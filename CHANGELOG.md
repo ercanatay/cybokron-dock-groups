@@ -5,6 +5,26 @@ All notable changes to Cybokron Dock Groups are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] - 2026-10-17
+
+### Added
+
+- Developer ID (Rigicon, Inc.) signed and Apple notarized releases: the release workflow signs the
+  app and the disk image with the Developer ID Application certificate (hardened runtime, secure
+  timestamp), notarizes the disk image with `notarytool`, staples the ticket and checks it with
+  `stapler validate`, `codesign` and `spctl` before attaching it to the draft release. Releases open
+  without a Gatekeeper warning.
+- `CODESIGN_IDENTITY` for `scripts/build-app.sh` and `scripts/make-dmg.sh`: set to a signing
+  identity's SHA-1, it signs the app (and the DMG) with that identity instead of ad hoc. Without it,
+  builds are signed ad hoc as before.
+
+### Changed
+
+- The README explains the signed releases and how to open the ad hoc signed v0.5.0 and v0.5.1 the
+  first time (Privacy & Security → Open Anyway, or `xattr -dr com.apple.quarantine`).
+- Accessibility access needs to be allowed once more when moving from an ad hoc signed build to a
+  signed release; afterwards it carries over between signed releases.
+
 ## [0.5.1] - 2026-10-17
 
 ### Added
@@ -63,5 +83,6 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
+[0.5.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/ercanatay/cybokron-dock-groups/releases/tag/v0.5.0

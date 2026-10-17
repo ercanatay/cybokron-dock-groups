@@ -107,6 +107,43 @@ The app has no Dock icon of its own (`LSUIElement`); standalone groups bring the
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
 popup is already showing, or there are no groups yet, it shows the group window instead.
 
+## Download
+
+Get the universal disk image (`Cybokron-Dock-Groups-<version>-universal.dmg`) from the
+[releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and drag the app
+to Applications.
+
+Releases from v0.5.2 on are **signed and notarized**: the app and the disk image are signed with the
+Developer ID Application certificate of Rigicon, Inc. (team `GJ3Y762WQ9`, hardened runtime), and the
+disk image is notarized by Apple with the ticket stapled to it. They open without a Gatekeeper
+warning. To check a download:
+
+```sh
+spctl -a -t open --context context:primary-signature -vv Cybokron-Dock-Groups-<version>-universal.dmg
+# → accepted, source=Notarized Developer ID
+```
+
+Because signed releases keep the same signature identity, Accessibility access carries over from one
+signed release to the next. Coming from an ad hoc signed build (v0.5.0, v0.5.1 or your own build),
+allow it once more in Privacy & Security → Accessibility.
+
+### Opening v0.5.0 / v0.5.1 and your own builds the first time
+
+These builds are signed ad hoc only, so macOS blocks the first open of a downloaded copy
+(“Apple could not verify …”). Either:
+
+- try to open the app once, then go to **System Settings → Privacy & Security**, choose
+  **Open Anyway** next to the message about Cybokron Dock Groups and confirm; or
+- remove the quarantine attribute in Terminal, from the disk image before opening it or from the
+  copied app:
+
+  ```sh
+  xattr -dr com.apple.quarantine ~/Downloads/Cybokron-Dock-Groups-0.5.1-universal.dmg
+  xattr -dr com.apple.quarantine "/Applications/Cybokron Dock Groups.app"
+  ```
+
+Apps you build yourself aren't quarantined and open directly.
+
 ## Requirements
 
 - macOS 14 Sonoma or later (Apple silicon or Intel)
@@ -126,7 +163,7 @@ xcodebuild -project CybokronDockGroups.xcodeproj -scheme CybokronDockGroups test
 ```
 
 Builds are signed ad hoc, so no developer account is needed. Release builds are universal
-(arm64 + x86_64).
+(arm64 + x86_64). Only the CI release job signs with the Developer ID certificate (see below).
 
 ### Command Line Tools only (SwiftPM)
 
@@ -143,7 +180,19 @@ scripts/make-dmg.sh   # build/release/Cybokron-Dock-Groups-<version>-universal.d
 ```
 
 It builds the universal release app and packs it with an Applications shortcut into a compressed
-disk image (the DMG itself is not signed).
+disk image. By default the app is signed ad hoc and the DMG isn't signed. With `CODESIGN_IDENTITY`
+set to the SHA-1 of a Developer ID Application identity in your keychain, `build-app.sh` signs the
+app with it (`--options runtime --timestamp`) and `make-dmg.sh` signs the DMG too:
+
+```sh
+CODESIGN_IDENTITY=<SHA-1 from `security find-identity -v -p codesigning`> scripts/make-dmg.sh
+```
+
+For `v*` tags, CI does this with the Rigicon, Inc. certificate from the repository secrets
+(`APPLE_DEVID_CERT_P12`, `APPLE_DEVID_CERT_PASSWORD`) in a temporary keychain, notarizes the DMG with
+`notarytool` and an App Store Connect API key (`APPLE_ASC_KEY_P8`, `APPLE_ASC_KEY_ID`,
+`APPLE_ASC_ISSUER_ID`), staples and verifies it (team `APPLE_TEAM_ID`), and attaches it to a draft
+release.
 
 With Xcode installed, `build-app.sh` also extracts the App Intents metadata
 (`Contents/Resources/Metadata.appintents`) that Siri and the Shortcuts app read, as Xcode does;
