@@ -1,21 +1,30 @@
 # Cybokron Dock Groups
 
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
-group from the menu bar to open all of its apps at once.
+group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: early development (phase A — project skeleton and group engine). Dock tiles, the launcher
-> popup, keyboard shortcuts and Siri/Shortcuts support are planned.
+> Status: early development (phase B — group popup and tile rendering). Standalone Dock tiles,
+> keyboard shortcuts and Siri/Shortcuts support are planned.
 
 ## Features (so far)
 
-- Menu bar item listing your groups; choosing a group opens all of its apps (**Open All**). Apps
-  that are already running are brought to the front instead of being launched again.
+- Menu bar item listing your groups with their tiles. Choosing a group shows its **popup**; holding
+  ⌥ while choosing opens all of its apps right away.
+- Group popup: a floating panel over the Dock (it doesn't take focus from the app you're using)
+  with the group's app icons in a grid and a running indicator per app. Click an app to open it or
+  bring it to the front; **Open All** opens every app; **Close All** quits the group's running apps
+  normally, ⌘-click force quits them. Escape, a click elsewhere, or switching apps closes it.
+- **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
   reorder or remove them. Deleting a group never touches the apps themselves.
-- Per-group preferences for the upcoming Dock tile and popup: emoji or app-icon grid tile,
-  background style and color, pinning, popup columns/rows/titles/position.
-- Everything stays on your Mac, in
-  `~/Library/Application Support/Cybokron/DockGroups/groups.json`.
+- Group tiles drawn by the app: the group's emoji, or a 2×2 / 3×3 grid of its first app icons, on a
+  solid, gradient or glass background in the color you pick. They appear in the menu, the popup
+  header and a live preview in the group window.
+- Settings (⌘,): popup theme (dark by default, light, or matching the system), frosted glass,
+  columns (auto or fixed), maximum rows (extra rows scroll), app names, position. Each group can
+  override the layout settings in its own settings.
+- Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
+  `groups.json` for the groups and `preferences.json` for the settings.
 
 The app has no Dock icon (`LSUIElement`). Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the group window.
@@ -59,8 +68,8 @@ synced folders such as `~/Documents`), build elsewhere:
 
 | Path | Contents |
 | --- | --- |
-| `Sources/DockGroupsCore` | Group model, JSON persistence, `GroupStore`, Open All launcher (no UI) |
-| `Sources/CybokronDockGroups` | App: AppKit lifecycle and menu bar item, SwiftUI management window |
+| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout and placement, tile renderer and cache (no UI) |
+| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, SwiftUI group and settings windows |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
 | `Resources` | `Info.plist`, asset catalog with the placeholder app icon |
 | `scripts` | SwiftPM build/test scripts, icon generator |
