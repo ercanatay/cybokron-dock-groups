@@ -14,6 +14,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let menuWillOpen: () -> Void
         /// The group's tile, sized for a menu item.
         let tileImage: (DockGroup) -> NSImage
+        /// The group's global shortcut ("⌃⌥1"), `nil` when it has none or shortcuts are off.
+        let shortcutTitle: (DockGroup) -> String?
     }
 
     static let menuTileSize: CGFloat = 18
@@ -93,7 +95,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         item.keyEquivalentModifierMask = []
         let appCount = group.apps.count
         item.badge = appCount > 0 ? NSMenuItemBadge(count: appCount) : nil
-        item.toolTip = "Show the apps in “\(group.name)”. Hold ⌥ to open them all at once."
+        let shortcut = actions.shortcutTitle(group).map { " Shortcut: \($0)." } ?? ""
+        item.toolTip = "Show the apps in “\(group.name)”. Hold ⌥ to open them all at once.\(shortcut)"
         return item
     }
 
