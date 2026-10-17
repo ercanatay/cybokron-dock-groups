@@ -16,13 +16,9 @@ enum MainMenuBuilder {
 
     private static func appMenu() -> NSMenu {
         let menu = NSMenu(title: AppInfo.name)
-        menu.addItem(
-            withTitle: "About \(AppInfo.name)",
-            action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
-            keyEquivalent: ""
-        )
+        // No target: the responder chain delivers these to the app delegate.
+        menu.addItem(withTitle: "About \(AppInfo.name)", action: #selector(AppDelegate.showAboutWindow(_:)), keyEquivalent: "")
         menu.addItem(.separator())
-        // No target: the responder chain delivers it to the app delegate.
         menu.addItem(withTitle: "Settings…", action: #selector(AppDelegate.showSettingsWindow(_:)), keyEquivalent: ",")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Hide \(AppInfo.name)", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
@@ -60,4 +56,15 @@ enum MainMenuBuilder {
 
 enum AppInfo {
     static let name = "Cybokron Dock Groups"
+    static let repositoryURL = URL(string: "https://github.com/ercanatay/cybokron-dock-groups")!
+    static let licenseURL = URL(string: "https://github.com/ercanatay/cybokron-dock-groups/blob/main/LICENSE")!
+
+    /// The marketing version, e.g. "0.3.0".
+    static var version: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+    }
+
+    static var copyright: String? {
+        Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as? String
+    }
 }

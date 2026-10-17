@@ -10,6 +10,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let openAll: (DockGroup) -> Void
         let showMainWindow: () -> Void
         let showSettings: () -> Void
+        let showAbout: () -> Void
         let menuWillOpen: () -> Void
         /// The group's tile, sized for a menu item.
         let tileImage: (DockGroup) -> NSImage
@@ -70,6 +71,9 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let settings = NSMenuItem(title: "Settings…", action: #selector(showSettings(_:)), keyEquivalent: ",")
         settings.target = self
         menu.addItem(settings)
+        let about = NSMenuItem(title: "About \(AppInfo.name)", action: #selector(showAbout(_:)), keyEquivalent: "")
+        about.target = self
+        menu.addItem(about)
 
         menu.addItem(.separator())
         let quit = NSMenuItem(
@@ -129,5 +133,9 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
     @objc private func showSettings(_ sender: NSMenuItem) {
         actions.showSettings()
+    }
+
+    @objc private func showAbout(_ sender: NSMenuItem) {
+        actions.showAbout()
     }
 }
