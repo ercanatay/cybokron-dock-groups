@@ -48,9 +48,31 @@ struct PopupActions {
     let openAll: () -> Void
     let closeAll: (QuitMode) -> Void
     let manageGroups: () -> Void
+    /// Moves the app to this index of the group's app list.
+    let moveApp: (AppReference, Int) -> Void
+    /// Takes the app out of the group; the app itself isn't affected.
+    let removeApp: (AppReference) -> Void
+    /// Whether the pointer is far enough outside the popup for a drop to remove the dragged app.
+    let isPointerInRemovalArea: () -> Bool
+}
+
+/// An app being dragged in the popup grid.
+private struct CellDrag: Equatable {
+    let id: PopupCell.ID
+    /// Where the pointer grabbed the cell, from the cell's top-left corner.
+    let grabOffset: CGSize
+    /// Top-left corner of the dragged cell, following the pointer (grid coordinates).
+    var origin: CGPoint
+    /// The slot the app moves to when dropped now.
+    var targetIndex: Int
+    /// The pointer is outside the popup: dropping removes the app from the group.
+    var isInRemovalArea: Bool
 }
 
 /// The popup: the group's tile and name with Open All / Close All, the app grid, and a hint line.
+///
+/// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
+/// the group, as with the Dock.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -58,6 +80,15 @@ struct PopupContentView: View {
     let actions: PopupActions
 
     @Environment(\.colorScheme) private var colorScheme
+
+    @State private var drag: CellDrag?
+    /// The order shown after a drop, until the group's new order arrives from the store.
+    @State private var droppedOrder: [PopupCell.ID]?
+    /// Set from the start of a drag until just after it ends, so the click that ends a drag doesn't
+    /// also open the app.
+    @State private var suppressesClick = false
+
+    private static let gridSpace = "PopupGrid"
 
     var body: some View {
         let palette = PanelPalette.forScheme(colorScheme)
@@ -129,31 +160,156 @@ struct PopupContentView: View {
                 .frame(height: content.gridHeight)
         } else {
             let metrics = content.metrics
-            let columns = Array(
-                repeating: GridItem(.fixed(metrics.cellWidth), spacing: metrics.spacing),
-                count: content.layout.columns
-            )
+            let layout = content.layout
+            let slots = slotIndices()
             ScrollView(.vertical) {
-                LazyVGrid(columns: columns, spacing: metrics.spacing) {
+                // Cells are placed explicitly rather than by a grid view, so the dragged cell can
+                // follow the pointer while the others make room.
+                ZStack(alignment: .topLeading) {
                     ForEach(content.cells) { cell in
-                        PopupAppCell(
-                            cell: cell,
-                            isRunning: runningApps.isRunning(cell.app),
-                            showsTitle: content.showsTitles,
-                            metrics: metrics,
-                            palette: palette
-                        ) {
-                            actions.open(cell.app)
-                        }
+                        cellView(cell, slot: slots[cell.id], palette: palette)
                     }
                 }
-                .padding(metrics.padding)
+                .frame(
+                    width: layout.visibleSize(metrics: metrics).width,
+                    height: layout.contentHeight(metrics: metrics),
+                    alignment: .topLeading
+                )
+                .coordinateSpace(name: Self.gridSpace)
                 .frame(maxWidth: .infinity)
             }
             .scrollDisabled(!content.scrolls)
             .scrollIndicators(content.scrolls ? .automatic : .hidden)
             .frame(height: content.gridHeight)
+            .onChange(of: content.cells.map(\.id)) {
+                droppedOrder = nil
+            }
+            .onChange(of: content.group.id) {
+                // A drag cut short (the popup closed under it) mustn't carry over to another group.
+                drag = nil
+                suppressesClick = false
+            }
         }
+    }
+
+    /// Where each cell is shown: its slot in the grid, or `nil` while it's hidden (dropped outside
+    /// the popup, until the store removes it).
+    private func slotIndices() -> [PopupCell.ID: Int] {
+        let ids = content.cells.map(\.id)
+        let order: [PopupCell.ID]
+        if let drag {
+            // Over the removal area the other apps close ranks, as they will once it's gone.
+            order = PopupDrag.previewOrder(ids, moving: drag.id, to: drag.isInRemovalArea ? nil : drag.targetIndex)
+        } else if let droppedOrder {
+            order = droppedOrder.filter(ids.contains)
+        } else {
+            order = ids
+        }
+        return Dictionary(order.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    private func cellView(_ cell: PopupCell, slot: Int?, palette: PanelPalette) -> some View {
+        let metrics = content.metrics
+        let dragged = drag.flatMap { $0.id == cell.id ? $0 : nil }
+        let origin = dragged?.origin ?? content.layout.cellOrigin(at: slot ?? 0, metrics: metrics)
+        let isHidden = slot == nil && dragged == nil
+        return PopupAppCell(
+            cell: cell,
+            isRunning: runningApps.isRunning(cell.app),
+            showsTitle: content.showsTitles,
+            metrics: metrics,
+            palette: palette,
+            isDragged: dragged != nil,
+            isInRemovalArea: dragged?.isInRemovalArea ?? false,
+            highlightsOnHover: drag == nil
+        ) {
+            guard !suppressesClick else { return }
+            actions.open(cell.app)
+        }
+        .offset(x: origin.x, y: origin.y)
+        .opacity(isHidden ? 0 : 1)
+        .allowsHitTesting(!isHidden)
+        .zIndex(dragged != nil ? 1 : 0)
+        // The others glide to their new slots; the dragged cell stays under the pointer.
+        .animation(dragged != nil ? nil : .easeInOut(duration: 0.18), value: slot)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 4, coordinateSpace: .named(Self.gridSpace))
+                .onChanged { value in dragChanged(cell, value) }
+                .onEnded { _ in dragEnded(cell) }
+        )
+        .accessibilityAction(named: "Move Earlier") { move(cell, by: -1) }
+        .accessibilityAction(named: "Move Later") { move(cell, by: 1) }
+        .accessibilityAction(named: "Remove from Group") { actions.removeApp(cell.app) }
+    }
+
+    // MARK: - Dragging
+
+    private func dragChanged(_ cell: PopupCell, _ value: DragGesture.Value) {
+        let metrics = content.metrics
+        let layout = content.layout
+        var current: CellDrag
+        if let drag, drag.id == cell.id {
+            current = drag
+        } else {
+            guard let index = content.cells.firstIndex(where: { $0.id == cell.id }) else { return }
+            let start = layout.cellOrigin(at: slotIndices()[cell.id] ?? index, metrics: metrics)
+            current = CellDrag(
+                id: cell.id,
+                grabOffset: CGSize(width: value.startLocation.x - start.x, height: value.startLocation.y - start.y),
+                origin: start,
+                targetIndex: index,
+                isInRemovalArea: false
+            )
+            droppedOrder = nil
+            suppressesClick = true
+        }
+        current.origin = CGPoint(x: value.location.x - current.grabOffset.width, y: value.location.y - current.grabOffset.height)
+        let center = CGPoint(x: current.origin.x + metrics.cellWidth / 2, y: current.origin.y + metrics.cellHeight / 2)
+        current.targetIndex = layout.slotIndex(at: center, metrics: metrics) ?? current.targetIndex
+        let isInRemovalArea = actions.isPointerInRemovalArea()
+        if isInRemovalArea != current.isInRemovalArea {
+            // The dragged cell can't be drawn outside the panel; the cursor shows the removal.
+            (isInRemovalArea ? NSCursor.disappearingItem : NSCursor.arrow).set()
+        }
+        current.isInRemovalArea = isInRemovalArea
+        drag = current
+    }
+
+    private func dragEnded(_ cell: PopupCell) {
+        defer {
+            NSCursor.arrow.set()
+            // The click ending the drag may still reach the cell's button; let it pass first.
+            DispatchQueue.main.async { suppressesClick = false }
+        }
+        guard let current = drag, current.id == cell.id else { return }
+        let ids = content.cells.map(\.id)
+        guard let source = ids.firstIndex(of: cell.id) else {
+            drag = nil
+            return
+        }
+        let drop = PopupDrop(sourceIndex: source, targetIndex: current.targetIndex, isInRemovalArea: actions.isPointerInRemovalArea())
+        switch drop {
+        case .none:
+            withAnimation(.easeOut(duration: 0.18)) { drag = nil }
+        case .move(let index):
+            withAnimation(.easeOut(duration: 0.18)) {
+                droppedOrder = PopupDrag.previewOrder(ids, moving: cell.id, to: index)
+                drag = nil
+            }
+            actions.moveApp(cell.app, index)
+        case .remove:
+            droppedOrder = PopupDrag.previewOrder(ids, moving: cell.id, to: nil)
+            drag = nil
+            actions.removeApp(cell.app)
+        }
+    }
+
+    /// Moves an app one place, for VoiceOver's actions.
+    private func move(_ cell: PopupCell, by offset: Int) {
+        guard let index = content.cells.firstIndex(where: { $0.id == cell.id }) else { return }
+        let target = index + offset
+        guard content.cells.indices.contains(target) else { return }
+        actions.moveApp(cell.app, target)
     }
 
     private func emptyState(_ palette: PanelPalette) -> some View {
@@ -170,15 +326,24 @@ struct PopupContentView: View {
 
     private func footer(_ palette: PanelPalette) -> some View {
         HStack(spacing: 0) {
-            Text("Close All:  ⌥-click quits normally  ·  ⌘-click force quits")
+            Text(footerText)
                 .font(.system(size: 10.5))
-                .foregroundStyle(palette.secondaryText)
+                .foregroundStyle(drag?.isInRemovalArea == true ? PanelPalette.warning : palette.secondaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.footerHeight)
+    }
+
+    private var footerText: String {
+        guard let drag, let cell = content.cells.first(where: { $0.id == drag.id }) else {
+            return "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
+        }
+        return drag.isInRemovalArea
+            ? "Release to remove \(cell.app.name) from this group"
+            : "Drop to place \(cell.app.name)  ·  drag out of the popup to remove it"
     }
 }
 
@@ -189,6 +354,10 @@ private struct PopupAppCell: View {
     let showsTitle: Bool
     let metrics: PopupGridMetrics
     let palette: PanelPalette
+    let isDragged: Bool
+    let isInRemovalArea: Bool
+    /// Off while another cell is dragged over this one.
+    let highlightsOnHover: Bool
     let action: () -> Void
 
     @State private var isHovered = false
@@ -217,11 +386,14 @@ private struct PopupAppCell: View {
             .frame(width: metrics.cellWidth, height: metrics.cellHeight, alignment: .top)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isHovered ? palette.hover : Color.clear)
+                    .fill(isDragged ? palette.pressed : (isHovered && highlightsOnHover ? palette.hover : Color.clear))
             )
             .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
         .buttonStyle(CellButtonStyle(pressedFill: palette.pressed))
+        .scaleEffect(isDragged ? 1.1 : 1)
+        .opacity(isInRemovalArea ? 0.4 : 1)
+        .shadow(color: .black.opacity(isDragged ? 0.3 : 0), radius: 10, y: 4)
         .onHover { isHovered = $0 }
         .help(helpText)
         .accessibilityLabel(cell.app.name)
@@ -229,8 +401,11 @@ private struct PopupAppCell: View {
     }
 
     private var helpText: String {
-        guard cell.isInstalled else { return "\(cell.app.name) isn't on this Mac." }
-        return isRunning ? "Bring \(cell.app.name) to the front" : "Open \(cell.app.name)"
+        guard cell.isInstalled else {
+            return "\(cell.app.name) isn't on this Mac. Drag it out of the popup to remove it from the group."
+        }
+        let action = isRunning ? "Bring \(cell.app.name) to the front" : "Open \(cell.app.name)"
+        return "\(action). Drag to reorder, or out of the popup to remove it from the group."
     }
 }
 

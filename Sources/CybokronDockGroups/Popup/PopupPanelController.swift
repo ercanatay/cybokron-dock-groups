@@ -42,6 +42,10 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
 
     /// The group whose popup is open, `nil` while closed.
     private(set) var groupID: DockGroup.ID?
+    /// The group whose popup was shown last, even if it's closed now.
+    private(set) var lastGroupID: DockGroup.ID?
+
+    var isShown: Bool { groupID != nil }
 
     init(
         store: GroupStore,
@@ -83,6 +87,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         guard let group = store.group(withID: id), let frame = update(for: group) else { return }
         let wasShown = groupID != nil && panel.isVisible
         groupID = id
+        lastGroupID = id
         transition += 1
 
         panel.setFrame(frame, display: true)
@@ -220,6 +225,20 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             manageGroups: { [weak self] in
                 self?.close(reason: .appAction)
                 self?.actions.manageGroups()
+            },
+            moveApp: { [weak self] app, index in
+                guard let self else { return }
+                self.logger.notice("Moving \(app.bundleIdentifier, privacy: .public) to \(index) in group \(id, privacy: .public)")
+                self.store.moveApp(bundleIdentifier: app.bundleIdentifier, inGroup: id, to: index)
+            },
+            removeApp: { [weak self] app in
+                guard let self else { return }
+                self.logger.notice("Removing \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public)")
+                self.store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id)
+            },
+            isPointerInRemovalArea: { [weak self] in
+                guard let self else { return false }
+                return PopupDrag.isRemovalLocation(NSEvent.mouseLocation, panelFrame: self.panel.frame)
             }
         )
     }
