@@ -8,8 +8,10 @@ import SwiftUI
 final class MainWindowController: NSWindowController {
     private static let frameAutosaveName = "MainWindow"
 
-    init(store: GroupStore, openAll: @escaping (DockGroup) -> Void) {
-        let hostingController = NSHostingController(rootView: MainWindowView(store: store, openAll: openAll))
+    init(store: GroupStore, tiles: TileImageCache, actions: MainWindowView.Actions) {
+        let hostingController = NSHostingController(
+            rootView: MainWindowView(store: store, tiles: tiles, actions: actions)
+        )
         hostingController.sizingOptions = [.minSize]
 
         let window = NSWindow(contentViewController: hostingController)

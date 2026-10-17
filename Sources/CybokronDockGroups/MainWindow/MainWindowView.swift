@@ -3,8 +3,14 @@ import SwiftUI
 
 /// Group list on the left, the selected group's settings on the right.
 struct MainWindowView: View {
+    struct Actions {
+        let openAll: (DockGroup) -> Void
+        let showPopup: (DockGroup) -> Void
+    }
+
     @ObservedObject var store: GroupStore
-    let openAll: (DockGroup) -> Void
+    let tiles: TileImageCache
+    let actions: Actions
 
     @State private var selection: DockGroup.ID?
 
@@ -23,12 +29,12 @@ struct MainWindowView: View {
                 onAdd: addGroup,
                 onRename: beginRename,
                 onDelete: confirmDeletion,
-                onOpenAll: openAll
+                onOpenAll: actions.openAll
             )
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
         } detail: {
             if let id = selection, let group = store.group(withID: id) {
-                GroupDetailView(store: store, group: group, openAll: openAll)
+                GroupDetailView(store: store, group: group, tiles: tiles, actions: actions)
                     .id(group.id)
             } else {
                 ContentUnavailableView {

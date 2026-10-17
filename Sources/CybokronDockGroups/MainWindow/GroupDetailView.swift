@@ -7,7 +7,8 @@ import SwiftUI
 struct GroupDetailView: View {
     @ObservedObject var store: GroupStore
     let group: DockGroup
-    let openAll: (DockGroup) -> Void
+    let tiles: TileImageCache
+    let actions: MainWindowView.Actions
 
     @State private var nameDraft: String
     @State private var emojiDraft: String
@@ -18,10 +19,11 @@ struct GroupDetailView: View {
         case name, emoji
     }
 
-    init(store: GroupStore, group: DockGroup, openAll: @escaping (DockGroup) -> Void) {
+    init(store: GroupStore, group: DockGroup, tiles: TileImageCache, actions: MainWindowView.Actions) {
         self.store = store
         self.group = group
-        self.openAll = openAll
+        self.tiles = tiles
+        self.actions = actions
         _nameDraft = State(initialValue: group.name)
         _emojiDraft = State(initialValue: group.emoji)
     }
@@ -105,7 +107,9 @@ struct GroupDetailView: View {
                 Text("Apps")
                 Spacer()
                 Button("Add Apps…", action: addApps)
-                Button("Open All") { openAll(group) }
+                Button("Show Popup") { actions.showPopup(group) }
+                    .help("Show this group's popup over the Dock.")
+                Button("Open All") { actions.openAll(group) }
                     .disabled(group.apps.isEmpty)
             }
         }
@@ -113,6 +117,13 @@ struct GroupDetailView: View {
 
     private var tileSection: some View {
         Section("Dock Tile") {
+            LabeledContent("Preview") {
+                HStack(alignment: .bottom, spacing: 14) {
+                    tilePreview(pointSize: 64)
+                    tilePreview(pointSize: 32)
+                    tilePreview(pointSize: StatusBarController.menuTileSize)
+                }
+            }
             Picker("Shows", selection: binding(\.tile.kind)) {
                 Text("Emoji").tag(TileKind.emoji)
                 Text("App Icon Grid").tag(TileKind.grid)
@@ -161,6 +172,14 @@ struct GroupDetailView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    private func tilePreview(pointSize: CGFloat) -> some View {
+        Image(nsImage: tiles.image(for: group, pointSize: pointSize))
+            .resizable()
+            .interpolation(.high)
+            .frame(width: pointSize, height: pointSize)
+            .accessibilityLabel("Tile preview, \(Int(pointSize)) points")
     }
 
     // MARK: - Bindings

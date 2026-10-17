@@ -1,7 +1,7 @@
 import AppKit
 
 /// Builds the main menu. A menu bar utility never shows it, but its key equivalents still work
-/// while the app's window is active (⌘Q, ⌘W, and the text-editing shortcuts in text fields).
+/// while the app's window is active (⌘, ⌘Q, ⌘W, and the text-editing shortcuts in text fields).
 @MainActor
 enum MainMenuBuilder {
     static func makeMainMenu() -> NSMenu {
@@ -21,6 +21,9 @@ enum MainMenuBuilder {
             action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
             keyEquivalent: ""
         )
+        menu.addItem(.separator())
+        // No target: the responder chain delivers it to the app delegate.
+        menu.addItem(withTitle: "Settings…", action: #selector(AppDelegate.showSettingsWindow(_:)), keyEquivalent: ",")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Hide \(AppInfo.name)", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         menu.addItem(.separator())
