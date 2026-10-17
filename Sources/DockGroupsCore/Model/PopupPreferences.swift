@@ -9,9 +9,13 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 }
 
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
-/// defaults (a group can override those with its own `PopupOverrides`), and the global shortcuts.
+/// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, and
+/// the Most Used list.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
+    public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
+    /// Session lengths offered in Settings: 2, 5, 10, 15, 30 and 60 minutes.
+    public static let allowedMostUsedSessionSeconds = [120, 300, 600, 900, 1800, 3600]
 
     public var theme: PanelTheme
     /// Frosted-glass blur behind the panel instead of a solid background.
@@ -26,6 +30,13 @@ public struct PopupPreferences: Hashable, Sendable {
     public var shortcutsEnabled: Bool
     /// Modifier keys of the global shortcuts.
     public var shortcutModifiers: ShortcutModifiers
+    /// Whether the menu bar shows the Most Used list. Launches are counted either way.
+    public var showsMostUsed: Bool
+    /// How many apps the Most Used list shows; one of `MostUsedRanking.allowedLimits`.
+    public var mostUsedLimit: Int
+    /// Apps launched within this many seconds of each other count as launched together; one of
+    /// `allowedMostUsedSessionSeconds`.
+    public var mostUsedSessionSeconds: Int
 
     public init(
         theme: PanelTheme = .dark,
@@ -35,7 +46,10 @@ public struct PopupPreferences: Hashable, Sendable {
         showsTitles: Bool = true,
         anchor: PopupAnchor = .dockCenter,
         shortcutsEnabled: Bool = true,
-        shortcutModifiers: ShortcutModifiers = .controlOption
+        shortcutModifiers: ShortcutModifiers = .controlOption,
+        showsMostUsed: Bool = true,
+        mostUsedLimit: Int = MostUsedRanking.defaultLimit,
+        mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -45,6 +59,9 @@ public struct PopupPreferences: Hashable, Sendable {
         self.anchor = anchor
         self.shortcutsEnabled = shortcutsEnabled
         self.shortcutModifiers = shortcutModifiers
+        self.showsMostUsed = showsMostUsed
+        self.mostUsedLimit = mostUsedLimit
+        self.mostUsedSessionSeconds = mostUsedSessionSeconds
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -58,9 +75,15 @@ public struct PopupPreferences: Hashable, Sendable {
         )
     }
 
-    /// The preferences with out-of-range counts replaced by their defaults.
+    /// The preferences with out-of-range values replaced by their defaults.
     public func sanitized() -> PopupPreferences {
         var copy = self
+        if !MostUsedRanking.allowedLimits.contains(copy.mostUsedLimit) {
+            copy.mostUsedLimit = MostUsedRanking.defaultLimit
+        }
+        if !Self.allowedMostUsedSessionSeconds.contains(copy.mostUsedSessionSeconds) {
+            copy.mostUsedSessionSeconds = Self.defaultMostUsedSessionSeconds
+        }
         if !PopupOverrides.allowedCountRange.contains(copy.maxRows) {
             copy.maxRows = Self.defaultMaxRows
         }
@@ -98,6 +121,9 @@ extension PopupPreferences: Codable {
         case anchor = "popupAnchor"
         case shortcutsEnabled = "globalShortcutsEnabled"
         case shortcutModifiers = "globalShortcutModifiers"
+        case showsMostUsed = "popupShowsMostUsed"
+        case mostUsedLimit
+        case mostUsedSessionSeconds
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -116,5 +142,12 @@ extension PopupPreferences: Codable {
         shortcutsEnabled = container.decodeLeniently(Bool.self, forKey: .shortcutsEnabled) ?? defaults.shortcutsEnabled
         shortcutModifiers = container.decodeLeniently(ShortcutModifiers.self, forKey: .shortcutModifiers)
             ?? defaults.shortcutModifiers
+        showsMostUsed = container.decodeLeniently(Bool.self, forKey: .showsMostUsed) ?? defaults.showsMostUsed
+        mostUsedLimit = container.decodeLeniently(Int.self, forKey: .mostUsedLimit)
+            .flatMap { MostUsedRanking.allowedLimits.contains($0) ? $0 : nil }
+            ?? defaults.mostUsedLimit
+        mostUsedSessionSeconds = container.decodeLeniently(Int.self, forKey: .mostUsedSessionSeconds)
+            .flatMap { Self.allowedMostUsedSessionSeconds.contains($0) ? $0 : nil }
+            ?? defaults.mostUsedSessionSeconds
     }
 }
