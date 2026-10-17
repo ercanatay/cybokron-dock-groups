@@ -9,6 +9,7 @@ import OSLog
 /// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
 /// URLs. App launches are counted all along for the Most Used list. Standalone groups get their own
 /// apps with their own Dock icons (`StandaloneController`); those run with `AgentAppDelegate`.
+/// `AutoUpdater` looks for new releases on GitHub (only here, never in an agent).
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let store = GroupStore(persistence: JSONFileGroupPersistence())
@@ -49,9 +50,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         preferences: preferences,
         store: store,
         usage: usage,
-        shortcuts: shortcutMonitor
+        shortcuts: shortcutMonitor,
+        updater: updater
     )
     private lazy var aboutWindowController = AboutWindowController()
+    private lazy var updater = AutoUpdater(preferences: preferences)
+    private lazy var updateWindowController = UpdateWindowController(updater: updater)
     private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(preferences: preferences) { [weak self] digit in
         self?.togglePopup(forShortcut: digit)
     }
@@ -103,6 +107,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
                 showSettings: { [weak self] in self?.showSettingsWindow(nil) },
                 showAbout: { [weak self] in self?.showAboutWindow(nil) },
+                checkForUpdates: { [weak self] in self?.checkForUpdates(nil) },
                 menuWillOpen: { [weak self] in self?.popupController.close() },
                 tileImage: { [weak self] group in
                     self?.tiles.image(for: group, pointSize: StatusBarController.menuTileSize) ?? NSImage()
@@ -117,6 +122,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         shortcutMonitor.start()
         // Removes stranded agents, then keeps the standalone groups' agents up to date.
         standalone.start()
+        updater.showWindow = { [weak self] in
+            self?.popupController.close()
+            self?.updateWindowController.show()
+        }
+        updater.closeWindow = { [weak self] in self?.updateWindowController.close() }
+        updater.start()
         // The window stays closed at launch unless there's a problem the user needs to see.
         if store.issue != nil {
             mainWindowController.show()
@@ -170,6 +181,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func showAboutWindow(_ sender: Any?) {
         popupController.close()
         aboutWindowController.show()
+    }
+
+    /// Target of the Check for Updates… menu items: shows the update window, which follows the check.
+    @objc func checkForUpdates(_ sender: Any?) {
+        updater.checkForUpdatesFromMenu()
     }
 
     // MARK: - Group actions

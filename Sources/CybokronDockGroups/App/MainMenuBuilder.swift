@@ -18,6 +18,7 @@ enum MainMenuBuilder {
         let menu = NSMenu(title: AppInfo.name)
         // No target: the responder chain delivers these to the app delegate.
         menu.addItem(withTitle: "About \(AppInfo.name)", action: #selector(AppDelegate.showAboutWindow(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: "Check for Updates…", action: #selector(AppDelegate.checkForUpdates(_:)), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Settings…", action: #selector(AppDelegate.showSettingsWindow(_:)), keyEquivalent: ",")
         menu.addItem(.separator())
