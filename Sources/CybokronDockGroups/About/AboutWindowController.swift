@@ -13,7 +13,7 @@ final class AboutWindowController: NSWindowController {
         window.title = "About \(AppInfo.name)"
         window.styleMask = [.titled, .closable]
         window.isReleasedWhenClosed = false
-        window.setContentSize(NSSize(width: AboutView.width, height: 640))
+        window.setContentSize(NSSize(width: AboutView.width, height: 720))
         super.init(window: window)
         shouldCascadeWindows = false
     }
@@ -76,7 +76,7 @@ private struct AboutView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 22)
         }
-        .frame(width: Self.width, height: 640)
+        .frame(width: Self.width, height: 720)
         .background(palette.solidBackground)
     }
 
@@ -156,37 +156,43 @@ private struct BookCard: View {
     let palette: PanelPalette
 
     var body: some View {
-        Button { NSWorkspace.shared.open(book.englishURL) } label: {
-            HStack(spacing: 12) {
-                AsyncImage(url: book.coverURL) { image in
-                    image.resizable().aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    Image(systemName: "book.closed.fill")
-                        .foregroundStyle(palette.secondaryText)
-                }
-                .frame(width: 44, height: 62)
-                .clipShape(RoundedRectangle(cornerRadius: 3))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(book.titleLine)
-                        .font(.callout.weight(.medium))
-                        .foregroundStyle(palette.primaryText)
-                        .multilineTextAlignment(.leading)
-                    Text("Read in English")
-                        .font(.caption)
-                        .foregroundStyle(palette.secondaryText)
-                }
-                Spacer(minLength: 0)
-                Link("TR", destination: book.turkishURL)
-                    .font(.caption.weight(.semibold))
-                    .tint(PanelPalette.indigo)
+        HStack(spacing: 12) {
+            AsyncImage(url: book.coverURL) { image in
+                image.resizable().aspectRatio(contentMode: .fit)
+            } placeholder: {
+                Image(systemName: "book.closed.fill")
+                    .foregroundStyle(palette.secondaryText)
             }
-            .padding(8)
-            .background(palette.hover.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(palette.hairline))
-            .contentShape(Rectangle())
+            .frame(width: 44, height: 62)
+            .clipShape(RoundedRectangle(cornerRadius: 3))
+            VStack(alignment: .leading, spacing: 6) {
+                Text(book.titleLine)
+                    .font(.callout.weight(.medium))
+                    .foregroundStyle(palette.primaryText)
+                    .multilineTextAlignment(.leading)
+                HStack(spacing: 8) {
+                    languageButton("🌐 English", url: book.englishURL)
+                    languageButton("🇹🇷 Türkçe", url: book.turkishURL)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(8)
+        .background(palette.hover.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(palette.hairline))
+    }
+
+    private func languageButton(_ title: String, url: URL) -> some View {
+        Button { NSWorkspace.shared.open(url) } label: {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 5)
+                .foregroundStyle(.white)
+                .background(PanelPalette.indigo.opacity(0.85), in: RoundedRectangle(cornerRadius: 6))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(book.titleLine)
+        .help(url.absoluteString)
     }
 }
 
