@@ -1,3 +1,4 @@
+import AppIntents
 import AppKit
 import Combine
 import DockGroupsCore
@@ -5,6 +6,8 @@ import OSLog
 
 /// Owns the app's long-lived objects. The app is a menu bar utility (`LSUIElement`): it has no Dock
 /// icon, and its windows open from the menu bar or when the app is opened again while running.
+/// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
+/// URLs.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let store = GroupStore(persistence: JSONFileGroupPersistence())
@@ -16,7 +19,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var tiles: TileImageCache = TileImageCache(iconProvider: icons)
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
+    private var urlThrottle = CommandThrottle()
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
+    private let urlLogger = Logger(subsystem: "com.cybokron.dockgroups", category: "URLScheme")
 
     private lazy var mainWindowController: MainWindowController = MainWindowController(
         store: store,
@@ -49,11 +54,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
     )
 
+    override init() {
+        super.init()
+        // Intents may arrive as soon as the app runs; they reach the store through the delegate.
+        GroupIntentSupport.handler = self
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = MainMenuBuilder.makeMainMenu()
         // Changed and deleted groups lose their cached tiles.
         store.$groups
             .sink { [weak self] groups in self?.tiles.synchronize(with: groups) }
+            .store(in: &subscriptions)
+        // Siri learns the group names from the app's shortcuts; tell it when they change.
+        store.$groups
+            .map { groups in groups.map { "\($0.id.uuidString) \($0.name)" } }
+            .removeDuplicates()
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .sink { _ in DockGroupsShortcuts.updateAppShortcutParameters() }
             .store(in: &subscriptions)
         statusBarController = StatusBarController(
             store: store,
@@ -77,10 +95,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    /// Opening the app again (Finder, `open -a`, Spotlight) while it runs shows the window.
+    /// Opening the app again (Finder, `open -a`, Spotlight) while it runs shows a popup — the one
+    /// shown last, else the first group's — and brings the app forward. Without groups, or when a
+    /// popup is already showing, it shows the group window instead.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        mainWindowController.show()
+        if popupController.isShown {
+            popupController.close()
+            mainWindowController.show()
+        } else if let group = popupController.lastGroupID.flatMap(store.group(withID:)) ?? store.groups.first {
+            logger.notice("Reopened: showing the popup of group \(group.id, privacy: .public)")
+            NSApp.activate()
+            popupController.show(groupID: group.id)
+        } else {
+            mainWindowController.show()
+        }
         return false
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            handle(url)
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -108,6 +143,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         aboutWindowController.show()
     }
 
+    // MARK: - Group actions
+
     private func open(_ app: AppReference, in group: DockGroup) {
         Task { @MainActor in
             let report = await launcher.open(app, inGroup: group)
@@ -117,13 +154,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func openAll(_ group: DockGroup) {
         Task { @MainActor in
-            let report = await launcher.openAll(group)
-            LaunchReportPresenter.presentProblems(in: report)
+            LaunchReportPresenter.presentProblems(in: await launchAll(group))
         }
     }
 
     private func closeAll(_ group: DockGroup, mode: QuitMode) {
-        LaunchReportPresenter.presentProblems(in: terminator.closeAll(group, mode: mode))
+        LaunchReportPresenter.presentProblems(in: quitAll(group, mode: mode))
     }
 
     // MARK: - Global shortcuts
@@ -143,5 +179,75 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return nil
         }
         return GroupShortcuts.title(digit: digit, modifiers: settings.shortcutModifiers)
+    }
+
+    // MARK: - URL scheme
+
+    private func handle(_ url: URL) {
+        guard let command = URLCommand(url: url) else {
+            urlLogger.error("Ignored unsupported URL \(url.absoluteString, privacy: .public)")
+            return
+        }
+        guard urlThrottle.accept(command.throttleKey) else {
+            urlLogger.notice("Ignored \(url.absoluteString, privacy: .public): repeated within the \(Int(CommandThrottle.urlCooldown))-second cooldown")
+            return
+        }
+        urlLogger.notice("Handling \(url.absoluteString, privacy: .public)")
+        // Run once the activation that comes with an opened URL has settled.
+        Task { @MainActor [weak self] in
+            self?.perform(command)
+        }
+    }
+
+    private func perform(_ command: URLCommand) {
+        switch command {
+        case .showGroup(let name):
+            if let group = group(named: name) { popupController.show(groupID: group.id) }
+        case .launchGroup(let name):
+            if let group = group(named: name) { openAll(group) }
+        case .quitGroup(let name, let mode):
+            if let group = group(named: name) { closeAll(group, mode: mode) }
+        case .showShortcut(let digit):
+            if let group = GroupShortcuts.group(forDigit: digit, in: store.groups) {
+                popupController.show(groupID: group.id)
+            } else {
+                urlLogger.error("Shortcut \(digit) has no group")
+                NSSound.beep()
+            }
+        case .closePopup:
+            popupController.close()
+        case .openSettings:
+            showSettingsWindow(nil)
+        case .manageGroups:
+            popupController.close()
+            mainWindowController.show()
+        }
+    }
+
+    private func group(named name: String) -> DockGroup? {
+        guard let group = GroupLookup.group(matching: name, in: store.groups) else {
+            urlLogger.error("No group matches “\(name, privacy: .public)”")
+            NSSound.beep()
+            return nil
+        }
+        return group
+    }
+}
+
+// MARK: - Siri and Shortcuts
+
+extension AppDelegate: GroupIntentHandling {
+    var groups: [DockGroup] { store.groups }
+
+    func showPopup(forGroup id: DockGroup.ID) {
+        popupController.show(groupID: id)
+    }
+
+    func launchAll(_ group: DockGroup) async -> LaunchReport {
+        await launcher.openAll(group)
+    }
+
+    func quitAll(_ group: DockGroup, mode: QuitMode) -> QuitReport {
+        terminator.closeAll(group, mode: mode)
     }
 }
