@@ -3,7 +3,7 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: early development (phase D — Most Used apps). Standalone Dock tiles are planned.
+> Status: early development (phase E — standalone Dock icons).
 
 ## Features (so far)
 
@@ -49,14 +49,40 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   Most Used turns the list off (launches are still counted), sets how many apps it shows (5, 10 or
   15) and the session length, and clears the history. Background agents and a few system
   processes (Finder, Spotlight, …) aren't counted.
+- **Standalone Dock icons**: turn on *Standalone Dock icon* in a group's settings and the group gets
+  its own small app, with the group's tile (emoji or app icon grid) as its icon, at the end of the
+  Dock. Clicking it shows the group's popup over the Dock, clicking it again hides it, and ⌥-clicking
+  it opens all of the group's apps right away — even while Cybokron Dock Groups isn't running. The
+  popup opens apps, Open All and Close All as usual; apps are reordered and removed in the main app.
+  - The group's app lives in `~/Library/Application Support/Cybokron/DockGroups/Agents/<name>.app`
+    (`calisma-alani.app` for “Çalışma Alanı”). It's a copy of this app's own executable with its own
+    Info.plist (bundle identifier `com.cybokron.dockgroups.agent.<group ID>`, no Dock icon of its own
+    while running, no menu bar item, shortcuts, Siri actions or links), the group's settings in
+    `Contents/Resources/group-config.json` and the icon as `AppIcon.icns` (16 to 1024 pixels). It's
+    signed ad hoc with `codesign` and verified before it's moved into place; if signing fails, nothing
+    is installed and the setting turns itself off again. It's then registered with LaunchServices
+    (`lsregister -f`).
+  - The tile is added to the Dock's app list (`persistent-apps` in the `com.apple.dock` preferences,
+    as `defaults write` would) and the Dock restarts for a moment (`killall Dock`) to show it. Only
+    tiles of the groups' apps are added, updated or removed; the rest of the Dock stays as it is.
+  - Changes to the group (or to the popup settings it uses) rebuild its app shortly afterwards, and a
+    running copy reloads them. Renaming the group moves the app to its new name and updates its tile.
+    The Dock caches tile icons, so after an icon change the group's settings offer **Update Dock
+    Icon**, which clears the Dock's icon cache and restarts the Dock.
+  - Turning the setting off, deleting the group, or dragging the tile out of the Dock (noticed when
+    the app starts or the group window opens) removes the group's app: a running copy is asked to quit
+    (and forced after 3 seconds), its tile is removed and the Dock restarts. When the app starts it
+    also removes group apps that belong to no standalone group (“stranded” ones, e.g. left by a
+    crash) — unless they're running; those go once they've quit.
 - Settings (⌘,): popup theme (dark by default, light, or matching the system), frosted glass,
   columns (auto or fixed), maximum rows (extra rows scroll), app names, position. Each group can
   override the layout settings in its own settings.
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
-  `groups.json` for the groups, `preferences.json` for the settings, and `usage-stats.json` /
-  `usage-cooccurrence.json` for the launch counts behind Most Used.
+  `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
+  `usage-cooccurrence.json` for the launch counts behind Most Used, and `Agents/` for the
+  standalone groups' apps.
 
-The app has no Dock icon (`LSUIElement`). Opening it again while it runs (Finder, Spotlight,
+The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
 popup is already showing, or there are no groups yet, it shows the group window instead.
 
@@ -97,6 +123,11 @@ Ad hoc signed builds get a new signature every time they're built, so macOS trea
 new app for Accessibility access: after rebuilding, remove the app from the Accessibility list and
 allow it again for the global shortcuts to work in other apps.
 
+Every new build of the app has a different executable, so at its next start the standalone groups'
+apps are rebuilt from it. Debug builds made with Xcode keep their code in the one executable too
+(`ENABLE_DEBUG_DYLIB = NO`), because that executable is what the group apps copy. To try the
+signing failure path, start the app with `CYBOKRON_SIMULATE_SIGN_FAILURE=1` set.
+
 The scripts work around two Command Line Tools limitations automatically: they pick a macOS SDK
 whose SwiftUI doesn't need Xcode's macro plugins, and they point the compiler at swift-testing's
 macro plugin. If SwiftPM reports `disk I/O error` for its build database (seen with checkouts in
@@ -107,8 +138,8 @@ synced folders such as `~/Documents`), build elsewhere:
 
 | Path | Contents |
 | --- | --- |
-| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup (no UI) |
-| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows |
+| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions) (no UI) |
+| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows, standalone group apps (`Standalone/` keeps them in sync, `Agent/` runs a group's own app) |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
 | `Resources` | `Info.plist`, asset catalog with the placeholder app icon |
 | `scripts` | SwiftPM build/test scripts, App Intents protocol list for the build, icon generator |
