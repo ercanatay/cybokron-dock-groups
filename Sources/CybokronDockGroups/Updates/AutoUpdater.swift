@@ -1,0 +1,292 @@
+import AppKit
+import Combine
+import DockGroupsCore
+import OSLog
+
+/// Looks for new releases on GitHub and installs them.
+///
+/// Automatic checks (on by default, `PopupPreferences.automaticallyChecksForUpdates`) run shortly
+/// after launch and then every six hours; "Check for Updates…" and Settings' "Check Now" check at
+/// any time. When a check finds a newer release, the update window offers it with its release
+/// notes. "Download and Install" downloads the release's universal disk image, copies the app out
+/// of it, swaps it for the running app (keeping the old one to roll back to) and relaunches. The
+/// file work happens in `UpdateInstaller`; this class keeps the state the windows show.
+@MainActor
+final class AutoUpdater: ObservableObject {
+    enum Status: Equatable {
+        case idle
+        case checking
+        case upToDate(SemanticVersion)
+        /// A newer release; `asset` is `nil` when it has no disk image to install from.
+        case available(ReleaseInfo, asset: ReleaseAsset?)
+        case downloading(ReleaseInfo, fraction: Double)
+        case installing(ReleaseInfo)
+        /// `CYBOKRON_UPDATE_DRY_RUN` stopped the installation once the new app was staged.
+        case stagedForDryRun(ReleaseInfo, path: String)
+        case checkFailed(String)
+        case installFailed(ReleaseInfo, asset: ReleaseAsset?, message: String)
+    }
+
+    /// Delay of the check at launch, so it doesn't compete with starting up.
+    private static let launchCheckDelay: Duration = .seconds(5)
+
+    @Published private(set) var status: Status = .idle
+    @Published private(set) var lastCheckDate: Date?
+    /// The running app's version; `nil` when the bundle has none (e.g. `swift run`).
+    let currentVersion: SemanticVersion?
+
+    /// Brings up the update window; set by the app delegate.
+    var showWindow: () -> Void = {}
+    /// Closes the update window; set by the app delegate.
+    var closeWindow: () -> Void = {}
+
+    private let preferences: PreferencesStore
+    private let feed: ReleaseFetching
+    private let installer: UpdateInstaller
+    private let statePersistence: JSONFileUpdateStatePersistence
+    private var state: UpdateState
+    private let isDryRun: Bool
+    private var tickTimer: Timer?
+    private var hasHandledLaunch = false
+    private var subscriptions: Set<AnyCancellable> = []
+    private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Updates")
+
+    init(
+        preferences: PreferencesStore,
+        installer: UpdateInstaller = UpdateInstaller(),
+        statePersistence: JSONFileUpdateStatePersistence = JSONFileUpdateStatePersistence()
+    ) {
+        self.preferences = preferences
+        self.installer = installer
+        self.statePersistence = statePersistence
+        currentVersion = SemanticVersion(AppInfo.version)
+        let feed = GitHubReleaseFeed(appVersion: AppInfo.version)
+        self.feed = feed
+        state = statePersistence.load()
+        lastCheckDate = state.lastCheckDate
+        isDryRun = ProcessInfo.processInfo.environment[UpdateInstaller.dryRunVariable] != nil
+        if feed.url != UpdateLinks.latestReleaseAPI {
+            logger.notice("Update feed overridden: \(feed.url.absoluteString, privacy: .public)")
+        }
+    }
+
+    var isBusy: Bool {
+        switch status {
+        case .checking, .downloading, .installing: return true
+        default: return false
+        }
+    }
+
+    /// Cleans up after earlier updates, then follows the automatic-check setting. Call once the app
+    /// has finished launching.
+    func start() {
+        installer.removeLeftovers(keepingBackups: 1)
+        preferences.$preferences
+            .map(\.automaticallyChecksForUpdates)
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isOn in self?.automaticChecksChanged(isOn) }
+            .store(in: &subscriptions)
+        // Timers stand still while the Mac sleeps; look right after waking up.
+        NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)
+            .sink { [weak self] _ in self?.checkIfDue() }
+            .store(in: &subscriptions)
+    }
+
+    // MARK: - Checking
+
+    /// "Check for Updates…": shows the update window, which follows the check.
+    func checkForUpdatesFromMenu() {
+        showWindow()
+        checkNow()
+    }
+
+    /// Checks right away, unless a check or an installation is under way.
+    func checkNow() {
+        check(userInitiated: true)
+    }
+
+    /// The first call comes right at `start()`; later ones when the setting changes.
+    private func automaticChecksChanged(_ isOn: Bool) {
+        let isLaunch = !hasHandledLaunch
+        hasHandledLaunch = true
+        tickTimer?.invalidate()
+        tickTimer = nil
+        guard isOn else {
+            logger.notice("Automatic update checks are off")
+            return
+        }
+        let timer = Timer(timeInterval: UpdateSchedule.tickInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in self?.checkIfDue() }
+        }
+        timer.tolerance = 60
+        RunLoop.main.add(timer, forMode: .common)
+        tickTimer = timer
+        if !isLaunch {
+            // Turned on in Settings.
+            checkIfDue()
+        } else {
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: Self.launchCheckDelay)
+                guard let self, self.preferences.preferences.automaticallyChecksForUpdates else { return }
+                self.check(userInitiated: false)
+            }
+        }
+    }
+
+    private func checkIfDue() {
+        guard preferences.preferences.automaticallyChecksForUpdates,
+              UpdateSchedule.isCheckDue(lastCheck: state.lastCheckDate, now: Date())
+        else { return }
+        check(userInitiated: false)
+    }
+
+    private func check(userInitiated: Bool) {
+        guard !isBusy else { return }
+        guard let currentVersion else {
+            status = .checkFailed(UpdateCheckError.unknownCurrentVersion.localizedDescription)
+            return
+        }
+        logger.notice("Checking for updates (\(userInitiated ? "user" : "automatic", privacy: .public))")
+        status = .checking
+        Task { @MainActor [weak self, feed] in
+            let result: Result<ReleaseInfo, Error>
+            do {
+                result = .success(try await feed.latestRelease())
+            } catch {
+                result = .failure(error)
+            }
+            self?.finishCheck(result, current: currentVersion, userInitiated: userInitiated)
+        }
+    }
+
+    private func finishCheck(_ result: Result<ReleaseInfo, Error>, current: SemanticVersion, userInitiated: Bool) {
+        state.lastCheckDate = Date()
+        lastCheckDate = state.lastCheckDate
+        saveState()
+        switch result {
+        case .success(let release):
+            switch UpdateDecision.evaluate(current: current, latest: release) {
+            case .upToDate(_, let latest):
+                logger.notice("Up to date: \(current, privacy: .public) (latest release \(latest, privacy: .public))")
+                status = .upToDate(current)
+            case .available(let release, let asset):
+                offer(release, asset: asset, userInitiated: userInitiated)
+            case .availableWithoutInstaller(let release):
+                offer(release, asset: nil, userInitiated: userInitiated)
+            }
+        case .failure(let error):
+            logger.error("Update check failed: \(String(describing: error), privacy: .public)")
+            status = .checkFailed(error.localizedDescription)
+        }
+    }
+
+    private func offer(_ release: ReleaseInfo, asset: ReleaseAsset?, userInitiated: Bool) {
+        logger.notice("Update available: \(release.version, privacy: .public), asset \(asset?.name ?? "none", privacy: .public)")
+        status = .available(release, asset: asset)
+        // Automatic checks bring up the window, except for a version the user skipped.
+        if !userInitiated && state.skippedVersion != release.version.description {
+            showWindow()
+        }
+    }
+
+    // MARK: - Choices in the update window
+
+    /// Skips `release` for automatic checks and closes the window.
+    func skip(_ release: ReleaseInfo) {
+        state.skippedVersion = release.version.description
+        saveState()
+        closeWindow()
+    }
+
+    /// Closes the window; the next automatic check offers the update again.
+    func remindLater() {
+        closeWindow()
+    }
+
+    /// Downloads the offered release, swaps it for the running app and relaunches.
+    func downloadAndInstall() {
+        let release: ReleaseInfo
+        let asset: ReleaseAsset
+        switch status {
+        case .available(let offered, let offeredAsset?), .installFailed(let offered, let offeredAsset?, _):
+            (release, asset) = (offered, offeredAsset)
+        default:
+            return
+        }
+        let appURL = Bundle.main.bundleURL
+        if !isDryRun, let problem = UpdateInstaller.installLocationProblem(for: appURL) {
+            status = .installFailed(release, asset: asset, message: problem)
+            return
+        }
+        logger.notice("Downloading \(asset.downloadURL.absoluteString, privacy: .public)")
+        status = .downloading(release, fraction: 0)
+        let progress: @Sendable (Double) -> Void = { [weak self] fraction in
+            Task { @MainActor in self?.downloadProgressed(fraction) }
+        }
+        Task { @MainActor [weak self, installer, isDryRun] in
+            do {
+                let diskImage = try await installer.download(asset, progress: progress)
+                self?.status = .installing(release)
+                let staged = try await installer.stageApp(fromDiskImage: diskImage, appName: AppInfo.name)
+                try UpdateInstaller.validateStagedApp(
+                    staged,
+                    bundleIdentifier: Bundle.main.bundleIdentifier ?? "",
+                    version: release.version
+                )
+                if isDryRun {
+                    self?.logger.notice("Dry run: staged \(staged.path, privacy: .public); nothing replaced")
+                    self?.status = .stagedForDryRun(release, path: staged.path)
+                    return
+                }
+                let backup = try await Task.detached {
+                    try installer.replace(installedApp: appURL, with: staged)
+                }.value
+                self?.logger.notice("Installed \(release.version, privacy: .public); previous version at \(backup.path, privacy: .public)")
+                self?.relaunch(appURL, backup: backup, release: release, asset: asset)
+            } catch {
+                self?.logger.error("Update failed: \(String(describing: error), privacy: .public)")
+                self?.status = .installFailed(release, asset: asset, message: error.localizedDescription)
+            }
+        }
+    }
+
+    private func downloadProgressed(_ fraction: Double) {
+        guard case .downloading(let release, _) = status else { return }
+        status = .downloading(release, fraction: fraction)
+    }
+
+    /// Starts a helper that opens the new version once this process has quit, then quits.
+    private func relaunch(_ appURL: URL, backup: URL, release: ReleaseInfo, asset: ReleaseAsset) {
+        let process = Process()
+        process.executableURL = UpdateInstaller.shell
+        process.arguments = UpdateInstaller.relaunchArguments(
+            processID: ProcessInfo.processInfo.processIdentifier,
+            appURL: appURL,
+            backupURL: backup
+        )
+        process.standardInput = FileHandle.nullDevice
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+        } catch {
+            logger.error("Relaunch helper failed: \(String(describing: error), privacy: .public)")
+            status = .installFailed(
+                release,
+                asset: nil,
+                message: "Version \(release.version) is installed, but the app couldn't restart itself. Quit it and open it again."
+            )
+            return
+        }
+        NSApp.terminate(nil)
+    }
+
+    private func saveState() {
+        do {
+            try statePersistence.save(state)
+        } catch {
+            logger.error("Saving the update state failed: \(String(describing: error), privacy: .public)")
+        }
+    }
+}

@@ -2,14 +2,21 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// The Settings window (⌘,): popup settings, shortcuts and the Most Used list, each in its own tab.
+/// The Settings window (⌘,): popup settings, shortcuts, the Most Used list and updates, each in its
+/// own tab.
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
 
-    init(preferences: PreferencesStore, store: GroupStore, usage: UsageStore, shortcuts: GlobalShortcutMonitor) {
+    init(
+        preferences: PreferencesStore,
+        store: GroupStore,
+        usage: UsageStore,
+        shortcuts: GlobalShortcutMonitor,
+        updater: AutoUpdater
+    ) {
         let hostingController = NSHostingController(
-            rootView: SettingsView(preferences: preferences, store: store, usage: usage, shortcuts: shortcuts)
+            rootView: SettingsView(preferences: preferences, store: store, usage: usage, shortcuts: shortcuts, updater: updater)
         )
         hostingController.sizingOptions = [.preferredContentSize]
 
@@ -42,6 +49,7 @@ private struct SettingsView: View {
     let store: GroupStore
     let usage: UsageStore
     let shortcuts: GlobalShortcutMonitor
+    let updater: AutoUpdater
 
     var body: some View {
         TabView {
@@ -51,6 +59,8 @@ private struct SettingsView: View {
                 .tabItem { Label("Shortcuts", systemImage: "keyboard") }
             MostUsedSettingsView(preferences: preferences, usage: usage)
                 .tabItem { Label("Most Used", systemImage: "star") }
+            UpdatesSettingsView(preferences: preferences, updater: updater)
+                .tabItem { Label("Updates", systemImage: "arrow.triangle.2.circlepath") }
         }
         .padding(.top, 8)
     }

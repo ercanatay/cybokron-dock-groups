@@ -13,6 +13,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let showMainWindow: () -> Void
         let showSettings: () -> Void
         let showAbout: () -> Void
+        let checkForUpdates: () -> Void
         let menuWillOpen: () -> Void
         /// The group's tile, sized for a menu item.
         let tileImage: (DockGroup) -> NSImage
@@ -85,6 +86,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let about = NSMenuItem(title: "About \(AppInfo.name)", action: #selector(showAbout(_:)), keyEquivalent: "")
         about.target = self
         menu.addItem(about)
+        let updates = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+        updates.target = self
+        updates.toolTip = "Look for a newer version of \(AppInfo.name) on GitHub."
+        menu.addItem(updates)
 
         menu.addItem(.separator())
         let quit = NSMenuItem(
@@ -187,5 +192,9 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
     @objc private func showAbout(_ sender: NSMenuItem) {
         actions.showAbout()
+    }
+
+    @objc private func checkForUpdates(_ sender: NSMenuItem) {
+        actions.checkForUpdates()
     }
 }
