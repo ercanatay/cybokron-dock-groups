@@ -115,6 +115,15 @@ scripts/build-app.sh debug                   # build/debug/Cybokron Dock Groups.
 UNIVERSAL=1 scripts/build-app.sh release     # universal release build
 ```
 
+### Building a release DMG
+
+```sh
+scripts/make-dmg.sh   # build/release/Cybokron-Dock-Groups-<version>-universal.dmg
+```
+
+It builds the universal release app and packs it with an Applications shortcut into a compressed
+disk image (the DMG itself is not signed).
+
 With Xcode installed, `build-app.sh` also extracts the App Intents metadata
 (`Contents/Resources/Metadata.appintents`) that Siri and the Shortcuts app read, as Xcode does;
 builds made with the Command Line Tools alone work but don't offer the Shortcuts actions.
