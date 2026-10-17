@@ -90,10 +90,18 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - Settings (⌘,): popup theme (dark by default, light, or matching the system), frosted glass,
   columns (auto or fixed), maximum rows (extra rows scroll), app names, position. Each group can
   override the layout settings in its own settings.
+- **Updates** from the project's [GitHub releases](https://github.com/ercanatay/cybokron-dock-groups/releases):
+  **Check for Updates…** in the menu bar menu shows a small window with the result. The app also
+  checks shortly after launch and every 6 hours (Settings → Updates turns that off; only the app's
+  version number is sent). A newer version is offered with its release notes; **Download and
+  Install** downloads the universal DMG, checks its size and SHA-256 checksum, copies the app out of
+  the read-only mounted image, moves the running app to `updates/backups/`, puts the new one in its
+  place and relaunches — putting the previous one back if that fails. See [CHANGELOG.md](CHANGELOG.md).
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
   `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
-  `usage-cooccurrence.json` for the launch counts behind Most Used, and `Agents/` for the
-  standalone groups' apps.
+  `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
+  standalone groups' apps, and `update-state.json` / `updates/` for the updater (last check,
+  skipped version, downloads and the previous version's backup).
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
@@ -150,6 +158,16 @@ apps are rebuilt from it. Debug builds made with Xcode keep their code in the on
 (`ENABLE_DEBUG_DYLIB = NO`), because that executable is what the group apps copy. To try the
 signing failure path, start the app with `CYBOKRON_SIMULATE_SIGN_FAILURE=1` set.
 
+To try the updater without GitHub, serve a release JSON (shaped like GitHub's
+`/releases/latest` answer) locally and point the app at it; `CYBOKRON_UPDATE_DRY_RUN=1` stops an
+installation once the new app is downloaded, checked and staged, without replacing anything:
+
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1 &   # serves ./latest.json and the DMG
+open --env CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json \
+     --env CYBOKRON_UPDATE_DRY_RUN=1 "build/debug/Cybokron Dock Groups.app"
+```
+
 The scripts work around two Command Line Tools limitations automatically: they pick a macOS SDK
 whose SwiftUI doesn't need Xcode's macro plugins, and they point the compiler at swift-testing's
 macro plugin. If SwiftPM reports `disk I/O error` for its build database (seen with checkouts in
@@ -160,8 +178,8 @@ synced folders such as `~/Documents`), build elsewhere:
 
 | Path | Contents |
 | --- | --- |
-| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions) (no UI) |
-| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows, standalone group apps (`Standalone/` keeps them in sync, `Agent/` runs a group's own app) |
+| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions), updates (release parsing, version comparison, asset choice, download, install and rollback) (no UI) |
+| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows, standalone group apps (`Standalone/` keeps them in sync, `Agent/` runs a group's own app), updater and its window (`Updates/`) |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
 | `Resources` | `Info.plist`, asset catalog with the placeholder app icon |
 | `scripts` | SwiftPM build/test scripts, App Intents protocol list for the build, icon generator |
