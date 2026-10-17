@@ -1,0 +1,80 @@
+# CI for Cybokron Dock Groups (macOS 14+ menu bar app, Swift 6 tools / Swift 5 language mode).
+# Runs the DockGroupsCore unit tests with SwiftPM and Xcode, and builds the ad hoc signed .app.
+# Docs: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  swiftpm:
+    name: SwiftPM test & app build
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Run unit tests
+        run: scripts/test.sh
+
+      - name: Build universal release app
+        env:
+          UNIVERSAL: "1"
+        run: scripts/build-app.sh release
+
+      - name: Zip app bundle
+        run: |
+          cd build/release
+          ditto -c -k --keepParent "Cybokron Dock Groups.app" "Cybokron-Dock-Groups.zip"
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cybokron-Dock-Groups
+          path: build/release/Cybokron-Dock-Groups.zip
+          retention-days: 14
+
+  xcode:
+    name: Xcode build & test
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: Build (Debug)
+        run: |
+          xcodebuild -project CybokronDockGroups.xcodeproj \
+            -scheme CybokronDockGroups \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            build
+
+      - name: Test
+        run: |
+          xcodebuild -project CybokronDockGroups.xcodeproj \
+            -scheme CybokronDockGroups \
+            -destination 'platform=macOS' \
+            test
