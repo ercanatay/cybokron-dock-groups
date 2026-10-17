@@ -60,6 +60,38 @@ public struct PopupGridLayout: Equatable, Sendable {
         height(ofRows: rows, metrics: metrics)
     }
 
+    /// Top-left corner of the cell in slot `index` (slots run row by row), in coordinates of the
+    /// whole grid content: the origin is its top-left corner, padding included, and y grows
+    /// downward as in SwiftUI.
+    public func cellOrigin(at index: Int, metrics: PopupGridMetrics) -> CGPoint {
+        let slot = max(index, 0)
+        return CGPoint(
+            x: metrics.padding + CGFloat(slot % columns) * (metrics.cellWidth + metrics.spacing),
+            y: metrics.padding + CGFloat(slot / columns) * (metrics.cellHeight + metrics.spacing)
+        )
+    }
+
+    /// The slot of the cell under `point` (coordinates as in `cellOrigin`); points in the gaps
+    /// between cells go to the nearest one, points beyond the grid to the closest edge slot, and
+    /// points past the last app to the last slot. `nil` for an empty grid.
+    public func slotIndex(at point: CGPoint, metrics: PopupGridMetrics) -> Int? {
+        guard itemCount > 0 else { return nil }
+        let column = Self.clampedIndex(
+            (point.x - metrics.padding + metrics.spacing / 2) / (metrics.cellWidth + metrics.spacing),
+            count: columns
+        )
+        let row = Self.clampedIndex(
+            (point.y - metrics.padding + metrics.spacing / 2) / (metrics.cellHeight + metrics.spacing),
+            count: rows
+        )
+        return min(row * columns + column, itemCount - 1)
+    }
+
+    private static func clampedIndex(_ value: CGFloat, count: Int) -> Int {
+        guard value.isFinite else { return 0 }
+        return min(max(Int(value.rounded(.down)), 0), max(count - 1, 0))
+    }
+
     private func width(metrics: PopupGridMetrics) -> CGFloat {
         CGFloat(columns) * metrics.cellWidth + CGFloat(columns - 1) * metrics.spacing + 2 * metrics.padding
     }

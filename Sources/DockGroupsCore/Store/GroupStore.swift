@@ -127,6 +127,20 @@ public final class GroupStore: ObservableObject {
         scheduleSave()
     }
 
+    /// Moves one app so it ends up at `index` of the group's list (clamped to the list), as
+    /// dropping it on that slot of the popup grid does.
+    public func moveApp(bundleIdentifier: String, inGroup id: DockGroup.ID, to index: Int) {
+        guard let groupIndex = self.index(of: id) else { return }
+        let target = bundleIdentifier.lowercased()
+        var apps = groups[groupIndex].apps
+        guard let source = apps.firstIndex(where: { $0.normalizedBundleIdentifier == target }) else { return }
+        let app = apps.remove(at: source)
+        apps.insert(app, at: min(max(index, 0), apps.count))
+        guard apps != groups[groupIndex].apps else { return }
+        groups[groupIndex].apps = apps
+        scheduleSave()
+    }
+
     public func moveApps(inGroup id: DockGroup.ID, fromOffsets source: IndexSet, toOffset destination: Int) {
         guard let index = index(of: id) else { return }
         let before = groups[index].apps
