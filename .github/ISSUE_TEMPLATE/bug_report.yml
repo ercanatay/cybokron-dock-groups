@@ -1,0 +1,66 @@
+name: Bug report
+description: Something in Cybokron Dock Groups doesn't work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Questions and ideas are welcome in [Discussions](https://github.com/ercanatay/cybokron-dock-groups/discussions).
+        **Security issues:** please don't open an issue — use [private vulnerability reporting](https://github.com/ercanatay/cybokron-dock-groups/security/advisories/new) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Create a group with …
+        2. Choose the group from the menu bar
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: About box, or the commit hash if you built it yourself.
+      placeholder: "3.0 (1) / a1b2c3d"
+    validations:
+      required: true
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      placeholder: "macOS 15.5"
+    validations:
+      required: true
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Mac
+      options:
+        - Apple silicon
+        - Intel
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you get the app?
+      options:
+        - Release download
+        - Built with Xcode
+        - Built with scripts/build-app.sh (Command Line Tools)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, screenshots or groups.json
+      description: |
+        Console.app output, screenshots, or the relevant part of
+        `~/Library/Application Support/Cybokron/DockGroups/groups.json` (remove anything private).
+      render: shell
