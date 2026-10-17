@@ -41,8 +41,10 @@ struct PopupContent {
     let gridHeight: CGFloat
     let scrolls: Bool
     let usesFrostedGlass: Bool
-    /// Whether apps can be reordered and removed; `false` for the Most Used list.
+    /// Whether apps can be reordered and removed; `false` for the Most Used list and in agents.
     let isEditable: Bool
+    /// The Most Used list rather than one of the user's groups.
+    let isMostUsed: Bool
 }
 
 struct PopupActions {
@@ -134,9 +136,9 @@ struct PopupContentView: View {
                 .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: true))
                 .fixedSize()
                 .disabled(group.apps.isEmpty)
-                .help(content.isEditable
-                    ? "Open every app in this group; running apps come to the front."
-                    : "Open every app in this list; running apps come to the front.")
+                .help(content.isMostUsed
+                    ? "Open every app in this list; running apps come to the front."
+                    : "Open every app in this group; running apps come to the front.")
             Button(quitMode == .force ? "Force Quit" : "Close All") {
                 // The keys held during the click decide, even if no flags change was seen.
                 let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags
@@ -145,9 +147,9 @@ struct PopupContentView: View {
             .buttonStyle(PillButtonStyle(tint: quitMode == .force ? PanelPalette.warning : PanelPalette.indigo, filled: false))
             .fixedSize()
             .disabled(runningCount == 0)
-            .help(content.isEditable
-                ? "Quit this group's running apps. ⌘-click to force quit without saving."
-                : "Quit this list's running apps. ⌘-click to force quit without saving.")
+            .help(content.isMostUsed
+                ? "Quit this list's running apps. ⌘-click to force quit without saving."
+                : "Quit this group's running apps. ⌘-click to force quit without saving.")
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.headerHeight)
@@ -156,7 +158,7 @@ struct PopupContentView: View {
     private func summary(appCount: Int, runningCount: Int) -> String {
         let apps = appCount == 1 ? "1 app" : "\(appCount) apps"
         let counts = runningCount > 0 ? "\(apps) · \(runningCount) running" : apps
-        return content.isEditable ? counts : "\(counts) · by launches"
+        return content.isMostUsed ? "\(counts) · by launches" : counts
     }
 
     // MARK: - Grid
@@ -329,7 +331,7 @@ struct PopupContentView: View {
 
     @ViewBuilder
     private func emptyState(_ palette: PanelPalette) -> some View {
-        if content.isEditable {
+        if !content.isMostUsed {
             VStack(spacing: 6) {
                 Text("No apps in this group yet")
                     .font(.system(size: 12, weight: .medium))
@@ -368,9 +370,9 @@ struct PopupContentView: View {
 
     private var footerText: String {
         guard let drag, let cell = content.cells.first(where: { $0.id == drag.id }) else {
-            return content.isEditable
-                ? "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
-                : "Ranked by how often you open them  ·  ⌘-click Close All to force quit"
+            return content.isMostUsed
+                ? "Ranked by how often you open them  ·  ⌘-click Close All to force quit"
+                : "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
         }
         return drag.isInRemovalArea
             ? "Release to remove \(cell.app.name) from this group"
@@ -434,7 +436,9 @@ private struct PopupAppCell: View {
 
     private var helpText: String {
         guard cell.isInstalled else {
-            return "\(cell.app.name) isn't on this Mac. Drag it out of the popup to remove it from the group."
+            return isEditable
+                ? "\(cell.app.name) isn't on this Mac. Drag it out of the popup to remove it from the group."
+                : "\(cell.app.name) isn't on this Mac."
         }
         let action = isRunning ? "Bring \(cell.app.name) to the front" : "Open \(cell.app.name)"
         return isEditable ? "\(action). Drag to reorder, or out of the popup to remove it from the group." : "\(action)."

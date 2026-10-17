@@ -10,6 +10,7 @@ struct MainWindowView: View {
 
     @ObservedObject var store: GroupStore
     let tiles: TileImageCache
+    let standalone: StandaloneController
     let actions: Actions
 
     @State private var selection: DockGroup.ID?
@@ -34,7 +35,7 @@ struct MainWindowView: View {
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
         } detail: {
             if let id = selection, let group = store.group(withID: id) {
-                GroupDetailView(store: store, group: group, tiles: tiles, actions: actions)
+                GroupDetailView(store: store, standalone: standalone, group: group, tiles: tiles, actions: actions)
                     .id(group.id)
             } else {
                 ContentUnavailableView {
@@ -64,8 +65,10 @@ struct MainWindowView: View {
         ) { group in
             Button("Delete Group", role: .destructive) { delete(group) }
             Button("Cancel", role: .cancel) {}
-        } message: { _ in
-            Text("This removes the group and its app list. The apps themselves aren't affected.")
+        } message: { group in
+            Text(group.isStandalone
+                ? "This removes the group and its app list, and its own Dock icon. The apps themselves aren't affected."
+                : "This removes the group and its app list. The apps themselves aren't affected.")
         }
         .alert(
             store.issue?.title ?? "",

@@ -8,9 +8,12 @@ import SwiftUI
 final class MainWindowController: NSWindowController {
     private static let frameAutosaveName = "MainWindow"
 
-    init(store: GroupStore, tiles: TileImageCache, actions: MainWindowView.Actions) {
+    /// Called each time the window is about to show.
+    var willShow: (() -> Void)?
+
+    init(store: GroupStore, tiles: TileImageCache, standalone: StandaloneController, actions: MainWindowView.Actions) {
         let hostingController = NSHostingController(
-            rootView: MainWindowView(store: store, tiles: tiles, actions: actions)
+            rootView: MainWindowView(store: store, tiles: tiles, standalone: standalone, actions: actions)
         )
         hostingController.sizingOptions = [.minSize]
 
@@ -33,6 +36,7 @@ final class MainWindowController: NSWindowController {
 
     /// Shows the window and brings the app to the front.
     func show() {
+        willShow?()
         NSApp.activate()
         if let window, window.isMiniaturized {
             window.deminiaturize(nil)

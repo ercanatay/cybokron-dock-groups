@@ -2,10 +2,11 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// Settings of one group: name, emoji, member apps, Dock tile and popup preferences.
-/// Every change goes straight to the store, which saves it.
+/// Settings of one group: name, emoji, member apps, Dock tile, standalone Dock icon and popup
+/// preferences. Every change goes straight to the store, which saves it.
 struct GroupDetailView: View {
     @ObservedObject var store: GroupStore
+    @ObservedObject var standalone: StandaloneController
     let group: DockGroup
     let tiles: TileImageCache
     let actions: MainWindowView.Actions
@@ -19,8 +20,9 @@ struct GroupDetailView: View {
         case name, emoji
     }
 
-    init(store: GroupStore, group: DockGroup, tiles: TileImageCache, actions: MainWindowView.Actions) {
+    init(store: GroupStore, standalone: StandaloneController, group: DockGroup, tiles: TileImageCache, actions: MainWindowView.Actions) {
         self.store = store
+        self.standalone = standalone
         self.group = group
         self.tiles = tiles
         self.actions = actions
@@ -33,6 +35,7 @@ struct GroupDetailView: View {
             identitySection
             appsSection
             tileSection
+            standaloneSection
             popupSection
         }
         .formStyle(.grouped)
@@ -139,6 +142,49 @@ struct GroupDetailView: View {
         }
     }
 
+    private var standaloneSection: some View {
+        let status = standalone.status(for: group.id)
+        return Section {
+            Toggle("Standalone Dock icon", isOn: standaloneBinding)
+                .disabled(status == .working)
+                .help("Give this group its own app, with its own icon in the Dock.")
+            switch status {
+            case .working:
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(group.isStandalone ? "Setting up the Dock icon…" : "Removing the Dock icon…")
+                        .foregroundStyle(.secondary)
+                }
+            case .failed(let message):
+                Label(message, systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.red)
+                    .fixedSize(horizontal: false, vertical: true)
+            case nil:
+                if group.isStandalone, standalone.agentURL(for: group.id) != nil {
+                    LabeledContent("Group App") {
+                        Button("Show in Finder") { standalone.revealAgent(for: group.id) }
+                    }
+                    if standalone.staleDockIcons.contains(group.id) {
+                        LabeledContent {
+                            Button("Update Dock Icon") { standalone.refreshDockIcons() }
+                                .help("Restart the Dock with a fresh icon cache, so the tile shows the group's current icon.")
+                        } label: {
+                            Text("The Dock still shows the previous icon.")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        } header: {
+            Text("Standalone")
+        } footer: {
+            Text("Gives the group its own small app, with the tile above as its icon, at the end of the Dock. Clicking it shows the group's popup (⌥-click opens all of its apps), even while Cybokron Dock Groups isn't running. Turning this off, deleting the group or dragging the icon out of the Dock removes that app. Adding or removing the icon restarts the Dock for a moment.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
     private var popupSection: some View {
         Section {
             Picker("Columns", selection: binding(\.popup.columns)) {
@@ -190,6 +236,14 @@ struct GroupDetailView: View {
         return Binding(
             get: { store.group(withID: id)?[keyPath: keyPath] ?? fallback },
             set: { newValue in store.updateGroup(id) { $0[keyPath: keyPath] = newValue } }
+        )
+    }
+
+    private var standaloneBinding: Binding<Bool> {
+        let id = group.id
+        return Binding(
+            get: { store.group(withID: id)?.isStandalone ?? false },
+            set: { isOn in standalone.setStandalone(isOn, for: id) }
         )
     }
 
