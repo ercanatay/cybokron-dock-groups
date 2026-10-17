@@ -174,4 +174,74 @@ struct PopupPreferencesTests {
         #expect(store.preferences.maxRows == PopupPreferences.defaultMaxRows)
         #expect(store.preferences.columns == .auto)
     }
+    // MARK: - Most Used
+
+    @Test func mostUsedDefaultsToShownTopTenTenMinuteSessions() {
+        let defaults = PopupPreferences()
+        #expect(defaults.showsMostUsed)
+        #expect(defaults.mostUsedLimit == 10)
+        #expect(defaults.mostUsedSessionSeconds == 600)
+    }
+
+    @Test func mostUsedSettingsRoundTripUnderTheirKeys() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let persistence = persistence(in: directory)
+
+        try persistence.savePreferences(PopupPreferences(showsMostUsed: false, mostUsedLimit: 15, mostUsedSessionSeconds: 1800))
+
+        let object = try JSONSerialization.jsonObject(with: Data(contentsOf: persistence.fileURL)) as? [String: Any]
+        #expect(object?["popupShowsMostUsed"] as? Bool == false)
+        #expect(object?["mostUsedLimit"] as? Int == 15)
+        #expect(object?["mostUsedSessionSeconds"] as? Int == 1800)
+        let reloaded = try persistence.loadPreferences()
+        #expect(reloaded?.showsMostUsed == false)
+        #expect(reloaded?.mostUsedLimit == 15)
+        #expect(reloaded?.mostUsedSessionSeconds == 1800)
+    }
+
+    @Test func invalidMostUsedValuesFallBackFieldByField() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let persistence = persistence(in: directory)
+        try write("""
+        { "popupShowsMostUsed": "no", "mostUsedLimit": 7, "mostUsedSessionSeconds": -5, "popupShowsTitles": false }
+        """, to: persistence)
+
+        let preferences = try #require(try persistence.loadPreferences())
+
+        #expect(preferences.showsMostUsed == true)
+        #expect(preferences.mostUsedLimit == 10)
+        #expect(preferences.mostUsedSessionSeconds == 600)
+        #expect(preferences.showsTitles == false, "the other fields still load")
+    }
+
+    @Test func fileFromAnEarlierVersionGetsMostUsedDefaults() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let persistence = persistence(in: directory)
+        try write(#"{ "formatVersion": 1, "panelTheme": "light", "globalShortcutsEnabled": false }"#, to: persistence)
+
+        let preferences = try #require(try persistence.loadPreferences())
+
+        #expect(preferences.theme == .light)
+        #expect(preferences.shortcutsEnabled == false)
+        #expect(preferences.showsMostUsed)
+        #expect(preferences.mostUsedLimit == MostUsedRanking.defaultLimit)
+        #expect(preferences.mostUsedSessionSeconds == PopupPreferences.defaultMostUsedSessionSeconds)
+    }
+
+    @Test func storeRejectsUnofferedMostUsedValues() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+
+        let store = PreferencesStore(persistence: persistence(in: directory), saveDelay: .zero)
+        store.update {
+            $0.mostUsedLimit = 3
+            $0.mostUsedSessionSeconds = 61
+        }
+
+        #expect(store.preferences.mostUsedLimit == MostUsedRanking.defaultLimit)
+        #expect(store.preferences.mostUsedSessionSeconds == PopupPreferences.defaultMostUsedSessionSeconds)
+    }
 }
