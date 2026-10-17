@@ -1,0 +1,747 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03CCD8D8B9953272976870F2 /* AppReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994BD907AE7F69808146B00A /* AppReference.swift */; };
+		0920533F591EAE9369ED8B95 /* DockGroupCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3439C241A0C71C41130903F /* DockGroupCodingTests.swift */; };
+		092EF77DAF1657D8F0F32B6E /* CybokronDockGroupsMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF457A0549DA59C556944F /* CybokronDockGroupsMain.swift */; };
+		0DD8F382AE659A2118A64AA8 /* GroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E85E906C590A2B99FB486E72 /* GroupStore.swift */; };
+		0EEEF41DB574F7C888701CF6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00AC80C0B6544FBB31C04F9F /* Assets.xcassets */; };
+		1125416FE5625965EF151851 /* PopupOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD9756F64AC09F7DCADCA0 /* PopupOverrides.swift */; };
+		130A65569AB2D833016610B4 /* GroupDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95835185441519310F29031 /* GroupDetailView.swift */; };
+		14E57E344E1AAE1AC4BF0450 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40249A13EF9B3C69AA55DD5A /* StatusBarController.swift */; };
+		3B0DE9AC2AECF808C2E8A4C5 /* libDockGroupsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */; };
+		4D779D910731F57A8EB71E41 /* DockGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7DDE2E6A92F7A941A6B668 /* DockGroup.swift */; };
+		51942273E4A82B34674D86AB /* AppReferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B3E343131C65A89DA04197 /* AppReferenceTests.swift */; };
+		51F56235AEF7702B88963E58 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F96706B977C84150E57515 /* MainWindowController.swift */; };
+		56DDDE63E4476AC4FC5E4A03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12EFB7D27566A2E0AE2D0B4 /* AppDelegate.swift */; };
+		656D794DDB6888F942A2C400 /* GroupLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */; };
+		7495ED03D2A519746C220115 /* GroupSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDC60218E7F9A86D5162161 /* GroupSidebarView.swift */; };
+		7C8310567B8DF6CA4F0267DA /* AppRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13AB9B3DB19872BA66EA39B0 /* AppRowView.swift */; };
+		8F9D2D97160AA2F384DCCB09 /* GroupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AAAF01792CF3ED5DEA7A3E /* GroupStoreTests.swift */; };
+		9C55BDFD9985B003409CDE51 /* TileAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5179989231E27CC02A3150EF /* TileAppearance.swift */; };
+		A7ABF95427D56CE54B7EC92C /* MainMenuBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE1F8DD44D5B3629CBD3DAC4 /* MainMenuBuilder.swift */; };
+		AFE84CF796B46E1F209C9BAE /* GroupPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A3E1DF8DD13E25B5CBE45 /* GroupPersistence.swift */; };
+		B6EEBF8BC65508F5518B0931 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0712509968CCE2F10AE2D812 /* MainWindowView.swift */; };
+		BE46179E6E615B56089D06C3 /* TileColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A259C9AA97EE8C1A56EA55 /* TileColor.swift */; };
+		C1C99DBD8A834A04E609B252 /* DisplayNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB3BEC6E712399D629ACCB /* DisplayNames.swift */; };
+		C6C5DA2A48359D6546CF5767 /* AppPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */; };
+		D8018D9BC20A31E97473AF4B /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2910543B6521799B99E5C2 /* TestSupport.swift */; };
+		D80D4DBD8D773BC8BB580604 /* GroupLauncherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46576E68C0A5B01DB9B650F /* GroupLauncherTests.swift */; };
+		EBC55D50713B274D9536C5B7 /* Array+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D07DFC6D51CF69AA14ECB2B /* Array+Move.swift */; };
+		F7435C36FF7B525F3315610C /* ApplicationWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2503E00EE4DC8ED74902660C /* ApplicationWorkspace.swift */; };
+		F8852AE457C736F84EC553CE /* libDockGroupsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */; };
+		FDDE3C6D841C4A227EDF632A /* LaunchReportPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC7BC59B449CFA72316D99D /* LaunchReportPresenter.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		67ADCC7E0FB3C2D786B49BE8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48CD32E7F1DE5DAB97211E0D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3357CFA9B66526925FFFE868;
+			remoteInfo = DockGroupsCore;
+		};
+		83B6FB2FE3A3BE29C6481244 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48CD32E7F1DE5DAB97211E0D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3357CFA9B66526925FFFE868;
+			remoteInfo = DockGroupsCore;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00AC80C0B6544FBB31C04F9F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0712509968CCE2F10AE2D812 /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
+		13AB9B3DB19872BA66EA39B0 /* AppRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRowView.swift; sourceTree = "<group>"; };
+		14A259C9AA97EE8C1A56EA55 /* TileColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileColor.swift; sourceTree = "<group>"; };
+		1BFB3BEC6E712399D629ACCB /* DisplayNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayNames.swift; sourceTree = "<group>"; };
+		2503E00EE4DC8ED74902660C /* ApplicationWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationWorkspace.swift; sourceTree = "<group>"; };
+		3D07DFC6D51CF69AA14ECB2B /* Array+Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Move.swift"; sourceTree = "<group>"; };
+		40249A13EF9B3C69AA55DD5A /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		5179989231E27CC02A3150EF /* TileAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileAppearance.swift; sourceTree = "<group>"; };
+		54AAAF01792CF3ED5DEA7A3E /* GroupStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStoreTests.swift; sourceTree = "<group>"; };
+		6144640F7107B2BDD2E6005D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPicker.swift; sourceTree = "<group>"; };
+		89B3E343131C65A89DA04197 /* AppReferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReferenceTests.swift; sourceTree = "<group>"; };
+		93BD9756F64AC09F7DCADCA0 /* PopupOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupOverrides.swift; sourceTree = "<group>"; };
+		987A3E1DF8DD13E25B5CBE45 /* GroupPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupPersistence.swift; sourceTree = "<group>"; };
+		994BD907AE7F69808146B00A /* AppReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReference.swift; sourceTree = "<group>"; };
+		9D2910543B6521799B99E5C2 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		9E6AF56C61E37C0803DBFCF6 /* CybokronDockGroups.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CybokronDockGroups.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A46576E68C0A5B01DB9B650F /* GroupLauncherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupLauncherTests.swift; sourceTree = "<group>"; };
+		AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupLauncher.swift; sourceTree = "<group>"; };
+		ACDC60218E7F9A86D5162161 /* GroupSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSidebarView.swift; sourceTree = "<group>"; };
+		AE1F8DD44D5B3629CBD3DAC4 /* MainMenuBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuBuilder.swift; sourceTree = "<group>"; };
+		BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDockGroupsCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD7DDE2E6A92F7A941A6B668 /* DockGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockGroup.swift; sourceTree = "<group>"; };
+		BFC7BC59B449CFA72316D99D /* LaunchReportPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchReportPresenter.swift; sourceTree = "<group>"; };
+		C12EFB7D27566A2E0AE2D0B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C6F96706B977C84150E57515 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
+		C95835185441519310F29031 /* GroupDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailView.swift; sourceTree = "<group>"; };
+		E3439C241A0C71C41130903F /* DockGroupCodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockGroupCodingTests.swift; sourceTree = "<group>"; };
+		E85E906C590A2B99FB486E72 /* GroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStore.swift; sourceTree = "<group>"; };
+		E9CF457A0549DA59C556944F /* CybokronDockGroupsMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CybokronDockGroupsMain.swift; sourceTree = "<group>"; };
+		FC61FE43A3730EC426FD8569 /* DockGroupsCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DockGroupsCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		479FA1EF421E055875115F39 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B0DE9AC2AECF808C2E8A4C5 /* libDockGroupsCore.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AE02532D89B9A89468F10A62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8852AE457C736F84EC553CE /* libDockGroupsCore.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		338CB9A83FD8795A845C1D99 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				BF7D94EC03F19CFDACBC77AB /* DockGroupsCoreTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		538EDFBB32FFD14BBCA1AB43 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				00AC80C0B6544FBB31C04F9F /* Assets.xcassets */,
+				6144640F7107B2BDD2E6005D /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5BFF5C2CAE199A62A92D4744 /* MainWindow */ = {
+			isa = PBXGroup;
+			children = (
+				13AB9B3DB19872BA66EA39B0 /* AppRowView.swift */,
+				C95835185441519310F29031 /* GroupDetailView.swift */,
+				ACDC60218E7F9A86D5162161 /* GroupSidebarView.swift */,
+				C6F96706B977C84150E57515 /* MainWindowController.swift */,
+				0712509968CCE2F10AE2D812 /* MainWindowView.swift */,
+			);
+			path = MainWindow;
+			sourceTree = "<group>";
+		};
+		65A7B66D6099B2B81EC45032 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */,
+				1BFB3BEC6E712399D629ACCB /* DisplayNames.swift */,
+				BFC7BC59B449CFA72316D99D /* LaunchReportPresenter.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		67C74BBF883EFCB877684EC0 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				987A3E1DF8DD13E25B5CBE45 /* GroupPersistence.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		6D4819568C121C351FC59693 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				994BD907AE7F69808146B00A /* AppReference.swift */,
+				BD7DDE2E6A92F7A941A6B668 /* DockGroup.swift */,
+				93BD9756F64AC09F7DCADCA0 /* PopupOverrides.swift */,
+				5179989231E27CC02A3150EF /* TileAppearance.swift */,
+				14A259C9AA97EE8C1A56EA55 /* TileColor.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		78451AB2EF93204403338861 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				3D07DFC6D51CF69AA14ECB2B /* Array+Move.swift */,
+				E85E906C590A2B99FB486E72 /* GroupStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		8F9301BC76FF0C014B3126BF /* DockGroupsCore */ = {
+			isa = PBXGroup;
+			children = (
+				CED95E3B7548ABCBB3CC2B62 /* Launching */,
+				6D4819568C121C351FC59693 /* Model */,
+				67C74BBF883EFCB877684EC0 /* Persistence */,
+				78451AB2EF93204403338861 /* Store */,
+			);
+			path = DockGroupsCore;
+			sourceTree = "<group>";
+		};
+		A5EA865D580D2C8466E98237 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9E6AF56C61E37C0803DBFCF6 /* CybokronDockGroups.app */,
+				FC61FE43A3730EC426FD8569 /* DockGroupsCoreTests.xctest */,
+				BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B9A9AF8991A032E119D1B203 = {
+			isa = PBXGroup;
+			children = (
+				538EDFBB32FFD14BBCA1AB43 /* Resources */,
+				C65EA26C7F0D2E374180A04B /* Sources */,
+				338CB9A83FD8795A845C1D99 /* Tests */,
+				A5EA865D580D2C8466E98237 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BA3FFFD67C66E01D8409685F /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				40249A13EF9B3C69AA55DD5A /* StatusBarController.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		BF7D94EC03F19CFDACBC77AB /* DockGroupsCoreTests */ = {
+			isa = PBXGroup;
+			children = (
+				89B3E343131C65A89DA04197 /* AppReferenceTests.swift */,
+				E3439C241A0C71C41130903F /* DockGroupCodingTests.swift */,
+				A46576E68C0A5B01DB9B650F /* GroupLauncherTests.swift */,
+				54AAAF01792CF3ED5DEA7A3E /* GroupStoreTests.swift */,
+				9D2910543B6521799B99E5C2 /* TestSupport.swift */,
+			);
+			path = DockGroupsCoreTests;
+			sourceTree = "<group>";
+		};
+		C65EA26C7F0D2E374180A04B /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E1205CF7B951F7988F3849F0 /* CybokronDockGroups */,
+				8F9301BC76FF0C014B3126BF /* DockGroupsCore */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		CED95E3B7548ABCBB3CC2B62 /* Launching */ = {
+			isa = PBXGroup;
+			children = (
+				2503E00EE4DC8ED74902660C /* ApplicationWorkspace.swift */,
+				AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */,
+			);
+			path = Launching;
+			sourceTree = "<group>";
+		};
+		D6E11169A3AB03438F8DBDA6 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C12EFB7D27566A2E0AE2D0B4 /* AppDelegate.swift */,
+				E9CF457A0549DA59C556944F /* CybokronDockGroupsMain.swift */,
+				AE1F8DD44D5B3629CBD3DAC4 /* MainMenuBuilder.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E1205CF7B951F7988F3849F0 /* CybokronDockGroups */ = {
+			isa = PBXGroup;
+			children = (
+				D6E11169A3AB03438F8DBDA6 /* App */,
+				5BFF5C2CAE199A62A92D4744 /* MainWindow */,
+				BA3FFFD67C66E01D8409685F /* MenuBar */,
+				65A7B66D6099B2B81EC45032 /* Support */,
+			);
+			path = CybokronDockGroups;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3357CFA9B66526925FFFE868 /* DockGroupsCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB194E510280E92A64388326 /* Build configuration list for PBXNativeTarget "DockGroupsCore" */;
+			buildPhases = (
+				8BF7DAE7929FB43A8A5ADB70 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DockGroupsCore;
+			packageProductDependencies = (
+			);
+			productName = DockGroupsCore;
+			productReference = BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		7CE145F124F677FBB08AA94C /* DockGroupsCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B0B29A2F0F351193D53BBBA /* Build configuration list for PBXNativeTarget "DockGroupsCoreTests" */;
+			buildPhases = (
+				C88D23859C644A1D7A51C835 /* Sources */,
+				479FA1EF421E055875115F39 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3DC361056834E89E64CE0F5A /* PBXTargetDependency */,
+			);
+			name = DockGroupsCoreTests;
+			packageProductDependencies = (
+			);
+			productName = DockGroupsCoreTests;
+			productReference = FC61FE43A3730EC426FD8569 /* DockGroupsCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		99A62B3788A3CE6D92ED396D /* CybokronDockGroups */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 92A081FB6C627A436D92860F /* Build configuration list for PBXNativeTarget "CybokronDockGroups" */;
+			buildPhases = (
+				7F1406F7B05E60D128734822 /* Sources */,
+				8C070DE8355F0296F536108C /* Resources */,
+				AE02532D89B9A89468F10A62 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8DF0A1BAD2FB29663257C85 /* PBXTargetDependency */,
+			);
+			name = CybokronDockGroups;
+			packageProductDependencies = (
+			);
+			productName = CybokronDockGroups;
+			productReference = 9E6AF56C61E37C0803DBFCF6 /* CybokronDockGroups.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		48CD32E7F1DE5DAB97211E0D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					3357CFA9B66526925FFFE868 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					7CE145F124F677FBB08AA94C = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+					99A62B3788A3CE6D92ED396D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = DC5CEA3C217F4DEF7FB10C86 /* Build configuration list for PBXProject "CybokronDockGroups" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = B9A9AF8991A032E119D1B203;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A5EA865D580D2C8466E98237 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3357CFA9B66526925FFFE868 /* DockGroupsCore */,
+				99A62B3788A3CE6D92ED396D /* CybokronDockGroups */,
+				7CE145F124F677FBB08AA94C /* DockGroupsCoreTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8C070DE8355F0296F536108C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0EEEF41DB574F7C888701CF6 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7F1406F7B05E60D128734822 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56DDDE63E4476AC4FC5E4A03 /* AppDelegate.swift in Sources */,
+				C6C5DA2A48359D6546CF5767 /* AppPicker.swift in Sources */,
+				7C8310567B8DF6CA4F0267DA /* AppRowView.swift in Sources */,
+				092EF77DAF1657D8F0F32B6E /* CybokronDockGroupsMain.swift in Sources */,
+				C1C99DBD8A834A04E609B252 /* DisplayNames.swift in Sources */,
+				130A65569AB2D833016610B4 /* GroupDetailView.swift in Sources */,
+				7495ED03D2A519746C220115 /* GroupSidebarView.swift in Sources */,
+				FDDE3C6D841C4A227EDF632A /* LaunchReportPresenter.swift in Sources */,
+				A7ABF95427D56CE54B7EC92C /* MainMenuBuilder.swift in Sources */,
+				51F56235AEF7702B88963E58 /* MainWindowController.swift in Sources */,
+				B6EEBF8BC65508F5518B0931 /* MainWindowView.swift in Sources */,
+				14E57E344E1AAE1AC4BF0450 /* StatusBarController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BF7DAE7929FB43A8A5ADB70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03CCD8D8B9953272976870F2 /* AppReference.swift in Sources */,
+				F7435C36FF7B525F3315610C /* ApplicationWorkspace.swift in Sources */,
+				EBC55D50713B274D9536C5B7 /* Array+Move.swift in Sources */,
+				4D779D910731F57A8EB71E41 /* DockGroup.swift in Sources */,
+				656D794DDB6888F942A2C400 /* GroupLauncher.swift in Sources */,
+				AFE84CF796B46E1F209C9BAE /* GroupPersistence.swift in Sources */,
+				0DD8F382AE659A2118A64AA8 /* GroupStore.swift in Sources */,
+				1125416FE5625965EF151851 /* PopupOverrides.swift in Sources */,
+				9C55BDFD9985B003409CDE51 /* TileAppearance.swift in Sources */,
+				BE46179E6E615B56089D06C3 /* TileColor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C88D23859C644A1D7A51C835 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				51942273E4A82B34674D86AB /* AppReferenceTests.swift in Sources */,
+				0920533F591EAE9369ED8B95 /* DockGroupCodingTests.swift in Sources */,
+				D80D4DBD8D773BC8BB580604 /* GroupLauncherTests.swift in Sources */,
+				8F9D2D97160AA2F384DCCB09 /* GroupStoreTests.swift in Sources */,
+				D8018D9BC20A31E97473AF4B /* TestSupport.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3DC361056834E89E64CE0F5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3357CFA9B66526925FFFE868 /* DockGroupsCore */;
+			targetProxy = 83B6FB2FE3A3BE29C6481244 /* PBXContainerItemProxy */;
+		};
+		D8DF0A1BAD2FB29663257C85 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3357CFA9B66526925FFFE868 /* DockGroupsCore */;
+			targetProxy = 67ADCC7E0FB3C2D786B49BE8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0C430241081098492D018EF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cybokron.dockgroups;
+				PRODUCT_MODULE_NAME = CybokronDockGroups;
+				PRODUCT_NAME = "Cybokron Dock Groups";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0F872BDF8FA9E02C1C04CA37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cybokron.DockGroupsCore;
+				PRODUCT_NAME = DockGroupsCore;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+			};
+			name = Debug;
+		};
+		440774BA39D3C40890AD986F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 3.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6D31596E9AB408D178E85A55 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cybokron.dockgroups.core-tests";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		920EBC33B74D49D1995F6928 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cybokron.dockgroups;
+				PRODUCT_MODULE_NAME = CybokronDockGroups;
+				PRODUCT_NAME = "Cybokron Dock Groups";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B860961830B3A03D79C86611 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cybokron.DockGroupsCore;
+				PRODUCT_NAME = DockGroupsCore;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+			};
+			name = Release;
+		};
+		CB0B19E97AD4472B62A10E0C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 3.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F9C8A1218F1861FF2BA03FC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cybokron.dockgroups.core-tests";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		92A081FB6C627A436D92860F /* Build configuration list for PBXNativeTarget "CybokronDockGroups" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C430241081098492D018EF8 /* Debug */,
+				920EBC33B74D49D1995F6928 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9B0B29A2F0F351193D53BBBA /* Build configuration list for PBXNativeTarget "DockGroupsCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D31596E9AB408D178E85A55 /* Debug */,
+				F9C8A1218F1861FF2BA03FC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DC5CEA3C217F4DEF7FB10C86 /* Build configuration list for PBXProject "CybokronDockGroups" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB0B19E97AD4472B62A10E0C /* Debug */,
+				440774BA39D3C40890AD986F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EB194E510280E92A64388326 /* Build configuration list for PBXNativeTarget "DockGroupsCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F872BDF8FA9E02C1C04CA37 /* Debug */,
+				B860961830B3A03D79C86611 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 48CD32E7F1DE5DAB97211E0D /* Project object */;
+}

@@ -1,0 +1,98 @@
+# XcodeGen spec for CybokronDockGroups.xcodeproj.
+# After changing this file or adding/removing source files, regenerate and commit the project:
+#     xcodegen generate
+name: CybokronDockGroups
+
+options:
+  bundleIdPrefix: com.cybokron
+  deploymentTarget:
+    macOS: "14.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    MARKETING_VERSION: "3.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_VERSION: "5.0"
+    # Open-source build: sign ad hoc so anyone can build and run without a developer account.
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    DEAD_CODE_STRIPPING: YES
+  configs:
+    Debug:
+      ONLY_ACTIVE_ARCH: YES
+    Release:
+      ONLY_ACTIVE_ARCH: NO
+
+targets:
+  DockGroupsCore:
+    type: library.static
+    platform: macOS
+    sources:
+      - path: Sources/DockGroupsCore
+    settings:
+      base:
+        PRODUCT_NAME: DockGroupsCore
+        SKIP_INSTALL: YES
+        # Swift-only library: no Objective-C header (and no header copy phase) needed.
+        SWIFT_INSTALL_OBJC_HEADER: NO
+
+  CybokronDockGroups:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/CybokronDockGroups
+      - path: Resources/Assets.xcassets
+      - path: Resources/Info.plist
+        buildPhase: none
+    dependencies:
+      - target: DockGroupsCore
+    settings:
+      base:
+        PRODUCT_NAME: Cybokron Dock Groups
+        PRODUCT_MODULE_NAME: CybokronDockGroups
+        PRODUCT_BUNDLE_IDENTIFIER: com.cybokron.dockgroups
+        INFOPLIST_FILE: Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+        # Universal (arm64 + x86_64) for Release; Debug builds only the active architecture.
+        ARCHS: $(ARCHS_STANDARD)
+
+  DockGroupsCoreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/DockGroupsCoreTests
+    dependencies:
+      - target: DockGroupsCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cybokron.dockgroups.core-tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  CybokronDockGroups:
+    build:
+      targets:
+        CybokronDockGroups: all
+        DockGroupsCoreTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - DockGroupsCoreTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
