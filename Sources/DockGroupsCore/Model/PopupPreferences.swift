@@ -9,8 +9,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 }
 
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
-/// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, and
-/// the Most Used list.
+/// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, the
+/// Most Used list, and whether the app looks for updates on its own.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
     public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
@@ -37,6 +37,9 @@ public struct PopupPreferences: Hashable, Sendable {
     /// Apps launched within this many seconds of each other count as launched together; one of
     /// `allowedMostUsedSessionSeconds`.
     public var mostUsedSessionSeconds: Int
+    /// Whether the app checks GitHub for a new release at launch and every six hours. "Check for
+    /// Updates…" works either way.
+    public var automaticallyChecksForUpdates: Bool
 
     public init(
         theme: PanelTheme = .dark,
@@ -49,7 +52,8 @@ public struct PopupPreferences: Hashable, Sendable {
         shortcutModifiers: ShortcutModifiers = .controlOption,
         showsMostUsed: Bool = true,
         mostUsedLimit: Int = MostUsedRanking.defaultLimit,
-        mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds
+        mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds,
+        automaticallyChecksForUpdates: Bool = true
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -62,6 +66,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.showsMostUsed = showsMostUsed
         self.mostUsedLimit = mostUsedLimit
         self.mostUsedSessionSeconds = mostUsedSessionSeconds
+        self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -124,6 +129,7 @@ extension PopupPreferences: Codable {
         case showsMostUsed = "popupShowsMostUsed"
         case mostUsedLimit
         case mostUsedSessionSeconds
+        case automaticallyChecksForUpdates
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -149,5 +155,7 @@ extension PopupPreferences: Codable {
         mostUsedSessionSeconds = container.decodeLeniently(Int.self, forKey: .mostUsedSessionSeconds)
             .flatMap { Self.allowedMostUsedSessionSeconds.contains($0) ? $0 : nil }
             ?? defaults.mostUsedSessionSeconds
+        automaticallyChecksForUpdates = container.decodeLeniently(Bool.self, forKey: .automaticallyChecksForUpdates)
+            ?? defaults.automaticallyChecksForUpdates
     }
 }
