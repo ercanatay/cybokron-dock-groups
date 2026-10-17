@@ -8,8 +8,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
     case system
 }
 
-/// App-wide popup preferences. A group can override the layout and position fields with its own
-/// `PopupOverrides`; theme and background apply to every group.
+/// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
+/// defaults (a group can override those with its own `PopupOverrides`), and the global shortcuts.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
 
@@ -22,6 +22,10 @@ public struct PopupPreferences: Hashable, Sendable {
     /// Shows app names under the icons.
     public var showsTitles: Bool
     public var anchor: PopupAnchor
+    /// Whether the modifiers plus 1…9 open the first nine groups' popups from any app.
+    public var shortcutsEnabled: Bool
+    /// Modifier keys of the global shortcuts.
+    public var shortcutModifiers: ShortcutModifiers
 
     public init(
         theme: PanelTheme = .dark,
@@ -29,7 +33,9 @@ public struct PopupPreferences: Hashable, Sendable {
         columns: PopupColumns = .auto,
         maxRows: Int = PopupPreferences.defaultMaxRows,
         showsTitles: Bool = true,
-        anchor: PopupAnchor = .dockCenter
+        anchor: PopupAnchor = .dockCenter,
+        shortcutsEnabled: Bool = true,
+        shortcutModifiers: ShortcutModifiers = .controlOption
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -37,6 +43,8 @@ public struct PopupPreferences: Hashable, Sendable {
         self.maxRows = maxRows
         self.showsTitles = showsTitles
         self.anchor = anchor
+        self.shortcutsEnabled = shortcutsEnabled
+        self.shortcutModifiers = shortcutModifiers
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -88,6 +96,8 @@ extension PopupPreferences: Codable {
         case maxRows = "popupMaxRows"
         case showsTitles = "popupShowsTitles"
         case anchor = "popupAnchor"
+        case shortcutsEnabled = "globalShortcutsEnabled"
+        case shortcutModifiers = "globalShortcutModifiers"
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -103,5 +113,8 @@ extension PopupPreferences: Codable {
             ?? defaults.maxRows
         showsTitles = container.decodeLeniently(Bool.self, forKey: .showsTitles) ?? defaults.showsTitles
         anchor = container.decodeLeniently(PopupAnchor.self, forKey: .anchor) ?? defaults.anchor
+        shortcutsEnabled = container.decodeLeniently(Bool.self, forKey: .shortcutsEnabled) ?? defaults.shortcutsEnabled
+        shortcutModifiers = container.decodeLeniently(ShortcutModifiers.self, forKey: .shortcutModifiers)
+            ?? defaults.shortcutModifiers
     }
 }
