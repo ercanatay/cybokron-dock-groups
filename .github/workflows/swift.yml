@@ -24,7 +24,7 @@ jobs:
     runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Select Xcode 16
         run: sudo xcode-select -s /Applications/Xcode_16.4.app
@@ -48,7 +48,7 @@ jobs:
           ditto -c -k --keepParent "Cybokron Dock Groups.app" "Cybokron-Dock-Groups.zip"
 
       - name: Upload app artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Cybokron-Dock-Groups
           path: build/release/Cybokron-Dock-Groups.zip
@@ -59,7 +59,7 @@ jobs:
     runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Select Xcode 16
         run: sudo xcode-select -s /Applications/Xcode_16.4.app
