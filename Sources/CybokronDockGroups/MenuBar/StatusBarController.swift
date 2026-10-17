@@ -2,7 +2,9 @@ import AppKit
 import DockGroupsCore
 
 /// The menu bar item. Its menu lists the groups with their tiles: choosing one shows the group's
-/// popup, choosing it with ⌥ held opens all of its apps right away.
+/// popup, choosing it with ⌥ held opens all of its apps right away. Below them, the Most Used
+/// section lists the most launched apps: choosing one opens it, and the section's first item
+/// shows them in a popup.
 @MainActor
 final class StatusBarController: NSObject, NSMenuDelegate {
     struct Actions {
@@ -16,6 +18,12 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let tileImage: (DockGroup) -> NSImage
         /// The group's global shortcut ("⌃⌥1"), `nil` when it has none or shortcuts are off.
         let shortcutTitle: (DockGroup) -> String?
+        /// The Most Used apps, best first; `nil` hides the section (turned off in Settings).
+        let mostUsedEntries: () -> [MostUsedEntry]?
+        let showMostUsedPopup: () -> Void
+        let openMostUsedApp: (AppReference) -> Void
+        /// The app's icon, sized for a menu item.
+        let appIcon: (AppReference) -> NSImage
     }
 
     static let menuTileSize: CGFloat = 18
@@ -65,6 +73,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
                 menu.addItem(openAllItem(for: group))
             }
         }
+        addMostUsedSection()
 
         menu.addItem(.separator())
         let manage = NSMenuItem(title: "Manage Groups…", action: #selector(showMainWindow(_:)), keyEquivalent: "g")
@@ -85,6 +94,35 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         )
         quit.target = NSApp
         menu.addItem(quit)
+    }
+
+    private func addMostUsedSection() {
+        guard let entries = actions.mostUsedEntries() else { return }
+        menu.addItem(.separator())
+        menu.addItem(.sectionHeader(title: MostUsedGroup.name))
+        guard !entries.isEmpty else {
+            let placeholder = NSMenuItem(title: "No launches tracked yet", action: nil, keyEquivalent: "")
+            placeholder.isEnabled = false
+            placeholder.toolTip = "Open apps as usual; the ones you open most will appear here."
+            menu.addItem(placeholder)
+            return
+        }
+        let group = MostUsedGroup.group(with: entries)
+        let show = NSMenuItem(title: "Show Most Used", action: #selector(showMostUsed(_:)), keyEquivalent: "")
+        show.target = self
+        show.image = actions.tileImage(group)
+        show.toolTip = "Show your most opened apps in a popup."
+        menu.addItem(show)
+        for entry in entries {
+            let item = NSMenuItem(title: entry.app.name, action: #selector(openMostUsedApp(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = entry.app
+            item.image = actions.appIcon(entry.app)
+            item.indentationLevel = 1
+            let times = entry.launchCount == 1 ? "once" : "\(entry.launchCount) times"
+            item.toolTip = "Open \(entry.app.name). Opened \(times)."
+            menu.addItem(item)
+        }
     }
 
     private func popupItem(for group: DockGroup) -> NSMenuItem {
@@ -128,6 +166,15 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc private func openGroup(_ sender: NSMenuItem) {
         guard let group = group(for: sender) else { return }
         actions.openAll(group)
+    }
+
+    @objc private func showMostUsed(_ sender: NSMenuItem) {
+        actions.showMostUsedPopup()
+    }
+
+    @objc private func openMostUsedApp(_ sender: NSMenuItem) {
+        guard let app = sender.representedObject as? AppReference else { return }
+        actions.openMostUsedApp(app)
     }
 
     @objc private func showMainWindow(_ sender: NSMenuItem) {

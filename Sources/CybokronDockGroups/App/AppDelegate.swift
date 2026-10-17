@@ -7,7 +7,7 @@ import OSLog
 /// Owns the app's long-lived objects. The app is a menu bar utility (`LSUIElement`): it has no Dock
 /// icon, and its windows open from the menu bar or when the app is opened again while running.
 /// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
-/// URLs.
+/// URLs. App launches are counted all along for the Most Used list.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let store = GroupStore(persistence: JSONFileGroupPersistence())
@@ -16,6 +16,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let terminator = GroupTerminator()
     private let icons = WorkspaceAppIconProvider()
     private let runningApps = RunningAppsMonitor()
+    private lazy var usage: UsageStore = UsageStore(
+        persistence: JSONFileUsagePersistence(),
+        sessionLength: TimeInterval(preferences.preferences.mostUsedSessionSeconds)
+    )
+    private lazy var usageMonitor = UsageMonitor(usage: usage)
+    private lazy var mostUsed = MostUsedProvider(usage: usage, preferences: preferences, icons: icons)
     private lazy var tiles: TileImageCache = TileImageCache(iconProvider: icons)
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
@@ -34,6 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var settingsWindowController: SettingsWindowController = SettingsWindowController(
         preferences: preferences,
         store: store,
+        usage: usage,
         shortcuts: shortcutMonitor
     )
     private lazy var aboutWindowController = AboutWindowController()
@@ -46,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         tiles: tiles,
         icons: icons,
         runningApps: runningApps,
+        mostUsed: mostUsed,
         actions: PopupPanelController.Actions(
             open: { [weak self] app, group in self?.open(app, in: group) },
             openAll: { [weak self] group in self?.openAll(group) },
@@ -62,6 +70,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.mainMenu = MainMenuBuilder.makeMainMenu()
+        usageMonitor.start()
+        preferences.$preferences
+            .map(\.mostUsedSessionSeconds)
+            .removeDuplicates()
+            .sink { [weak self] seconds in self?.usage.sessionLength = TimeInterval(seconds) }
+            .store(in: &subscriptions)
         // Changed and deleted groups lose their cached tiles.
         store.$groups
             .sink { [weak self] groups in self?.tiles.synchronize(with: groups) }
@@ -85,7 +99,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 tileImage: { [weak self] group in
                     self?.tiles.image(for: group, pointSize: StatusBarController.menuTileSize) ?? NSImage()
                 },
-                shortcutTitle: { [weak self] group in self?.shortcutTitle(for: group) }
+                shortcutTitle: { [weak self] group in self?.shortcutTitle(for: group) },
+                mostUsedEntries: { [weak self] in self?.mostUsed.entries() },
+                showMostUsedPopup: { [weak self] in self?.popupController.toggle(groupID: MostUsedGroup.id) },
+                openMostUsedApp: { [weak self] app in self?.open(app, in: MostUsedGroup.group(with: [])) },
+                appIcon: { [weak self] app in self?.menuIcon(for: app) ?? NSImage() }
             )
         )
         shortcutMonitor.start()
@@ -102,7 +120,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if popupController.isShown {
             popupController.close()
             mainWindowController.show()
-        } else if let group = popupController.lastGroupID.flatMap(store.group(withID:)) ?? store.groups.first {
+        } else if let group = popupController.lastGroupID.flatMap(popupController.group(withID:)) ?? store.groups.first {
             logger.notice("Reopened: showing the popup of group \(group.id, privacy: .public)")
             NSApp.activate()
             popupController.show(groupID: group.id)
@@ -125,6 +143,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         store.flushPendingSave()
         preferences.flushPendingSave()
+        usage.flushPendingSave()
     }
 
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
@@ -171,6 +190,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         popupController.toggle(groupID: group.id)
+    }
+
+    /// A copy of the app's icon sized for a menu item; the shared icon keeps its size.
+    private func menuIcon(for app: AppReference) -> NSImage {
+        let icon = (icons.icon(for: app).copy() as? NSImage) ?? NSImage()
+        icon.size = NSSize(width: StatusBarController.menuTileSize, height: StatusBarController.menuTileSize)
+        return icon
     }
 
     private func shortcutTitle(for group: DockGroup) -> String? {
