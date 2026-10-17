@@ -22,6 +22,7 @@ struct DockGroupCodingTests {
                 backgroundColor: TileColor(normalizedRed: 0.1, green: 0.5, blue: 0.9)
             ),
             isPinned: true,
+            isStandalone: true,
             popup: PopupOverrides(columns: .fixed(4), maxRows: 3, showsTitles: false, anchor: .dockIcon)
         )
         #expect(try roundTrip(group) == group)
@@ -40,6 +41,7 @@ struct DockGroupCodingTests {
         #expect(group.apps.isEmpty)
         #expect(group.tile == TileAppearance())
         #expect(group.isPinned == false)
+        #expect(group.isStandalone == false)
         #expect(group.popup.isEmpty)
     }
 
@@ -55,6 +57,7 @@ struct DockGroupCodingTests {
         """
         let group = try JSONDecoder().decode(DockGroup.self, from: Data(json.utf8))
         #expect(group.isPinned == false)
+        #expect(group.isStandalone == false)
         #expect(group.tile.kind == .emoji)
         #expect(group.tile.backgroundStyle == .glass)
         #expect(group.tile.backgroundColor == .defaultTileBackground)
