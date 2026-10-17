@@ -47,6 +47,28 @@ public final class GroupLauncher {
         self.init(workspace: SystemApplicationWorkspace())
     }
 
+    /// Opens one of the group's apps, as clicking it in the popup does: brings it to the front when
+    /// it's running and starts it otherwise. The report has a single entry.
+    public func open(_ app: AppReference, inGroup group: DockGroup) async -> LaunchReport {
+        let outcome: LaunchReport.Outcome
+        if workspace.activateRunningApplication(bundleIdentifier: app.bundleIdentifier) {
+            outcome = .activated
+        } else if let url = workspace.locateApplication(app) {
+            do {
+                try await workspace.launchApplication(at: url)
+                outcome = .launched
+            } catch {
+                outcome = .failed(reason: error.localizedDescription)
+            }
+        } else {
+            outcome = .notFound
+        }
+        if outcome.isProblem {
+            logger.error("Open in group \(group.id, privacy: .public): \(app.bundleIdentifier, privacy: .public) -> \(String(describing: outcome), privacy: .public)")
+        }
+        return LaunchReport(groupName: group.name, entries: [LaunchReport.Entry(app: app, outcome: outcome)])
+    }
+
     /// Starts every app in the group that isn't running and brings the running ones to the front.
     /// Apps are launched concurrently; a running app is never launched a second time.
     public func openAll(_ group: DockGroup) async -> LaunchReport {
