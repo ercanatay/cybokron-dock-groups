@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
     )
     private lazy var settingsWindowController: SettingsWindowController = SettingsWindowController(preferences: preferences)
+    private lazy var aboutWindowController = AboutWindowController()
     private lazy var popupController: PopupPanelController = PopupPanelController(
         store: store,
         preferences: preferences,
@@ -52,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 openAll: { [weak self] group in self?.openAll(group) },
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
                 showSettings: { [weak self] in self?.showSettingsWindow(nil) },
+                showAbout: { [weak self] in self?.showAboutWindow(nil) },
                 menuWillOpen: { [weak self] in self?.popupController.close() },
                 tileImage: { [weak self] group in
                     self?.tiles.image(for: group, pointSize: StatusBarController.menuTileSize) ?? NSImage()
@@ -87,6 +89,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func showSettingsWindow(_ sender: Any?) {
         popupController.close()
         settingsWindowController.show()
+    }
+
+    /// Target of the About menu items.
+    @objc func showAboutWindow(_ sender: Any?) {
+        popupController.close()
+        aboutWindowController.show()
     }
 
     private func open(_ app: AppReference, in group: DockGroup) {
