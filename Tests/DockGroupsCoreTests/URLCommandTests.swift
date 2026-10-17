@@ -75,6 +75,18 @@ struct URLCommandTests {
         #expect(command("cybokrondockgroups://shortcut/3") == .showShortcut(3))
     }
 
+    @Test func groupIdentifierInAURLFindsTheGroup() throws {
+        let work = DockGroup(name: "Work")
+        let play = DockGroup(name: "Play")
+        let parsed = try #require(command("cybokrondockgroups://open/\(play.id.uuidString)"))
+        guard case .showGroup(let token) = parsed else {
+            Issue.record("Expected showGroup, got \(parsed)")
+            return
+        }
+        #expect(GroupLookup.group(matching: token, in: [work, play])?.id == play.id)
+        #expect(command("cybokrondockgroups://launch/\(work.id.uuidString.lowercased())") == .launchGroup(work.id.uuidString.lowercased()))
+    }
+
     @Test func parsesAppCommands() {
         #expect(command("cybokrondockgroups://close") == .closePopup)
         #expect(command("cybokrondockgroups://settings") == .openSettings)
