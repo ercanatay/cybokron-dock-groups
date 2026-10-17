@@ -93,6 +93,7 @@ public final class GroupTerminator {
                 logger.error("Close All (\(mode.rawValue, privacy: .public)) in group \(group.id, privacy: .public): \(app.bundleIdentifier, privacy: .public) refused")
             }
         }
+        logger.debug("Close All (\(mode.rawValue, privacy: .public)) in group \(group.id, privacy: .public): \(quit.count) quit, \(refused.count) refused")
         return QuitReport(groupName: group.name, mode: mode, quit: quit, refused: refused)
     }
 
