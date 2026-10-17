@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Developer ID (Developer ID) signed and Apple notarized releases: the release workflow signs the
+- Developer ID signed and Apple notarized releases: the release workflow signs the
   app and the disk image with the Developer ID Application certificate (hardened runtime, secure
   timestamp), notarizes the disk image with `notarytool`, staples the ticket and checks it with
   `stapler validate`, `codesign` and `spctl` before attaching it to the draft release. Releases open

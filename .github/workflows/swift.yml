@@ -89,7 +89,7 @@ jobs:
 
   release:
     # Runs for v* tags only: builds the universal DMG, signs the app and the DMG with the Developer ID
-    # Application certificate (Developer ID), notarizes and staples the DMG, and attaches it to a
+    # Application certificate, notarizes and staples the DMG, and attaches it to a
     # draft GitHub release. Needs a macos-26 runner (Xcode 26+ toolchain).
     name: Release DMG
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
@@ -97,7 +97,7 @@ jobs:
     permissions:
       contents: write
     env:
-      # SHA-1 of "Developer ID Application: Developer ID Application"; pins the identity
+      # SHA-1 of the Developer ID Application certificate; pins the identity
       # build-app.sh and make-dmg.sh sign with.
       CODESIGN_IDENTITY: 5113D3C4DEA9F1F9C082E516112B89E58BAA5111
 

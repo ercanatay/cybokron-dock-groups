@@ -114,7 +114,7 @@ Get the universal disk image (`Cybokron-Dock-Groups-<version>-universal.dmg`) fr
 to Applications.
 
 Releases from v0.5.2 on are **signed and notarized**: the app and the disk image are signed with the
-Developer ID Application certificate of Developer ID (hardened runtime), and the
+Developer ID Application certificate (hardened runtime), and the
 disk image is notarized by Apple with the ticket stapled to it. They open without a Gatekeeper
 warning. To check a download:
 
