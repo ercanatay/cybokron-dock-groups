@@ -9,7 +9,8 @@ import OSLog
 /// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
 /// URLs. App launches are counted all along for the Most Used list. Standalone groups get their own
 /// apps with their own Dock icons (`StandaloneController`); those run with `AgentAppDelegate`.
-/// `AutoUpdater` looks for new releases on GitHub (only here, never in an agent).
+/// `AutoUpdater` looks for new releases on GitHub (only here, never in an agent). A second copy of
+/// the app, launched while one runs, hands its URLs to the running copy and quits (`SecondCopyHandoff`).
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let store = GroupStore(persistence: JSONFileGroupPersistence())
@@ -28,6 +29,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var standalone = StandaloneController(store: store, preferences: preferences, icons: icons)
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
+    /// Set while this is a second copy of the app, launched next to the copy that runs: it then
+    /// only hands its URLs over to that copy and quits.
+    private var secondCopyHandoff: SecondCopyHandoff?
     private var urlThrottle = CommandThrottle()
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
     private let urlLogger = Logger(subsystem: "com.cybokron.dockgroups", category: "URLScheme")
@@ -80,7 +84,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         GroupIntentSupport.handler = self
     }
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Before the URLs the app was launched with arrive.
+        secondCopyHandoff = SecondCopyHandoff.toOlderRunningCopy()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        var launchURLs: [URL] = []
+        if let handoff = secondCopyHandoff {
+            if handoff.isPrimaryRunning {
+                handoff.finishLaunching()
+                return
+            }
+            // The other copy quit meanwhile: this one runs as the app.
+            launchURLs = handoff.takePendingURLs()
+            secondCopyHandoff = nil
+        }
         NSApp.mainMenu = MainMenuBuilder.makeMainMenu()
         usageMonitor.start()
         preferences.$preferences
@@ -132,12 +151,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if store.issue != nil {
             mainWindowController.show()
         }
+        for url in launchURLs {
+            handle(url)
+        }
     }
 
     /// Opening the app again (Finder, `open -a`, Spotlight) while it runs shows a popup — the one
     /// shown last, else the first group's — and brings the app forward. Without groups, or when a
     /// popup is already showing, it shows the group window instead.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        guard secondCopyHandoff == nil else { return false }
         if popupController.isShown {
             popupController.close()
             mainWindowController.show()
@@ -152,6 +175,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
+        if let secondCopyHandoff {
+            secondCopyHandoff.receive(urls)
+            return
+        }
         for url in urls {
             handle(url)
         }
@@ -162,6 +189,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        // A second copy changed nothing; the copy that runs owns the files.
+        guard secondCopyHandoff == nil else { return }
         store.flushPendingSave()
         preferences.flushPendingSave()
         usage.flushPendingSave()
