@@ -17,7 +17,11 @@ public struct AgentConfiguration: Equatable, Sendable {
     public init(group: DockGroup, preferences: PopupPreferences) {
         formatVersion = Self.currentFormatVersion
         self.group = group
-        self.preferences = preferences
+        // The update setting concerns the main app only; leaving it at its default keeps turning it
+        // on or off from rebuilding every agent.
+        var snapshot = preferences
+        snapshot.automaticallyChecksForUpdates = PopupPreferences().automaticallyChecksForUpdates
+        self.preferences = snapshot
     }
 
     /// The group's popup settings: its own overrides on top of the preferences snapshot.
