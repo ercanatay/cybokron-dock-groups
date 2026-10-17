@@ -3,6 +3,9 @@
 #
 #   scripts/build-app.sh [debug|release]      → build/<configuration>/Cybokron Dock Groups.app
 #   UNIVERSAL=1 scripts/build-app.sh release  → arm64 + x86_64 binary
+#   CODESIGN_IDENTITY=<SHA-1> scripts/build-app.sh release
+#                                             → signed with that Developer ID Application identity
+#                                               (hardened runtime, secure timestamp) instead of ad hoc
 #
 # The Xcode project (project.yml / CybokronDockGroups.xcodeproj) is the primary build; this script
 # mirrors its settings. Keep the version numbers below in sync with project.yml.
@@ -153,7 +156,13 @@ elif [[ -z "$APPINTENTS_PROCESSOR" ]]; then
     echo "note: appintentsmetadataprocessor needs Xcode; Siri and Shortcuts won't list this build's actions." >&2
 fi
 
-codesign --force --sign - --options runtime --timestamp=none "$APP"
+if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
+    # Release builds: Developer ID signature with the hardened runtime and a secure timestamp, as
+    # notarization requires. The app needs no entitlements.
+    codesign --force --deep --sign "$CODESIGN_IDENTITY" --options runtime --timestamp "$APP"
+else
+    codesign --force --sign - --options runtime --timestamp=none "$APP"
+fi
 codesign --verify --strict "$APP"
 
 echo "Built $APP"
