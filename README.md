@@ -3,8 +3,7 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: early development (phase C — keyboard shortcuts, Siri and Shortcuts, links, drag and drop
-> in the popup). Standalone Dock tiles are planned.
+> Status: early development (phase D — Most Used apps). Standalone Dock tiles are planned.
 
 ## Features (so far)
 
@@ -43,11 +42,19 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - Group tiles drawn by the app: the group's emoji, or a 2×2 / 3×3 grid of its first app icons, on a
   solid, gradient or glass background in the color you pick. They appear in the menu, the popup
   header and a live preview in the group window.
+- **Most Used**: the menu lists the apps you open most — from the Dock, Finder, Spotlight or a
+  group — with no setup. Choose one to open it, or **Show Most Used** for a popup of them (read-only:
+  apps open, but can't be reordered or removed). Apps are ranked by launch count; apps you open
+  within the same session (10 minutes by default) get a small bonus of at most 30 %. Settings →
+  Most Used turns the list off (launches are still counted), sets how many apps it shows (5, 10 or
+  15) and the session length, and clears the history. Background agents and a few system
+  processes (Finder, Spotlight, …) aren't counted.
 - Settings (⌘,): popup theme (dark by default, light, or matching the system), frosted glass,
   columns (auto or fixed), maximum rows (extra rows scroll), app names, position. Each group can
   override the layout settings in its own settings.
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
-  `groups.json` for the groups and `preferences.json` for the settings.
+  `groups.json` for the groups, `preferences.json` for the settings, and `usage-stats.json` /
+  `usage-cooccurrence.json` for the launch counts behind Most Used.
 
 The app has no Dock icon (`LSUIElement`). Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
