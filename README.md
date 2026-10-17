@@ -3,8 +3,8 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: early development (phase B — group popup and tile rendering). Standalone Dock tiles,
-> keyboard shortcuts and Siri/Shortcuts support are planned.
+> Status: early development (phase C — keyboard shortcuts, Siri and Shortcuts, links, drag and drop
+> in the popup). Standalone Dock tiles are planned.
 
 ## Features (so far)
 
@@ -14,6 +14,29 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   with the group's app icons in a grid and a running indicator per app. Click an app to open it or
   bring it to the front; **Open All** opens every app; **Close All** quits the group's running apps
   normally, ⌘-click force quits them. Escape, a click elsewhere, or switching apps closes it.
+- In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
+  remove it from the group (the app itself isn't touched). The new order is saved right away.
+- Global keyboard shortcuts: ⌃⌥1 shows the first group's popup, ⌃⌥2 the second, and so on up to
+  9; pressing it again closes the popup. The modifier keys can be changed, or the shortcuts turned
+  off, in Settings → Shortcuts. To notice them while you work in other apps, the app needs
+  Accessibility access (Privacy & Security → Accessibility); it asks once. The shortcuts are
+  observed, not taken over, so the app in front also receives the key press.
+- Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
+  optionally force quit) and **Show Group** (the popup) actions, and phrases such as “Launch Work in
+  Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames.
+- Links, e.g. from scripts or other apps (`open "cybokrondockgroups://open/work"`):
+
+  | Link | Does |
+  | --- | --- |
+  | `cybokrondockgroups://open/<group>` | Shows the group's popup |
+  | `cybokrondockgroups://launch/<group>` | Open All |
+  | `cybokrondockgroups://quit/<group>` | Close All; add `?mode=force` to force quit |
+  | `cybokrondockgroups://shortcut/<1…9>` | Shows the popup of the group with that shortcut |
+  | `cybokrondockgroups://close` · `settings` · `groups` | Closes the popup · opens Settings · the group window |
+
+  `<group>` is the group's name — case, accents, spaces and punctuation don't matter
+  (`Çalışma Alanı` → `calisma-alani`) — or its ID. The same link is ignored when it comes again
+  within 5 seconds.
 - **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
   reorder or remove them. Deleting a group never touches the apps themselves.
@@ -27,7 +50,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   `groups.json` for the groups and `preferences.json` for the settings.
 
 The app has no Dock icon (`LSUIElement`). Opening it again while it runs (Finder, Spotlight,
-`open -a "Cybokron Dock Groups"`) shows the group window.
+`open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
+popup is already showing, or there are no groups yet, it shows the group window instead.
 
 ## Requirements
 
@@ -58,6 +82,14 @@ scripts/build-app.sh debug                   # build/debug/Cybokron Dock Groups.
 UNIVERSAL=1 scripts/build-app.sh release     # universal release build
 ```
 
+With Xcode installed, `build-app.sh` also extracts the App Intents metadata
+(`Contents/Resources/Metadata.appintents`) that Siri and the Shortcuts app read, as Xcode does;
+builds made with the Command Line Tools alone work but don't offer the Shortcuts actions.
+
+Ad hoc signed builds get a new signature every time they're built, so macOS treats each build as a
+new app for Accessibility access: after rebuilding, remove the app from the Accessibility list and
+allow it again for the global shortcuts to work in other apps.
+
 The scripts work around two Command Line Tools limitations automatically: they pick a macOS SDK
 whose SwiftUI doesn't need Xcode's macro plugins, and they point the compiler at swift-testing's
 macro plugin. If SwiftPM reports `disk I/O error` for its build database (seen with checkouts in
@@ -68,11 +100,11 @@ synced folders such as `~/Documents`), build elsewhere:
 
 | Path | Contents |
 | --- | --- |
-| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout and placement, tile renderer and cache (no UI) |
-| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, SwiftUI group and settings windows |
+| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup (no UI) |
+| `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
 | `Resources` | `Info.plist`, asset catalog with the placeholder app icon |
-| `scripts` | SwiftPM build/test scripts, icon generator |
+| `scripts` | SwiftPM build/test scripts, App Intents protocol list for the build, icon generator |
 
 The placeholder app icon is drawn by `scripts/generate-app-icon.swift` from plain shapes.
 
