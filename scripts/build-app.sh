@@ -39,12 +39,30 @@ if [[ "${UNIVERSAL:-0}" == 1 ]]; then
     BUILD_ARGS+=(--arch arm64 --arch x86_64)
 fi
 APPINTENTS_PROCESSOR="$(xcrun --find appintentsmetadataprocessor 2>/dev/null || true)"
+# The swiftc driver of CI's Xcode 26.x rejects the const-values flags (only Xcode 27+ has them), so
+# probe the driver instead of assuming.
+swiftc_supports_const_gather() {
+    local dir ok=1
+    dir="$(mktemp -d)"
+    printf 'import Foundation\nfunc probe() {}\n' > "$dir/probe.swift"
+    xcrun swiftc -c "$dir/probe.swift" -o "$dir/probe.o" -emit-const-values \
+        -const-gather-protocols-list "$ROOT/scripts/appintents-const-protocols.json" \
+        >/dev/null 2>&1 || ok=0
+    rm -rf "$dir"
+    [[ "$ok" == 1 ]]
+}
+APPINTENTS_ENABLED=0
 if [[ -n "$APPINTENTS_PROCESSOR" ]]; then
-    # The compiler writes the constant values the metadata is extracted from (a .swiftconstvalues
-    # file per source file). The protocol list's path must stay the same between builds, or
-    # every build would recompile everything.
-    BUILD_ARGS+=(-Xswiftc -emit-const-values -Xswiftc -const-gather-protocols-list
-        -Xswiftc "$ROOT/scripts/appintents-const-protocols.json")
+    if swiftc_supports_const_gather; then
+        APPINTENTS_ENABLED=1
+        # The compiler writes the constant values the metadata is extracted from (a .swiftconstvalues
+        # file per source file). The protocol list's path must stay the same between builds, or
+        # every build would recompile everything.
+        BUILD_ARGS+=(-Xswiftc -emit-const-values -Xswiftc -const-gather-protocols-list
+            -Xswiftc "$ROOT/scripts/appintents-const-protocols.json")
+    else
+        echo "App Intents metadata skipped: driver does not support const protocol gathering"
+    fi
 fi
 swift build --product "$PRODUCT" "${BUILD_ARGS[@]}"
 BINARY="$(swift build "${BUILD_ARGS[@]}" --show-bin-path)/$PRODUCT"
@@ -129,9 +147,9 @@ extract_app_intents_metadata() {
     fi
     echo "App Intents metadata: $APP/Contents/Resources/Metadata.appintents"
 }
-if [[ -n "$APPINTENTS_PROCESSOR" ]]; then
+if [[ "$APPINTENTS_ENABLED" == 1 ]]; then
     extract_app_intents_metadata
-else
+elif [[ -z "$APPINTENTS_PROCESSOR" ]]; then
     echo "note: appintentsmetadataprocessor needs Xcode; Siri and Shortcuts won't list this build's actions." >&2
 fi
 
