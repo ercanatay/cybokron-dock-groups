@@ -7,8 +7,9 @@ Instructions for AI coding agents (OpenCode, Claude, Codex, Copilot, …) workin
 Cybokron Dock Groups is a macOS 14+ menu bar app (Swift, AppKit + SwiftUI) that organizes apps into
 named groups and opens a whole group at once. See [README.md](README.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-- `Sources/DockGroupsCore` — model, JSON persistence, `GroupStore`, launcher. No UI; keep logic here so it is testable.
-- `Sources/CybokronDockGroups` — app lifecycle, menu bar, SwiftUI windows.
+- `Sources/DockGroupsCore` — model, JSON persistence, `GroupStore`, launcher, standalone agent bundles and Dock tile list. No UI; keep logic here so it is testable.
+- `Sources/CybokronDockGroups` — app lifecycle, menu bar, SwiftUI windows. The same executable runs a standalone group's agent when its bundle identifier starts with `com.cybokron.dockgroups.agent.` (`Agent/AgentAppDelegate.swift`).
+- Tests never touch the real Dock or LaunchServices: use `DockTileStoring` / `ToolRunning` fakes.
 - `Tests/DockGroupsCoreTests` — swift-testing unit tests.
 
 ## Commands
