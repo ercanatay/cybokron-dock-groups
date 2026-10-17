@@ -16,6 +16,8 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
     public var tile: TileAppearance
     /// Whether the group's tile stays in the Dock while the group isn't open.
     public var isPinned: Bool
+    /// Whether the group has its own app (a standalone agent) with its own icon in the Dock.
+    public var isStandalone: Bool
     /// Per-group popup settings; fields left `nil` fall back to the app-wide defaults.
     public var popup: PopupOverrides
 
@@ -26,6 +28,7 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         apps: [AppReference] = [],
         tile: TileAppearance = TileAppearance(),
         isPinned: Bool = false,
+        isStandalone: Bool = false,
         popup: PopupOverrides = PopupOverrides()
     ) {
         self.id = id
@@ -34,6 +37,7 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         self.apps = apps
         self.tile = tile
         self.isPinned = isPinned
+        self.isStandalone = isStandalone
         self.popup = popup
     }
 }
@@ -57,7 +61,7 @@ extension DockGroup {
 
 extension DockGroup: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, name, emoji, apps, tile, isPinned, popup
+        case id, name, emoji, apps, tile, isPinned, isStandalone, popup
     }
 
     /// Identity, name and app list are required; display preferences are decoded leniently so a value
@@ -70,6 +74,7 @@ extension DockGroup: Codable {
         emoji = container.decodeLeniently(String.self, forKey: .emoji) ?? DockGroup.defaultEmoji
         tile = container.decodeLeniently(TileAppearance.self, forKey: .tile) ?? TileAppearance()
         isPinned = container.decodeLeniently(Bool.self, forKey: .isPinned) ?? false
+        isStandalone = container.decodeLeniently(Bool.self, forKey: .isStandalone) ?? false
         popup = container.decodeLeniently(PopupOverrides.self, forKey: .popup) ?? PopupOverrides()
     }
 }
