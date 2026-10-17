@@ -1,6 +1,7 @@
 import AppKit
 import Combine
 import DockGroupsCore
+import OSLog
 
 /// Owns the app's long-lived objects. The app is a menu bar utility (`LSUIElement`): it has no Dock
 /// icon, and its windows open from the menu bar or when the app is opened again while running.
@@ -15,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var tiles: TileImageCache = TileImageCache(iconProvider: icons)
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
+    private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
 
     private lazy var mainWindowController: MainWindowController = MainWindowController(
         store: store,
@@ -24,8 +26,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
         )
     )
-    private lazy var settingsWindowController: SettingsWindowController = SettingsWindowController(preferences: preferences)
+    private lazy var settingsWindowController: SettingsWindowController = SettingsWindowController(
+        preferences: preferences,
+        store: store,
+        shortcuts: shortcutMonitor
+    )
     private lazy var aboutWindowController = AboutWindowController()
+    private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(preferences: preferences) { [weak self] digit in
+        self?.togglePopup(forShortcut: digit)
+    }
     private lazy var popupController: PopupPanelController = PopupPanelController(
         store: store,
         preferences: preferences,
@@ -57,9 +66,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 menuWillOpen: { [weak self] in self?.popupController.close() },
                 tileImage: { [weak self] group in
                     self?.tiles.image(for: group, pointSize: StatusBarController.menuTileSize) ?? NSImage()
-                }
+                },
+                shortcutTitle: { [weak self] group in self?.shortcutTitle(for: group) }
             )
         )
+        shortcutMonitor.start()
         // The window stays closed at launch unless there's a problem the user needs to see.
         if store.issue != nil {
             mainWindowController.show()
@@ -113,5 +124,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func closeAll(_ group: DockGroup, mode: QuitMode) {
         LaunchReportPresenter.presentProblems(in: terminator.closeAll(group, mode: mode))
+    }
+
+    // MARK: - Global shortcuts
+
+    /// Shortcut *n* shows or hides the *n*-th group's popup.
+    private func togglePopup(forShortcut digit: Int) {
+        guard let group = GroupShortcuts.group(forDigit: digit, in: store.groups) else {
+            logger.debug("Shortcut \(digit) has no group")
+            return
+        }
+        popupController.toggle(groupID: group.id)
+    }
+
+    private func shortcutTitle(for group: DockGroup) -> String? {
+        let settings = preferences.preferences
+        guard settings.shortcutsEnabled, let digit = GroupShortcuts.digit(forGroup: group.id, in: store.groups) else {
+            return nil
+        }
+        return GroupShortcuts.title(digit: digit, modifiers: settings.shortcutModifiers)
     }
 }
