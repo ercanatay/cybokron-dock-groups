@@ -41,6 +41,8 @@ struct PopupContent {
     let gridHeight: CGFloat
     let scrolls: Bool
     let usesFrostedGlass: Bool
+    /// Whether apps can be reordered and removed; `false` for the Most Used list.
+    let isEditable: Bool
 }
 
 struct PopupActions {
@@ -72,7 +74,7 @@ private struct CellDrag: Equatable {
 /// The popup: the group's tile and name with Open All / Close All, the app grid, and a hint line.
 ///
 /// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
-/// the group, as with the Dock.
+/// the group, as with the Dock. The Most Used list is read-only.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -114,6 +116,7 @@ struct PopupContentView: View {
                 .resizable()
                 .interpolation(.high)
                 .frame(width: PopupMetrics.headerTileSize, height: PopupMetrics.headerTileSize)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
                 Text(group.name)
                     .font(.system(size: 13, weight: .semibold))
@@ -121,6 +124,7 @@ struct PopupContentView: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Text(summary(appCount: group.apps.count, runningCount: runningCount))
+                    .accessibilityIdentifier("popup-summary")
                     .font(.system(size: 11))
                     .foregroundStyle(palette.secondaryText)
                     .lineLimit(1)
@@ -130,7 +134,9 @@ struct PopupContentView: View {
                 .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: true))
                 .fixedSize()
                 .disabled(group.apps.isEmpty)
-                .help("Open every app in this group; running apps come to the front.")
+                .help(content.isEditable
+                    ? "Open every app in this group; running apps come to the front."
+                    : "Open every app in this list; running apps come to the front.")
             Button(quitMode == .force ? "Force Quit" : "Close All") {
                 // The keys held during the click decide, even if no flags change was seen.
                 let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags
@@ -139,7 +145,9 @@ struct PopupContentView: View {
             .buttonStyle(PillButtonStyle(tint: quitMode == .force ? PanelPalette.warning : PanelPalette.indigo, filled: false))
             .fixedSize()
             .disabled(runningCount == 0)
-            .help("Quit this group's running apps. ⌘-click to force quit without saving.")
+            .help(content.isEditable
+                ? "Quit this group's running apps. ⌘-click to force quit without saving."
+                : "Quit this list's running apps. ⌘-click to force quit without saving.")
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.headerHeight)
@@ -147,7 +155,8 @@ struct PopupContentView: View {
 
     private func summary(appCount: Int, runningCount: Int) -> String {
         let apps = appCount == 1 ? "1 app" : "\(appCount) apps"
-        return runningCount > 0 ? "\(apps) · \(runningCount) running" : apps
+        let counts = runningCount > 0 ? "\(apps) · \(runningCount) running" : apps
+        return content.isEditable ? counts : "\(counts) · by launches"
     }
 
     // MARK: - Grid
@@ -216,6 +225,7 @@ struct PopupContentView: View {
         return PopupAppCell(
             cell: cell,
             isRunning: runningApps.isRunning(cell.app),
+            isEditable: content.isEditable,
             showsTitle: content.showsTitles,
             metrics: metrics,
             palette: palette,
@@ -235,11 +245,16 @@ struct PopupContentView: View {
         .simultaneousGesture(
             DragGesture(minimumDistance: 4, coordinateSpace: .named(Self.gridSpace))
                 .onChanged { value in dragChanged(cell, value) }
-                .onEnded { _ in dragEnded(cell) }
+                .onEnded { _ in dragEnded(cell) },
+            including: content.isEditable ? .all : .subviews
         )
-        .accessibilityAction(named: "Move Earlier") { move(cell, by: -1) }
-        .accessibilityAction(named: "Move Later") { move(cell, by: 1) }
-        .accessibilityAction(named: "Remove from Group") { actions.removeApp(cell.app) }
+        .modifier(EditingAccessibilityActions(isEnabled: content.isEditable) {
+            move(cell, by: -1)
+        } moveLater: {
+            move(cell, by: 1)
+        } remove: {
+            actions.removeApp(cell.app)
+        })
     }
 
     // MARK: - Dragging
@@ -312,13 +327,27 @@ struct PopupContentView: View {
         actions.moveApp(cell.app, target)
     }
 
+    @ViewBuilder
     private func emptyState(_ palette: PanelPalette) -> some View {
-        VStack(spacing: 6) {
-            Text("No apps in this group yet")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(palette.secondaryText)
-            Button("Add Apps…", action: actions.manageGroups)
-                .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+        if content.isEditable {
+            VStack(spacing: 6) {
+                Text("No apps in this group yet")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(palette.secondaryText)
+                Button("Add Apps…", action: actions.manageGroups)
+                    .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+            }
+        } else {
+            VStack(spacing: 4) {
+                Text("No launches tracked yet")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(palette.secondaryText)
+                Text("Open apps as usual to start building your history.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(palette.secondaryText)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 14)
         }
     }
 
@@ -339,7 +368,9 @@ struct PopupContentView: View {
 
     private var footerText: String {
         guard let drag, let cell = content.cells.first(where: { $0.id == drag.id }) else {
-            return "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
+            return content.isEditable
+                ? "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
+                : "Ranked by how often you open them  ·  ⌘-click Close All to force quit"
         }
         return drag.isInRemovalArea
             ? "Release to remove \(cell.app.name) from this group"
@@ -351,6 +382,7 @@ struct PopupContentView: View {
 private struct PopupAppCell: View {
     let cell: PopupCell
     let isRunning: Bool
+    let isEditable: Bool
     let showsTitle: Bool
     let metrics: PopupGridMetrics
     let palette: PanelPalette
@@ -405,7 +437,33 @@ private struct PopupAppCell: View {
             return "\(cell.app.name) isn't on this Mac. Drag it out of the popup to remove it from the group."
         }
         let action = isRunning ? "Bring \(cell.app.name) to the front" : "Open \(cell.app.name)"
-        return "\(action). Drag to reorder, or out of the popup to remove it from the group."
+        return isEditable ? "\(action). Drag to reorder, or out of the popup to remove it from the group." : "\(action)."
+    }
+}
+
+/// VoiceOver's reorder and remove actions, for cells of editable groups only.
+private struct EditingAccessibilityActions: ViewModifier {
+    let isEnabled: Bool
+    let moveEarlier: () -> Void
+    let moveLater: () -> Void
+    let remove: () -> Void
+
+    init(isEnabled: Bool, moveEarlier: @escaping () -> Void, moveLater: @escaping () -> Void, remove: @escaping () -> Void) {
+        self.isEnabled = isEnabled
+        self.moveEarlier = moveEarlier
+        self.moveLater = moveLater
+        self.remove = remove
+    }
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content
+                .accessibilityAction(named: "Move Earlier", moveEarlier)
+                .accessibilityAction(named: "Move Later", moveLater)
+                .accessibilityAction(named: "Remove from Group", remove)
+        } else {
+            content
+        }
     }
 }
 
