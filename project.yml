@@ -13,7 +13,7 @@ options:
 
 settings:
   base:
-    MARKETING_VERSION: "0.4.0"
+    MARKETING_VERSION: "0.5.0"
     CURRENT_PROJECT_VERSION: "1"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
     SWIFT_VERSION: "5.0"
@@ -61,6 +61,9 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: YES
+        # One self-contained executable in Debug too (no .debug.dylib next to it): standalone
+        # groups copy just this executable into their own app bundles.
+        ENABLE_DEBUG_DYLIB: NO
         COMBINE_HIDPI_IMAGES: YES
         # Universal (arm64 + x86_64) for Release; Debug builds only the active architecture.
         ARCHS: $(ARCHS_STANDARD)
