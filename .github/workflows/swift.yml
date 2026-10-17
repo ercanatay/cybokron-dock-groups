@@ -7,6 +7,7 @@ name: CI
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -21,6 +22,7 @@ permissions:
 jobs:
   swiftpm:
     name: SwiftPM test & app build
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     runs-on: macos-26
 
     steps:
@@ -58,6 +60,7 @@ jobs:
 
   xcode:
     name: Xcode build & test
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     runs-on: macos-26
 
     steps:
@@ -82,3 +85,31 @@ jobs:
             -scheme CybokronDockGroups \
             -destination 'platform=macOS' \
             test
+
+  release:
+    # Runs for v* tags only: builds the universal DMG and attaches it to a draft GitHub release.
+    # Needs a macos-26 runner (Xcode 26+ toolchain).
+    name: Release DMG
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: macos-26
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select newest Xcode
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+
+      - name: Run unit tests
+        run: scripts/test.sh
+
+      - name: Build universal DMG
+        run: scripts/make-dmg.sh
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/release/*.dmg
+          draft: true
+          generate_release_notes: true
