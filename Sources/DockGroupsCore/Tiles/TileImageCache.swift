@@ -63,10 +63,6 @@ public final class TileImageCache {
         entries = entries.filter { $0.key.groupID != groupID }
     }
 
-    public func removeAll() {
-        entries.removeAll()
-    }
-
     /// Drops images of groups that no longer exist or whose tile looks different now.
     public func synchronize(with groups: [DockGroup]) {
         let groupsByID = Dictionary(groups.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })

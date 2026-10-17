@@ -37,9 +37,4 @@ public final class WorkspaceAppIconProvider: AppIconProviding {
     public func isInstalled(_ app: AppReference) -> Bool {
         app.resolvedURL(workspace: workspace) != nil
     }
-
-    /// Forgets the remembered icons, e.g. after apps were updated.
-    public func removeAll() {
-        icons.removeAll()
-    }
 }
