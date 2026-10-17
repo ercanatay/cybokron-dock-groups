@@ -5,6 +5,19 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 
 > Status: early development (phase E — standalone Dock icons).
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/popup-panel.png" width="320" alt="Group popup over the Dock"><br><sub>Group popup over the Dock</sub></td>
+    <td align="center"><img src="docs/screenshots/groups-window.png" width="480" alt="Group management window"><br><sub>Group management window</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/settings.png" width="360" alt="Settings window"><br><sub>Settings</sub></td>
+    <td align="center"><img src="docs/screenshots/about.png" width="300" alt="About window"><br><sub>About</sub></td>
+  </tr>
+</table>
+
 ## Features (so far)
 
 - Menu bar item listing your groups with their tiles. Choosing a group shows its **popup**; holding
