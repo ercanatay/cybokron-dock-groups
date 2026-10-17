@@ -9,7 +9,8 @@ import SwiftUI
 /// the popup preferences while it's open, and closes it on Escape, an outside click or focus loss.
 ///
 /// The Most Used list (`MostUsedGroup.id`) opens like a group, read-only: its apps can be opened
-/// but not reordered or removed.
+/// but not reordered or removed. A standalone agent shows its group read-only too
+/// (`allowsEditing: false`): the group belongs to the main app.
 @MainActor
 final class PopupPanelController: NSObject, NSWindowDelegate {
     struct Actions {
@@ -32,7 +33,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private let tiles: TileImageCache
     private let icons: AppIconProviding
     private let runningApps: RunningAppsMonitor
-    private let mostUsed: MostUsedProvider
+    private let mostUsed: MostUsedProvider?
+    private let allowsEditing: Bool
     private let actions: Actions
     private let modifierKeys = ModifierKeyState()
 
@@ -48,6 +50,10 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private(set) var groupID: DockGroup.ID?
     /// The group whose popup was shown last, even if it's closed now.
     private(set) var lastGroupID: DockGroup.ID?
+    /// Why and when the popup closed last.
+    private(set) var lastClose: (reason: CloseReason, date: Date)?
+    /// Called whenever the popup closes.
+    var onClose: ((CloseReason) -> Void)?
 
     var isShown: Bool { groupID != nil }
 
@@ -57,7 +63,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         tiles: TileImageCache,
         icons: AppIconProviding,
         runningApps: RunningAppsMonitor,
-        mostUsed: MostUsedProvider,
+        mostUsed: MostUsedProvider?,
+        allowsEditing: Bool = true,
         actions: Actions
     ) {
         self.store = store
@@ -66,6 +73,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         self.icons = icons
         self.runningApps = runningApps
         self.mostUsed = mostUsed
+        self.allowsEditing = allowsEditing
         self.actions = actions
         super.init()
 
@@ -73,7 +81,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         panel.onCancel = { [weak self] in self?.close(reason: .escape) }
         // @Published fires before the value changes; the main-queue hop reads the new value.
         store.$groups.map { _ in () }
-            .merge(with: preferences.$preferences.map { _ in () }, mostUsed.changes)
+            .merge(with: preferences.$preferences.map { _ in () }, mostUsed?.changes ?? Empty().eraseToAnyPublisher())
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.refresh() }
             .store(in: &subscriptions)
@@ -91,7 +99,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
 
     /// The group with this ID, or the Most Used list while it's turned on.
     func group(withID id: DockGroup.ID) -> DockGroup? {
-        id == MostUsedGroup.id ? mostUsed.group() : store.group(withID: id)
+        id == MostUsedGroup.id ? mostUsed?.group() : store.group(withID: id)
     }
 
     func show(groupID id: DockGroup.ID) {
@@ -122,6 +130,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         guard groupID != nil else { return }
         logger.debug("Closing popup: \(reason.rawValue, privacy: .public)")
         groupID = nil
+        lastClose = (reason, Date())
         removeEventMonitors()
         transition += 1
         let closingTransition = transition
@@ -135,6 +144,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 self.panel.orderOut(nil)
             }
         })
+        onClose?(reason)
     }
 
     func windowDidResignKey(_ notification: Notification) {
@@ -185,7 +195,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             gridHeight: gridHeight,
             scrolls: layout.contentHeight(metrics: metrics) > gridHeight + 0.5,
             usesFrostedGlass: popupPreferences.usesFrostedGlass,
-            isEditable: group.id != MostUsedGroup.id
+            isEditable: allowsEditing && group.id != MostUsedGroup.id,
+            isMostUsed: group.id == MostUsedGroup.id
         )
 
         panel.appearance = popupPreferences.theme.appearance
@@ -239,12 +250,12 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 self?.actions.manageGroups()
             },
             moveApp: { [weak self] app, index in
-                guard let self, id != MostUsedGroup.id else { return }
+                guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Moving \(app.bundleIdentifier, privacy: .public) to \(index) in group \(id, privacy: .public)")
                 self.store.moveApp(bundleIdentifier: app.bundleIdentifier, inGroup: id, to: index)
             },
             removeApp: { [weak self] app in
-                guard let self, id != MostUsedGroup.id else { return }
+                guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Removing \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public)")
                 self.store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id)
             },

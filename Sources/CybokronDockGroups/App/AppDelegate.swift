@@ -7,7 +7,8 @@ import OSLog
 /// Owns the app's long-lived objects. The app is a menu bar utility (`LSUIElement`): it has no Dock
 /// icon, and its windows open from the menu bar or when the app is opened again while running.
 /// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
-/// URLs. App launches are counted all along for the Most Used list.
+/// URLs. App launches are counted all along for the Most Used list. Standalone groups get their own
+/// apps with their own Dock icons (`StandaloneController`); those run with `AgentAppDelegate`.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let store = GroupStore(persistence: JSONFileGroupPersistence())
@@ -23,20 +24,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var usageMonitor = UsageMonitor(usage: usage)
     private lazy var mostUsed = MostUsedProvider(usage: usage, preferences: preferences, icons: icons)
     private lazy var tiles: TileImageCache = TileImageCache(iconProvider: icons)
+    private lazy var standalone = StandaloneController(store: store, preferences: preferences, icons: icons)
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
     private var urlThrottle = CommandThrottle()
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
     private let urlLogger = Logger(subsystem: "com.cybokron.dockgroups", category: "URLScheme")
 
-    private lazy var mainWindowController: MainWindowController = MainWindowController(
-        store: store,
-        tiles: tiles,
-        actions: MainWindowView.Actions(
-            openAll: { [weak self] group in self?.openAll(group) },
-            showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
+    private lazy var mainWindowController: MainWindowController = {
+        let controller = MainWindowController(
+            store: store,
+            tiles: tiles,
+            standalone: standalone,
+            actions: MainWindowView.Actions(
+                openAll: { [weak self] group in self?.openAll(group) },
+                showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
+            )
         )
-    )
+        // A standalone group's Dock tile may have been dragged out of the Dock meanwhile.
+        controller.willShow = { [weak self] in self?.standalone.checkDockTiles() }
+        return controller
+    }()
     private lazy var settingsWindowController: SettingsWindowController = SettingsWindowController(
         preferences: preferences,
         store: store,
@@ -107,6 +115,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             )
         )
         shortcutMonitor.start()
+        // Removes stranded agents, then keeps the standalone groups' agents up to date.
+        standalone.start()
         // The window stays closed at launch unless there's a problem the user needs to see.
         if store.issue != nil {
             mainWindowController.show()
