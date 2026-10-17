@@ -116,9 +116,12 @@ private struct AboutView: View {
             Text("Version \(AppInfo.version) · open source, MIT License")
                 .foregroundStyle(palette.secondaryText)
                 .textSelection(.enabled)
-            HStack(spacing: 16) {
-                Link("Source Code", destination: AppInfo.repositoryURL)
-                Link("License", destination: AppInfo.licenseURL)
+            VStack(spacing: 4) {
+                HStack(spacing: 16) {
+                    Link("Source Code", destination: AppInfo.repositoryURL)
+                    Link("License", destination: AppInfo.licenseURL)
+                    Link("Changelog", destination: UpdateLinks.changelog)
+                }
                 Link("Found a bug? Open an issue", destination: AboutData.issuesURL)
             }
             .tint(PanelPalette.teal)
