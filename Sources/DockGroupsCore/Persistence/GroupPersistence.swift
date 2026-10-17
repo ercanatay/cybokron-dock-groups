@@ -38,8 +38,7 @@ struct GroupsDocument: Codable {
 /// `~/Library/Application Support/Cybokron/DockGroups/groups.json`. Nothing leaves this Mac.
 public struct JSONFileGroupPersistence: GroupPersisting {
     public static var defaultFileURL: URL {
-        URL.applicationSupportDirectory
-            .appending(components: "Cybokron", "DockGroups", "groups.json", directoryHint: .notDirectory)
+        JSONFileSupport.directoryURL.appending(path: "groups.json", directoryHint: .notDirectory)
     }
 
     public let fileURL: URL
@@ -59,27 +58,10 @@ public struct JSONFileGroupPersistence: GroupPersisting {
     }
 
     public func saveGroups(_ groups: [DockGroup]) throws {
-        try FileManager.default.createDirectory(
-            at: fileURL.deletingLastPathComponent(),
-            withIntermediateDirectories: true
-        )
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-        let data = try encoder.encode(GroupsDocument(groups: groups))
-        try data.write(to: fileURL, options: .atomic)
+        try JSONFileSupport.write(GroupsDocument(groups: groups), to: fileURL)
     }
 
     public func preserveUnreadableData() throws -> URL? {
-        guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
-        let baseName = fileURL.deletingPathExtension().lastPathComponent
-        let backupURL = fileURL.deletingLastPathComponent().appending(
-            path: "\(baseName).unreadable-\(formatter.string(from: Date())).json",
-            directoryHint: .notDirectory
-        )
-        try FileManager.default.moveItem(at: fileURL, to: backupURL)
-        return backupURL
+        try JSONFileSupport.moveAside(fileURL)
     }
 }
