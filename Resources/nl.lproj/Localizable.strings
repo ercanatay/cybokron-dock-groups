@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Nederlands)
+  Cybokron Dock Groups
+
+  De Nederlandse tekst van elke sleutel. Tijdelijke aanduidingen blijven behouden: %@ is tekst, %ld een getal, en
+  %1$@, %2$ld … zijn genummerd, zodat de volgorde in de vertaling kan worden aangepast. Sleutels
+  met de uitgang .one/.other zijn het enkelvoud (aantal 1) en het meervoud. De appnaam „Cybokron Dock Groups“,
+  „DockGroups“, „GitHub“, „Siri“, toetssymbolen (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) en bestandsnamen blijven ongewijzigd.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Annuleren";
+"common.add" = "Voeg toe";
+"common.copy" = "Kopiëren";
+"common.copied" = "Gekopieerd";
+"common.close" = "Sluit";
+"common.done" = "Gereed";
+"common.install" = "Installeer";
+"common.tryAgain" = "Probeer opnieuw";
+"common.openAll" = "Open alles";
+"common.hideAll" = "Verberg alles";
+"common.closeAll" = "Sluit alles";
+"common.forceQuit" = "Forceer stoppen";
+"common.addApps" = "Voeg apps toe…";
+"common.addWebsite" = "Voeg website toe…";
+"common.showInFinder" = "Toon in Finder";
+"common.removeFromGroup" = "Verwijder uit groep";
+"common.moveTo" = "Verplaats naar";
+"common.default" = "Standaard";
+"common.auto" = "Automatisch";
+"common.changelog" = "Wijzigingenlogboek";
+"common.links" = "Links";
+"common.openReleasesPage" = "Open de releasepagina";
+"common.openPrivacySettings" = "Open Privacy en beveiliging…";
+"common.checkForUpdates" = "Controleer op updates…";
+"common.settings" = "Instellingen…";
+"common.noLaunchesYet" = "Nog geen starts bijgehouden";
+"common.noAppsInGroup" = "Nog geen apps in deze groep";
+"common.about" = "Over %@";
+"common.hideApp" = "Verberg %@";
+"common.quitApp" = "Stop %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Versie %@ wordt geïnstalleerd…";
+"common.update.restarting" = "Versie %@ is geïnstalleerd — opnieuw starten…";
+"common.appCount.one" = "1 app";
+"common.appCount.other" = "%ld apps";
+"common.groupCount.one" = "1 groep";
+"common.groupCount.other" = "%ld groepen";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Groepen";
+"menuBar.noGroups" = "Nog geen groepen";
+"menuBar.manageGroups" = "Beheer groepen…";
+"menuBar.mostUsed.empty.tooltip" = "Open apps zoals gewoonlijk; de apps die je het vaakst opent verschijnen hier.";
+"menuBar.mostUsed.show" = "Toon meest gebruikt";
+"menuBar.mostUsed.show.tooltip" = "Toon je meest geopende apps in een pop-up.";
+"menuBar.checkForUpdates.tooltip" = "Zoek op GitHub naar een nieuwere versie van %@.";
+"menuBar.mostUsed.app.tooltip.one" = "Open %@. Eén keer geopend.";
+"menuBar.mostUsed.app.tooltip.other" = "Open %1$@. %2$ld keer geopend.";
+"menuBar.group.tooltip" = "Toon de apps in „%@“. Houd ⌥ ingedrukt om ze allemaal tegelijk te openen, of ⇧⌥ om de actieve te verbergen.";
+"menuBar.group.tooltip.shortcut" = "Toon de apps in „%1$@“. Houd ⌥ ingedrukt om ze allemaal tegelijk te openen, of ⇧⌥ om de actieve te verbergen. Sneltoets: %2$@.";
+"menuBar.group.openAll" = "Open alles in „%@“";
+"menuBar.group.openAll.tooltip.one" = "Open de app in „%@“";
+"menuBar.group.openAll.tooltip.other" = "Open alle %1$ld apps in „%2$@“";
+"menuBar.group.noApps" = "„%@“ heeft nog geen apps.";
+"menuBar.group.hideAll" = "Verberg alles in „%@“";
+"menuBar.group.hideAll.tooltip" = "Verberg de actieve apps in „%@“. Apps die niet actief zijn, blijven gesloten.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Bewerk";
+"mainMenu.undo" = "Ongedaan maken";
+"mainMenu.redo" = "Opnieuw";
+"mainMenu.cut" = "Knippen";
+"mainMenu.paste" = "Plakken";
+"mainMenu.selectAll" = "Selecteer alles";
+"mainMenu.window" = "Venster";
+"mainMenu.minimize" = "Minimaliseer";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Open elke app in deze groep; actieve apps komen naar voren.";
+"popup.openAll.help.mostUsed" = "Open elke app in deze lijst; actieve apps komen naar voren.";
+"popup.hideAll.help.group" = "Verberg de actieve apps van deze groep; apps die niet actief zijn, blijven gesloten.";
+"popup.hideAll.help.mostUsed" = "Verberg de actieve apps van deze lijst; apps die niet actief zijn, blijven gesloten.";
+"popup.closeAll.help.group" = "Stop de actieve apps van deze groep. ⌘-klik om te forceren zonder op te slaan.";
+"popup.closeAll.help.mostUsed" = "Stop de actieve apps van deze lijst. ⌘-klik om te forceren zonder op te slaan.";
+"popup.summary.websites.one" = "1 website";
+"popup.summary.websites.other" = "%ld websites";
+"popup.summary.running" = "%ld actief";
+"popup.summary.byLaunches" = "op starts";
+"popup.filter.noMatch" = "Geen apps komen overeen met „%@“";
+"popup.filter.noMatch.hint" = "Druk op Delete of Esc om het filter te wissen.";
+"popup.empty.mostUsed.hint" = "Open apps zoals gewoonlijk om je geschiedenis op te bouwen.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Sorteer de apps in deze groep op naam, van A naar Z.";
+"popup.footer.sortAZ.accessibility" = "Sorteer van A naar Z";
+"popup.footer.filter.matches" = "Filter: „%@“  ·  ↩ opent de geselecteerde app  ·  esc wist";
+"popup.footer.filter.noMatch" = "Filter: „%@“  ·  geen overeenkomst  ·  ⌫ of esc wist";
+"popup.footer.hint.mostUsed" = "Gerangschikt op hoe vaak je ze opent  ·  ⌘-klik op Sluit alles om te forceren";
+"popup.footer.hint.group" = "Sluit alles:  ⌥-klik stopt normaal  ·  ⌘-klik forceert";
+"popup.footer.drag.remove" = "Laat los om %@ uit deze groep te verwijderen";
+"popup.footer.drag.free" = "Zet %@ op een willekeurige cel; op een andere app om te wisselen  ·  sleep naar buiten om te verwijderen";
+"popup.footer.drag.ordered" = "Zet %@ neer om het te plaatsen  ·  sleep het uit de pop-up om het te verwijderen";
+"popup.cell.accessibility.website" = "Website %@";
+"popup.cell.hint.website" = "Opent de website in je browser";
+"popup.cell.hint.running" = "Brengt de app naar voren";
+"popup.cell.hint.open" = "Opent de app";
+"popup.cell.help.openWebsite" = "Open %@ in je browser.";
+"popup.cell.help.bringToFront" = "Breng %@ naar voren.";
+"popup.cell.help.openApp" = "Open %@.";
+"popup.cell.help.missing" = "%@ staat niet op deze Mac.";
+"popup.cell.help.drag.freeItem" = "Sleep naar een willekeurige cel of op een ander item om ze te wisselen, of naar buiten de pop-up om het uit de groep te verwijderen.";
+"popup.cell.help.drag.freeApp" = "Sleep naar een willekeurige cel of op een andere app om ze te wisselen, of naar buiten de pop-up om het uit de groep te verwijderen.";
+"popup.cell.help.drag.ordered" = "Sleep om de volgorde te wijzigen, of naar buiten de pop-up om het uit de groep te verwijderen.";
+"popup.cell.help.drag.missing" = "Sleep het naar buiten de pop-up om het uit de groep te verwijderen.";
+"popup.menu.open" = "Open";
+"popup.menu.copyURL" = "Kopieer URL";
+"popup.accessibility.moveEarlier" = "Verplaats omhoog";
+"popup.accessibility.moveLater" = "Verplaats omlaag";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Nog geen groepen";
+"groupWindow.empty.noSelection" = "Geen groep geselecteerd";
+"groupWindow.empty.noGroups.description" = "Voeg een groep toe om apps te verzamelen die je samen gebruikt.";
+"groupWindow.empty.noSelection.description" = "Selecteer een groep om deze te bewerken.";
+"groupWindow.addGroup" = "Voeg een groep toe";
+"groupWindow.rename.title" = "Hernoem groep";
+"groupWindow.rename.confirm" = "Hernoem";
+"groupWindow.rename.message" = "Voer een nieuwe naam in voor de groep.";
+"groupWindow.delete.title" = "„%@“ verwijderen?";
+"groupWindow.delete.confirm" = "Verwijder groep";
+"groupWindow.delete.message.standalone" = "Dit verwijdert de groep met haar applijst en haar eigen Dock-pictogram. De apps zelf worden niet beïnvloed.";
+"groupWindow.delete.message" = "Dit verwijdert de groep met haar applijst. De apps zelf worden niet beïnvloed.";
+"groupWindow.sidebar.rename" = "Hernoem…";
+"groupWindow.sidebar.delete" = "Verwijder…";
+"groupWindow.sidebar.add.help" = "Voeg een groep toe";
+"groupWindow.sidebar.delete.help" = "Verwijder de geselecteerde groep";
+"groupWindow.addApps.problem.title" = "Sommige apps konden niet worden toegevoegd";
+"groupWindow.section.group" = "Groep";
+"groupWindow.name" = "Naam";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Kies…";
+"groupWindow.section.apps" = "Apps";
+"groupWindow.apps.empty" = "Nog geen apps. Gebruik „%1$@“ om apps voor deze groep te kiezen, of „%2$@“ voor een weblink.";
+"groupWindow.addWebsite.help" = "Voeg een weblink toe aan deze groep. Deze opent in je standaardbrowser.";
+"groupWindow.sortAZ" = "Sorteer A→Z";
+"groupWindow.sortAZ.help" = "Sorteer de apps in deze groep op naam, van A naar Z. Sleep ze om de volgorde handmatig aan te passen.";
+"groupWindow.showPopup" = "Toon pop-up";
+"groupWindow.showPopup.help" = "Toon de pop-up van deze groep boven het Dock.";
+"groupWindow.hideAll.help" = "Verberg de actieve apps van deze groep. Apps die niet actief zijn, blijven gesloten.";
+"groupWindow.apps.moveHint" = "Om een app naar een andere groep te verplaatsen, sleep je hem naar die groep in de zijbalk, of gebruik je %@ in het contextmenu.";
+"groupWindow.app.notFound" = "Niet gevonden op deze Mac · %@";
+"groupWindow.app.remove.website" = "Verwijder %@ uit deze groep.";
+"groupWindow.app.remove" = "Verwijder %@ uit deze groep. De app zelf wordt niet beïnvloed.";
+"groupWindow.section.dockTile" = "Dock-tegel";
+"groupWindow.tile.preview" = "Voorbeeld";
+"groupWindow.tile.shows" = "Toont";
+"groupWindow.tile.kind.grid" = "Raster met apppictogrammen";
+"groupWindow.tile.background" = "Achtergrond";
+"groupWindow.tile.backgroundColor" = "Achtergrondkleur";
+"groupWindow.tile.pinned" = "Houd de tegel vastgezet in het Dock";
+"groupWindow.tile.preview.accessibility" = "Voorbeeld van de tegel, %ld punten";
+"groupWindow.section.standalone" = "Zelfstandig";
+"groupWindow.standalone.toggle" = "Zelfstandig Dock-pictogram";
+"groupWindow.standalone.help" = "Geef deze groep een eigen app, met een eigen pictogram in het Dock.";
+"groupWindow.standalone.settingUp" = "Dock-pictogram wordt ingesteld…";
+"groupWindow.standalone.removing" = "Dock-pictogram wordt verwijderd…";
+"groupWindow.standalone.groupApp" = "Groepsapp";
+"groupWindow.standalone.updateDockIcon" = "Werk Dock-pictogram bij";
+"groupWindow.standalone.updateDockIcon.help" = "Start het Dock opnieuw met een verse pictogramcache, zodat de tegel het huidige pictogram van de groep toont.";
+"groupWindow.standalone.staleIcon" = "Het Dock toont nog het vorige pictogram.";
+"groupWindow.standalone.footer" = "Geeft de groep een eigen kleine app, met de tegel hierboven als pictogram, aan het eind van het Dock. Klikken erop toont de pop-up van de groep (⌥-klik opent alle apps), ook als %@ niet actief is; rechtsklikken toont de apps van de groep (Instellingen → Pop-up). Als je dit uitzet, de groep verwijdert of het pictogram uit het Dock sleept, verdwijnt die app. Het toevoegen of verwijderen van het pictogram start het Dock even opnieuw.";
+"groupWindow.section.popup" = "Pop-up";
+"groupWindow.popup.columns" = "Kolommen";
+"groupWindow.popup.maxRows" = "Maximaal aantal rijen";
+"groupWindow.popup.appNames" = "Appnamen";
+"groupWindow.popup.show" = "Toon";
+"groupWindow.popup.hide" = "Verberg";
+"groupWindow.popup.position" = "Positie";
+"groupWindow.popup.footer" = "„%@“ volgt de pop-upinstellingen van de app.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Effen";
+"choice.tileBackground.gradient" = "Verloop";
+"choice.tileBackground.glass" = "Glas";
+"choice.popupAnchor.dockCenter" = "Gecentreerd boven het Dock";
+"choice.popupAnchor.dockIcon" = "Boven het aangeklikte pictogram";
+"choice.theme.dark" = "Donker";
+"choice.theme.light" = "Licht";
+"choice.theme.system" = "Volg systeem";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Voeg website toe";
+"addWebsite.title" = "Voeg website toe aan „%@“";
+"addWebsite.address" = "Adres:";
+"addWebsite.address.accessibility" = "Websiteadres";
+"addWebsite.name" = "Naam:";
+"addWebsite.name.accessibility" = "Websitenaam, optioneel";
+"addWebsite.name.placeholder" = "Optioneel";
+"addWebsite.hint" = "Opent in je standaardbrowser. Laat de naam leeg om het adres van de site te gebruiken.";
+"addWebsite.duplicate" = "„%@“ staat al in deze groep.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Voeg apps toe aan groep";
+"appPicker.message" = "Kies de apps die je aan „%@“ wilt toevoegen.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "De apps in „%@“ konden niet worden geopend.";
+"problems.launch.someFailed" = "Sommige apps in „%@“ konden niet worden geopend.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "niet gevonden op deze Mac.";
+"problems.launch.opened" = "geopend.";
+"problems.quit.force" = "Sommige apps in „%@“ konden niet worden geforceerd gestopt.";
+"problems.quit.graceful" = "Aan sommige apps in „%@“ kon niet worden gevraagd om te stoppen.";
+"problems.hide" = "Sommige apps in „%@“ konden niet worden verborgen.";
+"problems.standalone.failed" = "„%@“ kon geen eigen Dock-pictogram krijgen.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "De app van deze groep kan de groep niet openen.";
+"agent.damaged.message" = "%1$@\n\nZet in %2$@ Zelfstandig uit en weer aan, zodat de groep haar app opnieuw kan opbouwen.";
+"agent.error.groupMismatch" = "De instellingen van de app horen bij een andere groep.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Al ingeschakeld? Na een update kan het item bij de vorige versie horen: selecteer %@, verwijder het met −, en voeg de app daarna opnieuw toe met +.";
+
+/* Settings window */
+"settings.window.title" = "Instellingen";
+
+/* Settings tabs */
+"settings.tab.popup" = "Pop-up";
+"settings.tab.shortcuts" = "Sneltoetsen en Siri";
+"settings.tab.updates" = "Updates";
+"settings.tab.backup" = "Back-up";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Taal";
+"general.language.system" = "Systeem (%1$@)";
+"general.language.restartNote" = "De nieuwe taal wordt van kracht nadat de app opnieuw is gestart.";
+"general.language.restartNow" = "Start nu opnieuw";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Thema";
+"settings.popup.frostedGlass" = "Mat glas als achtergrond";
+"settings.popup.appearance.header" = "Uiterlijk van de pop-up";
+"settings.popup.appearance.footer" = "Het thema geldt alleen voor de pop-up; dit venster volgt het uiterlijk van macOS.";
+"settings.popup.columns" = "Kolommen";
+"settings.popup.columns.detail" = "Automatisch houdt de standaardbreedte van de pop-up aan; een getal maakt de pop-up precies zo breed als de groep nodig heeft.";
+"settings.popup.maxRows" = "Maximaal aantal rijen";
+"settings.popup.maxRows.detail" = "Beperkt de hoogte van de pop-up; grotere groepen scrollen.";
+"settings.popup.showNames" = "Toon appnamen";
+"settings.popup.position" = "Positie";
+"settings.popup.position.detail" = "Boven het aangeklikte pictogram opent een pop-up boven het Dock-pictogram van de groep, of onder het menubalkpictogram als je het via het menu kiest. Pop-ups die je met een sneltoets, een link of Siri opent, blijven gecentreerd boven het Dock.";
+"settings.popup.layout.header" = "Lay-out van de pop-up";
+"settings.popup.layout.footer" = "Dit zijn de standaardinstellingen voor elke groep. Elke groep kan ze overschrijven onder Beheer groepen.";
+"settings.popup.freeLayout" = "Vrije lay-out";
+"settings.popup.freeLayout.detail" = "Apps blijven in de cel waarheen je ze sleept, en de andere verschuiven niet; een app op een andere zetten wisselt de twee.";
+"settings.popup.arranging.header" = "Apps rangschikken";
+"settings.popup.arranging.footer" = "Uit: de apps van een groep vullen de pop-up in volgorde en maken ruimte als je er een verplaatst. A→Z in de pop-up sorteert een groep in beide gevallen op naam.";
+"settings.popup.restoreWindows" = "Herstel vensters bij het opnieuw openen van een actieve app";
+"settings.popup.restoreWindows.detail" = "Klikken op een actieve app brengt zijn verborgen en geminimaliseerde vensters terug, net als klikken in het Dock. Uit: de app komt alleen naar voren.";
+"settings.popup.runningApps.header" = "Actieve apps";
+"settings.popup.dockMenus" = "Menu op pictogrammen van groepen in het Dock";
+"settings.popup.dockMenus.detail" = "Rechtsklik op het Dock-pictogram van een zelfstandige groep voor de apps, Open alles, Verberg alles en Sluit alles, zodra het pictogram is aangeklikt. De app wordt daarna als actief getoond in het Dock en in ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Zelfstandige Dock-pictogrammen";
+"settings.popup.ax.granted" = "Toegang tot Toegankelijkheid verleend: geminimaliseerde vensters komen ook terug";
+"settings.popup.ax.required" = "Voor het herstellen van geminimaliseerde vensters is toegang tot Toegankelijkheid nodig";
+"settings.popup.ax.detail" = "Sta %@ toe onder Privacy en beveiliging → Toegankelijkheid. Tot die tijd komen verborgen apps nog terug, en wordt aan apps gevraagd om te worden geopend zoals vanuit het Dock. Pictogrammen van zelfstandige groepen hebben die toegang nodig voor hun eigen apps.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Open groep-pop-ups met sneltoetsen";
+"settings.shortcuts.modifiers" = "Modifiertoetsen";
+"settings.shortcuts.keys" = "Sneltoetsen";
+"settings.shortcuts.keys.detail" = "Houd deze toetsen ingedrukt en druk op 1 voor de eerste groep, 2 voor de tweede, enzovoort. Druk nogmaals om de pop-up te sluiten.";
+"settings.shortcuts.header" = "Sneltoetsen";
+"settings.shortcuts.ax.granted" = "Werkt in elke app";
+"settings.shortcuts.ax.needed" = "Heeft toegang tot Toegankelijkheid nodig";
+"settings.shortcuts.ax.detail" = "Om de sneltoetsen op te merken terwijl je in andere apps werkt, sta %@ toe onder Privacy en beveiliging → Toegankelijkheid. Tot die tijd werken ze alleen wanneer de pop-up of een venster ervan actief is.";
+"settings.shortcuts.noGroups" = "Nog geen groepen.";
+"settings.shortcuts.assigned.header" = "Toegewezen groepen";
+"settings.shortcuts.assigned.footer.limit" = "Alleen de eerste negen groepen hebben sneltoetsen. Sleep groepen in Beheer groepen om de volgorde te wijzigen.";
+"settings.shortcuts.assigned.footer" = "Sneltoetsen volgen de volgorde van de groepen in Beheer groepen.";
+"settings.shortcuts.siri.group" = "Groep";
+"settings.shortcuts.siri.quoted" = "„%@“";
+"settings.shortcuts.siri.noGroups" = "Voeg een groep toe om te zien wat je Siri ervoor kunt vragen.";
+"settings.shortcuts.openShortcuts" = "Open Snelkoppelingen";
+"settings.shortcuts.shortcutsApp" = "App Snelkoppelingen";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group en Show Group zijn daar acties, net als in Spotlight: voeg ze toe aan je eigen snelkoppelingen, met je eigen trigger.";
+"settings.shortcuts.siri.header" = "Siri en Snelkoppelingen";
+"settings.shortcuts.siri.footer" = "Vraag Siri met deze woorden, met je stem of door te typen. Ze gebruiken de huidige naam van de groep; snelkoppelingen die je maakt blijven werken na een hernoeming.";
+"settings.shortcuts.links.noGroups" = "Voeg een groep toe om de links ervan te zien.";
+"settings.shortcuts.links.footer" = "Open een link vanuit een script of een andere app, bijvoorbeeld met `open` in Terminal. Een groep wordt aangeduid met haar naam (hoofdletters, accenten en leestekens doen er niet toe) of, als de naam dubbelzinnig is, met haar ID. Voeg ?mode=force toe aan een stoplink om te forceren.";
+"settings.shortcuts.copy.help" = "Kopieer „%@“ naar het klembord.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Toon meest gebruikt in de menubalk";
+"settings.mostUsed.appsShown" = "Getoonde apps";
+"settings.mostUsed.appsShown.detail" = "De meest geopende apps, in het menu en in de pop-up Meest gebruikt.";
+"settings.mostUsed.sessionLength" = "Sessieduur";
+"settings.mostUsed.together" = "Samen geopend binnen";
+"settings.mostUsed.together.detail" = "Apps die binnen deze tijd van elkaar zijn geopend, tellen als samen gebruikt, wat ze iets omhoog brengt.";
+"settings.mostUsed.footer" = "Apps worden gerangschikt op hoe vaak je ze opent, vanuit het Dock, Finder, Spotlight of een groep. Starts worden geteld, ook als de lijst verborgen is.";
+"settings.mostUsed.recorded" = "Geregistreerd";
+"settings.mostUsed.clear" = "Wis geschiedenis…";
+"settings.mostUsed.history" = "Geschiedenis";
+"settings.mostUsed.history.detail" = "Alleen opgeslagen op deze Mac, in usage-stats.json en usage-cooccurrence.json in Application Support.";
+"settings.mostUsed.usageHistory.header" = "Gebruiksgeschiedenis";
+"settings.mostUsed.clear.confirm.title" = "Gebruiksgeschiedenis wissen?";
+"settings.mostUsed.clear.confirm.button" = "Wis geschiedenis";
+"settings.mostUsed.clear.confirm.message" = "De lijst Meest gebruikt begint opnieuw. Je groepen en apps worden niet beïnvloed.";
+"settings.mostUsed.summary.none" = "Nog geen starts";
+"settings.mostUsed.summary.launches.one" = "1 start";
+"settings.mostUsed.summary.launches.other" = "%ld starts";
+"settings.mostUsed.summary" = "%1$@ van %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Automatisch controleren op updates";
+"settings.updates.currentVersion" = "Huidige versie";
+"settings.updates.lastChecked" = "Laatst gecontroleerd";
+"settings.updates.checkNow" = "Controleer nu";
+"settings.updates.otherVersions" = "Andere versies…";
+"settings.updates.footer" = "Controleert bij het starten en elke 6 uur de GitHub-releases van het project; alleen het versienummer van de app wordt meegestuurd. Een nieuwe versie wordt pas geïnstalleerd nadat je Downloaden en installeren kiest. Andere versies… installeert elke gepubliceerde release, oudere of nieuwere; teruggaan slaat de nieuwere versies over bij automatische controles.";
+"settings.updates.viewChangelog" = "Bekijk wijzigingenlogboek";
+"settings.updates.latestPath" = "Terug op het nieuwste pad: elke nieuwere release wordt aangeboden";
+"settings.updates.skipped" = "Overgeslagen nieuwere versies: %@";
+"settings.updates.clear" = "Wis";
+"settings.updates.clear.help" = "Laat automatische controles deze versies weer aanbieden";
+"settings.updates.never" = "Nooit";
+"settings.updates.status.idle" = "Niet gecontroleerd sinds de app is gestart";
+"settings.updates.status.checking" = "Controleren…";
+"settings.updates.status.upToDate" = "Je hebt de nieuwste versie (v%@)";
+"settings.updates.status.available" = "Versie %@ is beschikbaar";
+"settings.updates.showUpdate" = "Toon update…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Andere versies";
+"settings.otherVersions.intro" = "Installeer elke gepubliceerde release van %@, oudere of nieuwere. De app sluit af en opent opnieuw als de versie die je kiest.";
+"settings.otherVersions.releasesLink" = "Open de releasepagina op GitHub";
+"settings.otherVersions.loading" = "Releases worden geladen van GitHub…";
+"settings.otherVersions.none" = "GitHub toont geen gepubliceerde releases.";
+"settings.otherVersions.current" = "Huidig";
+"settings.otherVersions.noDownload" = "Geen download";
+"settings.otherVersions.install.help" = "Installeer versie %@";
+"settings.otherVersions.install.noImage" = "Deze release heeft geen schijfimage om van te installeren.";
+"settings.otherVersions.confirm.title" = "Versie %@ installeren?";
+"settings.otherVersions.confirm.quits" = "%1$@ wordt afgesloten en opent opnieuw als versie %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Versie %@ kan zichzelf niet bijwerken: om terug te gaan, download je een nieuwere versie van de releasepagina.";
+"settings.otherVersions.confirm.skips" = "Automatische controles slaan de nieuwere versies dan over (%@); Controleer op updates… biedt ze nog steeds aan.";
+"settings.otherVersions.confirm.older" = "Een oudere versie kent mogelijk de functies niet die sindsdien zijn toegevoegd; overweeg eerst een back-up te exporteren (Instellingen → Back-up).";
+"settings.otherVersions.confirm.upgrade" = "Overgeslagen versies worden gewist, zodat automatische controles elke nieuwere release weer aanbieden.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Exporteer instellingen…";
+"settings.backup.export" = "Exporteer";
+"settings.backup.export.detail" = "Slaat je groepen en instellingen op in een .dockgroups-bestand.";
+"settings.backup.import.button" = "Importeer instellingen…";
+"settings.backup.import" = "Importeer";
+"settings.backup.import.detail" = "Vervangt je groepen en instellingen door die uit een back-upbestand, of voegt de nieuwe groepen uit de back-up samen met die van jou.";
+"settings.backup.footer" = "De back-up bevat je groepen, hun apps en elke instelling. Starttellingen van Meest gebruikt zijn niet inbegrepen. Het bestand blijft waar je het opslaat.";
+"settings.backup.status.exported" = "Geëxporteerd naar „%@“";
+"settings.backup.status.restored" = "%1$@ hersteld met %2$@";
+"settings.backup.status.merged" = "%@ uit de back-up samengevoegd";
+"settings.backup.status.mergedSkipped" = "%1$@ uit de back-up samengevoegd; %2$ld stond er al";
+"settings.backup.exportPanel.title" = "Exporteer instellingen";
+"settings.backup.exportPanel.message" = "Sla je groepen en instellingen op in een back-upbestand.";
+"settings.backup.exportFailed" = "De instellingen konden niet worden geëxporteerd";
+"settings.backup.importPanel.title" = "Importeer instellingen";
+"settings.backup.importPanel.message" = "Kies een %@-back-up om te herstellen.";
+"settings.backup.readFailed" = "Het bestand kon niet worden gelezen";
+"settings.backup.confirm.title" = "De groepen en instellingen in deze back-up importeren?";
+"settings.backup.confirm.replaceAll" = "Vervang alles";
+"settings.backup.confirm.merge" = "Samenvoegen";
+"settings.backup.restoreFailed" = "De back-up kon niet worden hersteld";
+"settings.backup.restoreFailed.kept" = "%@ Je huidige groepen en instellingen zijn behouden.";
+"settings.backup.mergeFailed" = "De back-up kon niet worden samengevoegd";
+"settings.backup.mergeFailed.kept" = "%@ Je huidige groepen zijn behouden.";
+"settings.backup.rejected.notABackup" = "Kies een .dockgroups-bestand dat is gemaakt met Exporteer instellingen…. Er is niets gewijzigd.";
+"settings.backup.rejected.newer" = "Er is niets gewijzigd.";
+"settings.backup.confirm.noGroups" = "De back-up bevat geen groepen.";
+"settings.backup.confirm.noGroups.exported" = "De back-up bevat geen groepen, geëxporteerd %@.";
+"settings.backup.confirm.contents" = "De back-up bevat %1$@ met %2$@.";
+"settings.backup.confirm.contents.exported" = "De back-up bevat %1$@ met %2$@, geëxporteerd %3$@.";
+"settings.backup.confirm.replace" = "Vervang alles gebruikt de groepen en instellingen uit de back-up in plaats van die van jou.";
+"settings.backup.confirm.replaced.one" = "1 huidige groep met dezelfde naam als een groep in de back-up wordt erdoor vervangen.";
+"settings.backup.confirm.replaced.other" = "%ld huidige groepen met dezelfde naam als een groep in de back-up worden erdoor vervangen.";
+"settings.backup.confirm.removed.one" = "1 huidige groep die niet in de back-up staat, wordt verwijderd.";
+"settings.backup.confirm.removed.other" = "%ld huidige groepen die niet in de back-up staan, worden verwijderd.";
+"settings.backup.confirm.replaceSettings" = "Je instellingen (pop-up, sneltoetsen, Meest gebruikt en updates) worden ook vervangen.";
+"settings.backup.confirm.merge.nothing" = "Samenvoegen behoudt je groepen en instellingen en voegt niets toe.";
+"settings.backup.confirm.merge.allHere" = "Samenvoegen behoudt je groepen en instellingen; elke groep uit de back-up staat er al, dus er wordt niets toegevoegd.";
+"settings.backup.confirm.merge.adds" = "Samenvoegen behoudt je groepen en instellingen en voegt %1$@ met %2$@ uit de back-up toe.";
+"settings.backup.confirm.skipped.one" = "1 groep die er al is (dezelfde naam) wordt overgeslagen.";
+"settings.backup.confirm.skipped.other" = "%ld groepen die er al zijn (dezelfde naam) worden overgeslagen.";
+"settings.backup.confirm.final" = "De starttellingen van Meest gebruikt blijven behouden. Een kopie van je huidige bestanden wordt ernaast opgeslagen in Application Support. Dit kan niet ongedaan worden gemaakt.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Opslaan naar bestand…";
+"settings.diagnostics.export" = "Exporteer diagnose";
+"settings.diagnostics.export.detail" = "Een tekstrapport om bij een GitHub-issue of supportverzoek te voegen.";
+"settings.diagnostics.header" = "Diagnose";
+"settings.diagnostics.footer" = "Toont de versies van de app en macOS, het model van je Mac, waar de app is geïnstalleerd, de toegang tot Toegankelijkheid, je instellingen, updatecontroles, je groepsnamen met het aantal apps en recente fouten. De apps in je groepen worden niet vermeld. Er wordt niets verstuurd.";
+"settings.diagnostics.copied" = "Diagnose gekopieerd naar het klembord";
+"settings.diagnostics.saved" = "Opgeslagen naar „%@“";
+"settings.diagnostics.failed" = "Het rapport kon niet worden opgeslagen: %@";
+"settings.diagnostics.panel.title" = "Diagnose opslaan";
+"settings.diagnostics.panel.message" = "Sla het diagnoserapport op als tekstbestand, bijvoorbeeld om bij een GitHub-issue te voegen.";
+"settings.diagnostics.panel.prompt" = "Sla op";
+
+/* Software Update window */
+"updateWindow.title" = "Software-update";
+"updateWindow.checking" = "Controleren op updates…";
+"updateWindow.upToDate.title" = "Je hebt de nieuwste versie!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ is de nieuwste beschikbare versie.";
+"updateWindow.available.title" = "Er is een nieuwe versie van %@ beschikbaar!";
+"updateWindow.available.message" = "Versie %1$@ is beschikbaar — jij hebt %2$@.";
+"updateWindow.available.noImage" = "Deze release heeft geen schijfimage voor automatische installatie; download het van de releasepagina.";
+"updateWindow.available.question" = "Wil je hem nu downloaden en installeren?";
+"updateWindow.skip" = "Sla deze versie over";
+"updateWindow.remindLater" = "Herinner me later";
+"updateWindow.openReleasePage" = "Open de releasepagina";
+"updateWindow.downloadAndInstall" = "Downloaden en installeren";
+"updateWindow.downloading" = "Versie %@ wordt gedownload…";
+"updateWindow.restartsWhenDone" = "%@ wordt opnieuw gestart als het klaar is.";
+"updateWindow.reopening" = "%@ wordt opnieuw geopend.";
+"updateWindow.dryRun.title" = "Proefrun voltooid";
+"updateWindow.dryRun.message" = "Versie %1$@ is gedownload, gecontroleerd en gekopieerd naar %2$@. Er is niets vervangen.";
+"updateWindow.checkFailed" = "Kon niet controleren op updates";
+"updateWindow.installFailed" = "Versie %@ kon niet worden geïnstalleerd";
+"updateWindow.link.releases" = "Releases";
+"updateWindow.link.releasePage" = "Releasepagina";
+"updateWindow.releaseNotes" = "Releasenotities";
+"updateWindow.releaseNotes.none" = "Deze release heeft geen notities.";
+"updateWindow.relaunchFailed" = "Versie %@ is geïnstalleerd, maar de app kon zichzelf niet opnieuw starten. Sluit hem af en open hem opnieuw.";
+
+/* About window */
+"about.section.findMe" = "Vind me online";
+"about.section.support" = "Steun dit project";
+"about.section.books" = "Mijn boeken";
+"about.section.software" = "Mijn open-sourcesoftware";
+"about.fullList" = "Volledige lijst op github.com/ercanatay";
+"about.section.blogs" = "Medium-blogs";
+"about.icon.accessibility" = "Pictogram van %@";
+"about.version" = "Versie %@ · open source, MIT-licentie";
+"about.website" = "Website";
+"about.sourceCode" = "Broncode";
+"about.license" = "Licentie";
+"about.reportBug" = "Een bug gevonden? Open een issue";
+"about.inspiredBy" = "Geïnspireerd door de functionaliteit van DockGroups. %@ is een onafhankelijke, originele implementatie die helemaal opnieuw is geschreven; het bevat geen code of illustraties van DockGroups.";
+"about.project.dockGroups" = "Deze app · Dock-groepen voor macOS";
+"about.project.intelComputerUse" = "Native macOS-desktopautomatisering voor Intel-Macs via MCP.";
+"about.project.exchangeRate" = "PHP/MySQL-wisselkoers- en portfoliotracker met live scrape en GitHub-releaseupdates.";
+"about.project.backlinkChecker" = "Controleert ankertekst, dofollow/nofollow en HTTP-statussen van backlinks.";
+"about.project.consentManager" = "Vertalingsplug-in voor de YOOtheme Pro 5 Consent Manager (WordPress.org).";
+"about.project.antigravityUpdater" = "Lichtgewicht macOS-updater voor Antigravity Tools, 21 talen.";
+"about.project.widgetVisibility" = "WP-plug-in zonder Jetpack voor de zichtbaarheid van widgets, met ondersteuning voor afstammelingen.";
+"about.project.forbiddenContent" = "Detecteert verboden trefwoorden (bijv. 'Casino') in berichttitels — als een WP-auditcontrole.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Toon %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Start %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Stop %1$@ in %2$@";
+"core.invocation.showPopup" = "Toon pop-up";
+"core.invocation.openAll" = "Open alles";
+"core.invocation.hideAll" = "Verberg alles";
+"core.invocation.closeAll" = "Sluit alles";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Er is geen webbrowser ingesteld om het te openen.";
+"core.launch.notOpened" = "De app is niet geopend.";
+"core.group.defaultName" = "Nieuwe groep";
+"core.website.error.empty" = "Voer een webadres in.";
+"core.website.error.invalid" = "Dit is geen geldig webadres.";
+"core.website.error.scheme" = "Alleen http- en https-adressen kunnen worden toegevoegd, niet „%@:“.";
+"core.website.error.credentials" = "Verwijder de gebruikersnaam en het wachtwoord uit het adres.";
+"core.persistence.groups.newer" = "Het groepenbestand is opgeslagen door een nieuwere versie van Cybokron Dock Groups (formaat %ld).";
+"core.backup.error.notABackup" = "Dit bestand is geen back-up van Cybokron Dock Groups.";
+"core.backup.error.newer" = "Deze back-up is gemaakt met een nieuwere versie van Cybokron Dock Groups (back-upformaat %ld). Werk de app bij om hem te herstellen.";
+"core.persistence.usage.newer" = "De gebruiksstatistieken zijn opgeslagen door een nieuwere versie van Cybokron Dock Groups (formaat %ld).";
+"core.agent.configuration.newer" = "De instellingen van de groep zijn opgeslagen door een nieuwere versie van Cybokron Dock Groups (formaat %ld).";
+"core.agent.error.icon" = "Het pictogram van de groep kon niet worden getekend.";
+"core.agent.error.bundleWrite" = "De app van de groep kon niet worden aangemaakt: %@";
+"core.agent.error.toolMissing" = "Een systeemhulpmiddel dat hiervoor nodig is, ontbreekt: %@.";
+"core.agent.error.signing" = "macOS vereist dat elke app is ondertekend, en het ondertekenen van de app van de groep is op deze Mac mislukt, dus er is niets geïnstalleerd.";
+"core.agent.error.registration" = "macOS heeft de app van de groep niet geregistreerd: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups kon zijn eigen uitvoerbaar bestand niet lezen: %@";
+"core.agent.error.noExecutable" = "De app heeft geen uitvoerbaar bestand.";
+"core.dock.saveFailed" = "De instellingen van het Dock konden niet worden gewijzigd.";
+"core.store.loadFailed.title" = "Je groepen konden niet worden geladen";
+"core.store.loadFailed.kept" = "%1$@ Er wordt gestart met een lege groepenlijst. Een kopie is bewaard op „%2$@“.";
+"core.store.loadFailed.empty" = "%@ Er wordt gestart met een lege groepenlijst.";
+"core.store.loadFailed.suspended" = "%@ Om het bestaande bestand te beschermen, worden wijzigingen pas opgeslagen nadat de app opnieuw is gestart.";
+"core.store.saveFailed.title" = "Je wijzigingen konden niet worden opgeslagen";
+"core.preferences.saveFailed" = "Je instellingen konden niet worden opgeslagen: %@";
+"core.websiteIcon.accessibility" = "Website";
+"core.update.check.notHTTP" = "Het antwoord was geen HTTP.";
+"core.update.check.malformed" = "De releaseinformatie van GitHub kon niet worden gelezen.";
+"core.update.check.unsupportedTag" = "De nieuwste release („%@“) heeft geen versienummer als tag.";
+"core.update.check.noRelease" = "Er is nog geen release gepubliceerd.";
+"core.update.check.rateLimited" = "GitHub beperkt op dit moment de verzoeken. Probeer het over een uur opnieuw.";
+"core.update.check.httpStatus" = "GitHub antwoordde met HTTP-status %ld.";
+"core.update.check.network" = "GitHub kon niet worden bereikt: %@";
+"core.update.check.noVersion" = "Deze kopie van de app heeft geen versienummer, dus die kan niet worden vergeleken.";
+"core.update.install.insecureURL" = "Het downloadadres van de update is niet veilig (%@).";
+"core.update.install.downloadFailed" = "De update kon niet worden gedownload: %@";
+"core.update.install.sizeMismatch" = "De gedownloade update is onvolledig (%1$ld van %2$ld bytes).";
+"core.update.install.checksum" = "De gedownloade update komt niet overeen met de gepubliceerde checksum, dus is hij niet geïnstalleerd.";
+"core.update.install.mountFailed" = "Het schijfimage van de update kon niet worden geopend: %@";
+"core.update.install.appNotFound" = "Het schijfimage van de update bevat de app niet.";
+"core.update.install.wrongApp" = "Het schijfimage van de update bevat een andere app (%@).";
+"core.update.install.versionMismatch" = "De gedownloade app is versie %1$@, maar de release is %2$@.";
+"core.update.install.replaceFailed" = "De nieuwe versie kon niet worden geplaatst, dus de huidige is behouden: %@";
+"core.update.install.rollbackFailed" = "De update is mislukt en de vorige versie kon niet worden teruggezet. Die is bewaard op %@.";
+"core.update.location.translocated" = "macOS draait deze kopie vanaf een tijdelijke alleen-lezen locatie. Verplaats de app naar je map Programma's, open hem vanaf daar en probeer het opnieuw.";
+"core.update.location.notFound" = "De actieve app is niet gevonden op %@.";
+"core.update.location.readOnly" = "De app draait vanaf een alleen-lezen volume, zoals zijn schijfimage. Kopieer hem eerst naar je map Programma's.";
+"core.update.location.noPermission" = "Je hebt geen toestemming om de app in „%@“ te vervangen. Download de nieuwe versie in plaats daarvan van de releasepagina.";
+"core.update.install.noFile" = "De server heeft geen bestand verstuurd.";
+"core.update.install.httpStatus" = "HTTP-status %ld.";
+"core.update.install.copyFailed" = "Het kopiëren van de app is mislukt: %@";
+"core.mostUsed.name" = "Meest gebruikt";

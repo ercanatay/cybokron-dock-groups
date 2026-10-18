@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Svenska)
+  Cybokron Dock Groups
+
+  Den svenska texten för varje nyckel. Platshållare behålls: %@ är text, %ld ett tal, och
+  %1$@, %2$ld … är numrerade så att ordningen kan ändras i översättningen. Nycklar som slutar på
+  .one/.other är singular (antal 1) och plural. Appnamnet „Cybokron Dock Groups“,
+  „DockGroups“, „GitHub“, „Siri“, tangentsymbolerna (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) och filnamn förblir oförändrade.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Avbryt";
+"common.add" = "Lägg till";
+"common.copy" = "Kopiera";
+"common.copied" = "Kopierad";
+"common.close" = "Stäng";
+"common.done" = "Klar";
+"common.install" = "Installera";
+"common.tryAgain" = "Försök igen";
+"common.openAll" = "Öppna alla";
+"common.hideAll" = "Dölj alla";
+"common.closeAll" = "Stäng alla";
+"common.forceQuit" = "Tvinga att avsluta";
+"common.addApps" = "Lägg till appar…";
+"common.addWebsite" = "Lägg till webbplats…";
+"common.showInFinder" = "Visa i Finder";
+"common.removeFromGroup" = "Ta bort från grupp";
+"common.moveTo" = "Flytta till";
+"common.default" = "Standard";
+"common.auto" = "Auto";
+"common.changelog" = "Ändringslogg";
+"common.links" = "Länkar";
+"common.openReleasesPage" = "Öppna sidan med versioner";
+"common.openPrivacySettings" = "Öppna Sekretess och säkerhet…";
+"common.checkForUpdates" = "Sök efter uppdateringar…";
+"common.settings" = "Inställningar…";
+"common.noLaunchesYet" = "Inga starter registrerade ännu";
+"common.noAppsInGroup" = "Inga appar i den här gruppen ännu";
+"common.about" = "Om %@";
+"common.hideApp" = "Dölj %@";
+"common.quitApp" = "Avsluta %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Installerar version %@…";
+"common.update.restarting" = "Version %@ är installerad — startar om…";
+"common.appCount.one" = "1 app";
+"common.appCount.other" = "%ld appar";
+"common.groupCount.one" = "1 grupp";
+"common.groupCount.other" = "%ld grupper";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Grupper";
+"menuBar.noGroups" = "Inga grupper ännu";
+"menuBar.manageGroups" = "Hantera grupper…";
+"menuBar.mostUsed.empty.tooltip" = "Öppna appar som vanligt; de du öppnar oftast visas här.";
+"menuBar.mostUsed.show" = "Visa mest använda";
+"menuBar.mostUsed.show.tooltip" = "Visa dina mest öppnade appar i en popup.";
+"menuBar.checkForUpdates.tooltip" = "Sök på GitHub efter en nyare version av %@.";
+"menuBar.mostUsed.app.tooltip.one" = "Öppna %@. Öppnad en gång.";
+"menuBar.mostUsed.app.tooltip.other" = "Öppna %1$@. Öppnad %2$ld gånger.";
+"menuBar.group.tooltip" = "Visa apparna i „%@“. Håll ⌥ för att öppna dem alla samtidigt, eller ⇧⌥ för att dölja de som kör.";
+"menuBar.group.tooltip.shortcut" = "Visa apparna i „%1$@“. Håll ⌥ för att öppna dem alla samtidigt, eller ⇧⌥ för att dölja de som kör. Genväg: %2$@.";
+"menuBar.group.openAll" = "Öppna alla i „%@“";
+"menuBar.group.openAll.tooltip.one" = "Öppna appen i „%@“";
+"menuBar.group.openAll.tooltip.other" = "Öppna alla %1$ld appar i „%2$@“";
+"menuBar.group.noApps" = "„%@“ har inga appar ännu.";
+"menuBar.group.hideAll" = "Dölj alla i „%@“";
+"menuBar.group.hideAll.tooltip" = "Dölj apparna som kör i „%@“. Appar som inte kör förblir stängda.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Redigera";
+"mainMenu.undo" = "Ångra";
+"mainMenu.redo" = "Gör om";
+"mainMenu.cut" = "Klipp ut";
+"mainMenu.paste" = "Klistra in";
+"mainMenu.selectAll" = "Markera allt";
+"mainMenu.window" = "Fönster";
+"mainMenu.minimize" = "Minimera";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Öppna varje app i den här gruppen; appar som kör kommer till förgrunden.";
+"popup.openAll.help.mostUsed" = "Öppna varje app i den här listan; appar som kör kommer till förgrunden.";
+"popup.hideAll.help.group" = "Dölj gruppens appar som kör; appar som inte kör förblir stängda.";
+"popup.hideAll.help.mostUsed" = "Dölj listans appar som kör; appar som inte kör förblir stängda.";
+"popup.closeAll.help.group" = "Avsluta gruppens appar som kör. ⌘-klicka för att tvinga avslut utan att spara.";
+"popup.closeAll.help.mostUsed" = "Avsluta listans appar som kör. ⌘-klicka för att tvinga avslut utan att spara.";
+"popup.summary.websites.one" = "1 webbplats";
+"popup.summary.websites.other" = "%ld webbplatser";
+"popup.summary.running" = "%ld körs";
+"popup.summary.byLaunches" = "efter starter";
+"popup.filter.noMatch" = "Inga appar matchar „%@“";
+"popup.filter.noMatch.hint" = "Tryck på Delete eller Esc för att rensa filtret.";
+"popup.empty.mostUsed.hint" = "Öppna appar som vanligt för att börja bygga din historik.";
+"popup.footer.sortAZ" = "A→Ö";
+"popup.footer.sortAZ.help" = "Sortera apparna i den här gruppen efter namn, A till Ö.";
+"popup.footer.sortAZ.accessibility" = "Sortera A till Ö";
+"popup.footer.filter.matches" = "Filter: „%@“  ·  ↩ öppnar den markerade appen  ·  esc rensar";
+"popup.footer.filter.noMatch" = "Filter: „%@“  ·  ingen träff  ·  ⌫ eller esc rensar";
+"popup.footer.hint.mostUsed" = "Rangordnat efter hur ofta du öppnar dem  ·  ⌘-klicka på Stäng alla för att tvinga avslut";
+"popup.footer.hint.group" = "Stäng alla:  ⌥-klick avslutar normalt  ·  ⌘-klick tvingar avslut";
+"popup.footer.drag.remove" = "Släpp för att ta bort %@ från den här gruppen";
+"popup.footer.drag.free" = "Släpp %@ i valfri ruta; på en annan app för att byta plats  ·  dra ut för att ta bort";
+"popup.footer.drag.ordered" = "Släpp för att placera %@  ·  dra ut ur popupen för att ta bort den";
+"popup.cell.accessibility.website" = "Webbplatsen %@";
+"popup.cell.hint.website" = "Öppnar webbplatsen i din webbläsare";
+"popup.cell.hint.running" = "För appen till förgrunden";
+"popup.cell.hint.open" = "Öppnar appen";
+"popup.cell.help.openWebsite" = "Öppna %@ i din webbläsare.";
+"popup.cell.help.bringToFront" = "För %@ till förgrunden.";
+"popup.cell.help.openApp" = "Öppna %@.";
+"popup.cell.help.missing" = "%@ finns inte på den här Mac:en.";
+"popup.cell.help.drag.freeItem" = "Dra till valfri ruta eller till ett annat objekt för att byta plats, eller ut ur popupen för att ta bort det från gruppen.";
+"popup.cell.help.drag.freeApp" = "Dra till valfri ruta eller till en annan app för att byta plats, eller ut ur popupen för att ta bort den från gruppen.";
+"popup.cell.help.drag.ordered" = "Dra för att ändra ordning, eller ut ur popupen för att ta bort den från gruppen.";
+"popup.cell.help.drag.missing" = "Dra den ut ur popupen för att ta bort den från gruppen.";
+"popup.menu.open" = "Öppna";
+"popup.menu.copyURL" = "Kopiera URL";
+"popup.accessibility.moveEarlier" = "Flytta tidigare";
+"popup.accessibility.moveLater" = "Flytta senare";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Inga grupper ännu";
+"groupWindow.empty.noSelection" = "Ingen grupp vald";
+"groupWindow.empty.noGroups.description" = "Lägg till en grupp för att samla appar som du använder tillsammans.";
+"groupWindow.empty.noSelection.description" = "Välj en grupp för att redigera den.";
+"groupWindow.addGroup" = "Lägg till en grupp";
+"groupWindow.rename.title" = "Byt namn på grupp";
+"groupWindow.rename.confirm" = "Byt namn";
+"groupWindow.rename.message" = "Ange ett nytt namn för gruppen.";
+"groupWindow.delete.title" = "Ta bort „%@“?";
+"groupWindow.delete.confirm" = "Ta bort grupp";
+"groupWindow.delete.message.standalone" = "Det här tar bort gruppen och dess applista, samt dess egen ikon i Dock. Apparna påverkas inte.";
+"groupWindow.delete.message" = "Det här tar bort gruppen och dess applista. Apparna påverkas inte.";
+"groupWindow.sidebar.rename" = "Byt namn…";
+"groupWindow.sidebar.delete" = "Ta bort…";
+"groupWindow.sidebar.add.help" = "Lägg till en grupp";
+"groupWindow.sidebar.delete.help" = "Ta bort den valda gruppen";
+"groupWindow.addApps.problem.title" = "Vissa appar kunde inte läggas till";
+"groupWindow.section.group" = "Grupp";
+"groupWindow.name" = "Namn";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Välj…";
+"groupWindow.section.apps" = "Appar";
+"groupWindow.apps.empty" = "Inga appar ännu. Använd „%1$@“ för att välja appar till den här gruppen, eller „%2$@“ för en webblänk.";
+"groupWindow.addWebsite.help" = "Lägg till en webblänk i den här gruppen. Den öppnas i din standardwebbläsare.";
+"groupWindow.sortAZ" = "Sortera A→Ö";
+"groupWindow.sortAZ.help" = "Sortera apparna i den här gruppen efter namn, A till Ö. Dra dem för att ändra ordning manuellt.";
+"groupWindow.showPopup" = "Visa popup";
+"groupWindow.showPopup.help" = "Visa gruppens popup över Dock.";
+"groupWindow.hideAll.help" = "Dölj gruppens appar som kör. Appar som inte kör förblir stängda.";
+"groupWindow.apps.moveHint" = "För att flytta en app till en annan grupp, dra den till den gruppen i sidofältet, eller använd %@ i dess snabbmeny.";
+"groupWindow.app.notFound" = "Hittades inte på den här Mac:en · %@";
+"groupWindow.app.remove.website" = "Ta bort %@ från den här gruppen.";
+"groupWindow.app.remove" = "Ta bort %@ från den här gruppen. Appen påverkas inte.";
+"groupWindow.section.dockTile" = "Dock-ruta";
+"groupWindow.tile.preview" = "Förhandsvisning";
+"groupWindow.tile.shows" = "Visar";
+"groupWindow.tile.kind.grid" = "Rutnät med appikoner";
+"groupWindow.tile.background" = "Bakgrund";
+"groupWindow.tile.backgroundColor" = "Bakgrundsfärg";
+"groupWindow.tile.pinned" = "Håll rutan fast i Dock";
+"groupWindow.tile.preview.accessibility" = "Förhandsvisning av rutan, %ld punkter";
+"groupWindow.section.standalone" = "Fristående";
+"groupWindow.standalone.toggle" = "Fristående Dock-ikon";
+"groupWindow.standalone.help" = "Ge den här gruppen en egen app, med en egen ikon i Dock.";
+"groupWindow.standalone.settingUp" = "Ställer in Dock-ikonen…";
+"groupWindow.standalone.removing" = "Tar bort Dock-ikonen…";
+"groupWindow.standalone.groupApp" = "Gruppapp";
+"groupWindow.standalone.updateDockIcon" = "Uppdatera Dock-ikon";
+"groupWindow.standalone.updateDockIcon.help" = "Starta om Dock med en ny ikoncache, så att rutan visar gruppens aktuella ikon.";
+"groupWindow.standalone.staleIcon" = "Dock visar fortfarande den föregående ikonen.";
+"groupWindow.standalone.footer" = "Ger gruppen en egen liten app, med rutan ovan som ikon, sist i Dock. Ett klick på den visar gruppens popup (⌥-klick öppnar alla dess appar), även när %@ inte kör; högerklick visar gruppens appar (Inställningar → Popup). Om du stänger av det, tar bort gruppen eller drar ikonen ur Dock tas den appen bort. Att lägga till eller ta bort ikonen startar om Dock en stund.";
+"groupWindow.section.popup" = "Popup";
+"groupWindow.popup.columns" = "Kolumner";
+"groupWindow.popup.maxRows" = "Maximalt antal rader";
+"groupWindow.popup.appNames" = "Appnamn";
+"groupWindow.popup.show" = "Visa";
+"groupWindow.popup.hide" = "Dölj";
+"groupWindow.popup.position" = "Position";
+"groupWindow.popup.footer" = "„%@“ följer appens inställningar för popup.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Enfärgad";
+"choice.tileBackground.gradient" = "Övertoning";
+"choice.tileBackground.glass" = "Glas";
+"choice.popupAnchor.dockCenter" = "Centrerad över Dock";
+"choice.popupAnchor.dockIcon" = "Ovanför den klickade ikonen";
+"choice.theme.dark" = "Mörk";
+"choice.theme.light" = "Ljus";
+"choice.theme.system" = "Följ systemet";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Lägg till webbplats";
+"addWebsite.title" = "Lägg till webbplats i „%@“";
+"addWebsite.address" = "Adress:";
+"addWebsite.address.accessibility" = "Webbplatsens adress";
+"addWebsite.name" = "Namn:";
+"addWebsite.name.accessibility" = "Webbplatsens namn, valfritt";
+"addWebsite.name.placeholder" = "Valfritt";
+"addWebsite.hint" = "Öppnas i din standardwebbläsare. Lämna namnet tomt för att använda webbplatsens adress.";
+"addWebsite.duplicate" = "„%@“ finns redan i den här gruppen.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Lägg till appar i grupp";
+"appPicker.message" = "Välj de appar som ska läggas till i „%@“.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "Apparna i „%@“ kunde inte öppnas.";
+"problems.launch.someFailed" = "Vissa appar i „%@“ kunde inte öppnas.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "hittades inte på den här Mac:en.";
+"problems.launch.opened" = "öppnad.";
+"problems.quit.force" = "Vissa appar i „%@“ kunde inte tvingas att avslutas.";
+"problems.quit.graceful" = "Vissa appar i „%@“ kunde inte ombes att avslutas.";
+"problems.hide" = "Vissa appar i „%@“ kunde inte döljas.";
+"problems.standalone.failed" = "„%@“ kunde inte få en egen Dock-ikon.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Gruppens app kan inte öppna sin grupp.";
+"agent.damaged.message" = "%1$@\n\nStäng av och sätt på Fristående igen i %2$@ så att gruppen kan bygga om sin app.";
+"agent.error.groupMismatch" = "Appens inställningar tillhör en annan grupp.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Redan påslagen? Efter en uppdatering kan posten tillhöra den föregående versionen: markera %@, ta bort den med −, och lägg sedan till appen igen med +.";
+
+/* Settings window */
+"settings.window.title" = "Inställningar";
+
+/* Settings tabs */
+"settings.tab.popup" = "Popup";
+"settings.tab.shortcuts" = "Genvägar och Siri";
+"settings.tab.updates" = "Uppdateringar";
+"settings.tab.backup" = "Säkerhetskopia";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Språk";
+"general.language.system" = "System (%1$@)";
+"general.language.restartNote" = "Det nya språket träder i kraft när appen har startat om.";
+"general.language.restartNow" = "Starta om nu";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Tema";
+"settings.popup.frostedGlass" = "Mattat glas som bakgrund";
+"settings.popup.appearance.header" = "Popupens utseende";
+"settings.popup.appearance.footer" = "Temat gäller bara popupen; det här fönstret följer ditt utseende i macOS.";
+"settings.popup.columns" = "Kolumner";
+"settings.popup.columns.detail" = "Auto behåller popupens standardbredd; ett tal gör popupen precis så bred som gruppen behöver.";
+"settings.popup.maxRows" = "Maximalt antal rader";
+"settings.popup.maxRows.detail" = "Begränsar popupens höjd; större grupper rullar.";
+"settings.popup.showNames" = "Visa appnamn";
+"settings.popup.position" = "Position";
+"settings.popup.position.detail" = "Ovanför den klickade ikonen öppnar en popup över gruppens ikon i Dock, eller under menyradsikonen när den väljs från dess meny. Popupar som öppnas med en genväg, en länk eller Siri förblir centrerade över Dock.";
+"settings.popup.layout.header" = "Popupens layout";
+"settings.popup.layout.footer" = "Dessa är standardvärdena för varje grupp. Varje grupp kan åsidosätta dem under Hantera grupper.";
+"settings.popup.freeLayout" = "Fri layout";
+"settings.popup.freeLayout.detail" = "Appar stannar i rutan du drar dem till, och de andra flyttas inte; om du släpper en app på en annan byts de två.";
+"settings.popup.arranging.header" = "Ordna appar";
+"settings.popup.arranging.footer" = "Av: en grupps appar fyller popupen i ordning och gör plats när du flyttar en. A→Ö i popupen sorterar en grupp efter namn i båda fallen.";
+"settings.popup.restoreWindows" = "Återställ fönster när en app som kör öppnas igen";
+"settings.popup.restoreWindows.detail" = "Ett klick på en app som kör återställer dess dolda och minimerade fönster, precis som ett klick i Dock gör. Av: appen kommer bara till förgrunden.";
+"settings.popup.runningApps.header" = "Appar som kör";
+"settings.popup.dockMenus" = "Meny på gruppikoner i Dock";
+"settings.popup.dockMenus.detail" = "Högerklicka på en fristående gruppikon i Dock för dess appar, Öppna alla, Dölj alla och Stäng alla, när ikonen en gång har klickats. Dess app visas sedan som igång i Dock och i ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Fristående ikoner i Dock";
+"settings.popup.ax.granted" = "Åtkomst till Tillgänglighet beviljad: minimerade fönster återkommer också";
+"settings.popup.ax.required" = "Att återställa minimerade fönster kräver åtkomst till Tillgänglighet";
+"settings.popup.ax.detail" = "Tillåt %@ under Sekretess och säkerhet → Tillgänglighet. Tills dess återkommer dolda appar ändå, och appar ombeds öppnas igen som från Dock. Ikoner för fristående grupper behöver åtkomsten för sina egna appar.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Öppna gruppopupar med tangentbordsgenvägar";
+"settings.shortcuts.modifiers" = "Modifierartangenter";
+"settings.shortcuts.keys" = "Genvägstangenter";
+"settings.shortcuts.keys.detail" = "Håll ned dessa tangenter och tryck på 1 för första gruppen, 2 för den andra, och så vidare. Tryck igen för att stänga popupen.";
+"settings.shortcuts.header" = "Tangentbordsgenvägar";
+"settings.shortcuts.ax.granted" = "Fungerar i alla appar";
+"settings.shortcuts.ax.needed" = "Kräver åtkomst till Tillgänglighet";
+"settings.shortcuts.ax.detail" = "För att genvägarna ska märkas när du arbetar i andra appar, tillåt %@ under Sekretess och säkerhet → Tillgänglighet. Tills dess fungerar de bara när dess popup eller ett av dess fönster är aktivt.";
+"settings.shortcuts.noGroups" = "Inga grupper ännu.";
+"settings.shortcuts.assigned.header" = "Tilldelade grupper";
+"settings.shortcuts.assigned.footer.limit" = "Endast de nio första grupperna har genvägar. Dra grupper i Hantera grupper för att ändra ordningen.";
+"settings.shortcuts.assigned.footer" = "Genvägar följer ordningen på grupperna i Hantera grupper.";
+"settings.shortcuts.siri.group" = "Grupp";
+"settings.shortcuts.siri.quoted" = "„%@“";
+"settings.shortcuts.siri.noGroups" = "Lägg till en grupp för att se vad du kan be Siri om för den.";
+"settings.shortcuts.openShortcuts" = "Öppna Genvägar";
+"settings.shortcuts.shortcutsApp" = "Appen Genvägar";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group och Show Group är åtgärder där och i Spotlight: lägg till dem i dina egna genvägar, med din egen utlösare.";
+"settings.shortcuts.siri.header" = "Siri och Genvägar";
+"settings.shortcuts.siri.footer" = "Be Siri med dessa ord, med röst eller genom att skriva. De använder gruppens aktuella namn; genvägar du bygger fortsätter att fungera efter ett namnbyte.";
+"settings.shortcuts.links.noGroups" = "Lägg till en grupp för att se dess länkar.";
+"settings.shortcuts.links.footer" = "Öppna en länk från ett skript eller en annan app, t.ex. med `open` i Terminal. En grupp anges med sitt namn (versaler, accenter och skiljetecken spelar ingen roll) eller, om namnet är tvetydigt, med dess ID. Lägg till ?mode=force på en avslutslänk för att tvinga avslut.";
+"settings.shortcuts.copy.help" = "Kopiera „%@“ till Urklipp.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Visa mest använda i menyraden";
+"settings.mostUsed.appsShown" = "Visade appar";
+"settings.mostUsed.appsShown.detail" = "De mest öppnade apparna, i menyn och i popupen Mest använda.";
+"settings.mostUsed.sessionLength" = "Sessionslängd";
+"settings.mostUsed.together" = "Öppnade tillsammans inom";
+"settings.mostUsed.together.detail" = "Appar som öppnas inom denna tid från varandra räknas som använda tillsammans, vilket flyttar upp dem lite.";
+"settings.mostUsed.footer" = "Appar rangordnas efter hur ofta du öppnar dem, från Dock, Finder, Spotlight eller en grupp. Starter räknas även när listan är dold.";
+"settings.mostUsed.recorded" = "Registrerad";
+"settings.mostUsed.clear" = "Rensa historik…";
+"settings.mostUsed.history" = "Historik";
+"settings.mostUsed.history.detail" = "Lagras endast på den här Mac:en, i usage-stats.json och usage-cooccurrence.json i Application Support.";
+"settings.mostUsed.usageHistory.header" = "Användningshistorik";
+"settings.mostUsed.clear.confirm.title" = "Rensa användningshistoriken?";
+"settings.mostUsed.clear.confirm.button" = "Rensa historik";
+"settings.mostUsed.clear.confirm.message" = "Listan Mest använda börjar om. Dina grupper och appar påverkas inte.";
+"settings.mostUsed.summary.none" = "Inga starter ännu";
+"settings.mostUsed.summary.launches.one" = "1 start";
+"settings.mostUsed.summary.launches.other" = "%ld starter";
+"settings.mostUsed.summary" = "%1$@ av %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Sök efter uppdateringar automatiskt";
+"settings.updates.currentVersion" = "Nuvarande version";
+"settings.updates.lastChecked" = "Senast kontrollerad";
+"settings.updates.checkNow" = "Sök nu";
+"settings.updates.otherVersions" = "Andra versioner…";
+"settings.updates.footer" = "Söker efter projektets GitHub-versioner vid start och var sjätte timme; endast appens versionsnummer skickas med. En ny version installeras först när du väljer Ladda ner och installera. Andra versioner… installerar vilken publicerad version som helst, äldre eller nyare; att gå tillbaka hoppar över de nyare vid automatiska kontroller.";
+"settings.updates.viewChangelog" = "Visa ändringslogg";
+"settings.updates.latestPath" = "Tillbaka på den senaste vägen: varje nyare version erbjuds";
+"settings.updates.skipped" = "Överhoppade nyare versioner: %@";
+"settings.updates.clear" = "Rensa";
+"settings.updates.clear.help" = "Låt automatiska kontroller erbjuda dessa versioner igen";
+"settings.updates.never" = "Aldrig";
+"settings.updates.status.idle" = "Inte kontrollerad sedan appen startade";
+"settings.updates.status.checking" = "Kontrollerar…";
+"settings.updates.status.upToDate" = "Du har den senaste versionen (v%@)";
+"settings.updates.status.available" = "Version %@ finns tillgänglig";
+"settings.updates.showUpdate" = "Visa uppdatering…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Andra versioner";
+"settings.otherVersions.intro" = "Installera vilken publicerad version av %@ som helst, äldre eller nyare. Appen avslutas och öppnas igen som den version du väljer.";
+"settings.otherVersions.releasesLink" = "Öppna sidan med versioner på GitHub";
+"settings.otherVersions.loading" = "Hämtar versioner från GitHub…";
+"settings.otherVersions.none" = "GitHub visar inga publicerade versioner.";
+"settings.otherVersions.current" = "Nuvarande";
+"settings.otherVersions.noDownload" = "Ingen nedladdning";
+"settings.otherVersions.install.help" = "Installera version %@";
+"settings.otherVersions.install.noImage" = "Den här versionen har ingen diskavbild att installera från.";
+"settings.otherVersions.confirm.title" = "Installera version %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ avslutas och öppnas igen som version %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Version %@ kan inte uppdatera sig själv: för att gå tillbaka, ladda ner en nyare version från sidan med versioner.";
+"settings.otherVersions.confirm.skips" = "Automatiska kontroller hoppar då över de nyare versionerna (%@); Sök efter uppdateringar… erbjuder dem fortfarande.";
+"settings.otherVersions.confirm.older" = "En äldre version känner kanske inte till funktioner som lagts till sedan dess; överväg att exportera en säkerhetskopia först (Inställningar → Säkerhetskopia).";
+"settings.otherVersions.confirm.upgrade" = "Överhoppade versioner rensas, så automatiska kontroller erbjuder varje nyare version igen.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Exportera inställningar…";
+"settings.backup.export" = "Exportera";
+"settings.backup.export.detail" = "Sparar dina grupper och inställningar i en .dockgroups-fil.";
+"settings.backup.import.button" = "Importera inställningar…";
+"settings.backup.import" = "Importera";
+"settings.backup.import.detail" = "Ersätter dina grupper och inställningar med dem i en säkerhetskopia, eller slår samman säkerhetskopians nya grupper med dina.";
+"settings.backup.footer" = "Säkerhetskopian innehåller dina grupper, deras appar och alla inställningar. Startantal för Mest använda ingår inte. Filen finns kvar där du sparar den.";
+"settings.backup.status.exported" = "Exporterad till „%@“";
+"settings.backup.status.restored" = "Återställde %1$@ med %2$@";
+"settings.backup.status.merged" = "Sammanslog %@ från säkerhetskopian";
+"settings.backup.status.mergedSkipped" = "Sammanslog %1$@ från säkerhetskopian; %2$ld fanns redan";
+"settings.backup.exportPanel.title" = "Exportera inställningar";
+"settings.backup.exportPanel.message" = "Spara dina grupper och inställningar i en säkerhetskopia.";
+"settings.backup.exportFailed" = "Inställningarna kunde inte exporteras";
+"settings.backup.importPanel.title" = "Importera inställningar";
+"settings.backup.importPanel.message" = "Välj en %@-säkerhetskopia att återställa.";
+"settings.backup.readFailed" = "Filen kunde inte läsas";
+"settings.backup.confirm.title" = "Importera grupperna och inställningarna i den här säkerhetskopian?";
+"settings.backup.confirm.replaceAll" = "Ersätt allt";
+"settings.backup.confirm.merge" = "Slå samman";
+"settings.backup.restoreFailed" = "Säkerhetskopian kunde inte återställas";
+"settings.backup.restoreFailed.kept" = "%@ Dina nuvarande grupper och inställningar behölls.";
+"settings.backup.mergeFailed" = "Säkerhetskopian kunde inte slås samman";
+"settings.backup.mergeFailed.kept" = "%@ Dina nuvarande grupper behölls.";
+"settings.backup.rejected.notABackup" = "Välj en .dockgroups-fil som skapats med Exportera inställningar…. Inget ändrades.";
+"settings.backup.rejected.newer" = "Inget ändrades.";
+"settings.backup.confirm.noGroups" = "Säkerhetskopian innehåller inga grupper.";
+"settings.backup.confirm.noGroups.exported" = "Säkerhetskopian innehåller inga grupper, exporterad %@.";
+"settings.backup.confirm.contents" = "Säkerhetskopian innehåller %1$@ med %2$@.";
+"settings.backup.confirm.contents.exported" = "Säkerhetskopian innehåller %1$@ med %2$@, exporterad %3$@.";
+"settings.backup.confirm.replace" = "Ersätt allt använder säkerhetskopians grupper och inställningar i stället för dina.";
+"settings.backup.confirm.replaced.one" = "1 nuvarande grupp med samma namn som en grupp i säkerhetskopian ersätts av den.";
+"settings.backup.confirm.replaced.other" = "%ld nuvarande grupper med samma namn som en grupp i säkerhetskopian ersätts av dem.";
+"settings.backup.confirm.removed.one" = "1 nuvarande grupp som inte finns i säkerhetskopian tas bort.";
+"settings.backup.confirm.removed.other" = "%ld nuvarande grupper som inte finns i säkerhetskopian tas bort.";
+"settings.backup.confirm.replaceSettings" = "Dina inställningar (popup, genvägar, Mest använda och uppdateringar) ersätts också.";
+"settings.backup.confirm.merge.nothing" = "Sammanslagning behåller dina grupper och inställningar och lägger inte till något.";
+"settings.backup.confirm.merge.allHere" = "Sammanslagning behåller dina grupper och inställningar; varje grupp i säkerhetskopian finns redan här, så den lägger inte till något.";
+"settings.backup.confirm.merge.adds" = "Sammanslagning behåller dina grupper och inställningar och lägger till %1$@ med %2$@ från säkerhetskopian.";
+"settings.backup.confirm.skipped.one" = "1 grupp som redan finns här (samma namn) hoppas över.";
+"settings.backup.confirm.skipped.other" = "%ld grupper som redan finns här (samma namn) hoppas över.";
+"settings.backup.confirm.final" = "Startantalen för Mest använda behålls. En kopia av dina nuvarande filer sparas bredvid dem i Application Support. Detta kan inte ångras.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Spara till fil…";
+"settings.diagnostics.export" = "Exportera diagnostik";
+"settings.diagnostics.export.detail" = "En textrapport att bifoga till ett GitHub-ärende eller en supportförfrågan.";
+"settings.diagnostics.header" = "Diagnostik";
+"settings.diagnostics.footer" = "Listar app- och macOS-versioner, din Macs modell, var appen är installerad, åtkomst till Tillgänglighet, dina inställningar, uppdateringskontroller, namnen på dina grupper med antal appar och senaste fel. Den listar inte apparna i dina grupper. Inget skickas någonstans.";
+"settings.diagnostics.copied" = "Diagnostiken kopierades till Urklipp";
+"settings.diagnostics.saved" = "Sparad till „%@“";
+"settings.diagnostics.failed" = "Rapporten kunde inte sparas: %@";
+"settings.diagnostics.panel.title" = "Spara diagnostik";
+"settings.diagnostics.panel.message" = "Spara diagnostikrapporten som en textfil, t.ex. för att bifoga till ett GitHub-ärende.";
+"settings.diagnostics.panel.prompt" = "Spara";
+
+/* Software Update window */
+"updateWindow.title" = "Programuppdatering";
+"updateWindow.checking" = "Söker efter uppdateringar…";
+"updateWindow.upToDate.title" = "Du har den senaste versionen!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ är den senaste tillgängliga versionen.";
+"updateWindow.available.title" = "En ny version av %@ finns tillgänglig!";
+"updateWindow.available.message" = "Version %1$@ finns tillgänglig — du har %2$@.";
+"updateWindow.available.noImage" = "Den här versionen har ingen diskavbild för automatisk installation; ladda ner den från sidan för versionen.";
+"updateWindow.available.question" = "Vill du ladda ner och installera den nu?";
+"updateWindow.skip" = "Hoppa över den här versionen";
+"updateWindow.remindLater" = "Påminn mig senare";
+"updateWindow.openReleasePage" = "Öppna sidan för versionen";
+"updateWindow.downloadAndInstall" = "Ladda ner och installera";
+"updateWindow.downloading" = "Laddar ner version %@…";
+"updateWindow.restartsWhenDone" = "%@ startar om när det är klart.";
+"updateWindow.reopening" = "%@ öppnas igen.";
+"updateWindow.dryRun.title" = "Testkörningen är klar";
+"updateWindow.dryRun.message" = "Version %1$@ laddades ner, verifierades och kopierades till %2$@. Inget ersattes.";
+"updateWindow.checkFailed" = "Det gick inte att söka efter uppdateringar";
+"updateWindow.installFailed" = "Version %@ kunde inte installeras";
+"updateWindow.link.releases" = "Versioner";
+"updateWindow.link.releasePage" = "Sidan för versionen";
+"updateWindow.releaseNotes" = "Versionsinformation";
+"updateWindow.releaseNotes.none" = "Den här versionen har ingen information.";
+"updateWindow.relaunchFailed" = "Version %@ är installerad, men appen kunde inte starta om sig själv. Avsluta den och öppna den igen.";
+
+/* About window */
+"about.section.findMe" = "Hitta mig online";
+"about.section.support" = "Stöd det här projektet";
+"about.section.books" = "Mina böcker";
+"about.section.software" = "Min programvara med öppen källkod";
+"about.fullList" = "Fullständig lista på github.com/ercanatay";
+"about.section.blogs" = "Medium-bloggar";
+"about.icon.accessibility" = "%@-ikon";
+"about.version" = "Version %@ · öppen källkod, MIT-licens";
+"about.website" = "Webbplats";
+"about.sourceCode" = "Källkod";
+"about.license" = "Licens";
+"about.reportBug" = "Hittade du ett fel? Öppna ett ärende";
+"about.inspiredBy" = "Inspirerad av DockGroups funktioner. %@ är en oberoende, originell implementation skriven från grunden; den innehåller ingen kod eller grafik från DockGroups.";
+"about.project.dockGroups" = "Den här appen · Dock-grupper för macOS";
+"about.project.intelComputerUse" = "Inbyggd macOS-skrivbordsautomation för Intel-Mac via MCP.";
+"about.project.exchangeRate" = "PHP/MySQL-spårare för valutakurser och portfölj med live-skrapning och GitHub-releaseuppdateringar.";
+"about.project.backlinkChecker" = "Kontrollerar ankartext, dofollow/nofollow och HTTP-statusar för backlänkar.";
+"about.project.consentManager" = "Översättningsplugin för YOOtheme Pro 5 Consent Manager (WordPress.org).";
+"about.project.antigravityUpdater" = "Lättviktig macOS-uppdaterare för Antigravity Tools, 21 språk.";
+"about.project.widgetVisibility" = "Jetpack-fri WP-plugin för widgetsynlighet med stöd för underordnade.";
+"about.project.forbiddenContent" = "Upptäcker förbjudna nyckelord (t.ex. 'Casino') i inläggsrubriker — som en WP-granskningskontroll.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Visa %1$@ i %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Starta %1$@ i %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Avsluta %1$@ i %2$@";
+"core.invocation.showPopup" = "Visa popup";
+"core.invocation.openAll" = "Öppna alla";
+"core.invocation.hideAll" = "Dölj alla";
+"core.invocation.closeAll" = "Stäng alla";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Ingen webbläsare är inställd för att öppna den.";
+"core.launch.notOpened" = "Appen öppnades inte.";
+"core.group.defaultName" = "Ny grupp";
+"core.website.error.empty" = "Ange en webbadress.";
+"core.website.error.invalid" = "Det här är inte en giltig webbadress.";
+"core.website.error.scheme" = "Endast http- och https-adresser kan läggas till, inte „%@:“.";
+"core.website.error.credentials" = "Ta bort användarnamnet och lösenordet från adressen.";
+"core.persistence.groups.newer" = "Gruppfilen sparades av en nyare version av Cybokron Dock Groups (format %ld).";
+"core.backup.error.notABackup" = "Den här filen är inte en säkerhetskopia av Cybokron Dock Groups.";
+"core.backup.error.newer" = "Den här säkerhetskopian skapades med en nyare version av Cybokron Dock Groups (säkerhetskopieformat %ld). Uppdatera appen för att återställa den.";
+"core.persistence.usage.newer" = "Användningsstatistiken sparades av en nyare version av Cybokron Dock Groups (format %ld).";
+"core.agent.configuration.newer" = "Gruppens inställningar sparades av en nyare version av Cybokron Dock Groups (format %ld).";
+"core.agent.error.icon" = "Gruppens ikon kunde inte ritas.";
+"core.agent.error.bundleWrite" = "Gruppens app kunde inte skapas: %@";
+"core.agent.error.toolMissing" = "Ett systemverktyg som behövs saknas: %@.";
+"core.agent.error.signing" = "macOS kräver att varje app är kodsignerad, och signeringen av gruppens app misslyckades på den här Mac:en, så ingenting installerades.";
+"core.agent.error.registration" = "macOS registrerade inte gruppens app: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups kunde inte läsa sin egen körbara fil: %@";
+"core.agent.error.noExecutable" = "Appen har ingen körbar fil.";
+"core.dock.saveFailed" = "Dock-inställningarna kunde inte ändras.";
+"core.store.loadFailed.title" = "Dina grupper kunde inte läsas in";
+"core.store.loadFailed.kept" = "%1$@ Startar med en tom grupplista. En kopia sparades i „%2$@“.";
+"core.store.loadFailed.empty" = "%@ Startar med en tom grupplista.";
+"core.store.loadFailed.suspended" = "%@ För att skydda den befintliga filen sparas inga ändringar förrän appen startas om.";
+"core.store.saveFailed.title" = "Dina ändringar kunde inte sparas";
+"core.preferences.saveFailed" = "Dina inställningar kunde inte sparas: %@";
+"core.websiteIcon.accessibility" = "Webbplats";
+"core.update.check.notHTTP" = "Svaret var inte HTTP.";
+"core.update.check.malformed" = "Versionsinformationen från GitHub kunde inte läsas.";
+"core.update.check.unsupportedTag" = "Den senaste versionen („%@“) har inte ett versionsnummer som tagg.";
+"core.update.check.noRelease" = "Ingen version har publicerats ännu.";
+"core.update.check.rateLimited" = "GitHub begränsar just nu förfrågningarna. Försök igen om en timme.";
+"core.update.check.httpStatus" = "GitHub svarade med HTTP-status %ld.";
+"core.update.check.network" = "GitHub kunde inte nås: %@";
+"core.update.check.noVersion" = "Den här kopian av appen har inget versionsnummer, så den kan inte jämföras.";
+"core.update.install.insecureURL" = "Uppdateringens nedladdningsadress är inte säker (%@).";
+"core.update.install.downloadFailed" = "Uppdateringen kunde inte laddas ner: %@";
+"core.update.install.sizeMismatch" = "Den nedladdade uppdateringen är ofullständig (%1$ld av %2$ld byte).";
+"core.update.install.checksum" = "Den nedladdade uppdateringen stämmer inte med sin publicerade checksumma, så den installerades inte.";
+"core.update.install.mountFailed" = "Uppdateringens diskavbild kunde inte öppnas: %@";
+"core.update.install.appNotFound" = "Uppdateringens diskavbild innehåller inte appen.";
+"core.update.install.wrongApp" = "Uppdateringens diskavbild innehåller en annan app (%@).";
+"core.update.install.versionMismatch" = "Den nedladdade appen är version %1$@, men versionen är %2$@.";
+"core.update.install.replaceFailed" = "Den nya versionen kunde inte sättas på plats, så den nuvarande behölls: %@";
+"core.update.install.rollbackFailed" = "Uppdateringen misslyckades och den föregående versionen kunde inte återställas. Den finns kvar på %@.";
+"core.update.location.translocated" = "macOS kör den här kopian från en tillfällig skrivskyddad plats. Flytta appen till mappen Program, öppna den därifrån och försök igen.";
+"core.update.location.notFound" = "Den körande appen hittades inte på %@.";
+"core.update.location.readOnly" = "Appen körs från en skrivskyddad volym, till exempel dess diskavbild. Kopiera den till mappen Program först.";
+"core.update.location.noPermission" = "Du har inte behörighet att ersätta appen i „%@“. Ladda ner den nya versionen från sidan med versioner i stället.";
+"core.update.install.noFile" = "Servern skickade ingen fil.";
+"core.update.install.httpStatus" = "HTTP-status %ld.";
+"core.update.install.copyFailed" = "Det gick inte att kopiera appen: %@";
+"core.mostUsed.name" = "Mest använda";
