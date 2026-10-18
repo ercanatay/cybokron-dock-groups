@@ -31,9 +31,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings → **Shortcuts & Siri** (was Shortcuts) spells out, for a group you pick, what to ask
   Siri (“Launch Work in Cybokron Dock Groups”, Quit, Show) and its four links, each with a Copy
   button, and opens the Shortcuts app.
+- **Popup above the clicked icon**: with Position (Settings → Popup, or a group's own) set to *Above
+  the Clicked Icon*, a standalone group's popup opens centered above its Dock icon — beside it for a
+  left or right Dock, on the display whose Dock was clicked — and a group chosen from the menu bar
+  menu hangs 4 points under the menu bar icon. Shortcuts, links, Siri and Show Popup in the group
+  window keep the popup centered over the Dock. The tile is found through the Dock's accessibility
+  information when the group's app has Accessibility access, else from the clicked point.
+- **Restore windows of running apps**: clicking a running app in a popup, the Most Used menu or a
+  standalone group's Dock menu brings it back as clicking it in the Dock does: a hidden app
+  un-hides, and when all of its windows are minimized they all come back (needs Accessibility
+  access; the app asks once, the first time it would help) — otherwise the app is asked to reopen.
+  Settings → Popup → *Restore windows when reopening an app that is running* (on by default) turns
+  it off, so the app is only brought to the front. Most Used counts this as bringing the app to the
+  front, not as a launch.
 
 ### Changed
 
+- Settings → Popup → Position *Above the Clicked Icon* no longer centers popups opened from the menu
+  bar over the Dock; see above.
 - The import confirmation offers **Replace All**, **Merge** and **Cancel**, and explains what each
   would change.
 - The popup is at least 440 points wide (was 380), so the group name stays readable next to the

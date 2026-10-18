@@ -27,6 +27,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   bring it to the front; **Open All** opens every app; **Hide All** hides the group's running apps
   (apps that aren't running stay closed); **Close All** quits the group's running apps
   normally, ⌘-click force quits them. Escape, a click elsewhere, or switching apps closes it.
+  Clicking a running app brings it back as a Dock click does: a hidden app un-hides and, when all
+  of its windows are minimized, they come back (with Accessibility access; otherwise the app is
+  asked to reopen). Settings → Popup → *Restore windows when reopening an app that is running* (on
+  by default) turns that off.
 - In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
@@ -107,7 +111,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
     crash) — unless they're running; those go once they've quit.
 - Settings (⌘,): popup theme (dark by default, light, or matching the system), frosted glass,
   columns (auto or fixed), maximum rows (extra rows scroll), app names, position, free layout. Each
-  group can override the layout settings (except free layout) in its own settings.
+  group can override the layout settings (except free layout) in its own settings. Position *Above
+  the Clicked Icon* opens a standalone group's popup right above its Dock icon (beside it for a side
+  Dock, on that display) and a group chosen from the menu bar menu under the menu bar icon;
+  shortcuts, links and Siri keep the popup centered over the Dock.
 - **Updates** from the project's [GitHub releases](https://github.com/ercanatay/cybokron-dock-groups/releases):
   **Check for Updates…** in the menu bar menu shows a small window with the result. The app also
   checks shortly after launch and every 6 hours (Settings → Updates turns that off; only the app's
@@ -251,11 +258,38 @@ macro plugin. If SwiftPM reports `disk I/O error` for its build database (seen w
 synced folders such as `~/Documents`), build elsewhere:
 `SWIFTPM_SCRATCH_PATH=~/Library/Caches/CybokronDockGroups scripts/build-app.sh`.
 
+### Testing manually
+
+Popup placement and window restoring involve the Dock, the menu bar and other apps, so they're
+checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron Dock Groups.app`):
+
+1. **Above the clicked icon** — set Settings → Popup → Position to *Above the Clicked Icon*.
+   - Choose a group from the menu bar menu: the popup hangs 4 points under the menu bar icon,
+     centered on it and kept on screen.
+   - Turn on *Standalone Dock icon* for a group and click its Dock icon: the popup opens centered
+     above the icon. Move the Dock to the left and to the right (System Settings → Desktop & Dock):
+     it opens beside the Dock at the icon's height. With a second display, click the icon in the
+     Dock there: the popup opens on that display.
+   - Press the group's shortcut (⌃⌥1), or run `open "cybokrondockgroups://open/<group>"`: the
+     popup stays centered over the Dock. With Position *Centered Over the Dock*, every popup is.
+2. **Restoring windows** — keep Settings → Popup → *Restore windows when reopening an app that is
+   running* on, with the app allowed under Privacy & Security → Accessibility.
+   - Hide a group's app with ⌘H, then click it in the popup: it comes back to the front.
+   - Minimize every window of an app (⌘M), then click it in the popup: all of its windows come
+     back and the frontmost is raised. With one window still open, the click only brings the app
+     forward and the minimized windows stay in the Dock.
+   - Remove the app from the Accessibility list, minimize an app's windows and click it: macOS asks
+     for access, and the app is asked to reopen as from the Dock meanwhile. The prompt appears only
+     once; `defaults delete com.cybokron.dockgroups didPromptAccessibilityForWindows` brings it back.
+   - Choose the app from the Most Used menu, or from a standalone group's Dock menu: same results.
+   - Turn the setting off: a click only brings the app to the front, hidden and minimized windows
+     stay where they are.
+
 ## Project layout
 
 | Path | Contents |
 | --- | --- |
-| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions), updates (release parsing, version comparison, asset choice, download, install and rollback) (no UI) |
+| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, restoring running apps' windows, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions), updates (release parsing, version comparison, asset choice, download, install and rollback) (no UI) |
 | `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows, standalone group apps (`Standalone/` keeps them in sync, `Agent/` runs a group's own app), updater and its window (`Updates/`) |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
 | `Resources` | `Info.plist`, asset catalog with the placeholder app icon |
