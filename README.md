@@ -104,7 +104,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   version number is sent). A newer version is offered with its release notes; **Download and
   Install** downloads the universal DMG, checks its size and SHA-256 checksum, copies the app out of
   the read-only mounted image, moves the running app to `updates/backups/`, puts the new one in its
-  place and relaunches — putting the previous one back if that fails. See [CHANGELOG.md](CHANGELOG.md).
+  place and relaunches — putting the previous one back if that fails. The update window shows its
+  progress and tells you when the app restarts. See [CHANGELOG.md](CHANGELOG.md).
+- **About** window with a "Find Me Online" row of social profile icons (LinkedIn, X, GitHub, YouTube
+  and more).
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
   `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the

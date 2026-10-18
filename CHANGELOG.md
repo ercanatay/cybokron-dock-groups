@@ -5,6 +5,20 @@ All notable changes to Cybokron Dock Groups are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- The About window shows a "Find Me Online" row with social profile icons (LinkedIn, X, Instagram,
+  YouTube, TikTok, Threads, Reddit, Pinterest, Steam, WordPress.org, GitHub, Medium, Facebook, Vimeo,
+  Flickr, Ekşi Sözlük, Wikipedia).
+
+### Changed
+
+- The Update window now shows the installation stages: "Installing version X…" while the update
+  replaces the app, then "Installed version X — restarting…" with a short "is reopening" note just
+  before the app relaunches.
+
 ## [0.5.2] - 2026-10-17
 
 ### Added
