@@ -315,7 +315,7 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
 | `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, restoring running apps' windows, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions), updates (release parsing, version comparison, asset choice, download, install and rollback) (no UI) |
 | `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows, standalone group apps (`Standalone/` keeps them in sync, `Agent/` runs a group's own app), updater and its window (`Updates/`) |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
-| `Resources` | `Info.plist`, asset catalog with the placeholder app icon |
+| `Resources` | `Info.plist`, asset catalog with the placeholder app icon, string tables (`<language>.lproj/Localizable.strings`; English in `en.lproj`, every key listed in [`docs/l10n-keys.md`](docs/l10n-keys.md)) |
 | `scripts` | SwiftPM build/test scripts, App Intents protocol list for the build, icon generator |
 
 The placeholder app icon is drawn by `scripts/generate-app-icon.swift` from plain shapes.

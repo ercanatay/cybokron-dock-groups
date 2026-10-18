@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Localization framework**: the app's user-facing text — menus, popup, group window, Settings,
+  the update and About windows, alerts and the core's error messages — comes from string tables,
+  `Resources/<language>.lproj/Localizable.strings`, with the English text in `en.lproj` (listed in
+  `docs/l10n-keys.md`); a missing translation falls back to English. Both build paths copy every
+  `.lproj` folder into the app, and standalone groups' apps get a copy. No translations yet: the
+  app is still in English. Siri and Shortcuts texts follow separately.
+
 ## [0.5.6] - 2026-10-18
 
 ### Added
