@@ -126,7 +126,7 @@ public struct ReleaseInfo: Hashable, Sendable {
 }
 
 /// A list element that decodes to `nil` instead of failing the whole list.
-private struct Lenient<Value: Decodable>: Decodable {
+struct Lenient<Value: Decodable>: Decodable {
     let value: Value?
 
     init(from decoder: Decoder) throws {

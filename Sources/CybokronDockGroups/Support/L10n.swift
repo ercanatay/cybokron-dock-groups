@@ -900,6 +900,39 @@ enum L10n {
         }
     }
 
+    /// Settings → Changelog: the release notes of the published versions.
+    enum Changelog {
+        static var tab: String { tr("changelog.tab", "Changelog") }
+        /// "Current version: 0.6.0".
+        static func currentVersion(_ version: String) -> String {
+            tr("changelog.currentVersion", "Current version: %@", version)
+        }
+        static var refresh: String { tr("changelog.refresh", "Refresh") }
+        static var refreshHelp: String { tr("changelog.refresh.help", "Load the latest release notes from GitHub") }
+        /// "Last updated 3 minutes ago"; `relativeDate` is the system's relative date, e.g. "3 minutes ago".
+        static func lastUpdated(_ relativeDate: String) -> String {
+            tr("changelog.lastUpdated", "Last updated %@", relativeDate)
+        }
+        static var header: String { tr("changelog.header", "Release Notes") }
+        static var footer: String {
+            tr(
+                "changelog.footer",
+                "From the project's GitHub releases. A copy stays on this Mac, so the notes show offline too."
+            )
+        }
+        static var latest: String { tr("changelog.latest", "Latest") }
+        static var installed: String { tr("changelog.installed", "Installed") }
+        static var prerelease: String { tr("changelog.prerelease", "Pre-release") }
+        static var noNotes: String { tr("changelog.noNotes", "No release notes for this version.") }
+        static var loading: String { tr("changelog.loading", "Loading release notes from GitHub…") }
+        static var unavailable: String { tr("changelog.unavailable", "Release notes unavailable") }
+        static var showingCachedCopy: String {
+            tr("changelog.error.cached", "Could not load release notes — showing cached copy.")
+        }
+        static var retryHint: String { tr("changelog.retry", "Click Refresh to try again.") }
+        static var openRelease: String { tr("changelog.openRelease", "View on GitHub") }
+    }
+
     // MARK: - Update window
 
     enum UpdateWindow {

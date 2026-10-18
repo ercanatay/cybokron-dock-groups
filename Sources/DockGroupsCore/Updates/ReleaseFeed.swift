@@ -15,8 +15,9 @@ public protocol ReleaseListFetching: Sendable {
 /// `ReleaseFetching` with GitHub's REST API (`GET /repos/{owner}/{repo}/releases/latest`), which
 /// returns the newest release that is neither a draft nor a prerelease, and `ReleaseListFetching`
 /// with `GET /repos/{owner}/{repo}/releases` (the newest 100, more than the project has). No token is
-/// sent; GitHub allows 60 such requests an hour per IP address, far more than the checks need. These
-/// are the only requests the app makes besides downloading a release's disk image.
+/// sent; GitHub allows 60 such requests an hour per IP address, far more than the checks need. These,
+/// and Settings → Changelog's list of releases (`GitHubChangelogFeed`), are the only requests the app
+/// makes besides downloading a release's disk image.
 public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
     /// Environment variable that points the updater at another release JSON, e.g. a local test
     /// server: `CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json`.
@@ -24,11 +25,7 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
 
     /// `UpdateLinks.latestReleaseAPI`, unless `urlOverrideVariable` holds an http(s) URL.
     public static func resolvedURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
-        if let value = environment[urlOverrideVariable]?.trimmingCharacters(in: .whitespaces),
-           let url = URL(string: value), ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil {
-            return url
-        }
-        return UpdateLinks.latestReleaseAPI
+        GitHubAPI.overrideURL(urlOverrideVariable, in: environment) ?? UpdateLinks.latestReleaseAPI
     }
 
     /// Environment variable that points "Other Versions…" at another release list JSON:
@@ -37,11 +34,7 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
 
     /// `UpdateLinks.releasesAPI`, unless `listURLOverrideVariable` holds an http(s) URL.
     public static func resolvedListURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
-        if let value = environment[listURLOverrideVariable]?.trimmingCharacters(in: .whitespaces),
-           let url = URL(string: value), ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil {
-            return url
-        }
-        return UpdateLinks.releasesAPI
+        GitHubAPI.overrideURL(listURLOverrideVariable, in: environment) ?? UpdateLinks.releasesAPI
     }
 
     public let url: URL
@@ -74,10 +67,37 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
 
     /// GETs `url` from GitHub's API; HTTP errors become `UpdateCheckError`s.
     private func fetch(_ url: URL) async throws -> Data {
+        switch try await GitHubAPI.get(url, userAgent: userAgent, session: session) {
+        case .ok(let data, _):
+            return data
+        case .notModified:
+            // Only an answer to a request with an ETag; none is sent here.
+            throw UpdateCheckError.httpStatus(304)
+        }
+    }
+}
+
+/// GET requests to GitHub's REST API, shared by the updater and Settings → Changelog: GitHub's JSON
+/// media type and API version, a User-Agent (which GitHub requires) and no token.
+enum GitHubAPI {
+    /// What a GET brought.
+    enum Answer {
+        /// HTTP 200, with the answer's ETag (for a later conditional request).
+        case ok(Data, etag: String?)
+        /// HTTP 304: nothing changed since the copy whose ETag was sent.
+        case notModified
+    }
+
+    /// GETs `url`. With `etag` it's a conditional request (`If-None-Match`), which GitHub answers
+    /// with 304 and no body when nothing changed. Other HTTP errors become `UpdateCheckError`s.
+    static func get(_ url: URL, userAgent: String, session: URLSession, ifNoneMatch etag: String? = nil) async throws -> Answer {
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
         request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
+        if let etag {
+            request.setValue(etag, forHTTPHeaderField: "If-None-Match")
+        }
 
         let data: Data
         let response: URLResponse
@@ -92,7 +112,9 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
         }
         switch http.statusCode {
         case 200:
-            return data
+            return .ok(data, etag: http.value(forHTTPHeaderField: "ETag"))
+        case 304 where etag != nil:
+            return .notModified
         case 404:
             throw UpdateCheckError.noPublishedRelease
         case 403, 429:
@@ -100,5 +122,14 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
         default:
             throw UpdateCheckError.httpStatus(http.statusCode)
         }
+    }
+
+    /// The http(s) URL in the environment variable `variable` (to point a request at a local test
+    /// server), `nil` when it holds none.
+    static func overrideURL(_ variable: String, in environment: [String: String]) -> URL? {
+        guard let value = environment[variable]?.trimmingCharacters(in: .whitespaces),
+              let url = URL(string: value), ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil
+        else { return nil }
+        return url
     }
 }

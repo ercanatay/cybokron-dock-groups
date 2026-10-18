@@ -3,7 +3,8 @@
   Cybokron Dock Groups
 
   The English text of every key. Translations go in Resources/<language>.lproj/Localizable.strings
-  with exactly the same keys. Keep the placeholders: %@ is text, %ld a number, and %1$@, %2$ld …
+  with exactly the same keys (sections marked "English only for now" may still be missing there; the
+  app then shows the English text). Keep the placeholders: %@ is text, %ld a number, and %1$@, %2$ld …
   are numbered so a translation can put them in another order. Keys ending in .one/.other are
   the singular (count 1) and the plural text of a count. The app name "Cybokron Dock Groups",
   "DockGroups", "GitHub", "Siri", key symbols (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) and file names stay as they are.
@@ -406,6 +407,24 @@
 "settings.diagnostics.panel.title" = "Save Diagnostics";
 "settings.diagnostics.panel.message" = "Save the diagnostics report as a text file, e.g. to attach to a GitHub issue.";
 "settings.diagnostics.panel.prompt" = "Save";
+
+/* Settings → Changelog (English only for now: translations show this English text until they add these keys) */
+"changelog.tab" = "Changelog";
+"changelog.currentVersion" = "Current version: %@";
+"changelog.refresh" = "Refresh";
+"changelog.refresh.help" = "Load the latest release notes from GitHub";
+"changelog.lastUpdated" = "Last updated %@";
+"changelog.header" = "Release Notes";
+"changelog.footer" = "From the project's GitHub releases. A copy stays on this Mac, so the notes show offline too.";
+"changelog.latest" = "Latest";
+"changelog.installed" = "Installed";
+"changelog.prerelease" = "Pre-release";
+"changelog.noNotes" = "No release notes for this version.";
+"changelog.loading" = "Loading release notes from GitHub…";
+"changelog.unavailable" = "Release notes unavailable";
+"changelog.error.cached" = "Could not load release notes — showing cached copy.";
+"changelog.retry" = "Click Refresh to try again.";
+"changelog.openRelease" = "View on GitHub";
 
 /* Software Update window */
 "updateWindow.title" = "Software Update";

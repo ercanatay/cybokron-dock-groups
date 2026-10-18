@@ -7,6 +7,8 @@ final class StubURLProtocol: URLProtocol {
     struct Response {
         var status = 200
         var body = Data()
+        /// Extra response headers, e.g. an `ETag`.
+        var headers: [String: String] = [:]
     }
 
     private static let lock = NSLock()
@@ -42,8 +44,8 @@ final class StubURLProtocol: URLProtocol {
             client?.urlProtocol(self, didFailWithError: URLError(.cannotFindHost))
             return
         }
-        let http = HTTPURLResponse(url: url, statusCode: response.status, httpVersion: "HTTP/1.1",
-                                   headerFields: ["Content-Length": "\(response.body.count)"])!
+        let headers = response.headers.merging(["Content-Length": "\(response.body.count)"]) { own, _ in own }
+        let http = HTTPURLResponse(url: url, statusCode: response.status, httpVersion: "HTTP/1.1", headerFields: headers)!
         client?.urlProtocol(self, didReceive: http, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: response.body)
         client?.urlProtocolDidFinishLoading(self)

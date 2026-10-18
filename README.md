@@ -134,13 +134,19 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   progress and tells you when the app restarts. **Other Versions…** in Settings → Updates lists the
   published releases and installs any of them the same way, older or newer; after going back,
   automatic checks skip the newer versions until you go up again. See [CHANGELOG.md](CHANGELOG.md).
+- **Changelog** (Settings → Changelog): the release notes of the newest 30 GitHub releases, newest
+  first (the newest open, the others a click away), with *Latest*, *Installed* and *Pre-release*
+  badges, your current version and a **Refresh** button. A copy is kept on your Mac, so the list
+  shows at once and offline; opening the pane refreshes it in the background when it's more than 10
+  minutes old, and a failed refresh keeps the copy with a short note.
 - **About** window with a "Find Me Online" row of social profile icons (LinkedIn, X, GitHub, YouTube
   and more).
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
   `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
-  standalone groups' apps, and `update-state.json` / `updates/` for the updater (last check,
-  skipped versions, downloads and the previous version's backup).
+  standalone groups' apps, `update-state.json` / `updates/` for the updater (last check,
+  skipped versions, downloads and the previous version's backup), and `changelog-cache.json` for
+  Settings → Changelog's copy of the release notes.
 - **Backup** (Settings → Backup): **Export Settings…** saves the groups and the settings to a
   `.dockgroups` file (JSON); **Import Settings…** asks first, then either **Replace All** (the
   backup's groups and settings instead of yours) or **Merge** (adds the backup's groups whose name you

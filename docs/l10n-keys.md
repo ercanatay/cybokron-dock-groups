@@ -3,7 +3,9 @@
 Every user-facing string of the app, by key, with its English text — the content of
 [`Resources/en.lproj/Localizable.strings`](../Resources/en.lproj/Localizable.strings). Translations
 live in `Resources/<language>.lproj/Localizable.strings` and must have exactly these keys, with the
-same placeholders (`LocalizationTests` check both).
+same placeholders (`LocalizationTests` check both). The one exception are sections marked *English
+only for now*: translations may still lack their keys (the app shows the English text instead) until
+they're translated; `LocalizationTests.awaitingTranslation` lists them.
 
 - `%@` is text and `%ld` a number; `%1$@`, `%2$ld` … are numbered so a translation can reorder them.
 - Keys ending in `.one` / `.other` are the singular (count 1) and plural text of a count.
@@ -12,7 +14,7 @@ same placeholders (`LocalizationTests` check both).
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-463 keys.
+479 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -476,6 +478,27 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.diagnostics.panel.title` | Save Diagnostics |
 | `settings.diagnostics.panel.message` | Save the diagnostics report as a text file, e.g. to attach to a GitHub issue. |
 | `settings.diagnostics.panel.prompt` | Save |
+
+## Settings → Changelog (English only for now: translations show this English text until they add these keys)
+
+| Key | English |
+| --- | --- |
+| `changelog.tab` | Changelog |
+| `changelog.currentVersion` | Current version: %@ |
+| `changelog.refresh` | Refresh |
+| `changelog.refresh.help` | Load the latest release notes from GitHub |
+| `changelog.lastUpdated` | Last updated %@ |
+| `changelog.header` | Release Notes |
+| `changelog.footer` | From the project's GitHub releases. A copy stays on this Mac, so the notes show offline too. |
+| `changelog.latest` | Latest |
+| `changelog.installed` | Installed |
+| `changelog.prerelease` | Pre-release |
+| `changelog.noNotes` | No release notes for this version. |
+| `changelog.loading` | Loading release notes from GitHub… |
+| `changelog.unavailable` | Release notes unavailable |
+| `changelog.error.cached` | Could not load release notes — showing cached copy. |
+| `changelog.retry` | Click Refresh to try again. |
+| `changelog.openRelease` | View on GitHub |
 
 ## Software Update window
 

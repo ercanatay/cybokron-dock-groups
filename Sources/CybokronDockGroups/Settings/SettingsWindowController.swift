@@ -2,8 +2,8 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, the Most Used list, updates, and
-/// backups with the diagnostics report, each in its own pane, picked from a sidebar.
+/// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, the Most Used list, updates,
+/// backups with the diagnostics report, and the changelog, each in its own pane, picked from a sidebar.
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
@@ -32,6 +32,11 @@ final class SettingsWindowController: NSWindowController {
             updater: updater,
             isStatusItemShown: isStatusItemShown
         )
+        // Reads the saved release list now, so the Changelog pane shows it at once.
+        let changelog = ChangelogService(
+            fetcher: GitHubChangelogFeed(appVersion: AppInfo.version),
+            currentVersion: SemanticVersion(AppInfo.version)
+        )
         let hostingController = NSHostingController(
             rootView: SettingsView(
                 preferences: preferences,
@@ -41,6 +46,7 @@ final class SettingsWindowController: NSWindowController {
                 updater: updater,
                 backup: backup,
                 diagnostics: diagnostics,
+                changelog: changelog,
                 paneHeight: Self.idealPaneHeight
             )
         )
@@ -102,6 +108,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
     case mostUsed
     case updates
     case backup
+    case changelog
 
     var id: Self { self }
 
@@ -112,6 +119,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .mostUsed: MostUsedGroup.name
         case .updates: L10n.Settings.updatesTab
         case .backup: L10n.Settings.backupTab
+        case .changelog: L10n.Changelog.tab
         }
     }
 
@@ -122,6 +130,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .mostUsed: "star"
         case .updates: "arrow.triangle.2.circlepath"
         case .backup: "externaldrive"
+        case .changelog: "newspaper"
         }
     }
 }
@@ -139,6 +148,7 @@ private struct SettingsView: View {
     let updater: AutoUpdater
     let backup: SettingsBackupController
     let diagnostics: DiagnosticsController
+    let changelog: ChangelogService
     /// Set by `SettingsWindowController` to fit the screen.
     var paneHeight: CGFloat
 
@@ -175,6 +185,8 @@ private struct SettingsView: View {
             UpdatesSettingsView(preferences: preferences, updater: updater)
         case .backup:
             BackupSettingsView(backup: backup, diagnostics: diagnostics)
+        case .changelog:
+            ChangelogSettingsView(changelog: changelog)
         }
     }
 }

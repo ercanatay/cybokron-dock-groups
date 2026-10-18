@@ -31,6 +31,16 @@ struct LocalizationTests {
         return try #require(plist as? [String: String], "\(language).lproj/Localizable.strings isn't a strings table")
     }
 
+    /// Key prefixes of texts added after the last translation pass, still English only:
+    /// translations may lack these keys (the lookup then shows the English text) but not have others,
+    /// and the keys they do have keep the English placeholders. Remove a prefix once every language
+    /// has its keys.
+    static let awaitingTranslation = ["changelog."]
+
+    static func isAwaitingTranslation(_ key: String) -> Bool {
+        awaitingTranslation.contains { key.hasPrefix($0) }
+    }
+
     static var languages: [String] {
         let names = (try? FileManager.default.contentsOfDirectory(atPath: resources.path)) ?? []
         return names.filter { $0.hasSuffix(".lproj") }.map { String($0.dropLast(".lproj".count)) }.sorted()
@@ -198,7 +208,7 @@ struct LocalizationTests {
         #expect(Self.languages.contains("en"))
         for language in Self.languages where language != "en" {
             let translation = try Self.table(language)
-            let missing = Set(english.keys).subtracting(translation.keys)
+            let missing = Set(english.keys).subtracting(translation.keys).filter { !Self.isAwaitingTranslation($0) }
             let extra = Set(translation.keys).subtracting(english.keys)
             #expect(missing.isEmpty, "\(language).lproj lacks \(missing.sorted())")
             #expect(extra.isEmpty, "\(language).lproj has keys en.lproj doesn't: \(extra.sorted())")
@@ -208,6 +218,14 @@ struct LocalizationTests {
                 #expect(Self.placeholders(value) == Self.placeholders(source),
                         "\(language) \(key): placeholders \(Self.placeholders(value)) instead of \(Self.placeholders(source))")
             }
+        }
+    }
+
+    /// Every key awaiting translation is in the English table, so the prefixes don't hide a typo.
+    @Test func keysAwaitingTranslationAreEnglishKeys() throws {
+        let english = try Self.table("en")
+        for prefix in Self.awaitingTranslation {
+            #expect(english.keys.contains { $0.hasPrefix(prefix) }, "no en.lproj key starts with \(prefix)")
         }
     }
 
