@@ -264,9 +264,14 @@ private struct SocialButton: View {
     @ViewBuilder private var glyph: some View {
         if let shape = SocialIcons.shape(for: profile.id) {
             shape.fill().frame(width: 20, height: 20)
+        } else if !SocialIcons.hasPathData(for: profile.id) {
+            // No brand glyph (Ekşi Sözlük isn't in Simple Icons): the name's initial, lowercased
+            // like Ekşi Sözlük's own "e".
+            Text(profile.name.prefix(1).lowercased())
+                .font(.system(size: 24, weight: .bold, design: .rounded))
         } else {
-            // Ekşi Sözlük has no Simple Icons glyph.
-            Text("e").font(.system(size: 24, weight: .bold, design: .rounded))
+            // Path data that doesn't parse: a neutral glyph rather than an empty button.
+            Image(systemName: "globe").font(.system(size: 18))
         }
     }
 }
