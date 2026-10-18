@@ -56,6 +56,8 @@ struct PopupActions {
     let moveApp: (AppReference, Int) -> Void
     /// Takes the app out of the group; the app itself isn't affected.
     let removeApp: (AppReference) -> Void
+    /// Sorts the group's apps by name, A to Z.
+    let sortApps: () -> Void
     /// Whether the pointer is far enough outside the popup for a drop to remove the dragged app.
     let isPointerInRemovalArea: () -> Bool
 }
@@ -356,13 +358,24 @@ struct PopupContentView: View {
     // MARK: - Footer
 
     private func footer(_ palette: PanelPalette) -> some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 8) {
             Text(footerText)
                 .font(.system(size: 10.5))
                 .foregroundStyle(drag?.isInRemovalArea == true ? PanelPalette.warning : palette.secondaryText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
             Spacer(minLength: 0)
+            // Per-group "Sort A→Z": a one-off sort of this group's apps by name, saved like a drag.
+            if content.isEditable, content.cells.count > 1, drag == nil {
+                Button(action: actions.sortApps) {
+                    Label("A→Z", systemImage: "arrow.up.arrow.down")
+                        .font(.system(size: 10.5, weight: .semibold))
+                }
+                .buttonStyle(FooterButtonStyle(tint: PanelPalette.teal))
+                .fixedSize()
+                .help("Sort the apps in this group by name, A to Z.")
+                .accessibilityLabel("Sort A to Z")
+            }
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.footerHeight)
@@ -483,6 +496,23 @@ private struct CellButtonStyle: ButtonStyle {
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
             .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
+    }
+}
+
+/// The small text button of the popup footer: accent-colored, with a faint capsule while pressed.
+private struct FooterButtonStyle: ButtonStyle {
+    let tint: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(tint)
+            .padding(.horizontal, 7)
+            .frame(height: 20)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(tint.opacity(configuration.isPressed ? 0.22 : 0.1))
+            )
+            .contentShape(Capsule(style: .continuous))
     }
 }
 

@@ -110,6 +110,9 @@ struct GroupDetailView: View {
                 Text("Apps")
                 Spacer()
                 Button("Add Apps…", action: addApps)
+                Button("Sort A→Z") { store.sortAppsByName(inGroup: group.id) }
+                    .disabled(group.apps.count < 2)
+                    .help("Sort the apps in this group by name, A to Z. Drag them to reorder by hand.")
                 Button("Show Popup") { actions.showPopup(group) }
                     .help("Show this group's popup over the Dock.")
                 Button("Open All") { actions.openAll(group) }

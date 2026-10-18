@@ -259,6 +259,11 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 self.logger.notice("Removing \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public)")
                 self.store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id)
             },
+            sortApps: { [weak self] in
+                guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
+                self.logger.notice("Sorting the apps of group \(id, privacy: .public) by name")
+                self.store.sortAppsByName(inGroup: id)
+            },
             isPointerInRemovalArea: { [weak self] in
                 guard let self else { return false }
                 return PopupDrag.isRemovalLocation(NSEvent.mouseLocation, panelFrame: self.panel.frame)

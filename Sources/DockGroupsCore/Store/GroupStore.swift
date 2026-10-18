@@ -136,18 +136,28 @@ public final class GroupStore: ObservableObject {
         guard let source = apps.firstIndex(where: { $0.normalizedBundleIdentifier == target }) else { return }
         let app = apps.remove(at: source)
         apps.insert(app, at: min(max(index, 0), apps.count))
-        guard apps != groups[groupIndex].apps else { return }
-        groups[groupIndex].apps = apps
-        scheduleSave()
+        reorderApps(inGroupAt: groupIndex, to: apps)
     }
 
     public func moveApps(inGroup id: DockGroup.ID, fromOffsets source: IndexSet, toOffset destination: Int) {
         guard let index = index(of: id) else { return }
-        let before = groups[index].apps
-        groups[index].apps.moveElements(fromOffsets: source, toOffset: destination)
-        if groups[index].apps != before {
-            scheduleSave()
-        }
+        var apps = groups[index].apps
+        apps.moveElements(fromOffsets: source, toOffset: destination)
+        reorderApps(inGroupAt: index, to: apps)
+    }
+
+    /// Sorts the group's apps by name, A to Z, the way Finder sorts names (ignoring case, with
+    /// numbers in numeric order). Apps with the same name keep their order.
+    public func sortAppsByName(inGroup id: DockGroup.ID) {
+        guard let index = index(of: id) else { return }
+        reorderApps(inGroupAt: index, to: DockGroup.sortedByName(groups[index].apps))
+    }
+
+    /// Puts the group's apps in the order of `apps` (the same apps, reordered).
+    private func reorderApps(inGroupAt index: Int, to apps: [AppReference]) {
+        guard apps != groups[index].apps else { return }
+        groups[index].apps = apps
+        scheduleSave()
     }
 
     // MARK: - Persistence

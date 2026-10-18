@@ -28,6 +28,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   normally, ⌘-click force quits them. Escape, a click elsewhere, or switching apps closes it.
 - In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
   remove it from the group (the app itself isn't touched). The new order is saved right away.
+  **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
+  name.
 - Global keyboard shortcuts: ⌃⌥1 shows the first group's popup, ⌃⌥2 the second, and so on up to
   9; pressing it again closes the popup. The modifier keys can be changed, or the shortcuts turned
   off, in Settings → Shortcuts. To notice them while you work in other apps, the app needs

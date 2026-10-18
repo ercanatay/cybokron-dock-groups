@@ -55,6 +55,20 @@ extension DockGroup {
     public static func sanitizedEmoji(_ raw: String) -> String? {
         raw.trimmingCharacters(in: .whitespacesAndNewlines).last.map(String.init)
     }
+
+    /// `apps` sorted by name, A to Z, the way Finder sorts names; apps with the same name keep
+    /// their order.
+    public static func sortedByName(_ apps: [AppReference]) -> [AppReference] {
+        apps.enumerated()
+            .sorted { lhs, rhs in
+                switch lhs.element.name.localizedStandardCompare(rhs.element.name) {
+                case .orderedAscending: return true
+                case .orderedDescending: return false
+                case .orderedSame: return lhs.offset < rhs.offset
+                }
+            }
+            .map(\.element)
+    }
 }
 
 // MARK: - Codable
