@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (فارسی)
+  Cybokron Dock Groups
+
+  متن هر کلید به فارسی. عنصرهای جای‌نگهدار حفظ می‌شوند: %@ متن، %ld عدد، و %1$@ و %2$ld شماره‌دار
+  هستند تا ترتیبشان در ترجمه قابل تغییر باشد. کلیدهای با پایان .one/.other صورت مفرد (عدد ۱) و
+  جمع‌اند. نام‌های «Cybokron Dock Groups» و «DockGroups» و «GitHub» و «Siri»، نمادهای کلید
+  (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) و نام فایل‌ها بدون تغییر می‌مانند.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "تأیید";
+"common.cancel" = "لغو";
+"common.add" = "افزودن";
+"common.copy" = "کپی";
+"common.copied" = "کپی شد";
+"common.close" = "بستن";
+"common.done" = "تمام";
+"common.install" = "نصب";
+"common.tryAgain" = "دوباره تلاش کنید";
+"common.openAll" = "باز کردن همه";
+"common.hideAll" = "پنهان کردن همه";
+"common.closeAll" = "بستن همه";
+"common.forceQuit" = "خروج اجباری";
+"common.addApps" = "افزودن برنامه‌ها…";
+"common.addWebsite" = "افزودن وب‌سایت…";
+"common.showInFinder" = "نمایش در Finder";
+"common.removeFromGroup" = "حذف از گروه";
+"common.moveTo" = "انتقال به";
+"common.default" = "پیش‌فرض";
+"common.auto" = "خودکار";
+"common.changelog" = "تغییرات";
+"common.links" = "پیوندها";
+"common.openReleasesPage" = "باز کردن صفحه نسخه‌ها";
+"common.openPrivacySettings" = "باز کردن امنیت و حریم خصوصی…";
+"common.checkForUpdates" = "بررسی به‌روزرسانی‌ها…";
+"common.settings" = "تنظیمات…";
+"common.noLaunchesYet" = "هنوز اجرایی ثبت نشده";
+"common.noAppsInGroup" = "هنوز برنامه‌ای در این گروه نیست";
+"common.about" = "درباره %@";
+"common.hideApp" = "پنهان کردن %@";
+"common.quitApp" = "خروج از %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "در حال نصب نسخه %@…";
+"common.update.restarting" = "نسخه %@ نصب شد — در حال راه‌اندازی مجدد…";
+"common.appCount.one" = "۱ برنامه";
+"common.appCount.other" = "%ld برنامه";
+"common.groupCount.one" = "۱ گروه";
+"common.groupCount.other" = "%ld گروه";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "گروه‌ها";
+"menuBar.noGroups" = "هنوز گروهی نیست";
+"menuBar.manageGroups" = "مدیریت گروه‌ها…";
+"menuBar.mostUsed.empty.tooltip" = "برنامه‌ها را مثل همیشه باز کنید؛ پرکاربردترین‌ها اینجا ظاهر می‌شوند.";
+"menuBar.mostUsed.show" = "نمایش پرکاربردترین‌ها";
+"menuBar.mostUsed.show.tooltip" = "نمایش برنامه‌هایی که بیشتر باز می‌کنید، در یک پنجره بازشو.";
+"menuBar.checkForUpdates.tooltip" = "جستجوی نسخه جدیدتر %@ در GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "%@ را باز کنید. یک بار باز شده.";
+"menuBar.mostUsed.app.tooltip.other" = "%1$@ را باز کنید. %2$ld بار باز شده.";
+"menuBar.group.tooltip" = "نمایش برنامه‌های «%@». ⌥ را نگه دارید تا همه با هم باز شوند، یا ⇧⌥ برای پنهان کردن برنامه‌های در حال اجرا.";
+"menuBar.group.tooltip.shortcut" = "نمایش برنامه‌های «%1$@». ⌥ را نگه دارید تا همه با هم باز شوند، یا ⇧⌥ برای پنهان کردن برنامه‌های در حال اجرا. میان‌بر: %2$@.";
+"menuBar.group.openAll" = "باز کردن همه در «%@»";
+"menuBar.group.openAll.tooltip.one" = "برنامه «%@» را باز کنید";
+"menuBar.group.openAll.tooltip.other" = "هر %1$ld برنامه «%2$@» را باز کنید";
+"menuBar.group.noApps" = "«%@» هنوز برنامه‌ای ندارد.";
+"menuBar.group.hideAll" = "پنهان کردن همه در «%@»";
+"menuBar.group.hideAll.tooltip" = "پنهان کردن برنامه‌های در حال اجرای «%@». برنامه‌های بسته بسته می‌مانند.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "ویرایش";
+"mainMenu.undo" = "واگرد";
+"mainMenu.redo" = "انجام دوباره";
+"mainMenu.cut" = "بریدن";
+"mainMenu.paste" = "چسباندن";
+"mainMenu.selectAll" = "انتخاب همه";
+"mainMenu.window" = "پنجره";
+"mainMenu.minimize" = "کوچک کردن";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "باز کردن همه برنامه‌های این گروه؛ برنامه‌های در حال اجرا به جلو می‌آیند.";
+"popup.openAll.help.mostUsed" = "باز کردن همه برنامه‌های این فهرست؛ برنامه‌های در حال اجرا به جلو می‌آیند.";
+"popup.hideAll.help.group" = "پنهان کردن برنامه‌های در حال اجرای این گروه؛ برنامه‌های بسته بسته می‌مانند.";
+"popup.hideAll.help.mostUsed" = "پنهان کردن برنامه‌های در حال اجرای این فهرست؛ برنامه‌های بسته بسته می‌مانند.";
+"popup.closeAll.help.group" = "خروج از برنامه‌های در حال اجرای این گروه. ⌘-کلیک برای خروج اجباری بدون ذخیره.";
+"popup.closeAll.help.mostUsed" = "خروج از برنامه‌های در حال اجرای این فهرست. ⌘-کلیک برای خروج اجباری بدون ذخیره.";
+"popup.summary.websites.one" = "۱ وب‌سایت";
+"popup.summary.websites.other" = "%ld وب‌سایت";
+"popup.summary.running" = "%ld در حال اجرا";
+"popup.summary.byLaunches" = "بر اساس دفعات اجرا";
+"popup.filter.noMatch" = "هیچ برنامه‌ای با «%@» مطابقت ندارد";
+"popup.filter.noMatch.hint" = "برای پاک کردن فیلتر، Delete یا Esc را بزنید.";
+"popup.empty.mostUsed.hint" = "برای ساختن سابقه، برنامه‌ها را مثل همیشه باز کنید.";
+"popup.footer.sortAZ" = "A–Z";
+"popup.footer.sortAZ.help" = "مرتب‌سازی برنامه‌های این گروه بر اساس نام، از A تا Z.";
+"popup.footer.sortAZ.accessibility" = "مرتب‌سازی از A تا Z";
+"popup.footer.filter.matches" = "فیلتر: «%@»  ·  ↩ برنامه انتخاب‌شده را باز می‌کند  ·  esc پاک می‌کند";
+"popup.footer.filter.noMatch" = "فیلتر: «%@»  ·  بدون تطابق  ·  ⌫ یا esc پاک می‌کند";
+"popup.footer.hint.mostUsed" = "رتبه‌بندی بر اساس دفعات باز کردن  ·  ⌘-کلیک روی بستن همه برای خروج اجباری";
+"popup.footer.hint.group" = "بستن همه:  ⌥-کلیک خروج عادی  ·  ⌘-کلیک خروج اجباری";
+"popup.footer.drag.remove" = "رها کنید تا %@ از این گروه حذف شود";
+"popup.footer.drag.free" = "%@ را در هر خانه رها کنید؛ روی برنامه دیگر برای جابه‌جایی  ·  برای حذف، بیرون بکشید";
+"popup.footer.drag.ordered" = "رها کنید تا %@ قرار گیرد  ·  برای حذف، بیرون از پنجره بکشید";
+"popup.cell.accessibility.website" = "وب‌سایت %@";
+"popup.cell.hint.website" = "وب‌سایت را در مرورگرتان باز می‌کند";
+"popup.cell.hint.running" = "برنامه را به جلو می‌آورد";
+"popup.cell.hint.open" = "برنامه را باز می‌کند";
+"popup.cell.help.openWebsite" = "%@ را در مرورگرتان باز کنید.";
+"popup.cell.help.bringToFront" = "%@ را به جلو بیاورید.";
+"popup.cell.help.openApp" = "%@ را باز کنید.";
+"popup.cell.help.missing" = "%@ روی این Mac نیست.";
+"popup.cell.help.drag.freeItem" = "برای جابه‌جایی، به هر خانه یا روی مورد دیگری بکشید، یا برای حذف از گروه، بیرون از پنجره بکشید.";
+"popup.cell.help.drag.freeApp" = "برای جابه‌جایی، به هر خانه یا روی برنامه دیگری بکشید، یا برای حذف از گروه، بیرون از پنجره بکشید.";
+"popup.cell.help.drag.ordered" = "برای تغییر ترتیب بکشید، یا برای حذف از گروه، بیرون از پنجره بکشید.";
+"popup.cell.help.drag.missing" = "برای حذف از گروه، بیرون از پنجره بکشید.";
+"popup.menu.open" = "باز کردن";
+"popup.menu.copyURL" = "کپی نشانی";
+"popup.accessibility.moveEarlier" = "انتقال به قبل";
+"popup.accessibility.moveLater" = "انتقال به بعد";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "هنوز گروهی نیست";
+"groupWindow.empty.noSelection" = "گروهی انتخاب نشده";
+"groupWindow.empty.noGroups.description" = "یک گروه بسازید تا برنامه‌هایی را که با هم استفاده می‌کنید کنار هم جمع کنید.";
+"groupWindow.empty.noSelection.description" = "برای ویرایش، یک گروه را انتخاب کنید.";
+"groupWindow.addGroup" = "افزودن گروه";
+"groupWindow.rename.title" = "تغییر نام گروه";
+"groupWindow.rename.confirm" = "تغییر نام";
+"groupWindow.rename.message" = "نام جدید گروه را وارد کنید.";
+"groupWindow.delete.title" = "«%@» حذف شود؟";
+"groupWindow.delete.confirm" = "حذف گروه";
+"groupWindow.delete.message.standalone" = "این کار گروه، فهرست برنامه‌هایش و نماد مستقل آن در Dock را حذف می‌کند. خود برنامه‌ها تغییری نمی‌کنند.";
+"groupWindow.delete.message" = "این کار گروه و فهرست برنامه‌هایش را حذف می‌کند. خود برنامه‌ها تغییری نمی‌کنند.";
+"groupWindow.sidebar.rename" = "تغییر نام…";
+"groupWindow.sidebar.delete" = "حذف…";
+"groupWindow.sidebar.add.help" = "افزودن گروه";
+"groupWindow.sidebar.delete.help" = "حذف گروه انتخاب‌شده";
+"groupWindow.addApps.problem.title" = "برخی برنامه‌ها اضافه نشدند";
+"groupWindow.section.group" = "گروه";
+"groupWindow.name" = "نام";
+"groupWindow.emoji" = "ایموجی";
+"groupWindow.emoji.choose" = "انتخاب…";
+"groupWindow.section.apps" = "برنامه‌ها";
+"groupWindow.apps.empty" = "هنوز برنامه‌ای نیست. از «%1$@» برای انتخاب برنامه‌های این گروه، یا از «%2$@» برای افزودن پیوند وب استفاده کنید.";
+"groupWindow.addWebsite.help" = "یک پیوند وب به این گروه بیفزایید. در مرورگر پیش‌فرض باز می‌شود.";
+"groupWindow.sortAZ" = "مرتب‌سازی A–Z";
+"groupWindow.sortAZ.help" = "مرتب‌سازی برنامه‌های این گروه بر اساس نام، از A تا Z. برای چیدن دستی، آن‌ها را بکشید.";
+"groupWindow.showPopup" = "نمایش پنجره بازشو";
+"groupWindow.showPopup.help" = "نمایش پنجره بازشوی این گروه روی Dock.";
+"groupWindow.hideAll.help" = "پنهان کردن برنامه‌های در حال اجرای این گروه. برنامه‌های بسته بسته می‌مانند.";
+"groupWindow.apps.moveHint" = "برای انتقال برنامه به گروه دیگر، آن را روی آن گروه در نوار کناری بکشید، یا از %@ در منوی زمینه‌اش استفاده کنید.";
+"groupWindow.app.notFound" = "روی این Mac پیدا نشد · %@";
+"groupWindow.app.remove.website" = "حذف %@ از این گروه.";
+"groupWindow.app.remove" = "حذف %@ از این گروه. خود برنامه تغییری نمی‌کند.";
+"groupWindow.section.dockTile" = "کاشی Dock";
+"groupWindow.tile.preview" = "پیش‌نمایش";
+"groupWindow.tile.shows" = "نمایش";
+"groupWindow.tile.kind.grid" = "شبکه نماد برنامه‌ها";
+"groupWindow.tile.background" = "پس‌زمینه";
+"groupWindow.tile.backgroundColor" = "رنگ پس‌زمینه";
+"groupWindow.tile.pinned" = "کاشی همیشه در Dock بماند";
+"groupWindow.tile.preview.accessibility" = "پیش‌نمایش کاشی، %ld نقطه";
+"groupWindow.section.standalone" = "مستقل";
+"groupWindow.standalone.toggle" = "نماد مستقل در Dock";
+"groupWindow.standalone.help" = "به این گروه برنامه و نماد اختصاصی در Dock بدهید.";
+"groupWindow.standalone.settingUp" = "در حال تنظیم نماد Dock…";
+"groupWindow.standalone.removing" = "در حال حذف نماد Dock…";
+"groupWindow.standalone.groupApp" = "برنامه گروه";
+"groupWindow.standalone.updateDockIcon" = "به‌روزرسانی نماد Dock";
+"groupWindow.standalone.updateDockIcon.help" = "راه‌اندازی مجدد Dock با حافظه نماد تازه، تا کاشی نماد فعلی گروه را نشان دهد.";
+"groupWindow.standalone.staleIcon" = "Dock هنوز نماد قبلی را نشان می‌دهد.";
+"groupWindow.standalone.footer" = "به گروه یک برنامه کوچک اختصاصی می‌دهد که کاشی بالا نمادش است و در انتهای Dock قرار می‌گیرد. کلیک روی آن پنجره بازشوی گروه را نشان می‌دهد (⌥-کلیک همه برنامه‌هایش را باز می‌کند)، حتی وقتی %@ در حال اجرا نیست؛ کلیک راست روی آن برنامه‌های گروه را فهرست می‌کند (تنظیمات ← پنجره بازشو). خاموش کردن این گزینه، حذف گروه یا بیرون کشیدن نماد از Dock، آن برنامه را حذف می‌کند. افزودن یا حذف نماد، Dock را برای لحظه‌ای راه‌اندازی مجدد می‌کند.";
+"groupWindow.section.popup" = "پنجره بازشو";
+"groupWindow.popup.columns" = "ستون‌ها";
+"groupWindow.popup.maxRows" = "حداکثر ردیف";
+"groupWindow.popup.appNames" = "نام برنامه‌ها";
+"groupWindow.popup.show" = "نمایش";
+"groupWindow.popup.hide" = "پنهان";
+"groupWindow.popup.position" = "موقعیت";
+"groupWindow.popup.footer" = "«%@» از تنظیمات پنجره بازشوی کل برنامه پیروی می‌کند.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "یکدست";
+"choice.tileBackground.gradient" = "گرادیانت";
+"choice.tileBackground.glass" = "شیشه‌ای";
+"choice.popupAnchor.dockCenter" = "وسط Dock";
+"choice.popupAnchor.dockIcon" = "بالای نمادی که کلیک شد";
+"choice.theme.dark" = "تیره";
+"choice.theme.light" = "روشن";
+"choice.theme.system" = "مطابق سیستم";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "افزودن وب‌سایت";
+"addWebsite.title" = "افزودن وب‌سایت به «%@»";
+"addWebsite.address" = "نشانی:";
+"addWebsite.address.accessibility" = "نشانی وب‌سایت";
+"addWebsite.name" = "نام:";
+"addWebsite.name.accessibility" = "نام وب‌سایت، اختیاری";
+"addWebsite.name.placeholder" = "اختیاری";
+"addWebsite.hint" = "در مرورگر پیش‌فرض باز می‌شود. اگر نام را خالی بگذارید، از نشانی سایت استفاده می‌شود.";
+"addWebsite.duplicate" = "«%@» از قبل در این گروه است.";
+
+/* Add Apps open panel */
+"appPicker.title" = "افزودن برنامه به گروه";
+"appPicker.message" = "برنامه‌هایی را که می‌خواهید به «%@» اضافه شوند انتخاب کنید.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "برنامه‌های «%@» باز نشدند.";
+"problems.launch.someFailed" = "برخی برنامه‌های «%@» باز نشدند.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "روی این Mac پیدا نشد.";
+"problems.launch.opened" = "باز شد.";
+"problems.quit.force" = "برخی برنامه‌های «%@» با خروج اجباری بسته نشدند.";
+"problems.quit.graceful" = "از برخی برنامه‌های «%@» درخواست بستن نشد.";
+"problems.hide" = "برخی برنامه‌های «%@» پنهان نشدند.";
+"problems.standalone.failed" = "«%@» نتوانست نماد اختصاصی خود را در Dock بگیرد.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "برنامه این گروه نمی‌تواند گروهش را باز کند.";
+"agent.damaged.message" = "%1$@\n\nدر %2$@، «مستقل» را خاموش و دوباره روشن کنید تا گروه برنامه‌اش را بازسازی کند.";
+"agent.error.groupMismatch" = "تنظیمات برنامه متعلق به گروه دیگری است.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "از قبل روشن است؟ پس از به‌روزرسانی ممکن است این ورودی متعلق به نسخه قبلی باشد: %@ را انتخاب کنید، با − حذفش کنید، و سپس برنامه را با + دوباره اضافه کنید.";
+
+/* Settings window */
+"settings.window.title" = "تنظیمات";
+
+/* Settings tabs */
+"settings.tab.popup" = "پنجره بازشو";
+"settings.tab.shortcuts" = "میان‌برها و Siri";
+"settings.tab.updates" = "به‌روزرسانی‌ها";
+"settings.tab.backup" = "پشتیبان‌گیری";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "زبان";
+"general.language.system" = "سیستم (%1$@)";
+"general.language.restartNote" = "زبان جدید پس از راه‌اندازی مجدد برنامه اعمال می‌شود.";
+"general.language.restartNow" = "اکنون راه‌اندازی مجدد";
+
+/* Settings → Popup */
+"settings.popup.theme" = "تم";
+"settings.popup.frostedGlass" = "پس‌زمینهٔ شیشه‌ای مات";
+"settings.popup.appearance.header" = "ظاهر پنجره‌بازشو";
+"settings.popup.appearance.footer" = "تم فقط روی پنجره‌بازشو اعمال می‌شود؛ این پنجره از ظاهر macOS شما پیروی می‌کند.";
+"settings.popup.columns" = "ستون‌ها";
+"settings.popup.columns.detail" = "«خودکار» عرض استاندارد پنجره‌بازشو را نگه می‌دارد؛ یک عدد باعث می‌شود پنجره‌بازشو فقط به اندازهٔ نیاز گروه عرض داشته باشد.";
+"settings.popup.maxRows" = "حداکثر ردیف";
+"settings.popup.maxRows.detail" = "ارتفاع پنجره‌بازشو را محدود می‌کند؛ گروه‌های بزرگ‌تر قابل پیمایش هستند.";
+"settings.popup.showNames" = "نمایش نام برنامه‌ها";
+"settings.popup.position" = "موقعیت";
+"settings.popup.position.detail" = "«بالای آیکون کلیک‌شده» پنجره‌بازشو را روی آیکون Dock گروه باز می‌کند، یا وقتی از منوی آیکون نوار منو انتخاب شود، زیر آن. پنجره‌بازشوهایی که با میان‌بر، پیوند یا Siri باز می‌شوند، وسط Dock می‌مانند.";
+"settings.popup.layout.header" = "چیدمان پنجره‌بازشو";
+"settings.popup.layout.footer" = "اینها پیش‌فرض همهٔ گروه‌ها هستند. هر گروه می‌تواند آنها را در «مدیریت گروه‌ها» تغییر دهد.";
+"settings.popup.freeLayout" = "چیدمان آزاد";
+"settings.popup.freeLayout.detail" = "برنامه‌ها در خانه‌ای که به آن می‌کشید می‌مانند و بقیه جابه‌جا نمی‌شوند؛ رها کردن یک برنامه روی برنامهٔ دیگر، جای این دو را عوض می‌کند.";
+"settings.popup.arranging.header" = "چیدن برنامه‌ها";
+"settings.popup.arranging.footer" = "وقتی خاموش باشد، برنامه‌های گروه به ترتیب پنجره‌بازشو را پر می‌کنند و با جابه‌جایی یک برنامه جا باز می‌کنند. «A–Z» در پنجره‌بازشو، گروه را در هر دو حالت بر اساس نام مرتب می‌کند.";
+"settings.popup.restoreWindows" = "بازگرداندن پنجره‌ها هنگام باز کردن دوبارهٔ برنامهٔ در حال اجرا";
+"settings.popup.restoreWindows.detail" = "کلیک روی برنامهٔ در حال اجرا، پنجره‌های پنهان و کمینه‌شدهٔ آن را برمی‌گرداند، همان‌طور که کلیک روی آن در Dock انجام می‌دهد. وقتی خاموش باشد، برنامه فقط به جلو می‌آید.";
+"settings.popup.runningApps.header" = "برنامه‌های در حال اجرا";
+"settings.popup.dockMenus" = "منوی آیکون‌های Dock گروه‌ها";
+"settings.popup.dockMenus.detail" = "پس از کلیک روی آیکون یک گروهِ مستقل، با راست‌کلیک روی آن برنامه‌های گروه، «باز کردن همه»، «پنهان کردن همه» و «بستن همه» را ببینید. برنامهٔ آن سپس در Dock و در ⌘-Tab به‌عنوان در حال اجرا نمایش داده می‌شود.";
+"settings.popup.standaloneIcons.header" = "آیکون‌های مستقل Dock";
+"settings.popup.ax.granted" = "دسترس‌پذیری مجاز شد: پنجره‌های کمینه‌شده هم برمی‌گردند";
+"settings.popup.ax.required" = "بازگرداندن پنجره‌های کمینه‌شده به دسترس‌پذیری نیاز دارد";
+"settings.popup.ax.detail" = "%@ را در «امنیت و حریم خصوصی ← دسترس‌پذیری» مجاز کنید. تا آن زمان، برنامه‌های پنهان همچنان برمی‌گردند و از برنامه‌ها خواسته می‌شود مانند Dock دوباره باز شوند. آیکون‌های گروه‌های مستقل برای برنامه‌های خودشان به این دسترسی نیاز دارند.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "باز کردن پنجره‌بازشوهای گروه‌ها با میان‌برهای صفحه‌کلید";
+"settings.shortcuts.modifiers" = "کلیدهای تغییر‌دهنده";
+"settings.shortcuts.keys" = "کلیدهای میان‌بر";
+"settings.shortcuts.keys.detail" = "این کلیدها را نگه دارید و 1 را برای گروه اول، 2 را برای گروه دوم و به همین ترتیب بزنید. برای بستن پنجره‌بازشو دوباره همان را بزنید.";
+"settings.shortcuts.header" = "میان‌برهای صفحه‌کلید";
+"settings.shortcuts.ax.granted" = "در همهٔ برنامه‌ها کار می‌کند";
+"settings.shortcuts.ax.needed" = "به دسترسی دسترس‌پذیری نیاز دارد";
+"settings.shortcuts.ax.detail" = "برای تشخیص میان‌برها هنگام کار در برنامه‌های دیگر، %@ را در «امنیت و حریم خصوصی ← دسترس‌پذیری» مجاز کنید. تا آن زمان، میان‌برها فقط وقتی کار می‌کنند که پنجره‌بازشوی آن یا یکی از پنجره‌هایش فعال باشد.";
+"settings.shortcuts.noGroups" = "هنوز گروهی وجود ندارد.";
+"settings.shortcuts.assigned.header" = "گروه‌های تخصیص‌یافته";
+"settings.shortcuts.assigned.footer.limit" = "فقط نُه گروه اول میان‌بر دارند. برای تغییر ترتیب، گروه‌ها را در «مدیریت گروه‌ها» بکشید.";
+"settings.shortcuts.assigned.footer" = "میان‌برها از ترتیب گروه‌ها در «مدیریت گروه‌ها» پیروی می‌کنند.";
+"settings.shortcuts.siri.group" = "گروه";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "یک گروه اضافه کنید تا ببینید برای آن از Siri چه بخواهید.";
+"settings.shortcuts.openShortcuts" = "باز کردن میان‌برها";
+"settings.shortcuts.shortcutsApp" = "برنامهٔ میان‌برها";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group، Quit Group و Show Group در آنجا و در Spotlight به‌عنوان اقدام موجودند: آنها را با محرک دلخواه خودتان به میان‌برهای خود اضافه کنید.";
+"settings.shortcuts.siri.header" = "Siri و میان‌برها";
+"settings.shortcuts.siri.footer" = "با این عبارات از Siri بخواهید، با صدا یا با تایپ. آنها از نام فعلی گروه استفاده می‌کنند؛ میان‌برهایی که می‌سازید پس از تغییر نام هم کار می‌کنند.";
+"settings.shortcuts.links.noGroups" = "یک گروه اضافه کنید تا پیوندهایش را ببینید.";
+"settings.shortcuts.links.footer" = "یک پیوند را از یک اسکریپت یا برنامهٔ دیگر باز کنید، مثلاً با `open` در Terminal. گروه با نامش مشخص می‌شود (حروف بزرگ/کوچک، تلفظ‌ها و علامت‌گذاری مهم نیستند) یا، وقتی نام مبهم است، با شناسه‌اش. برای اجبار به خروج، ?mode=force را به یک پیوند خروج اضافه کنید.";
+"settings.shortcuts.copy.help" = "کپی “%@” در کلیپ‌بورد.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "نمایش «پرکاربردترین‌ها» در نوار منو";
+"settings.mostUsed.appsShown" = "برنامه‌های نمایش‌داده‌شده";
+"settings.mostUsed.appsShown.detail" = "پرباز‌شده‌ترین برنامه‌ها، در منو و در پنجره‌بازشوی «پرکاربردترین‌ها».";
+"settings.mostUsed.sessionLength" = "طول یک نشست";
+"settings.mostUsed.together" = "باز شده با هم در بازهٔ";
+"settings.mostUsed.together.detail" = "برنامه‌هایی که در این بازه از هم باز شوند، «با هم استفاده‌شده» حساب می‌شوند و کمی بالاتر قرار می‌گیرند.";
+"settings.mostUsed.footer" = "برنامه‌ها بر اساس دفعات بازشدن‌شان رتبه‌بندی می‌شوند، از Dock، Finder، Spotlight یا یک گروه. بازشدن‌ها حتی وقتی فهرست پنهان است شمرده می‌شوند.";
+"settings.mostUsed.recorded" = "ثبت‌شده";
+"settings.mostUsed.clear" = "پاک کردن تاریخچه…";
+"settings.mostUsed.history" = "تاریخچه";
+"settings.mostUsed.history.detail" = "فقط روی این Mac در usage-stats.json و usage-cooccurrence.json در Application Support ذخیره می‌شود.";
+"settings.mostUsed.usageHistory.header" = "تاریخچهٔ استفاده";
+"settings.mostUsed.clear.confirm.title" = "تاریخچهٔ استفاده پاک شود؟";
+"settings.mostUsed.clear.confirm.button" = "پاک کردن تاریخچه";
+"settings.mostUsed.clear.confirm.message" = "فهرست «پرکاربردترین‌ها» از نو شروع می‌شود. گروه‌ها و برنامه‌های شما تغییری نمی‌کنند.";
+"settings.mostUsed.summary.none" = "هنوز بازشدنی ثبت نشده";
+"settings.mostUsed.summary.launches.one" = "۱ بازشدن";
+"settings.mostUsed.summary.launches.other" = "%ld بازشدن";
+"settings.mostUsed.summary" = "%1$@ از %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "بررسی خودکار به‌روزرسانی‌ها";
+"settings.updates.currentVersion" = "نسخهٔ فعلی";
+"settings.updates.lastChecked" = "آخرین بررسی";
+"settings.updates.checkNow" = "بررسی اکنون";
+"settings.updates.otherVersions" = "نسخه‌های دیگر…";
+"settings.updates.footer" = "هنگام راه‌اندازی و هر ۶ ساعت، انتشارهای GitHub پروژه بررسی می‌شوند؛ فقط شمارهٔ نسخهٔ برنامه ارسال می‌شود. نسخهٔ جدید فقط پس از انتخاب «دانلود و نصب» نصب می‌شود. «نسخه‌های دیگر…» هر انتشار منتشرشده، قدیمی یا جدید، را نصب می‌کند؛ بازگشت به نسخهٔ قدیمی، نسخه‌های جدیدتر را در بررسی‌های خودکار رد می‌کند.";
+"settings.updates.viewChangelog" = "نمایش تغییرات";
+"settings.updates.latestPath" = "بازگشت به مسیر آخرین نسخه: هر نسخهٔ جدیدتر پیشنهاد می‌شود";
+"settings.updates.skipped" = "نسخه‌های جدیدتر ردشده: %@";
+"settings.updates.clear" = "پاک کردن";
+"settings.updates.clear.help" = "به بررسی‌های خودکار اجازه بده این نسخه‌ها را دوباره پیشنهاد کنند";
+"settings.updates.never" = "هرگز";
+"settings.updates.status.idle" = "از زمان اجرای برنامه بررسی نشده";
+"settings.updates.status.checking" = "در حال بررسی…";
+"settings.updates.status.upToDate" = "نسخهٔ شما به‌روز است (v%@)";
+"settings.updates.status.available" = "نسخهٔ %@ در دسترس است";
+"settings.updates.showUpdate" = "نمایش به‌روزرسانی…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "نسخه‌های دیگر";
+"settings.otherVersions.intro" = "هر انتشار منتشرشدهٔ %@ را، قدیمی یا جدید، نصب کنید. برنامه بسته و با نسخهٔ انتخابی شما دوباره باز می‌شود.";
+"settings.otherVersions.releasesLink" = "باز کردن صفحهٔ انتشارها در GitHub";
+"settings.otherVersions.loading" = "در حال بارگذاری انتشارها از GitHub…";
+"settings.otherVersions.none" = "GitHub هیچ انتشار منتشرشده‌ای فهرست نمی‌کند.";
+"settings.otherVersions.current" = "فعلی";
+"settings.otherVersions.noDownload" = "بدون دانلود";
+"settings.otherVersions.install.help" = "نصب نسخهٔ %@";
+"settings.otherVersions.install.noImage" = "این انتشار تصویر دیسک برای نصب ندارد.";
+"settings.otherVersions.confirm.title" = "نصب نسخهٔ %@؟";
+"settings.otherVersions.confirm.quits" = "%1$@ بسته و با نسخهٔ %2$@ دوباره باز می‌شود.";
+"settings.otherVersions.confirm.cantUpdate" = "نسخهٔ %@ خودش را به‌روز نمی‌کند: برای بازگشت، یک نسخهٔ جدیدتر را از صفحهٔ انتشارها دانلود کنید.";
+"settings.otherVersions.confirm.skips" = "پس از آن، بررسی‌های خودکار نسخه‌های جدیدتر (%@) را رد می‌کنند؛ «بررسی به‌روزرسانی‌ها…» همچنان آنها را پیشنهاد می‌دهد.";
+"settings.otherVersions.confirm.older" = "یک نسخهٔ قدیمی ممکن است از امکاناتی که بعداً اضافه شده‌اند خبر نداشته باشد؛ بهتر است ابتدا یک پشتیبان بگیرید (تنظیمات ← پشتیبان‌گیری).";
+"settings.otherVersions.confirm.upgrade" = "نسخه‌های ردشده پاک می‌شوند، تا بررسی‌های خودکار هر نسخهٔ جدیدتر را دوباره پیشنهاد کنند.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "خروجی گرفتن از تنظیمات…";
+"settings.backup.export" = "خروجی گرفتن";
+"settings.backup.export.detail" = "گروه‌ها و تنظیمات شما را در یک فایل .dockgroups ذخیره می‌کند.";
+"settings.backup.import.button" = "وارد کردن تنظیمات…";
+"settings.backup.import" = "وارد کردن";
+"settings.backup.import.detail" = "گروه‌ها و تنظیمات شما را با آنچه در یک فایل پشتیبان است جایگزین می‌کند، یا گروه‌های جدید پشتیبان را با گروه‌های شما ادغام می‌کند.";
+"settings.backup.footer" = "پشتیبان شامل گروه‌ها، برنامه‌های آنها و همهٔ تنظیمات است. شمارش بازشدن‌های «پرکاربردترین‌ها» در آن نیست. فایل همان‌جایی می‌ماند که ذخیره‌اش می‌کنید.";
+"settings.backup.status.exported" = "در “%@” ذخیره شد";
+"settings.backup.status.restored" = "%1$@ با %2$@ بازیابی شد";
+"settings.backup.status.merged" = "%@ از پشتیبان ادغام شد";
+"settings.backup.status.mergedSkipped" = "%1$@ از پشتیبان ادغام شد؛ %2$ld مورد از قبل وجود داشت";
+"settings.backup.exportPanel.title" = "خروجی گرفتن از تنظیمات";
+"settings.backup.exportPanel.message" = "گروه‌ها و تنظیمات خود را در یک فایل پشتیبان ذخیره کنید.";
+"settings.backup.exportFailed" = "تنظیمات خروجی گرفته نشد";
+"settings.backup.importPanel.title" = "وارد کردن تنظیمات";
+"settings.backup.importPanel.message" = "یک پشتیبان %@ را برای بازیابی انتخاب کنید.";
+"settings.backup.readFailed" = "فایل خوانده نشد";
+"settings.backup.confirm.title" = "گروه‌ها و تنظیمات این پشتیبان وارد شوند؟";
+"settings.backup.confirm.replaceAll" = "جایگزینی همه";
+"settings.backup.confirm.merge" = "ادغام";
+"settings.backup.restoreFailed" = "پشتیبان بازیابی نشد";
+"settings.backup.restoreFailed.kept" = "%@ گروه‌ها و تنظیمات فعلی شما حفظ شد.";
+"settings.backup.mergeFailed" = "پشتیبان ادغام نشد";
+"settings.backup.mergeFailed.kept" = "%@ گروه‌های فعلی شما حفظ شد.";
+"settings.backup.rejected.notABackup" = "یک فایل .dockgroups را انتخاب کنید که با «خروجی گرفتن از تنظیمات…» ساخته شده باشد. چیزی تغییر نکرد.";
+"settings.backup.rejected.newer" = "چیزی تغییر نکرد.";
+"settings.backup.confirm.noGroups" = "پشتیبان هیچ گروهی ندارد.";
+"settings.backup.confirm.noGroups.exported" = "پشتیبان هیچ گروهی ندارد؛ خروجی در %@ گرفته شده.";
+"settings.backup.confirm.contents" = "پشتیبان شامل %1$@ با %2$@ است.";
+"settings.backup.confirm.contents.exported" = "پشتیبان شامل %1$@ با %2$@ است، خروجی در %3$@ گرفته شده.";
+"settings.backup.confirm.replace" = "«جایگزینی همه» به جای گروه‌ها و تنظیمات شما، گروه‌ها و تنظیمات پشتیبان را به کار می‌برد.";
+"settings.backup.confirm.replaced.one" = "۱ گروه فعلی با همان نام یک گروه در پشتیبان با آن جایگزین می‌شود.";
+"settings.backup.confirm.replaced.other" = "%ld گروه فعلی با همان نام گروه‌هایی در پشتیبان با آنها جایگزین می‌شوند.";
+"settings.backup.confirm.removed.one" = "۱ گروه فعلی که در پشتیبان نیست حذف می‌شود.";
+"settings.backup.confirm.removed.other" = "%ld گروه فعلی که در پشتیبان نیستند حذف می‌شوند.";
+"settings.backup.confirm.replaceSettings" = "تنظیمات شما (پنجره‌بازشو، میان‌برها، «پرکاربردترین‌ها» و به‌روزرسانی‌ها) نیز جایگزین می‌شوند.";
+"settings.backup.confirm.merge.nothing" = "ادغام، گروه‌ها و تنظیمات شما را نگه می‌دارد و چیزی اضافه نمی‌کند.";
+"settings.backup.confirm.merge.allHere" = "ادغام، گروه‌ها و تنظیمات شما را نگه می‌دارد؛ همهٔ گروه‌های پشتیبان از قبل اینجا هستند، پس چیزی اضافه نمی‌کند.";
+"settings.backup.confirm.merge.adds" = "ادغام، گروه‌ها و تنظیمات شما را نگه می‌دارد و %1$@ با %2$@ از پشتیبان اضافه می‌کند.";
+"settings.backup.confirm.skipped.one" = "۱ گروه که از قبل وجود دارد (با همان نام) رد می‌شود.";
+"settings.backup.confirm.skipped.other" = "%ld گروه که از قبل وجود دارند (با همان نام) رد می‌شوند.";
+"settings.backup.confirm.final" = "شمارش بازشدن‌های «پرکاربردترین‌ها» حفظ می‌شود. نسخه‌ای از فایل‌های فعلی شما کنار آنها در Application Support ذخیره می‌شود. این کار قابل برگشت نیست.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "ذخیره در فایل…";
+"settings.diagnostics.export" = "خروجی گرفتن از عیب‌یابی";
+"settings.diagnostics.export.detail" = "یک گزارش متنی برای پیوست کردن به یک مسئلهٔ GitHub یا درخواست پشتیبانی.";
+"settings.diagnostics.header" = "عیب‌یابی";
+"settings.diagnostics.footer" = "نسخهٔ برنامه و macOS، مدل Mac شما، محل نصب برنامه، دسترسی دسترس‌پذیری، تنظیمات، بررسی‌های به‌روزرسانی، نام گروه‌ها با تعداد برنامه‌هایشان و خطاهای اخیر را فهرست می‌کند. فهرست برنامه‌های گروه‌ها را شامل نمی‌شود. چیزی جایی ارسال نمی‌شود.";
+"settings.diagnostics.copied" = "عیب‌یابی در کلیپ‌بورد کپی شد";
+"settings.diagnostics.saved" = "در “%@” ذخیره شد";
+"settings.diagnostics.failed" = "گزارش ذخیره نشد: %@";
+"settings.diagnostics.panel.title" = "ذخیرهٔ عیب‌یابی";
+"settings.diagnostics.panel.message" = "گزارش عیب‌یابی را به‌صورت فایل متنی ذخیره کنید، مثلاً برای پیوست کردن به یک مسئلهٔ GitHub.";
+"settings.diagnostics.panel.prompt" = "ذخیره";
+
+/* Software Update window */
+"updateWindow.title" = "به‌روزرسانی نرم‌افزار";
+"updateWindow.checking" = "در حال بررسی به‌روزرسانی‌ها…";
+"updateWindow.upToDate.title" = "نسخهٔ شما به‌روز است!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ جدیدترین نسخهٔ موجود است.";
+"updateWindow.available.title" = "یک نسخهٔ جدید از %@ در دسترس است!";
+"updateWindow.available.message" = "نسخهٔ %1$@ در دسترس است — شما نسخهٔ %2$@ را دارید.";
+"updateWindow.available.noImage" = "این انتشار تصویر دیسک برای نصب خودکار ندارد؛ آن را از صفحهٔ انتشارش دانلود کنید.";
+"updateWindow.available.question" = "آیا می‌خواهید همین حالا آن را دانلود و نصب کنید؟";
+"updateWindow.skip" = "رد کردن این نسخه";
+"updateWindow.remindLater" = "بعداً یادآوری کن";
+"updateWindow.openReleasePage" = "باز کردن صفحهٔ انتشار";
+"updateWindow.downloadAndInstall" = "دانلود و نصب";
+"updateWindow.downloading" = "در حال دانلود نسخهٔ %@…";
+"updateWindow.restartsWhenDone" = "%@ پس از اتمام دوباره راه‌اندازی می‌شود.";
+"updateWindow.reopening" = "%@ در حال باز شدن دوباره است.";
+"updateWindow.dryRun.title" = "آزمایش خشک تمام شد";
+"updateWindow.dryRun.message" = "نسخهٔ %1$@ دانلود، تأیید و در %2$@ کپی شد. چیزی جایگزین نشد.";
+"updateWindow.checkFailed" = "بررسی به‌روزرسانی‌ها ممکن نشد";
+"updateWindow.installFailed" = "نسخهٔ %@ نصب نشد";
+"updateWindow.link.releases" = "انتشارها";
+"updateWindow.link.releasePage" = "صفحهٔ انتشار";
+"updateWindow.releaseNotes" = "یادداشت‌های انتشار";
+"updateWindow.releaseNotes.none" = "این انتشار یادداشتی ندارد.";
+"updateWindow.relaunchFailed" = "نسخهٔ %@ نصب شد، اما برنامه نتوانست خودش را دوباره راه‌اندازی کند. آن را ببندید و دوباره باز کنید.";
+
+/* About window */
+"about.section.findMe" = "مرا در اینترنت پیدا کنید";
+"about.section.support" = "حمایت از این پروژه";
+"about.section.books" = "کتاب‌های من";
+"about.section.software" = "نرم‌افزارهای متن‌باز من";
+"about.fullList" = "فهرست کامل در github.com/ercanatay";
+"about.section.blogs" = "وبلاگ‌های Medium";
+"about.icon.accessibility" = "آیکون %@";
+"about.version" = "نسخهٔ %@ · متن‌باز، مجوز MIT";
+"about.website" = "وب‌سایت";
+"about.sourceCode" = "کد منبع";
+"about.license" = "مجوز";
+"about.reportBug" = "خطایی پیدا کردید؟ یک مسئله باز کنید";
+"about.inspiredBy" = "الهام‌گرفته از امکانات DockGroups. %@ یک پیاده‌سازی مستقل و اصیل است که از صفر نوشته شده؛ هیچ کد یا تصویری از DockGroups در آن نیست.";
+"about.project.dockGroups" = "این برنامه · گروه‌های Dock برای macOS";
+"about.project.intelComputerUse" = "اتوماسیون بومی دسکتاپ macOS برای Mac‌های اینتل از طریق MCP.";
+"about.project.exchangeRate" = "ردیاب نرخ ارز و پرتفوی با PHP/MySQL، با دریافت زندهٔ داده و به‌روزرسانی انتشارهای GitHub.";
+"about.project.backlinkChecker" = "بررسی متن‌های لنگر، dofollow/nofollow و وضعیت HTTP بک‌لینک‌ها.";
+"about.project.consentManager" = "افزونهٔ ترجمه‌های مدیریت رضایت YOOtheme Pro 5 (WordPress.org).";
+"about.project.antigravityUpdater" = "به‌روزرسانی سبک macOS برای Antigravity Tools، با ۲۱ زبان.";
+"about.project.widgetVisibility" = "افزونهٔ وردپرس بدون Jetpack برای نمایش ویجت‌ها با پشتیبانی از زیرمجموعه‌ها.";
+"about.project.forbiddenContent" = "یافتن کلیدواژه‌های ممنوع (مثلاً 'Casino') در عنوان نوشته‌ها — مانند یک ابزار بازرسی ممیزی وردپرس.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "نمایش %1$@ در %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "اجرای %1$@ در %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "بستن %1$@ در %2$@";
+"core.invocation.showPopup" = "نمایش پنجره‌بازشو";
+"core.invocation.openAll" = "باز کردن همه";
+"core.invocation.hideAll" = "پنهان کردن همه";
+"core.invocation.closeAll" = "بستن همه";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "هیچ مرورگر وبی برای باز کردن آن تنظیم نشده است.";
+"core.launch.notOpened" = "برنامه باز نشد.";
+"core.group.defaultName" = "گروه جدید";
+"core.website.error.empty" = "یک نشانی وب وارد کنید.";
+"core.website.error.invalid" = "این نشانی وب معتبر نیست.";
+"core.website.error.scheme" = "فقط نشانی‌های http و https را می‌توان اضافه کرد، نه “%@:”.";
+"core.website.error.credentials" = "نام کاربری و گذرواژه را از نشانی حذف کنید.";
+"core.persistence.groups.newer" = "فایل گروه‌ها با نسخهٔ جدیدتری از Cybokron Dock Groups ذخیره شده است (قالب %ld).";
+"core.backup.error.notABackup" = "این فایل یک پشتیبان Cybokron Dock Groups نیست.";
+"core.backup.error.newer" = "این پشتیبان با نسخهٔ جدیدتری از Cybokron Dock Groups ساخته شده است (قالب پشتیبان %ld). برای بازیابی آن برنامه را به‌روز کنید.";
+"core.persistence.usage.newer" = "آمار استفاده با نسخهٔ جدیدتری از Cybokron Dock Groups ذخیره شده است (قالب %ld).";
+"core.agent.configuration.newer" = "تنظیمات گروه با نسخهٔ جدیدتری از Cybokron Dock Groups ذخیره شده است (قالب %ld).";
+"core.agent.error.icon" = "آیکون گروه نتوانست رسم شود.";
+"core.agent.error.bundleWrite" = "برنامهٔ گروه ساخته نشد: %@";
+"core.agent.error.toolMissing" = "یک ابزار سیستمی که لازم است یافت نشد: %@.";
+"core.agent.error.signing" = "macOS به امضای کد همهٔ برنامه‌ها نیاز دارد و امضای برنامهٔ گروه روی این Mac شکست خورد، پس چیزی نصب نشد.";
+"core.agent.error.registration" = "macOS برنامهٔ گروه را ثبت نکرد: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups نتوانست فایل اجرایی خودش را بخواند: %@";
+"core.agent.error.noExecutable" = "برنامه فایل اجرایی ندارد.";
+"core.dock.saveFailed" = "تنظیمات Dock تغییر نکرد.";
+"core.store.loadFailed.title" = "گروه‌های شما بارگذاری نشدند";
+"core.store.loadFailed.kept" = "%1$@ با فهرست خالی گروه‌ها شروع می‌شود. یک کپی در “%2$@” نگه داشته شد.";
+"core.store.loadFailed.empty" = "%@ با فهرست خالی گروه‌ها شروع می‌شود.";
+"core.store.loadFailed.suspended" = "%@ برای محافظت از فایل موجود، تغییرات تا راه‌اندازی مجدد برنامه ذخیره نمی‌شوند.";
+"core.store.saveFailed.title" = "تغییرات شما ذخیره نشدند";
+"core.preferences.saveFailed" = "تنظیمات شما ذخیره نشدند: %@";
+"core.websiteIcon.accessibility" = "وب‌سایت";
+"core.update.check.notHTTP" = "پاسخ از نوع HTTP نبود.";
+"core.update.check.malformed" = "اطلاعات انتشار از GitHub خوانده نشد.";
+"core.update.check.unsupportedTag" = "آخرین انتشار (“%@”) با شمارهٔ نسخه برچسب‌گذاری نشده است.";
+"core.update.check.noRelease" = "هنوز هیچ انتشاری منتشر نشده است.";
+"core.update.check.rateLimited" = "GitHub در حال حاضر درخواست‌ها را محدود کرده است. یک ساعت دیگر دوباره امتحان کنید.";
+"core.update.check.httpStatus" = "GitHub با وضعیت HTTP %ld پاسخ داد.";
+"core.update.check.network" = "به GitHub نمی‌توان رسید: %@";
+"core.update.check.noVersion" = "این نسخهٔ برنامه شمارهٔ نسخه ندارد، پس نمی‌توان آن را مقایسه کرد.";
+"core.update.install.insecureURL" = "نشانی دانلود به‌روزرسانی امن نیست (%@).";
+"core.update.install.downloadFailed" = "به‌روزرسانی دانلود نشد: %@";
+"core.update.install.sizeMismatch" = "به‌روزرسانی دانلودشده ناقص است (%1$ld از %2$ld بایت).";
+"core.update.install.checksum" = "به‌روزرسانی دانلودشده با جمع کنترلی منتشرشدهٔ آن مطابقت ندارد، پس نصب نشد.";
+"core.update.install.mountFailed" = "تصویر دیسک به‌روزرسانی باز نشد: %@";
+"core.update.install.appNotFound" = "تصویر دیسک به‌روزرسانی برنامه را ندارد.";
+"core.update.install.wrongApp" = "تصویر دیسک به‌روزرسانی برنامهٔ دیگری (%@) دارد.";
+"core.update.install.versionMismatch" = "برنامهٔ دانلودشده نسخهٔ %1$@ است، اما انتشار %2$@ است.";
+"core.update.install.replaceFailed" = "نسخهٔ جدید جایگزین نشد، پس نسخهٔ فعلی حفظ شد: %@";
+"core.update.install.rollbackFailed" = "به‌روزرسانی ناموفق بود و نسخهٔ قبلی برنگشت. در %@ نگه داشته شده است.";
+"core.update.location.translocated" = "macOS این کپی را از یک مکان موقتِ فقط‌خواندنی اجرا می‌کند. برنامه را به پوشهٔ Applications منتقل کنید، از آنجا باز کنید و دوباره امتحان کنید.";
+"core.update.location.notFound" = "برنامهٔ در حال اجرا در %@ پیدا نشد.";
+"core.update.location.readOnly" = "برنامه از یک حجم فقط‌خواندنی، مانند تصویر دیسکش، اجرا می‌شود. ابتدا آن را به پوشهٔ Applications کپی کنید.";
+"core.update.location.noPermission" = "اجازهٔ جایگزینی برنامه در “%@” را ندارید. به جای آن نسخهٔ جدید را از صفحهٔ انتشارها دانلود کنید.";
+"core.update.install.noFile" = "سرور هیچ فایلی نفرستاد.";
+"core.update.install.httpStatus" = "وضعیت HTTP %ld.";
+"core.update.install.copyFailed" = "کپی کردن برنامه ناموفق بود: %@";
+"core.mostUsed.name" = "پرکاربردترین‌ها";

@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (العربية)
+  Cybokron Dock Groups
+
+  نص كل مفتاح بالعربية. الاحتفاظ بالعناصر النائبة: %@ نص، و%ld رقم، و%1$@ و%2$ld مرقّمة
+  حتى يمكن تغيير ترتيبها في الترجمة. المفاتيح المنتهية بـ .one/.other هي صيغة المفرد (العدد 1)
+  وصيغة الجمع. الاسم "Cybokron Dock Groups" و"DockGroups" و"GitHub" و"Siri" ورموز المفاتيح
+  (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) وأسماء الملفات تبقى كما هي.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "موافق";
+"common.cancel" = "إلغاء";
+"common.add" = "إضافة";
+"common.copy" = "نسخ";
+"common.copied" = "تم النسخ";
+"common.close" = "إغلاق";
+"common.done" = "تم";
+"common.install" = "تثبيت";
+"common.tryAgain" = "حاول مرة أخرى";
+"common.openAll" = "فتح الكل";
+"common.hideAll" = "إخفاء الكل";
+"common.closeAll" = "إغلاق الكل";
+"common.forceQuit" = "فرض الإنهاء";
+"common.addApps" = "إضافة تطبيقات…";
+"common.addWebsite" = "إضافة موقع…";
+"common.showInFinder" = "إظهار في Finder";
+"common.removeFromGroup" = "إزالة من المجموعة";
+"common.moveTo" = "نقل إلى";
+"common.default" = "افتراضي";
+"common.auto" = "تلقائي";
+"common.changelog" = "سجل التغييرات";
+"common.links" = "الروابط";
+"common.openReleasesPage" = "فتح صفحة الإصدارات";
+"common.openPrivacySettings" = "فتح الخصوصية والأمان…";
+"common.checkForUpdates" = "التحقق من التحديثات…";
+"common.settings" = "الإعدادات…";
+"common.noLaunchesYet" = "لم تُسجَّل عمليات تشغيل بعد";
+"common.noAppsInGroup" = "لا توجد تطبيقات في هذه المجموعة بعد";
+"common.about" = "حول %@";
+"common.hideApp" = "إخفاء %@";
+"common.quitApp" = "إنهاء %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "جارٍ تثبيت الإصدار %@…";
+"common.update.restarting" = "تم تثبيت الإصدار %@ — جارٍ إعادة التشغيل…";
+"common.appCount.one" = "تطبيق واحد";
+"common.appCount.other" = "%ld تطبيقًا";
+"common.groupCount.one" = "مجموعة واحدة";
+"common.groupCount.other" = "%ld مجموعات";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "المجموعات";
+"menuBar.noGroups" = "لا توجد مجموعات بعد";
+"menuBar.manageGroups" = "إدارة المجموعات…";
+"menuBar.mostUsed.empty.tooltip" = "افتح التطبيقات كالمعتاد، وستظهر هنا الأكثر فتحًا.";
+"menuBar.mostUsed.show" = "عرض الأكثر استخدامًا";
+"menuBar.mostUsed.show.tooltip" = "عرض التطبيقات الأكثر فتحًا في نافذة منبثقة.";
+"menuBar.checkForUpdates.tooltip" = "البحث عن إصدار أحدث من %@ على GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "افتح %@. فُتح مرة واحدة.";
+"menuBar.mostUsed.app.tooltip.other" = "افتح %1$@. فُتح %2$ld مرة.";
+"menuBar.group.tooltip" = "عرض التطبيقات في “%@”. اضغط ⌥ مع النقر لفتحها كلها دفعة واحدة، أو ⇧⌥ لإخفاء الجارية منها.";
+"menuBar.group.tooltip.shortcut" = "عرض التطبيقات في “%1$@”. اضغط ⌥ مع النقر لفتحها كلها دفعة واحدة، أو ⇧⌥ لإخفاء الجارية منها. الاختصار: %2$@.";
+"menuBar.group.openAll" = "فتح الكل في “%@”";
+"menuBar.group.openAll.tooltip.one" = "افتح التطبيق في “%@”";
+"menuBar.group.openAll.tooltip.other" = "افتح جميع التطبيقات البالغ عددها %1$ld في “%2$@”";
+"menuBar.group.noApps" = "“%@” لا تحتوي على تطبيقات بعد.";
+"menuBar.group.hideAll" = "إخفاء الكل في “%@”";
+"menuBar.group.hideAll.tooltip" = "إخفاء التطبيقات الجارية في “%@”. تبقى التطبيقات غير الجارية مغلقة.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "تحرير";
+"mainMenu.undo" = "تراجع";
+"mainMenu.redo" = "إعادة";
+"mainMenu.cut" = "قص";
+"mainMenu.paste" = "لصق";
+"mainMenu.selectAll" = "تحديد الكل";
+"mainMenu.window" = "النافذة";
+"mainMenu.minimize" = "تصغير";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "افتح كل تطبيق في هذه المجموعة؛ وتُعرض التطبيقات الجارية في المقدمة.";
+"popup.openAll.help.mostUsed" = "افتح كل تطبيق في هذه القائمة؛ وتُعرض التطبيقات الجارية في المقدمة.";
+"popup.hideAll.help.group" = "أخفِ التطبيقات الجارية في هذه المجموعة؛ وتبقى غير الجارية مغلقة.";
+"popup.hideAll.help.mostUsed" = "أخفِ التطبيقات الجارية في هذه القائمة؛ وتبقى غير الجارية مغلقة.";
+"popup.closeAll.help.group" = "أنهِ التطبيقات الجارية في هذه المجموعة. ⌘-نقر لفرض الإنهاء دون حفظ.";
+"popup.closeAll.help.mostUsed" = "أنهِ التطبيقات الجارية في هذه القائمة. ⌘-نقر لفرض الإنهاء دون حفظ.";
+"popup.summary.websites.one" = "موقع واحد";
+"popup.summary.websites.other" = "%ld موقعًا";
+"popup.summary.running" = "%ld قيد التشغيل";
+"popup.summary.byLaunches" = "حسب عمليات التشغيل";
+"popup.filter.noMatch" = "لا توجد تطبيقات تطابق “%@”";
+"popup.filter.noMatch.hint" = "اضغط Delete أو Esc لمسح عامل التصفية.";
+"popup.empty.mostUsed.hint" = "افتح التطبيقات كالمعتاد لبدء بناء سجلك.";
+"popup.footer.sortAZ" = "A–Z";
+"popup.footer.sortAZ.help" = "رتّب تطبيقات هذه المجموعة حسب الاسم، من A إلى Z.";
+"popup.footer.sortAZ.accessibility" = "ترتيب من A إلى Z";
+"popup.footer.filter.matches" = "تصفية: “%@”  ·  ↩ يفتح التطبيق المحدد  ·  esc يمسح";
+"popup.footer.filter.noMatch" = "تصفية: “%@”  ·  لا تطابق  ·  ⌫ أو esc يمسح";
+"popup.footer.hint.mostUsed" = "مرتبة حسب عدد مرات فتحها  ·  ⌘-نقر على إغلاق الكل لفرض الإنهاء";
+"popup.footer.hint.group" = "إغلاق الكل:  ⌥-نقر للإنهاء العادي  ·  ⌘-نقر لفرض الإنهاء";
+"popup.footer.drag.remove" = "حرّر لإزالة %@ من هذه المجموعة";
+"popup.footer.drag.free" = "أفلت %@ في أي خلية، أو على تطبيق آخر للتبديل  ·  اسحب خارجًا للإزالة";
+"popup.footer.drag.ordered" = "أفلت لوضع %@  ·  اسحب خارج النافذة لإزالته";
+"popup.cell.accessibility.website" = "موقع %@";
+"popup.cell.hint.website" = "يفتح الموقع في متصفحك";
+"popup.cell.hint.running" = "يجلب التطبيق إلى المقدمة";
+"popup.cell.hint.open" = "يفتح التطبيق";
+"popup.cell.help.openWebsite" = "افتح %@ في متصفحك.";
+"popup.cell.help.bringToFront" = "اجلب %@ إلى المقدمة.";
+"popup.cell.help.openApp" = "افتح %@.";
+"popup.cell.help.missing" = "%@ غير موجود على هذا الماك.";
+"popup.cell.help.drag.freeItem" = "اسحب إلى أي خلية أو فوق عنصر آخر لتبديلهما، أو خارج النافذة لإزالته من المجموعة.";
+"popup.cell.help.drag.freeApp" = "اسحب إلى أي خلية أو فوق تطبيق آخر لتبديلهما، أو خارج النافذة لإزالته من المجموعة.";
+"popup.cell.help.drag.ordered" = "اسحب لإعادة الترتيب، أو خارج النافذة لإزالته من المجموعة.";
+"popup.cell.help.drag.missing" = "اسحبه خارج النافذة لإزالته من المجموعة.";
+"popup.menu.open" = "فتح";
+"popup.menu.copyURL" = "نسخ الرابط";
+"popup.accessibility.moveEarlier" = "نقل إلى الأمام";
+"popup.accessibility.moveLater" = "نقل إلى الخلف";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "لا توجد مجموعات بعد";
+"groupWindow.empty.noSelection" = "لم تُحدَّد أي مجموعة";
+"groupWindow.empty.noGroups.description" = "أضف مجموعة لجمع التطبيقات التي تستخدمها معًا.";
+"groupWindow.empty.noSelection.description" = "حدِّد مجموعة لتحريرها.";
+"groupWindow.addGroup" = "إضافة مجموعة";
+"groupWindow.rename.title" = "إعادة تسمية المجموعة";
+"groupWindow.rename.confirm" = "إعادة التسمية";
+"groupWindow.rename.message" = "أدخل اسمًا جديدًا للمجموعة.";
+"groupWindow.delete.title" = "حذف “%@”؟";
+"groupWindow.delete.confirm" = "حذف المجموعة";
+"groupWindow.delete.message.standalone" = "سيؤدي هذا إلى حذف المجموعة وقائمة تطبيقاتها وأيقونتها الخاصة في الدوك. التطبيقات نفسها لن تتأثر.";
+"groupWindow.delete.message" = "سيؤدي هذا إلى حذف المجموعة وقائمة تطبيقاتها. التطبيقات نفسها لن تتأثر.";
+"groupWindow.sidebar.rename" = "إعادة التسمية…";
+"groupWindow.sidebar.delete" = "حذف…";
+"groupWindow.sidebar.add.help" = "إضافة مجموعة";
+"groupWindow.sidebar.delete.help" = "حذف المجموعة المحددة";
+"groupWindow.addApps.problem.title" = "تعذّرت إضافة بعض التطبيقات";
+"groupWindow.section.group" = "المجموعة";
+"groupWindow.name" = "الاسم";
+"groupWindow.emoji" = "الرمز التعبيري";
+"groupWindow.emoji.choose" = "اختر…";
+"groupWindow.section.apps" = "التطبيقات";
+"groupWindow.apps.empty" = "لا توجد تطبيقات بعد. استخدم “%1$@” لاختيار تطبيقات لهذه المجموعة، أو “%2$@” لإضافة رابط ويب.";
+"groupWindow.addWebsite.help" = "أضف رابط ويب إلى هذه المجموعة. يُفتح في متصفحك الافتراضي.";
+"groupWindow.sortAZ" = "ترتيب A–Z";
+"groupWindow.sortAZ.help" = "رتّب تطبيقات هذه المجموعة حسب الاسم من A إلى Z. اسحبها لإعادة الترتيب يدويًا.";
+"groupWindow.showPopup" = "عرض النافذة المنبثقة";
+"groupWindow.showPopup.help" = "عرض النافذة المنبثقة لهذه المجموعة فوق الدوك.";
+"groupWindow.hideAll.help" = "أخفِ التطبيقات الجارية في هذه المجموعة. تبقى التطبيقات غير الجارية مغلقة.";
+"groupWindow.apps.moveHint" = "لنقل تطبيق إلى مجموعة أخرى، اسحبه فوقها في الشريط الجانبي، أو استخدم %@ في قائمته السياقية.";
+"groupWindow.app.notFound" = "غير موجود على هذا الماك · %@";
+"groupWindow.app.remove.website" = "إزالة %@ من هذه المجموعة.";
+"groupWindow.app.remove" = "إزالة %@ من هذه المجموعة. التطبيق نفسه لن يتأثر.";
+"groupWindow.section.dockTile" = "أيقونة الدوك";
+"groupWindow.tile.preview" = "المعاينة";
+"groupWindow.tile.shows" = "تعرض";
+"groupWindow.tile.kind.grid" = "شبكة أيقونات التطبيقات";
+"groupWindow.tile.background" = "الخلفية";
+"groupWindow.tile.backgroundColor" = "لون الخلفية";
+"groupWindow.tile.pinned" = "تثبيت الأيقونة في الدوك";
+"groupWindow.tile.preview.accessibility" = "معاينة الأيقونة، %ld نقطة";
+"groupWindow.section.standalone" = "مستقلة";
+"groupWindow.standalone.toggle" = "أيقونة دوك مستقلة";
+"groupWindow.standalone.help" = "امنح هذه المجموعة تطبيقها الخاص، مع أيقونتها في الدوك.";
+"groupWindow.standalone.settingUp" = "جارٍ إعداد أيقونة الدوك…";
+"groupWindow.standalone.removing" = "جارٍ إزالة أيقونة الدوك…";
+"groupWindow.standalone.groupApp" = "تطبيق المجموعة";
+"groupWindow.standalone.updateDockIcon" = "تحديث أيقونة الدوك";
+"groupWindow.standalone.updateDockIcon.help" = "أعِد تشغيل الدوك بذاكرة أيقونات جديدة، ليعرض الزر أيقونة المجموعة الحالية.";
+"groupWindow.standalone.staleIcon" = "ما زال الدوك يعرض الأيقونة السابقة.";
+"groupWindow.standalone.footer" = "يمنح المجموعة تطبيقًا صغيرًا خاصًا بها، بالزر أعلاه أيقونةً له، في نهاية الدوك. النقر عليه يعرض نافذة المجموعة المنبثقة (⌥-نقر يفتح كل تطبيقاتها)، حتى عندما لا يكون %@ قيد التشغيل؛ والنقر بالزر الأيمن عليه يعرض تطبيقات المجموعة (الإعدادات ← النافذة المنبثقة). إيقاف هذا الخيار، أو حذف المجموعة، أو سحب الأيقونة خارج الدوك يزيل ذلك التطبيق. إضافة الأيقونة أو إزالتها تعيد تشغيل الدوك لحظات.";
+"groupWindow.section.popup" = "النافذة المنبثقة";
+"groupWindow.popup.columns" = "الأعمدة";
+"groupWindow.popup.maxRows" = "أقصى عدد من الصفوف";
+"groupWindow.popup.appNames" = "أسماء التطبيقات";
+"groupWindow.popup.show" = "إظهار";
+"groupWindow.popup.hide" = "إخفاء";
+"groupWindow.popup.position" = "الموضع";
+"groupWindow.popup.footer" = "“%@” يتبع إعدادات النافذة المنبثقة على مستوى التطبيق.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "لون واحد";
+"choice.tileBackground.gradient" = "متدرج";
+"choice.tileBackground.glass" = "زجاجي";
+"choice.popupAnchor.dockCenter" = "في منتصف الدوك";
+"choice.popupAnchor.dockIcon" = "فوق الأيقونة التي نُقرت";
+"choice.theme.dark" = "داكن";
+"choice.theme.light" = "فاتح";
+"choice.theme.system" = "حسب النظام";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "إضافة موقع";
+"addWebsite.title" = "إضافة موقع إلى “%@”";
+"addWebsite.address" = "العنوان:";
+"addWebsite.address.accessibility" = "عنوان الموقع";
+"addWebsite.name" = "الاسم:";
+"addWebsite.name.accessibility" = "اسم الموقع، اختياري";
+"addWebsite.name.placeholder" = "اختياري";
+"addWebsite.hint" = "يُفتح في متصفحك الافتراضي. اترك الاسم فارغًا لاستخدام عنوان الموقع.";
+"addWebsite.duplicate" = "“%@” موجود بالفعل في هذه المجموعة.";
+
+/* Add Apps open panel */
+"appPicker.title" = "إضافة تطبيقات إلى المجموعة";
+"appPicker.message" = "اختر التطبيقات لإضافتها إلى “%@”.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "تعذّر فتح التطبيقات في “%@”.";
+"problems.launch.someFailed" = "تعذّر فتح بعض التطبيقات في “%@”.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "غير موجود على هذا الماك.";
+"problems.launch.opened" = "تم فتحه.";
+"problems.quit.force" = "تعذّر فرض إنهاء بعض التطبيقات في “%@”.";
+"problems.quit.graceful" = "تعذّر طلب إنهاء بعض التطبيقات في “%@”.";
+"problems.hide" = "تعذّر إخفاء بعض التطبيقات في “%@”.";
+"problems.standalone.failed" = "تعذّر على “%@” الحصول على أيقونته الخاصة في الدوك.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "تطبيق هذه المجموعة لا يستطيع فتح مجموعته.";
+"agent.damaged.message" = "%1$@\n\nفي %2$@، أوقف تشغيل «مستقلة» ثم شغّله مجددًا كي تعيد المجموعة بناء تطبيقها.";
+"agent.error.groupMismatch" = "إعدادات التطبيق تنتمي إلى مجموعة أخرى.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "مفعّل بالفعل؟ بعد التحديث قد يعود الإدخال إلى الإصدار السابق: حدّد %@، واحذفه بالزر −، ثم أضف التطبيق مجددًا بالزر +.";
+
+/* Settings window */
+"settings.window.title" = "الإعدادات";
+
+/* Settings tabs */
+"settings.tab.popup" = "النافذة المنبثقة";
+"settings.tab.shortcuts" = "الاختصارات وSiri";
+"settings.tab.updates" = "التحديثات";
+"settings.tab.backup" = "النسخ الاحتياطي";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "اللغة";
+"general.language.system" = "النظام (%1$@)";
+"general.language.restartNote" = "تسري اللغة الجديدة بعد إعادة تشغيل التطبيق.";
+"general.language.restartNow" = "إعادة التشغيل الآن";
+
+/* Settings → Popup */
+"settings.popup.theme" = "المظهر";
+"settings.popup.frostedGlass" = "خلفية زجاجية ضبابية";
+"settings.popup.appearance.header" = "مظهر النافذة المنبثقة";
+"settings.popup.appearance.footer" = "يُطبَّق المظهر على النافذة المنبثقة فقط؛ وهذه النافذة تتبع مظهر macOS.";
+"settings.popup.columns" = "الأعمدة";
+"settings.popup.columns.detail" = "«تلقائي» يحافظ على العرض القياسي للنافذة المنبثقة، والرقم يجعلها بالعرض الذي تحتاجه المجموعة فقط.";
+"settings.popup.maxRows" = "أقصى عدد من الصفوف";
+"settings.popup.maxRows.detail" = "يحدّ من ارتفاع النافذة المنبثقة؛ والمجموعات الكبيرة تُمرَّر.";
+"settings.popup.showNames" = "إظهار أسماء التطبيقات";
+"settings.popup.position" = "الموضع";
+"settings.popup.position.detail" = "«فوق الأيقونة التي نُقرت» تفتح النافذة فوق أيقونة مجموعتها في الدوك، أو تحت أيقونة شريط القوائم عند اختيارها من قائمته. النوافذ المفتوحة بالاختصار أو الرابط أو Siri تبقى في منتصف الدوك.";
+"settings.popup.layout.header" = "تخطيط النافذة المنبثقة";
+"settings.popup.layout.footer" = "هذه القيم الافتراضية لكل المجموعات. ويمكن لكل مجموعة تجاوزها من «إدارة المجموعات».";
+"settings.popup.freeLayout" = "تخطيط حر";
+"settings.popup.freeLayout.detail" = "تبقى التطبيقات في الخلية التي تسحبها إليها، ولا تتحرك البقية؛ وإفلات تطبيق فوق آخر يبدّل بينهما.";
+"settings.popup.arranging.header" = "ترتيب التطبيقات";
+"settings.popup.arranging.footer" = "عند الإيقاف، تملأ تطبيقات المجموعة النافذة بالترتيب وتفسح مكانًا عند نقل أحدها. الترتيب A–Z في النافذة يرتّب المجموعة حسب الاسم في الحالتين.";
+"settings.popup.restoreWindows" = "استعادة النوافذ عند فتح تطبيق قيد التشغيل مجددًا";
+"settings.popup.restoreWindows.detail" = "النقر على تطبيق قيد التشغيل يعيد نوافذه المخفية والمصغّرة، كما يحدث عند النقر عليه في الدوك. عند الإيقاف، يُجلب التطبيق إلى المقدمة فقط.";
+"settings.popup.runningApps.header" = "التطبيقات قيد التشغيل";
+"settings.popup.dockMenus" = "قائمة على أيقونات مجموعات الدوك";
+"settings.popup.dockMenus.detail" = "انقر بالزر الأيمن على أيقونة مجموعة مستقلة في الدوك لعرض تطبيقاتها: فتح الكل، وإخفاء الكل، وإغلاق الكل، بعد النقر على الأيقونة. يظهر تطبيقها حينها قيد التشغيل في الدوك وفي ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "أيقونات الدوك المستقلة";
+"settings.popup.ax.granted" = "إذن إمكانية الوصول ممنوح: تعود النوافذ المصغّرة أيضًا";
+"settings.popup.ax.required" = "استعادة النوافذ المصغّرة تتطلب إذن إمكانية الوصول";
+"settings.popup.ax.detail" = "اسمح لـ %@ في الخصوصية والأمان ← إمكانية الوصول. حتى ذلك الحين تعود التطبيقات المخفية، ويُطلب من التطبيقات إعادة الفتح كما من الدوك. أيقونات المجموعات المستقلة تحتاج الإذن لتطبيقاتها الخاصة.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "فتح النوافذ المنبثقة للمجموعات باختصارات لوحة المفاتيح";
+"settings.shortcuts.modifiers" = "مفاتيح التعديل";
+"settings.shortcuts.keys" = "مفاتيح الاختصار";
+"settings.shortcuts.keys.detail" = "اضغط هذه المفاتيح مع 1 للمجموعة الأولى، و2 للثانية، وهكذا. اضغطها مرة أخرى لإغلاق النافذة.";
+"settings.shortcuts.header" = "اختصارات لوحة المفاتيح";
+"settings.shortcuts.ax.granted" = "يعمل في كل التطبيقات";
+"settings.shortcuts.ax.needed" = "يحتاج إذن إمكانية الوصول";
+"settings.shortcuts.ax.detail" = "لتلقّي الاختصارات أثناء عملك في تطبيقات أخرى، اسمح لـ %@ في الخصوصية والأمان ← إمكانية الوصول. حتى ذلك الحين تعمل فقط عندما تكون نافذته المنبثقة أو إحدى نوافذه نشطة.";
+"settings.shortcuts.noGroups" = "لا توجد مجموعات بعد.";
+"settings.shortcuts.assigned.header" = "المجموعات المعيّنة";
+"settings.shortcuts.assigned.footer.limit" = "التسع مجموعات الأولى فقط لها اختصارات. اسحب المجموعات في «إدارة المجموعات» لتغيير الترتيب.";
+"settings.shortcuts.assigned.footer" = "تتبع الاختصارات ترتيب المجموعات في «إدارة المجموعات».";
+"settings.shortcuts.siri.group" = "المجموعة";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "أضف مجموعة لترى ما تطلبه من Siri لها.";
+"settings.shortcuts.openShortcuts" = "فتح الاختصارات";
+"settings.shortcuts.shortcutsApp" = "تطبيق الاختصارات";
+"settings.shortcuts.shortcutsApp.detail" = "«Launch Group» و«Quit Group» و«Show Group» إجراءات هناك وفي Spotlight: أضفها إلى اختصاراتك، بالمشغّل الذي تختاره.";
+"settings.shortcuts.siri.header" = "Siri والاختصارات";
+"settings.shortcuts.siri.footer" = "اطلب من Siri بهذه العبارات، بالصوت أو بالكتابة. تستخدم الاسم الحالي للمجموعة، والاختصارات التي تبنيها تستمر في العمل بعد إعادة التسمية.";
+"settings.shortcuts.links.noGroups" = "أضف مجموعة لترى روابطها.";
+"settings.shortcuts.links.footer" = "افتح رابطًا من سكربت أو تطبيق آخر، مثلًا بالأمر `open` في Terminal. تُسمّى المجموعة باسمها (لا فرق للأحرف والتشكيل وعلامات الترقيم)، أو بمعرّفها إذا كان الاسم ملتبسًا. أضِف ?mode=force إلى رابط الإنهاء لفرض الإنهاء.";
+"settings.shortcuts.copy.help" = "نسخ “%@” إلى الحافظة.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "عرض الأكثر استخدامًا في شريط القوائم";
+"settings.mostUsed.appsShown" = "عدد التطبيقات المعروضة";
+"settings.mostUsed.appsShown.detail" = "أكثر التطبيقات فتحًا، في القائمة وفي نافذة «الأكثر استخدامًا».";
+"settings.mostUsed.sessionLength" = "مدة الجلسة";
+"settings.mostUsed.together" = "فُتحت معًا خلال";
+"settings.mostUsed.together.detail" = "التطبيقات المفتوحة في غضون هذه المدة من بعضها تُحسب مستخدمة معًا، فترتفع قليلًا في الترتيب.";
+"settings.mostUsed.footer" = "تُرتَّب التطبيقات حسب عدد مرات فتحها من الدوك أو Finder أو Spotlight أو مجموعة. تُحتسب عمليات التشغيل حتى عندما تكون القائمة مخفية.";
+"settings.mostUsed.recorded" = "المسجَّل";
+"settings.mostUsed.clear" = "مسح السجل…";
+"settings.mostUsed.history" = "السجل";
+"settings.mostUsed.history.detail" = "محفوظ على هذا الماك فقط، في الملفين usage-stats.json وusage-cooccurrence.json داخل Application Support.";
+"settings.mostUsed.usageHistory.header" = "سجل الاستخدام";
+"settings.mostUsed.clear.confirm.title" = "هل تريد مسح سجل الاستخدام؟";
+"settings.mostUsed.clear.confirm.button" = "مسح السجل";
+"settings.mostUsed.clear.confirm.message" = "ستبدأ قائمة «الأكثر استخدامًا» من جديد. مجموعاتك وتطبيقاتك لن تتأثر.";
+"settings.mostUsed.summary.none" = "لا توجد عمليات تشغيل بعد";
+"settings.mostUsed.summary.launches.one" = "عملية تشغيل واحدة";
+"settings.mostUsed.summary.launches.other" = "%ld عملية تشغيل";
+"settings.mostUsed.summary" = "%1$@ من %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "التحقق من التحديثات تلقائيًا";
+"settings.updates.currentVersion" = "الإصدار الحالي";
+"settings.updates.lastChecked" = "آخر فحص";
+"settings.updates.checkNow" = "تحقّق الآن";
+"settings.updates.otherVersions" = "إصدارات أخرى…";
+"settings.updates.footer" = "يتحقق من إصدارات المشروع على GitHub عند التشغيل وكل 6 ساعات، ولا يُرسل سوى رقم إصدار التطبيق. لا يُثبَّت أي إصدار جديد إلا بعد أن تختار «تنزيل وتثبيت». «إصدارات أخرى…» تثبّت أي إصدار منشور، أقدم أو أحدث؛ والرجوع إلى إصدار أقدم يتخطى الأحدث في الفحص التلقائي.";
+"settings.updates.viewChangelog" = "عرض سجل التغييرات";
+"settings.updates.latestPath" = "العودة إلى المسار الأحدث: يُعرض كل إصدار أحدث";
+"settings.updates.skipped" = "إصدارات أحدث متجاوَزة: %@";
+"settings.updates.clear" = "مسح";
+"settings.updates.clear.help" = "السماح للفحص التلقائي بعرض هذه الإصدارات مجددًا";
+"settings.updates.never" = "أبدًا";
+"settings.updates.status.idle" = "لم يُفحص منذ بدء التطبيق";
+"settings.updates.status.checking" = "جارٍ الفحص…";
+"settings.updates.status.upToDate" = "أنت على أحدث إصدار (v%@)";
+"settings.updates.status.available" = "الإصدار %@ متاح";
+"settings.updates.showUpdate" = "عرض التحديث…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "إصدارات أخرى";
+"settings.otherVersions.intro" = "ثبّت أي إصدار منشور من %@، أقدم أو أحدث. يُغلق التطبيق ويُعاد فتحه بالإصدار الذي تختاره.";
+"settings.otherVersions.releasesLink" = "فتح صفحة الإصدارات على GitHub";
+"settings.otherVersions.loading" = "جارٍ تحميل الإصدارات من GitHub…";
+"settings.otherVersions.none" = "لا توجد إصدارات منشورة على GitHub.";
+"settings.otherVersions.current" = "الحالي";
+"settings.otherVersions.noDownload" = "لا يوجد تنزيل";
+"settings.otherVersions.install.help" = "تثبيت الإصدار %@";
+"settings.otherVersions.install.noImage" = "هذا الإصدار لا يحتوي على صورة قرص يُثبَّت منها.";
+"settings.otherVersions.confirm.title" = "تثبيت الإصدار %@؟";
+"settings.otherVersions.confirm.quits" = "%1$@ سيُغلق ويُعاد فتحه بالإصدار %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "الإصدار %@ لا يستطيع تحديث نفسه: للعودة، نزّل إصدارًا أحدث من صفحة الإصدارات.";
+"settings.otherVersions.confirm.skips" = "عندها سيتخطى الفحص التلقائي الإصدارات الأحدث (%@)، لكن «التحقق من التحديثات…» ما زال يعرضها.";
+"settings.otherVersions.confirm.older" = "قد لا يعرف الإصدار الأقدم عن الميزات المضافة بعده؛ فكّر في تصدير نسخة احتياطية أولًا (الإعدادات ← النسخ الاحتياطي).";
+"settings.otherVersions.confirm.upgrade" = "ستُمسح الإصدارات المتجاوَزة، فيعرض الفحص التلقائي كل إصدار أحدث من جديد.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "تصدير الإعدادات…";
+"settings.backup.export" = "تصدير";
+"settings.backup.export.detail" = "يحفظ مجموعاتك وإعداداتك في ملف .dockgroups.";
+"settings.backup.import.button" = "استيراد الإعدادات…";
+"settings.backup.import" = "استيراد";
+"settings.backup.import.detail" = "يستبدل مجموعاتك وإعداداتك بتلك الموجودة في ملف النسخة الاحتياطية، أو يدمج المجموعات الجديدة من النسخة مع مجموعاتك.";
+"settings.backup.footer" = "تحتوي النسخة الاحتياطية على مجموعاتك وتطبيقاتها وكل الإعدادات. لا تتضمن عدادات تشغيل «الأكثر استخدامًا». يبقى الملف حيث تحفظه.";
+"settings.backup.status.exported" = "تم التصدير إلى “%@”";
+"settings.backup.status.restored" = "تمت استعادة %1$@ مع %2$@";
+"settings.backup.status.merged" = "تم دمج %@ من النسخة الاحتياطية";
+"settings.backup.status.mergedSkipped" = "تم دمج %1$@ من النسخة الاحتياطية؛ %2$ld موجودة هنا بالفعل";
+"settings.backup.exportPanel.title" = "تصدير الإعدادات";
+"settings.backup.exportPanel.message" = "احفظ مجموعاتك وإعداداتك في ملف نسخة احتياطية.";
+"settings.backup.exportFailed" = "تعذّر تصدير الإعدادات";
+"settings.backup.importPanel.title" = "استيراد الإعدادات";
+"settings.backup.importPanel.message" = "اختر نسخة احتياطية %@ لاستعادتها.";
+"settings.backup.readFailed" = "تعذّرت قراءة الملف";
+"settings.backup.confirm.title" = "هل تستورد المجموعات والإعدادات في هذه النسخة؟";
+"settings.backup.confirm.replaceAll" = "استبدال الكل";
+"settings.backup.confirm.merge" = "دمج";
+"settings.backup.restoreFailed" = "تعذّرت استعادة النسخة الاحتياطية";
+"settings.backup.restoreFailed.kept" = "%@ تم الاحتفاظ بمجموعاتك وإعداداتك الحالية.";
+"settings.backup.mergeFailed" = "تعذّر دمج النسخة الاحتياطية";
+"settings.backup.mergeFailed.kept" = "%@ تم الاحتفاظ بمجموعاتك الحالية.";
+"settings.backup.rejected.notABackup" = "اختر ملف .dockgroups أنشأته بأمر «تصدير الإعدادات…». لم يتغيّر شيء.";
+"settings.backup.rejected.newer" = "لم يتغيّر شيء.";
+"settings.backup.confirm.noGroups" = "لا توجد مجموعات في النسخة الاحتياطية.";
+"settings.backup.confirm.noGroups.exported" = "لا توجد مجموعات في النسخة الاحتياطية، صُدِّرت في %@.";
+"settings.backup.confirm.contents" = "تحتوي النسخة الاحتياطية على %1$@ مع %2$@.";
+"settings.backup.confirm.contents.exported" = "تحتوي النسخة الاحتياطية على %1$@ مع %2$@، صُدِّرت في %3$@.";
+"settings.backup.confirm.replace" = "«استبدال الكل» يستخدم مجموعات النسخة الاحتياطية وإعداداتها بدلًا من مجموعاتك.";
+"settings.backup.confirm.replaced.one" = "ستُستبدل بها مجموعة حالية واحدة لها الاسم نفسه لمجموعة في النسخة الاحتياطية.";
+"settings.backup.confirm.replaced.other" = "ستُستبدل بها %ld مجموعات حالية لها الأسماء نفسها لمجموعات في النسخة الاحتياطية.";
+"settings.backup.confirm.removed.one" = "ستُحذف مجموعة حالية واحدة غير موجودة في النسخة الاحتياطية.";
+"settings.backup.confirm.removed.other" = "ستُحذف %ld مجموعات حالية غير موجودة في النسخة الاحتياطية.";
+"settings.backup.confirm.replaceSettings" = "ستُستبدل إعداداتك أيضًا (النافذة المنبثقة والاختصارات و«الأكثر استخدامًا» والتحديثات).";
+"settings.backup.confirm.merge.nothing" = "«دمج» يُبقي مجموعاتك وإعداداتك ولا يضيف شيئًا.";
+"settings.backup.confirm.merge.allHere" = "«دمج» يُبقي مجموعاتك وإعداداتك؛ وكل مجموعات النسخة موجودة هنا بالفعل، فلا يُضاف شيء.";
+"settings.backup.confirm.merge.adds" = "«دمج» يُبقي مجموعاتك وإعداداتك، ويضيف %1$@ مع %2$@ من النسخة الاحتياطية.";
+"settings.backup.confirm.skipped.one" = "ستُتخطى مجموعة واحدة موجودة هنا بالفعل (بالاسم نفسه).";
+"settings.backup.confirm.skipped.other" = "سيُتخطى %ld مجموعات موجودة هنا بالفعل (بالأسماء نفسها).";
+"settings.backup.confirm.final" = "تُحفظ عدادات تشغيل «الأكثر استخدامًا». وتُحفظ نسخة من ملفاتك الحالية بجوارها في Application Support. لا يمكن التراجع عن هذا.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "حفظ في ملف…";
+"settings.diagnostics.export" = "تصدير التشخيصات";
+"settings.diagnostics.export.detail" = "تقرير نصي تُرفقه بمشكلة على GitHub أو بطلب دعم.";
+"settings.diagnostics.header" = "التشخيصات";
+"settings.diagnostics.footer" = "يسرد إصدارات التطبيق وmacOS، وطراز الماك، ومكان تثبيت التطبيق، وإذن إمكانية الوصول، وإعداداتك، وفحوص التحديث، وأسماء مجموعاتك مع عدد تطبيقاتها، والأخطاء الأخيرة. لا يسرد التطبيقات الموجودة في مجموعاتك. ولا يُرسَل شيء إلى أي جهة.";
+"settings.diagnostics.copied" = "نُسخت التشخيصات إلى الحافظة";
+"settings.diagnostics.saved" = "تم الحفظ في “%@”";
+"settings.diagnostics.failed" = "تعذّر حفظ التقرير: %@";
+"settings.diagnostics.panel.title" = "حفظ التشخيصات";
+"settings.diagnostics.panel.message" = "احفظ تقرير التشخيص كملف نصي، مثلًا لإرفاقه بمشكلة على GitHub.";
+"settings.diagnostics.panel.prompt" = "حفظ";
+
+/* Software Update window */
+"updateWindow.title" = "تحديث البرنامج";
+"updateWindow.checking" = "جارٍ البحث عن تحديثات…";
+"updateWindow.upToDate.title" = "أنت على أحدث إصدار!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ هو أحدث إصدار متاح.";
+"updateWindow.available.title" = "يتوفر إصدار جديد من %@!";
+"updateWindow.available.message" = "الإصدار %1$@ متاح — وأنت تستخدم %2$@.";
+"updateWindow.available.noImage" = "هذا الإصدار لا يحتوي على صورة قرص للتثبيت التلقائي؛ نزّله من صفحة الإصدار.";
+"updateWindow.available.question" = "هل تريد تنزيله وتثبيته الآن؟";
+"updateWindow.skip" = "تخطي هذا الإصدار";
+"updateWindow.remindLater" = "تذكيري لاحقًا";
+"updateWindow.openReleasePage" = "فتح صفحة الإصدار";
+"updateWindow.downloadAndInstall" = "تنزيل وتثبيت";
+"updateWindow.downloading" = "جارٍ تنزيل الإصدار %@…";
+"updateWindow.restartsWhenDone" = "سيُعاد تشغيل %@ عند الانتهاء.";
+"updateWindow.reopening" = "جارٍ إعادة فتح %@.";
+"updateWindow.dryRun.title" = "انتهى التشغيل التجريبي";
+"updateWindow.dryRun.message" = "تم تنزيل الإصدار %1$@ والتحقق منه ونسخه إلى %2$@. لم يُستبدل شيء.";
+"updateWindow.checkFailed" = "تعذّر البحث عن تحديثات";
+"updateWindow.installFailed" = "تعذّر تثبيت الإصدار %@";
+"updateWindow.link.releases" = "الإصدارات";
+"updateWindow.link.releasePage" = "صفحة الإصدار";
+"updateWindow.releaseNotes" = "ملاحظات الإصدار";
+"updateWindow.releaseNotes.none" = "لا توجد ملاحظات لهذا الإصدار.";
+"updateWindow.relaunchFailed" = "الإصدار %@ مثبّت، لكن التطبيق تعذّر عليه إعادة تشغيل نفسه. أغلقه ثم افتحه مجددًا.";
+
+/* About window */
+"about.section.findMe" = "تابعني على الإنترنت";
+"about.section.support" = "ادعم هذا المشروع";
+"about.section.books" = "كتبي";
+"about.section.software" = "برامجي مفتوحة المصدر";
+"about.fullList" = "القائمة الكاملة على github.com/ercanatay";
+"about.section.blogs" = "مدونات Medium";
+"about.icon.accessibility" = "أيقونة %@";
+"about.version" = "الإصدار %@ · مفتوح المصدر، ترخيص MIT";
+"about.website" = "الموقع";
+"about.sourceCode" = "الشيفرة المصدرية";
+"about.license" = "الترخيص";
+"about.reportBug" = "وجدت خللًا؟ افتح بلاغًا";
+"about.inspiredBy" = "مستوحى من وظائف DockGroups. %@ تطبيق مستقل وأصلي كُتب من الصفر، ولا يحتوي على أي شيفرة أو رسومات من DockGroups.";
+"about.project.dockGroups" = "هذا التطبيق · مجموعات الدوك لنظام macOS";
+"about.project.intelComputerUse" = "أتمتة سطح مكتب macOS الأصلية لأجهزة Intel عبر MCP.";
+"about.project.exchangeRate" = "متتبع أسعار الصرف والمحفظة بـ PHP/MySQL مع سحب مباشر وتحديثات إصدارات GitHub.";
+"about.project.backlinkChecker" = "فحص نصوص الروابط وdofollow/nofollow وحالات HTTP للروابط الخلفية.";
+"about.project.consentManager" = "ترجمات إضافة YOOtheme Pro 5 Consent Manager لووردبريس (WordPress.org).";
+"about.project.antigravityUpdater" = "محدِّث خفيف لنظام macOS لأدوات Antigravity، بـ 21 لغة.";
+"about.project.widgetVisibility" = "إضافة ووردبريس خالية من Jetpack لإظهار الودجات، مع دعم الفروع.";
+"about.project.forbiddenContent" = "يكشف الكلمات المحظورة (مثل 'Casino') في عناوين المقالات، كمدقق تدقيق لووردبريس.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "اعرض %1$@ في %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "شغّل %1$@ في %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "أنهِ %1$@ في %2$@";
+"core.invocation.showPopup" = "عرض النافذة المنبثقة";
+"core.invocation.openAll" = "فتح الكل";
+"core.invocation.hideAll" = "إخفاء الكل";
+"core.invocation.closeAll" = "إغلاق الكل";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "لم يُعدّ أي متصفح ويب لفتحه.";
+"core.launch.notOpened" = "لم يُفتح التطبيق.";
+"core.group.defaultName" = "مجموعة جديدة";
+"core.website.error.empty" = "أدخل عنوان ويب.";
+"core.website.error.invalid" = "هذا ليس عنوان ويب صالحًا.";
+"core.website.error.scheme" = "لا يمكن إضافة إلا عناوين http وhttps، وليس “%@:”.";
+"core.website.error.credentials" = "أزِل اسم المستخدم وكلمة المرور من العنوان.";
+"core.persistence.groups.newer" = "حُفظ ملف المجموعات بإصدار أحدث من Cybokron Dock Groups (الصيغة %ld).";
+"core.backup.error.notABackup" = "هذا الملف ليس نسخة احتياطية من Cybokron Dock Groups.";
+"core.backup.error.newer" = "أُنشئت هذه النسخة الاحتياطية بإصدار أحدث من Cybokron Dock Groups (صيغة النسخ %ld). حدِّث التطبيق لاستعادتها.";
+"core.persistence.usage.newer" = "حُفظت إحصاءات الاستخدام بإصدار أحدث من Cybokron Dock Groups (الصيغة %ld).";
+"core.agent.configuration.newer" = "حُفظت إعدادات المجموعة بإصدار أحدث من Cybokron Dock Groups (الصيغة %ld).";
+"core.agent.error.icon" = "تعذّر رسم أيقونة المجموعة.";
+"core.agent.error.bundleWrite" = "تعذّر إنشاء تطبيق المجموعة: %@";
+"core.agent.error.toolMissing" = "أداة نظام مطلوبة مفقودة: %@.";
+"core.agent.error.signing" = "يشترط macOS توقيع كل تطبيق برمجيًا، وفشل توقيع تطبيق المجموعة على هذا الماك، لذلك لم يُثبَّت شيء.";
+"core.agent.error.registration" = "لم يسجّل macOS تطبيق المجموعة: %@";
+"core.agent.error.hostUnavailable" = "تعذّر على Cybokron Dock Groups قراءة ملفه التنفيذي: %@";
+"core.agent.error.noExecutable" = "ليس للتطبيق ملف تنفيذي.";
+"core.dock.saveFailed" = "تعذّر تغيير إعدادات الدوك.";
+"core.store.loadFailed.title" = "تعذّر تحميل مجموعاتك";
+"core.store.loadFailed.kept" = "%1$@ سيبدأ التطبيق بقائمة مجموعات فارغة. احتُفظ بنسخة في “%2$@”.";
+"core.store.loadFailed.empty" = "%@ سيبدأ التطبيق بقائمة مجموعات فارغة.";
+"core.store.loadFailed.suspended" = "%@ حمايةً للملف الحالي، لن تُحفظ التغييرات حتى تُعاد تشغيل التطبيق.";
+"core.store.saveFailed.title" = "تعذّر حفظ تغييراتك";
+"core.preferences.saveFailed" = "تعذّر حفظ إعداداتك: %@";
+"core.websiteIcon.accessibility" = "موقع ويب";
+"core.update.check.notHTTP" = "الرد ليس من نوع HTTP.";
+"core.update.check.malformed" = "تعذّرت قراءة معلومات الإصدار من GitHub.";
+"core.update.check.unsupportedTag" = "الإصدار الأحدث (“%@”) غير موسوم برقم إصدار.";
+"core.update.check.noRelease" = "لم يُنشر أي إصدار بعد.";
+"core.update.check.rateLimited" = "يحدّ GitHub الطلبات حاليًا. حاول مرة أخرى بعد ساعة.";
+"core.update.check.httpStatus" = "ردّ GitHub برمز HTTP %ld.";
+"core.update.check.network" = "تعذّر الوصول إلى GitHub: %@";
+"core.update.check.noVersion" = "هذه النسخة من التطبيق بلا رقم إصدار، لذلك لا يمكن مقارنتها.";
+"core.update.install.insecureURL" = "عنوان تنزيل التحديث غير آمن (%@).";
+"core.update.install.downloadFailed" = "تعذّر تنزيل التحديث: %@";
+"core.update.install.sizeMismatch" = "التحديث المنزَّل غير مكتمل (%1$ld من %2$ld بايت).";
+"core.update.install.checksum" = "التحديث المنزَّل لا يطابق مجموعه الاختباري المنشور، لذلك لم يُثبَّت.";
+"core.update.install.mountFailed" = "تعذّر فتح صورة قرص التحديث: %@";
+"core.update.install.appNotFound" = "صورة قرص التحديث لا تحتوي على التطبيق.";
+"core.update.install.wrongApp" = "صورة قرص التحديث تحتوي على تطبيق آخر (%@).";
+"core.update.install.versionMismatch" = "التطبيق المنزَّل هو الإصدار %1$@، بينما الإصدار المنشور هو %2$@.";
+"core.update.install.replaceFailed" = "تعذّر وضع الإصدار الجديد في مكانه، لذلك احتُفظ بالحالي: %@";
+"core.update.install.rollbackFailed" = "فشل التحديث وتعذّرت إعادة الإصدار السابق. محفوظ في %@.";
+"core.update.location.translocated" = "يشغّل macOS هذه النسخة من موقع مؤقت للقراءة فقط. انقل التطبيق إلى مجلد التطبيقات، وافتحه منه، ثم حاول مجددًا.";
+"core.update.location.notFound" = "لم يُعثر على التطبيق الجاري في %@.";
+"core.update.location.readOnly" = "يعمل التطبيق من وحدة تخزين للقراءة فقط، مثل صورة القرص. انسخه إلى مجلد التطبيقات أولًا.";
+"core.update.location.noPermission" = "ليست لديك صلاحية لاستبدال التطبيق في “%@”. نزّل الإصدار الجديد من صفحة الإصدارات بدلًا من ذلك.";
+"core.update.install.noFile" = "لم يُرسل الخادم أي ملف.";
+"core.update.install.httpStatus" = "رمز HTTP %ld.";
+"core.update.install.copyFailed" = "فشل نسخ التطبيق: %@";
+"core.mostUsed.name" = "الأكثر استخدامًا";
