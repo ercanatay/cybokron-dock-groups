@@ -3,7 +3,7 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: in active development — current release v0.5.6.
+> Status: in active development — current release v0.6.0, with 26 languages.
 
 ## Screenshots
 
@@ -158,14 +158,14 @@ popup is already showing, or there are no groups yet, it shows the group window 
 
 ## Download
 
-Get the universal disk image (`Cybokron-Dock-Groups-<version>-universal.dmg`) from the
+Get the v0.6.0 universal disk image (`Cybokron-Dock-Groups-0.6.0-universal.dmg`, 26 languages) from the
 [releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and drag the app
 to Applications.
 [cybokron.com/dock-groups/](https://cybokron.com/dock-groups/) describes the app in 26 languages, and
 [cybokron.com/dock-groups/download/](https://cybokron.com/dock-groups/download/) always downloads the
 latest release's disk image.
 
-All published releases (v0.5.0 to v0.5.6) are **signed ad hoc**, not with a Developer ID, and aren't
+All published releases (v0.5.0 to v0.6.0) are **signed ad hoc**, not with a Developer ID, and aren't
 notarized, so macOS shows an “Apple could not verify …” warning the first time you open a downloaded
 copy. See the next section for how to open it.
 
@@ -178,7 +178,7 @@ signed release to the next.
 
 ### Opening a downloaded release the first time
 
-Every published release so far (v0.5.0 to v0.5.6) is signed ad hoc only, so macOS blocks the first
+Every published release so far (v0.5.0 to v0.6.0) is signed ad hoc only, so macOS blocks the first
 open of a downloaded copy (“Apple could not verify …”). Either:
 
 - try to open the app once, then go to **System Settings → Privacy & Security**, choose
