@@ -137,3 +137,36 @@ struct PopupKeyboardNavigationTests {
         #expect(Navigation.nextGroup(after: "a", in: [String]()) == nil)
     }
 }
+
+@Suite("Popup Quick Look keys")
+struct PopupQuickLookTests {
+    @Test func spaceWithoutAFilterTogglesQuickLook() {
+        #expect(PopupQuickLook.spaceAction(query: "", isPreviewShown: false, selection: .previewable) == .showPreview)
+        #expect(PopupQuickLook.spaceAction(query: "", isPreviewShown: true, selection: .previewable) == .closePreview)
+        #expect(PopupQuickLook.spaceAction(query: "", isPreviewShown: true, selection: .none) == .closePreview)
+    }
+
+    @Test func spaceWhileTypingIsASpace() {
+        #expect(PopupQuickLook.spaceAction(query: "visual", isPreviewShown: false, selection: .previewable) == .typeSpace)
+        #expect(PopupQuickLook.spaceAction(query: "v", isPreviewShown: true, selection: .previewable) == .typeSpace)
+        #expect(PopupQuickLook.spaceAction(query: "v", isPreviewShown: false, selection: .none) == .typeSpace)
+        // The filter's own rule agrees: a space only extends something already typed.
+        #expect(PopupFilter.acceptsCharacter(" ", currentQuery: "v"))
+        #expect(!PopupFilter.acceptsCharacter(" ", currentQuery: ""))
+    }
+
+    @Test func websitesAndMissingAppsHaveNoPreview() {
+        #expect(PopupQuickLook.spaceAction(query: "", isPreviewShown: false, selection: .notPreviewable) == .ignore)
+    }
+
+    @Test func spaceWithNothingSelectedIsLeftAlone() {
+        #expect(PopupQuickLook.spaceAction(query: "", isPreviewShown: false, selection: .none) == .pass)
+    }
+
+    @Test func escapeClosesQuickLookThenTheFilterThenThePopup() {
+        #expect(PopupQuickLook.escapeAction(query: "mail", isPreviewShown: true) == .closePreview)
+        #expect(PopupQuickLook.escapeAction(query: "", isPreviewShown: true) == .closePreview)
+        #expect(PopupQuickLook.escapeAction(query: "mail", isPreviewShown: false) == .clearFilter)
+        #expect(PopupQuickLook.escapeAction(query: "", isPreviewShown: false) == .closePopup)
+    }
+}

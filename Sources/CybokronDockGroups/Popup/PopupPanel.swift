@@ -1,11 +1,17 @@
 import AppKit
+import Quartz
 import SwiftUI
 
 /// The borderless, floating panel the popup lives in. It doesn't activate the app, so the app the
 /// user was working in stays frontmost, but it can become key to receive Escape.
+///
+/// It controls the Quick Look panel while the popup previews an app: Quick Look looks for its
+/// controller in the key window's responder chain, which the panel is part of.
 final class PopupPanel: NSPanel {
     /// Called for Escape (the standard Cancel action).
     var onCancel: (() -> Void)?
+    /// Supplies what Quick Look shows; Quick Look isn't offered while it's `nil`.
+    weak var preview: PopupPreviewController?
 
     init() {
         super.init(
@@ -32,6 +38,20 @@ final class PopupPanel: NSPanel {
 
     override func cancelOperation(_ sender: Any?) {
         onCancel?()
+    }
+
+    // MARK: - Quick Look
+
+    override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool {
+        preview != nil
+    }
+
+    override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) {
+        preview?.begin(panel)
+    }
+
+    override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {
+        preview?.end(panel)
     }
 }
 

@@ -13,7 +13,8 @@ import SwiftUI
 /// While it's open the keyboard works the popup: the arrow keys select an app, Return opens it,
 /// typing filters the apps by name (Return then opens the selected, by default the best, match),
 /// Delete and Escape clear the filter, Tab and ⇧Tab go to the next and previous group, and Escape
-/// without a filter closes the popup.
+/// without a filter closes the popup. Space without a filter shows the selected app in Quick Look
+/// (`PopupQuickLook`); Escape then closes Quick Look first, and closing the popup closes it too.
 ///
 /// The Most Used list (`MostUsedGroup.id`) opens like a group, read-only: its apps can be opened
 /// but not reordered or removed. A standalone agent shows its group read-only too
@@ -41,6 +42,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         static let returnKey: UInt16 = 36
         static let keypadEnter: UInt16 = 76
         static let tab: UInt16 = 48
+        static let space: UInt16 = 49
         static let delete: UInt16 = 51
         static let left: UInt16 = 123
         static let right: UInt16 = 124
@@ -60,6 +62,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private let actions: Actions
     private let modifierKeys = ModifierKeyState()
     private let keyboard = PopupKeyboardState()
+    /// Quick Look for the selected app.
+    private lazy var preview = PopupPreviewController(host: panel)
     /// What the open popup shows, for the keyboard.
     private var content: PopupContent?
 
@@ -106,11 +110,18 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
 
         panel.delegate = self
         panel.onCancel = { [weak self] in self?.close(reason: .escape) }
+        panel.preview = preview
         // @Published fires before the value changes; the main-queue hop reads the new value.
         store.$groups.map { _ in () }
             .merge(with: preferences.$preferences.map { _ in () }, mostUsed?.changes ?? Empty().eraseToAnyPublisher())
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.refresh() }
+            .store(in: &subscriptions)
+        // The preview follows the keyboard selection.
+        keyboard.$selectedID
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.syncPreview() }
             .store(in: &subscriptions)
     }
 
@@ -165,6 +176,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         logger.debug("Closing popup: \(reason.rawValue, privacy: .public)")
         groupID = nil
         lastClose = (reason, Date())
+        preview.close()
         removeEventMonitors()
         transition += 1
         let closingTransition = transition
@@ -182,7 +194,23 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     }
 
     func windowDidResignKey(_ notification: Notification) {
-        close(reason: .lostFocus)
+        guard preview.isShown else {
+            close(reason: .lostFocus)
+            return
+        }
+        if preview.isSettling {
+            // Quick Look coming up took the keyboard for an instant: take it back.
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.isShown, self.preview.isShown, !self.preview.isKey else { return }
+                self.panel.makeKey()
+            }
+            return
+        }
+        // A click into the Quick Look panel makes it key; the popup stays open for it.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.isShown, !self.panel.isKeyWindow, !self.preview.isKey else { return }
+            self.close(reason: .lostFocus)
+        }
     }
 
     // MARK: - Content
@@ -198,6 +226,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             panel.setFrame(frame, display: true)
             panel.invalidateShadow()
         }
+        syncPreview()
     }
 
     /// Puts `group`'s content into the panel and returns the panel's frame.
@@ -365,7 +394,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 // Clicks in the app's other windows (the menu bar item, the group window).
                 let windowNumber = event.windowNumber
                 MainActor.assumeIsolated {
-                    guard let self, windowNumber != self.panel.windowNumber else { return }
+                    guard let self, windowNumber != self.panel.windowNumber, windowNumber != self.preview.windowNumber else { return }
                     self.close(reason: .appWindowClick)
                 }
                 return event
@@ -393,15 +422,16 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private func handle(_ key: PopupKeyPress) -> Bool {
         guard groupID != nil else { return false }
         if key.keyCode == KeyCode.escape {
-            if keyboard.query.isEmpty {
-                close(reason: .escape)
-            } else {
-                setQuery("")
+            switch PopupQuickLook.escapeAction(query: keyboard.query, isPreviewShown: preview.isShown) {
+            case .closePreview: preview.close()
+            case .clearFilter: setQuery("")
+            case .closePopup: close(reason: .escape)
             }
             return true
         }
-        // Everything else only while the popup has the keyboard; ⌘ and ⌃ shortcuts (⌘Q, ⌘,) pass.
-        guard panel.isKeyWindow, key.modifierFlags.isDisjoint(with: [.command, .control]) else { return false }
+        // Everything else only while the popup (or its Quick Look preview) has the keyboard; ⌘ and ⌃
+        // shortcuts (⌘Q, ⌘,) pass.
+        guard panel.isKeyWindow || preview.isKey, key.modifierFlags.isDisjoint(with: [.command, .control]) else { return false }
         switch key.keyCode {
         case KeyCode.left: return moveSelection(.left)
         case KeyCode.right: return moveSelection(.right)
@@ -418,6 +448,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 setQuery(String(keyboard.query.dropLast()))
             }
             return true
+        case KeyCode.space where !key.modifierFlags.contains(.option):
+            return handleSpace()
         default:
             break
         }
@@ -426,6 +458,42 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         else { return false }
         setQuery(keyboard.query + String(character))
         return true
+    }
+
+    /// Space: a space in the filter while typing, else Quick Look for the selected app.
+    private func handleSpace() -> Bool {
+        let location = selectedCell().flatMap { $0.app.isWebsite ? nil : $0.app.resolvedURL() }
+        let selection: PopupQuickLook.Selection = selectedCell() == nil ? .none : (location == nil ? .notPreviewable : .previewable)
+        switch PopupQuickLook.spaceAction(query: keyboard.query, isPreviewShown: preview.isShown, selection: selection) {
+        case .typeSpace:
+            setQuery(keyboard.query + " ")
+        case .showPreview:
+            if let location { preview.show(location) }
+        case .closePreview:
+            preview.close()
+        case .ignore:
+            break
+        case .pass:
+            return false
+        }
+        return true
+    }
+
+    /// The cell the keyboard selected, if it's shown.
+    private func selectedCell() -> PopupCell? {
+        guard let content, let id = keyboard.selectedID else { return nil }
+        return content.navigationItems(query: keyboard.query).cells.first { $0.id == id }
+    }
+
+    /// Keeps an open preview on the selected app; closes it once the selection is gone or has
+    /// nothing to preview.
+    private func syncPreview() {
+        guard preview.isShown else { return }
+        if let cell = selectedCell(), !cell.app.isWebsite, let location = cell.app.resolvedURL() {
+            preview.show(location)
+        } else {
+            preview.close()
+        }
     }
 
     /// Changes the filter and selects its best match (nothing once the filter is cleared).

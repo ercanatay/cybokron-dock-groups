@@ -142,3 +142,54 @@ public enum PopupKeyboardNavigation {
         return order[(index + step) % order.count]
     }
 }
+
+/// Quick Look in the popup: Space previews the selected app, as in Finder.
+public enum PopupQuickLook {
+    /// What the keyboard selection is, for Quick Look.
+    public enum Selection: Sendable {
+        /// Nothing is selected.
+        case none
+        /// An app found on this Mac: Quick Look shows its card (name, version, size).
+        case previewable
+        /// Something Quick Look has nothing to show for: a website, or an app that isn't on this Mac.
+        case notPreviewable
+    }
+
+    /// What pressing Space does.
+    public enum SpaceAction: Equatable, Sendable {
+        /// Types a space into the filter.
+        case typeSpace
+        /// Shows the selected app in Quick Look.
+        case showPreview
+        /// Closes Quick Look again.
+        case closePreview
+        /// Nothing; the key is used up, so it doesn't beep.
+        case ignore
+        /// The popup doesn't use the key.
+        case pass
+    }
+
+    /// What pressing Escape does: close Quick Look first, then clear the filter, then close the popup.
+    public enum EscapeAction: Equatable, Sendable {
+        case closePreview, clearFilter, closePopup
+    }
+
+    /// Space while something was typed extends the filter (spaces count only after something was
+    /// typed, `PopupFilter.acceptsCharacter`). Without a filter it toggles Quick Look for the
+    /// selected app; a selected website (or a missing app) has no preview, so Space does nothing,
+    /// and with nothing selected the popup leaves the key alone.
+    public static func spaceAction(query: String, isPreviewShown: Bool, selection: Selection) -> SpaceAction {
+        if !query.isEmpty { return .typeSpace }
+        if isPreviewShown { return .closePreview }
+        switch selection {
+        case .previewable: return .showPreview
+        case .notPreviewable: return .ignore
+        case .none: return .pass
+        }
+    }
+
+    public static func escapeAction(query: String, isPreviewShown: Bool) -> EscapeAction {
+        if isPreviewShown { return .closePreview }
+        return query.isEmpty ? .closePopup : .clearFilter
+    }
+}
