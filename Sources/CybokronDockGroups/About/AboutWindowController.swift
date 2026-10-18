@@ -45,6 +45,7 @@ private struct AboutView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                socialSection
                 supportSection
                 header
                 section("My Books") {
@@ -78,6 +79,14 @@ private struct AboutView: View {
         }
         .frame(width: Self.width, height: 720)
         .background(palette.solidBackground)
+    }
+
+    private var socialSection: some View {
+        section("Find Me Online") {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 6), spacing: 8) {
+                ForEach(SocialProfile.all) { SocialButton(profile: $0, palette: palette) }
+            }
+        }
     }
 
     private var supportSection: some View {
@@ -228,5 +237,36 @@ private struct LinkRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+}
+
+private struct SocialButton: View {
+    let profile: SocialProfile
+    let palette: PanelPalette
+    @State private var hovering = false
+
+    var body: some View {
+        Button { NSWorkspace.shared.open(profile.url) } label: {
+            glyph
+                .foregroundStyle(hovering ? PanelPalette.teal : palette.primaryText)
+                .frame(maxWidth: .infinity)
+                .frame(height: 40)
+                .background(palette.hover.opacity(hovering ? 0.9 : 0.5), in: RoundedRectangle(cornerRadius: 8))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(palette.hairline))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+        .help(profile.name)
+        .accessibilityLabel(profile.name)
+    }
+
+    @ViewBuilder private var glyph: some View {
+        if let shape = SocialIcons.shape(for: profile.id) {
+            shape.fill().frame(width: 20, height: 20)
+        } else {
+            // Ekşi Sözlük has no Simple Icons glyph.
+            Text("e").font(.system(size: 24, weight: .bold, design: .rounded))
+        }
     }
 }
