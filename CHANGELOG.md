@@ -5,6 +5,24 @@ All notable changes to Cybokron Dock Groups are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Quick Look in the popup**: with an app selected (arrow keys) and nothing typed, Space shows its
+  Finder preview — name, version, size — and the preview follows the selection; Space again or
+  Escape closes it (Escape then clears the filter, then closes the popup), and closing the popup
+  closes it too. While typing a filter, Space is still a space. Websites and missing apps have no
+  preview: Space does nothing for them.
+- **Websites in groups**: **Add Website…** in the group window, or in the popup's context menu,
+  adds a web link (`https://` is added when left out, broken addresses are refused, the name
+  defaults to the host). It shows as a globe, opens in the default browser on click or Return, and
+  Open All opens a group's websites together; Close All and Hide All, the running indicators and
+  Most Used leave them out. A website can be moved, reordered, sorted A→Z with the apps and removed
+  like an app, is in a group once (but may be in several groups), and is kept in backups. The
+  popup's context menu also has **Open**, **Copy URL** (websites) or **Show in Finder** (apps), and
+  **Remove from Group**.
+
 ## [0.5.4] - 2026-10-18
 
 ### Added

@@ -38,6 +38,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - **Keyboard in the popup**: the arrow keys select an app and Return opens it; typing filters the
   apps by name (case and accents don't matter, `cal` finds “Çalışma”), Delete or Escape clears the
   filter; Tab / ⇧Tab switch to the next / previous group (and Most Used), and Escape closes the popup.
+  With an app selected and nothing typed, Space shows it in Quick Look (Space or Escape closes it).
+- **Websites in groups**: **Add Website…** (group window or the popup's context menu) adds a web
+  link, shown as a globe; it opens in your default browser and Open All opens it with the apps.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are
