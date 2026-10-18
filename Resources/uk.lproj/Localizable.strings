@@ -519,3 +519,21 @@
 "core.update.install.httpStatus" = "Статус HTTP %ld.";
 "core.update.install.copyFailed" = "Не вдалося скопіювати застосунок: %@";
 "core.mostUsed.name" = "Найуживаніші";
+
+/* Changelog */
+"changelog.tab" = "Список змін";
+"changelog.currentVersion" = "Поточна версія: %@";
+"changelog.refresh" = "Оновити";
+"changelog.refresh.help" = "Завантажити останні примітки до випуску з GitHub";
+"changelog.lastUpdated" = "Востаннє оновлено %@";
+"changelog.header" = "Примітки до випуску";
+"changelog.footer" = "Із релізів проєкту на GitHub. Копія зберігається на цьому Mac, тож примітки відображаються й без з’єднання.";
+"changelog.latest" = "Останній";
+"changelog.installed" = "Встановлено";
+"changelog.prerelease" = "Попередній випуск";
+"changelog.noNotes" = "Для цієї версії немає приміток до випуску.";
+"changelog.loading" = "Завантаження приміток до випуску з GitHub…";
+"changelog.unavailable" = "Примітки до випуску недоступні";
+"changelog.error.cached" = "Не вдалося завантажити примітки до випуску — показано збережену копію.";
+"changelog.retry" = "Натисніть «Оновити», щоб спробувати знову.";
+"changelog.openRelease" = "Переглянути на GitHub";

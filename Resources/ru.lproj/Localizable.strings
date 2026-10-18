@@ -519,3 +519,21 @@
 "core.update.install.httpStatus" = "Статус HTTP %ld.";
 "core.update.install.copyFailed" = "Не удалось скопировать приложение: %@";
 "core.mostUsed.name" = "Часто используемые";
+
+/* Changelog */
+"changelog.tab" = "Список изменений";
+"changelog.currentVersion" = "Текущая версия: %@";
+"changelog.refresh" = "Обновить";
+"changelog.refresh.help" = "Загрузить последние примечания к выпуску с GitHub";
+"changelog.lastUpdated" = "Последнее обновление: %@";
+"changelog.header" = "Примечания к выпуску";
+"changelog.footer" = "Из релизов проекта на GitHub. Копия хранится на этом Mac, поэтому примечания доступны и без сети.";
+"changelog.latest" = "Последняя";
+"changelog.installed" = "Установлена";
+"changelog.prerelease" = "Предварительный выпуск";
+"changelog.noNotes" = "Для этой версии примечаний к выпуску нет.";
+"changelog.loading" = "Загрузка примечаний к выпуску с GitHub…";
+"changelog.unavailable" = "Примечания к выпуску недоступны";
+"changelog.error.cached" = "Не удалось загрузить примечания к выпуску — показана сохранённая копия.";
+"changelog.retry" = "Нажмите «Обновить», чтобы повторить попытку.";
+"changelog.openRelease" = "Открыть на GitHub";

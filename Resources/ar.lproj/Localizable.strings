@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "رمز HTTP %ld.";
 "core.update.install.copyFailed" = "فشل نسخ التطبيق: %@";
 "core.mostUsed.name" = "الأكثر استخدامًا";
+
+/* Changelog */
+"changelog.tab" = "سجل التغييرات";
+"changelog.currentVersion" = "الإصدار الحالي: %@";
+"changelog.refresh" = "تحديث";
+"changelog.refresh.help" = "تحميل أحدث ملاحظات الإصدار من GitHub";
+"changelog.lastUpdated" = "آخر تحديث %@";
+"changelog.header" = "ملاحظات الإصدار";
+"changelog.footer" = "من إصدارات المشروع على GitHub. تُحفظ نسخة على هذا الجهاز، لذا تظهر الملاحظات دون اتصال أيضًا.";
+"changelog.latest" = "الأحدث";
+"changelog.installed" = "المثبّت";
+"changelog.prerelease" = "إصدار تجريبي";
+"changelog.noNotes" = "لا توجد ملاحظات إصدار لهذه النسخة.";
+"changelog.loading" = "جارٍ تحميل ملاحظات الإصدار من GitHub…";
+"changelog.unavailable" = "ملاحظات الإصدار غير متاحة";
+"changelog.error.cached" = "تعذّر تحميل ملاحظات الإصدار — يتم عرض النسخة المخزّنة.";
+"changelog.retry" = "انقر على «تحديث» للمحاولة مرة أخرى.";
+"changelog.openRelease" = "عرض على GitHub";

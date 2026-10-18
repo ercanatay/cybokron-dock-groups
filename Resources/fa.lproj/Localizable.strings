@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "وضعیت HTTP %ld.";
 "core.update.install.copyFailed" = "کپی کردن برنامه ناموفق بود: %@";
 "core.mostUsed.name" = "پرکاربردترین‌ها";
+
+/* Changelog */
+"changelog.tab" = "تغییرات نسخه";
+"changelog.currentVersion" = "نسخهٔ فعلی: %@";
+"changelog.refresh" = "تازه‌سازی";
+"changelog.refresh.help" = "بارگیری آخرین یادداشت‌های انتشار از GitHub";
+"changelog.lastUpdated" = "آخرین به‌روزرسانی %@";
+"changelog.header" = "یادداشت‌های انتشار";
+"changelog.footer" = "از انتشارهای پروژه در GitHub. یک رونوشت روی این Mac نگه داشته می‌شود، بنابراین یادداشت‌ها بدون اینترنت هم نمایش داده می‌شوند.";
+"changelog.latest" = "آخرین";
+"changelog.installed" = "نصب‌شده";
+"changelog.prerelease" = "پیش‌انتشار";
+"changelog.noNotes" = "یادداشت انتشاری برای این نسخه وجود ندارد.";
+"changelog.loading" = "در حال بارگیری یادداشت‌های انتشار از GitHub…";
+"changelog.unavailable" = "یادداشت‌های انتشار در دسترس نیست";
+"changelog.error.cached" = "بارگیری یادداشت‌های انتشار ناموفق بود — نسخهٔ ذخیره‌شده نمایش داده می‌شود.";
+"changelog.retry" = "برای تلاش دوباره روی «تازه‌سازی» کلیک کنید.";
+"changelog.openRelease" = "مشاهده در GitHub";

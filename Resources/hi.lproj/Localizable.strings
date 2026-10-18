@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP स्थिति %ld।";
 "core.update.install.copyFailed" = "ऐप कॉपी करना विफल रहा: %@";
 "core.mostUsed.name" = "सबसे ज़्यादा उपयोग";
+
+/* Changelog */
+"changelog.tab" = "बदलाव लॉग";
+"changelog.currentVersion" = "वर्तमान संस्करण: %@";
+"changelog.refresh" = "ताज़ा करें";
+"changelog.refresh.help" = "GitHub से नवीनतम रिलीज़ नोट्स लोड करें";
+"changelog.lastUpdated" = "अंतिम अपडेट %@";
+"changelog.header" = "रिलीज़ नोट्स";
+"changelog.footer" = "प्रोजेक्ट की GitHub रिलीज़ से। एक प्रति इस Mac पर रहती है, इसलिए नोट्स ऑफ़लाइन भी दिखते हैं।";
+"changelog.latest" = "नवीनतम";
+"changelog.installed" = "इंस्टॉल किया गया";
+"changelog.prerelease" = "प्री-रिलीज़";
+"changelog.noNotes" = "इस संस्करण के लिए कोई रिलीज़ नोट्स नहीं हैं।";
+"changelog.loading" = "GitHub से रिलीज़ नोट्स लोड हो रहे हैं…";
+"changelog.unavailable" = "रिलीज़ नोट्स उपलब्ध नहीं हैं";
+"changelog.error.cached" = "रिलीज़ नोट्स लोड नहीं हो सके — कैश्ड प्रति दिखाई जा रही है।";
+"changelog.retry" = "फिर से कोशिश करने के लिए ताज़ा करें पर क्लिक करें।";
+"changelog.openRelease" = "GitHub पर देखें";
