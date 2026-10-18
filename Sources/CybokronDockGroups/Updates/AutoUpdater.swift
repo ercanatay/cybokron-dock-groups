@@ -21,6 +21,8 @@ final class AutoUpdater: ObservableObject {
         case available(ReleaseInfo, asset: ReleaseAsset?)
         case downloading(ReleaseInfo, fraction: Double)
         case installing(ReleaseInfo)
+        /// The new version is in place; the app is about to quit and reopen.
+        case restarting(ReleaseInfo)
         /// `CYBOKRON_UPDATE_DRY_RUN` stopped the installation once the new app was staged.
         case stagedForDryRun(ReleaseInfo, path: String)
         case checkFailed(String)
@@ -72,7 +74,7 @@ final class AutoUpdater: ObservableObject {
 
     var isBusy: Bool {
         switch status {
-        case .checking, .downloading, .installing: return true
+        case .checking, .downloading, .installing, .restarting: return true
         default: return false
         }
     }
@@ -243,6 +245,9 @@ final class AutoUpdater: ObservableObject {
                     try installer.replace(installedApp: appURL, with: staged)
                 }.value
                 self?.logger.notice("Installed \(release.version, privacy: .public); previous version at \(backup.path, privacy: .public)")
+                self?.status = .restarting(release)
+                // Let the "restarting" text show before the app quits.
+                try? await Task.sleep(nanoseconds: 600_000_000)
                 self?.relaunch(appURL, backup: backup, release: release, asset: asset)
             } catch {
                 self?.logger.error("Update failed: \(String(describing: error), privacy: .public)")

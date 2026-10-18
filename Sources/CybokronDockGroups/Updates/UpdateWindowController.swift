@@ -119,6 +119,13 @@ private struct UpdateView: View {
             Text("\(AppInfo.name) restarts when it's done.")
                 .foregroundStyle(.secondary)
 
+        case .restarting(let release):
+            title("Installed version \(release.version.description) — restarting…")
+            ProgressView()
+                .progressViewStyle(.linear)
+            Text("\(AppInfo.name) is reopening.")
+                .foregroundStyle(.secondary)
+
         case .stagedForDryRun(let release, let path):
             title("Dry run finished")
             Text("Version \(release.version.description) was downloaded, verified and copied to \(path). Nothing was replaced.")

@@ -82,6 +82,11 @@ struct UpdatesSettingsView: View {
                 ProgressView().controlSize(.small)
                 Text("Installing version \(release.version.description)…")
             }
+        case .restarting(let release):
+            HStack(spacing: 6) {
+                ProgressView().controlSize(.small)
+                Text("Installed version \(release.version.description) — restarting…")
+            }
         case .checkFailed(let message), .installFailed(_, _, let message):
             Label(message, systemImage: "exclamationmark.triangle.fill")
                 .foregroundStyle(.orange)
