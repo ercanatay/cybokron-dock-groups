@@ -250,7 +250,9 @@ Developer ID certificate from the repository secrets
 `notarytool` and an App Store Connect API key (`APPLE_ASC_KEY_P8`, `APPLE_ASC_KEY_ID`,
 `APPLE_ASC_ISSUER_ID`), staples and verifies it (team `APPLE_TEAM_ID`), and attaches it to a draft
 release. While `NOTARIZE_ENABLED` is `false` (the current state), CI skips signing and
-notarization and attaches an ad hoc signed DMG to the draft release instead.
+notarization and attaches an ad hoc signed DMG to the draft release instead. The draft release's
+notes are the tag's section of [CHANGELOG.md](CHANGELOG.md) plus its compare link, made by
+`scripts/release-notes.sh <tag>` (e.g. `scripts/release-notes.sh v0.6.1`).
 
 With Xcode installed, `build-app.sh` also extracts the App Intents metadata
 (`Contents/Resources/Metadata.appintents`) that Siri and the Shortcuts app read, as Xcode does;
