@@ -230,11 +230,11 @@
 "settings.tab.updates" = "Güncellemeler";
 "settings.tab.backup" = "Yedekleme";
 
-/* Settings → Language (at the top of the Popup tab) — TODO translate */
-"general.language" = "Language";
-"general.language.system" = "System (%1$@)";
-"general.language.restartNote" = "The new language takes effect after the app restarts.";
-"general.language.restartNow" = "Restart Now";
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Dil";
+"general.language.system" = "Sistem (%1$@)";
+"general.language.restartNote" = "Yeni dil, uygulama yeniden başlatıldıktan sonra etkin olur.";
+"general.language.restartNow" = "Şimdi Yeniden Başlat";
 
 /* Settings → Popup */
 "settings.popup.theme" = "Tema";
