@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Español)
+  Cybokron Dock Groups
+
+  El texto español de cada clave. Los marcadores se mantienen: %@ es texto, %ld un número, y
+  %1$@, %2$ld … están numerados para que la traducción pueda cambiar su orden. Las claves
+  que terminan en .one/.other son el singular (cantidad 1) y el plural. El nombre de la app «Cybokron Dock Groups»,
+  «DockGroups», «GitHub», «Siri», los símbolos de teclas (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) y los nombres de archivo se mantienen igual.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Cancelar";
+"common.add" = "Añadir";
+"common.copy" = "Copiar";
+"common.copied" = "Copiado";
+"common.close" = "Cerrar";
+"common.done" = "OK";
+"common.install" = "Instalar";
+"common.tryAgain" = "Reintentar";
+"common.openAll" = "Abrir todo";
+"common.hideAll" = "Ocultar todo";
+"common.closeAll" = "Cerrar todo";
+"common.forceQuit" = "Forzar salida";
+"common.addApps" = "Añadir apps…";
+"common.addWebsite" = "Añadir sitio web…";
+"common.showInFinder" = "Mostrar en el Finder";
+"common.removeFromGroup" = "Quitar del grupo";
+"common.moveTo" = "Mover a";
+"common.default" = "Predeterminado";
+"common.auto" = "Automático";
+"common.changelog" = "Registro de cambios";
+"common.links" = "Enlaces";
+"common.openReleasesPage" = "Abrir la página de versiones";
+"common.openPrivacySettings" = "Abrir Privacidad y seguridad…";
+"common.checkForUpdates" = "Buscar actualizaciones…";
+"common.settings" = "Ajustes…";
+"common.noLaunchesYet" = "Todavía no hay aperturas registradas";
+"common.noAppsInGroup" = "Este grupo todavía no tiene apps";
+"common.about" = "Acerca de %@";
+"common.hideApp" = "Ocultar %@";
+"common.quitApp" = "Salir de %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Instalando la versión %@…";
+"common.update.restarting" = "Versión %@ instalada — reiniciando…";
+"common.appCount.one" = "1 app";
+"common.appCount.other" = "%ld apps";
+"common.groupCount.one" = "1 grupo";
+"common.groupCount.other" = "%ld grupos";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Grupos";
+"menuBar.noGroups" = "Todavía no hay grupos";
+"menuBar.manageGroups" = "Gestionar grupos…";
+"menuBar.mostUsed.empty.tooltip" = "Abre tus apps como de costumbre; aquí aparecerán las que más abras.";
+"menuBar.mostUsed.show" = "Mostrar lo más usado";
+"menuBar.mostUsed.show.tooltip" = "Muestra tus apps más abiertas en una ventana emergente.";
+"menuBar.checkForUpdates.tooltip" = "Busca en GitHub una versión más reciente de %@.";
+"menuBar.mostUsed.app.tooltip.one" = "Abrir %@. Abierta una vez.";
+"menuBar.mostUsed.app.tooltip.other" = "Abrir %1$@. Abierta %2$ld veces.";
+"menuBar.group.tooltip" = "Muestra las apps de «%@». Mantén ⌥ para abrirlas todas a la vez, o ⇧⌥ para ocultar las que están abiertas.";
+"menuBar.group.tooltip.shortcut" = "Muestra las apps de «%1$@». Mantén ⌥ para abrirlas todas a la vez, o ⇧⌥ para ocultar las que están abiertas. Atajo: %2$@.";
+"menuBar.group.openAll" = "Abrir todo en «%@»";
+"menuBar.group.openAll.tooltip.one" = "Abrir la app de «%@»";
+"menuBar.group.openAll.tooltip.other" = "Abrir las %1$ld apps de «%2$@»";
+"menuBar.group.noApps" = "«%@» todavía no tiene apps.";
+"menuBar.group.hideAll" = "Ocultar todo en «%@»";
+"menuBar.group.hideAll.tooltip" = "Oculta las apps abiertas de «%@». Las que no están abiertas siguen cerradas.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Edición";
+"mainMenu.undo" = "Deshacer";
+"mainMenu.redo" = "Rehacer";
+"mainMenu.cut" = "Cortar";
+"mainMenu.paste" = "Pegar";
+"mainMenu.selectAll" = "Seleccionar todo";
+"mainMenu.window" = "Ventana";
+"mainMenu.minimize" = "Minimizar";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Abre todas las apps de este grupo; las que ya están abiertas pasan al frente.";
+"popup.openAll.help.mostUsed" = "Abre todas las apps de esta lista; las que ya están abiertas pasan al frente.";
+"popup.hideAll.help.group" = "Oculta las apps abiertas de este grupo; las que no están abiertas siguen cerradas.";
+"popup.hideAll.help.mostUsed" = "Oculta las apps abiertas de esta lista; las que no están abiertas siguen cerradas.";
+"popup.closeAll.help.group" = "Sale de las apps abiertas de este grupo. ⌘-clic para forzar la salida sin guardar.";
+"popup.closeAll.help.mostUsed" = "Sale de las apps abiertas de esta lista. ⌘-clic para forzar la salida sin guardar.";
+"popup.summary.websites.one" = "1 sitio web";
+"popup.summary.websites.other" = "%ld sitios web";
+"popup.summary.running" = "%ld abiertas";
+"popup.summary.byLaunches" = "por aperturas";
+"popup.filter.noMatch" = "Ninguna app coincide con «%@»";
+"popup.filter.noMatch.hint" = "Pulsa Suprimir o Esc para borrar el filtro.";
+"popup.empty.mostUsed.hint" = "Abre tus apps como de costumbre para empezar tu historial.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Ordena las apps de este grupo por nombre, de la A a la Z.";
+"popup.footer.sortAZ.accessibility" = "Ordenar de la A a la Z";
+"popup.footer.filter.matches" = "Filtro: «%@»  ·  ↩ abre la app seleccionada  ·  esc borra";
+"popup.footer.filter.noMatch" = "Filtro: «%@»  ·  sin coincidencias  ·  ⌫ o esc borra";
+"popup.footer.hint.mostUsed" = "Ordenadas por la frecuencia de apertura  ·  ⌘-clic en Cerrar todo para forzar la salida";
+"popup.footer.hint.group" = "Cerrar todo:  ⌥-clic sale normalmente  ·  ⌘-clic fuerza la salida";
+"popup.footer.drag.remove" = "Suelta para quitar %@ de este grupo";
+"popup.footer.drag.free" = "Suelta %@ en cualquier celda; sobre otra app para intercambiarlas  ·  arrastra fuera para quitar";
+"popup.footer.drag.ordered" = "Suelta para colocar %@  ·  arrastra fuera de la ventana para quitarla";
+"popup.cell.accessibility.website" = "Sitio web %@";
+"popup.cell.hint.website" = "Abre el sitio web en tu navegador";
+"popup.cell.hint.running" = "Trae la app al frente";
+"popup.cell.hint.open" = "Abre la app";
+"popup.cell.help.openWebsite" = "Abrir %@ en tu navegador.";
+"popup.cell.help.bringToFront" = "Traer %@ al frente.";
+"popup.cell.help.openApp" = "Abrir %@.";
+"popup.cell.help.missing" = "%@ no está en este Mac.";
+"popup.cell.help.drag.freeItem" = "Arrastra a cualquier celda o sobre otro elemento para intercambiarlos, o fuera de la ventana para quitarlo del grupo.";
+"popup.cell.help.drag.freeApp" = "Arrastra a cualquier celda o sobre otra app para intercambiarlas, o fuera de la ventana para quitarla del grupo.";
+"popup.cell.help.drag.ordered" = "Arrastra para reordenar, o fuera de la ventana para quitarla del grupo.";
+"popup.cell.help.drag.missing" = "Arrástrala fuera de la ventana para quitarla del grupo.";
+"popup.menu.open" = "Abrir";
+"popup.menu.copyURL" = "Copiar URL";
+"popup.accessibility.moveEarlier" = "Mover antes";
+"popup.accessibility.moveLater" = "Mover después";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Todavía no hay grupos";
+"groupWindow.empty.noSelection" = "Ningún grupo seleccionado";
+"groupWindow.empty.noGroups.description" = "Añade un grupo para reunir las apps que usas juntas.";
+"groupWindow.empty.noSelection.description" = "Selecciona un grupo para editarlo.";
+"groupWindow.addGroup" = "Añadir un grupo";
+"groupWindow.rename.title" = "Renombrar grupo";
+"groupWindow.rename.confirm" = "Renombrar";
+"groupWindow.rename.message" = "Introduce un nuevo nombre para el grupo.";
+"groupWindow.delete.title" = "¿Eliminar «%@»?";
+"groupWindow.delete.confirm" = "Eliminar grupo";
+"groupWindow.delete.message.standalone" = "Esto elimina el grupo, su lista de apps y su propio icono en el Dock. Las apps en sí no se ven afectadas.";
+"groupWindow.delete.message" = "Esto elimina el grupo y su lista de apps. Las apps en sí no se ven afectadas.";
+"groupWindow.sidebar.rename" = "Renombrar…";
+"groupWindow.sidebar.delete" = "Eliminar…";
+"groupWindow.sidebar.add.help" = "Añadir un grupo";
+"groupWindow.sidebar.delete.help" = "Eliminar el grupo seleccionado";
+"groupWindow.addApps.problem.title" = "No se pudieron añadir algunas apps";
+"groupWindow.section.group" = "Grupo";
+"groupWindow.name" = "Nombre";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Elegir…";
+"groupWindow.section.apps" = "Apps";
+"groupWindow.apps.empty" = "Todavía no hay apps. Usa «%1$@» para elegir apps para este grupo, o «%2$@» para un enlace web.";
+"groupWindow.addWebsite.help" = "Añade un enlace web a este grupo. Se abre en tu navegador predeterminado.";
+"groupWindow.sortAZ" = "Ordenar A→Z";
+"groupWindow.sortAZ.help" = "Ordena las apps de este grupo por nombre, de la A a la Z. Arrástralas para reordenarlas a mano.";
+"groupWindow.showPopup" = "Mostrar ventana emergente";
+"groupWindow.showPopup.help" = "Muestra la ventana emergente de este grupo sobre el Dock.";
+"groupWindow.hideAll.help" = "Oculta las apps abiertas de este grupo. Las que no están abiertas siguen cerradas.";
+"groupWindow.apps.moveHint" = "Para mover una app a otro grupo, arrástrala sobre ese grupo en la barra lateral, o usa %@ en su menú contextual.";
+"groupWindow.app.notFound" = "No encontrada en este Mac · %@";
+"groupWindow.app.remove.website" = "Quitar %@ de este grupo.";
+"groupWindow.app.remove" = "Quitar %@ de este grupo. La app en sí no se ve afectada.";
+"groupWindow.section.dockTile" = "Icono del Dock";
+"groupWindow.tile.preview" = "Vista previa";
+"groupWindow.tile.shows" = "Muestra";
+"groupWindow.tile.kind.grid" = "Cuadrícula de iconos de apps";
+"groupWindow.tile.background" = "Fondo";
+"groupWindow.tile.backgroundColor" = "Color de fondo";
+"groupWindow.tile.pinned" = "Mantener el icono anclado en el Dock";
+"groupWindow.tile.preview.accessibility" = "Vista previa del icono, %ld puntos";
+"groupWindow.section.standalone" = "Independiente";
+"groupWindow.standalone.toggle" = "Icono independiente en el Dock";
+"groupWindow.standalone.help" = "Da a este grupo su propia app, con su propio icono en el Dock.";
+"groupWindow.standalone.settingUp" = "Configurando el icono del Dock…";
+"groupWindow.standalone.removing" = "Quitando el icono del Dock…";
+"groupWindow.standalone.groupApp" = "App del grupo";
+"groupWindow.standalone.updateDockIcon" = "Actualizar icono del Dock";
+"groupWindow.standalone.updateDockIcon.help" = "Reinicia el Dock con una caché de iconos nueva, para que el icono muestre el icono actual del grupo.";
+"groupWindow.standalone.staleIcon" = "El Dock todavía muestra el icono anterior.";
+"groupWindow.standalone.footer" = "Da al grupo su propia app pequeña, con el icono de arriba, al final del Dock. Al hacer clic se muestra la ventana del grupo (⌥-clic abre todas sus apps), incluso si %@ no está abierta; al hacer clic derecho se listan las apps del grupo (Ajustes → Ventana). Desactivar esto, eliminar el grupo o arrastrar el icono fuera del Dock elimina esa app. Añadir o quitar el icono reinicia el Dock un momento.";
+"groupWindow.section.popup" = "Ventana";
+"groupWindow.popup.columns" = "Columnas";
+"groupWindow.popup.maxRows" = "Filas máximas";
+"groupWindow.popup.appNames" = "Nombres de apps";
+"groupWindow.popup.show" = "Mostrar";
+"groupWindow.popup.hide" = "Ocultar";
+"groupWindow.popup.position" = "Posición";
+"groupWindow.popup.footer" = "«%@» sigue los ajustes de ventana emergente de toda la app.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Sólido";
+"choice.tileBackground.gradient" = "Degradado";
+"choice.tileBackground.glass" = "Cristal";
+"choice.popupAnchor.dockCenter" = "Centrada sobre el Dock";
+"choice.popupAnchor.dockIcon" = "Encima del icono pulsado";
+"choice.theme.dark" = "Oscuro";
+"choice.theme.light" = "Claro";
+"choice.theme.system" = "Igual que el sistema";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Añadir sitio web";
+"addWebsite.title" = "Añadir sitio web a «%@»";
+"addWebsite.address" = "Dirección:";
+"addWebsite.address.accessibility" = "Dirección del sitio web";
+"addWebsite.name" = "Nombre:";
+"addWebsite.name.accessibility" = "Nombre del sitio web, opcional";
+"addWebsite.name.placeholder" = "Opcional";
+"addWebsite.hint" = "Se abre en tu navegador predeterminado. Deja el nombre vacío para usar la dirección del sitio.";
+"addWebsite.duplicate" = "«%@» ya está en este grupo.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Añadir apps al grupo";
+"appPicker.message" = "Elige las apps que quieres añadir a «%@».";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "No se pudieron abrir las apps de «%@».";
+"problems.launch.someFailed" = "No se pudieron abrir algunas apps de «%@».";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "no está en este Mac.";
+"problems.launch.opened" = "abierta.";
+"problems.quit.force" = "No se pudo forzar la salida de algunas apps de «%@».";
+"problems.quit.graceful" = "No se pudo pedir a algunas apps de «%@» que salgan.";
+"problems.hide" = "No se pudieron ocultar algunas apps de «%@».";
+"problems.standalone.failed" = "«%@» no pudo obtener su propio icono en el Dock.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "La app de este grupo no puede abrir su grupo.";
+"agent.damaged.message" = "%1$@\n\nEn %2$@, desactiva y vuelve a activar Independiente para el grupo, para que reconstruya su app.";
+"agent.error.groupMismatch" = "Los ajustes de la app pertenecen a otro grupo.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "¿Ya está activado? Tras una actualización, la entrada puede pertenecer a la versión anterior: selecciona %@, quítala con −, y luego añade la app otra vez con +.";
+
+/* Settings window */
+"settings.window.title" = "Ajustes";
+
+/* Settings tabs */
+"settings.tab.popup" = "Ventana";
+"settings.tab.shortcuts" = "Atajos y Siri";
+"settings.tab.updates" = "Actualizaciones";
+"settings.tab.backup" = "Copia de seguridad";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Idioma";
+"general.language.system" = "Sistema (%1$@)";
+"general.language.restartNote" = "El nuevo idioma se aplica después de reiniciar la app.";
+"general.language.restartNow" = "Reiniciar ahora";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Tema";
+"settings.popup.frostedGlass" = "Fondo de cristal esmerilado";
+"settings.popup.appearance.header" = "Apariencia de la ventana";
+"settings.popup.appearance.footer" = "El tema se aplica solo a la ventana emergente; esta ventana sigue la apariencia de macOS.";
+"settings.popup.columns" = "Columnas";
+"settings.popup.columns.detail" = "Automático mantiene el ancho estándar de la ventana; un número hace que la ventana sea solo tan ancha como necesita el grupo.";
+"settings.popup.maxRows" = "Filas máximas";
+"settings.popup.maxRows.detail" = "Limita la altura de la ventana; los grupos más grandes se desplazan.";
+"settings.popup.showNames" = "Mostrar nombres de apps";
+"settings.popup.position" = "Posición";
+"settings.popup.position.detail" = "«Encima del icono pulsado» abre la ventana sobre el icono del grupo en el Dock, o debajo del icono de la barra de menús cuando se elige desde su menú. Las ventanas abiertas con un atajo, un enlace o Siri permanecen centradas sobre el Dock.";
+"settings.popup.layout.header" = "Disposición de la ventana";
+"settings.popup.layout.footer" = "Estos son los valores predeterminados para todos los grupos. Cada grupo puede cambiarlos en Gestionar grupos.";
+"settings.popup.freeLayout" = "Disposición libre";
+"settings.popup.freeLayout.detail" = "Las apps se quedan en la celda a la que las arrastras, y las demás no se mueven; soltar una app sobre otra las intercambia.";
+"settings.popup.arranging.header" = "Organización de apps";
+"settings.popup.arranging.footer" = "Desactivado, las apps de un grupo llenan la ventana en orden y se desplazan al mover una. A→Z en la ventana ordena un grupo por nombre en ambos casos.";
+"settings.popup.restoreWindows" = "Restaurar ventanas al reabrir una app que está abierta";
+"settings.popup.restoreWindows.detail" = "Al hacer clic en una app abierta se recuperan sus ventanas ocultas y minimizadas, como hace el clic en el Dock. Desactivado, la app solo pasa al frente.";
+"settings.popup.runningApps.header" = "Apps abiertas";
+"settings.popup.dockMenus" = "Menú en los iconos de grupo del Dock";
+"settings.popup.dockMenus.detail" = "Haz clic derecho en el icono del Dock de un grupo independiente para ver sus apps, Abrir todo, Ocultar todo y Cerrar todo, una vez que se haya pulsado el icono. Su app aparece entonces como abierta en el Dock y en ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Iconos independientes del Dock";
+"settings.popup.ax.granted" = "Acceso de accesibilidad concedido: las ventanas minimizadas también vuelven";
+"settings.popup.ax.required" = "Restaurar ventanas minimizadas requiere acceso de accesibilidad";
+"settings.popup.ax.detail" = "Permite %@ en Privacidad y seguridad → Accesibilidad. Mientras tanto, las apps ocultas siguen volviendo, y se pide a las apps que se reabran como desde el Dock. Los iconos de grupo independientes necesitan este acceso para sus propias apps.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Abrir ventanas de grupo con atajos de teclado";
+"settings.shortcuts.modifiers" = "Teclas modificadoras";
+"settings.shortcuts.keys" = "Teclas de atajo";
+"settings.shortcuts.keys.detail" = "Mantén estas teclas y pulsa 1 para el primer grupo, 2 para el segundo, y así sucesivamente. Púlsalas de nuevo para cerrar la ventana.";
+"settings.shortcuts.header" = "Atajos de teclado";
+"settings.shortcuts.ax.granted" = "Funciona en todas las apps";
+"settings.shortcuts.ax.needed" = "Necesita acceso de accesibilidad";
+"settings.shortcuts.ax.detail" = "Para detectar los atajos mientras trabajas en otras apps, permite %@ en Privacidad y seguridad → Accesibilidad. Mientras tanto, solo funcionan cuando su ventana o una de sus ventanas está activa.";
+"settings.shortcuts.noGroups" = "Todavía no hay grupos.";
+"settings.shortcuts.assigned.header" = "Grupos asignados";
+"settings.shortcuts.assigned.footer.limit" = "Solo los primeros nueve grupos tienen atajos. Arrastra grupos en Gestionar grupos para cambiar el orden.";
+"settings.shortcuts.assigned.footer" = "Los atajos siguen el orden de los grupos en Gestionar grupos.";
+"settings.shortcuts.siri.group" = "Grupo";
+"settings.shortcuts.siri.quoted" = "«%@»";
+"settings.shortcuts.siri.noGroups" = "Añade un grupo para ver qué pedirle a Siri.";
+"settings.shortcuts.openShortcuts" = "Abrir Atajos";
+"settings.shortcuts.shortcutsApp" = "App Atajos";
+"settings.shortcuts.shortcutsApp.detail" = "Abrir grupo, Salir del grupo y Mostrar grupo son acciones allí y en Spotlight: añádelas a tus propios atajos, con tu propio disparador.";
+"settings.shortcuts.siri.header" = "Siri y Atajos";
+"settings.shortcuts.siri.footer" = "Pide a Siri con estas palabras, por voz o escribiendo. Usan el nombre actual del grupo; los atajos que crees siguen funcionando tras un cambio de nombre.";
+"settings.shortcuts.links.noGroups" = "Añade un grupo para ver sus enlaces.";
+"settings.shortcuts.links.footer" = "Abre un enlace desde un script u otra app, por ejemplo con `open` en Terminal. Un grupo se designa por su nombre (no importan mayúsculas, acentos ni signos de puntuación) o, si el nombre es ambiguo, por su ID. Añade ?mode=force a un enlace de salida para forzarla.";
+"settings.shortcuts.copy.help" = "Copiar «%@» al portapapeles.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Mostrar lo más usado en la barra de menús";
+"settings.mostUsed.appsShown" = "Apps mostradas";
+"settings.mostUsed.appsShown.detail" = "Las apps más abiertas, en el menú y en la ventana Lo más usado.";
+"settings.mostUsed.sessionLength" = "Duración de la sesión";
+"settings.mostUsed.together" = "Abiertas juntas dentro de";
+"settings.mostUsed.together.detail" = "Las apps abiertas dentro de este intervalo entre sí cuentan como usadas juntas, lo que las sube un poco en la lista.";
+"settings.mostUsed.footer" = "Las apps se ordenan por la frecuencia con que las abres, desde el Dock, el Finder, Spotlight o un grupo. Las aperturas se cuentan incluso cuando la lista está oculta.";
+"settings.mostUsed.recorded" = "Registradas";
+"settings.mostUsed.clear" = "Borrar historial…";
+"settings.mostUsed.history" = "Historial";
+"settings.mostUsed.history.detail" = "Se guarda solo en este Mac, en usage-stats.json y usage-cooccurrence.json, en Application Support.";
+"settings.mostUsed.usageHistory.header" = "Historial de uso";
+"settings.mostUsed.clear.confirm.title" = "¿Borrar el historial de uso?";
+"settings.mostUsed.clear.confirm.button" = "Borrar historial";
+"settings.mostUsed.clear.confirm.message" = "La lista Lo más usado empieza de nuevo. Tus grupos y apps no se ven afectados.";
+"settings.mostUsed.summary.none" = "Todavía no hay aperturas";
+"settings.mostUsed.summary.launches.one" = "1 apertura";
+"settings.mostUsed.summary.launches.other" = "%ld aperturas";
+"settings.mostUsed.summary" = "%1$@ de %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Buscar actualizaciones automáticamente";
+"settings.updates.currentVersion" = "Versión actual";
+"settings.updates.lastChecked" = "Última comprobación";
+"settings.updates.checkNow" = "Comprobar ahora";
+"settings.updates.otherVersions" = "Otras versiones…";
+"settings.updates.footer" = "Comprueba las versiones publicadas en GitHub al abrir la app y cada 6 horas; solo se envía el número de versión de la app. Una nueva versión solo se instala después de elegir Descargar e instalar. Otras versiones… instala cualquier versión publicada, anterior o posterior; volver atrás omite las versiones más nuevas en las comprobaciones automáticas.";
+"settings.updates.viewChangelog" = "Ver registro de cambios";
+"settings.updates.latestPath" = "Volver a la última versión: se ofrece cada versión más reciente";
+"settings.updates.skipped" = "Versiones más recientes omitidas: %@";
+"settings.updates.clear" = "Borrar";
+"settings.updates.clear.help" = "Permitir que las comprobaciones automáticas vuelvan a ofrecer estas versiones";
+"settings.updates.never" = "Nunca";
+"settings.updates.status.idle" = "No comprobado desde que se abrió la app";
+"settings.updates.status.checking" = "Comprobando…";
+"settings.updates.status.upToDate" = "Estás al día (v%@)";
+"settings.updates.status.available" = "La versión %@ está disponible";
+"settings.updates.showUpdate" = "Mostrar actualización…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Otras versiones";
+"settings.otherVersions.intro" = "Instala cualquier versión publicada de %@, anterior o posterior. La app se cierra y se vuelve a abrir como la versión que elijas.";
+"settings.otherVersions.releasesLink" = "Abrir la página de versiones en GitHub";
+"settings.otherVersions.loading" = "Cargando versiones desde GitHub…";
+"settings.otherVersions.none" = "GitHub no muestra ninguna versión publicada.";
+"settings.otherVersions.current" = "Actual";
+"settings.otherVersions.noDownload" = "Sin descarga";
+"settings.otherVersions.install.help" = "Instalar la versión %@";
+"settings.otherVersions.install.noImage" = "Esta versión no tiene una imagen de disco desde la que instalar.";
+"settings.otherVersions.confirm.title" = "¿Instalar la versión %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ se cierra y se vuelve a abrir como la versión %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "La versión %@ no puede actualizarse sola: para volver, descarga una versión más reciente desde la página de versiones.";
+"settings.otherVersions.confirm.skips" = "Las comprobaciones automáticas omitirán entonces las versiones más recientes (%@); Buscar actualizaciones… seguirá ofreciéndolas.";
+"settings.otherVersions.confirm.older" = "Una versión anterior puede desconocer las funciones añadidas después; considera exportar antes una copia de seguridad (Ajustes → Copia de seguridad).";
+"settings.otherVersions.confirm.upgrade" = "Las versiones omitidas se borran, así las comprobaciones automáticas vuelven a ofrecer todas las versiones más recientes.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Exportar ajustes…";
+"settings.backup.export" = "Exportar";
+"settings.backup.export.detail" = "Guarda tus grupos y ajustes en un archivo .dockgroups.";
+"settings.backup.import.button" = "Importar ajustes…";
+"settings.backup.import" = "Importar";
+"settings.backup.import.detail" = "Reemplaza tus grupos y ajustes por los de un archivo de copia de seguridad, o fusiona los grupos nuevos de la copia con los tuyos.";
+"settings.backup.footer" = "La copia de seguridad contiene tus grupos, sus apps y todos los ajustes. Los recuentos de aperturas de Lo más usado no se incluyen. El archivo se queda donde lo guardes.";
+"settings.backup.status.exported" = "Exportado a «%@»";
+"settings.backup.status.restored" = "Restaurado %1$@ con %2$@";
+"settings.backup.status.merged" = "Fusionado %@ desde la copia de seguridad";
+"settings.backup.status.mergedSkipped" = "Fusionado %1$@ desde la copia de seguridad; %2$ld ya estaban aquí";
+"settings.backup.exportPanel.title" = "Exportar ajustes";
+"settings.backup.exportPanel.message" = "Guarda tus grupos y ajustes en un archivo de copia de seguridad.";
+"settings.backup.exportFailed" = "No se pudieron exportar los ajustes";
+"settings.backup.importPanel.title" = "Importar ajustes";
+"settings.backup.importPanel.message" = "Elige una copia de seguridad %@ para restaurar.";
+"settings.backup.readFailed" = "No se pudo leer el archivo";
+"settings.backup.confirm.title" = "¿Importar los grupos y ajustes de esta copia de seguridad?";
+"settings.backup.confirm.replaceAll" = "Reemplazar todo";
+"settings.backup.confirm.merge" = "Fusionar";
+"settings.backup.restoreFailed" = "No se pudo restaurar la copia de seguridad";
+"settings.backup.restoreFailed.kept" = "%@ Se conservaron tus grupos y ajustes actuales.";
+"settings.backup.mergeFailed" = "No se pudo fusionar la copia de seguridad";
+"settings.backup.mergeFailed.kept" = "%@ Se conservaron tus grupos actuales.";
+"settings.backup.rejected.notABackup" = "Elige un archivo .dockgroups creado con Exportar ajustes…. No se cambió nada.";
+"settings.backup.rejected.newer" = "No se cambió nada.";
+"settings.backup.confirm.noGroups" = "La copia de seguridad no tiene grupos.";
+"settings.backup.confirm.noGroups.exported" = "La copia de seguridad no tiene grupos, exportada el %@.";
+"settings.backup.confirm.contents" = "La copia de seguridad tiene %1$@ con %2$@.";
+"settings.backup.confirm.contents.exported" = "La copia de seguridad tiene %1$@ con %2$@, exportada el %3$@.";
+"settings.backup.confirm.replace" = "Reemplazar todo usa los grupos y ajustes de la copia en lugar de los tuyos.";
+"settings.backup.confirm.replaced.one" = "1 grupo actual con el mismo nombre que un grupo de la copia será reemplazado por él.";
+"settings.backup.confirm.replaced.other" = "%ld grupos actuales con el mismo nombre que un grupo de la copia serán reemplazados por ellos.";
+"settings.backup.confirm.removed.one" = "1 grupo actual que no está en la copia será eliminado.";
+"settings.backup.confirm.removed.other" = "%ld grupos actuales que no están en la copia serán eliminados.";
+"settings.backup.confirm.replaceSettings" = "Tus ajustes (ventana, atajos, Lo más usado y actualizaciones) también serán reemplazados.";
+"settings.backup.confirm.merge.nothing" = "Fusionar mantiene tus grupos y ajustes y no añade nada.";
+"settings.backup.confirm.merge.allHere" = "Fusionar mantiene tus grupos y ajustes; todos los grupos de la copia ya están aquí, así que no añade nada.";
+"settings.backup.confirm.merge.adds" = "Fusionar mantiene tus grupos y ajustes y añade %1$@ con %2$@ desde la copia de seguridad.";
+"settings.backup.confirm.skipped.one" = "1 grupo que ya está aquí (mismo nombre) se omitirá.";
+"settings.backup.confirm.skipped.other" = "%ld grupos que ya están aquí (mismo nombre) se omitirán.";
+"settings.backup.confirm.final" = "Los recuentos de aperturas de Lo más usado se conservan. Se guarda una copia de tus archivos actuales junto a ellos en Application Support. Esto no se puede deshacer.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Guardar en archivo…";
+"settings.diagnostics.export" = "Exportar diagnóstico";
+"settings.diagnostics.export.detail" = "Un informe de texto para adjuntar a un issue de GitHub o a una solicitud de soporte.";
+"settings.diagnostics.header" = "Diagnóstico";
+"settings.diagnostics.footer" = "Enumera las versiones de la app y de macOS, el modelo de tu Mac, dónde está instalada la app, el acceso de accesibilidad, tus ajustes, las comprobaciones de actualizaciones, los nombres de tus grupos con su número de apps, y los errores recientes. No enumera las apps de tus grupos. No se envía nada a ningún sitio.";
+"settings.diagnostics.copied" = "Diagnóstico copiado al portapapeles";
+"settings.diagnostics.saved" = "Guardado en «%@»";
+"settings.diagnostics.failed" = "No se pudo guardar el informe: %@";
+"settings.diagnostics.panel.title" = "Guardar diagnóstico";
+"settings.diagnostics.panel.message" = "Guarda el informe de diagnóstico como archivo de texto, por ejemplo para adjuntarlo a un issue de GitHub.";
+"settings.diagnostics.panel.prompt" = "Guardar";
+
+/* Software Update window */
+"updateWindow.title" = "Actualización de software";
+"updateWindow.checking" = "Buscando actualizaciones…";
+"updateWindow.upToDate.title" = "¡Estás al día!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ es la versión más reciente disponible.";
+"updateWindow.available.title" = "¡Hay una nueva versión de %@ disponible!";
+"updateWindow.available.message" = "La versión %1$@ está disponible — tienes la %2$@.";
+"updateWindow.available.noImage" = "Esta versión no tiene imagen de disco para la instalación automática; descárgala desde su página de versión.";
+"updateWindow.available.question" = "¿Quieres descargarla e instalarla ahora?";
+"updateWindow.skip" = "Omitir esta versión";
+"updateWindow.remindLater" = "Recordármelo más tarde";
+"updateWindow.openReleasePage" = "Abrir página de la versión";
+"updateWindow.downloadAndInstall" = "Descargar e instalar";
+"updateWindow.downloading" = "Descargando la versión %@…";
+"updateWindow.restartsWhenDone" = "%@ se reiniciará al terminar.";
+"updateWindow.reopening" = "%@ se está volviendo a abrir.";
+"updateWindow.dryRun.title" = "Simulación terminada";
+"updateWindow.dryRun.message" = "La versión %1$@ se descargó, verificó y copió a %2$@. No se reemplazó nada.";
+"updateWindow.checkFailed" = "No se pudo buscar actualizaciones";
+"updateWindow.installFailed" = "No se pudo instalar la versión %@";
+"updateWindow.link.releases" = "Versiones";
+"updateWindow.link.releasePage" = "Página de la versión";
+"updateWindow.releaseNotes" = "Notas de la versión";
+"updateWindow.releaseNotes.none" = "Esta versión no tiene notas.";
+"updateWindow.relaunchFailed" = "La versión %@ está instalada, pero la app no pudo reiniciarse sola. Ciérrala y vuelve a abrirla.";
+
+/* About window */
+"about.section.findMe" = "Encuéntrame en línea";
+"about.section.support" = "Apoya este proyecto";
+"about.section.books" = "Mis libros";
+"about.section.software" = "Mi software de código abierto";
+"about.fullList" = "Lista completa en github.com/ercanatay";
+"about.section.blogs" = "Blogs de Medium";
+"about.icon.accessibility" = "Icono de %@";
+"about.version" = "Versión %@ · código abierto, Licencia MIT";
+"about.website" = "Sitio web";
+"about.sourceCode" = "Código fuente";
+"about.license" = "Licencia";
+"about.reportBug" = "¿Encontraste un error? Abre un issue";
+"about.inspiredBy" = "Inspirada en la funcionalidad de DockGroups. %@ es una implementación independiente y original, escrita desde cero; no contiene código ni ilustraciones de DockGroups.";
+"about.project.dockGroups" = "Esta app · Grupos del Dock para macOS";
+"about.project.intelComputerUse" = "Automatización nativa de escritorio para macOS en Mac Intel mediante MCP.";
+"about.project.exchangeRate" = "Seguimiento de tipos de cambio y carteras en PHP/MySQL, con extracción en vivo y actualizaciones desde las versiones de GitHub.";
+"about.project.backlinkChecker" = "Comprueba anclas, dofollow/nofollow y estados HTTP de los backlinks.";
+"about.project.consentManager" = "Plugin de traducciones del Consent Manager de YOOtheme Pro 5 (WordPress.org).";
+"about.project.antigravityUpdater" = "Actualizador ligero para macOS de Antigravity Tools, en 21 idiomas.";
+"about.project.widgetVisibility" = "Plugin de WP sin Jetpack para la visibilidad de widgets, con soporte para descendientes.";
+"about.project.forbiddenContent" = "Detecta palabras clave prohibidas (p. ej. «Casino») en los títulos de entradas — como un comprobador de auditoría WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Mostrar grupo";
+"core.invocation.showGroup.phrase" = "Mostrar %1$@ en %2$@";
+"core.invocation.launchGroup" = "Abrir grupo";
+"core.invocation.launchGroup.phrase" = "Abrir %1$@ en %2$@";
+"core.invocation.quitGroup" = "Salir del grupo";
+"core.invocation.quitGroup.phrase" = "Salir de %1$@ en %2$@";
+"core.invocation.showPopup" = "Mostrar ventana emergente";
+"core.invocation.openAll" = "Abrir todo";
+"core.invocation.hideAll" = "Ocultar todo";
+"core.invocation.closeAll" = "Cerrar todo";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "No hay ningún navegador web configurado para abrirlo.";
+"core.launch.notOpened" = "La app no se abrió.";
+"core.group.defaultName" = "Grupo nuevo";
+"core.website.error.empty" = "Introduce una dirección web.";
+"core.website.error.invalid" = "Esta no es una dirección web válida.";
+"core.website.error.scheme" = "Solo se pueden añadir direcciones http y https, no «%@:».";
+"core.website.error.credentials" = "Quita el nombre de usuario y la contraseña de la dirección.";
+"core.persistence.groups.newer" = "El archivo de grupos fue guardado por una versión más reciente de Cybokron Dock Groups (formato %ld).";
+"core.backup.error.notABackup" = "Este archivo no es una copia de seguridad de Cybokron Dock Groups.";
+"core.backup.error.newer" = "Esta copia de seguridad se creó con una versión más reciente de Cybokron Dock Groups (formato de copia %ld). Actualiza la app para restaurarla.";
+"core.persistence.usage.newer" = "Las estadísticas de uso fueron guardadas por una versión más reciente de Cybokron Dock Groups (formato %ld).";
+"core.agent.configuration.newer" = "Los ajustes del grupo fueron guardados por una versión más reciente de Cybokron Dock Groups (formato %ld).";
+"core.agent.error.icon" = "No se pudo dibujar el icono del grupo.";
+"core.agent.error.bundleWrite" = "No se pudo crear la app del grupo: %@";
+"core.agent.error.toolMissing" = "Falta una herramienta del sistema que se necesita: %@.";
+"core.agent.error.signing" = "macOS exige que cada app esté firmada, y la firma de la app del grupo falló en este Mac, así que no se instaló nada.";
+"core.agent.error.registration" = "macOS no registró la app del grupo: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups no pudo leer su propio ejecutable: %@";
+"core.agent.error.noExecutable" = "La app no tiene ejecutable.";
+"core.dock.saveFailed" = "No se pudieron cambiar los ajustes del Dock.";
+"core.store.loadFailed.title" = "No se pudieron cargar tus grupos";
+"core.store.loadFailed.kept" = "%1$@ Se empieza con una lista de grupos vacía. Se conservó una copia en «%2$@».";
+"core.store.loadFailed.empty" = "%@ Se empieza con una lista de grupos vacía.";
+"core.store.loadFailed.suspended" = "%@ Para proteger el archivo existente, los cambios no se guardarán hasta que se reinicie la app.";
+"core.store.saveFailed.title" = "No se pudieron guardar tus cambios";
+"core.preferences.saveFailed" = "No se pudieron guardar tus ajustes: %@";
+"core.websiteIcon.accessibility" = "Sitio web";
+"core.update.check.notHTTP" = "La respuesta no fue HTTP.";
+"core.update.check.malformed" = "No se pudo leer la información de la versión de GitHub.";
+"core.update.check.unsupportedTag" = "La última versión («%@») no tiene una etiqueta con número de versión.";
+"core.update.check.noRelease" = "Todavía no se ha publicado ninguna versión.";
+"core.update.check.rateLimited" = "GitHub está limitando las solicitudes en este momento. Inténtalo de nuevo en una hora.";
+"core.update.check.httpStatus" = "GitHub respondió con el estado HTTP %ld.";
+"core.update.check.network" = "No se pudo conectar con GitHub: %@";
+"core.update.check.noVersion" = "Esta copia de la app no tiene número de versión, así que no se puede comparar.";
+"core.update.install.insecureURL" = "La dirección de descarga de la actualización no es segura (%@).";
+"core.update.install.downloadFailed" = "No se pudo descargar la actualización: %@";
+"core.update.install.sizeMismatch" = "La actualización descargada está incompleta (%1$ld de %2$ld bytes).";
+"core.update.install.checksum" = "La actualización descargada no coincide con su suma de verificación publicada, así que no se instaló.";
+"core.update.install.mountFailed" = "No se pudo abrir la imagen de disco de la actualización: %@";
+"core.update.install.appNotFound" = "La imagen de disco de la actualización no contiene la app.";
+"core.update.install.wrongApp" = "La imagen de disco de la actualización contiene otra app (%@).";
+"core.update.install.versionMismatch" = "La app descargada es la versión %1$@, pero la publicación es %2$@.";
+"core.update.install.replaceFailed" = "No se pudo colocar la nueva versión, así que se conservó la actual: %@";
+"core.update.install.rollbackFailed" = "La actualización falló y no se pudo restaurar la versión anterior. Se conserva en %@.";
+"core.update.location.translocated" = "macOS ejecuta esta copia desde una ubicación temporal de solo lectura. Mueve la app a tu carpeta Aplicaciones, ábrela desde allí e inténtalo de nuevo.";
+"core.update.location.notFound" = "No se encontró la app en ejecución en %@.";
+"core.update.location.readOnly" = "La app se ejecuta desde un volumen de solo lectura, como su imagen de disco. Primero cópiala a tu carpeta Aplicaciones.";
+"core.update.location.noPermission" = "No tienes permiso para reemplazar la app en «%@». Descarga la nueva versión desde la página de versiones.";
+"core.update.install.noFile" = "El servidor no envió ningún archivo.";
+"core.update.install.httpStatus" = "Estado HTTP %ld.";
+"core.update.install.copyFailed" = "Falló la copia de la app: %@";
+"core.mostUsed.name" = "Lo más usado";
