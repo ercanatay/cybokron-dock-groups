@@ -10,6 +10,11 @@ import SwiftUI
 /// the group and the popup preferences while it's open, and closes it on Escape, an outside click
 /// or focus loss.
 ///
+/// While it's open the keyboard works the popup: the arrow keys select an app, Return opens it,
+/// typing filters the apps by name (Return then opens the selected, by default the best, match),
+/// Delete and Escape clear the filter, Tab and ⇧Tab go to the next and previous group, and Escape
+/// without a filter closes the popup.
+///
 /// The Most Used list (`MostUsedGroup.id`) opens like a group, read-only: its apps can be opened
 /// but not reordered or removed. A standalone agent shows its group read-only too
 /// (`allowsEditing: false`): the group belongs to the main app.
@@ -28,7 +33,19 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         case requested, toggled, escape, outsideClick, appWindowClick, lostFocus, groupDeleted, appAction
     }
 
-    private static let escapeKeyCode: UInt16 = 53
+    /// Virtual key codes of the keys the popup handles.
+    private enum KeyCode {
+        static let escape: UInt16 = 53
+        static let returnKey: UInt16 = 36
+        static let keypadEnter: UInt16 = 76
+        static let tab: UInt16 = 48
+        static let delete: UInt16 = 51
+        static let left: UInt16 = 123
+        static let right: UInt16 = 124
+        static let down: UInt16 = 125
+        static let up: UInt16 = 126
+    }
+
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Popup")
 
     private let store: GroupStore
@@ -40,6 +57,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private let allowsEditing: Bool
     private let actions: Actions
     private let modifierKeys = ModifierKeyState()
+    private let keyboard = PopupKeyboardState()
+    /// What the open popup shows, for the keyboard.
+    private var content: PopupContent?
 
     private let panel = PopupPanel()
     private var hostingView: FirstMouseHostingView<PopupContentView>?
@@ -114,6 +134,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         self.source = source
         guard let frame = update(for: group) else { return }
         let wasShown = groupID != nil && panel.isVisible
+        if !wasShown || groupID != id {
+            keyboard.reset()
+        }
         groupID = id
         lastGroupID = id
         transition += 1
@@ -215,11 +238,13 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             isMostUsed: group.id == MostUsedGroup.id
         )
 
+        self.content = content
         panel.appearance = popupPreferences.theme.appearance
         let rootView = PopupContentView(
             content: content,
             runningApps: runningApps,
             modifierKeys: modifierKeys,
+            keyboard: keyboard,
             actions: popupActions(for: group.id)
         )
         if let hostingView {
@@ -307,11 +332,13 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         // Monitors run on the main thread; only Sendable values cross into the isolated blocks.
         let local: [(NSEvent.EventTypeMask, (NSEvent) -> NSEvent?)] = [
             (.keyDown, { [weak self] event in
-                guard event.keyCode == Self.escapeKeyCode else { return event }
+                let key = PopupKeyPress(
+                    keyCode: event.keyCode,
+                    characters: event.characters ?? "",
+                    modifierFlags: event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+                )
                 let handled = MainActor.assumeIsolated { () -> Bool in
-                    guard let self, self.groupID != nil else { return false }
-                    self.close(reason: .escape)
-                    return true
+                    self?.handle(key) ?? false
                 }
                 return handled ? nil : event
             }),
@@ -344,6 +371,84 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         ) {
             eventMonitors.append(monitor)
         }
+    }
+
+    // MARK: - Keyboard
+
+    /// Handles a key pressed while the popup is open; returns whether it was used.
+    private func handle(_ key: PopupKeyPress) -> Bool {
+        guard groupID != nil else { return false }
+        if key.keyCode == KeyCode.escape {
+            if keyboard.query.isEmpty {
+                close(reason: .escape)
+            } else {
+                setQuery("")
+            }
+            return true
+        }
+        // Everything else only while the popup has the keyboard; ⌘ and ⌃ shortcuts (⌘Q, ⌘,) pass.
+        guard panel.isKeyWindow, key.modifierFlags.isDisjoint(with: [.command, .control]) else { return false }
+        switch key.keyCode {
+        case KeyCode.left: return moveSelection(.left)
+        case KeyCode.right: return moveSelection(.right)
+        case KeyCode.up: return moveSelection(.up)
+        case KeyCode.down: return moveSelection(.down)
+        case KeyCode.returnKey, KeyCode.keypadEnter:
+            openSelection()
+            return true
+        case KeyCode.tab:
+            showNextGroup(backward: key.modifierFlags.contains(.shift))
+            return true
+        case KeyCode.delete:
+            if !keyboard.query.isEmpty {
+                setQuery(String(keyboard.query.dropLast()))
+            }
+            return true
+        default:
+            break
+        }
+        guard !key.modifierFlags.contains(.option), key.characters.count == 1, let character = key.characters.first,
+              PopupFilter.acceptsCharacter(character, currentQuery: keyboard.query)
+        else { return false }
+        setQuery(keyboard.query + String(character))
+        return true
+    }
+
+    /// Changes the filter and selects its best match (nothing once the filter is cleared).
+    private func setQuery(_ query: String) {
+        keyboard.query = query
+        keyboard.selectedID = keyboard.isFiltering ? content?.navigationItems(query: query).cells.first?.id : nil
+    }
+
+    private func moveSelection(_ direction: PopupKeyboardNavigation.Direction) -> Bool {
+        guard let content else { return false }
+        let items = content.navigationItems(query: keyboard.query)
+        let current = keyboard.selectedID.flatMap { id in items.cells.firstIndex { $0.id == id } }
+        if let target = PopupKeyboardNavigation.target(from: current, direction: direction, slots: items.slots, columns: content.layout.columns) {
+            keyboard.selectedID = items.cells[target].id
+        }
+        return true
+    }
+
+    /// Opens the selected app the way clicking it does; with a filter and nothing selected, the best
+    /// match.
+    private func openSelection() {
+        guard let content, let id = groupID else { return }
+        let items = content.navigationItems(query: keyboard.query)
+        let selected = keyboard.selectedID.flatMap { selectedID in items.cells.first { $0.id == selectedID } }
+        guard let cell = selected ?? (keyboard.isFiltering ? items.cells.first : nil) else { return }
+        popupActions(for: id).open(cell.app)
+    }
+
+    /// Tab: the next group's popup, in the menu bar menu's order (the groups, then Most Used).
+    private func showNextGroup(backward: Bool) {
+        guard let id = groupID else { return }
+        var order = store.groups.map(\.id)
+        if mostUsed?.group() != nil {
+            order.append(MostUsedGroup.id)
+        }
+        guard let next = PopupKeyboardNavigation.nextGroup(after: id, in: order, backward: backward) else { return }
+        show(groupID: next, source: source)
     }
 
     private func removeEventMonitors() {
@@ -385,4 +490,11 @@ enum DockScreenReader {
         let orientation = UserDefaults(suiteName: "com.apple.dock")?.string(forKey: "orientation") ?? "bottom"
         return DockEdge(orientation: orientation, screen: primary)
     }
+}
+
+/// The parts of a key press the popup needs, copied out of the `NSEvent`.
+private struct PopupKeyPress: Sendable {
+    let keyCode: UInt16
+    let characters: String
+    let modifierFlags: NSEvent.ModifierFlags
 }

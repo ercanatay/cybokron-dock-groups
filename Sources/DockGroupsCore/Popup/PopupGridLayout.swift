@@ -62,6 +62,14 @@ public struct PopupGridLayout: Equatable, Sendable {
         height(ofRows: rows, metrics: metrics)
     }
 
+    /// Height of the rows `itemCount` items fill in this layout's columns (at least one row),
+    /// padding included: the scrolling content's height while the popup shows only some of its
+    /// apps, packed from the first cell (type-to-filter).
+    public func contentHeight(packing itemCount: Int, metrics: PopupGridMetrics) -> CGFloat {
+        let rowCount = max(1, (max(itemCount, 0) + columns - 1) / columns)
+        return height(ofRows: rowCount, metrics: metrics)
+    }
+
     /// Top-left corner of the cell in slot `index` (slots run row by row), in coordinates of the
     /// whole grid content: the origin is its top-left corner, padding included, and y grows
     /// downward as in SwiftUI.

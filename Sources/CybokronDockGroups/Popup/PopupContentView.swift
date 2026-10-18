@@ -94,10 +94,14 @@ private struct CellDrag: Equatable {
 /// the group, as with the Dock; their context menu moves them to another group. In Free Layout a
 /// dragged app goes to the cell it's dropped on (swapping places with the app there) and the others
 /// stay put. The Most Used list is read-only.
+///
+/// The keyboard (handled by `PopupPanelController`) selects apps and filters them by name: while
+/// filtering, the matches are shown packed from the first cell, best first, and can't be dragged.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
     @ObservedObject var modifierKeys: ModifierKeyState
+    @ObservedObject var keyboard: PopupKeyboardState
     let actions: PopupActions
 
     @Environment(\.colorScheme) private var colorScheme
@@ -112,6 +116,9 @@ struct PopupContentView: View {
     @State private var suppressesClick = false
 
     private static let gridSpace = "PopupGrid"
+
+    /// Scroll target of a cell, for bringing the keyboard selection into view.
+    private static func scrollAnchorID(_ id: PopupCell.ID) -> String { "keyboard-anchor-\(id)" }
 
     var body: some View {
         let palette = PanelPalette.forScheme(colorScheme)
@@ -195,31 +202,37 @@ struct PopupContentView: View {
             emptyState(palette)
                 .frame(maxWidth: .infinity)
                 .frame(height: content.gridHeight)
+        } else if keyboard.isFiltering {
+            filteredGrid(palette)
         } else {
             let metrics = content.metrics
             let layout = content.layout
             let slots = slotIndices()
-            ScrollView(.vertical) {
-                // Cells are placed explicitly rather than by a grid view, so the dragged cell can
-                // follow the pointer while the others make room.
-                ZStack(alignment: .topLeading) {
-                    if content.freeLayout != nil, drag != nil {
-                        emptyCellOutlines(occupied: occupiedCells(slots), palette: palette)
+            ScrollViewReader { proxy in
+                ScrollView(.vertical) {
+                    // Cells are placed explicitly rather than by a grid view, so the dragged cell can
+                    // follow the pointer while the others make room.
+                    ZStack(alignment: .topLeading) {
+                        if content.freeLayout != nil, drag != nil {
+                            emptyCellOutlines(occupied: occupiedCells(slots), palette: palette)
+                        }
+                        scrollAnchors(content.cells.compactMap { cell in slots[cell.id].map { (cell.id, $0) } })
+                        ForEach(content.cells) { cell in
+                            cellView(cell, slot: slots[cell.id], palette: palette)
+                        }
                     }
-                    ForEach(content.cells) { cell in
-                        cellView(cell, slot: slots[cell.id], palette: palette)
-                    }
+                    .frame(
+                        width: layout.visibleSize(metrics: metrics).width,
+                        height: layout.contentHeight(metrics: metrics),
+                        alignment: .topLeading
+                    )
+                    .coordinateSpace(name: Self.gridSpace)
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(
-                    width: layout.visibleSize(metrics: metrics).width,
-                    height: layout.contentHeight(metrics: metrics),
-                    alignment: .topLeading
-                )
-                .coordinateSpace(name: Self.gridSpace)
-                .frame(maxWidth: .infinity)
+                .scrollDisabled(!content.scrolls)
+                .scrollIndicators(content.scrolls ? .automatic : .hidden)
+                .onChange(of: keyboard.selectedID) { scrollToSelection(proxy) }
             }
-            .scrollDisabled(!content.scrolls)
-            .scrollIndicators(content.scrolls ? .automatic : .hidden)
             .frame(height: content.gridHeight)
             .onChange(of: content.cells.map(\.id)) {
                 droppedOrder = nil
@@ -233,6 +246,96 @@ struct PopupContentView: View {
                 drag = nil
                 suppressesClick = false
             }
+        }
+    }
+
+    /// The matches of the typed filter, best first and packed from the first cell; a "no match" line
+    /// when there are none. They open on click as usual but can't be dragged.
+    @ViewBuilder
+    private func filteredGrid(_ palette: PanelPalette) -> some View {
+        let matches = content.navigationItems(query: keyboard.query).cells
+        if matches.isEmpty {
+            VStack(spacing: 4) {
+                Text("No apps match “\(keyboard.query)”")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(palette.secondaryText)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                Text("Press Delete or Esc to clear the filter.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(palette.secondaryText)
+            }
+            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity)
+            .frame(height: content.gridHeight)
+        } else {
+            let metrics = content.metrics
+            let layout = content.layout
+            ScrollViewReader { proxy in
+                ScrollView(.vertical) {
+                    ZStack(alignment: .topLeading) {
+                        scrollAnchors(matches.enumerated().map { ($1.id, $0) })
+                        ForEach(Array(matches.enumerated()), id: \.element.id) { index, cell in
+                            filteredCellView(cell, origin: layout.cellOrigin(at: index, metrics: metrics), palette: palette)
+                        }
+                    }
+                    .frame(
+                        width: layout.visibleSize(metrics: metrics).width,
+                        height: layout.contentHeight(packing: matches.count, metrics: metrics),
+                        alignment: .topLeading
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .scrollIndicators(content.scrolls ? .automatic : .hidden)
+                .onChange(of: keyboard.selectedID) { scrollToSelection(proxy) }
+            }
+            .frame(height: content.gridHeight)
+        }
+    }
+
+    private func filteredCellView(_ cell: PopupCell, origin: CGPoint, palette: PanelPalette) -> some View {
+        PopupAppCell(
+            cell: cell,
+            isRunning: runningApps.isRunning(cell.app),
+            isEditable: false,
+            isFreeLayout: false,
+            showsTitle: content.showsTitles,
+            metrics: content.metrics,
+            palette: palette,
+            isDragged: false,
+            isInRemovalArea: false,
+            highlightsOnHover: true,
+            isSelected: keyboard.selectedID == cell.id
+        ) {
+            actions.open(cell.app)
+        }
+        .offset(x: origin.x, y: origin.y)
+        .modifier(MoveToGroupContextMenu(targets: content.moveTargets) { destination in
+            actions.moveAppToGroup(cell.app, destination)
+        })
+    }
+
+    /// Invisible views in the cells' places for `ScrollViewProxy.scrollTo`: the cells themselves are
+    /// moved with `offset`, which the scroll view doesn't see.
+    private func scrollAnchors(_ placements: [(id: PopupCell.ID, slot: Int)]) -> some View {
+        let metrics = content.metrics
+        return ForEach(placements, id: \.id) { placement in
+            let origin = content.layout.cellOrigin(at: placement.slot, metrics: metrics)
+            Color.clear
+                .frame(width: metrics.cellWidth, height: metrics.cellHeight)
+                .id(Self.scrollAnchorID(placement.id))
+                .padding(.leading, origin.x)
+                .padding(.top, origin.y)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
+    }
+
+    /// Scrolls just enough to show the keyboard selection.
+    private func scrollToSelection(_ proxy: ScrollViewProxy) {
+        guard content.scrolls, let id = keyboard.selectedID else { return }
+        withAnimation(.easeOut(duration: 0.12)) {
+            proxy.scrollTo(Self.scrollAnchorID(id))
         }
     }
 
@@ -317,7 +420,8 @@ struct PopupContentView: View {
             palette: palette,
             isDragged: dragged != nil,
             isInRemovalArea: dragged?.isInRemovalArea ?? false,
-            highlightsOnHover: drag == nil
+            highlightsOnHover: drag == nil,
+            isSelected: drag == nil && keyboard.selectedID == cell.id
         ) {
             guard !suppressesClick else { return }
             actions.open(cell.app)
@@ -483,7 +587,7 @@ struct PopupContentView: View {
                 .minimumScaleFactor(0.8)
             Spacer(minLength: 0)
             // Per-group "Sort A→Z": a one-off sort of this group's apps by name, saved like a drag.
-            if content.isEditable, content.cells.count > 1, drag == nil {
+            if content.isEditable, content.cells.count > 1, drag == nil, !keyboard.isFiltering {
                 Button(action: actions.sortApps) {
                     Label("A→Z", systemImage: "arrow.up.arrow.down")
                         .font(.system(size: 10.5, weight: .semibold))
@@ -499,6 +603,12 @@ struct PopupContentView: View {
     }
 
     private var footerText: String {
+        if keyboard.isFiltering, drag == nil {
+            let hasMatches = !content.navigationItems(query: keyboard.query).cells.isEmpty
+            return hasMatches
+                ? "Filter: “\(keyboard.query)”  ·  ↩ opens the selected app  ·  esc clears"
+                : "Filter: “\(keyboard.query)”  ·  no match  ·  ⌫ or esc clears"
+        }
         guard let drag, let cell = content.cells.first(where: { $0.id == drag.id }) else {
             return content.isMostUsed
                 ? "Ranked by how often you open them  ·  ⌘-click Close All to force quit"
@@ -526,6 +636,8 @@ private struct PopupAppCell: View {
     let isInRemovalArea: Bool
     /// Off while another cell is dragged over this one.
     let highlightsOnHover: Bool
+    /// Selected with the keyboard: Return opens it.
+    let isSelected: Bool
     let action: () -> Void
 
     @State private var isHovered = false
@@ -554,7 +666,11 @@ private struct PopupAppCell: View {
             .frame(width: metrics.cellWidth, height: metrics.cellHeight, alignment: .top)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(isDragged ? palette.pressed : (isHovered && highlightsOnHover ? palette.hover : Color.clear))
+                    .fill(isDragged ? palette.pressed : ((isHovered && highlightsOnHover) || isSelected ? palette.hover : Color.clear))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(isSelected ? PanelPalette.teal.opacity(0.85) : Color.clear, lineWidth: 1.5)
             )
             .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
@@ -565,6 +681,7 @@ private struct PopupAppCell: View {
         .onHover { isHovered = $0 }
         .help(helpText)
         .accessibilityLabel(cell.app.name)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityHint(isRunning ? "Brings the app to the front" : "Opens the app")
     }
 
