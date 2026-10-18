@@ -1,11 +1,14 @@
 import DockGroupsCore
 import SwiftUI
 
-/// Updates: automatic checks, checking right away, when the last check ran and what it found, and
-/// links to the releases and the changelog.
+/// Updates: automatic checks, checking right away, when the last check ran and what it found, the
+/// skipped versions, installing another published version, and links to the releases and the
+/// changelog.
 struct UpdatesSettingsView: View {
     @ObservedObject var preferences: PreferencesStore
     @ObservedObject var updater: AutoUpdater
+
+    @State private var isShowingOtherVersions = false
 
     var body: some View {
         Form {
@@ -26,10 +29,16 @@ struct UpdatesSettingsView: View {
                 } label: {
                     status
                 }
+                LabeledContent {
+                    Button("Other Versions…") { isShowingOtherVersions = true }
+                        .disabled(updater.isBusy)
+                } label: {
+                    skippedVersions
+                }
             } header: {
                 Text("Updates")
             } footer: {
-                Text("Checks the project's GitHub releases at launch and every 6 hours; only the app's version number is sent along. A new version is installed only after you choose Download and Install.")
+                Text("Checks the project's GitHub releases at launch and every 6 hours; only the app's version number is sent along. A new version is installed only after you choose Download and Install. Other Versions… installs any published release, older or newer; going back skips the newer ones in automatic checks.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -48,6 +57,34 @@ struct UpdatesSettingsView: View {
         .formStyle(.grouped)
         .frame(width: 480)
         .fixedSize(horizontal: false, vertical: true)
+        .sheet(isPresented: $isShowingOtherVersions) {
+            OtherVersionsView(updater: updater) { isShowingOtherVersions = false }
+        }
+    }
+
+    /// Which newer versions automatic checks skip, next to "Other Versions…". Skips of versions not
+    /// newer than the running one don't matter any more and aren't shown.
+    @ViewBuilder
+    private var skippedVersions: some View {
+        let newer = updater.skippedVersions.filter { skipped in
+            guard let current = updater.currentVersion, let version = SemanticVersion(skipped) else { return true }
+            return version > current
+        }
+        if newer.isEmpty {
+            Text("Back on the latest path: every newer release is offered")
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        } else {
+            HStack(spacing: 8) {
+                Text("Skipped newer versions: \(newer.joined(separator: ", "))")
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button("Clear") { updater.clearSkippedVersions() }
+                    .controlSize(.small)
+                    .help("Let automatic checks offer these versions again")
+            }
+        }
     }
 
     private var lastChecked: String {

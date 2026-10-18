@@ -11,6 +11,10 @@ import OSLog
 /// notes. "Download and Install" downloads the release's universal disk image, copies the app out
 /// of it, swaps it for the running app (keeping the old one to roll back to) and relaunches. The
 /// file work happens in `UpdateInstaller`; this class keeps the state the windows show.
+///
+/// Settings → Updates → "Other Versions…" lists every published release and installs the chosen
+/// one the same way, older or newer; `ReleaseHistory.state(_:afterInstalling:over:published:)`
+/// decides which versions automatic checks skip afterwards.
 @MainActor
 final class AutoUpdater: ObservableObject {
     enum Status: Equatable {
@@ -29,11 +33,27 @@ final class AutoUpdater: ObservableObject {
         case installFailed(ReleaseInfo, asset: ReleaseAsset?, message: String)
     }
 
+    /// The published releases for "Other Versions…".
+    enum ReleaseListStatus: Equatable {
+        case idle
+        case loading
+        /// Installable releases, newest first; see `ReleaseHistory.installable`.
+        case loaded([ReleaseInfo])
+        case failed(String)
+    }
+
+    /// How long a loaded release list is shown again without asking GitHub, so opening and closing
+    /// "Other Versions…" doesn't use up GitHub's hourly limit.
+    private static let releaseListLifetime: TimeInterval = 10 * 60
+
     /// Delay of the check at launch, so it doesn't compete with starting up.
     private static let launchCheckDelay: Duration = .seconds(5)
 
     @Published private(set) var status: Status = .idle
     @Published private(set) var lastCheckDate: Date?
+    @Published private(set) var releaseList: ReleaseListStatus = .idle
+    /// Versions automatic checks don't offer, newest first.
+    @Published private(set) var skippedVersions: [String] = []
     /// The running app's version; `nil` when the bundle has none (e.g. `swift run`).
     let currentVersion: SemanticVersion?
 
@@ -43,10 +63,16 @@ final class AutoUpdater: ObservableObject {
     var closeWindow: () -> Void = {}
 
     private let preferences: PreferencesStore
-    private let feed: ReleaseFetching
+    private let feed: ReleaseFetching & ReleaseListFetching
     private let installer: UpdateInstaller
     private let statePersistence: JSONFileUpdateStatePersistence
-    private var state: UpdateState
+    private var state: UpdateState {
+        didSet { skippedVersions = state.skippedVersions }
+    }
+    /// The release list "Other Versions…" showed, while the version picked there is being installed
+    /// (also through Try Again); `nil` for an update offered by a check.
+    private var pickedFromReleases: [ReleaseInfo]?
+    private var releaseListDate: Date?
     private let isDryRun: Bool
     private var tickTimer: Timer?
     private var hasHandledLaunch = false
@@ -66,9 +92,13 @@ final class AutoUpdater: ObservableObject {
         self.feed = feed
         state = statePersistence.load()
         lastCheckDate = state.lastCheckDate
+        skippedVersions = state.skippedVersions
         isDryRun = ProcessInfo.processInfo.environment[UpdateInstaller.dryRunVariable] != nil
         if feed.url != UpdateLinks.latestReleaseAPI {
             logger.notice("Update feed overridden: \(feed.url.absoluteString, privacy: .public)")
+        }
+        if feed.listURL != UpdateLinks.releasesAPI {
+            logger.notice("Release list overridden: \(feed.listURL.absoluteString, privacy: .public)")
         }
     }
 
@@ -187,7 +217,7 @@ final class AutoUpdater: ObservableObject {
         logger.notice("Update available: \(release.version, privacy: .public), asset \(asset?.name ?? "none", privacy: .public)")
         status = .available(release, asset: asset)
         // Automatic checks bring up the window, except for a version the user skipped.
-        if !userInitiated && state.skippedVersion != release.version.description {
+        if !userInitiated && !state.isSkipped(release.version) {
             showWindow()
         }
     }
@@ -196,7 +226,7 @@ final class AutoUpdater: ObservableObject {
 
     /// Skips `release` for automatic checks and closes the window.
     func skip(_ release: ReleaseInfo) {
-        state.skippedVersion = release.version.description
+        state.skip(release.version)
         saveState()
         closeWindow()
     }
@@ -206,16 +236,64 @@ final class AutoUpdater: ObservableObject {
         closeWindow()
     }
 
-    /// Downloads the offered release, swaps it for the running app and relaunches.
+    /// Downloads the offered release (or tries the failed one again), swaps it for the running app
+    /// and relaunches.
     func downloadAndInstall() {
-        let release: ReleaseInfo
-        let asset: ReleaseAsset
         switch status {
-        case .available(let offered, let offeredAsset?), .installFailed(let offered, let offeredAsset?, _):
-            (release, asset) = (offered, offeredAsset)
+        case .available(let release, let asset?):
+            pickedFromReleases = nil
+            install(release, asset: asset)
+        case .installFailed(let release, let asset?, _):
+            install(release, asset: asset)
         default:
             return
         }
+    }
+
+    // MARK: - Other versions
+
+    /// Loads the published releases for "Other Versions…", unless they're loading already or were
+    /// loaded in the last few minutes (`force` loads them anyway).
+    func loadReleases(force: Bool = false) {
+        guard releaseList != .loading else { return }
+        if !force, case .loaded = releaseList, let releaseListDate,
+           !UpdateSchedule.isCheckDue(lastCheck: releaseListDate, now: Date(), interval: Self.releaseListLifetime) {
+            return
+        }
+        logger.notice("Loading the release list")
+        releaseList = .loading
+        Task { @MainActor [weak self, feed] in
+            do {
+                let releases = try await feed.releases()
+                self?.releaseListDate = Date()
+                self?.releaseList = .loaded(ReleaseHistory.installable(releases))
+            } catch {
+                self?.logger.error("Loading the release list failed: \(String(describing: error), privacy: .public)")
+                self?.releaseList = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// Installs `release`, picked from `releases` in "Other Versions…", in the update window. Once
+    /// it's in place, the skipped versions follow `ReleaseHistory.state(_:afterInstalling:…)`.
+    func installPicked(_ release: ReleaseInfo, from releases: [ReleaseInfo]) {
+        guard !isBusy, let asset = release.installerAsset else { return }
+        logger.notice("Installing version \(release.version, privacy: .public) from Other Versions")
+        pickedFromReleases = releases
+        showWindow()
+        install(release, asset: asset)
+    }
+
+    /// Clears the skipped versions, so automatic checks offer every newer release again.
+    func clearSkippedVersions() {
+        state.skippedVersions = []
+        saveState()
+    }
+
+    // MARK: - Installing
+
+    private func install(_ release: ReleaseInfo, asset: ReleaseAsset) {
+        guard !isBusy else { return }
         let appURL = Bundle.main.bundleURL
         if !isDryRun, let problem = UpdateInstaller.installLocationProblem(for: appURL) {
             status = .installFailed(release, asset: asset, message: problem)
@@ -245,6 +323,7 @@ final class AutoUpdater: ObservableObject {
                     try installer.replace(installedApp: appURL, with: staged)
                 }.value
                 self?.logger.notice("Installed \(release.version, privacy: .public); previous version at \(backup.path, privacy: .public)")
+                self?.updateSkippedVersions(afterInstalling: release)
                 self?.status = .restarting(release)
                 // Let the "restarting" text show before the app quits.
                 try? await Task.sleep(nanoseconds: 600_000_000)
@@ -254,6 +333,16 @@ final class AutoUpdater: ObservableObject {
                 self?.status = .installFailed(release, asset: asset, message: error.localizedDescription)
             }
         }
+    }
+
+    /// After a version picked in "Other Versions…" is in place: skip the newer releases (going back)
+    /// or clear the skipped ones (going up).
+    private func updateSkippedVersions(afterInstalling release: ReleaseInfo) {
+        guard let releases = pickedFromReleases, let currentVersion else { return }
+        pickedFromReleases = nil
+        state = ReleaseHistory.state(state, afterInstalling: release.version, over: currentVersion, published: releases)
+        logger.notice("Skipped versions now: \(self.state.skippedVersions.joined(separator: ", "), privacy: .public)")
+        saveState()
     }
 
     private func downloadProgressed(_ fraction: Double) {

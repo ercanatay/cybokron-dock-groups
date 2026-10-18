@@ -83,6 +83,8 @@ public enum UpdateLinks {
     public static let repositoryOwner = "ercanatay"
     public static let repositoryName = "cybokron-dock-groups"
     public static let latestReleaseAPI = URL(string: "https://api.github.com/repos/ercanatay/cybokron-dock-groups/releases/latest")!
+    /// Every release, newest first (GitHub's maximum page size).
+    public static let releasesAPI = URL(string: "https://api.github.com/repos/ercanatay/cybokron-dock-groups/releases?per_page=100")!
     public static let releasesPage = URL(string: "https://github.com/ercanatay/cybokron-dock-groups/releases")!
     /// The changelog as a plain text file on GitHub.
     public static let changelog = URL(string: "https://raw.githubusercontent.com/ercanatay/cybokron-dock-groups/main/CHANGELOG.md")!

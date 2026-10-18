@@ -70,14 +70,14 @@ public struct DiagnosticsInfo: Sendable {
         public var lastResult: String
         /// The newer version the updater offers, if any.
         public var offeredVersion: String?
-        /// The version the user chose to skip, if any.
-        public var skippedVersion: String?
+        /// The versions automatic checks skip, newest first.
+        public var skippedVersions: [String]
 
-        public init(lastCheckDate: Date?, lastResult: String, offeredVersion: String? = nil, skippedVersion: String? = nil) {
+        public init(lastCheckDate: Date?, lastResult: String, offeredVersion: String? = nil, skippedVersions: [String] = []) {
             self.lastCheckDate = lastCheckDate
             self.lastResult = lastResult
             self.offeredVersion = offeredVersion
-            self.skippedVersion = skippedVersion
+            self.skippedVersions = skippedVersions
         }
     }
 
@@ -173,8 +173,8 @@ public enum DiagnosticsReport {
         lines.append("Last check: \(updates.lastCheckDate.map(timestamp) ?? "never")")
         lines.append("Last result: \(updates.lastResult)")
         lines.append("Offered version: \(updates.offeredVersion ?? "none")")
-        if let skipped = updates.skippedVersion {
-            lines.append("Skipped version: \(skipped)")
+        if !updates.skippedVersions.isEmpty {
+            lines.append("Skipped versions: \(updates.skippedVersions.joined(separator: ", "))")
         }
 
         section(.groups, into: &lines)

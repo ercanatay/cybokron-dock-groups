@@ -19,7 +19,7 @@ struct DiagnosticsReportTests {
                 lastCheckDate: Date(timeIntervalSince1970: 1_800_000_000),
                 lastResult: "Up to date (v0.5.3)",
                 offeredVersion: nil,
-                skippedVersion: "0.5.2"
+                skippedVersions: ["0.5.3", "0.5.2"]
             ),
             groups: groups,
             recentErrors: errors,
@@ -40,7 +40,7 @@ struct DiagnosticsReportTests {
         #expect(text.contains("Model: Mac15,6"))
         #expect(text.contains("Accessibility: granted"))
         #expect(text.contains("Last check: 2027-01-15T08:00:00Z"))
-        #expect(text.contains("Skipped version: 0.5.2"))
+        #expect(text.contains("Skipped versions: 0.5.3, 0.5.2"))
         #expect(text.contains("Offered version: none"))
     }
 

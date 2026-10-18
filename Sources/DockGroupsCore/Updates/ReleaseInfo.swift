@@ -74,12 +74,33 @@ public struct ReleaseInfo: Hashable, Sendable {
     public static func decode(from data: Data) throws -> ReleaseInfo {
         let raw: RawRelease
         do {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            raw = try decoder.decode(RawRelease.self, from: data)
+            raw = try makeDecoder().decode(RawRelease.self, from: data)
         } catch {
             throw UpdateCheckError.malformedRelease(String(describing: error))
         }
+        return try ReleaseInfo(raw)
+    }
+
+    /// Parses GitHub's list of releases (`GET /repos/{owner}/{repo}/releases`), in the order given.
+    /// Entries that can't be read or whose tag isn't a version number are left out; an answer that
+    /// isn't a list is an error.
+    public static func decodeList(from data: Data) throws -> [ReleaseInfo] {
+        let entries: [Lenient<RawRelease>]
+        do {
+            entries = try makeDecoder().decode([Lenient<RawRelease>].self, from: data)
+        } catch {
+            throw UpdateCheckError.malformedRelease(String(describing: error))
+        }
+        return entries.compactMap { entry in entry.value.flatMap { try? ReleaseInfo($0) } }
+    }
+
+    private static func makeDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }
+
+    private init(_ raw: RawRelease) throws {
         guard let version = SemanticVersion(raw.tagName) else {
             throw UpdateCheckError.unsupportedTag(raw.tagName)
         }
@@ -90,7 +111,7 @@ public struct ReleaseInfo: Hashable, Sendable {
             else { return nil }
             return ReleaseAsset(name: name, downloadURL: url, size: asset.size ?? 0, digest: asset.digest)
         }
-        return ReleaseInfo(
+        self.init(
             tagName: raw.tagName,
             version: version,
             name: raw.name.flatMap { $0.isEmpty ? nil : $0 },
@@ -101,6 +122,15 @@ public struct ReleaseInfo: Hashable, Sendable {
             isPrerelease: raw.prerelease ?? false,
             assets: assets
         )
+    }
+}
+
+/// A list element that decodes to `nil` instead of failing the whole list.
+private struct Lenient<Value: Decodable>: Decodable {
+    let value: Value?
+
+    init(from decoder: Decoder) throws {
+        value = try? Value(from: decoder)
     }
 }
 

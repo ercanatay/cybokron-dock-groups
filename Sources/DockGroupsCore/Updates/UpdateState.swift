@@ -5,33 +5,66 @@ import Foundation
 public struct UpdateState: Equatable, Sendable {
     /// When the latest check finished, successfully or not.
     public var lastCheckDate: Date?
-    /// A version the user chose to skip; automatic checks don't offer it again.
-    public var skippedVersion: String?
+    /// Versions automatic checks don't offer: one the user chose to skip, or the newer releases
+    /// skipped when an older version was installed from "Other Versions…". Newest first, each once,
+    /// without a `v` (see `normalizedSkippedVersions`).
+    public var skippedVersions: [String] {
+        didSet { skippedVersions = Self.normalizedSkippedVersions(skippedVersions) }
+    }
 
-    public init(lastCheckDate: Date? = nil, skippedVersion: String? = nil) {
+    public init(lastCheckDate: Date? = nil, skippedVersions: [String] = []) {
         self.lastCheckDate = lastCheckDate
-        self.skippedVersion = skippedVersion
+        self.skippedVersions = Self.normalizedSkippedVersions(skippedVersions)
+    }
+
+    /// Whether automatic checks keep quiet about `version`.
+    public func isSkipped(_ version: SemanticVersion) -> Bool {
+        skippedVersions.contains { SemanticVersion($0) == version }
+    }
+
+    /// Adds `version` to the skipped versions.
+    public mutating func skip(_ version: SemanticVersion) {
+        skippedVersions.append(version.description)
+    }
+
+    /// Version numbers only (entries that aren't one are dropped), written without a `v`, each once,
+    /// newest first.
+    public static func normalizedSkippedVersions(_ versions: [String]) -> [String] {
+        var seen: Set<SemanticVersion> = []
+        return versions
+            .compactMap(SemanticVersion.init)
+            .filter { seen.insert($0).inserted }
+            .sorted(by: >)
+            .map(\.description)
     }
 }
 
 extension UpdateState: Codable {
     private enum CodingKeys: String, CodingKey {
-        case formatVersion, lastCheckDate, skippedVersion
+        case formatVersion, lastCheckDate, skippedVersions, skippedVersion
     }
 
-    /// Every field is optional; unreadable values are dropped.
+    /// Every field is optional; unreadable values are dropped. `skippedVersion` (a single version) is
+    /// what versions up to 0.5.5 write; it's merged into the list.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         lastCheckDate = container.decodeLeniently(Double.self, forKey: .lastCheckDate).map(Date.init(timeIntervalSince1970:))
-        skippedVersion = container.decodeLeniently(String.self, forKey: .skippedVersion)
+        let list = container.decodeLeniently([String].self, forKey: .skippedVersions) ?? []
+        let single = container.decodeLeniently(String.self, forKey: .skippedVersion)
+        skippedVersions = Self.normalizedSkippedVersions(list + [single].compactMap { $0 })
     }
 
-    /// Dates as seconds since 1970, like the usage statistics.
+    /// Dates as seconds since 1970, like the usage statistics. The newest skipped version is also
+    /// written as `skippedVersion`, the only key older versions read: after going back to one, its
+    /// automatic checks (which only look at the latest release) keep quiet about the newest release.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(1, forKey: .formatVersion)
         try container.encodeIfPresent(lastCheckDate?.timeIntervalSince1970, forKey: .lastCheckDate)
-        try container.encodeIfPresent(skippedVersion, forKey: .skippedVersion)
+        if !skippedVersions.isEmpty {
+            try container.encode(skippedVersions, forKey: .skippedVersions)
+            try container.encode(skippedVersions[0], forKey: .skippedVersion)
+        }
     }
 }
 

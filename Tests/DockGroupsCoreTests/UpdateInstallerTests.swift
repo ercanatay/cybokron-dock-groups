@@ -420,7 +420,7 @@ struct UpdateInstallerTests {
         let persistence = JSONFileUpdateStatePersistence(fileURL: temporary.url.appending(path: "update-state.json"))
         #expect(persistence.load() == UpdateState())
 
-        let state = UpdateState(lastCheckDate: Date(timeIntervalSince1970: 1_800_000_000), skippedVersion: "0.6.0")
+        let state = UpdateState(lastCheckDate: Date(timeIntervalSince1970: 1_800_000_000), skippedVersions: ["0.6.0"])
         try persistence.save(state)
         #expect(persistence.load() == state)
         let object = try JSONSerialization.jsonObject(with: Data(contentsOf: persistence.fileURL)) as? [String: Any]

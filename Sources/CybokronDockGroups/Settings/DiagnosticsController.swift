@@ -122,7 +122,7 @@ final class DiagnosticsController: ObservableObject {
                 lastCheckDate: updater.lastCheckDate ?? state.lastCheckDate,
                 lastResult: Self.describe(updater.status),
                 offeredVersion: Self.offeredVersion(in: updater.status),
-                skippedVersion: state.skippedVersion
+                skippedVersions: state.skippedVersions
             ),
             groups: store.groups,
             recentErrors: []
