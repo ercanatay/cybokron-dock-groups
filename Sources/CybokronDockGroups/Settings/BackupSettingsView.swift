@@ -62,7 +62,6 @@ struct BackupSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 480)
-        .fixedSize(horizontal: false, vertical: true)
     }
 
     private var status: String? {

@@ -7,6 +7,13 @@ import SwiftUI
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
+    /// The tabs' height on a screen with room for it; shorter screens get shorter tabs.
+    private static let idealPaneHeight: CGFloat = 640
+    /// The tabs don't shrink below this, however short the screen.
+    private static let minimumPaneHeight: CGFloat = 320
+    /// Room kept between the window and the edges of the screen's usable area.
+    private static let screenMargin: CGFloat = 40
+    private let hostingController: NSHostingController<SettingsView>
     private let backup: SettingsBackupController
     private let diagnostics: DiagnosticsController
 
@@ -33,7 +40,8 @@ final class SettingsWindowController: NSWindowController {
                 shortcuts: shortcuts,
                 updater: updater,
                 backup: backup,
-                diagnostics: diagnostics
+                diagnostics: diagnostics,
+                paneHeight: Self.idealPaneHeight
             )
         )
         hostingController.sizingOptions = [.preferredContentSize]
@@ -48,6 +56,7 @@ final class SettingsWindowController: NSWindowController {
         window.setFrameAutosaveName(Self.frameAutosaveName)
         backup.window = window
         diagnostics.window = window
+        self.hostingController = hostingController
         self.backup = backup
         self.diagnostics = diagnostics
         super.init(window: window)
@@ -60,9 +69,29 @@ final class SettingsWindowController: NSWindowController {
 
     /// Shows the window and brings the app to the front.
     func show() {
+        fitToScreen()
         NSApp.activate()
         showWindow(nil)
         window?.makeKeyAndOrderFront(nil)
+    }
+
+    /// Makes the tabs as tall as the screen the window is on has room for, and keeps the whole
+    /// window inside that screen's usable area: a frame saved on a bigger screen could otherwise
+    /// leave its bottom out of reach.
+    private func fitToScreen() {
+        guard let window, let screen = window.screen ?? NSScreen.main else { return }
+        let visible = screen.visibleFrame
+        let titleBarHeight = window.frameRect(forContentRect: .zero).height
+        let available = visible.height - titleBarHeight - 2 * Self.screenMargin
+        hostingController.rootView.paneHeight = min(Self.idealPaneHeight, max(Self.minimumPaneHeight, available))
+        hostingController.view.layoutSubtreeIfNeeded()
+
+        let previous = window.frame
+        var frame = window.frameRect(forContentRect: NSRect(origin: .zero, size: hostingController.preferredContentSize))
+        // Keep the top-left corner where it was, then pull the window back onto the screen.
+        frame.origin.x = max(visible.minX, min(previous.minX, visible.maxX - frame.width))
+        frame.origin.y = max(visible.minY, min(previous.maxY - frame.height, visible.maxY - frame.height))
+        window.setFrame(frame, display: true)
     }
 }
 
@@ -74,6 +103,8 @@ private struct SettingsView: View {
     let updater: AutoUpdater
     let backup: SettingsBackupController
     let diagnostics: DiagnosticsController
+    /// Set by `SettingsWindowController` to fit the screen.
+    var paneHeight: CGFloat
 
     var body: some View {
         TabView {
@@ -89,8 +120,9 @@ private struct SettingsView: View {
                 .tabItem { Label(L10n.Settings.backupTab, systemImage: "externaldrive") }
         }
         .padding(.top, 8)
-        // Fixed pane height: each tab's grouped Form scrolls inside it instead of growing the
-        // window past the screen.
-        .frame(height: 640)
+        // The window is as tall as this; each tab's grouped Form fills it and scrolls. The tabs
+        // must not fix their own height (or `fixedSize` it): the form would then grow past the
+        // window, cut off its bottom and cover the tab bar.
+        .frame(height: paneHeight)
     }
 }

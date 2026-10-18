@@ -56,7 +56,6 @@ struct UpdatesSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 480)
-        .fixedSize(horizontal: false, vertical: true)
         .sheet(isPresented: $isShowingOtherVersions) {
             OtherVersionsView(updater: updater) { isShowingOtherVersions = false }
         }

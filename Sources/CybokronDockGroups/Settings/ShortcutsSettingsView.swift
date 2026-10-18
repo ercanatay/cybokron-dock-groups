@@ -31,9 +31,7 @@ struct ShortcutsSettingsView: View {
             linksSection
         }
         .formStyle(.grouped)
-        // With every group's phrases and links this tab is the tallest; the form scrolls instead
-        // of growing past the screen.
-        .frame(width: 480, height: 640)
+        .frame(width: 480)
         .onAppear { shortcuts.refreshTrust() }
     }
 

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Settings window scrolls on any screen**: the Popup, Most Used, Updates and Backup tabs still
+  sized their form to its full height, so it didn't scroll, its bottom was out of reach and it
+  covered the tab bar; the Shortcuts tab was taller than its pane. Every tab now fills the pane and
+  scrolls, the pane is as tall as the screen has room for (at most 640 points), and the window is
+  kept inside the screen even when its saved position isn't.
+
 ## [0.5.7] - 2026-10-18
 
 ### Fixed

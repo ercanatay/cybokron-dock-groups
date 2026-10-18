@@ -66,7 +66,6 @@ struct MostUsedSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 480)
-        .fixedSize(horizontal: false, vertical: true)
         .confirmationDialog(L10n.Settings.MostUsed.clearConfirmTitle, isPresented: $confirmsClearing) {
             Button(L10n.Settings.MostUsed.clearHistory, role: .destructive) { usage.clearHistory() }
         } message: {
