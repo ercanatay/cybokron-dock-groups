@@ -198,6 +198,25 @@ struct SettingsBackupTests {
         #expect(summary.appCount == 3)
         #expect(summary.replacedGroupCount == 1)
         #expect(summary.removedGroupCount == 2)
+        // Merging adds "Notes" only; "Work" matches the current "work".
+        #expect(summary.mergedGroupCount == 1)
+        #expect(summary.mergedAppCount == 1)
+        #expect(summary.skippedGroupCount == 1)
+    }
+
+    @Test func mergeSkipsSameNamedAndSameIdentifierGroups() {
+        let current = [DockGroup(name: " WORK "), DockGroup(name: "Games")]
+        let renamed = DockGroup(id: current[1].id, name: "Play")
+        let incoming = [
+            DockGroup(name: "work"),
+            renamed,
+            DockGroup(name: "Music"),
+            DockGroup(name: "music"),
+        ]
+
+        let added = GroupStore.groupsAddedByMerging(incoming, into: current)
+
+        #expect(added.map(\.name) == ["Music"])
     }
 
     // MARK: - Restoring
@@ -302,6 +321,80 @@ struct SettingsBackupTests {
         #expect(groups.groups.first?.name == DockGroup.defaultName)
         #expect(groups.groups.first?.emoji == DockGroup.defaultEmoji)
         #expect(groups.groups.first?.apps == [Self.safari, Self.mail])
+    }
+
+    // MARK: - Merging
+
+    @Test func mergeAddsNewGroupsAndKeepsCurrentOnesAndPreferences() throws {
+        let stores = try Stores()
+        defer { stores.directory.remove() }
+        let groups = stores.groups()
+        let preferences = stores.preferences()
+        let work = groups.addGroup(named: "work")
+        groups.addApps([Self.notes], toGroup: work.id)
+        groups.addGroup(named: "Games")
+        preferences.update { $0.theme = .system }
+        let preferencesBefore = preferences.preferences
+        let currentBefore = groups.groups
+
+        let result = try Self.sampleBackup().merge(into: groups)
+
+        // "Work" is already here as "work" and keeps its own apps; "Notes" is added after.
+        #expect(result.addedGroups.map(\.name) == ["Notes"])
+        #expect(groups.groups.map(\.name) == ["work", "Games", "Notes"])
+        #expect(Array(groups.groups.prefix(2)) == currentBefore)
+        #expect(groups.groups.last == Self.sampleGroups[1])
+        #expect(preferences.preferences == preferencesBefore)
+        // Written to disk, with a safety copy of the previous groups only.
+        #expect(stores.groups().groups.map(\.name) == ["work", "Games", "Notes"])
+        let copy = try #require(result.copyURL)
+        #expect(copy.lastPathComponent.hasPrefix("groups.pre-import-"))
+        #expect(try JSONFileGroupPersistence(fileURL: copy).loadGroups() == currentBefore)
+        #expect(try !stores.files().contains { $0.hasPrefix("preferences.pre-import-") })
+    }
+
+    @Test func mergeKeepsFreeLayoutSlotsAndCleansUpAddedGroups() throws {
+        let stores = try Stores()
+        defer { stores.directory.remove() }
+        let groups = stores.groups()
+        let backup = Self.sampleBackup(groups: [
+            Self.sampleGroups[0],
+            DockGroup(name: "Mail", emoji: "", apps: [Self.mail, Self.mail]),
+        ])
+
+        try backup.merge(into: groups)
+
+        #expect(groups.groups.first?.freeLayoutSlots == ["com.apple.safari": 4, "com.apple.mail": 0])
+        #expect(groups.groups.last?.apps == [Self.mail])
+        #expect(groups.groups.last?.emoji == DockGroup.defaultEmoji)
+    }
+
+    @Test func mergeWithNothingNewChangesNothing() throws {
+        let stores = try Stores()
+        defer { stores.directory.remove() }
+        let groups = stores.groups()
+        groups.addGroup(named: "Work")
+        groups.addGroup(named: "Notes")
+        let before = try stores.files()
+
+        let result = try Self.sampleBackup().merge(into: groups)
+
+        #expect(result.addedGroups.isEmpty)
+        #expect(result.copyURL == nil)
+        #expect(groups.groups.map(\.name) == ["Work", "Notes"])
+        #expect(try stores.files() == before)
+    }
+
+    @Test func failedMergeChangesNothing() throws {
+        let stores = try Stores()
+        defer { stores.directory.remove() }
+        let groups = stores.groups(persistence: FailingSavePersistence(groups: [DockGroup(name: "Kept")]))
+
+        #expect(throws: FailingSavePersistence.Failure.self) {
+            try Self.sampleBackup().merge(into: groups)
+        }
+
+        #expect(groups.groups.map(\.name) == ["Kept"])
     }
 
     @Test func failedRestoreChangesNothing() throws {

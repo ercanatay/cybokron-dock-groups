@@ -2,7 +2,8 @@ import AppKit
 import DockGroupsCore
 import UniformTypeIdentifiers
 
-/// Exports the groups and preferences to a `.dockgroups` backup file and restores them from one.
+/// Exports the groups and preferences to a `.dockgroups` backup file and restores them from one:
+/// either replacing everything, or merging the backup's new groups into the current ones.
 /// Panels and alerts are sheets on the Settings window, and files are read and written off the
 /// main thread, so the rest of the app keeps working meanwhile.
 @MainActor
@@ -11,6 +12,7 @@ final class SettingsBackupController: ObservableObject {
     enum Status: Equatable {
         case exported(fileName: String)
         case imported(groupCount: Int, appCount: Int)
+        case merged(addedGroupCount: Int, skippedGroupCount: Int)
     }
 
     @Published private(set) var isBusy = false
@@ -104,14 +106,18 @@ final class SettingsBackupController: ObservableObject {
         let summary = SettingsRestoreSummary(backup: backup, currentGroups: store.groups)
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "Replace your current groups and settings with the ones in this backup?"
+        alert.messageText = "Import the groups and settings in this backup?"
         alert.informativeText = Self.confirmationDetail(for: summary, exportedAt: backup.exportedAt)
-        alert.addButton(withTitle: "Replace")
+        alert.addButton(withTitle: "Replace All")
+        alert.addButton(withTitle: "Merge")
         alert.addButton(withTitle: "Cancel")
         alert.buttons.first?.hasDestructiveAction = true
         present(alert) { [weak self] response in
-            guard response == .alertFirstButtonReturn else { return }
-            self?.restore(backup)
+            switch response {
+            case .alertFirstButtonReturn: self?.restore(backup)
+            case .alertSecondButtonReturn: self?.merge(backup)
+            default: break
+            }
         }
     }
 
@@ -123,6 +129,22 @@ final class SettingsBackupController: ObservableObject {
             presentAlert(
                 title: "The backup couldn't be restored",
                 message: "\(error.localizedDescription) Your current groups and settings were kept.",
+                style: .warning
+            )
+        }
+    }
+
+    private func merge(_ backup: SettingsBackup) {
+        do {
+            let result = try backup.merge(into: store)
+            status = .merged(
+                addedGroupCount: result.addedGroups.count,
+                skippedGroupCount: backup.groups.count - result.addedGroups.count
+            )
+        } catch {
+            presentAlert(
+                title: "The backup couldn't be merged",
+                message: "\(error.localizedDescription) Your current groups were kept.",
                 style: .warning
             )
         }
@@ -146,15 +168,30 @@ final class SettingsBackupController: ObservableObject {
         if summary.groupCount == 0 {
             lines.append("The backup has no groups\(exported).")
         } else {
-            lines.append("\(count(summary.groupCount, "group")) with \(count(summary.appCount, "app")) will be added from the backup\(exported).")
+            lines.append("The backup has \(count(summary.groupCount, "group")) with \(count(summary.appCount, "app"))\(exported).")
         }
+
+        var replace = "Replace All uses the backup's groups and settings instead of yours."
         if summary.replacedGroupCount > 0 {
-            lines.append("\(count(summary.replacedGroupCount, "current group")) with the same name as a group in the backup will be replaced by it.")
+            replace += " \(count(summary.replacedGroupCount, "current group")) with the same name as a group in the backup will be replaced by it."
         }
         if summary.removedGroupCount > 0 {
-            lines.append("\(count(summary.removedGroupCount, "current group")) not in the backup will be removed.")
+            replace += " \(count(summary.removedGroupCount, "current group")) not in the backup will be removed."
         }
-        lines.append("Your settings (popup, shortcuts, Most Used and updates) will be replaced too; the Most Used launch counts are kept. A copy of your current files is saved next to them in Application Support. This can't be undone.")
+        replace += " Your settings (popup, shortcuts, Most Used and updates) will be replaced too."
+        lines.append(replace)
+
+        var merge = summary.groupCount == 0
+            ? "Merge keeps your groups and settings and adds nothing."
+            : summary.mergedGroupCount == 0
+            ? "Merge keeps your groups and settings; every group in the backup is already here, so it adds nothing."
+            : "Merge keeps your groups and settings and adds \(count(summary.mergedGroupCount, "group")) with \(count(summary.mergedAppCount, "app")) from the backup."
+        if summary.mergedGroupCount > 0, summary.skippedGroupCount > 0 {
+            merge += " \(count(summary.skippedGroupCount, "group")) already here (same name) will be skipped."
+        }
+        lines.append(merge)
+
+        lines.append("The Most Used launch counts are kept. A copy of your current files is saved next to them in Application Support. This can't be undone.")
         return lines.joined(separator: "\n\n")
     }
 

@@ -20,7 +20,7 @@ struct BackupSettingsView: View {
                         .disabled(backup.isBusy)
                 } label: {
                     Text("Import")
-                    Text("Replaces your groups and settings with the ones in a backup file.")
+                    Text("Replaces your groups and settings with the ones in a backup file, or merges the backup's new groups into yours.")
                 }
                 if let status {
                     Label(status, systemImage: "checkmark.circle.fill")
@@ -47,6 +47,10 @@ struct BackupSettingsView: View {
             let groups = "\(groupCount) group\(groupCount == 1 ? "" : "s")"
             let apps = "\(appCount) app\(appCount == 1 ? "" : "s")"
             return "Restored \(groups) with \(apps)"
+        case .merged(let addedGroupCount, let skippedGroupCount):
+            let added = "\(addedGroupCount) group\(addedGroupCount == 1 ? "" : "s")"
+            let skipped = skippedGroupCount > 0 ? "; \(skippedGroupCount) already here" : ""
+            return "Merged \(added) from the backup\(skipped)"
         case nil:
             return nil
         }

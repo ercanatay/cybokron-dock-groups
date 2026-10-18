@@ -33,4 +33,12 @@ extension SettingsBackup {
         }
         return copies
     }
+
+    /// Adds the backup's groups that the store doesn't have yet (by name or identifier) after the
+    /// current groups; current groups and all preferences stay as they are. The groups file is
+    /// copied next to itself first (`groups.pre-import-<timestamp>.json`) when anything is added.
+    @discardableResult
+    public func merge(into groups: GroupStore) throws -> GroupMergeResult {
+        try groups.mergeGroups(self.groups)
+    }
 }

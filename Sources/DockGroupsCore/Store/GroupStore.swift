@@ -14,6 +14,14 @@ public struct GroupStoreIssue: Identifiable, Equatable, Sendable {
     }
 }
 
+/// What merging a backup's groups into the current ones did.
+public struct GroupMergeResult: Equatable, Sendable {
+    /// The groups that were added, after the current ones, in the backup's order.
+    public let addedGroups: [DockGroup]
+    /// The copy of the previous groups file, `nil` when nothing was added or nothing had been saved.
+    public let copyURL: URL?
+}
+
 /// The single source of truth for the user's groups.
 ///
 /// Every change is written to disk shortly after it happens (changes arriving in quick succession,
@@ -210,6 +218,41 @@ public final class GroupStore: ObservableObject {
         isSavingSuspended = false
         issue = nil
         return copyURL
+    }
+
+    /// Adds the groups of `incoming` that aren't here yet after the current ones, as merging a
+    /// backup does; every current group stays as it is. A group is skipped when a current group has
+    /// the same name (ignoring case and surrounding spaces) or the same identifier — and so are
+    /// later groups of `incoming` repeating one already added. The added groups are cleaned up the
+    /// way `replaceGroups(with:)` cleans them. When something is added, the current file is first
+    /// copied next to itself (`groups.pre-import-<timestamp>.json`) and the new list is written
+    /// before it's shown, so if anything fails nothing changes.
+    @discardableResult
+    public func mergeGroups(_ incoming: [DockGroup]) throws -> GroupMergeResult {
+        let added = Self.sanitizedForRestore(Self.groupsAddedByMerging(incoming, into: groups))
+        guard !added.isEmpty else { return GroupMergeResult(addedGroups: [], copyURL: nil) }
+        let copyURL = try replaceGroups(with: groups + added, copyLabel: "pre-import")
+        return GroupMergeResult(addedGroups: added, copyURL: copyURL)
+    }
+
+    /// The groups of `incoming` that merging adds to `current`, unchanged and in order: see
+    /// `mergeGroups(_:)`.
+    public nonisolated static func groupsAddedByMerging(_ incoming: [DockGroup], into current: [DockGroup]) -> [DockGroup] {
+        var names = Set(current.map(mergeName(of:)))
+        var ids = Set(current.map(\.id))
+        return incoming.filter { group in
+            let name = mergeName(of: group)
+            guard !ids.contains(group.id), !names.contains(name) else { return false }
+            names.insert(name)
+            ids.insert(group.id)
+            return true
+        }
+    }
+
+    /// The name groups are matched by: as the store keeps it (trimmed, a blank one replaced by the
+    /// default), ignoring case.
+    nonisolated static func mergeName(of group: DockGroup) -> String {
+        (DockGroup.sanitizedName(group.name) ?? DockGroup.defaultName).lowercased()
     }
 
     private static func sanitizedForRestore(_ groups: [DockGroup]) -> [DockGroup] {

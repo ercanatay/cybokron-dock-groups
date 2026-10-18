@@ -114,18 +114,23 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     public var replacedGroupCount: Int
     /// Current groups with no group of the same name in the backup; they're removed.
     public var removedGroupCount: Int
+    /// Merging instead: the backup's groups that would be added, and the apps they hold…
+    public var mergedGroupCount: Int
+    public var mergedAppCount: Int
+    /// …and the backup's groups skipped because a current group has the same name or identifier.
+    public var skippedGroupCount: Int
 
     public init(backup: SettingsBackup, currentGroups: [DockGroup]) {
         groupCount = backup.groups.count
         appCount = backup.appCount
-        let backupNames = Set(backup.groups.map { Self.comparableName($0.name) })
-        let matching = currentGroups.filter { backupNames.contains(Self.comparableName($0.name)) }.count
+        let backupNames = Set(backup.groups.map(GroupStore.mergeName(of:)))
+        let matching = currentGroups.filter { backupNames.contains(GroupStore.mergeName(of: $0)) }.count
         replacedGroupCount = matching
         removedGroupCount = currentGroups.count - matching
-    }
-
-    private static func comparableName(_ name: String) -> String {
-        name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let merged = GroupStore.groupsAddedByMerging(backup.groups, into: currentGroups)
+        mergedGroupCount = merged.count
+        mergedAppCount = merged.reduce(0) { $0 + $1.apps.count }
+        skippedGroupCount = backup.groups.count - merged.count
     }
 }
 
