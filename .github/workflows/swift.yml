@@ -1,6 +1,7 @@
 # CI for Cybokron Dock Groups (macOS 14+ menu bar app, Swift 6 tools / Swift 5 language mode).
 # Runs on macos-26 runners (Xcode 26+ toolchain). Runs the DockGroupsCore unit tests with SwiftPM and Xcode, and builds the ad hoc signed .app.
-# For v* tags, the release job builds a Developer ID signed, notarized and stapled DMG for a draft release.
+# For v* tags, the release job builds a DMG for a draft release. With the repository variable
+# NOTARIZE_ENABLED=true it is Developer ID signed, notarized and stapled; otherwise it is ad hoc signed.
 # Docs: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
 name: CI
@@ -96,10 +97,6 @@ jobs:
     runs-on: macos-26
     permissions:
       contents: write
-    env:
-      # SHA-1 of the Developer ID Application certificate; pins the identity
-      # build-app.sh and make-dmg.sh sign with.
-      CODESIGN_IDENTITY: 5113D3C4DEA9F1F9C082E516112B89E58BAA5111
 
     steps:
       - uses: actions/checkout@v4
@@ -111,7 +108,9 @@ jobs:
         run: scripts/test.sh
 
       - name: Import Developer ID certificate
+        if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
         env:
+          CODESIGN_IDENTITY: 5113D3C4DEA9F1F9C082E516112B89E58BAA5111
           CERT_P12_BASE64: ${{ secrets.APPLE_DEVID_CERT_P12 }}
           CERT_PASSWORD: ${{ secrets.APPLE_DEVID_CERT_PASSWORD }}
         run: |
@@ -143,9 +142,12 @@ jobs:
           grep -q "$CODESIGN_IDENTITY" <<< "$IDENTITIES" \
             || { echo "::error::Signing identity $CODESIGN_IDENTITY not found in the imported certificate"; exit 1; }
 
-      - name: Build signed universal DMG
-        # CODESIGN_IDENTITY (job env) makes build-app.sh sign the app with the hardened runtime and a
-        # secure timestamp, and make-dmg.sh sign the DMG.
+      - name: Build universal DMG
+        # With NOTARIZE_ENABLED=true, CODESIGN_IDENTITY makes build-app.sh sign the app with the hardened
+        # runtime and a secure timestamp, and make-dmg.sh sign the DMG. Otherwise it is empty and both
+        # scripts sign ad hoc.
+        env:
+          CODESIGN_IDENTITY: ${{ vars.NOTARIZE_ENABLED == 'true' && '5113D3C4DEA9F1F9C082E516112B89E58BAA5111' || '' }}
         run: |
           scripts/make-dmg.sh
           VERSION="$(plutil -extract CFBundleShortVersionString raw "build/release/Cybokron Dock Groups.app/Contents/Info.plist")"
@@ -154,6 +156,7 @@ jobs:
           echo "DMG=$DMG" >> "$GITHUB_ENV"
 
       - name: Notarize DMG
+        if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
         timeout-minutes: 95
         env:
           ASC_KEY_P8_BASE64: ${{ secrets.APPLE_ASC_KEY_P8 }}
@@ -188,6 +191,7 @@ jobs:
           fi
 
       - name: Staple and verify DMG
+        if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
         env:
           EXPECTED_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
@@ -212,7 +216,7 @@ jobs:
           spctl --assess --type execute --verbose=2 "$APP"
 
       - name: Clean up signing material
-        if: ${{ always() }}
+        if: ${{ always() && vars.NOTARIZE_ENABLED == 'true' }}
         run: |
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
           rm -f "$RUNNER_TEMP/AuthKey.p8" "$RUNNER_TEMP/devid.p12"
