@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Română)
+  Cybokron Dock Groups
+
+  Textul românesc al fiecărei chei. Plasatorii rămân: %@ este text, %ld un număr, iar %1$@, %2$ld …
+  sunt numerotați, ca traducerea să-i poată reordona. Cheile cu terminația .one/.other sunt forma
+  de singular (numărul 1) și de plural. Numele aplicației „Cybokron Dock Groups”, „DockGroups”,
+  „GitHub”, „Siri”, simbolurile tastelor (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) și numele de fișiere rămân neschimbate.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Anulează";
+"common.add" = "Adaugă";
+"common.copy" = "Copiază";
+"common.copied" = "Copiat";
+"common.close" = "Închide";
+"common.done" = "Gata";
+"common.install" = "Instalează";
+"common.tryAgain" = "Încearcă din nou";
+"common.openAll" = "Deschide tot";
+"common.hideAll" = "Ascunde tot";
+"common.closeAll" = "Închide tot";
+"common.forceQuit" = "Forțează închiderea";
+"common.addApps" = "Adaugă aplicații…";
+"common.addWebsite" = "Adaugă site web…";
+"common.showInFinder" = "Arată în Finder";
+"common.removeFromGroup" = "Elimină din grup";
+"common.moveTo" = "Mută în";
+"common.default" = "Implicit";
+"common.auto" = "Automat";
+"common.changelog" = "Jurnalul modificărilor";
+"common.links" = "Linkuri";
+"common.openReleasesPage" = "Deschide pagina versiunilor";
+"common.openPrivacySettings" = "Deschide Confidențialitate și securitate…";
+"common.checkForUpdates" = "Caută actualizări…";
+"common.settings" = "Setări…";
+"common.noLaunchesYet" = "Nicio lansare înregistrată încă";
+"common.noAppsInGroup" = "Niciun aplicație în acest grup încă";
+"common.about" = "Despre %@";
+"common.hideApp" = "Ascunde %@";
+"common.quitApp" = "Închide %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Se instalează versiunea %@…";
+"common.update.restarting" = "Versiunea %@ a fost instalată — se repornește…";
+"common.appCount.one" = "1 aplicație";
+"common.appCount.other" = "%ld aplicații";
+"common.groupCount.one" = "1 grup";
+"common.groupCount.other" = "%ld grupuri";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Grupuri";
+"menuBar.noGroups" = "Încă niciun grup";
+"menuBar.manageGroups" = "Gestionează grupurile…";
+"menuBar.mostUsed.empty.tooltip" = "Deschide aplicațiile ca de obicei; cele pe care le deschizi cel mai des vor apărea aici.";
+"menuBar.mostUsed.show" = "Arată cele mai utilizate";
+"menuBar.mostUsed.show.tooltip" = "Arată aplicațiile tale cel mai des deschise într-o fereastră pop-up.";
+"menuBar.checkForUpdates.tooltip" = "Caută o versiune mai nouă a %@ pe GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "Deschide %@. Deschisă o dată.";
+"menuBar.mostUsed.app.tooltip.other" = "Deschide %1$@. Deschisă de %2$ld ori.";
+"menuBar.group.tooltip" = "Arată aplicațiile din „%@”. Ține apăsat ⌥ ca să le deschizi pe toate odată, sau ⇧⌥ ca să ascunzi pe cele care rulează.";
+"menuBar.group.tooltip.shortcut" = "Arată aplicațiile din „%1$@”. Ține apăsat ⌥ ca să le deschizi pe toate odată, sau ⇧⌥ ca să ascunzi pe cele care rulează. Scurtătură: %2$@.";
+"menuBar.group.openAll" = "Deschide tot din „%@”";
+"menuBar.group.openAll.tooltip.one" = "Deschide aplicația din „%@”";
+"menuBar.group.openAll.tooltip.other" = "Deschide toate cele %1$ld aplicații din „%2$@”";
+"menuBar.group.noApps" = "„%@” nu are încă nicio aplicație.";
+"menuBar.group.hideAll" = "Ascunde tot din „%@”";
+"menuBar.group.hideAll.tooltip" = "Ascunde aplicațiile care rulează din „%@”. Aplicațiile care nu rulează rămân închise.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Editare";
+"mainMenu.undo" = "Anulează";
+"mainMenu.redo" = "Refă";
+"mainMenu.cut" = "Taie";
+"mainMenu.paste" = "Lipește";
+"mainMenu.selectAll" = "Selectează tot";
+"mainMenu.window" = "Fereastră";
+"mainMenu.minimize" = "Minimizează";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Deschide fiecare aplicație din acest grup; cele care rulează vin în prim-plan.";
+"popup.openAll.help.mostUsed" = "Deschide fiecare aplicație din această listă; cele care rulează vin în prim-plan.";
+"popup.hideAll.help.group" = "Ascunde aplicațiile care rulează din acest grup; cele care nu rulează rămân închise.";
+"popup.hideAll.help.mostUsed" = "Ascunde aplicațiile care rulează din această listă; cele care nu rulează rămân închise.";
+"popup.closeAll.help.group" = "Închide aplicațiile care rulează din acest grup. ⌘-clic pentru a forța închiderea fără salvare.";
+"popup.closeAll.help.mostUsed" = "Închide aplicațiile care rulează din această listă. ⌘-clic pentru a forța închiderea fără salvare.";
+"popup.summary.websites.one" = "1 site web";
+"popup.summary.websites.other" = "%ld site-uri web";
+"popup.summary.running" = "%ld în execuție";
+"popup.summary.byLaunches" = "după lansări";
+"popup.filter.noMatch" = "Nicio aplicație nu se potrivește cu „%@”";
+"popup.filter.noMatch.hint" = "Apasă Delete sau Esc pentru a șterge filtrul.";
+"popup.empty.mostUsed.hint" = "Deschide aplicațiile ca de obicei pentru a începe să-ți construiești istoricul.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Sortează aplicațiile din acest grup după nume, de la A la Z.";
+"popup.footer.sortAZ.accessibility" = "Sortează de la A la Z";
+"popup.footer.filter.matches" = "Filtru: „%@”  ·  ↩ deschide aplicația selectată  ·  esc șterge";
+"popup.footer.filter.noMatch" = "Filtru: „%@”  ·  nicio potrivire  ·  ⌫ sau esc șterge";
+"popup.footer.hint.mostUsed" = "Ordonate după cât de des le deschizi  ·  ⌘-clic pe Închide tot pentru a forța închiderea";
+"popup.footer.hint.group" = "Închide tot:  ⌥-clic închide normal  ·  ⌘-clic forțează închiderea";
+"popup.footer.drag.remove" = "Eliberează pentru a elimina %@ din acest grup";
+"popup.footer.drag.free" = "Plasează %@ pe orice celulă; pe altă aplicație pentru a le schimba  ·  trage afară pentru a elimina";
+"popup.footer.drag.ordered" = "Plasează pentru a pune %@  ·  trage în afara ferestrei pentru a o elimina";
+"popup.cell.accessibility.website" = "Site web %@";
+"popup.cell.hint.website" = "Deschide site-ul în browser";
+"popup.cell.hint.running" = "Aduce aplicația în prim-plan";
+"popup.cell.hint.open" = "Deschide aplicația";
+"popup.cell.help.openWebsite" = "Deschide %@ în browser.";
+"popup.cell.help.bringToFront" = "Aduce %@ în prim-plan.";
+"popup.cell.help.openApp" = "Deschide %@.";
+"popup.cell.help.missing" = "%@ nu se află pe acest Mac.";
+"popup.cell.help.drag.freeItem" = "Trage pe orice celulă sau peste alt element pentru a le schimba, ori în afara ferestrei pentru a-l elimina din grup.";
+"popup.cell.help.drag.freeApp" = "Trage pe orice celulă sau peste altă aplicație pentru a le schimba, ori în afara ferestrei pentru a o elimina din grup.";
+"popup.cell.help.drag.ordered" = "Trage pentru a reordona, ori în afara ferestrei pentru a o elimina din grup.";
+"popup.cell.help.drag.missing" = "Trage-o în afara ferestrei pentru a o elimina din grup.";
+"popup.menu.open" = "Deschide";
+"popup.menu.copyURL" = "Copiază URL-ul";
+"popup.accessibility.moveEarlier" = "Mută mai devreme";
+"popup.accessibility.moveLater" = "Mută mai târziu";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Încă niciun grup";
+"groupWindow.empty.noSelection" = "Niciun grup selectat";
+"groupWindow.empty.noGroups.description" = "Adaugă un grup pentru a strânge aplicațiile pe care le folosești împreună.";
+"groupWindow.empty.noSelection.description" = "Selectează un grup pentru a-l edita.";
+"groupWindow.addGroup" = "Adaugă un grup";
+"groupWindow.rename.title" = "Redenumește grupul";
+"groupWindow.rename.confirm" = "Redenumește";
+"groupWindow.rename.message" = "Introdu un nume nou pentru grup.";
+"groupWindow.delete.title" = "Ștergi „%@”?";
+"groupWindow.delete.confirm" = "Șterge grupul";
+"groupWindow.delete.message.standalone" = "Aceasta șterge grupul și lista lui de aplicații, precum și pictograma lui proprie din Dock. Aplicațiile în sine nu sunt afectate.";
+"groupWindow.delete.message" = "Aceasta șterge grupul și lista lui de aplicații. Aplicațiile în sine nu sunt afectate.";
+"groupWindow.sidebar.rename" = "Redenumește…";
+"groupWindow.sidebar.delete" = "Șterge…";
+"groupWindow.sidebar.add.help" = "Adaugă un grup";
+"groupWindow.sidebar.delete.help" = "Șterge grupul selectat";
+"groupWindow.addApps.problem.title" = "Unele aplicații nu au putut fi adăugate";
+"groupWindow.section.group" = "Grup";
+"groupWindow.name" = "Nume";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Alege…";
+"groupWindow.section.apps" = "Aplicații";
+"groupWindow.apps.empty" = "Încă nicio aplicație. Folosește „%1$@” pentru a alege aplicații pentru acest grup, sau „%2$@” pentru un link web.";
+"groupWindow.addWebsite.help" = "Adaugă un link web la acest grup. Se deschide în browserul implicit.";
+"groupWindow.sortAZ" = "Sortează A→Z";
+"groupWindow.sortAZ.help" = "Sortează aplicațiile din acest grup după nume, de la A la Z. Trage-le pentru a le reordona manual.";
+"groupWindow.showPopup" = "Arată fereastra pop-up";
+"groupWindow.showPopup.help" = "Arată fereastra pop-up a acestui grup peste Dock.";
+"groupWindow.hideAll.help" = "Ascunde aplicațiile care rulează din acest grup. Aplicațiile care nu rulează rămân închise.";
+"groupWindow.apps.moveHint" = "Pentru a muta o aplicație în alt grup, trage-o pe acel grup din bara laterală sau folosește %@ din meniul ei contextual.";
+"groupWindow.app.notFound" = "Nu a fost găsită pe acest Mac · %@";
+"groupWindow.app.remove.website" = "Elimină %@ din acest grup.";
+"groupWindow.app.remove" = "Elimină %@ din acest grup. Aplicația în sine nu este afectată.";
+"groupWindow.section.dockTile" = "Pictograma din Dock";
+"groupWindow.tile.preview" = "Previzualizare";
+"groupWindow.tile.shows" = "Afișează";
+"groupWindow.tile.kind.grid" = "Grilă cu pictogramele aplicațiilor";
+"groupWindow.tile.background" = "Fundal";
+"groupWindow.tile.backgroundColor" = "Culoarea fundalului";
+"groupWindow.tile.pinned" = "Păstrează pictograma fixată în Dock";
+"groupWindow.tile.preview.accessibility" = "Previzualizarea pictogramei, %ld puncte";
+"groupWindow.section.standalone" = "Independent";
+"groupWindow.standalone.toggle" = "Pictogramă independentă în Dock";
+"groupWindow.standalone.help" = "Dă acestui grup propria aplicație, cu propria pictogramă în Dock.";
+"groupWindow.standalone.settingUp" = "Se configurează pictograma din Dock…";
+"groupWindow.standalone.removing" = "Se elimină pictograma din Dock…";
+"groupWindow.standalone.groupApp" = "Aplicația grupului";
+"groupWindow.standalone.updateDockIcon" = "Actualizează pictograma din Dock";
+"groupWindow.standalone.updateDockIcon.help" = "Repornește Dock-ul cu o memorie cache nouă a pictogramelor, astfel încât pictograma să arate iconița actuală a grupului.";
+"groupWindow.standalone.staleIcon" = "Dock-ul încă afișează pictograma anterioară.";
+"groupWindow.standalone.footer" = "Dă grupului o aplicație mică proprie, cu pictograma de mai sus, la sfârșitul Dock-ului. Un clic pe ea arată fereastra pop-up a grupului (⌥-clic deschide toate aplicațiile lui), chiar când %@ nu rulează; clic-dreapta pe ea listează aplicațiile grupului (Setări → Pop-up). Dezactivarea acestei opțiuni, ștergerea grupului sau trage pictogramei din Dock elimină acea aplicație. Adăugarea sau eliminarea pictogramei repornește Dock-ul pentru o clipă.";
+"groupWindow.section.popup" = "Pop-up";
+"groupWindow.popup.columns" = "Coloane";
+"groupWindow.popup.maxRows" = "Rânduri maxime";
+"groupWindow.popup.appNames" = "Nume aplicații";
+"groupWindow.popup.show" = "Arată";
+"groupWindow.popup.hide" = "Ascunde";
+"groupWindow.popup.position" = "Poziție";
+"groupWindow.popup.footer" = "„%@” urmează setările pop-up-ului din întreaga aplicație.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Plin";
+"choice.tileBackground.gradient" = "Gradient";
+"choice.tileBackground.glass" = "Sticlă";
+"choice.popupAnchor.dockCenter" = "Centrat deasupra Dock-ului";
+"choice.popupAnchor.dockIcon" = "Deasupra pictogramei apăsate";
+"choice.theme.dark" = "Întunecat";
+"choice.theme.light" = "Luminos";
+"choice.theme.system" = "Ca sistemul";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Adaugă site web";
+"addWebsite.title" = "Adaugă site web la „%@”";
+"addWebsite.address" = "Adresă:";
+"addWebsite.address.accessibility" = "Adresa site-ului web";
+"addWebsite.name" = "Nume:";
+"addWebsite.name.accessibility" = "Numele site-ului web, opțional";
+"addWebsite.name.placeholder" = "Opțional";
+"addWebsite.hint" = "Se deschide în browserul implicit. Lasă numele gol pentru a folosi adresa site-ului.";
+"addWebsite.duplicate" = "„%@” se află deja în acest grup.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Adaugă aplicații în grup";
+"appPicker.message" = "Alege aplicațiile de adăugat la „%@”.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "Aplicațiile din „%@” nu au putut fi deschise.";
+"problems.launch.someFailed" = "Unele aplicații din „%@” nu au putut fi deschise.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "nu a fost găsită pe acest Mac.";
+"problems.launch.opened" = "deschisă.";
+"problems.quit.force" = "Unele aplicații din „%@” nu au putut fi forțate să se închidă.";
+"problems.quit.graceful" = "Unor aplicații din „%@” nu li s-a putut cere să se închidă.";
+"problems.hide" = "Unele aplicații din „%@” nu au putut fi ascunse.";
+"problems.standalone.failed" = "„%@” nu și-a putut obține propria pictogramă din Dock.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Aplicația acestui grup nu își poate deschide grupul.";
+"agent.damaged.message" = "%1$@\n\nÎn %2$@, dezactivează și reactivează Independent pentru grup, ca aplicația lui să fie reconstruită.";
+"agent.error.groupMismatch" = "Setările aplicației aparțin unui alt grup.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Deja activat? După o actualizare, intrarea poate aparține versiunii anterioare: selectează %@, elimină-o cu −, apoi adaugă din nou aplicația cu +.";
+
+/* Settings window */
+"settings.window.title" = "Setări";
+
+/* Settings tabs */
+"settings.tab.popup" = "Pop-up";
+"settings.tab.shortcuts" = "Scurtături și Siri";
+"settings.tab.updates" = "Actualizări";
+"settings.tab.backup" = "Copie de rezervă";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Limba";
+"general.language.system" = "Sistem (%1$@)";
+"general.language.restartNote" = "Noua limbă se aplică după ce aplicația se repornește.";
+"general.language.restartNow" = "Repornește acum";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Temă";
+"settings.popup.frostedGlass" = "Fundal de sticlă mată";
+"settings.popup.appearance.header" = "Aspectul pop-up-ului";
+"settings.popup.appearance.footer" = "Tema se aplică doar pop-up-ului; această fereastră urmează aspectul macOS.";
+"settings.popup.columns" = "Coloane";
+"settings.popup.columns.detail" = "Automat păstrează lățimea standard a pop-up-ului; un număr face pop-up-ul doar atât de lat cât are nevoie grupul.";
+"settings.popup.maxRows" = "Rânduri maxime";
+"settings.popup.maxRows.detail" = "Limitează înălțimea pop-up-ului; grupurile mai mari derulează.";
+"settings.popup.showNames" = "Arată numele aplicațiilor";
+"settings.popup.position" = "Poziție";
+"settings.popup.position.detail" = "Deasupra pictogramei apăsate deschide un pop-up peste pictograma din Dock a grupului, sau sub pictograma din bara de meniu când este ales din meniul ei. Pop-up-urile deschise cu o scurtătură, un link sau Siri rămân centrate peste Dock.";
+"settings.popup.layout.header" = "Aspectul pop-up-ului";
+"settings.popup.layout.footer" = "Acestea sunt valorile implicite pentru fiecare grup. Fiecare grup le poate suprascrie în Gestionează grupurile.";
+"settings.popup.freeLayout" = "Aspect liber";
+"settings.popup.freeLayout.detail" = "Aplicațiile rămân în celula în care le tragi, iar celelalte nu se mișcă; plasarea unei aplicații peste alta le schimbă între ele.";
+"settings.popup.arranging.header" = "Aranjarea aplicațiilor";
+"settings.popup.arranging.footer" = "Dezactivat, aplicațiile unui grup umplu pop-up-ul în ordine și fac loc când muți una. A→Z din pop-up sortează grupul după nume, în orice caz.";
+"settings.popup.restoreWindows" = "Restaurează ferestrele la redeschiderea unei aplicații care rulează";
+"settings.popup.restoreWindows.detail" = "Un clic pe o aplicație care rulează readuce ferestrele ei ascunse și minimizate, ca un clic pe ea în Dock. Dezactivat, aplicația doar vine în prim-plan.";
+"settings.popup.runningApps.header" = "Aplicații care rulează";
+"settings.popup.dockMenus" = "Meniu la pictogramele grupurilor din Dock";
+"settings.popup.dockMenus.detail" = "Clic-dreapta pe pictograma din Dock a unui grup independent arată aplicațiile lui, Deschide tot, Ascunde tot și Închide tot, după ce pictograma a fost apăsată. Aplicația lui apare apoi ca rulând în Dock și în ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Pictograme independente în Dock";
+"settings.popup.ax.granted" = "Acces de accesibilitate acordat: ferestrele minimizate revin și ele";
+"settings.popup.ax.required" = "Restaurarea ferestrelor minimizate necesită acces de accesibilitate";
+"settings.popup.ax.detail" = "Permite %@ la Confidențialitate și securitate → Accesibilitate. Până atunci, aplicațiile ascunse tot revin, iar aplicațiile sunt rugate să se redeschidă ca din Dock. Pictogramele grupurilor independente au nevoie de acces pentru propriile aplicații.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Deschide pop-up-urile grupurilor cu scurtături de tastatură";
+"settings.shortcuts.modifiers" = "Taste modificatoare";
+"settings.shortcuts.keys" = "Taste de scurtătură";
+"settings.shortcuts.keys.detail" = "Ține apăsate aceste taste și apasă 1 pentru primul grup, 2 pentru al doilea și așa mai departe. Apasă din nou pentru a închide pop-up-ul.";
+"settings.shortcuts.header" = "Scurtături de tastatură";
+"settings.shortcuts.ax.granted" = "Funcționează în fiecare aplicație";
+"settings.shortcuts.ax.needed" = "Necesită acces de accesibilitate";
+"settings.shortcuts.ax.detail" = "Pentru a le observa cât lucrezi în alte aplicații, permite %@ la Confidențialitate și securitate → Accesibilitate. Până atunci, funcționează doar când pop-up-ul ei sau o fereastră de-a lui este activă.";
+"settings.shortcuts.noGroups" = "Încă niciun grup.";
+"settings.shortcuts.assigned.header" = "Grupuri atribuite";
+"settings.shortcuts.assigned.footer.limit" = "Doar primele nouă grupuri au scurtături. Trage grupurile în Gestionează grupurile pentru a schimba ordinea.";
+"settings.shortcuts.assigned.footer" = "Scurtăturile urmează ordinea grupurilor din Gestionează grupurile.";
+"settings.shortcuts.siri.group" = "Grup";
+"settings.shortcuts.siri.quoted" = "„%@”";
+"settings.shortcuts.siri.noGroups" = "Adaugă un grup pentru a vedea ce să-i ceri lui Siri.";
+"settings.shortcuts.openShortcuts" = "Deschide Comenzi rapide";
+"settings.shortcuts.shortcutsApp" = "Aplicația Comenzi rapide";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group și Show Group sunt acțiuni acolo și în Spotlight: adaugă-le la propriile comenzi rapide, cu propriul declanșator.";
+"settings.shortcuts.siri.header" = "Siri și Comenzi rapide";
+"settings.shortcuts.siri.footer" = "Cere-i lui Siri cu aceste cuvinte, vocal sau scris. Ele folosesc numele actual al grupului; comenzile rapide create continuă să funcționeze după o redenumire.";
+"settings.shortcuts.links.noGroups" = "Adaugă un grup pentru a-i vedea linkurile.";
+"settings.shortcuts.links.footer" = "Deschide un link dintr-un script sau dintr-o altă aplicație, de exemplu cu `open` în Terminal. Un grup se indică prin nume (majusculele, diacriticele și semnele de punctuație nu contează) sau, când numele este ambiguu, prin ID. Adaugă ?mode=force la un link de închidere pentru a forța închiderea.";
+"settings.shortcuts.copy.help" = "Copiază „%@” în clipboard.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Arată cele mai utilizate în bara de meniu";
+"settings.mostUsed.appsShown" = "Aplicații afișate";
+"settings.mostUsed.appsShown.detail" = "Cele mai des deschise aplicații, în meniu și în pop-up-ul Cele mai utilizate.";
+"settings.mostUsed.sessionLength" = "Durata sesiunii";
+"settings.mostUsed.together" = "Deschise împreună în interval de";
+"settings.mostUsed.together.detail" = "Aplicațiile deschise la un interval unele de altele sunt considerate folosite împreună, ceea ce le ridică puțin în clasament.";
+"settings.mostUsed.footer" = "Aplicațiile sunt ordonate după cât de des le deschizi, din Dock, Finder, Spotlight sau un grup. Lansările sunt numărate chiar și când lista este ascunsă.";
+"settings.mostUsed.recorded" = "Înregistrat";
+"settings.mostUsed.clear" = "Șterge istoricul…";
+"settings.mostUsed.history" = "Istoric";
+"settings.mostUsed.history.detail" = "Stocat doar pe acest Mac, în usage-stats.json și usage-cooccurrence.json din Application Support.";
+"settings.mostUsed.usageHistory.header" = "Istoricul utilizării";
+"settings.mostUsed.clear.confirm.title" = "Ștergi istoricul utilizării?";
+"settings.mostUsed.clear.confirm.button" = "Șterge istoricul";
+"settings.mostUsed.clear.confirm.message" = "Lista Cele mai utilizate începe de la zero. Grupurile și aplicațiile tale nu sunt afectate.";
+"settings.mostUsed.summary.none" = "Încă nicio lansare";
+"settings.mostUsed.summary.launches.one" = "1 lansare";
+"settings.mostUsed.summary.launches.other" = "%ld lansări";
+"settings.mostUsed.summary" = "%1$@ din %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Caută automat actualizări";
+"settings.updates.currentVersion" = "Versiunea curentă";
+"settings.updates.lastChecked" = "Ultima verificare";
+"settings.updates.checkNow" = "Verifică acum";
+"settings.updates.otherVersions" = "Alte versiuni…";
+"settings.updates.footer" = "Verifică versiunile publicate pe GitHub la pornire și la fiecare 6 ore; se trimite doar numărul de versiune al aplicației. O versiune nouă se instalează doar după ce alegi Descarcă și instalează. Alte versiuni… instalează orice versiune publicată, mai veche sau mai nouă; revenirea omite versiunile mai noi la verificările automate.";
+"settings.updates.viewChangelog" = "Vezi jurnalul modificărilor";
+"settings.updates.latestPath" = "Înapoi pe ultima cale: se oferă fiecare versiune mai nouă";
+"settings.updates.skipped" = "Versiuni mai noi omise: %@";
+"settings.updates.clear" = "Șterge";
+"settings.updates.clear.help" = "Permite verificărilor automate să ofere din nou aceste versiuni";
+"settings.updates.never" = "Niciodată";
+"settings.updates.status.idle" = "Neverificat de la pornirea aplicației";
+"settings.updates.status.checking" = "Se verifică…";
+"settings.updates.status.upToDate" = "Ești la zi (v%@)";
+"settings.updates.status.available" = "Versiunea %@ este disponibilă";
+"settings.updates.showUpdate" = "Arată actualizarea…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Alte versiuni";
+"settings.otherVersions.intro" = "Instalează orice versiune publicată a %@, mai veche sau mai nouă. Aplicația se închide și se redeschide ca versiunea aleasă.";
+"settings.otherVersions.releasesLink" = "Deschide pagina versiunilor pe GitHub";
+"settings.otherVersions.loading" = "Se încarcă versiunile de pe GitHub…";
+"settings.otherVersions.none" = "GitHub nu listează nicio versiune publicată.";
+"settings.otherVersions.current" = "Curentă";
+"settings.otherVersions.noDownload" = "Fără descărcare";
+"settings.otherVersions.install.help" = "Instalează versiunea %@";
+"settings.otherVersions.install.noImage" = "Această versiune nu are o imagine de disc din care să se instaleze.";
+"settings.otherVersions.confirm.title" = "Instalezi versiunea %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ se închide și se redeschide ca versiunea %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Versiunea %@ nu se poate actualiza singură: ca să revii, descarcă o versiune mai nouă de pe pagina versiunilor.";
+"settings.otherVersions.confirm.skips" = "Verificările automate vor omite apoi versiunile mai noi (%@); Caută actualizări… le oferă în continuare.";
+"settings.otherVersions.confirm.older" = "O versiune mai veche poate să nu cunoască funcțiile adăugate între timp; ia în considerare mai întâi exportul unei copii de rezervă (Setări → Copie de rezervă).";
+"settings.otherVersions.confirm.upgrade" = "Versiunile omise sunt șterse, astfel încât verificările automate oferă din nou fiecare versiune mai nouă.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Exportă setările…";
+"settings.backup.export" = "Exportă";
+"settings.backup.export.detail" = "Salvează grupurile și setările tale într-un fișier .dockgroups.";
+"settings.backup.import.button" = "Importă setările…";
+"settings.backup.import" = "Importă";
+"settings.backup.import.detail" = "Înlocuiește grupurile și setările tale cu cele dintr-un fișier de rezervă, sau îmbină grupurile noi din rezervă cu ale tale.";
+"settings.backup.footer" = "Copia de rezervă conține grupurile, aplicațiile lor și fiecare setare. Numărătorile de lansări din Cele mai utilizate nu sunt incluse. Fișierul rămâne unde îl salvezi.";
+"settings.backup.status.exported" = "Exportat în „%@”";
+"settings.backup.status.restored" = "Restaurat %1$@ cu %2$@";
+"settings.backup.status.merged" = "Îmbinat %@ din copia de rezervă";
+"settings.backup.status.mergedSkipped" = "Îmbinat %1$@ din copia de rezervă; %2$ld existau deja aici";
+"settings.backup.exportPanel.title" = "Exportă setările";
+"settings.backup.exportPanel.message" = "Salvează grupurile și setările într-un fișier de rezervă.";
+"settings.backup.exportFailed" = "Setările nu au putut fi exportate";
+"settings.backup.importPanel.title" = "Importă setările";
+"settings.backup.importPanel.message" = "Alege o copie de rezervă %@ de restaurat.";
+"settings.backup.readFailed" = "Fișierul nu a putut fi citit";
+"settings.backup.confirm.title" = "Imporți grupurile și setările din această copie de rezervă?";
+"settings.backup.confirm.replaceAll" = "Înlocuiește tot";
+"settings.backup.confirm.merge" = "Îmbină";
+"settings.backup.restoreFailed" = "Copia de rezervă nu a putut fi restaurată";
+"settings.backup.restoreFailed.kept" = "%@ Grupurile și setările tale actuale au fost păstrate.";
+"settings.backup.mergeFailed" = "Copia de rezervă nu a putut fi îmbinată";
+"settings.backup.mergeFailed.kept" = "%@ Grupurile tale actuale au fost păstrate.";
+"settings.backup.rejected.notABackup" = "Alege un fișier .dockgroups creat cu Exportă setările…. Nu s-a schimbat nimic.";
+"settings.backup.rejected.newer" = "Nu s-a schimbat nimic.";
+"settings.backup.confirm.noGroups" = "Copia de rezervă nu conține grupuri.";
+"settings.backup.confirm.noGroups.exported" = "Copia de rezervă nu conține grupuri, exportată %@.";
+"settings.backup.confirm.contents" = "Copia de rezervă conține %1$@ cu %2$@.";
+"settings.backup.confirm.contents.exported" = "Copia de rezervă conține %1$@ cu %2$@, exportată %3$@.";
+"settings.backup.confirm.replace" = "Înlocuiește tot folosește grupurile și setările din copia de rezervă în locul celor tale.";
+"settings.backup.confirm.replaced.one" = "1 grup actual cu același nume ca un grup din copia de rezervă va fi înlocuit de acesta.";
+"settings.backup.confirm.replaced.other" = "%ld grupuri actuale cu același nume ca un grup din copia de rezervă vor fi înlocuite de acestea.";
+"settings.backup.confirm.removed.one" = "1 grup actual care nu este în copia de rezervă va fi eliminat.";
+"settings.backup.confirm.removed.other" = "%ld grupuri actuale care nu sunt în copia de rezervă vor fi eliminate.";
+"settings.backup.confirm.replaceSettings" = "Setările tale (pop-up, scurtături, Cele mai utilizate și actualizări) vor fi înlocuite și ele.";
+"settings.backup.confirm.merge.nothing" = "Îmbinarea îți păstrează grupurile și setările și nu adaugă nimic.";
+"settings.backup.confirm.merge.allHere" = "Îmbinarea îți păstrează grupurile și setările; fiecare grup din copia de rezervă este deja aici, deci nu adaugă nimic.";
+"settings.backup.confirm.merge.adds" = "Îmbinarea îți păstrează grupurile și setările și adaugă %1$@ cu %2$@ din copia de rezervă.";
+"settings.backup.confirm.skipped.one" = "1 grup deja aici (același nume) va fi omis.";
+"settings.backup.confirm.skipped.other" = "%ld grupuri deja aici (același nume) vor fi omise.";
+"settings.backup.confirm.final" = "Numărătorile de lansări din Cele mai utilizate sunt păstrate. O copie a fișierelor tale actuale este salvată lângă ele în Application Support. Aceasta nu poate fi anulată.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Salvează în fișier…";
+"settings.diagnostics.export" = "Exportă diagnosticul";
+"settings.diagnostics.export.detail" = "Un raport text de atașat la un issue pe GitHub sau la o cerere de suport.";
+"settings.diagnostics.header" = "Diagnostic";
+"settings.diagnostics.footer" = "Listează versiunile aplicației și ale macOS, modelul Mac-ului tău, unde este instalată aplicația, accesul de accesibilitate, setările tale, verificările de actualizări, numele grupurilor cu numărul de aplicații și erorile recente. Nu listează aplicațiile din grupurile tale. Nimic nu este trimis nicăieri.";
+"settings.diagnostics.copied" = "Diagnosticul a fost copiat în clipboard";
+"settings.diagnostics.saved" = "Salvat în „%@”";
+"settings.diagnostics.failed" = "Raportul nu a putut fi salvat: %@";
+"settings.diagnostics.panel.title" = "Salvează diagnosticul";
+"settings.diagnostics.panel.message" = "Salvează raportul de diagnostic ca fișier text, de exemplu ca să-l atașezi la un issue pe GitHub.";
+"settings.diagnostics.panel.prompt" = "Salvează";
+
+/* Software Update window */
+"updateWindow.title" = "Actualizare software";
+"updateWindow.checking" = "Se caută actualizări…";
+"updateWindow.upToDate.title" = "Ești la zi!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ este cea mai nouă versiune disponibilă.";
+"updateWindow.available.title" = "Este disponibilă o versiune nouă a %@!";
+"updateWindow.available.message" = "Versiunea %1$@ este disponibilă — tu ai %2$@.";
+"updateWindow.available.noImage" = "Această versiune nu are o imagine de disc pentru instalare automată; descarc-o de pe pagina ei de versiune.";
+"updateWindow.available.question" = "Vrei să o descarci și să o instalezi acum?";
+"updateWindow.skip" = "Omite această versiune";
+"updateWindow.remindLater" = "Amintește-mi mai târziu";
+"updateWindow.openReleasePage" = "Deschide pagina versiunii";
+"updateWindow.downloadAndInstall" = "Descarcă și instalează";
+"updateWindow.downloading" = "Se descarcă versiunea %@…";
+"updateWindow.restartsWhenDone" = "%@ se repornește când termină.";
+"updateWindow.reopening" = "%@ se redeschide.";
+"updateWindow.dryRun.title" = "Probă încheiată";
+"updateWindow.dryRun.message" = "Versiunea %1$@ a fost descărcată, verificată și copiată în %2$@. Nimic nu a fost înlocuit.";
+"updateWindow.checkFailed" = "Nu s-a putut verifica existența actualizărilor";
+"updateWindow.installFailed" = "Versiunea %@ nu a putut fi instalată";
+"updateWindow.link.releases" = "Versiuni";
+"updateWindow.link.releasePage" = "Pagina versiunii";
+"updateWindow.releaseNotes" = "Note de versiune";
+"updateWindow.releaseNotes.none" = "Această versiune nu are note.";
+"updateWindow.relaunchFailed" = "Versiunea %@ este instalată, dar aplicația nu s-a putut reporni singură. Închide-o și deschide-o din nou.";
+
+/* About window */
+"about.section.findMe" = "Găsește-mă online";
+"about.section.support" = "Susține acest proiect";
+"about.section.books" = "Cărțile mele";
+"about.section.software" = "Software-ul meu open source";
+"about.fullList" = "Lista completă pe github.com/ercanatay";
+"about.section.blogs" = "Bloguri pe Medium";
+"about.icon.accessibility" = "Pictograma %@";
+"about.version" = "Versiunea %@ · open source, licență MIT";
+"about.website" = "Site web";
+"about.sourceCode" = "Cod sursă";
+"about.license" = "Licență";
+"about.reportBug" = "Ai găsit o eroare? Deschide un issue";
+"about.inspiredBy" = "Inspirată de funcționalitatea DockGroups. %@ este o implementare independentă, originală, scrisă de la zero; nu conține cod sau grafică din DockGroups.";
+"about.project.dockGroups" = "Această aplicație · grupuri de Dock pentru macOS";
+"about.project.intelComputerUse" = "Automatizare nativă de desktop macOS pentru Mac-uri Intel, prin MCP.";
+"about.project.exchangeRate" = "Urmăritor de curs valutar și portofoliu PHP/MySQL, cu scraping live și actualizări de versiune GitHub.";
+"about.project.backlinkChecker" = "Verifică ancorele, dofollow/nofollow și stările HTTP ale backlinkurilor.";
+"about.project.consentManager" = "Plugin de traduceri pentru YOOtheme Pro 5 Consent Manager (WordPress.org).";
+"about.project.antigravityUpdater" = "Actualizator ușor pentru macOS pentru Antigravity Tools, în 21 de limbi.";
+"about.project.widgetVisibility" = "Plugin WP fără Jetpack pentru vizibilitatea widgeturilor, cu suport pentru descendenți.";
+"about.project.forbiddenContent" = "Detectează cuvinte cheie interzise (de ex. „Casino”) în titlurile articolelor — ca un verificator de audit WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Show %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Launch %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Quit %1$@ in %2$@";
+"core.invocation.showPopup" = "Arată pop-up-ul";
+"core.invocation.openAll" = "Deschide tot";
+"core.invocation.hideAll" = "Ascunde tot";
+"core.invocation.closeAll" = "Închide tot";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Niciun browser web nu este configurat pentru a-l deschide.";
+"core.launch.notOpened" = "Aplicația nu a fost deschisă.";
+"core.group.defaultName" = "Grup nou";
+"core.website.error.empty" = "Introdu o adresă web.";
+"core.website.error.invalid" = "Aceasta nu este o adresă web validă.";
+"core.website.error.scheme" = "Pot fi adăugate doar adrese http și https, nu „%@:”.";
+"core.website.error.credentials" = "Elimină numele de utilizator și parola din adresă.";
+"core.persistence.groups.newer" = "Fișierul cu grupuri a fost salvat de o versiune mai nouă a Cybokron Dock Groups (format %ld).";
+"core.backup.error.notABackup" = "Acest fișier nu este o copie de rezervă Cybokron Dock Groups.";
+"core.backup.error.newer" = "Această copie de rezervă a fost creată cu o versiune mai nouă a Cybokron Dock Groups (format de copie %ld). Actualizează aplicația pentru a o restaura.";
+"core.persistence.usage.newer" = "Statisticile de utilizare au fost salvate de o versiune mai nouă a Cybokron Dock Groups (format %ld).";
+"core.agent.configuration.newer" = "Setările grupului au fost salvate de o versiune mai nouă a Cybokron Dock Groups (format %ld).";
+"core.agent.error.icon" = "Pictograma grupului nu a putut fi desenată.";
+"core.agent.error.bundleWrite" = "Aplicația grupului nu a putut fi creată: %@";
+"core.agent.error.toolMissing" = "Lipsește un instrument de sistem necesar: %@.";
+"core.agent.error.signing" = "macOS cere ca fiecare aplicație să fie semnată, iar semnarea aplicației grupului a eșuat pe acest Mac, așa că nimic nu a fost instalat.";
+"core.agent.error.registration" = "macOS nu a înregistrat aplicația grupului: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups nu și-a putut citi propriul executabil: %@";
+"core.agent.error.noExecutable" = "Aplicația nu are un executabil.";
+"core.dock.saveFailed" = "Setările Dock-ului nu au putut fi modificate.";
+"core.store.loadFailed.title" = "Grupurile tale nu au putut fi încărcate";
+"core.store.loadFailed.kept" = "%1$@ Se pornește cu o listă de grupuri goală. O copie a fost păstrată la „%2$@”.";
+"core.store.loadFailed.empty" = "%@ Se pornește cu o listă de grupuri goală.";
+"core.store.loadFailed.suspended" = "%@ Pentru a proteja fișierul existent, modificările nu vor fi salvate până la repornirea aplicației.";
+"core.store.saveFailed.title" = "Modificările tale nu au putut fi salvate";
+"core.preferences.saveFailed" = "Setările tale nu au putut fi salvate: %@";
+"core.websiteIcon.accessibility" = "Site web";
+"core.update.check.notHTTP" = "Răspunsul nu a fost HTTP.";
+"core.update.check.malformed" = "Informațiile despre versiune de la GitHub nu au putut fi citite.";
+"core.update.check.unsupportedTag" = "Ultima versiune („%@”) nu are etichetat un număr de versiune.";
+"core.update.check.noRelease" = "Nicio versiune nu a fost publicată încă.";
+"core.update.check.rateLimited" = "GitHub limitează cererile chiar acum. Încearcă din nou peste o oră.";
+"core.update.check.httpStatus" = "GitHub a răspuns cu starea HTTP %ld.";
+"core.update.check.network" = "GitHub nu a putut fi contactat: %@";
+"core.update.check.noVersion" = "Această copie a aplicației nu are număr de versiune, deci nu poate fi comparată.";
+"core.update.install.insecureURL" = "Adresa de descărcare a actualizării nu este sigură (%@).";
+"core.update.install.downloadFailed" = "Actualizarea nu a putut fi descărcată: %@";
+"core.update.install.sizeMismatch" = "Actualizarea descărcată este incompletă (%1$ld din %2$ld octeți).";
+"core.update.install.checksum" = "Actualizarea descărcată nu se potrivește cu suma de control publicată, așa că nu a fost instalată.";
+"core.update.install.mountFailed" = "Imaginea de disc a actualizării nu a putut fi deschisă: %@";
+"core.update.install.appNotFound" = "Imaginea de disc a actualizării nu conține aplicația.";
+"core.update.install.wrongApp" = "Imaginea de disc a actualizării conține altă aplicație (%@).";
+"core.update.install.versionMismatch" = "Aplicația descărcată este versiunea %1$@, dar versiunea publicată este %2$@.";
+"core.update.install.replaceFailed" = "Noua versiune nu a putut fi pusă la locul ei, așa că a fost păstrată cea actuală: %@";
+"core.update.install.rollbackFailed" = "Actualizarea a eșuat, iar versiunea anterioară nu a putut fi repusă. Este păstrată în %@.";
+"core.update.location.translocated" = "macOS rulează această copie dintr-o locație temporară, doar pentru citire. Mută aplicația în folderul Applications, deschide-o de acolo și încearcă din nou.";
+"core.update.location.notFound" = "Aplicația în execuție nu a fost găsită la %@.";
+"core.update.location.readOnly" = "Aplicația rulează de pe un volum doar pentru citire, cum ar fi imaginea ei de disc. Copiază-o mai întâi în folderul Applications.";
+"core.update.location.noPermission" = "Nu ai permisiunea de a înlocui aplicația din „%@”. Descarcă în schimb noua versiune de pe pagina versiunilor.";
+"core.update.install.noFile" = "Serverul nu a trimis niciun fișier.";
+"core.update.install.httpStatus" = "Starea HTTP %ld.";
+"core.update.install.copyFailed" = "Copierea aplicației a eșuat: %@";
+"core.mostUsed.name" = "Cele mai utilizate";

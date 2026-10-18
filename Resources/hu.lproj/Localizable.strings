@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Magyar)
+  Cybokron Dock Groups
+
+  A magyar szöveg minden kulcshoz. A helyőrzők megmaradnak: %@ szöveg, %ld szám, a %1$@, %2$ld …
+  sorszámozottak, hogy a fordítás sorrendjük megváltoztatható legyen. A .one/.other végű kulcsok
+  az egyes (1 darab) és a többes szám szövegei. A „Cybokron Dock Groups” alkalmazásnév,
+  a „DockGroups”, a „GitHub”, a „Siri”, a billentyűszimbólumok (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) és a fájlnevek változatlanok.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Mégse";
+"common.add" = "Hozzáadás";
+"common.copy" = "Másolás";
+"common.copied" = "Másolva";
+"common.close" = "Bezárás";
+"common.done" = "Kész";
+"common.install" = "Telepítés";
+"common.tryAgain" = "Próbálja újra";
+"common.openAll" = "Összes megnyitása";
+"common.hideAll" = "Összes elrejtése";
+"common.closeAll" = "Összes bezárása";
+"common.forceQuit" = "Kényszerített kilépés";
+"common.addApps" = "Alkalmazások hozzáadása…";
+"common.addWebsite" = "Webhely hozzáadása…";
+"common.showInFinder" = "Megjelenítés a Finderben";
+"common.removeFromGroup" = "Eltávolítás a csoportból";
+"common.moveTo" = "Áthelyezés ide:";
+"common.default" = "Alapértelmezett";
+"common.auto" = "Automatikus";
+"common.changelog" = "Változásnapló";
+"common.links" = "Hivatkozások";
+"common.openReleasesPage" = "Kiadások oldalának megnyitása";
+"common.openPrivacySettings" = "Adatvédelem és biztonság megnyitása…";
+"common.checkForUpdates" = "Frissítések keresése…";
+"common.settings" = "Beállítások…";
+"common.noLaunchesYet" = "Még nincs rögzített indítás";
+"common.noAppsInGroup" = "Ebben a csoportban még nincs alkalmazás";
+"common.about" = "A(z) %@ névjegye";
+"common.hideApp" = "A(z) %@ elrejtése";
+"common.quitApp" = "A(z) %@ kilépése";
+"common.versionShort" = "v%@";
+"common.update.installing" = "A(z) %@ verzió telepítése…";
+"common.update.restarting" = "A(z) %@ verzió telepítve — újraindítás…";
+"common.appCount.one" = "1 alkalmazás";
+"common.appCount.other" = "%ld alkalmazás";
+"common.groupCount.one" = "1 csoport";
+"common.groupCount.other" = "%ld csoport";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Csoportok";
+"menuBar.noGroups" = "Még nincs csoport";
+"menuBar.manageGroups" = "Csoportok kezelése…";
+"menuBar.mostUsed.empty.tooltip" = "Nyissa meg az alkalmazásokat a szokásos módon; a leggyakrabban megnyitottak itt jelennek meg.";
+"menuBar.mostUsed.show" = "Leggyakrabban használtak megjelenítése";
+"menuBar.mostUsed.show.tooltip" = "A leggyakrabban megnyitott alkalmazások megjelenítése előugró ablakban.";
+"menuBar.checkForUpdates.tooltip" = "Újabb verzió keresése a(z) %@ számára a GitHubon.";
+"menuBar.mostUsed.app.tooltip.one" = "A(z) %@ megnyitása. Egyszer lett megnyitva.";
+"menuBar.mostUsed.app.tooltip.other" = "A(z) %1$@ megnyitása. %2$ld alkalommal lett megnyitva.";
+"menuBar.group.tooltip" = "A(z) „%@” csoport alkalmazásainak megjelenítése. ⌥ nyomva tartásával mindet egyszerre nyitja meg, ⇧⌥ nyomva tartásával a futókat rejti el.";
+"menuBar.group.tooltip.shortcut" = "A(z) „%1$@” csoport alkalmazásainak megjelenítése. ⌥ nyomva tartásával mindet egyszerre nyitja meg, ⇧⌥ nyomva tartásával a futókat rejti el. Gyorsbillentyű: %2$@.";
+"menuBar.group.openAll" = "Összes megnyitása itt: „%@”";
+"menuBar.group.openAll.tooltip.one" = "A(z) „%@” csoport alkalmazásának megnyitása";
+"menuBar.group.openAll.tooltip.other" = "A(z) „%2$@” csoport mind a(z) %1$ld alkalmazásának megnyitása";
+"menuBar.group.noApps" = "A(z) „%@” csoportban még nincs alkalmazás.";
+"menuBar.group.hideAll" = "Összes elrejtése itt: „%@”";
+"menuBar.group.hideAll.tooltip" = "A(z) „%@” csoport futó alkalmazásainak elrejtése. A nem futó alkalmazások zárva maradnak.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Szerkesztés";
+"mainMenu.undo" = "Visszavonás";
+"mainMenu.redo" = "Mégis";
+"mainMenu.cut" = "Kivágás";
+"mainMenu.paste" = "Beillesztés";
+"mainMenu.selectAll" = "Összes kijelölése";
+"mainMenu.window" = "Ablak";
+"mainMenu.minimize" = "Kicsinyítés";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Ebben a csoportban lévő összes alkalmazás megnyitása; a futók előtérbe kerülnek.";
+"popup.openAll.help.mostUsed" = "A listában lévő összes alkalmazás megnyitása; a futók előtérbe kerülnek.";
+"popup.hideAll.help.group" = "A csoport futó alkalmazásainak elrejtése; a nem futók zárva maradnak.";
+"popup.hideAll.help.mostUsed" = "A lista futó alkalmazásainak elrejtése; a nem futók zárva maradnak.";
+"popup.closeAll.help.group" = "A csoport futó alkalmazásainak bezárása. ⌘-kattintás: kényszerített kilépés mentés nélkül.";
+"popup.closeAll.help.mostUsed" = "A lista futó alkalmazásainak bezárása. ⌘-kattintás: kényszerített kilépés mentés nélkül.";
+"popup.summary.websites.one" = "1 webhely";
+"popup.summary.websites.other" = "%ld webhely";
+"popup.summary.running" = "%ld fut";
+"popup.summary.byLaunches" = "indítások szerint";
+"popup.filter.noMatch" = "Nincs a(z) „%@” kifejezésnek megfelelő alkalmazás";
+"popup.filter.noMatch.hint" = "Nyomja meg a Delete vagy az Esc billentyűt a szűrő törléséhez.";
+"popup.empty.mostUsed.hint" = "Nyisson meg alkalmazásokat a szokásos módon, hogy elkezdődjön az előzmények gyűjtése.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "A csoport alkalmazásainak rendezése név szerint, A-tól Z-ig.";
+"popup.footer.sortAZ.accessibility" = "Rendezés A-tól Z-ig";
+"popup.footer.filter.matches" = "Szűrő: „%@”  ·  ↩ megnyitja a kijelölt alkalmazást  ·  esc törli";
+"popup.footer.filter.noMatch" = "Szűrő: „%@”  ·  nincs találat  ·  ⌫ vagy esc törli";
+"popup.footer.hint.mostUsed" = "Megnyitásuk gyakorisága szerint rendezve  ·  ⌘-kattintás az Összes bezárása gombon: kényszerített kilépés";
+"popup.footer.hint.group" = "Összes bezárása:  ⌥-kattintás normál kilépés  ·  ⌘-kattintás kényszerített kilépés";
+"popup.footer.drag.remove" = "Engedje el a(z) %@ eltávolításához a csoportból";
+"popup.footer.drag.free" = "Húzza a(z) %@ alkalmazást bármely cellába; más alkalmazásra húzva cserél  ·  kihúzva eltávolítja";
+"popup.footer.drag.ordered" = "Engedje el a(z) %@ elhelyezéséhez  ·  húzza ki az előugró ablakból az eltávolításhoz";
+"popup.cell.accessibility.website" = "%@ webhely";
+"popup.cell.hint.website" = "Megnyitja a webhelyet a böngészőben";
+"popup.cell.hint.running" = "Az alkalmazást előtérbe hozza";
+"popup.cell.hint.open" = "Megnyitja az alkalmazást";
+"popup.cell.help.openWebsite" = "A(z) %@ megnyitása a böngészőben.";
+"popup.cell.help.bringToFront" = "A(z) %@ előtérbe hozása.";
+"popup.cell.help.openApp" = "A(z) %@ megnyitása.";
+"popup.cell.help.missing" = "A(z) %@ nincs ezen a Macen.";
+"popup.cell.help.drag.freeItem" = "Húzza bármely cellára vagy egy másik elemre a cseréhez, illetve ki az előugró ablakból, hogy eltávolítsa a csoportból.";
+"popup.cell.help.drag.freeApp" = "Húzza bármely cellára vagy egy másik alkalmazásra a cseréhez, illetve ki az előugró ablakból, hogy eltávolítsa a csoportból.";
+"popup.cell.help.drag.ordered" = "Húzza az átrendezéshez, illetve ki az előugró ablakból, hogy eltávolítsa a csoportból.";
+"popup.cell.help.drag.missing" = "Húzza ki az előugró ablakból, hogy eltávolítsa a csoportból.";
+"popup.menu.open" = "Megnyitás";
+"popup.menu.copyURL" = "URL másolása";
+"popup.accessibility.moveEarlier" = "Mozgatás korábbra";
+"popup.accessibility.moveLater" = "Mozgatás későbbre";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Még nincs csoport";
+"groupWindow.empty.noSelection" = "Nincs kijelölt csoport";
+"groupWindow.empty.noGroups.description" = "Adjon hozzá egy csoportot az együtt használt alkalmazások összegyűjtéséhez.";
+"groupWindow.empty.noSelection.description" = "Jelöljön ki egy csoportot a szerkesztéséhez.";
+"groupWindow.addGroup" = "Csoport hozzáadása";
+"groupWindow.rename.title" = "Csoport átnevezése";
+"groupWindow.rename.confirm" = "Átnevezés";
+"groupWindow.rename.message" = "Adjon meg új nevet a csoportnak.";
+"groupWindow.delete.title" = "Törli a(z) „%@” csoportot?";
+"groupWindow.delete.confirm" = "Csoport törlése";
+"groupWindow.delete.message.standalone" = "Ez törli a csoportot és az alkalmazáslistáját, valamint a saját Dock-ikonját. Maguk az alkalmazások nem változnak.";
+"groupWindow.delete.message" = "Ez törli a csoportot és az alkalmazáslistáját. Maguk az alkalmazások nem változnak.";
+"groupWindow.sidebar.rename" = "Átnevezés…";
+"groupWindow.sidebar.delete" = "Törlés…";
+"groupWindow.sidebar.add.help" = "Csoport hozzáadása";
+"groupWindow.sidebar.delete.help" = "A kijelölt csoport törlése";
+"groupWindow.addApps.problem.title" = "Néhány alkalmazást nem sikerült hozzáadni";
+"groupWindow.section.group" = "Csoport";
+"groupWindow.name" = "Név";
+"groupWindow.emoji" = "Emodzsi";
+"groupWindow.emoji.choose" = "Választás…";
+"groupWindow.section.apps" = "Alkalmazások";
+"groupWindow.apps.empty" = "Még nincs alkalmazás. A(z) „%1$@” gombbal válasszon alkalmazásokat a csoporthoz, vagy a(z) „%2$@” gombbal webes hivatkozást.";
+"groupWindow.addWebsite.help" = "Webes hivatkozás hozzáadása ehhez a csoporthoz. Az alapértelmezett böngészőben nyílik meg.";
+"groupWindow.sortAZ" = "Rendezés A→Z";
+"groupWindow.sortAZ.help" = "A csoport alkalmazásainak rendezése név szerint, A-tól Z-ig. Kézzel is átrendezhetők húzással.";
+"groupWindow.showPopup" = "Előugró ablak megjelenítése";
+"groupWindow.showPopup.help" = "A csoport előugró ablakának megjelenítése a Dock fölött.";
+"groupWindow.hideAll.help" = "A csoport futó alkalmazásainak elrejtése. A nem futó alkalmazások zárva maradnak.";
+"groupWindow.apps.moveHint" = "Alkalmazás másik csoportba helyezéséhez húzza azt az oldalsávban lévő csoportra, vagy használja a(z) %@ parancsot a helyi menüjében.";
+"groupWindow.app.notFound" = "Nem található ezen a Macen · %@";
+"groupWindow.app.remove.website" = "A(z) %@ eltávolítása ebből a csoportból.";
+"groupWindow.app.remove" = "A(z) %@ eltávolítása ebből a csoportból. Maga az alkalmazás nem változik.";
+"groupWindow.section.dockTile" = "Dock-csempe";
+"groupWindow.tile.preview" = "Előnézet";
+"groupWindow.tile.shows" = "Megjelenít";
+"groupWindow.tile.kind.grid" = "Alkalmazásikon-rács";
+"groupWindow.tile.background" = "Háttér";
+"groupWindow.tile.backgroundColor" = "Háttérszín";
+"groupWindow.tile.pinned" = "A csempe rögzítve marad a Dockban";
+"groupWindow.tile.preview.accessibility" = "Csempe előnézete, %ld pont";
+"groupWindow.section.standalone" = "Önálló";
+"groupWindow.standalone.toggle" = "Önálló Dock-ikon";
+"groupWindow.standalone.help" = "Saját alkalmazást kap a csoport, saját ikonnal a Dockban.";
+"groupWindow.standalone.settingUp" = "Dock-ikon beállítása…";
+"groupWindow.standalone.removing" = "Dock-ikon eltávolítása…";
+"groupWindow.standalone.groupApp" = "Csoportalkalmazás";
+"groupWindow.standalone.updateDockIcon" = "Dock-ikon frissítése";
+"groupWindow.standalone.updateDockIcon.help" = "A Dock újraindítása friss ikon-gyorsítótárral, hogy a csempe a csoport aktuális ikonját mutassa.";
+"groupWindow.standalone.staleIcon" = "A Dock még a korábbi ikont mutatja.";
+"groupWindow.standalone.footer" = "A csoportnak saját kis alkalmazást ad, a fenti csempével ikonként, a Dock végén. Kattintásra megjelenik a csoport előugró ablaka (⌥-kattintás megnyitja az összes alkalmazását), még akkor is, ha a(z) %@ nem fut; jobb gombbal kattintva a csoport alkalmazásait listázza (Beállítások → Előugró ablak). Ennek kikapcsolása, a csoport törlése vagy az ikon kihúzása a Dockból eltávolítja ezt az alkalmazást. Az ikon hozzáadása vagy eltávolítása egy pillanatra újraindítja a Dockot.";
+"groupWindow.section.popup" = "Előugró ablak";
+"groupWindow.popup.columns" = "Oszlopok";
+"groupWindow.popup.maxRows" = "Legnagyobb sorszám";
+"groupWindow.popup.appNames" = "Alkalmazásnevek";
+"groupWindow.popup.show" = "Megjelenítés";
+"groupWindow.popup.hide" = "Elrejtés";
+"groupWindow.popup.position" = "Pozíció";
+"groupWindow.popup.footer" = "A(z) „%@” az alkalmazásszintű előugró ablak beállításait követi.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Egyszínű";
+"choice.tileBackground.gradient" = "Átmenetes";
+"choice.tileBackground.glass" = "Üveg";
+"choice.popupAnchor.dockCenter" = "A Dock fölé középre";
+"choice.popupAnchor.dockIcon" = "A kattintott ikon fölé";
+"choice.theme.dark" = "Sötét";
+"choice.theme.light" = "Világos";
+"choice.theme.system" = "Rendszerhez igazítás";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Webhely hozzáadása";
+"addWebsite.title" = "Webhely hozzáadása ide: „%@”";
+"addWebsite.address" = "Cím:";
+"addWebsite.address.accessibility" = "Webhely címe";
+"addWebsite.name" = "Név:";
+"addWebsite.name.accessibility" = "Webhely neve, elhagyható";
+"addWebsite.name.placeholder" = "Elhagyható";
+"addWebsite.hint" = "Az alapértelmezett böngészőben nyílik meg. Hagyja üresen a nevet, hogy a webhely címe legyen a név.";
+"addWebsite.duplicate" = "A(z) „%@” már szerepel ebben a csoportban.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Alkalmazások hozzáadása a csoporthoz";
+"appPicker.message" = "Válassza ki a(z) „%@” csoporthoz adandó alkalmazásokat.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "A(z) „%@” csoport alkalmazásait nem sikerült megnyitni.";
+"problems.launch.someFailed" = "A(z) „%@” csoport néhány alkalmazását nem sikerült megnyitni.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "nem található ezen a Macen.";
+"problems.launch.opened" = "megnyitva.";
+"problems.quit.force" = "A(z) „%@” csoport néhány alkalmazását nem sikerült kényszerítve bezárni.";
+"problems.quit.graceful" = "A(z) „%@” csoport néhány alkalmazásától nem sikerült a kilépést kérni.";
+"problems.hide" = "A(z) „%@” csoport néhány alkalmazását nem sikerült elrejteni.";
+"problems.standalone.failed" = "A(z) „%@” nem kapta meg a saját Dock-ikonját.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Ennek a csoportnak az alkalmazása nem tudja megnyitni a csoportját.";
+"agent.damaged.message" = "%1$@\n\nA(z) %2$@ alkalmazásban kapcsolja ki, majd be az Önálló opciót a csoportnál, hogy az alkalmazás újra épüljön.";
+"agent.error.groupMismatch" = "Az alkalmazás beállításai egy másik csoporthoz tartoznak.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Már be van kapcsolva? Frissítés után a bejegyzés az előző verzióhoz tartozhat: jelölje ki a(z) %@ elemet, távolítsa el a −-val, majd adja hozzá újra az alkalmazást a +-szal.";
+
+/* Settings window */
+"settings.window.title" = "Beállítások";
+
+/* Settings tabs */
+"settings.tab.popup" = "Előugró ablak";
+"settings.tab.shortcuts" = "Gyorsbillentyűk és Siri";
+"settings.tab.updates" = "Frissítések";
+"settings.tab.backup" = "Biztonsági mentés";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Nyelv";
+"general.language.system" = "Rendszer (%1$@)";
+"general.language.restartNote" = "Az új nyelv az alkalmazás újraindítása után lép életbe.";
+"general.language.restartNow" = "Újraindítás most";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Téma";
+"settings.popup.frostedGlass" = "Matt üveg háttér";
+"settings.popup.appearance.header" = "Előugró ablak megjelenése";
+"settings.popup.appearance.footer" = "A téma csak az előugró ablakra vonatkozik; ez az ablak a macOS megjelenését követi.";
+"settings.popup.columns" = "Oszlopok";
+"settings.popup.columns.detail" = "Az automatikus mód a szokásos előugró ablak-szélességet tartja; egy szám csak annyira szélessé teszi az ablakot, amennyire a csoportnak szüksége van.";
+"settings.popup.maxRows" = "Legnagyobb sorszám";
+"settings.popup.maxRows.detail" = "Korlátozza az előugró ablak magasságát; a nagyobb csoportok görgethetők.";
+"settings.popup.showNames" = "Alkalmazásnevek megjelenítése";
+"settings.popup.position" = "Pozíció";
+"settings.popup.position.detail" = "A kattintott ikon fölé nyitás a csoport Dock-ikonja fölé nyit előugró ablakot, vagy a menüsáv ikonja alá, ha onnan választják. A gyorsbillentyűvel, hivatkozással vagy Sirivel nyitott előugró ablakok a Dock fölött maradnak középen.";
+"settings.popup.layout.header" = "Előugró ablak elrendezése";
+"settings.popup.layout.footer" = "Ezek minden csoport alapértelmezései. Minden csoport felülírhatja őket a Csoportok kezelése alatt.";
+"settings.popup.freeLayout" = "Szabad elrendezés";
+"settings.popup.freeLayout.detail" = "Az alkalmazások abban a cellában maradnak, ahová húzza őket, a többi nem mozdul; ha egy alkalmazást egy másikra ejt, a kettő cserél helyet.";
+"settings.popup.arranging.header" = "Alkalmazások elrendezése";
+"settings.popup.arranging.footer" = "Kikapcsolva a csoport alkalmazásai sorrendben töltik ki az előugró ablakot, és helyet csinálnak, ha egyet áthelyez. Az előugró ablak A→Z gombja mindkét esetben név szerint rendezi a csoportot.";
+"settings.popup.restoreWindows" = "Ablakok visszaállítása futó alkalmazás újranyitásakor";
+"settings.popup.restoreWindows.detail" = "Futó alkalmazásra kattintva visszaállnak a rejtett és kicsinyített ablakai, ahogy a Dockban kattintva is. Kikapcsolva az alkalmazás csak előtérbe kerül.";
+"settings.popup.runningApps.header" = "Futó alkalmazások";
+"settings.popup.dockMenus" = "Menü a csoportok Dock-ikonjain";
+"settings.popup.dockMenus.detail" = "Egy önálló csoport Dock-ikonjára jobb gombbal kattintva megjelennek az alkalmazásai, valamint az Összes megnyitása, Összes elrejtése és Összes bezárása parancsok, miután az ikonra kattintottak. Az alkalmazás ekkor futóként jelenik meg a Dockban és a ⌘-Tabban.";
+"settings.popup.standaloneIcons.header" = "Önálló Dock-ikonok";
+"settings.popup.ax.granted" = "Akadálymentesítési hozzáférés megadva: a kicsinyített ablakok is visszajönnek";
+"settings.popup.ax.required" = "A kicsinyített ablakok visszaállításához akadálymentesítési hozzáférés szükséges";
+"settings.popup.ax.detail" = "Engedélyezze a(z) %@ alkalmazásnak az Adatvédelem és biztonság → Akadálymentesítés alatt. Addig is a rejtett alkalmazások visszajönnek, és az alkalmazásoktól kérik az újranyitást, mintha a Dockból nyitnák. Az önálló csoportok ikonjainak a saját alkalmazásaik hozzáférésére van szükségük.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Csoportok előugró ablakainak megnyitása billentyűparancsokkal";
+"settings.shortcuts.modifiers" = "Módosítóbillentyűk";
+"settings.shortcuts.keys" = "Gyorsbillentyű-karakterek";
+"settings.shortcuts.keys.detail" = "Tartsa nyomva ezeket a billentyűket, és nyomja meg az 1-et az első csoporthoz, a 2-t a másodikhoz, és így tovább. Újbóli megnyomással zárja be az előugró ablakot.";
+"settings.shortcuts.header" = "Billentyűparancsok";
+"settings.shortcuts.ax.granted" = "Minden alkalmazásban működik";
+"settings.shortcuts.ax.needed" = "Akadálymentesítési hozzáférés szükséges";
+"settings.shortcuts.ax.detail" = "Hogy más alkalmazásokban dolgozva is észrevegye a gyorsbillentyűket, engedélyezze a(z) %@ alkalmazásnak az Adatvédelem és biztonság → Akadálymentesítés alatt. Addig csak akkor működnek, ha az előugró ablaka vagy egy ablaka aktív.";
+"settings.shortcuts.noGroups" = "Még nincs csoport.";
+"settings.shortcuts.assigned.header" = "Hozzárendelt csoportok";
+"settings.shortcuts.assigned.footer.limit" = "Csak az első kilenc csoportnak van gyorsbillentyűje. A sorrend módosításához húzza a csoportokat a Csoportok kezelése alatt.";
+"settings.shortcuts.assigned.footer" = "A gyorsbillentyűk a Csoportok kezelése alatti csoportsorrendet követik.";
+"settings.shortcuts.siri.group" = "Csoport";
+"settings.shortcuts.siri.quoted" = "„%@”";
+"settings.shortcuts.siri.noGroups" = "Adjon hozzá egy csoportot, hogy lássa, mit kérjen tőle Sirivel.";
+"settings.shortcuts.openShortcuts" = "Parancsok megnyitása";
+"settings.shortcuts.shortcutsApp" = "Parancsok alkalmazás";
+"settings.shortcuts.shortcutsApp.detail" = "A Launch Group, a Quit Group és a Show Group műveletek ott és a Spotlightban is elérhetők: adja őket saját parancsaihoz, saját indítóval.";
+"settings.shortcuts.siri.header" = "Siri és Parancsok";
+"settings.shortcuts.siri.footer" = "Ezekkel a szavakkal kérje Sirit, hangon vagy gépelve. A csoport aktuális nevét használják; az Ön által készített parancsok átnevezés után is működnek.";
+"settings.shortcuts.links.noGroups" = "Adjon hozzá egy csoportot, hogy lássa a hivatkozásait.";
+"settings.shortcuts.links.footer" = "Hivatkozást szkriptből vagy másik alkalmazásból nyithat meg, pl. a Terminál `open` parancsával. A csoportot a nevével azonosítja (a kis- és nagybetű, az ékezetek és az írásjelek nem számítanak), vagy ha a név egyértelmű, az azonosítójával. Kényszerített kilépéshez adja hozzá a ?mode=force paramétert a kilépési hivatkozáshoz.";
+"settings.shortcuts.copy.help" = "A(z) „%@” másolása a vágólapra.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Leggyakrabban használtak megjelenítése a menüsávban";
+"settings.mostUsed.appsShown" = "Megjelenített alkalmazások";
+"settings.mostUsed.appsShown.detail" = "A leggyakrabban megnyitott alkalmazások a menüben és a Leggyakrabban használtak előugró ablakban.";
+"settings.mostUsed.sessionLength" = "Munkamenet hossza";
+"settings.mostUsed.together" = "Együtt megnyitva ezen belül:";
+"settings.mostUsed.together.detail" = "Az ezen az időn belül egymás után megnyitott alkalmazások együtt használtnak számítanak, ami kissé feljebb sorolja őket.";
+"settings.mostUsed.footer" = "Az alkalmazások megnyitásuk gyakorisága szerint vannak rangsorolva, a Dockból, a Finderből, a Spotlightból vagy egy csoportból. Az indításokat akkor is számolják, ha a lista rejtve van.";
+"settings.mostUsed.recorded" = "Rögzítve";
+"settings.mostUsed.clear" = "Előzmények törlése…";
+"settings.mostUsed.history" = "Előzmények";
+"settings.mostUsed.history.detail" = "Csak ezen a Macen tárolódik, az Application Support mappában lévő usage-stats.json és usage-cooccurrence.json fájlokban.";
+"settings.mostUsed.usageHistory.header" = "Használati előzmények";
+"settings.mostUsed.clear.confirm.title" = "Törli a használati előzményeket?";
+"settings.mostUsed.clear.confirm.button" = "Előzmények törlése";
+"settings.mostUsed.clear.confirm.message" = "A Leggyakrabban használtak lista újrakezdődik. A csoportjai és alkalmazásai nem változnak.";
+"settings.mostUsed.summary.none" = "Még nincs indítás";
+"settings.mostUsed.summary.launches.one" = "1 indítás";
+"settings.mostUsed.summary.launches.other" = "%ld indítás";
+"settings.mostUsed.summary" = "%1$@ / %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Frissítések automatikus keresése";
+"settings.updates.currentVersion" = "Jelenlegi verzió";
+"settings.updates.lastChecked" = "Utolsó ellenőrzés";
+"settings.updates.checkNow" = "Ellenőrzés most";
+"settings.updates.otherVersions" = "Egyéb verziók…";
+"settings.updates.footer" = "Az indításkor és 6 óránként ellenőrzi a projekt GitHub-kiadásait; csak az alkalmazás verziószáma kerül elküldésre. Új verziót csak a Letöltés és telepítés gombra kattintás után telepít. Az Egyéb verziók… bármely közzétett kiadást telepíti, régebbit vagy újabbat; a visszalépés az automatikus ellenőrzésekben kihagyja az újabbakat.";
+"settings.updates.viewChangelog" = "Változásnapló megtekintése";
+"settings.updates.latestPath" = "Vissza a legutolsó útvonalra: minden újabb kiadás felajánlva";
+"settings.updates.skipped" = "Kihagyott újabb verziók: %@";
+"settings.updates.clear" = "Törlés";
+"settings.updates.clear.help" = "Az automatikus ellenőrzések újra felajánlhatják ezeket a verziókat";
+"settings.updates.never" = "Soha";
+"settings.updates.status.idle" = "Az alkalmazás indítása óta nem ellenőrizve";
+"settings.updates.status.checking" = "Ellenőrzés…";
+"settings.updates.status.upToDate" = "A legfrissebb verziót használja (v%@)";
+"settings.updates.status.available" = "A(z) %@ verzió elérhető";
+"settings.updates.showUpdate" = "Frissítés megjelenítése…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Egyéb verziók";
+"settings.otherVersions.intro" = "Telepítse a(z) %@ bármely közzétett kiadását, régebbit vagy újabbat. Az alkalmazás kilép, és a kiválasztott verzióként nyílik újra.";
+"settings.otherVersions.releasesLink" = "Kiadások oldalának megnyitása a GitHubon";
+"settings.otherVersions.loading" = "Kiadások betöltése a GitHubról…";
+"settings.otherVersions.none" = "A GitHub nem listáz közzétett kiadást.";
+"settings.otherVersions.current" = "Jelenlegi";
+"settings.otherVersions.noDownload" = "Nincs letöltés";
+"settings.otherVersions.install.help" = "A(z) %@ verzió telepítése";
+"settings.otherVersions.install.noImage" = "Ehhez a kiadáshoz nincs lemezkép, ahonnan telepíteni lehetne.";
+"settings.otherVersions.confirm.title" = "Telepíti a(z) %@ verziót?";
+"settings.otherVersions.confirm.quits" = "A(z) %1$@ kilép, és a(z) %2$@ verzióként nyílik újra.";
+"settings.otherVersions.confirm.cantUpdate" = "A(z) %@ verzió nem tud magától frissíteni: a visszatéréshez töltsön le egy újabb verziót a kiadások oldaláról.";
+"settings.otherVersions.confirm.skips" = "Az automatikus ellenőrzések ekkor kihagyják az újabb verziókat (%@); a Frissítések keresése… továbbra is felajánlja őket.";
+"settings.otherVersions.confirm.older" = "Egy régebbi verzió nem ismerheti a közben hozzáadott funkciókat; érdemes előbb biztonsági mentést exportálni (Beállítások → Biztonsági mentés).";
+"settings.otherVersions.confirm.upgrade" = "A kihagyott verziók törlődnek, így az automatikus ellenőrzések újra felajánlják az összes újabb kiadást.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Beállítások exportálása…";
+"settings.backup.export" = "Exportálás";
+"settings.backup.export.detail" = "A csoportokat és beállításait .dockgroups fájlba menti.";
+"settings.backup.import.button" = "Beállítások importálása…";
+"settings.backup.import" = "Importálás";
+"settings.backup.import.detail" = "A csoportokat és beállításokat lecseréli a biztonsági mentési fájlban lévőkre, vagy a mentés új csoportjait összefésüli a sajátjaival.";
+"settings.backup.footer" = "A biztonsági mentés tartalmazza a csoportait, azok alkalmazásait és minden beállítást. A Leggyakrabban használtak indításszámai nincsenek benne. A fájl ott marad, ahová elmenti.";
+"settings.backup.status.exported" = "Exportálva ide: „%@”";
+"settings.backup.status.restored" = "Visszaállítva: %1$@, %2$@";
+"settings.backup.status.merged" = "Összefésülve a mentésből: %@";
+"settings.backup.status.mergedSkipped" = "Összefésülve a mentésből: %1$@; %2$ld már itt volt";
+"settings.backup.exportPanel.title" = "Beállítások exportálása";
+"settings.backup.exportPanel.message" = "Mentse a csoportait és beállításait egy biztonsági mentési fájlba.";
+"settings.backup.exportFailed" = "A beállításokat nem sikerült exportálni";
+"settings.backup.importPanel.title" = "Beállítások importálása";
+"settings.backup.importPanel.message" = "Válasszon visszaállítandó %@ biztonsági mentést.";
+"settings.backup.readFailed" = "A fájlt nem sikerült beolvasni";
+"settings.backup.confirm.title" = "Importálja a csoportokat és beállításokat ebből a mentésből?";
+"settings.backup.confirm.replaceAll" = "Mindent lecserél";
+"settings.backup.confirm.merge" = "Összefésülés";
+"settings.backup.restoreFailed" = "A biztonsági mentést nem sikerült visszaállítani";
+"settings.backup.restoreFailed.kept" = "%@ A jelenlegi csoportjai és beállításai megmaradtak.";
+"settings.backup.mergeFailed" = "A biztonsági mentést nem sikerült összefésülni";
+"settings.backup.mergeFailed.kept" = "%@ A jelenlegi csoportjai megmaradtak.";
+"settings.backup.rejected.notABackup" = "Válasszon egy, a Beállítások exportálása… paranccsal készült .dockgroups fájlt. Semmi sem változott.";
+"settings.backup.rejected.newer" = "Semmi sem változott.";
+"settings.backup.confirm.noGroups" = "A biztonsági mentés nem tartalmaz csoportot.";
+"settings.backup.confirm.noGroups.exported" = "A biztonsági mentés nem tartalmaz csoportot, exportálva: %@.";
+"settings.backup.confirm.contents" = "A biztonsági mentés %1$@ tartalmaz, %2$@ mellett.";
+"settings.backup.confirm.contents.exported" = "A biztonsági mentés %1$@ tartalmaz, %2$@ mellett, exportálva: %3$@.";
+"settings.backup.confirm.replace" = "A Mindent lecserél a biztonsági mentés csoportjait és beállításait használja az Ön saját csoportjai és beállításai helyett.";
+"settings.backup.confirm.replaced.one" = "1 jelenlegi csoport, amelynek a neve megegyezik a mentés egyik csoportjával, lecserélődik arra.";
+"settings.backup.confirm.replaced.other" = "%ld jelenlegi csoport, amelynek a neve megegyezik a mentés egyik csoportjával, lecserélődik arra.";
+"settings.backup.confirm.removed.one" = "1 jelenlegi csoport, amely nincs a mentésben, el lesz távolítva.";
+"settings.backup.confirm.removed.other" = "%ld jelenlegi csoport, amely nincs a mentésben, el lesz távolítva.";
+"settings.backup.confirm.replaceSettings" = "A beállításai (előugró ablak, gyorsbillentyűk, Leggyakrabban használtak és frissítések) szintén lecserélődnek.";
+"settings.backup.confirm.merge.nothing" = "Az összefésülés megtartja a csoportjait és beállításait, és nem ad hozzá semmit.";
+"settings.backup.confirm.merge.allHere" = "Az összefésülés megtartja a csoportjait és beállításait; a mentés minden csoportja már itt van, így nem ad hozzá semmit.";
+"settings.backup.confirm.merge.adds" = "Az összefésülés megtartja a csoportjait és beállításait, és hozzáad %1$@, %2$@ a mentésből.";
+"settings.backup.confirm.skipped.one" = "1 csoport már itt van (ugyanazzal a névvel), ki lesz hagyva.";
+"settings.backup.confirm.skipped.other" = "%ld csoport már itt van (ugyanazzal a névvel), ki lesz hagyva.";
+"settings.backup.confirm.final" = "A Leggyakrabban használtak indításszámai megmaradnak. A jelenlegi fájljairól másolat készül mellettük az Application Supportban. Ezt nem lehet visszavonni.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Mentés fájlba…";
+"settings.diagnostics.export" = "Diagnosztika exportálása";
+"settings.diagnostics.export.detail" = "Szöveges jelentés, amelyet GitHub-hibajegyhez vagy támogatási kéréshez csatolhat.";
+"settings.diagnostics.header" = "Diagnosztika";
+"settings.diagnostics.footer" = "Felsorolja az alkalmazás és a macOS verzióját, a Mac modelljét, az alkalmazás telepítési helyét, az akadálymentesítési hozzáférést, a beállításait, a frissítés-ellenőrzéseket, a csoportjai neveit az alkalmazásszámukkal, valamint a legutóbbi hibákat. Nem sorolja fel a csoportjaiban lévő alkalmazásokat. Semmi sem kerül elküldésre sehova.";
+"settings.diagnostics.copied" = "A diagnosztika a vágólapra került";
+"settings.diagnostics.saved" = "Mentve ide: „%@”";
+"settings.diagnostics.failed" = "A jelentést nem sikerült menteni: %@";
+"settings.diagnostics.panel.title" = "Diagnosztika mentése";
+"settings.diagnostics.panel.message" = "Mentse a diagnosztikai jelentést szöveges fájlként, pl. hogy GitHub-hibajegyhez csatolja.";
+"settings.diagnostics.panel.prompt" = "Mentés";
+
+/* Software Update window */
+"updateWindow.title" = "Szoftverfrissítés";
+"updateWindow.checking" = "Frissítések keresése…";
+"updateWindow.upToDate.title" = "A legfrissebb verziót használja!";
+"updateWindow.upToDate.message" = "A(z) %1$@ %2$@ a legújabb elérhető verzió.";
+"updateWindow.available.title" = "A(z) %@ új verziója elérhető!";
+"updateWindow.available.message" = "A(z) %1$@ verzió elérhető — Ön a(z) %2$@ verziót használja.";
+"updateWindow.available.noImage" = "Ehhez a kiadáshoz nincs lemezkép az automatikus telepítéshez; töltse le a kiadás oldaláról.";
+"updateWindow.available.question" = "Szeretné most letölteni és telepíteni?";
+"updateWindow.skip" = "Ezen verzió kihagyása";
+"updateWindow.remindLater" = "Emlékeztessen később";
+"updateWindow.openReleasePage" = "Kiadás oldalának megnyitása";
+"updateWindow.downloadAndInstall" = "Letöltés és telepítés";
+"updateWindow.downloading" = "A(z) %@ verzió letöltése…";
+"updateWindow.restartsWhenDone" = "A(z) %@ a végeztével újraindul.";
+"updateWindow.reopening" = "A(z) %@ újranyílik.";
+"updateWindow.dryRun.title" = "Próbafuttatás befejezve";
+"updateWindow.dryRun.message" = "A(z) %1$@ verzió letöltve, ellenőrizve és átmásolva ide: %2$@. Semmi sem lett lecserélve.";
+"updateWindow.checkFailed" = "A frissítések keresése nem sikerült";
+"updateWindow.installFailed" = "A(z) %@ verziót nem sikerült telepíteni";
+"updateWindow.link.releases" = "Kiadások";
+"updateWindow.link.releasePage" = "Kiadás oldala";
+"updateWindow.releaseNotes" = "Kiadási megjegyzések";
+"updateWindow.releaseNotes.none" = "Ehhez a kiadáshoz nincsenek megjegyzések.";
+"updateWindow.relaunchFailed" = "A(z) %@ verzió telepítve van, de az alkalmazás nem tudott újraindulni. Lépjen ki belőle, és nyissa meg újra.";
+
+/* About window */
+"about.section.findMe" = "Találjon meg online";
+"about.section.support" = "Támogassa ezt a projektet";
+"about.section.books" = "Könyveim";
+"about.section.software" = "Nyílt forráskódú szoftvereim";
+"about.fullList" = "Teljes lista: github.com/ercanatay";
+"about.section.blogs" = "Medium blogok";
+"about.icon.accessibility" = "%@ ikon";
+"about.version" = "Verzió: %@ · nyílt forráskódú, MIT licenc";
+"about.website" = "Webhely";
+"about.sourceCode" = "Forráskód";
+"about.license" = "Licenc";
+"about.reportBug" = "Hibát talált? Nyisson hibajegyet";
+"about.inspiredBy" = "A DockGroups funkcionalitása ihlette. A(z) %@ független, eredeti megvalósítás, nulláról írva; nem tartalmaz kódot vagy grafikát a DockGroupsból.";
+"about.project.dockGroups" = "Ez az alkalmazás · Dock-csoportok macOS-hez";
+"about.project.intelComputerUse" = "Natív macOS asztali automatizálás Intel Mac gépekhez, MCP-n keresztül.";
+"about.project.exchangeRate" = "PHP/MySQL árfolyam- és portfóliókövető élő scrape-pel és GitHub-kiadás frissítésekkel.";
+"about.project.backlinkChecker" = "A backlinkek horgonyszövegeinek, dofollow/nofollow és HTTP-állapotainak ellenőrzése.";
+"about.project.consentManager" = "YOOtheme Pro 5 Consent Manager fordítási bővítmény (WordPress.org).";
+"about.project.antigravityUpdater" = "Könnyű macOS-frissítő az Antigravity Toolshoz, 21 nyelven.";
+"about.project.widgetVisibility" = "Jetpack nélküli WP-bővítmény a widgetek láthatóságához, leszármazott-támogatással.";
+"about.project.forbiddenContent" = "Tiltott kulcsszavakat (pl. „Casino”) keres a bejegyzések címeiben — mint egy WP-auditellenőrző.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Show %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Launch %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Quit %1$@ in %2$@";
+"core.invocation.showPopup" = "Előugró ablak megjelenítése";
+"core.invocation.openAll" = "Összes megnyitása";
+"core.invocation.hideAll" = "Összes elrejtése";
+"core.invocation.closeAll" = "Összes bezárása";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Nincs beállítva webböngésző a megnyitásához.";
+"core.launch.notOpened" = "Az alkalmazás nem lett megnyitva.";
+"core.group.defaultName" = "Új csoport";
+"core.website.error.empty" = "Adjon meg egy webcímet.";
+"core.website.error.invalid" = "Ez nem érvényes webcím.";
+"core.website.error.scheme" = "Csak http és https címek adhatók hozzá, a(z) „%@:” nem.";
+"core.website.error.credentials" = "Távolítsa el a felhasználónevet és a jelszót a címből.";
+"core.persistence.groups.newer" = "A csoportfájlt a Cybokron Dock Groups egy újabb verziója mentette (formátum: %ld).";
+"core.backup.error.notABackup" = "Ez a fájl nem Cybokron Dock Groups biztonsági mentés.";
+"core.backup.error.newer" = "Ezt a biztonsági mentést a Cybokron Dock Groups egy újabb verziójával készítették (mentési formátum: %ld). A visszaállításhoz frissítse az alkalmazást.";
+"core.persistence.usage.newer" = "A használati statisztikákat a Cybokron Dock Groups egy újabb verziója mentette (formátum: %ld).";
+"core.agent.configuration.newer" = "A csoport beállításait a Cybokron Dock Groups egy újabb verziója mentette (formátum: %ld).";
+"core.agent.error.icon" = "A csoport ikonját nem sikerült megrajzolni.";
+"core.agent.error.bundleWrite" = "A csoport alkalmazását nem sikerült létrehozni: %@";
+"core.agent.error.toolMissing" = "Hiányzik egy szükséges rendszereszköz: %@.";
+"core.agent.error.signing" = "A macOS minden alkalmazás kódaláírását megköveteli, a csoport alkalmazásának aláírása azonban sikertelen volt ezen a Macen, ezért semmi sem lett telepítve.";
+"core.agent.error.registration" = "A macOS nem regisztrálta a csoport alkalmazását: %@";
+"core.agent.error.hostUnavailable" = "A Cybokron Dock Groups nem tudta beolvasni a saját futtatható fájlját: %@";
+"core.agent.error.noExecutable" = "Az alkalmazásnak nincs futtatható fájlja.";
+"core.dock.saveFailed" = "A Dock beállításait nem sikerült módosítani.";
+"core.store.loadFailed.title" = "A csoportjait nem sikerült betölteni";
+"core.store.loadFailed.kept" = "%1$@ Üres csoportlistával indul. Egy másolat megmaradt ide: „%2$@”.";
+"core.store.loadFailed.empty" = "%@ Üres csoportlistával indul.";
+"core.store.loadFailed.suspended" = "%@ A meglévő fájl védelmében a módosítások nem lesznek mentve, amíg az alkalmazás újra nem indul.";
+"core.store.saveFailed.title" = "A módosításait nem sikerült menteni";
+"core.preferences.saveFailed" = "A beállításait nem sikerült menteni: %@";
+"core.websiteIcon.accessibility" = "Webhely";
+"core.update.check.notHTTP" = "A válasz nem HTTP volt.";
+"core.update.check.malformed" = "A GitHub kiadási információit nem sikerült beolvasni.";
+"core.update.check.unsupportedTag" = "A legújabb kiadás („%@”) nem rendelkezik verziószám-címkével.";
+"core.update.check.noRelease" = "Még nem tettek közzé kiadást.";
+"core.update.check.rateLimited" = "A GitHub jelenleg korlátozza a kéréseket. Próbálja újra egy óra múlva.";
+"core.update.check.httpStatus" = "A GitHub HTTP %ld állapottal válaszolt.";
+"core.update.check.network" = "A GitHub nem érhető el: %@";
+"core.update.check.noVersion" = "Az alkalmazás ezen példányának nincs verziószáma, ezért nem hasonlítható össze.";
+"core.update.install.insecureURL" = "A frissítés letöltési címe nem biztonságos (%@).";
+"core.update.install.downloadFailed" = "A frissítést nem sikerült letölteni: %@";
+"core.update.install.sizeMismatch" = "A letöltött frissítés hiányos (%1$ld / %2$ld bájt).";
+"core.update.install.checksum" = "A letöltött frissítés nem egyezik a közzétett ellenőrzőösszegével, ezért nem lett telepítve.";
+"core.update.install.mountFailed" = "A frissítés lemezképét nem sikerült megnyitni: %@";
+"core.update.install.appNotFound" = "A frissítés lemezképe nem tartalmazza az alkalmazást.";
+"core.update.install.wrongApp" = "A frissítés lemezképe egy másik alkalmazást tartalmaz (%@).";
+"core.update.install.versionMismatch" = "A letöltött alkalmazás a(z) %1$@ verzió, de a kiadás %2$@.";
+"core.update.install.replaceFailed" = "Az új verziót nem sikerült a helyére tenni, ezért a jelenlegi megmaradt: %@";
+"core.update.install.rollbackFailed" = "A frissítés nem sikerült, és az előző verziót nem sikerült visszaállítani. A(z) %@ helyen maradt meg.";
+"core.update.location.translocated" = "A macOS ezt a példányt egy ideiglenes, csak olvasható helyről futtatja. Helyezze át az alkalmazást az Alkalmazások mappába, onnan nyissa meg, és próbálja újra.";
+"core.update.location.notFound" = "A futó alkalmazás nem található itt: %@.";
+"core.update.location.readOnly" = "Az alkalmazás csak olvasható kötetről fut, például a lemezképéről. Előbb másolja az Alkalmazások mappába.";
+"core.update.location.noPermission" = "Nincs jogosultsága az alkalmazás lecseréléséhez itt: „%@”. Töltse le helyette az új verziót a kiadások oldaláról.";
+"core.update.install.noFile" = "A szerver nem küldött fájlt.";
+"core.update.install.httpStatus" = "HTTP állapot: %ld.";
+"core.update.install.copyFailed" = "Az alkalmazás másolása nem sikerült: %@";
+"core.mostUsed.name" = "Leggyakrabban használtak";
