@@ -26,6 +26,9 @@ public struct PopupPreferences: Hashable, Sendable {
     /// Shows app names under the icons.
     public var showsTitles: Bool
     public var anchor: PopupAnchor
+    /// Free Layout: apps stay in the popup grid cell they're dragged to, and moving one doesn't
+    /// shift the others (see `FreeLayout`). Off, the apps fill the grid in list order.
+    public var usesFreeLayout: Bool
     /// Whether the modifiers plus 1…9 open the first nine groups' popups from any app.
     public var shortcutsEnabled: Bool
     /// Modifier keys of the global shortcuts.
@@ -48,6 +51,7 @@ public struct PopupPreferences: Hashable, Sendable {
         maxRows: Int = PopupPreferences.defaultMaxRows,
         showsTitles: Bool = true,
         anchor: PopupAnchor = .dockCenter,
+        usesFreeLayout: Bool = false,
         shortcutsEnabled: Bool = true,
         shortcutModifiers: ShortcutModifiers = .controlOption,
         showsMostUsed: Bool = true,
@@ -61,6 +65,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.maxRows = maxRows
         self.showsTitles = showsTitles
         self.anchor = anchor
+        self.usesFreeLayout = usesFreeLayout
         self.shortcutsEnabled = shortcutsEnabled
         self.shortcutModifiers = shortcutModifiers
         self.showsMostUsed = showsMostUsed
@@ -124,6 +129,7 @@ extension PopupPreferences: Codable {
         case maxRows = "popupMaxRows"
         case showsTitles = "popupShowsTitles"
         case anchor = "popupAnchor"
+        case usesFreeLayout = "freeLayout"
         case shortcutsEnabled = "globalShortcutsEnabled"
         case shortcutModifiers = "globalShortcutModifiers"
         case showsMostUsed = "popupShowsMostUsed"
@@ -145,6 +151,7 @@ extension PopupPreferences: Codable {
             ?? defaults.maxRows
         showsTitles = container.decodeLeniently(Bool.self, forKey: .showsTitles) ?? defaults.showsTitles
         anchor = container.decodeLeniently(PopupAnchor.self, forKey: .anchor) ?? defaults.anchor
+        usesFreeLayout = container.decodeLeniently(Bool.self, forKey: .usesFreeLayout) ?? defaults.usesFreeLayout
         shortcutsEnabled = container.decodeLeniently(Bool.self, forKey: .shortcutsEnabled) ?? defaults.shortcutsEnabled
         shortcutModifiers = container.decodeLeniently(ShortcutModifiers.self, forKey: .shortcutModifiers)
             ?? defaults.shortcutModifiers

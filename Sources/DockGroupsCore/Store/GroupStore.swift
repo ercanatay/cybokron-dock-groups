@@ -99,6 +99,7 @@ public final class GroupStore: ObservableObject {
         edited.name = DockGroup.sanitizedName(edited.name) ?? original.name
         edited.emoji = DockGroup.sanitizedEmoji(edited.emoji) ?? original.emoji
         edited.apps = Self.removingDuplicates(edited.apps)
+        edited.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(edited.freeLayoutSlots, apps: edited.apps)
         guard edited != original else { return }
         groups[index] = edited
         scheduleSave()
@@ -123,7 +124,11 @@ public final class GroupStore: ObservableObject {
         let target = bundleIdentifier.lowercased()
         let remaining = groups[index].apps.filter { $0.normalizedBundleIdentifier != target }
         guard remaining.count != groups[index].apps.count else { return }
-        groups[index].apps = remaining
+        var group = groups[index]
+        group.apps = remaining
+        // In Free Layout the other apps keep their cells.
+        group.freeLayoutSlots[target] = nil
+        groups[index] = group
         scheduleSave()
     }
 
@@ -153,10 +158,26 @@ public final class GroupStore: ObservableObject {
         reorderApps(inGroupAt: index, to: DockGroup.sortedByName(groups[index].apps))
     }
 
-    /// Puts the group's apps in the order of `apps` (the same apps, reordered).
+    /// Puts the group's apps in the given Free Layout cells (keyed by normalized bundle
+    /// identifier, as `FreeLayout.slots` has them) and orders the app list the way the cells read,
+    /// row by row, so the Dock tile, Open All and the group window follow the popup.
+    public func arrangeApps(inGroup id: DockGroup.ID, freeLayoutSlots slots: [String: Int]) {
+        guard let index = index(of: id) else { return }
+        let arranged = groups[index].arranged(inFreeLayoutSlots: slots)
+        guard arranged != groups[index] else { return }
+        groups[index] = arranged
+        scheduleSave()
+    }
+
+    /// Puts the group's apps in the order of `apps` (the same apps, reordered). Apps arranged in
+    /// Free Layout refill the cells they occupy in the new order, so the arrangement keeps its
+    /// shape.
     private func reorderApps(inGroupAt index: Int, to apps: [AppReference]) {
         guard apps != groups[index].apps else { return }
-        groups[index].apps = apps
+        var group = groups[index]
+        group.apps = apps
+        group.refillFreeLayoutSlots(previousApps: groups[index].apps)
+        groups[index] = group
         scheduleSave()
     }
 

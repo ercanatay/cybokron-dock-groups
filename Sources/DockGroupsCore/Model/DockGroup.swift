@@ -20,6 +20,10 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
     public var isStandalone: Bool
     /// Per-group popup settings; fields left `nil` fall back to the app-wide defaults.
     public var popup: PopupOverrides
+    /// The popup grid cell (row by row) of each app while Free Layout is on, keyed by normalized
+    /// bundle identifier; see `FreeLayout`. Empty until apps are arranged in Free Layout. Each
+    /// cell holds at most one app, and only the group's apps have cells.
+    public var freeLayoutSlots: [String: Int]
 
     public init(
         id: UUID = UUID(),
@@ -29,7 +33,8 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         tile: TileAppearance = TileAppearance(),
         isPinned: Bool = false,
         isStandalone: Bool = false,
-        popup: PopupOverrides = PopupOverrides()
+        popup: PopupOverrides = PopupOverrides(),
+        freeLayoutSlots: [String: Int] = [:]
     ) {
         self.id = id
         self.name = name
@@ -39,6 +44,7 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         self.isPinned = isPinned
         self.isStandalone = isStandalone
         self.popup = popup
+        self.freeLayoutSlots = Self.sanitizedFreeLayoutSlots(freeLayoutSlots, apps: apps)
     }
 }
 
@@ -54,6 +60,24 @@ extension DockGroup {
     /// Reduces `raw` to a single character, keeping the most recently typed one, or `nil` when empty.
     public static func sanitizedEmoji(_ raw: String) -> String? {
         raw.trimmingCharacters(in: .whitespacesAndNewlines).last.map(String.init)
+    }
+
+    /// `slots` limited to the cells of `apps` (keys are matched case-insensitively), without
+    /// negative cells and with each cell used once: an app earlier in `apps` keeps a contested cell.
+    public static func sanitizedFreeLayoutSlots(_ slots: [String: Int], apps: [AppReference]) -> [String: Int] {
+        guard !slots.isEmpty else { return [:] }
+        var normalized: [String: Int] = [:]
+        for (key, slot) in slots where slot >= 0 {
+            normalized[key.lowercased()] = min(slot, normalized[key.lowercased()] ?? slot)
+        }
+        var sanitized: [String: Int] = [:]
+        var taken = Set<Int>()
+        for app in apps {
+            let id = app.normalizedBundleIdentifier
+            guard sanitized[id] == nil, let slot = normalized[id], taken.insert(slot).inserted else { continue }
+            sanitized[id] = slot
+        }
+        return sanitized
     }
 
     /// `apps` sorted by name, A to Z, the way Finder sorts names; apps with the same name keep
@@ -75,7 +99,7 @@ extension DockGroup {
 
 extension DockGroup: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, name, emoji, apps, tile, isPinned, isStandalone, popup
+        case id, name, emoji, apps, tile, isPinned, isStandalone, popup, freeLayoutSlots
     }
 
     /// Identity, name and app list are required; display preferences are decoded leniently so a value
@@ -90,6 +114,27 @@ extension DockGroup: Codable {
         isPinned = container.decodeLeniently(Bool.self, forKey: .isPinned) ?? false
         isStandalone = container.decodeLeniently(Bool.self, forKey: .isStandalone) ?? false
         popup = container.decodeLeniently(PopupOverrides.self, forKey: .popup) ?? PopupOverrides()
+        freeLayoutSlots = Self.sanitizedFreeLayoutSlots(
+            container.decodeLeniently([String: Int].self, forKey: .freeLayoutSlots) ?? [:],
+            apps: apps
+        )
+    }
+
+    /// Free Layout cells are written only once there are any, so groups that never used Free
+    /// Layout are saved as before.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(emoji, forKey: .emoji)
+        try container.encode(apps, forKey: .apps)
+        try container.encode(tile, forKey: .tile)
+        try container.encode(isPinned, forKey: .isPinned)
+        try container.encode(isStandalone, forKey: .isStandalone)
+        try container.encode(popup, forKey: .popup)
+        if !freeLayoutSlots.isEmpty {
+            try container.encode(freeLayoutSlots, forKey: .freeLayoutSlots)
+        }
     }
 }
 

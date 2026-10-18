@@ -34,6 +34,8 @@ public struct PopupGridLayout: Equatable, Sendable {
     public let visibleRows: Int
 
     public var scrolls: Bool { rows > visibleRows }
+    /// Cells of all rows, including the empty end of the last row: where apps can go in Free Layout.
+    public var slotCount: Int { rows * columns }
 
     public init(itemCount: Int, columns setting: PopupColumns, maxRows: Int) {
         let count = max(itemCount, 0)
@@ -76,6 +78,17 @@ public struct PopupGridLayout: Equatable, Sendable {
     /// points past the last app to the last slot. `nil` for an empty grid.
     public func slotIndex(at point: CGPoint, metrics: PopupGridMetrics) -> Int? {
         guard itemCount > 0 else { return nil }
+        return min(cellIndex(at: point, metrics: metrics), itemCount - 1)
+    }
+
+    /// Like `slotIndex(at:metrics:)`, but any of the `slotCount` cells, so points past the last
+    /// app hit the empty cells there, as Free Layout needs. `nil` for an empty grid.
+    public func freeSlotIndex(at point: CGPoint, metrics: PopupGridMetrics) -> Int? {
+        guard itemCount > 0 else { return nil }
+        return cellIndex(at: point, metrics: metrics)
+    }
+
+    private func cellIndex(at point: CGPoint, metrics: PopupGridMetrics) -> Int {
         let column = Self.clampedIndex(
             (point.x - metrics.padding + metrics.spacing / 2) / (metrics.cellWidth + metrics.spacing),
             count: columns
@@ -84,7 +97,7 @@ public struct PopupGridLayout: Equatable, Sendable {
             (point.y - metrics.padding + metrics.spacing / 2) / (metrics.cellHeight + metrics.spacing),
             count: rows
         )
-        return min(row * columns + column, itemCount - 1)
+        return row * columns + column
     }
 
     private static func clampedIndex(_ value: CGFloat, count: Int) -> Int {

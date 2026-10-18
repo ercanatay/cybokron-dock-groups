@@ -69,6 +69,19 @@ struct PopupSettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section {
+                Toggle(isOn: binding(\.usesFreeLayout)) {
+                    Text("Free layout")
+                    Text("Apps stay in the cell you drag them to, and the others don't move; dropping an app on another swaps the two.")
+                }
+            } header: {
+                Text("Arranging Apps")
+            } footer: {
+                Text("Off, a group's apps fill the popup in order and make room when you move one. A→Z in the popup sorts a group by name either way.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             if let problem = preferences.saveProblem {
                 Section {
                     Label(problem, systemImage: "exclamationmark.triangle.fill")

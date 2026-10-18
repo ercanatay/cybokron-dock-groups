@@ -30,6 +30,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
   name.
+- **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
+  don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
+  its size: the empty cells at the end of the last row become places to put apps. The cells are
+  saved with the group, and the group's app list follows them row by row.
 - Global keyboard shortcuts: ⌃⌥1 shows the first group's popup, ⌃⌥2 the second, and so on up to
   9; pressing it again closes the popup. The modifier keys can be changed, or the shortcuts turned
   off, in Settings → Shortcuts. To notice them while you work in other apps, the app needs
@@ -92,8 +96,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
     also removes group apps that belong to no standalone group (“stranded” ones, e.g. left by a
     crash) — unless they're running; those go once they've quit.
 - Settings (⌘,): popup theme (dark by default, light, or matching the system), frosted glass,
-  columns (auto or fixed), maximum rows (extra rows scroll), app names, position. Each group can
-  override the layout settings in its own settings.
+  columns (auto or fixed), maximum rows (extra rows scroll), app names, position, free layout. Each
+  group can override the layout settings (except free layout) in its own settings.
 - **Updates** from the project's [GitHub releases](https://github.com/ercanatay/cybokron-dock-groups/releases):
   **Check for Updates…** in the menu bar menu shows a small window with the result. The app also
   checks shortly after launch and every 6 hours (Settings → Updates turns that off; only the app's

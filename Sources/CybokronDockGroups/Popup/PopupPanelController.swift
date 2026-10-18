@@ -173,6 +173,10 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let settings = popupPreferences.resolved(with: group.popup)
         let metrics = PopupMetrics.grid(showsTitles: settings.showsTitles)
         let layout = PopupGridLayout(itemCount: group.apps.count, columns: settings.columns, maxRows: settings.maxRows)
+        // Free Layout arranges the user's groups; the Most Used list stays ranked.
+        let freeLayout = popupPreferences.usesFreeLayout && group.id != MostUsedGroup.id
+            ? FreeLayout(apps: group.apps, savedSlots: group.freeLayoutSlots, slotCount: layout.slotCount)
+            : nil
 
         // Keep the popup on screen: a grid taller than the screen allows scrolls instead.
         let maximum = PopupPlacement.maximumSize(on: dock.screen)
@@ -189,6 +193,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             tileImage: tiles.image(for: group, pointSize: PopupMetrics.headerTileSize),
             cells: group.apps.map { PopupCell(app: $0, icon: icons.icon(for: $0), isInstalled: icons.isInstalled($0)) },
             layout: layout,
+            freeLayout: freeLayout,
             metrics: metrics,
             showsTitles: settings.showsTitles,
             size: size,
@@ -253,6 +258,11 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Moving \(app.bundleIdentifier, privacy: .public) to \(index) in group \(id, privacy: .public)")
                 self.store.moveApp(bundleIdentifier: app.bundleIdentifier, inGroup: id, to: index)
+            },
+            arrangeApps: { [weak self] slots in
+                guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
+                self.logger.notice("Arranging the apps of group \(id, privacy: .public) in Free Layout")
+                self.store.arrangeApps(inGroup: id, freeLayoutSlots: slots)
             },
             removeApp: { [weak self] app in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }

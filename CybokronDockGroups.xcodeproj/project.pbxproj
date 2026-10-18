@@ -89,6 +89,7 @@
 		AA94C2E6C16D3FB645AC0367 /* GroupTerminator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599B104E5C4A021A7B768970 /* GroupTerminator.swift */; };
 		AC318D31CE4D2D539A376B28 /* GlobalShortcutMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FEF686EF5284D3AD49E590 /* GlobalShortcutMonitor.swift */; };
 		AFE84CF796B46E1F209C9BAE /* GroupPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987A3E1DF8DD13E25B5CBE45 /* GroupPersistence.swift */; };
+		B393A1C2E187ECEB82FD29BA /* FreeLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0B230ACDF8E49341D8FF3 /* FreeLayout.swift */; };
 		B670F093EACEB8A9E7C79081 /* UsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BA58F5FCD042EED1E77712 /* UsageMonitor.swift */; };
 		B6EEBF8BC65508F5518B0931 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0712509968CCE2F10AE2D812 /* MainWindowView.swift */; };
 		BC42D4759285227A989EA571 /* ReleaseInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 497C1AC0F9956B613E91A8F7 /* ReleaseInfoTests.swift */; };
@@ -237,6 +238,7 @@
 		CBC3759E0527D0F36B02E970 /* URLCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCommand.swift; sourceTree = "<group>"; };
 		CC70C230E9C207A3C5ED3046 /* UsageStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStats.swift; sourceTree = "<group>"; };
 		CEBD76B37DC84AB1971C113A /* DockTileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockTileList.swift; sourceTree = "<group>"; };
+		CEC0B230ACDF8E49341D8FF3 /* FreeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeLayout.swift; sourceTree = "<group>"; };
 		CECC195460426C83A873DFB2 /* AppArrangementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppArrangementTests.swift; sourceTree = "<group>"; };
 		D37C6EBB380038CE1049BA2A /* UsagePersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePersistence.swift; sourceTree = "<group>"; };
 		D738F21A891404F13D9EA917 /* AgentIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentIcon.swift; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 		5BDA8651E4B9D8089C4FA0AB /* Popup */ = {
 			isa = PBXGroup;
 			children = (
+				CEC0B230ACDF8E49341D8FF3 /* FreeLayout.swift */,
 				1317946282D755F9C07E6C8B /* PopupDrag.swift */,
 				F79ECA9395FCEA3EF228BFE9 /* PopupGridLayout.swift */,
 				F8778BC87DD2B06ACAA89D89 /* PopupPlacement.swift */,
@@ -806,6 +809,7 @@
 				EBC55D50713B274D9536C5B7 /* Array+Move.swift in Sources */,
 				4D779D910731F57A8EB71E41 /* DockGroup.swift in Sources */,
 				F81BF4C25E606DF2CEDE5486 /* DockTileList.swift in Sources */,
+				B393A1C2E187ECEB82FD29BA /* FreeLayout.swift in Sources */,
 				656D794DDB6888F942A2C400 /* GroupLauncher.swift in Sources */,
 				66C5E61B679C972EF395E102 /* GroupLookup.swift in Sources */,
 				AFE84CF796B46E1F209C9BAE /* GroupPersistence.swift in Sources */,

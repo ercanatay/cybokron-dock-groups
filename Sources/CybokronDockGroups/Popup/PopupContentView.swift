@@ -33,6 +33,8 @@ struct PopupContent {
     let tileImage: NSImage
     let cells: [PopupCell]
     let layout: PopupGridLayout
+    /// Each app's cell while Free Layout is on; `nil` when the apps fill the grid in list order.
+    let freeLayout: FreeLayout?
     let metrics: PopupGridMetrics
     let showsTitles: Bool
     /// Size of the whole panel.
@@ -54,6 +56,8 @@ struct PopupActions {
     let manageGroups: () -> Void
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
+    /// Free Layout: puts the apps in these cells (`FreeLayout.slots`).
+    let arrangeApps: ([String: Int]) -> Void
     /// Takes the app out of the group; the app itself isn't affected.
     let removeApp: (AppReference) -> Void
     /// Sorts the group's apps by name, A to Z.
@@ -69,7 +73,8 @@ private struct CellDrag: Equatable {
     let grabOffset: CGSize
     /// Top-left corner of the dragged cell, following the pointer (grid coordinates).
     var origin: CGPoint
-    /// The slot the app moves to when dropped now.
+    /// The slot the app moves to when dropped now: an index of the app list, or in Free Layout a
+    /// grid cell.
     var targetIndex: Int
     /// The pointer is outside the popup: dropping removes the app from the group.
     var isInRemovalArea: Bool
@@ -78,7 +83,8 @@ private struct CellDrag: Equatable {
 /// The popup: the group's tile and name with Open All / Close All, the app grid, and a hint line.
 ///
 /// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
-/// the group, as with the Dock. The Most Used list is read-only.
+/// the group, as with the Dock. In Free Layout a dragged app goes to the cell it's dropped on
+/// (swapping places with the app there) and the others stay put. The Most Used list is read-only.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -90,6 +96,8 @@ struct PopupContentView: View {
     @State private var drag: CellDrag?
     /// The order shown after a drop, until the group's new order arrives from the store.
     @State private var droppedOrder: [PopupCell.ID]?
+    /// The same for Free Layout: the cells shown after a drop.
+    @State private var droppedLayout: FreeLayout?
     /// Set from the start of a drag until just after it ends, so the click that ends a drag doesn't
     /// also open the app.
     @State private var suppressesClick = false
@@ -179,6 +187,9 @@ struct PopupContentView: View {
                 // Cells are placed explicitly rather than by a grid view, so the dragged cell can
                 // follow the pointer while the others make room.
                 ZStack(alignment: .topLeading) {
+                    if content.freeLayout != nil, drag != nil {
+                        emptyCellOutlines(occupied: occupiedCells(slots), palette: palette)
+                    }
                     ForEach(content.cells) { cell in
                         cellView(cell, slot: slots[cell.id], palette: palette)
                     }
@@ -196,6 +207,10 @@ struct PopupContentView: View {
             .frame(height: content.gridHeight)
             .onChange(of: content.cells.map(\.id)) {
                 droppedOrder = nil
+                droppedLayout = nil
+            }
+            .onChange(of: content.freeLayout) {
+                droppedLayout = nil
             }
             .onChange(of: content.group.id) {
                 // A drag cut short (the popup closed under it) mustn't carry over to another group.
@@ -208,6 +223,9 @@ struct PopupContentView: View {
     /// Where each cell is shown: its slot in the grid, or `nil` while it's hidden (dropped outside
     /// the popup, until the store removes it).
     private func slotIndices() -> [PopupCell.ID: Int] {
+        if let freeLayout = content.freeLayout {
+            return freeSlotIndices(freeLayout)
+        }
         let ids = content.cells.map(\.id)
         let order: [PopupCell.ID]
         if let drag {
@@ -221,6 +239,53 @@ struct PopupContentView: View {
         return Dictionary(order.enumerated().map { ($1, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
+    /// `slotIndices()` in Free Layout: the cells with the dragged app dropped where it is now
+    /// (the app it's over swaps to its cell), the others staying where they are.
+    private func freeSlotIndices(_ freeLayout: FreeLayout) -> [PopupCell.ID: Int] {
+        let shown: FreeLayout
+        if let drag, let cell = content.cells.first(where: { $0.id == drag.id }) {
+            shown = drag.isInRemovalArea ? freeLayout.removing(cell.app) : freeLayout.moving(cell.app, to: drag.targetIndex)
+        } else {
+            shown = droppedLayout ?? freeLayout
+        }
+        return Dictionary(
+            content.cells.compactMap { cell in shown.slot(of: cell.app).map { (cell.id, $0) } },
+            uniquingKeysWith: { first, _ in first }
+        )
+    }
+
+    /// The cells taken by apps other than the dragged one.
+    private func occupiedCells(_ slots: [PopupCell.ID: Int]) -> Set<Int> {
+        Set(slots.filter { $0.key != drag?.id }.values)
+    }
+
+    /// Faint outlines of the free cells while an app is dragged in Free Layout: where it can go.
+    private func emptyCellOutlines(occupied: Set<Int>, palette: PanelPalette) -> some View {
+        let metrics = content.metrics
+        let cellCount = content.freeLayout?.slotCount ?? 0
+        let free = (0..<cellCount).filter { !occupied.contains($0) }
+        return ForEach(free, id: \.self) { slot in
+            let origin = content.layout.cellOrigin(at: slot, metrics: metrics)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    slot == drag?.targetIndex ? PanelPalette.teal.opacity(0.7) : palette.secondaryText.opacity(0.35),
+                    style: StrokeStyle(lineWidth: 1, dash: [4, 3])
+                )
+                .frame(width: metrics.cellWidth, height: metrics.cellHeight)
+                .offset(x: origin.x, y: origin.y)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
+    }
+
+    /// Where the app is before it's dragged: its index in the list, or in Free Layout its cell.
+    private func sourceSlot(of cell: PopupCell) -> Int? {
+        if let freeLayout = content.freeLayout {
+            return freeLayout.slot(of: cell.app)
+        }
+        return content.cells.firstIndex(where: { $0.id == cell.id })
+    }
+
     private func cellView(_ cell: PopupCell, slot: Int?, palette: PanelPalette) -> some View {
         let metrics = content.metrics
         let dragged = drag.flatMap { $0.id == cell.id ? $0 : nil }
@@ -230,6 +295,7 @@ struct PopupContentView: View {
             cell: cell,
             isRunning: runningApps.isRunning(cell.app),
             isEditable: content.isEditable,
+            isFreeLayout: content.freeLayout != nil,
             showsTitle: content.showsTitles,
             metrics: metrics,
             palette: palette,
@@ -270,21 +336,25 @@ struct PopupContentView: View {
         if let drag, drag.id == cell.id {
             current = drag
         } else {
-            guard let index = content.cells.firstIndex(where: { $0.id == cell.id }) else { return }
-            let start = layout.cellOrigin(at: slotIndices()[cell.id] ?? index, metrics: metrics)
+            guard let source = sourceSlot(of: cell) else { return }
+            let start = layout.cellOrigin(at: slotIndices()[cell.id] ?? source, metrics: metrics)
             current = CellDrag(
                 id: cell.id,
                 grabOffset: CGSize(width: value.startLocation.x - start.x, height: value.startLocation.y - start.y),
                 origin: start,
-                targetIndex: index,
+                targetIndex: source,
                 isInRemovalArea: false
             )
             droppedOrder = nil
+            droppedLayout = nil
             suppressesClick = true
         }
         current.origin = CGPoint(x: value.location.x - current.grabOffset.width, y: value.location.y - current.grabOffset.height)
         let center = CGPoint(x: current.origin.x + metrics.cellWidth / 2, y: current.origin.y + metrics.cellHeight / 2)
-        current.targetIndex = layout.slotIndex(at: center, metrics: metrics) ?? current.targetIndex
+        let target = content.freeLayout != nil
+            ? layout.freeSlotIndex(at: center, metrics: metrics)
+            : layout.slotIndex(at: center, metrics: metrics)
+        current.targetIndex = target ?? current.targetIndex
         let isInRemovalArea = actions.isPointerInRemovalArea()
         if isInRemovalArea != current.isInRemovalArea {
             // The dragged cell can't be drawn outside the panel; the cursor shows the removal.
@@ -302,11 +372,15 @@ struct PopupContentView: View {
         }
         guard let current = drag, current.id == cell.id else { return }
         let ids = content.cells.map(\.id)
-        guard let source = ids.firstIndex(of: cell.id) else {
+        guard let source = sourceSlot(of: cell) else {
             drag = nil
             return
         }
         let drop = PopupDrop(sourceIndex: source, targetIndex: current.targetIndex, isInRemovalArea: actions.isPointerInRemovalArea())
+        if let freeLayout = content.freeLayout {
+            freeDragEnded(cell, drop: drop, freeLayout: freeLayout)
+            return
+        }
         switch drop {
         case .none:
             withAnimation(.easeOut(duration: 0.18)) { drag = nil }
@@ -323,8 +397,32 @@ struct PopupContentView: View {
         }
     }
 
-    /// Moves an app one place, for VoiceOver's actions.
+    private func freeDragEnded(_ cell: PopupCell, drop: PopupDrop, freeLayout: FreeLayout) {
+        switch drop {
+        case .none:
+            withAnimation(.easeOut(duration: 0.18)) { drag = nil }
+        case .move(let slot):
+            let arranged = freeLayout.moving(cell.app, to: slot)
+            withAnimation(.easeOut(duration: 0.18)) {
+                droppedLayout = arranged
+                drag = nil
+            }
+            actions.arrangeApps(arranged.slots)
+        case .remove:
+            droppedLayout = freeLayout.removing(cell.app)
+            drag = nil
+            actions.removeApp(cell.app)
+        }
+    }
+
+    /// Moves an app one place, for VoiceOver's actions; in Free Layout one cell, swapping with the
+    /// app there.
     private func move(_ cell: PopupCell, by offset: Int) {
+        if let freeLayout = content.freeLayout {
+            guard let slot = freeLayout.slot(of: cell.app), (0..<freeLayout.slotCount).contains(slot + offset) else { return }
+            actions.arrangeApps(freeLayout.moving(cell.app, to: slot + offset).slots)
+            return
+        }
         guard let index = content.cells.firstIndex(where: { $0.id == cell.id }) else { return }
         let target = index + offset
         guard content.cells.indices.contains(target) else { return }
@@ -387,8 +485,11 @@ struct PopupContentView: View {
                 ? "Ranked by how often you open them  ·  ⌘-click Close All to force quit"
                 : "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
         }
-        return drag.isInRemovalArea
-            ? "Release to remove \(cell.app.name) from this group"
+        if drag.isInRemovalArea {
+            return "Release to remove \(cell.app.name) from this group"
+        }
+        return content.freeLayout != nil
+            ? "Drop \(cell.app.name) on any cell; on another app to swap  ·  drag out to remove"
             : "Drop to place \(cell.app.name)  ·  drag out of the popup to remove it"
     }
 }
@@ -398,6 +499,7 @@ private struct PopupAppCell: View {
     let cell: PopupCell
     let isRunning: Bool
     let isEditable: Bool
+    let isFreeLayout: Bool
     let showsTitle: Bool
     let metrics: PopupGridMetrics
     let palette: PanelPalette
@@ -454,7 +556,10 @@ private struct PopupAppCell: View {
                 : "\(cell.app.name) isn't on this Mac."
         }
         let action = isRunning ? "Bring \(cell.app.name) to the front" : "Open \(cell.app.name)"
-        return isEditable ? "\(action). Drag to reorder, or out of the popup to remove it from the group." : "\(action)."
+        guard isEditable else { return "\(action)." }
+        return isFreeLayout
+            ? "\(action). Drag to any cell or onto another app to swap them, or out of the popup to remove it from the group."
+            : "\(action). Drag to reorder, or out of the popup to remove it from the group."
     }
 }
 
