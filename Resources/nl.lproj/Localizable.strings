@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP-status %ld.";
 "core.update.install.copyFailed" = "Het kopiëren van de app is mislukt: %@";
 "core.mostUsed.name" = "Meest gebruikt";
+
+/* Changelog */
+"changelog.tab" = "Wijzigingslogboek";
+"changelog.currentVersion" = "Huidige versie: %@";
+"changelog.refresh" = "Vernieuwen";
+"changelog.refresh.help" = "Laad de nieuwste releasenotities van GitHub";
+"changelog.lastUpdated" = "Laatst bijgewerkt %@";
+"changelog.header" = "Releasenotities";
+"changelog.footer" = "Afkomstig van de GitHub-releases van het project. Er blijft een kopie op deze Mac staan, dus de notities zijn ook offline zichtbaar.";
+"changelog.latest" = "Nieuwste";
+"changelog.installed" = "Geïnstalleerd";
+"changelog.prerelease" = "Pre-release";
+"changelog.noNotes" = "Geen releasenotities voor deze versie.";
+"changelog.loading" = "Releasenotities laden van GitHub…";
+"changelog.unavailable" = "Releasenotities niet beschikbaar";
+"changelog.error.cached" = "Releasenotities konden niet worden geladen — de gecachte kopie wordt getoond.";
+"changelog.retry" = "Klik op Vernieuwen om het opnieuw te proberen.";
+"changelog.openRelease" = "Bekijken op GitHub";

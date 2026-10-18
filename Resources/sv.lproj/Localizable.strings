@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP-status %ld.";
 "core.update.install.copyFailed" = "Det gick inte att kopiera appen: %@";
 "core.mostUsed.name" = "Mest använda";
+
+/* Changelog */
+"changelog.tab" = "Ändringslogg";
+"changelog.currentVersion" = "Aktuell version: %@";
+"changelog.refresh" = "Uppdatera";
+"changelog.refresh.help" = "Hämta de senaste versionsanteckningarna från GitHub";
+"changelog.lastUpdated" = "Senast uppdaterad %@";
+"changelog.header" = "Versionsanteckningar";
+"changelog.footer" = "Från projektets releaser på GitHub. En kopia sparas på den här Mac:en, så anteckningarna visas även offline.";
+"changelog.latest" = "Senaste";
+"changelog.installed" = "Installerad";
+"changelog.prerelease" = "Förhandsversion";
+"changelog.noNotes" = "Inga versionsanteckningar för den här versionen.";
+"changelog.loading" = "Hämtar versionsanteckningar från GitHub…";
+"changelog.unavailable" = "Versionsanteckningar är inte tillgängliga";
+"changelog.error.cached" = "Det gick inte att hämta versionsanteckningarna — visar den sparade kopian.";
+"changelog.retry" = "Klicka på Uppdatera för att försöka igen.";
+"changelog.openRelease" = "Visa på GitHub";

@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Status HTTP %ld.";
 "core.update.install.copyFailed" = "Nie udało się skopiować aplikacji: %@";
 "core.mostUsed.name" = "Najczęściej używane";
+
+/* Changelog */
+"changelog.tab" = "Dziennik zmian";
+"changelog.currentVersion" = "Bieżąca wersja: %@";
+"changelog.refresh" = "Odśwież";
+"changelog.refresh.help" = "Pobierz najnowsze informacje o wydaniu z GitHub";
+"changelog.lastUpdated" = "Ostatnia aktualizacja: %@";
+"changelog.header" = "Informacje o wydaniu";
+"changelog.footer" = "Pochodzą z wydań projektu na GitHub. Kopia zapisywana jest na tym Macu, więc informacje są widoczne także offline.";
+"changelog.latest" = "Najnowsza";
+"changelog.installed" = "Zainstalowana";
+"changelog.prerelease" = "Wersja przedpremierowa";
+"changelog.noNotes" = "Brak informacji o wydaniu dla tej wersji.";
+"changelog.loading" = "Ładowanie informacji o wydaniu z GitHub…";
+"changelog.unavailable" = "Informacje o wydaniu niedostępne";
+"changelog.error.cached" = "Nie udało się załadować informacji o wydaniu — pokazywana jest kopia z pamięci podręcznej.";
+"changelog.retry" = "Kliknij Odśwież, aby spróbować ponownie.";
+"changelog.openRelease" = "Zobacz na GitHub";

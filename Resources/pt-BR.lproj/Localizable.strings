@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Status HTTP %ld.";
 "core.update.install.copyFailed" = "Falha ao copiar o app: %@";
 "core.mostUsed.name" = "Mais usados";
+
+/* Changelog */
+"changelog.tab" = "Histórico de alterações";
+"changelog.currentVersion" = "Versão atual: %@";
+"changelog.refresh" = "Atualizar";
+"changelog.refresh.help" = "Carregar as notas de versão mais recentes do GitHub";
+"changelog.lastUpdated" = "Última atualização %@";
+"changelog.header" = "Notas de versão";
+"changelog.footer" = "Das releases do projeto no GitHub. Uma cópia fica neste Mac, então as notas também aparecem offline.";
+"changelog.latest" = "Mais recente";
+"changelog.installed" = "Instalada";
+"changelog.prerelease" = "Pré-lançamento";
+"changelog.noNotes" = "Não há notas de versão para esta versão.";
+"changelog.loading" = "Carregando notas de versão do GitHub…";
+"changelog.unavailable" = "Notas de versão indisponíveis";
+"changelog.error.cached" = "Não foi possível carregar as notas de versão — mostrando a cópia em cache.";
+"changelog.retry" = "Clique em Atualizar para tentar novamente.";
+"changelog.openRelease" = "Ver no GitHub";
