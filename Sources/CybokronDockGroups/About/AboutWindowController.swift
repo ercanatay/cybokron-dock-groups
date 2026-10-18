@@ -117,6 +117,8 @@ private struct AboutView: View {
                 .foregroundStyle(palette.secondaryText)
                 .textSelection(.enabled)
             VStack(spacing: 4) {
+                Link("Website", destination: AboutData.websiteURL)
+                    .help(AboutData.websiteURL.absoluteString)
                 HStack(spacing: 16) {
                     Link("Source Code", destination: AppInfo.repositoryURL)
                     Link("License", destination: AppInfo.licenseURL)

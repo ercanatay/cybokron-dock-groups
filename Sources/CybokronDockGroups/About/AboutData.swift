@@ -27,6 +27,7 @@ enum AboutData {
         var id: String { title }
     }
 
+    static let websiteURL = url("https://cybokron.com")
     static let issuesURL = url("https://github.com/ercanatay/cybokron-dock-groups/issues")
 
     static let donations = [
