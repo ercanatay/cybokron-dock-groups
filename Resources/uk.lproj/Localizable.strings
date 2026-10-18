@@ -1,0 +1,521 @@
+/*
+  Localizable.strings (Українська)
+  Cybokron Dock Groups
+
+  Український текст кожного ключа. Плейсхолдери зберігаються: %@ — текст, %ld — число, а %1$@, %2$ld … пронумеровані,
+  щоб переказ міг змінити порядок. Ключі з закінченням .one/.other — це однина (кількість 1) і множина. Назва застосунку
+  «Cybokron Dock Groups», «DockGroups», «GitHub», «Siri», символи клавіш (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) і назви файлів лишаються без змін.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Скасувати";
+"common.add" = "Додати";
+"common.copy" = "Копіювати";
+"common.copied" = "Скопійовано";
+"common.close" = "Закрити";
+"common.done" = "Готово";
+"common.install" = "Установити";
+"common.tryAgain" = "Спробувати знову";
+"common.openAll" = "Відкрити всі";
+"common.hideAll" = "Сховати всі";
+"common.closeAll" = "Закрити всі";
+"common.forceQuit" = "Примусово завершити";
+"common.addApps" = "Додати застосунки…";
+"common.addWebsite" = "Додати вебсайт…";
+"common.showInFinder" = "Показати у Finder";
+"common.removeFromGroup" = "Вилучити з групи";
+"common.moveTo" = "Перемістити до";
+"common.default" = "Типова";
+"common.auto" = "Авто";
+"common.changelog" = "Журнал змін";
+"common.links" = "Посилання";
+"common.openReleasesPage" = "Відкрити сторінку випусків";
+"common.openPrivacySettings" = "Відкрити «Конфіденційність і безпека»…";
+"common.checkForUpdates" = "Перевірити оновлення…";
+"common.settings" = "Параметри…";
+"common.noLaunchesYet" = "Запусків ще не зафіксовано";
+"common.noAppsInGroup" = "У цій групі ще немає застосунків";
+"common.about" = "Про %@";
+"common.hideApp" = "Сховати %@";
+"common.quitApp" = "Завершити %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Установлення версії %@…";
+"common.update.restarting" = "Версію %@ встановлено — перезапуск…";
+"common.appCount.one" = "1 застосунок";
+"common.appCount.other" = "%ld застосунків";
+"common.groupCount.one" = "1 група";
+"common.groupCount.other" = "%ld груп";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Групи";
+"menuBar.noGroups" = "Груп ще немає";
+"menuBar.manageGroups" = "Керувати групами…";
+"menuBar.mostUsed.empty.tooltip" = "Відкривайте застосунки як звичайно; ті, які відкриваєте найчастіше, з’являтимуться тут.";
+"menuBar.mostUsed.show" = "Показати найуживаніші";
+"menuBar.mostUsed.show.tooltip" = "Показати найчастіше відкривані застосунки у спливаючому вікні.";
+"menuBar.checkForUpdates.tooltip" = "Шукати новішу версію %@ на GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "Відкрити %@. Відкрито один раз.";
+"menuBar.mostUsed.app.tooltip.other" = "Відкрити %1$@. Відкрито %2$ld разів.";
+"menuBar.group.tooltip" = "Показати застосунки в «%@». Утримуйте ⌥, щоб відкрити їх усі разом, або ⇧⌥, щоб сховати запущені.";
+"menuBar.group.tooltip.shortcut" = "Показати застосунки в «%1$@». Утримуйте ⌥, щоб відкрити їх усі разом, або ⇧⌥, щоб сховати запущені. Комбінація: %2$@.";
+"menuBar.group.openAll" = "Відкрити всі в «%@»";
+"menuBar.group.openAll.tooltip.one" = "Відкрити застосунок у «%@»";
+"menuBar.group.openAll.tooltip.other" = "Відкрити всі %1$ld застосунків у «%2$@»";
+"menuBar.group.noApps" = "У «%@» ще немає застосунків.";
+"menuBar.group.hideAll" = "Сховати всі в «%@»";
+"menuBar.group.hideAll.tooltip" = "Сховати запущені застосунки в «%@». Застосунки, які не запущено, лишаються закритими.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Редагування";
+"mainMenu.undo" = "Скасувати";
+"mainMenu.redo" = "Повторити";
+"mainMenu.cut" = "Вирізати";
+"mainMenu.paste" = "Вставити";
+"mainMenu.selectAll" = "Вибрати все";
+"mainMenu.window" = "Вікно";
+"mainMenu.minimize" = "Згорнути";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Відкрити кожен застосунок цієї групи; запущені виходять на передній план.";
+"popup.openAll.help.mostUsed" = "Відкрити кожен застосунок із цього списку; запущені виходять на передній план.";
+"popup.hideAll.help.group" = "Сховати запущені застосунки цієї групи; застосунки, які не запущено, лишаються закритими.";
+"popup.hideAll.help.mostUsed" = "Сховати запущені застосунки з цього списку; застосунки, які не запущено, лишаються закритими.";
+"popup.closeAll.help.group" = "Завершити запущені застосунки цієї групи. ⌘-клік — примусово завершити без збереження.";
+"popup.closeAll.help.mostUsed" = "Завершити запущені застосунки з цього списку. ⌘-клік — примусово завершити без збереження.";
+"popup.summary.websites.one" = "1 вебсайт";
+"popup.summary.websites.other" = "%ld вебсайтів";
+"popup.summary.running" = "запущено: %ld";
+"popup.summary.byLaunches" = "за запусками";
+"popup.filter.noMatch" = "Немає застосунків, що відповідають «%@»";
+"popup.filter.noMatch.hint" = "Натисніть Delete або Esc, щоб очистити фільтр.";
+"popup.empty.mostUsed.hint" = "Відкривайте застосунки як звичайно, щоб почати формувати історію.";
+"popup.footer.sortAZ" = "А→Я";
+"popup.footer.sortAZ.help" = "Упорядкувати застосунки цієї групи за назвою, від А до Я.";
+"popup.footer.sortAZ.accessibility" = "Упорядкувати від А до Я";
+"popup.footer.filter.matches" = "Фільтр: «%@»  ·  ↩ відкриває вибраний застосунок  ·  esc очищає";
+"popup.footer.filter.noMatch" = "Фільтр: «%@»  ·  немає збігів  ·  ⌫ або esc очищає";
+"popup.footer.hint.mostUsed" = "Упорядковано за частотою відкриття  ·  ⌘-клік на «Закрити всі» — примусове завершення";
+"popup.footer.hint.group" = "Закрити всі:  ⌥-клік завершує звичайно  ·  ⌘-клік завершує примусово";
+"popup.footer.drag.remove" = "Відпустіть, щоб вилучити %@ з цієї групи";
+"popup.footer.drag.free" = "Перетягніть %@ на будь-яку клітинку; на інший застосунок — щоб поміняти місцями  ·  винесіть, щоб вилучити";
+"popup.footer.drag.ordered" = "Відпустіть, щоб розмістити %@  ·  винесіть зі спливаючого вікна, щоб вилучити";
+"popup.cell.accessibility.website" = "Вебсайт %@";
+"popup.cell.hint.website" = "Відкриває вебсайт у вашому браузері";
+"popup.cell.hint.running" = "Виводить застосунок на передній план";
+"popup.cell.hint.open" = "Відкриває застосунок";
+"popup.cell.help.openWebsite" = "Відкрити %@ у вашому браузері.";
+"popup.cell.help.bringToFront" = "Вивести %@ на передній план.";
+"popup.cell.help.openApp" = "Відкрити %@.";
+"popup.cell.help.missing" = "%@ немає на цьому Mac.";
+"popup.cell.help.drag.freeItem" = "Перетягніть на будь-яку клітинку або на інший елемент, щоб поміняти їх місцями, чи за межі вікна, щоб вилучити з групи.";
+"popup.cell.help.drag.freeApp" = "Перетягніть на будь-яку клітинку або на інший застосунок, щоб поміняти їх місцями, чи за межі вікна, щоб вилучити з групи.";
+"popup.cell.help.drag.ordered" = "Перетягніть, щоб змінити порядок, або за межі вікна, щоб вилучити з групи.";
+"popup.cell.help.drag.missing" = "Винесіть його за межі вікна, щоб вилучити з групи.";
+"popup.menu.open" = "Відкрити";
+"popup.menu.copyURL" = "Копіювати URL";
+"popup.accessibility.moveEarlier" = "Перемістити раніше";
+"popup.accessibility.moveLater" = "Перемістити пізніше";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Груп ще немає";
+"groupWindow.empty.noSelection" = "Групу не вибрано";
+"groupWindow.empty.noGroups.description" = "Додайте групу, щоб зібрати застосунки, якими ви користуєтеся разом.";
+"groupWindow.empty.noSelection.description" = "Виберіть групу, щоб змінити її.";
+"groupWindow.addGroup" = "Додати групу";
+"groupWindow.rename.title" = "Перейменувати групу";
+"groupWindow.rename.confirm" = "Перейменувати";
+"groupWindow.rename.message" = "Введіть нову назву для групи.";
+"groupWindow.delete.title" = "Видалити «%@»?";
+"groupWindow.delete.confirm" = "Видалити групу";
+"groupWindow.delete.message.standalone" = "Це видалить групу, її список застосунків і її власний значок у Dock. Самі застосунки не зачіпаються.";
+"groupWindow.delete.message" = "Це видалить групу та її список застосунків. Самі застосунки не зачіпаються.";
+"groupWindow.sidebar.rename" = "Перейменувати…";
+"groupWindow.sidebar.delete" = "Видалити…";
+"groupWindow.sidebar.add.help" = "Додати групу";
+"groupWindow.sidebar.delete.help" = "Видалити вибрану групу";
+"groupWindow.addApps.problem.title" = "Деякі застосунки не вдалося додати";
+"groupWindow.section.group" = "Група";
+"groupWindow.name" = "Назва";
+"groupWindow.emoji" = "Емодзі";
+"groupWindow.emoji.choose" = "Вибрати…";
+"groupWindow.section.apps" = "Застосунки";
+"groupWindow.apps.empty" = "Застосунків ще немає. Скористайтеся «%1$@», щоб вибрати застосунки для цієї групи, або «%2$@», щоб додати посилання на вебсайт.";
+"groupWindow.addWebsite.help" = "Додати посилання на вебсайт до цієї групи. Він відкривається у вашому браузері за замовчуванням.";
+"groupWindow.sortAZ" = "Упорядкувати А→Я";
+"groupWindow.sortAZ.help" = "Упорядкувати застосунки цієї групи за назвою, від А до Я. Перетягуйте їх, щоб змінити порядок вручну.";
+"groupWindow.showPopup" = "Показати вікно";
+"groupWindow.showPopup.help" = "Показати спливаюче вікно цієї групи над Dock.";
+"groupWindow.hideAll.help" = "Сховати запущені застосунки цієї групи. Застосунки, які не запущено, лишаються закритими.";
+"groupWindow.apps.moveHint" = "Щоб перемістити застосунок до іншої групи, перетягніть його на цю групу в бічній панелі або скористайтеся пунктом %@ в його контекстному меню.";
+"groupWindow.app.notFound" = "Не знайдено на цьому Mac · %@";
+"groupWindow.app.remove.website" = "Вилучити %@ з цієї групи.";
+"groupWindow.app.remove" = "Вилучити %@ з цієї групи. Сам застосунок не зачіпається.";
+"groupWindow.section.dockTile" = "Плитка в Dock";
+"groupWindow.tile.preview" = "Попередній перегляд";
+"groupWindow.tile.shows" = "Показує";
+"groupWindow.tile.kind.grid" = "Сітка значків застосунків";
+"groupWindow.tile.background" = "Фон";
+"groupWindow.tile.backgroundColor" = "Колір фону";
+"groupWindow.tile.pinned" = "Тримати плитку закріпленою в Dock";
+"groupWindow.tile.preview.accessibility" = "Попередній перегляд плитки, %ld пунктів";
+"groupWindow.section.standalone" = "Окремий застосунок";
+"groupWindow.standalone.toggle" = "Окремий значок у Dock";
+"groupWindow.standalone.help" = "Створити для цієї групи окремий застосунок зі своїм значком у Dock.";
+"groupWindow.standalone.settingUp" = "Налаштування значка в Dock…";
+"groupWindow.standalone.removing" = "Вилучення значка з Dock…";
+"groupWindow.standalone.groupApp" = "Застосунок групи";
+"groupWindow.standalone.updateDockIcon" = "Оновити значок у Dock";
+"groupWindow.standalone.updateDockIcon.help" = "Перезапустити Dock з оновленим кешем значків, щоб плитка показувала поточний значок групи.";
+"groupWindow.standalone.staleIcon" = "У Dock досі показано попередній значок.";
+"groupWindow.standalone.footer" = "Створює для групи окремий невеликий застосунок, із плиткою вище як значком, у кінці Dock. Клік по ньому показує спливаюче вікно групи (⌥-клік відкриває всі її застосунки), навіть коли %@ не запущено; правий клік показує список застосунків групи (Параметри → Вікно). Вимкнення цього, видалення групи або перетягування значка з Dock вилучає цей застосунок. Додавання або вилучення значка на мить перезапускає Dock.";
+"groupWindow.section.popup" = "Спливаюче вікно";
+"groupWindow.popup.columns" = "Стовпці";
+"groupWindow.popup.maxRows" = "Максимум рядків";
+"groupWindow.popup.appNames" = "Назви застосунків";
+"groupWindow.popup.show" = "Показувати";
+"groupWindow.popup.hide" = "Приховувати";
+"groupWindow.popup.position" = "Розташування";
+"groupWindow.popup.footer" = "«%@» дотримується загальних параметрів спливаючого вікна.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Суцільний";
+"choice.tileBackground.gradient" = "Градієнт";
+"choice.tileBackground.glass" = "Скло";
+"choice.popupAnchor.dockCenter" = "По центру над Dock";
+"choice.popupAnchor.dockIcon" = "Над клікнутим значком";
+"choice.theme.dark" = "Темна";
+"choice.theme.light" = "Світла";
+"choice.theme.system" = "Як у системі";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Додати вебсайт";
+"addWebsite.title" = "Додати вебсайт до «%@»";
+"addWebsite.address" = "Адреса:";
+"addWebsite.address.accessibility" = "Адреса вебсайту";
+"addWebsite.name" = "Назва:";
+"addWebsite.name.accessibility" = "Назва вебсайту, необов’язково";
+"addWebsite.name.placeholder" = "Необов’язково";
+"addWebsite.hint" = "Відкривається у вашому браузері за замовчуванням. Залиште назву порожньою, щоб використати адресу сайту.";
+"addWebsite.duplicate" = "«%@» уже є в цій групі.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Додати застосунки до групи";
+"appPicker.message" = "Виберіть застосунки, які додати до «%@».";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "Не вдалося відкрити застосунки з «%@».";
+"problems.launch.someFailed" = "Деякі застосунки з «%@» не вдалося відкрити.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "не знайдено на цьому Mac.";
+"problems.launch.opened" = "відкрито.";
+"problems.quit.force" = "Деякі застосунки з «%@» не вдалося примусово завершити.";
+"problems.quit.graceful" = "Деяким застосункам з «%@» не вдалося надіслати запит на завершення.";
+"problems.hide" = "Деякі застосунки з «%@» не вдалося сховати.";
+"problems.standalone.failed" = "«%@» не вдалося отримати власний значок у Dock.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Застосунок цієї групи не може відкрити її групу.";
+"agent.damaged.message" = "%1$@\n\nУ %2$@ вимкніть, а потім знову увімкніть «Окремий застосунок» для цієї групи, щоб вона перебудувала свій застосунок.";
+"agent.error.groupMismatch" = "Параметри застосунку належать до іншої групи.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Уже увімкнено? Після оновлення запис може належати попередній версії: виберіть %@, вилучіть його кнопкою −, а потім знову додайте застосунок кнопкою +.";
+
+/* Settings window */
+"settings.window.title" = "Параметри";
+
+/* Settings tabs */
+"settings.tab.popup" = "Вікно";
+"settings.tab.shortcuts" = "Комбінації та Siri";
+"settings.tab.updates" = "Оновлення";
+"settings.tab.backup" = "Резервна копія";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Мова";
+"general.language.system" = "Системна (%1$@)";
+"general.language.restartNote" = "Нова мова набуде чинності після перезапуску застосунку.";
+"general.language.restartNow" = "Перезапустити зараз";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Тема";
+"settings.popup.frostedGlass" = "Матове скло як фон";
+"settings.popup.appearance.header" = "Вигляд спливаючого вікна";
+"settings.popup.appearance.footer" = "Тема стосується лише спливаючого вікна; це вікно дотримується вигляду macOS.";
+"settings.popup.columns" = "Стовпці";
+"settings.popup.columns.detail" = "«Авто» зберігає стандартну ширину вікна; число робить вікно лише настільки широким, наскільки потрібно групі.";
+"settings.popup.maxRows" = "Максимум рядків";
+"settings.popup.maxRows.detail" = "Обмежує висоту вікна; великі групи прокручуються.";
+"settings.popup.showNames" = "Показувати назви застосунків";
+"settings.popup.position" = "Розташування";
+"settings.popup.position.detail" = "«Над клікнутим значком» відкриває вікно над значком групи в Dock, або під значком у рядку меню, якщо вибрано з його меню. Вікна, відкриті комбінацією клавіш, посиланням або через Siri, лишаються по центру над Dock.";
+"settings.popup.layout.header" = "Макет спливаючого вікна";
+"settings.popup.layout.footer" = "Це типові параметри для кожної групи. Кожна група може їх змінити в «Керувати групами».";
+"settings.popup.freeLayout" = "Вільний макет";
+"settings.popup.freeLayout.detail" = "Застосунки лишаються в клітинці, куди їх перетягнули, а інші не рухаються; якщо кинути застосунок на інший, вони міняються місцями.";
+"settings.popup.arranging.header" = "Упорядкування застосунків";
+"settings.popup.arranging.footer" = "Вимкнено: застосунки групи заповнюють вікно по порядку і звільняють місце, коли ви переміщуєте один. «А→Я» у вікні впорядковує групу за назвою в будь-якому разі.";
+"settings.popup.restoreWindows" = "Відновлювати вікна під час повторного відкриття запущеного застосунку";
+"settings.popup.restoreWindows.detail" = "Клік по запущеному застосунку повертає його приховані й згорнуті вікна, як і клік у Dock. Вимкнено: застосунок лише виводиться на передній план.";
+"settings.popup.runningApps.header" = "Запущені застосунки";
+"settings.popup.dockMenus" = "Меню на значках груп у Dock";
+"settings.popup.dockMenus.detail" = "Після кліку правий клік по значку окремої групи в Dock показує її застосунки, «Відкрити всі», «Сховати всі» та «Закрити всі». Її застосунок тоді позначається як запущений у Dock і в ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Окремі значки в Dock";
+"settings.popup.ax.granted" = "Доступ до універсального доступу надано: згорнуті вікна теж повертаються";
+"settings.popup.ax.required" = "Для відновлення згорнутих вікон потрібен доступ до універсального доступу";
+"settings.popup.ax.detail" = "Дозвольте %@ у «Конфіденційність і безпека → Універсальний доступ». Доти приховані застосунки все одно повертаються, а застосункам надсилається запит на повторне відкриття, як із Dock. Значки окремих груп потребують доступу для своїх застосунків.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Відкривати спливаючі вікна груп комбінаціями клавіш";
+"settings.shortcuts.modifiers" = "Клавіші-модифікатори";
+"settings.shortcuts.keys" = "Клавіші комбінації";
+"settings.shortcuts.keys.detail" = "Утримуйте ці клавіші й натисніть 1 для першої групи, 2 для другої тощо. Натисніть ще раз, щоб закрити вікно.";
+"settings.shortcuts.header" = "Комбінації клавіш";
+"settings.shortcuts.ax.granted" = "Працює в усіх застосунках";
+"settings.shortcuts.ax.needed" = "Потрібен доступ до універсального доступу";
+"settings.shortcuts.ax.detail" = "Щоб комбінації спрацьовували під час роботи в інших застосунках, дозвольте %@ у «Конфіденційність і безпека → Універсальний доступ». Доти вони працюють лише тоді, коли активне його вікно або вікно самого застосунку.";
+"settings.shortcuts.noGroups" = "Груп ще немає.";
+"settings.shortcuts.assigned.header" = "Призначені групи";
+"settings.shortcuts.assigned.footer.limit" = "Комбінації мають лише перші дев’ять груп. Перетягніть групи в «Керувати групами», щоб змінити порядок.";
+"settings.shortcuts.assigned.footer" = "Комбінації відповідають порядку груп у «Керувати групами».";
+"settings.shortcuts.siri.group" = "Група";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "Додайте групу, щоб побачити, що сказати Siri для її відкриття.";
+"settings.shortcuts.openShortcuts" = "Відкрити Швидкі команди";
+"settings.shortcuts.shortcutsApp" = "Застосунок «Швидкі команди»";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group і Show Group — це дії там і в Spotlight: додайте їх до своїх команд із власним запуском.";
+"settings.shortcuts.siri.header" = "Siri і Швидкі команди";
+"settings.shortcuts.siri.footer" = "Скажіть Siri ці слова голосом або введіть їх. Вони використовують поточну назву групи; команди, які ви створили, працюють і після перейменування.";
+"settings.shortcuts.links.noGroups" = "Додайте групу, щоб побачити її посилання.";
+"settings.shortcuts.links.footer" = "Відкривайте посилання зі скрипта або іншого застосунку, наприклад за допомогою `open` у Terminal. Група називається своєю назвою (регістр, наголоси й розділові знаки не мають значення) або, якщо назва неоднозначна, своїм ID. Додайте ?mode=force до посилання на завершення, щоб примусово завершити.";
+"settings.shortcuts.copy.help" = "Копіювати “%@” у буфер обміну.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Показувати найуживаніші в рядку меню";
+"settings.mostUsed.appsShown" = "Показано застосунків";
+"settings.mostUsed.appsShown.detail" = "Найчастіше відкривані застосунки в меню та у вікні «Найуживаніші».";
+"settings.mostUsed.sessionLength" = "Тривалість сесії";
+"settings.mostUsed.together" = "Відкриті разом протягом";
+"settings.mostUsed.together.detail" = "Застосунки, відкриті протягом цього часу один від одного, рахуються як використані разом, що трохи піднімає їх вище.";
+"settings.mostUsed.footer" = "Застосунки ранжуються за частотою відкриття з Dock, Finder, Spotlight або групи. Запуски враховуються навіть тоді, коли список приховано.";
+"settings.mostUsed.recorded" = "Зафіксовано";
+"settings.mostUsed.clear" = "Очистити історію…";
+"settings.mostUsed.history" = "Історія";
+"settings.mostUsed.history.detail" = "Зберігається лише на цьому Mac, у файлах usage-stats.json і usage-cooccurrence.json у Application Support.";
+"settings.mostUsed.usageHistory.header" = "Історія використання";
+"settings.mostUsed.clear.confirm.title" = "Очистити історію використання?";
+"settings.mostUsed.clear.confirm.button" = "Очистити історію";
+"settings.mostUsed.clear.confirm.message" = "Список «Найуживаніші» почнеться спочатку. Ваші групи та застосунки не зачіпаються.";
+"settings.mostUsed.summary.none" = "Запусків ще немає";
+"settings.mostUsed.summary.launches.one" = "1 запуск";
+"settings.mostUsed.summary.launches.other" = "Запусків: %ld";
+"settings.mostUsed.summary" = "%1$@ з %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Автоматично перевіряти оновлення";
+"settings.updates.currentVersion" = "Поточна версія";
+"settings.updates.lastChecked" = "Остання перевірка";
+"settings.updates.checkNow" = "Перевірити зараз";
+"settings.updates.otherVersions" = "Інші версії…";
+"settings.updates.footer" = "Перевіряє випуски проєкту на GitHub під час запуску та щойно кожні 6 годин; разом передається лише номер версії застосунку. Нова версія встановлюється лише після того, як ви натиснете «Завантажити й установити». «Інші версії…» встановлює будь-який опублікований випуск, старіший або новіший; повернення назад пропускає новіші версії під час автоматичних перевірок.";
+"settings.updates.viewChangelog" = "Переглянути журнал змін";
+"settings.updates.latestPath" = "Повернутися на останній шлях: пропонуватиметься кожен новіший випуск";
+"settings.updates.skipped" = "Пропущені новіші версії: %@";
+"settings.updates.clear" = "Очистити";
+"settings.updates.clear.help" = "Дозволити автоматичним перевіркам знову пропонувати ці версії";
+"settings.updates.never" = "Ніколи";
+"settings.updates.status.idle" = "Не перевірялося від запуску застосунку";
+"settings.updates.status.checking" = "Перевірка…";
+"settings.updates.status.upToDate" = "У вас остання версія (v%@)";
+"settings.updates.status.available" = "Доступна версія %@";
+"settings.updates.showUpdate" = "Показати оновлення…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Інші версії";
+"settings.otherVersions.intro" = "Установіть будь-який опублікований випуск %@, старіший або новіший. Застосунок закриється й відкриється як обрана вами версія.";
+"settings.otherVersions.releasesLink" = "Відкрити сторінку випусків на GitHub";
+"settings.otherVersions.loading" = "Завантаження випусків з GitHub…";
+"settings.otherVersions.none" = "GitHub не показує жодного опублікованого випуску.";
+"settings.otherVersions.current" = "Поточна";
+"settings.otherVersions.noDownload" = "Немає завантаження";
+"settings.otherVersions.install.help" = "Установити версію %@";
+"settings.otherVersions.install.noImage" = "Для цього випуску немає образу диска для встановлення.";
+"settings.otherVersions.confirm.title" = "Установити версію %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ завершиться й відкриється як версія %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Версія %@ не може оновити себе сама: щоб повернутися, завантажте новішу версію зі сторінки випусків.";
+"settings.otherVersions.confirm.skips" = "Тоді автоматичні перевірки пропускатимуть новіші версії (%@); «Перевірити оновлення…» їх усе одно пропонуватиме.";
+"settings.otherVersions.confirm.older" = "Старіша версія може не знати про функції, додані пізніше; розгляньте можливість спершу експортувати резервну копію (Параметри → Резервна копія).";
+"settings.otherVersions.confirm.upgrade" = "Пропущені версії очищаються, тож автоматичні перевірки знову пропонуватимуть кожен новіший випуск.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Експортувати параметри…";
+"settings.backup.export" = "Експорт";
+"settings.backup.export.detail" = "Зберігає ваші групи та параметри у файл .dockgroups.";
+"settings.backup.import.button" = "Імпортувати параметри…";
+"settings.backup.import" = "Імпорт";
+"settings.backup.import.detail" = "Замінює ваші групи та параметри тими, що є у файлі резервної копії, або об’єднує нові групи з копії з вашими.";
+"settings.backup.footer" = "Резервна копія містить ваші групи, їхні застосунки та всі параметри. Кількість запусків у «Найуживаніших» не включається. Файл лишається там, куди ви його зберегли.";
+"settings.backup.status.exported" = "Експортовано до «%@»";
+"settings.backup.status.restored" = "Відновлено %1$@ з %2$@";
+"settings.backup.status.merged" = "Об’єднано %@ з резервної копії";
+"settings.backup.status.mergedSkipped" = "Об’єднано %1$@ з резервної копії; %2$ld уже є тут";
+"settings.backup.exportPanel.title" = "Експорт параметрів";
+"settings.backup.exportPanel.message" = "Зберегти ваші групи та параметри у файл резервної копії.";
+"settings.backup.exportFailed" = "Не вдалося експортувати параметри";
+"settings.backup.importPanel.title" = "Імпорт параметрів";
+"settings.backup.importPanel.message" = "Виберіть резервну копію %@ для відновлення.";
+"settings.backup.readFailed" = "Не вдалося прочитати файл";
+"settings.backup.confirm.title" = "Імпортувати групи та параметри з цієї резервної копії?";
+"settings.backup.confirm.replaceAll" = "Замінити все";
+"settings.backup.confirm.merge" = "Об’єднати";
+"settings.backup.restoreFailed" = "Не вдалося відновити резервну копію";
+"settings.backup.restoreFailed.kept" = "%@ Ваші поточні групи та параметри збережено.";
+"settings.backup.mergeFailed" = "Не вдалося об’єднати резервну копію";
+"settings.backup.mergeFailed.kept" = "%@ Ваші поточні групи збережено.";
+"settings.backup.rejected.notABackup" = "Виберіть файл .dockgroups, створений через «Експортувати параметри…». Нічого не змінено.";
+"settings.backup.rejected.newer" = "Нічого не змінено.";
+"settings.backup.confirm.noGroups" = "У резервній копії немає груп.";
+"settings.backup.confirm.noGroups.exported" = "У резервній копії немає груп, експортовано %@.";
+"settings.backup.confirm.contents" = "У резервній копії: %1$@ з %2$@.";
+"settings.backup.confirm.contents.exported" = "У резервній копії: %1$@ з %2$@, експортовано %3$@.";
+"settings.backup.confirm.replace" = "«Замінити все» використовує групи та параметри з резервної копії замість ваших.";
+"settings.backup.confirm.replaced.one" = "1 поточну групу з такою самою назвою, як у резервній копії, буде замінено нею.";
+"settings.backup.confirm.replaced.other" = "%ld поточних груп із такими самими назвами, як у резервній копії, буде замінено ними.";
+"settings.backup.confirm.removed.one" = "1 поточну групу, якої немає в резервній копії, буде вилучено.";
+"settings.backup.confirm.removed.other" = "%ld поточних груп, яких немає в резервній копії, буде вилучено.";
+"settings.backup.confirm.replaceSettings" = "Ваші параметри (вікно, комбінації, «Найуживаніші» та оновлення) теж буде замінено.";
+"settings.backup.confirm.merge.nothing" = "«Об’єднати» зберігає ваші групи та параметри й нічого не додає.";
+"settings.backup.confirm.merge.allHere" = "«Об’єднати» зберігає ваші групи та параметри; кожна група з резервної копії вже тут, тож нічого не додається.";
+"settings.backup.confirm.merge.adds" = "«Об’єднати» зберігає ваші групи та параметри і додає %1$@ з %2$@ з резервної копії.";
+"settings.backup.confirm.skipped.one" = "1 групу, яка вже тут (з такою самою назвою), буде пропущено.";
+"settings.backup.confirm.skipped.other" = "%ld груп, які вже тут (з такими самими назвами), буде пропущено.";
+"settings.backup.confirm.final" = "Лічильники запусків у «Найуживаніших» зберігаються. Копію ваших поточних файлів буде збережено поруч із ними в Application Support. Це неможливо скасувати.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Зберегти у файл…";
+"settings.diagnostics.export" = "Експорт діагностики";
+"settings.diagnostics.export.detail" = "Текстовий звіт, який можна додати до звернення на GitHub або запиту в підтримку.";
+"settings.diagnostics.header" = "Діагностика";
+"settings.diagnostics.footer" = "Перелічує версії застосунку та macOS, модель вашого Mac, де встановлено застосунок, доступ до універсального доступу, ваші параметри, перевірки оновлень, назви ваших груп із кількістю застосунків і останні помилки. Вона не перелічує застосунки у ваших групах. Нікуди нічого не надсилається.";
+"settings.diagnostics.copied" = "Діагностику скопійовано в буфер обміну";
+"settings.diagnostics.saved" = "Збережено до «%@»";
+"settings.diagnostics.failed" = "Не вдалося зберегти звіт: %@";
+"settings.diagnostics.panel.title" = "Зберегти діагностику";
+"settings.diagnostics.panel.message" = "Зберегти звіт діагностики як текстовий файл, наприклад щоб додати його до звернення на GitHub.";
+"settings.diagnostics.panel.prompt" = "Зберегти";
+
+/* Software Update window */
+"updateWindow.title" = "Оновлення програмного забезпечення";
+"updateWindow.checking" = "Перевірка оновлень…";
+"updateWindow.upToDate.title" = "У вас остання версія!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ — найновіша доступна версія.";
+"updateWindow.available.title" = "Доступна нова версія %@!";
+"updateWindow.available.message" = "Доступна версія %1$@ — у вас %2$@.";
+"updateWindow.available.noImage" = "Для цього випуску немає образу диска для автоматичного встановлення; завантажте його зі сторінки випуску.";
+"updateWindow.available.question" = "Завантажити та встановити її зараз?";
+"updateWindow.skip" = "Пропустити цю версію";
+"updateWindow.remindLater" = "Нагадати пізніше";
+"updateWindow.openReleasePage" = "Відкрити сторінку випуску";
+"updateWindow.downloadAndInstall" = "Завантажити й установити";
+"updateWindow.downloading" = "Завантаження версії %@…";
+"updateWindow.restartsWhenDone" = "%@ перезапуститься, коли завершить.";
+"updateWindow.reopening" = "%@ відкривається знову.";
+"updateWindow.dryRun.title" = "Пробний запуск завершено";
+"updateWindow.dryRun.message" = "Версію %1$@ завантажено, перевірено та скопійовано до %2$@. Нічого не замінено.";
+"updateWindow.checkFailed" = "Не вдалося перевірити оновлення";
+"updateWindow.installFailed" = "Не вдалося встановити версію %@";
+"updateWindow.link.releases" = "Випуски";
+"updateWindow.link.releasePage" = "Сторінка випуску";
+"updateWindow.releaseNotes" = "Примітки до випуску";
+"updateWindow.releaseNotes.none" = "Для цього випуску немає приміток.";
+"updateWindow.relaunchFailed" = "Версію %@ встановлено, але застосунок не зміг перезапуститися сам. Закрийте його і відкрийте знову.";
+
+/* About window */
+"about.section.findMe" = "Знайти мене в мережі";
+"about.section.support" = "Підтримати проєкт";
+"about.section.books" = "Мої книжки";
+"about.section.software" = "Моє програмне забезпечення з відкритим кодом";
+"about.fullList" = "Повний список на github.com/ercanatay";
+"about.section.blogs" = "Блоги на Medium";
+"about.icon.accessibility" = "Значок %@";
+"about.version" = "Версія %@ · відкритий код, ліцензія MIT";
+"about.website" = "Вебсайт";
+"about.sourceCode" = "Вихідний код";
+"about.license" = "Ліцензія";
+"about.reportBug" = "Знайшли помилку? Відкрийте звернення";
+"about.inspiredBy" = "Натхнено функціональністю DockGroups. %@ — незалежна, оригінальна реалізація, написана з нуля; вона не містить коду чи графіки з DockGroups.";
+"about.project.dockGroups" = "Цей застосунок · групи Dock для macOS";
+"about.project.intelComputerUse" = "Нативна автоматизація стільничної macOS для Intel Mac через MCP.";
+"about.project.exchangeRate" = "Трекер курсів валют і портфеля на PHP/MySQL з живим парсингом і оновленнями з випусків GitHub.";
+"about.project.backlinkChecker" = "Перевіряє анкори, dofollow/nofollow і HTTP-статуси бекліків.";
+"about.project.consentManager" = "Плагін перекладів Consent Manager для YOOtheme Pro 5 (WordPress.org).";
+"about.project.antigravityUpdater" = "Легкий засіб оновлення для Antigravity Tools на macOS, 21 мова.";
+"about.project.widgetVisibility" = "Плагін WP без Jetpack для видимості віджетів з підтримкою вкладених елементів.";
+"about.project.forbiddenContent" = "Знаходить заборонені ключові слова (наприклад, «Casino») в заголовках записів — як перевірка аудиту WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Show %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Launch %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Quit %1$@ in %2$@";
+"core.invocation.showPopup" = "Показати вікно";
+"core.invocation.openAll" = "Відкрити всі";
+"core.invocation.hideAll" = "Сховати всі";
+"core.invocation.closeAll" = "Закрити всі";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Веб-браузер не налаштовано для відкриття цього.";
+"core.launch.notOpened" = "Застосунок не було відкрито.";
+"core.group.defaultName" = "Нова група";
+"core.website.error.empty" = "Введіть веб-адресу.";
+"core.website.error.invalid" = "Це некоректна веб-адреса.";
+"core.website.error.scheme" = "Можна додати лише адреси http і https, а не «%@:».";
+"core.website.error.credentials" = "Вилучіть ім’я користувача та пароль з адреси.";
+"core.persistence.groups.newer" = "Файл груп збережено новішою версією Cybokron Dock Groups (формат %ld).";
+"core.backup.error.notABackup" = "Цей файл не є резервною копією Cybokron Dock Groups.";
+"core.backup.error.newer" = "Ця резервна копія створена новішою версією Cybokron Dock Groups (формат резервної копії %ld). Оновіть застосунок, щоб її відновити.";
+"core.persistence.usage.newer" = "Статистику використання збережено новішою версією Cybokron Dock Groups (формат %ld).";
+"core.agent.configuration.newer" = "Параметри групи збережено новішою версією Cybokron Dock Groups (формат %ld).";
+"core.agent.error.icon" = "Не вдалося намалювати значок групи.";
+"core.agent.error.bundleWrite" = "Не вдалося створити застосунок групи: %@";
+"core.agent.error.toolMissing" = "Бракує системного інструмента, потрібного для цього: %@.";
+"core.agent.error.signing" = "macOS вимагає, щоб кожен застосунок був підписаний кодом, а підписати застосунок групи на цьому Mac не вдалося, тож нічого не встановлено.";
+"core.agent.error.registration" = "macOS не зареєструвала застосунок групи: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups не вдалося прочитати власний виконуваний файл: %@";
+"core.agent.error.noExecutable" = "У застосунку немає виконуваного файлу.";
+"core.dock.saveFailed" = "Не вдалося змінити параметри Dock.";
+"core.store.loadFailed.title" = "Не вдалося завантажити ваші групи";
+"core.store.loadFailed.kept" = "%1$@ Запуск із порожнім списком груп. Копію збережено за адресою «%2$@».";
+"core.store.loadFailed.empty" = "%@ Запуск із порожнім списком груп.";
+"core.store.loadFailed.suspended" = "%@ Щоб захистити наявний файл, зміни не зберігатимуться, доки застосунок не буде перезапущено.";
+"core.store.saveFailed.title" = "Не вдалося зберегти ваші зміни";
+"core.preferences.saveFailed" = "Не вдалося зберегти ваші параметри: %@";
+"core.websiteIcon.accessibility" = "Вебсайт";
+"core.update.check.notHTTP" = "Відповідь не була HTTP.";
+"core.update.check.malformed" = "Не вдалося прочитати інформацію про випуск з GitHub.";
+"core.update.check.unsupportedTag" = "Останній випуск («%@») не позначено номером версії.";
+"core.update.check.noRelease" = "Жодного випуску ще не опубліковано.";
+"core.update.check.rateLimited" = "GitHub зараз обмежує запити. Спробуйте за годину.";
+"core.update.check.httpStatus" = "GitHub відповів зі статусом HTTP %ld.";
+"core.update.check.network" = "Не вдалося зв’язатися з GitHub: %@";
+"core.update.check.noVersion" = "Ця копія застосунку не має номера версії, тому її не можна порівняти.";
+"core.update.install.insecureURL" = "Адреса завантаження оновлення не захищена (%@).";
+"core.update.install.downloadFailed" = "Не вдалося завантажити оновлення: %@";
+"core.update.install.sizeMismatch" = "Завантажене оновлення неповне (%1$ld з %2$ld байтів).";
+"core.update.install.checksum" = "Завантажене оновлення не збігається з опублікованою контрольною сумою, тому його не встановлено.";
+"core.update.install.mountFailed" = "Не вдалося відкрити образ диска оновлення: %@";
+"core.update.install.appNotFound" = "Образ диска оновлення не містить застосунку.";
+"core.update.install.wrongApp" = "Образ диска оновлення містить інший застосунок (%@).";
+"core.update.install.versionMismatch" = "Завантажений застосунок має версію %1$@, а випуск — %2$@.";
+"core.update.install.replaceFailed" = "Нову версію не вдалося встановити на місце, тож поточну збережено: %@";
+"core.update.install.rollbackFailed" = "Оновлення не вдалося, і попередню версію не вдалося відновити. Її збережено за адресою %@.";
+"core.update.location.translocated" = "macOS запускає цю копію з тимчасового каталогу лише для читання. Перемістіть застосунок до папки «Застосунки», відкрийте його звідти та спробуйте знову.";
+"core.update.location.notFound" = "Запущений застосунок не знайдено за адресою %@.";
+"core.update.location.readOnly" = "Застосунок запущено з тому лише для читання, наприклад з образу диска. Спершу скопіюйте його до папки «Застосунки».";
+"core.update.location.noPermission" = "У вас немає дозволу замінити застосунок у «%@». Натомість завантажте нову версію зі сторінки випусків.";
+"core.update.install.noFile" = "Сервер не надіслав файлу.";
+"core.update.install.httpStatus" = "Статус HTTP %ld.";
+"core.update.install.copyFailed" = "Не вдалося скопіювати застосунок: %@";
+"core.mostUsed.name" = "Найуживаніші";
