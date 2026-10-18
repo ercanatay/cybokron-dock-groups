@@ -1,13 +1,15 @@
 import DockGroupsCore
 import SwiftUI
 
-/// App-wide popup settings: look of the panel, the layout defaults groups can override, and what
-/// opening a running app does.
+/// The app's language, then the app-wide popup settings: look of the panel, the layout defaults
+/// groups can override, and what opening a running app does.
 struct PopupSettingsView: View {
     @ObservedObject var preferences: PreferencesStore
 
     var body: some View {
         Form {
+            LanguageSection(preferences: preferences)
+
             Section {
                 Picker(L10n.Settings.Popup.theme, selection: binding(\.theme)) {
                     ForEach(PanelTheme.allCases, id: \.self) { theme in
@@ -120,6 +122,41 @@ struct PopupSettingsView: View {
         Binding(
             get: { preferences.preferences[keyPath: keyPath] },
             set: { newValue in preferences.update { $0[keyPath: keyPath] = newValue } }
+        )
+    }
+}
+
+/// The app's language: the system's or one of the languages the app has string tables for, each
+/// named in itself. A new choice shows after a restart, which the section then offers.
+private struct LanguageSection: View {
+    @ObservedObject var preferences: PreferencesStore
+
+    var body: some View {
+        let selected = preferences.preferences.language
+        Section {
+            Picker(L10n.General.language, selection: language) {
+                Text(L10n.General.languageSystem(AppLanguageSupport.systemLanguage.nativeName))
+                    .tag(AppLanguage.system)
+                ForEach(AppLanguageSupport.pickerLanguages(selected: selected)) { language in
+                    Text(verbatim: language.nativeName).tag(AppLanguage.specific(language.code))
+                }
+            }
+            if selected != AppLanguageSupport.launchLanguage {
+                LabeledContent {
+                    Button(L10n.General.restartNow) {
+                        AppLanguageSupport.restart(preferences: preferences)
+                    }
+                } label: {
+                    Label(L10n.General.restartNote, systemImage: "arrow.clockwise.circle")
+                }
+            }
+        }
+    }
+
+    private var language: Binding<AppLanguage> {
+        Binding(
+            get: { preferences.preferences.language },
+            set: { newValue in preferences.update { $0.language = newValue } }
         )
     }
 }

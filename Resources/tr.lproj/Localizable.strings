@@ -230,6 +230,12 @@
 "settings.tab.updates" = "Güncellemeler";
 "settings.tab.backup" = "Yedekleme";
 
+/* Settings → Language (at the top of the Popup tab) — TODO translate */
+"general.language" = "Language";
+"general.language.system" = "System (%1$@)";
+"general.language.restartNote" = "The new language takes effect after the app restarts.";
+"general.language.restartNow" = "Restart Now";
+
 /* Settings → Popup */
 "settings.popup.theme" = "Tema";
 "settings.popup.frostedGlass" = "Buzlu cam arka plan";

@@ -2,7 +2,7 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// The Settings window (⌘,): popup settings, shortcuts and Siri, the Most Used list, updates, and
+/// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, the Most Used list, updates, and
 /// backups with the diagnostics report, each in its own tab.
 @MainActor
 final class SettingsWindowController: NSWindowController {

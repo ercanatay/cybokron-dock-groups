@@ -234,6 +234,12 @@
 "settings.tab.updates" = "Updates";
 "settings.tab.backup" = "Backup";
 
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Language";
+"general.language.system" = "System (%1$@)";
+"general.language.restartNote" = "The new language takes effect after the app restarts.";
+"general.language.restartNow" = "Restart Now";
+
 /* Settings → Popup */
 "settings.popup.theme" = "Theme";
 "settings.popup.frostedGlass" = "Frosted glass background";

@@ -12,7 +12,7 @@ same placeholders (`LocalizationTests` check both).
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-459 keys.
+463 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -276,6 +276,18 @@ same placeholders (`LocalizationTests` check both).
 | `settings.tab.shortcuts` | Shortcuts & Siri |
 | `settings.tab.updates` | Updates |
 | `settings.tab.backup` | Backup |
+
+## Settings → Language (at the top of the Popup tab)
+
+`%1$@` in `general.language.system` is the name, in itself, of the language the system settings give
+the app ("System (Türkçe)"); the other choices are language names in themselves and aren't translated.
+
+| Key | English |
+| --- | --- |
+| `general.language` | Language |
+| `general.language.system` | System (%1$@) |
+| `general.language.restartNote` | The new language takes effect after the app restarts. |
+| `general.language.restartNow` | Restart Now |
 
 ## Settings → Popup
 

@@ -10,8 +10,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
 /// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, the
-/// Most Used list, the standalone groups' Dock menus, restoring running apps' windows, and whether
-/// the app looks for updates on its own.
+/// Most Used list, the standalone groups' Dock menus, restoring running apps' windows, whether the
+/// app looks for updates on its own, and the language it's shown in.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
     public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
@@ -54,6 +54,8 @@ public struct PopupPreferences: Hashable, Sendable {
     /// windows from the Dock when all of them are minimized (with Accessibility access), and
     /// otherwise asks it to reopen. Off, the app is only brought to the front.
     public var restoresWindowsOfRunningApps: Bool
+    /// The language the app (and the standalone groups' apps) is shown in from its next launch on.
+    public var language: AppLanguage
 
     public init(
         theme: PanelTheme = .dark,
@@ -70,7 +72,8 @@ public struct PopupPreferences: Hashable, Sendable {
         mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds,
         automaticallyChecksForUpdates: Bool = true,
         showsStandaloneDockMenus: Bool = true,
-        restoresWindowsOfRunningApps: Bool = true
+        restoresWindowsOfRunningApps: Bool = true,
+        language: AppLanguage = .system
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -87,6 +90,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
         self.showsStandaloneDockMenus = showsStandaloneDockMenus
         self.restoresWindowsOfRunningApps = restoresWindowsOfRunningApps
+        self.language = language
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -114,6 +118,9 @@ public struct PopupPreferences: Hashable, Sendable {
         }
         if case .fixed(let count) = copy.columns, !PopupOverrides.allowedCountRange.contains(count) {
             copy.columns = .auto
+        }
+        if case .specific(let code) = copy.language, SupportedLanguages.language(withCode: code) == nil {
+            copy.language = .system
         }
         return copy
     }
@@ -153,6 +160,7 @@ extension PopupPreferences: Codable {
         case automaticallyChecksForUpdates
         case showsStandaloneDockMenus = "standaloneDockMenu"
         case restoresWindowsOfRunningApps = "restoreRunningAppWindows"
+        case language
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -185,5 +193,6 @@ extension PopupPreferences: Codable {
             ?? defaults.showsStandaloneDockMenus
         restoresWindowsOfRunningApps = container.decodeLeniently(Bool.self, forKey: .restoresWindowsOfRunningApps)
             ?? defaults.restoresWindowsOfRunningApps
+        language = container.decodeLeniently(AppLanguage.self, forKey: .language) ?? defaults.language
     }
 }

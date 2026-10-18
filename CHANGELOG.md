@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Language picker** at the top of Settings → Popup: *System* (the language macOS gives the app,
+  named in it) or any language the app has a string table for, each named in itself. The choice is
+  stored in `preferences.json` (`"language"`: `"system"` or the code) and applied at launch as the
+  app's own `AppleLanguages`, so it shows after a restart: the section then offers **Restart Now**,
+  which also quits the running standalone groups' apps so they start in the new language too.
+  *System* removes only the value the app set itself, not one chosen in System Settings. The list of
+  languages (`SupportedLanguages`, 26 with their native names) is the one place to update when a
+  translation is added; the tests check every `.lproj` folder has an entry.
 - **Localization framework**: the app's user-facing text — menus, popup, group window, Settings,
   the update and About windows, alerts and the core's error messages — comes from string tables,
   `Resources/<language>.lproj/Localizable.strings`, with the English text in `en.lproj` (listed in

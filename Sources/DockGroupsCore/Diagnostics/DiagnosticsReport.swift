@@ -166,6 +166,7 @@ public enum DiagnosticsReport {
         lines.append("Global shortcuts: \(onOff(preferences.shortcutsEnabled))")
         lines.append("Standalone Dock menus: \(onOff(preferences.showsStandaloneDockMenus))")
         lines.append("Restore windows of running apps: \(onOff(preferences.restoresWindowsOfRunningApps))")
+        lines.append("Language: \(preferences.language.rawValue)")
 
         let updates = info.updates
         section(.updates, into: &lines)

@@ -451,6 +451,19 @@ enum L10n {
 
     // MARK: - Settings
 
+    /// The app's language, at the top of Settings → Popup.
+    enum General {
+        static var language: String { tr("general.language", "Language") }
+        /// The "System" choice, with the language the system settings give the app: "System (English)".
+        static func languageSystem(_ languageName: String) -> String {
+            tr("general.language.system", "System (%1$@)", languageName)
+        }
+        static var restartNote: String {
+            tr("general.language.restartNote", "The new language takes effect after the app restarts.")
+        }
+        static var restartNow: String { tr("general.language.restartNow", "Restart Now") }
+    }
+
     enum Settings {
         static var windowTitle: String { tr("settings.window.title", "Settings") }
         static var popupTab: String { tr("settings.tab.popup", "Popup") }
