@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Azərbaycan dili)
+  Cybokron Dock Groups
+
+  Hər açarın Azərbaycan dilindəki mətni. Yer tutucular qorunur: %@ mətn, %ld rəqəm, %1$@, %2$ld … isə
+  nömrələnib ki, tərcümədə sıra dəyişə bilsin. .one/.other ilə bitən açarlar sayın 1 halı (tək) və çoxluq
+  mətnidir. "Cybokron Dock Groups", "DockGroups", "GitHub", "Siri", düymə simvolları (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc)
+  və fayl adları olduğu kimi qalır.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Ləğv et";
+"common.add" = "Əlavə et";
+"common.copy" = "Kopyala";
+"common.copied" = "Kopyalandı";
+"common.close" = "Bağla";
+"common.done" = "Hazırdır";
+"common.install" = "Quraşdır";
+"common.tryAgain" = "Yenidən cəhd et";
+"common.openAll" = "Hamısını aç";
+"common.hideAll" = "Hamısını gizlət";
+"common.closeAll" = "Hamısını bağla";
+"common.forceQuit" = "Məcburi çıxış";
+"common.addApps" = "Tətbiq əlavə et…";
+"common.addWebsite" = "Veb sayt əlavə et…";
+"common.showInFinder" = "Finder-də göstər";
+"common.removeFromGroup" = "Qrupdan çıxar";
+"common.moveTo" = "Köçür";
+"common.default" = "Standart";
+"common.auto" = "Avtomatik";
+"common.changelog" = "Dəyişikliklər";
+"common.links" = "Keçidlər";
+"common.openReleasesPage" = "Buraxılışlar səhifəsini aç";
+"common.openPrivacySettings" = "Məxfilik və təhlükəsizliyi aç…";
+"common.checkForUpdates" = "Yeniləmələri yoxla…";
+"common.settings" = "Ayarlar…";
+"common.noLaunchesYet" = "Hələ işə salınma qeydə alınmayıb";
+"common.noAppsInGroup" = "Bu qrupda hələ tətbiq yoxdur";
+"common.about" = "%@ haqqında";
+"common.hideApp" = "%@ tətbiqini gizlət";
+"common.quitApp" = "%@ tətbiqindən çıx";
+"common.versionShort" = "v%@";
+"common.update.installing" = "%@ versiyası quraşdırılır…";
+"common.update.restarting" = "%@ versiyası quraşdırıldı — yenidən başladılır…";
+"common.appCount.one" = "1 tətbiq";
+"common.appCount.other" = "%ld tətbiq";
+"common.groupCount.one" = "1 qrup";
+"common.groupCount.other" = "%ld qrup";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Qruplar";
+"menuBar.noGroups" = "Hələ qrup yoxdur";
+"menuBar.manageGroups" = "Qrupları idarə et…";
+"menuBar.mostUsed.empty.tooltip" = "Tətbiqləri adi kimi açın; ən çox açdığınız burada görünəcək.";
+"menuBar.mostUsed.show" = "Ən çox istifadəyə bax";
+"menuBar.mostUsed.show.tooltip" = "Ən çox açdığınız tətbiqləri açılan pəncərədə göstərir.";
+"menuBar.checkForUpdates.tooltip" = "GitHub-da %@ üçün daha yeni versiyanı axtarın.";
+"menuBar.mostUsed.app.tooltip.one" = "%@ tətbiqini aç. Bir dəfə açılıb.";
+"menuBar.mostUsed.app.tooltip.other" = "%1$@ tətbiqini aç. %2$ld dəfə açılıb.";
+"menuBar.group.tooltip" = "“%@” qrupundakı tətbiqləri göstər. Hamısını birdən açmaq üçün ⌥ basın saxlayın, işləyənləri gizlətmək üçün ⇧⌥.";
+"menuBar.group.tooltip.shortcut" = "“%1$@” qrupundakı tətbiqləri göstər. Hamısını birdən açmaq üçün ⌥ basın saxlayın, işləyənləri gizlətmək üçün ⇧⌥. Qısayol: %2$@.";
+"menuBar.group.openAll" = "“%@” qrupunda hamısını aç";
+"menuBar.group.openAll.tooltip.one" = "“%@” qrupundakı tətbiqi aç";
+"menuBar.group.openAll.tooltip.other" = "“%2$@” qrupundakı bütün %1$ld tətbiqi aç";
+"menuBar.group.noApps" = "“%@” qrupunda hələ tətbiq yoxdur.";
+"menuBar.group.hideAll" = "“%@” qrupunda hamısını gizlət";
+"menuBar.group.hideAll.tooltip" = "“%@” qrupundakı işləyən tətbiqləri gizlədir. İşləməyən tətbiqlər bağlı qalır.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Redaktə";
+"mainMenu.undo" = "Geri al";
+"mainMenu.redo" = "Yenidən et";
+"mainMenu.cut" = "Kəs";
+"mainMenu.paste" = "Yapışdır";
+"mainMenu.selectAll" = "Hamısını seç";
+"mainMenu.window" = "Pəncərə";
+"mainMenu.minimize" = "Kiçilt";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Bu qrupdakı hər tətbiqi açır; işləyən tətbiqlər ön plana çıxır.";
+"popup.openAll.help.mostUsed" = "Bu siyahıdakı hər tətbiqi açır; işləyən tətbiqlər ön plana çıxır.";
+"popup.hideAll.help.group" = "Bu qrupdakı işləyən tətbiqləri gizlədir; işləməyən tətbiqlər bağlı qalır.";
+"popup.hideAll.help.mostUsed" = "Bu siyahıdakı işləyən tətbiqləri gizlədir; işləməyən tətbiqlər bağlı qalır.";
+"popup.closeAll.help.group" = "Bu qrupdakı işləyən tətbiqlərdən çıxır. Saxlamadan məcburi çıxmaq üçün ⌘-klik edin.";
+"popup.closeAll.help.mostUsed" = "Bu siyahıdakı işləyən tətbiqlərdən çıxır. Saxlamadan məcburi çıxmaq üçün ⌘-klik edin.";
+"popup.summary.websites.one" = "1 veb sayt";
+"popup.summary.websites.other" = "%ld veb sayt";
+"popup.summary.running" = "%ld işləyir";
+"popup.summary.byLaunches" = "işə salınmaya görə";
+"popup.filter.noMatch" = "“%@” ilə uyğun tətbiq yoxdur";
+"popup.filter.noMatch.hint" = "Filtri təmizləmək üçün Delete və ya Esc basın.";
+"popup.empty.mostUsed.hint" = "Tarixçənizi yaratmaq üçün tətbiqləri adi kimi açın.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Bu qrupdakı tətbiqləri ada görə A-dan Z-yə sıralayır.";
+"popup.footer.sortAZ.accessibility" = "A-dan Z-yə sırala";
+"popup.footer.filter.matches" = "Filtr: “%@”  ·  ↩ seçilmiş tətbiqi açır  ·  esc təmizləyir";
+"popup.footer.filter.noMatch" = "Filtr: “%@”  ·  uyğunluq yoxdur  ·  ⌫ və ya esc təmizləyir";
+"popup.footer.hint.mostUsed" = "Açılma tezliyinə görə sıralanıb  ·  Hamısını bağla üzərində ⌘-klik məcburi çıxış edir";
+"popup.footer.hint.group" = "Hamısını bağla:  ⌥-klik adi qaydada çıxır  ·  ⌘-klik məcburi çıxır";
+"popup.footer.drag.remove" = "%@ tətbiqini bu qrupdan çıxarmaq üçün buraxın";
+"popup.footer.drag.free" = "%@ tətbiqini istənilən xanaya salın; başqa tətbiqin üzərinə salsanız yerləri dəyişir  ·  çıxarmaq üçün kənara sürüşdürün";
+"popup.footer.drag.ordered" = "%@ tətbiqini yerləşdirmək üçün buraxın  ·  çıxarmaq üçün pəncərədən kənara sürüşdürün";
+"popup.cell.accessibility.website" = "Veb sayt %@";
+"popup.cell.hint.website" = "Veb saytı brauzerinizdə açır";
+"popup.cell.hint.running" = "Tətbiqi ön plana gətirir";
+"popup.cell.hint.open" = "Tətbiqi açır";
+"popup.cell.help.openWebsite" = "%@ saytını brauzerinizdə açın.";
+"popup.cell.help.bringToFront" = "%@ tətbiqini ön plana gətirin.";
+"popup.cell.help.openApp" = "%@ tətbiqini açın.";
+"popup.cell.help.missing" = "%@ bu Mac-da yoxdur.";
+"popup.cell.help.drag.freeItem" = "Yerlərini dəyişmək üçün istənilən xanaya və ya başqa elementin üzərinə sürüşdürün, qrupdan çıxarmaq üçün pəncərədən kənara sürüşdürün.";
+"popup.cell.help.drag.freeApp" = "Yerlərini dəyişmək üçün istənilən xanaya və ya başqa tətbiqin üzərinə sürüşdürün, qrupdan çıxarmaq üçün pəncərədən kənara sürüşdürün.";
+"popup.cell.help.drag.ordered" = "Yenidən sıralamaq üçün sürüşdürün, qrupdan çıxarmaq üçün pəncərədən kənara sürüşdürün.";
+"popup.cell.help.drag.missing" = "Qrupdan çıxarmaq üçün pəncərədən kənara sürüşdürün.";
+"popup.menu.open" = "Aç";
+"popup.menu.copyURL" = "URL-i kopyala";
+"popup.accessibility.moveEarlier" = "Əvvələ köçür";
+"popup.accessibility.moveLater" = "Sonraya köçür";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Hələ qrup yoxdur";
+"groupWindow.empty.noSelection" = "Heç bir qrup seçilməyib";
+"groupWindow.empty.noGroups.description" = "Birlikdə istifadə etdiyiniz tətbiqləri toplamaq üçün qrup əlavə edin.";
+"groupWindow.empty.noSelection.description" = "Redaktə etmək üçün qrup seçin.";
+"groupWindow.addGroup" = "Qrup əlavə et";
+"groupWindow.rename.title" = "Qrupu adlandır";
+"groupWindow.rename.confirm" = "Adlandır";
+"groupWindow.rename.message" = "Qrup üçün yeni ad daxil edin.";
+"groupWindow.delete.title" = "“%@” silinsin?";
+"groupWindow.delete.confirm" = "Qrupu sil";
+"groupWindow.delete.message.standalone" = "Bu, qrupu, onun tətbiq siyahısını və öz Dock ikonunu silir. Tətbiqlərin özünə təsir etmir.";
+"groupWindow.delete.message" = "Bu, qrupu və onun tətbiq siyahısını silir. Tətbiqlərin özünə təsir etmir.";
+"groupWindow.sidebar.rename" = "Adlandır…";
+"groupWindow.sidebar.delete" = "Sil…";
+"groupWindow.sidebar.add.help" = "Qrup əlavə et";
+"groupWindow.sidebar.delete.help" = "Seçilmiş qrupu sil";
+"groupWindow.addApps.problem.title" = "Bəzi tətbiqlər əlavə edilə bilmədi";
+"groupWindow.section.group" = "Qrup";
+"groupWindow.name" = "Ad";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Seç…";
+"groupWindow.section.apps" = "Tətbiqlər";
+"groupWindow.apps.empty" = "Hələ tətbiq yoxdur. Bu qrup üçün tətbiq seçmək üçün “%1$@”, veb keçid üçün “%2$@” istifadə edin.";
+"groupWindow.addWebsite.help" = "Bu qrupa veb keçid əlavə edir. Standart brauzerinizdə açılır.";
+"groupWindow.sortAZ" = "A→Z sırala";
+"groupWindow.sortAZ.help" = "Bu qrupdakı tətbiqləri ada görə A-dan Z-yə sıralayır. Əllə yenidən sıralamaq üçün sürüşdürün.";
+"groupWindow.showPopup" = "Açılan pəncərəni göstər";
+"groupWindow.showPopup.help" = "Bu qrupun açılan pəncərəsini Dock-un üzərində göstərir.";
+"groupWindow.hideAll.help" = "Bu qrupdakı işləyən tətbiqləri gizlədir. İşləməyən tətbiqlər bağlı qalır.";
+"groupWindow.apps.moveHint" = "Tətbiqi başqa qrupa köçürmək üçün onu yan paneldə həmin qrupun üzərinə sürüşdürün və ya onun kontekst menyusunda %@ istifadə edin.";
+"groupWindow.app.notFound" = "Bu Mac-da tapılmadı · %@";
+"groupWindow.app.remove.website" = "%@ saytını bu qrupdan çıxar.";
+"groupWindow.app.remove" = "%@ tətbiqini bu qrupdan çıxar. Tətbiqin özünə təsir etmir.";
+"groupWindow.section.dockTile" = "Dock kafelı";
+"groupWindow.tile.preview" = "Önizləmə";
+"groupWindow.tile.shows" = "Göstərir";
+"groupWindow.tile.kind.grid" = "Tətbiq ikonları şəbəkəsi";
+"groupWindow.tile.background" = "Fon";
+"groupWindow.tile.backgroundColor" = "Fon rəngi";
+"groupWindow.tile.pinned" = "Kafeli Dock-da bərkidin";
+"groupWindow.tile.preview.accessibility" = "Kafel önizləməsi, %ld nöqtə";
+"groupWindow.section.standalone" = "Müstəqil";
+"groupWindow.standalone.toggle" = "Müstəqil Dock ikonu";
+"groupWindow.standalone.help" = "Bu qrupa Dock-da öz ikonu ilə öz tətbiqini verir.";
+"groupWindow.standalone.settingUp" = "Dock ikonu qurulur…";
+"groupWindow.standalone.removing" = "Dock ikonu silinir…";
+"groupWindow.standalone.groupApp" = "Qrup tətbiqi";
+"groupWindow.standalone.updateDockIcon" = "Dock ikonunu yenilə";
+"groupWindow.standalone.updateDockIcon.help" = "Dock-u təzə ikon keşi ilə yenidən başladır, beləliklə kafel qrupun cari ikonunu göstərir.";
+"groupWindow.standalone.staleIcon" = "Dock hələ də əvvəlki ikonu göstərir.";
+"groupWindow.standalone.footer" = "Qrupa Dock-un sonunda, yuxarıdakı kafeli ikon kimi istifadə edən öz kiçik tətbiqini verir. Üzərinə klik etdikdə qrupun açılan pəncərəsi göstərilir (⌥-klik bütün tətbiqlərini açır), %@ işləmədikdə də; sağ klik qrupun tətbiqlərini siyahılayır (Ayarlar → Popup). Bunu söndürdükdə, qrupu sildikdə və ya ikonu Dock-dan kənara sürüşdürdükdə həmin tətbiq silinir. İkonu əlavə və ya silmək Dock-u bir an yenidən başladır.";
+"groupWindow.section.popup" = "Açılan pəncərə";
+"groupWindow.popup.columns" = "Sütunlar";
+"groupWindow.popup.maxRows" = "Maksimum sətir";
+"groupWindow.popup.appNames" = "Tətbiq adları";
+"groupWindow.popup.show" = "Göstər";
+"groupWindow.popup.hide" = "Gizlət";
+"groupWindow.popup.position" = "Mövqe";
+"groupWindow.popup.footer" = "“%@” tətbiq üzrə açılan pəncərə ayarlarına əməl edir.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Düz";
+"choice.tileBackground.gradient" = "Qradiyent";
+"choice.tileBackground.glass" = "Şüşə";
+"choice.popupAnchor.dockCenter" = "Dock-un mərkəzində";
+"choice.popupAnchor.dockIcon" = "Klikləndiyi ikonun üstündə";
+"choice.theme.dark" = "Tünd";
+"choice.theme.light" = "Açıq";
+"choice.theme.system" = "Sistemə uyğun";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Veb sayt əlavə et";
+"addWebsite.title" = "“%@” qrupuna veb sayt əlavə et";
+"addWebsite.address" = "Ünvan:";
+"addWebsite.address.accessibility" = "Veb sayt ünvanı";
+"addWebsite.name" = "Ad:";
+"addWebsite.name.accessibility" = "Veb sayt adı, ixtiyari";
+"addWebsite.name.placeholder" = "İxtiyari";
+"addWebsite.hint" = "Standart brauzerinizdə açılır. Saytın ünvanını istifadə etmək üçün adı boş buraxın.";
+"addWebsite.duplicate" = "“%@” artıq bu qrupdadır.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Qrupa tətbiq əlavə et";
+"appPicker.message" = "“%@” qrupuna əlavə ediləcək tətbiqləri seçin.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "“%@” qrupundakı tətbiqlər açıla bilmədi.";
+"problems.launch.someFailed" = "“%@” qrupundakı bəzi tətbiqlər açıla bilmədi.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "bu Mac-da tapılmadı.";
+"problems.launch.opened" = "açıldı.";
+"problems.quit.force" = "“%@” qrupundakı bəzi tətbiqlər məcburi bağlana bilmədi.";
+"problems.quit.graceful" = "“%@” qrupundakı bəzi tətbiqlərə çıxmaq təklif edilə bilmədi.";
+"problems.hide" = "“%@” qrupundakı bəzi tətbiqlər gizlədilə bilmədi.";
+"problems.standalone.failed" = "“%@” öz Dock ikonunu ala bilmədi.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Bu qrupun tətbiqi qrupunu aça bilmir.";
+"agent.damaged.message" = "%1$@\n\n%2$@ tətbiqində qrupun tətbiqini yenidən qurması üçün qrup üçün Müstəqil seçimini söndürüb yenidən yandırın.";
+"agent.error.groupMismatch" = "Tətbiqin ayarları başqa qrupa aiddir.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Artıq yandırılıb? Yeniləmədən sonra qeyd əvvəlki versiyaya aid ola bilər: %@ seçin, onu − ilə silin, sonra tətbiqi + ilə yenidən əlavə edin.";
+
+/* Settings window */
+"settings.window.title" = "Ayarlar";
+
+/* Settings tabs */
+"settings.tab.popup" = "Popup";
+"settings.tab.shortcuts" = "Qısayollar və Siri";
+"settings.tab.updates" = "Yeniləmələr";
+"settings.tab.backup" = "Ehtiyat nüsxə";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Dil";
+"general.language.system" = "Sistem (%1$@)";
+"general.language.restartNote" = "Yeni dil tətbiq yenidən başladıldıqdan sonra tətbiq olunacaq.";
+"general.language.restartNow" = "İndi yenidən başlat";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Mövzu";
+"settings.popup.frostedGlass" = "Matlaşdırılmış şüşə fonu";
+"settings.popup.appearance.header" = "Açılan pəncərənin görünüşü";
+"settings.popup.appearance.footer" = "Mövzu yalnız açılan pəncərəyə tətbiq olunur; bu pəncərə macOS görünüşünü izləyir.";
+"settings.popup.columns" = "Sütunlar";
+"settings.popup.columns.detail" = "Avtomatik standart pəncərə enini saxlayır; ədəd isə açılan pəncərəni qrupun ehtiyac duyduğu qədər enli edir.";
+"settings.popup.maxRows" = "Maksimum sətir";
+"settings.popup.maxRows.detail" = "Açılan pəncərənin hündürlüyünü məhdudlaşdırır; böyük qruplar sürüşdürülür.";
+"settings.popup.showNames" = "Tətbiq adlarını göstər";
+"settings.popup.position" = "Mövqe";
+"settings.popup.position.detail" = "Klikləndiyi ikonun üstündə seçimi qrupun Dock ikonu üzərində, menyudan seçildikdə isə menyu çubuğu ikonunun altında açılan pəncərə göstərir. Qısayol, keçid və ya Siri ilə açılan pəncərələr Dock-un mərkəzində qalır.";
+"settings.popup.layout.header" = "Açılan pəncərənin düzümü";
+"settings.popup.layout.footer" = "Bunlar hər qrup üçün standart ayarlardır. Hər qrup onları Qrupları idarə et altında dəyişə bilər.";
+"settings.popup.freeLayout" = "Sərbəst düzüm";
+"settings.popup.freeLayout.detail" = "Tətbiqlər sürüklədiyiniz xanada qalır, digərləri yerini dəyişmir; tətbiqi başqasının üzərinə buraxsanız ikisinin yeri dəyişir.";
+"settings.popup.arranging.header" = "Tətbiqlərin düzülməsi";
+"settings.popup.arranging.footer" = "Söndürülmüş halda qrupun tətbiqləri açılan pəncərəni sıra ilə doldurur və biri köçəndə yer açır. Açılan pəncərədə A→Z isə hər iki halda qrupu ada görə sıralayır.";
+"settings.popup.restoreWindows" = "İşləyən tətbiq yenidən açılanda pəncərələri bərpa et";
+"settings.popup.restoreWindows.detail" = "İşləyən tətbiqə klik etdikdə Dock-da olduğu kimi gizlədilmiş və kiçildilmiş pəncərələri geri qaytarır. Söndürülmüş halda tətbiq yalnız ön plana çıxır.";
+"settings.popup.runningApps.header" = "İşləyən tətbiqlər";
+"settings.popup.dockMenus" = "Qrup Dock ikonlarında menyu";
+"settings.popup.dockMenus.detail" = "İkon bir dəfə klikləndikdən sonra müstəqil qrupun Dock ikonuna sağ klik etdikdə onun tətbiqləri, Hamısını aç, Hamısını gizlət və Hamısını bağla göstərilir. Onun tətbiqi sonra Dock-da və ⌘-Tab-da işləyən kimi görünür.";
+"settings.popup.standaloneIcons.header" = "Müstəqil Dock ikonları";
+"settings.popup.ax.granted" = "Əlçatanlıq icazəsi verilib: kiçildilmiş pəncərələr də geri qayıdır";
+"settings.popup.ax.required" = "Kiçildilmiş pəncərələri bərpa etmək üçün Əlçatanlıq icazəsi lazımdır";
+"settings.popup.ax.detail" = "Məxfilik və təhlükəsizlik → Əlçatanlıq altında %@ tətbiqinə icazə verin. Bu vaxta qədər gizlədilmiş tətbiqlər yenə geri qayıdır və tətbiqlərdən Dock-dakı kimi yenidən açılmaları istənir. Müstəqil qrup ikonları öz tətbiqləri üçün bu icazəyə ehtiyac duyur.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Qrup popup-larını klaviatura qısayolları ilə aç";
+"settings.shortcuts.modifiers" = "Dəyişdirici düymələr";
+"settings.shortcuts.keys" = "Qısayol düymələri";
+"settings.shortcuts.keys.detail" = "Bu düymələri basılı saxlayın və birinci qrup üçün 1, ikinci üçün 2 və s. basın. Popup-u bağlamaq üçün yenidən basın.";
+"settings.shortcuts.header" = "Klaviatura qısayolları";
+"settings.shortcuts.ax.granted" = "Bütün tətbiqlərdə işləyir";
+"settings.shortcuts.ax.needed" = "Əlçatanlıq icazəsi lazımdır";
+"settings.shortcuts.ax.detail" = "Digər tətbiqlərdə işlədikdə qısayolları tanımaq üçün Məxfilik və təhlükəsizlik → Əlçatanlıq altında %@ tətbiqinə icazə verin. Bu vaxta qədər qısayollar yalnız onun popup-u və ya pəncərəsi aktiv olduqda işləyir.";
+"settings.shortcuts.noGroups" = "Hələ qrup yoxdur.";
+"settings.shortcuts.assigned.header" = "Təyin olunmuş qruplar";
+"settings.shortcuts.assigned.footer.limit" = "Qısayolu yalnız ilk doqquz qrup alır. Sırasını dəyişmək üçün qrupları Qrupları idarə et altında sürüşdürün.";
+"settings.shortcuts.assigned.footer" = "Qısayollar qrupların Qrupları idarə et altındakı sırasını izləyir.";
+"settings.shortcuts.siri.group" = "Qrup";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "Siri-dən nə soruşacağınızı görmək üçün qrup əlavə edin.";
+"settings.shortcuts.openShortcuts" = "Qısayolları aç";
+"settings.shortcuts.shortcutsApp" = "Qısayollar tətbiqi";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group və Show Group orada və Spotlight-da əməliyyatlardır: onları öz tetikleyicinizlə öz qısayollarınıza əlavə edin.";
+"settings.shortcuts.siri.header" = "Siri və Qısayollar";
+"settings.shortcuts.siri.footer" = "Siri-yə bu sözlərlə səslə və ya yazaraq müraciət edin. Onlar qrupun cari adından istifadə edir; yaratdığınız qısayollar adı dəyişdikdən sonra da işləməyə davam edir.";
+"settings.shortcuts.links.noGroups" = "Keçidlərini görmək üçün qrup əlavə edin.";
+"settings.shortcuts.links.footer" = "Keçidi skriptdən və ya başqa tətbiqdən açın, məsələn Terminal-da `open` ilə. Qrup adı ilə (böyük-kiçik hərf, diakritik və durğu işarələri fərq etmir) və ya ad qeyri-müəyyən olduqda ID ilə göstərilir. Məcburi çıxmaq üçün çıxış keçidinə ?mode=force əlavə edin.";
+"settings.shortcuts.copy.help" = "“%@” mətnini buferə kopyala.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Ən çox istifadəni menyu çubuğunda göstər";
+"settings.mostUsed.appsShown" = "Göstərilən tətbiqlər";
+"settings.mostUsed.appsShown.detail" = "Ən çox açılan tətbiqlər, menyuda və Ən çox istifadə açılan pəncərəsində.";
+"settings.mostUsed.sessionLength" = "Sessiya müddəti";
+"settings.mostUsed.together" = "Bu müddət ərzində birlikdə açılıb";
+"settings.mostUsed.together.detail" = "Bu müddət ərzində bir-birinin ardınca açılan tətbiqlər birlikdə istifadə sayılır və bir az yuxarı qalxır.";
+"settings.mostUsed.footer" = "Tətbiqlər Dock, Finder, Spotlight və ya qrupdan neçə dəfə açıldığına görə sıralanır. Siyahı gizli olsa belə işə salınmalar sayılır.";
+"settings.mostUsed.recorded" = "Qeydə alınıb";
+"settings.mostUsed.clear" = "Tarixçəni təmizlə…";
+"settings.mostUsed.history" = "Tarixçə";
+"settings.mostUsed.history.detail" = "Yalnız bu Mac-da, Application Support-da usage-stats.json və usage-cooccurrence.json fayllarında saxlanılır.";
+"settings.mostUsed.usageHistory.header" = "İstifadə tarixçəsi";
+"settings.mostUsed.clear.confirm.title" = "İstifadə tarixçəsi təmizlənsin?";
+"settings.mostUsed.clear.confirm.button" = "Tarixçəni təmizlə";
+"settings.mostUsed.clear.confirm.message" = "Ən çox istifadə siyahısı sıfırdan başlayacaq. Qruplarınız və tətbiqləriniz təsirlənmir.";
+"settings.mostUsed.summary.none" = "Hələ işə salınma yoxdur";
+"settings.mostUsed.summary.launches.one" = "1 işə salınma";
+"settings.mostUsed.summary.launches.other" = "%ld işə salınma";
+"settings.mostUsed.summary" = "%2$@-dən %1$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Yeniləmələri avtomatik yoxla";
+"settings.updates.currentVersion" = "Cari versiya";
+"settings.updates.lastChecked" = "Son yoxlama";
+"settings.updates.checkNow" = "İndi yoxla";
+"settings.updates.otherVersions" = "Digər versiyalar…";
+"settings.updates.footer" = "Layihənin GitHub buraxılışlarını tətbiq açılanda və hər 6 saatdan bir yoxlayır; yalnız tətbiqin versiya nömrəsi göndərilir. Yeni versiya yalnız Yüklə və quraşdır seçdikdən sonra quraşdırılır. Digər versiyalar… hər dərc olunmuş buraxılışı, köhnə və ya yeni, quraşdırır; geri qayıdanda avtomatik yoxlamalarda daha yeni versiyalar atlanır.";
+"settings.updates.viewChangelog" = "Dəyişiklikləri göstər";
+"settings.updates.latestPath" = "Ən son yola qayıt: hər yeni buraxılış təklif olunur";
+"settings.updates.skipped" = "Atlanmış yeni versiyalar: %@";
+"settings.updates.clear" = "Təmizlə";
+"settings.updates.clear.help" = "Avtomatik yoxlamalara bu versiyaları yenidən təklif etməyə icazə ver";
+"settings.updates.never" = "Heç vaxt";
+"settings.updates.status.idle" = "Tətbiq işə düşəndən bəri yoxlanılmayıb";
+"settings.updates.status.checking" = "Yoxlanılır…";
+"settings.updates.status.upToDate" = "Ən son versiyadasınız (v%@)";
+"settings.updates.status.available" = "%@ versiyası mövcuddur";
+"settings.updates.showUpdate" = "Yeniləməni göstər…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Digər versiyalar";
+"settings.otherVersions.intro" = "%@-in dərc olunmuş istənilən buraxılışını, köhnə və ya yeni, quraşdırın. Tətbiq bağlanır və seçdiyiniz versiya kimi yenidən açılır.";
+"settings.otherVersions.releasesLink" = "GitHub-da buraxılışlar səhifəsini aç";
+"settings.otherVersions.loading" = "Buraxılışlar GitHub-dan yüklənir…";
+"settings.otherVersions.none" = "GitHub dərc olunmuş buraxılış göstərmir.";
+"settings.otherVersions.current" = "Cari";
+"settings.otherVersions.noDownload" = "Yükləmə yoxdur";
+"settings.otherVersions.install.help" = "%@ versiyasını quraşdır";
+"settings.otherVersions.install.noImage" = "Bu buraxılışın quraşdırılacağı disk şəkli yoxdur.";
+"settings.otherVersions.confirm.title" = "%@ versiyası quraşdırılsın?";
+"settings.otherVersions.confirm.quits" = "%1$@ bağlanır və %2$@ versiyası kimi yenidən açılır.";
+"settings.otherVersions.confirm.cantUpdate" = "%@ versiyası özünü yeniləyə bilmir: geri qayıtmaq üçün buraxılışlar səhifəsindən daha yeni versiya yükləyin.";
+"settings.otherVersions.confirm.skips" = "Bundan sonra avtomatik yoxlamalar daha yeni versiyaları (%@) atlayır; Yeniləmələri yoxla… isə yenə təklif edir.";
+"settings.otherVersions.confirm.older" = "Köhnə versiya bundan sonra əlavə olunmuş funksiyaları tanımaya bilər; əvvəlcə ehtiyat nüsxə ixrac etməyi düşünün (Ayarlar → Ehtiyat nüsxə).";
+"settings.otherVersions.confirm.upgrade" = "Atlanmış versiyalar təmizlənir, beləliklə avtomatik yoxlamalar hər yeni buraxılışı yenidən təklif edir.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Ayarları ixrac et…";
+"settings.backup.export" = "İxrac et";
+"settings.backup.export.detail" = "Qruplarınızı və ayarlarınızı .dockgroups faylına saxlayır.";
+"settings.backup.import.button" = "Ayarları idxal et…";
+"settings.backup.import" = "İdxal et";
+"settings.backup.import.detail" = "Qruplarınızı və ayarlarınızı ehtiyat faylındakılarla əvəz edir, ya da ehtiyat nüsxənin yeni qruplarını sizinkilərə birləşdirir.";
+"settings.backup.footer" = "Ehtiyat nüsxə qruplarınızı, onların tətbiqlərini və bütün ayarları saxlayır. Ən çox istifadə işə salınma saylarına daxil deyil. Fayl harada saxlasanız orada qalır.";
+"settings.backup.status.exported" = "“%@” faylına ixrac edildi";
+"settings.backup.status.restored" = "%2$@ ilə %1$@ bərpa edildi";
+"settings.backup.status.merged" = "Ehtiyat nüsxədən %@ birləşdirildi";
+"settings.backup.status.mergedSkipped" = "Ehtiyat nüsxədən %1$@ birləşdirildi; %2$ld artıq buradadır";
+"settings.backup.exportPanel.title" = "Ayarları ixrac et";
+"settings.backup.exportPanel.message" = "Qruplarınızı və ayarlarınızı ehtiyat faylına saxlayın.";
+"settings.backup.exportFailed" = "Ayarlar ixrac edilə bilmədi";
+"settings.backup.importPanel.title" = "Ayarları idxal et";
+"settings.backup.importPanel.message" = "Bərpa ediləcək %@ ehtiyat nüsxəsini seçin.";
+"settings.backup.readFailed" = "Fayl oxuna bilmədi";
+"settings.backup.confirm.title" = "Bu ehtiyat nüsxədəki qruplar və ayarlar idxal edilsin?";
+"settings.backup.confirm.replaceAll" = "Hamısını əvəz et";
+"settings.backup.confirm.merge" = "Birləşdir";
+"settings.backup.restoreFailed" = "Ehtiyat nüsxə bərpa edilə bilmədi";
+"settings.backup.restoreFailed.kept" = "%@ Cari qruplarınız və ayarlarınız saxlanıldı.";
+"settings.backup.mergeFailed" = "Ehtiyat nüsxə birləşdirilə bilmədi";
+"settings.backup.mergeFailed.kept" = "%@ Cari qruplarınız saxlanıldı.";
+"settings.backup.rejected.notABackup" = "Ayarları ixrac et… ilə yaradılmış .dockgroups faylını seçin. Heç nə dəyişdirilmədi.";
+"settings.backup.rejected.newer" = "Heç nə dəyişdirilmədi.";
+"settings.backup.confirm.noGroups" = "Ehtiyat nüsxədə qrup yoxdur.";
+"settings.backup.confirm.noGroups.exported" = "Ehtiyat nüsxədə qrup yoxdur, %@ tarixində ixrac edilib.";
+"settings.backup.confirm.contents" = "Ehtiyat nüsxədə %2$@ ilə %1$@ var.";
+"settings.backup.confirm.contents.exported" = "Ehtiyat nüsxədə %2$@ ilə %1$@ var, %3$@ tarixində ixrac edilib.";
+"settings.backup.confirm.replace" = "Hamısını əvəz et, sizinkilər əvəzinə ehtiyat nüsxənin qruplarını və ayarlarını istifadə edir.";
+"settings.backup.confirm.replaced.one" = "Ehtiyat nüsxədəki qrupla eyni adlı 1 cari qrup onunla əvəz olunacaq.";
+"settings.backup.confirm.replaced.other" = "Ehtiyat nüsxədəki qruplarla eyni adlı %ld cari qrup onlarla əvəz olunacaq.";
+"settings.backup.confirm.removed.one" = "Ehtiyat nüsxədə olmayan 1 cari qrup silinəcək.";
+"settings.backup.confirm.removed.other" = "Ehtiyat nüsxədə olmayan %ld cari qrup silinəcək.";
+"settings.backup.confirm.replaceSettings" = "Ayarlarınız (popup, qısayollar, Ən çox istifadə və yeniləmələr) da əvəz olunacaq.";
+"settings.backup.confirm.merge.nothing" = "Birləşdir qruplarınızı və ayarlarınızı saxlayır və heç nə əlavə etmir.";
+"settings.backup.confirm.merge.allHere" = "Birləşdir qruplarınızı və ayarlarınızı saxlayır; ehtiyat nüsxənin bütün qrupları artıq buradadır, ona görə heç nə əlavə etmir.";
+"settings.backup.confirm.merge.adds" = "Birləşdir qruplarınızı və ayarlarınızı saxlayır və ehtiyat nüsxədən %2$@ ilə %1$@ əlavə edir.";
+"settings.backup.confirm.skipped.one" = "Artıq burada olan 1 qrup (eyni ad) atlanacaq.";
+"settings.backup.confirm.skipped.other" = "Artıq burada olan %ld qrup (eyni ad) atlanacaq.";
+"settings.backup.confirm.final" = "Ən çox istifadə işə salınma sayları saxlanılır. Cari fayllarınızın surəti Application Support-da onların yanında saxlanılır. Bu geri qaytarıla bilməz.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Fayla saxla…";
+"settings.diagnostics.export" = "Diaqnostikanı ixrac et";
+"settings.diagnostics.export.detail" = "GitHub problemi və ya dəstək sorğusuna əlavə etmək üçün mətn hesabatı.";
+"settings.diagnostics.header" = "Diaqnostika";
+"settings.diagnostics.footer" = "Tətbiq və macOS versiyalarını, Mac-ınızın modelini, tətbiqin quraşdırıldığı yeri, Əlçatanlıq icazəsini, ayarlarınızı, yeniləmə yoxlamalarını, qrup adlarını tətbiq saylarıyla və son xətaları siyahılayır. Qruplarınızdakı tətbiqləri siyahılamır. Heç yerə göndərilmir.";
+"settings.diagnostics.copied" = "Diaqnostika buferə kopyalandı";
+"settings.diagnostics.saved" = "“%@” faylına saxlanıldı";
+"settings.diagnostics.failed" = "Hesabat saxlanıla bilmədi: %@";
+"settings.diagnostics.panel.title" = "Diaqnostikanı saxla";
+"settings.diagnostics.panel.message" = "Diaqnostika hesabatını mətn faylı kimi saxlayın, məsələn GitHub probleminə əlavə etmək üçün.";
+"settings.diagnostics.panel.prompt" = "Saxla";
+
+/* Software Update window */
+"updateWindow.title" = "Proqram yeniləməsi";
+"updateWindow.checking" = "Yeniləmələr yoxlanılır…";
+"updateWindow.upToDate.title" = "Ən son versiyadasınız!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ mövcud olan ən yeni versiyadır.";
+"updateWindow.available.title" = "%@ üçün yeni versiya mövcuddur!";
+"updateWindow.available.message" = "%1$@ versiyası mövcuddur — sizdə %2$@ var.";
+"updateWindow.available.noImage" = "Bu buraxılışın avtomatik quraşdırma üçün disk şəkli yoxdur; onu buraxılış səhifəsindən yükləyin.";
+"updateWindow.available.question" = "İndi yükləyib quraşdırmaq istərdiniz?";
+"updateWindow.skip" = "Bu versiyanı atla";
+"updateWindow.remindLater" = "Sonra xatırlat";
+"updateWindow.openReleasePage" = "Buraxılış səhifəsini aç";
+"updateWindow.downloadAndInstall" = "Yüklə və quraşdır";
+"updateWindow.downloading" = "%@ versiyası yüklənir…";
+"updateWindow.restartsWhenDone" = "Bitdikdə %@ yenidən başladılacaq.";
+"updateWindow.reopening" = "%@ yenidən açılır.";
+"updateWindow.dryRun.title" = "Sınaq tamamlandı";
+"updateWindow.dryRun.message" = "%1$@ versiyası yükləndi, yoxlandı və %2$@ qovluğuna kopyalandı. Heç nə əvəz edilmədi.";
+"updateWindow.checkFailed" = "Yeniləmələr yoxlanıla bilmədi";
+"updateWindow.installFailed" = "%@ versiyası quraşdırıla bilmədi";
+"updateWindow.link.releases" = "Buraxılışlar";
+"updateWindow.link.releasePage" = "Buraxılış səhifəsi";
+"updateWindow.releaseNotes" = "Buraxılış qeydləri";
+"updateWindow.releaseNotes.none" = "Bu buraxılışın qeydi yoxdur.";
+"updateWindow.relaunchFailed" = "%@ versiyası quraşdırıldı, lakin tətbiq özünü yenidən başlada bilmədi. Onu bağlayıb yenidən açın.";
+
+/* About window */
+"about.section.findMe" = "Onlayn tapın";
+"about.section.support" = "Bu layihəni dəstəkləyin";
+"about.section.books" = "Kitablarım";
+"about.section.software" = "Açıq mənbəli proqramlarım";
+"about.fullList" = "Tam siyahı: github.com/ercanatay";
+"about.section.blogs" = "Medium bloqları";
+"about.icon.accessibility" = "%@ ikonu";
+"about.version" = "Versiya %@ · açıq mənbəli, MIT Lisenziyası";
+"about.website" = "Veb sayt";
+"about.sourceCode" = "Mənbə kodu";
+"about.license" = "Lisenziya";
+"about.reportBug" = "Xəta tapdınız? Problem açın";
+"about.inspiredBy" = "DockGroups-un funksionallığından ilhamlanıb. %@ müstəqil, sıfırdan yazılmış orijinal həllidir; DockGroups-un heç bir kodu və ya qrafikası yoxdur.";
+"about.project.dockGroups" = "Bu tətbiq · macOS üçün Dock qrupları";
+"about.project.intelComputerUse" = "MCP vasitəsilə Intel Mac-lar üçün yerli macOS masaüstü avtomatlaşdırması.";
+"about.project.exchangeRate" = "PHP/MySQL valyuta məzənnəsi və portfel izləyicisi, canlı skan və GitHub buraxılış yeniləmələri ilə.";
+"about.project.backlinkChecker" = "Backlink-lərin mətnlərini, dofollow/nofollow və HTTP statuslarını yoxlayır.";
+"about.project.consentManager" = "YOOtheme Pro 5 Consent Manager tərcümə plagini (WordPress.org).";
+"about.project.antigravityUpdater" = "Antigravity Tools üçün yüngül macOS yeniləyicisi, 21 dil.";
+"about.project.widgetVisibility" = "Vidcetlərin görünməsi üçün Jetpack tələb etməyən WP plagini, alt elementlər dəstəyi ilə.";
+"about.project.forbiddenContent" = "Yazı başlıqlarında qadağan olunmuş açar sözləri (məsələn, “Casino”) tapır — WP audit yoxlayıcısı kimi.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Show %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Launch %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Quit %1$@ in %2$@";
+"core.invocation.showPopup" = "Açılan pəncərəni göstər";
+"core.invocation.openAll" = "Hamısını aç";
+"core.invocation.hideAll" = "Hamısını gizlət";
+"core.invocation.closeAll" = "Hamısını bağla";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Onu açmaq üçün quraşdırılmış veb brauzer yoxdur.";
+"core.launch.notOpened" = "Tətbiq açılmadı.";
+"core.group.defaultName" = "Yeni qrup";
+"core.website.error.empty" = "Veb ünvan daxil edin.";
+"core.website.error.invalid" = "Bu düzgün veb ünvan deyil.";
+"core.website.error.scheme" = "Yalnız http və https ünvanları əlavə edilə bilər, “%@:” yox.";
+"core.website.error.credentials" = "Ünvandan istifadəçi adını və parolu silin.";
+"core.persistence.groups.newer" = "Qruplar faylı daha yeni Cybokron Dock Groups versiyası ilə saxlanılıb (format %ld).";
+"core.backup.error.notABackup" = "Bu fayl Cybokron Dock Groups ehtiyat nüsxəsi deyil.";
+"core.backup.error.newer" = "Bu ehtiyat nüsxə daha yeni Cybokron Dock Groups versiyası ilə yaradılıb (ehtiyat formatı %ld). Bərpa etmək üçün tətbiqi yeniləyin.";
+"core.persistence.usage.newer" = "İstifadə statistikası daha yeni Cybokron Dock Groups versiyası ilə saxlanılıb (format %ld).";
+"core.agent.configuration.newer" = "Qrupun ayarları daha yeni Cybokron Dock Groups versiyası ilə saxlanılıb (format %ld).";
+"core.agent.error.icon" = "Qrupun ikonu çəkilə bilmədi.";
+"core.agent.error.bundleWrite" = "Qrupun tətbiqi yaradıla bilmədi: %@";
+"core.agent.error.toolMissing" = "Bunun üçün lazım olan sistem aləti yoxdur: %@.";
+"core.agent.error.signing" = "macOS hər tətbiqin kod imzalanmasını tələb edir; bu Mac-da qrupun tətbiqinin imzalanması alınmadı, buna görə heç nə quraşdırılmadı.";
+"core.agent.error.registration" = "macOS qrupun tətbiqini qeydə almadı: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups öz icra faylını oxuya bilmədi: %@";
+"core.agent.error.noExecutable" = "Tətbiqin icra faylı yoxdur.";
+"core.dock.saveFailed" = "Dock-un ayarları dəyişdirilə bilmədi.";
+"core.store.loadFailed.title" = "Qruplarınız yüklənə bilmədi";
+"core.store.loadFailed.kept" = "%1$@ Boş qrup siyahısı ilə başlanır. Surəti “%2$@” ünvanında saxlanıldı.";
+"core.store.loadFailed.empty" = "%@ Boş qrup siyahısı ilə başlanır.";
+"core.store.loadFailed.suspended" = "%@ Mövcud faylı qorumaq üçün dəyişikliklər tətbiq yenidən başladılana qədər saxlanılmayacaq.";
+"core.store.saveFailed.title" = "Dəyişiklikləriniz saxlanıla bilmədi";
+"core.preferences.saveFailed" = "Ayarlarınız saxlanıla bilmədi: %@";
+"core.websiteIcon.accessibility" = "Veb sayt";
+"core.update.check.notHTTP" = "Cavab HTTP deyildi.";
+"core.update.check.malformed" = "GitHub-dan buraxılış məlumatı oxuna bilmədi.";
+"core.update.check.unsupportedTag" = "Ən son buraxılış (“%@”) versiya nömrəsi ilə etiketlənməyib.";
+"core.update.check.noRelease" = "Hələ heç bir buraxılış dərc olunmayıb.";
+"core.update.check.rateLimited" = "GitHub hazırda sorğuları məhdudlaşdırır. Bir saatdan sonra yenidən cəhd edin.";
+"core.update.check.httpStatus" = "GitHub HTTP %ld statusu ilə cavab verdi.";
+"core.update.check.network" = "GitHub-a qoşulmaq mümkün olmadı: %@";
+"core.update.check.noVersion" = "Tətbiqin bu nüsxəsinin versiya nömrəsi yoxdur, ona görə müqayisə edilə bilməz.";
+"core.update.install.insecureURL" = "Yeniləmənin yükləmə ünvanı təhlükəsiz deyil (%@).";
+"core.update.install.downloadFailed" = "Yeniləmə yüklənə bilmədi: %@";
+"core.update.install.sizeMismatch" = "Yüklənmiş yeniləmə natamamdır (%2$ld baytdan %1$ld).";
+"core.update.install.checksum" = "Yüklənmiş yeniləmə dərc olunmuş yoxlama məbləği ilə uyğun gəlmir, ona görə quraşdırılmadı.";
+"core.update.install.mountFailed" = "Yeniləmənin disk şəkli açıla bilmədi: %@";
+"core.update.install.appNotFound" = "Yeniləmənin disk şəklində tətbiq yoxdur.";
+"core.update.install.wrongApp" = "Yeniləmənin disk şəklində başqa tətbiq var (%@).";
+"core.update.install.versionMismatch" = "Yüklənmiş tətbiqin versiyası %1$@-dir, lakin buraxılış %2$@-dir.";
+"core.update.install.replaceFailed" = "Yeni versiya yerinə qoyula bilmədi, ona görə cari versiya saxlanıldı: %@";
+"core.update.install.rollbackFailed" = "Yeniləmə alınmadı və əvvəlki versiyanı geri qaytarmaq olmadı. %@ ünvanında saxlanılır.";
+"core.update.location.translocated" = "macOS bu nüsxəni müvəqqəti, yalnız oxunan yerdən işlədir. Tətbiqi Applications qovluğuna köçürün, oradan açın və yenidən cəhd edin.";
+"core.update.location.notFound" = "İşləyən tətbiq %@ ünvanında tapılmadı.";
+"core.update.location.readOnly" = "Tətbiq yalnız oxunan diskdən, məsələn disk şəklindən işləyir. Əvvəlcə onu Applications qovluğuna kopyalayın.";
+"core.update.location.noPermission" = "“%@” içindəki tətbiqi əvəz etmək icazəniz yoxdur. Yeni versiyanı buraxılışlar səhifəsindən yükləyin.";
+"core.update.install.noFile" = "Server heç bir fayl göndərmədi.";
+"core.update.install.httpStatus" = "HTTP statusu %ld.";
+"core.update.install.copyFailed" = "Tətbiqin kopyalanması alınmadı: %@";
+"core.mostUsed.name" = "Ən çox istifadə";
