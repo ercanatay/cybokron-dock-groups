@@ -72,6 +72,48 @@ struct GroupTerminatorTests {
         #expect(apps.terminated.isEmpty && apps.forceTerminated.isEmpty)
     }
 
+    @Test func hideAllHidesOnlyRunningApps() {
+        let apps = FakeRunningApplications(running: [editor.bundleIdentifier: [11, 12], browser.bundleIdentifier: [13]])
+        let group = DockGroup(name: "Work", apps: [editor, stopped, browser])
+
+        let report = GroupTerminator(applications: apps, ownProcessIdentifier: ownPID).hideAll(group)
+
+        #expect(report.groupName == "Work")
+        #expect(report.hidden == [editor, browser])
+        #expect(report.refused.isEmpty)
+        #expect(apps.hidden == [11, 12, 13])
+        // Hiding never quits anything, and apps that aren't running aren't launched.
+        #expect(apps.terminated.isEmpty && apps.forceTerminated.isEmpty)
+    }
+
+    @Test func hideAllSkipsHiddenAppsAndReportsRefusals() {
+        let apps = FakeRunningApplications(
+            running: [editor.bundleIdentifier: [11], browser.bundleIdentifier: [13], stubborn.bundleIdentifier: [21]],
+            refusing: [21],
+            alreadyHidden: [13]
+        )
+        let group = DockGroup(name: "Work", apps: [editor, browser, stubborn])
+
+        let report = GroupTerminator(applications: apps, ownProcessIdentifier: ownPID).hideAll(group)
+
+        #expect(report.hidden == [editor, browser])
+        #expect(report.refused == [stubborn])
+        #expect(apps.hidden == [11, 21])
+    }
+
+    @Test func hideAllNeverHidesItselfOrFinishedApps() {
+        let apps = FakeRunningApplications(
+            running: [editor.bundleIdentifier: [ownPID], browser.bundleIdentifier: [31]],
+            alreadyTerminated: [31]
+        )
+
+        let report = GroupTerminator(applications: apps, ownProcessIdentifier: ownPID)
+            .hideAll(DockGroup(name: "Self", apps: [editor, browser]))
+
+        #expect(report.hidden.isEmpty && report.refused.isEmpty)
+        #expect(apps.hidden.isEmpty)
+    }
+
     @Test func hasRunningAppsSeesAnyRunningMember() {
         let apps = FakeRunningApplications(running: [browser.bundleIdentifier: [13]])
         let terminator = GroupTerminator(applications: apps, ownProcessIdentifier: ownPID)
@@ -106,14 +148,21 @@ private final class FakeRunningApplications: RunningApplicationsProviding {
     final class App: QuittableApplication {
         let processIdentifier: pid_t
         let isTerminated: Bool
+        let isHidden: Bool
         private let refuses: Bool
         private unowned let owner: FakeRunningApplications
 
-        init(processIdentifier: pid_t, isTerminated: Bool, refuses: Bool, owner: FakeRunningApplications) {
+        init(processIdentifier: pid_t, isTerminated: Bool, isHidden: Bool, refuses: Bool, owner: FakeRunningApplications) {
             self.processIdentifier = processIdentifier
             self.isTerminated = isTerminated
+            self.isHidden = isHidden
             self.refuses = refuses
             self.owner = owner
+        }
+
+        func hide() -> Bool {
+            MainActor.assumeIsolated { owner.hidden.append(processIdentifier) }
+            return !refuses
         }
 
         func terminate() -> Bool {
@@ -130,11 +179,23 @@ private final class FakeRunningApplications: RunningApplicationsProviding {
     private var apps: [String: [App]] = [:]
     var terminated: [pid_t] = []
     var forceTerminated: [pid_t] = []
+    var hidden: [pid_t] = []
 
-    init(running: [String: [pid_t]], refusing: Set<pid_t> = [], alreadyTerminated: Set<pid_t> = []) {
+    init(
+        running: [String: [pid_t]],
+        refusing: Set<pid_t> = [],
+        alreadyTerminated: Set<pid_t> = [],
+        alreadyHidden: Set<pid_t> = []
+    ) {
         for (bundleIdentifier, pids) in running {
             apps[bundleIdentifier] = pids.map {
-                App(processIdentifier: $0, isTerminated: alreadyTerminated.contains($0), refuses: refusing.contains($0), owner: self)
+                App(
+                    processIdentifier: $0,
+                    isTerminated: alreadyTerminated.contains($0),
+                    isHidden: alreadyHidden.contains($0),
+                    refuses: refusing.contains($0),
+                    owner: self
+                )
             }
         }
     }

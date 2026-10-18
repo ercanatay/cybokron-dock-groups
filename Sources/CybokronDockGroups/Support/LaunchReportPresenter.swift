@@ -34,6 +34,18 @@ enum LaunchReportPresenter {
         alert.runModal()
     }
 
+    /// Tells the user about running apps that Hide All couldn't hide.
+    static func presentProblems(in report: HideReport) {
+        guard !report.refused.isEmpty else { return }
+
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "Some apps in “\(report.groupName)” couldn't be hidden."
+        alert.informativeText = report.refused.map { "• \($0.name)" }.joined(separator: "\n")
+        NSApp.activate()
+        alert.runModal()
+    }
+
     private static func description(of outcome: LaunchReport.Outcome) -> String {
         switch outcome {
         case .notFound: return "not found on this Mac."

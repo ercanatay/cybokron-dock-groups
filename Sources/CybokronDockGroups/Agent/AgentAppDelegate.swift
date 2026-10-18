@@ -7,8 +7,8 @@ import OSLog
 ///
 /// Started from its Dock tile, the agent shows the group's popup over the Dock; clicking the tile
 /// again hides it, and clicking it with ⌥ held opens all of the group's apps right away. The popup
-/// opens apps, Open All and Close All as in the main app, but doesn't change the group: reordering
-/// and removing apps happen in the main app.
+/// opens apps, Open All, Hide All and Close All as in the main app, but doesn't change the group:
+/// reordering and removing apps happen in the main app.
 ///
 /// The group comes from the bundle's `group-config.json` only, so the agent works while the main
 /// app isn't running; the main app rewrites the file when the group changes and tells the agent
@@ -130,6 +130,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
                 open: { [weak self] app, group in self?.open(app, in: group) },
                 openAll: { [weak self] group in self?.openAll(group) },
                 closeAll: { [weak self] group, mode in self?.closeAll(group, mode: mode) },
+                hideAll: { [weak self] group in self?.hideAll(group) },
                 manageGroups: { [weak self] in self?.openMainApp() }
             )
         )
@@ -176,6 +177,10 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
 
     private func closeAll(_ group: DockGroup, mode: QuitMode) {
         LaunchReportPresenter.presentProblems(in: terminator.closeAll(group, mode: mode))
+    }
+
+    private func hideAll(_ group: DockGroup) {
+        LaunchReportPresenter.presentProblems(in: terminator.hideAll(group))
     }
 
     /// Groups are edited in the main app: open its group window.

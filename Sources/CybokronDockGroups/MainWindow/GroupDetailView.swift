@@ -117,6 +117,9 @@ struct GroupDetailView: View {
                     .help("Show this group's popup over the Dock.")
                 Button("Open All") { actions.openAll(group) }
                     .disabled(group.apps.isEmpty)
+                Button("Hide All") { actions.hideAll(group) }
+                    .disabled(group.apps.isEmpty)
+                    .help("Hide this group's running apps. Apps that aren't running stay closed.")
             }
         }
     }

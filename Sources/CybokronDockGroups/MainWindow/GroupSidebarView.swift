@@ -9,6 +9,7 @@ struct GroupSidebarView: View {
     let onRename: (DockGroup) -> Void
     let onDelete: (DockGroup) -> Void
     let onOpenAll: (DockGroup) -> Void
+    let onHideAll: (DockGroup) -> Void
 
     private var selectedGroup: DockGroup? {
         selection.flatMap(store.group(withID:))
@@ -21,6 +22,8 @@ struct GroupSidebarView: View {
                     .tag(group.id)
                     .contextMenu {
                         Button("Open All") { onOpenAll(group) }
+                            .disabled(group.apps.isEmpty)
+                        Button("Hide All") { onHideAll(group) }
                             .disabled(group.apps.isEmpty)
                         Button("Rename…") { onRename(group) }
                         Divider()

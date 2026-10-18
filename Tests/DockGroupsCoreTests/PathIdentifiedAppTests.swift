@@ -120,6 +120,7 @@ private final class PathRunningApplications: RunningApplicationsProviding {
     final class App: QuittableApplication {
         let processIdentifier: pid_t = 42
         let isTerminated = false
+        let isHidden = false
         private let identifier: String
         private unowned let owner: PathRunningApplications
 
@@ -134,6 +135,8 @@ private final class PathRunningApplications: RunningApplicationsProviding {
         }
 
         func forceTerminate() -> Bool { terminate() }
+
+        func hide() -> Bool { true }
     }
 
     private let running: Set<String>

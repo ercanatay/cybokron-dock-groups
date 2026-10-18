@@ -72,6 +72,8 @@ struct URLCommandTests {
         #expect(command("cybokrondockgroups://launch/work") == .launchGroup("work"))
         #expect(command("cybokrondockgroups://quit/work") == .quitGroup("work", .graceful))
         #expect(command("cybokrondockgroups://quit/work?mode=force") == .quitGroup("work", .force))
+        #expect(command("cybokrondockgroups://hide/work") == .hideGroup("work"))
+        #expect(command("cybokrondockgroups://HIDE/Deep%20Work") == .hideGroup("Deep Work"))
         #expect(command("cybokrondockgroups://shortcut/3") == .showShortcut(3))
     }
 
@@ -100,6 +102,8 @@ struct URLCommandTests {
         "cybokrondockgroups://open",
         "cybokrondockgroups://open/",
         "cybokrondockgroups://launch",
+        "cybokrondockgroups://hide",
+        "cybokrondockgroups://hide/",
         "cybokrondockgroups://shortcut/0",
         "cybokrondockgroups://shortcut/10",
         "cybokrondockgroups://shortcut/two",
@@ -115,6 +119,8 @@ struct URLCommandTests {
         #expect(URLCommand.showGroup("Deep Work").throttleKey == URLCommand.showGroup("deep-work").throttleKey)
         #expect(URLCommand.showGroup("work").throttleKey != URLCommand.launchGroup("work").throttleKey)
         #expect(URLCommand.quitGroup("work", .graceful).throttleKey != URLCommand.quitGroup("work", .force).throttleKey)
+        #expect(URLCommand.hideGroup("Deep Work").throttleKey == URLCommand.hideGroup("deep-work").throttleKey)
+        #expect(URLCommand.hideGroup("work").throttleKey != URLCommand.quitGroup("work", .graceful).throttleKey)
     }
 }
 

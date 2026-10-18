@@ -5,6 +5,8 @@ import SwiftUI
 struct MainWindowView: View {
     struct Actions {
         let openAll: (DockGroup) -> Void
+        /// Hides the group's running apps.
+        let hideAll: (DockGroup) -> Void
         let showPopup: (DockGroup) -> Void
     }
 
@@ -30,7 +32,8 @@ struct MainWindowView: View {
                 onAdd: addGroup,
                 onRename: beginRename,
                 onDelete: confirmDeletion,
-                onOpenAll: actions.openAll
+                onOpenAll: actions.openAll,
+                onHideAll: actions.hideAll
             )
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
         } detail: {

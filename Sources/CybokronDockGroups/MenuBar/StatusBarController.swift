@@ -2,7 +2,8 @@ import AppKit
 import DockGroupsCore
 
 /// The menu bar item. Its menu lists the groups with their tiles: choosing one shows the group's
-/// popup, choosing it with ⌥ held opens all of its apps right away. Below them, the Most Used
+/// popup, choosing it with ⌥ held opens all of its apps right away, and with ⇧⌥ held hides its
+/// running apps. Below them, the Most Used
 /// section lists the most launched apps: choosing one opens it, and the section's first item
 /// shows them in a popup.
 @MainActor
@@ -10,6 +11,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     struct Actions {
         let showPopup: (DockGroup) -> Void
         let openAll: (DockGroup) -> Void
+        let hideAll: (DockGroup) -> Void
         let showMainWindow: () -> Void
         let showSettings: () -> Void
         let showAbout: () -> Void
@@ -72,6 +74,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
             for group in store.groups {
                 menu.addItem(popupItem(for: group))
                 menu.addItem(openAllItem(for: group))
+                menu.addItem(hideAllItem(for: group))
             }
         }
         addMostUsedSection()
@@ -139,7 +142,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let appCount = group.apps.count
         item.badge = appCount > 0 ? NSMenuItemBadge(count: appCount) : nil
         let shortcut = actions.shortcutTitle(group).map { " Shortcut: \($0)." } ?? ""
-        item.toolTip = "Show the apps in “\(group.name)”. Hold ⌥ to open them all at once.\(shortcut)"
+        item.toolTip = "Show the apps in “\(group.name)”. Hold ⌥ to open them all at once, or ⇧⌥ to hide the running ones.\(shortcut)"
         return item
     }
 
@@ -159,6 +162,21 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         return item
     }
 
+    /// Replaces the group's item while ⇧⌥ is held. Apps that aren't running are left alone.
+    private func hideAllItem(for group: DockGroup) -> NSMenuItem {
+        let item = NSMenuItem(title: "Hide All in “\(group.name)”", action: #selector(hideGroup(_:)), keyEquivalent: "")
+        item.target = self
+        item.representedObject = group.id
+        item.image = actions.tileImage(group)
+        item.keyEquivalentModifierMask = [.option, .shift]
+        item.isAlternate = true
+        item.isEnabled = !group.apps.isEmpty
+        item.toolTip = group.apps.isEmpty
+            ? "“\(group.name)” has no apps yet."
+            : "Hide the running apps in “\(group.name)”. Apps that aren't running stay closed."
+        return item
+    }
+
     private func group(for sender: NSMenuItem) -> DockGroup? {
         (sender.representedObject as? UUID).flatMap(store.group(withID:))
     }
@@ -171,6 +189,11 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc private func openGroup(_ sender: NSMenuItem) {
         guard let group = group(for: sender) else { return }
         actions.openAll(group)
+    }
+
+    @objc private func hideGroup(_ sender: NSMenuItem) {
+        guard let group = group(for: sender) else { return }
+        actions.hideAll(group)
     }
 
     @objc private func showMostUsed(_ sender: NSMenuItem) {

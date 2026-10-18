@@ -8,6 +8,7 @@ import Foundation
 /// | `cybokrondockgroups://open/<group>` (or `show/<group>`) | Show the group's popup |
 /// | `cybokrondockgroups://launch/<group>` | Open All |
 /// | `cybokrondockgroups://quit/<group>` (`?mode=force` to force quit) | Close All |
+/// | `cybokrondockgroups://hide/<group>` | Hide All |
 /// | `cybokrondockgroups://shortcut/<1…9>` | Show the popup of the group with that shortcut |
 /// | `cybokrondockgroups://close` | Close the popup |
 /// | `cybokrondockgroups://settings` | Open Settings |
@@ -16,6 +17,7 @@ public enum URLCommand: Hashable, Sendable {
     case showGroup(String)
     case launchGroup(String)
     case quitGroup(String, QuitMode)
+    case hideGroup(String)
     case showShortcut(Int)
     case closePopup
     case openSettings
@@ -48,6 +50,9 @@ public enum URLCommand: Hashable, Sendable {
         case "quit":
             guard !argument.isEmpty else { return nil }
             self = .quitGroup(argument, mode == "force" ? .force : .graceful)
+        case "hide":
+            guard !argument.isEmpty else { return nil }
+            self = .hideGroup(argument)
         case "shortcut":
             guard let digit = Int(argument), GroupShortcuts.digits.contains(digit) else { return nil }
             self = .showShortcut(digit)
@@ -72,6 +77,7 @@ public enum URLCommand: Hashable, Sendable {
         case .showGroup(let group): return "show/\(GroupLookup.normalizedToken(group))"
         case .launchGroup(let group): return "launch/\(GroupLookup.normalizedToken(group))"
         case .quitGroup(let group, let mode): return "quit/\(GroupLookup.normalizedToken(group))?\(mode.rawValue)"
+        case .hideGroup(let group): return "hide/\(GroupLookup.normalizedToken(group))"
         case .showShortcut(let digit): return "shortcut/\(digit)"
         case .closePopup: return "close"
         case .openSettings: return "settings"

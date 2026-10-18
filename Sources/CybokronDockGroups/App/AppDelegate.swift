@@ -43,6 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             standalone: standalone,
             actions: MainWindowView.Actions(
                 openAll: { [weak self] group in self?.openAll(group) },
+                hideAll: { [weak self] group in self?.hideAll(group) },
                 showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
             )
         )
@@ -74,6 +75,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             open: { [weak self] app, group in self?.open(app, in: group) },
             openAll: { [weak self] group in self?.openAll(group) },
             closeAll: { [weak self] group, mode in self?.closeAll(group, mode: mode) },
+            hideAll: { [weak self] group in self?.hideAll(group) },
             manageGroups: { [weak self] in self?.mainWindowController.show() }
         )
     )
@@ -123,6 +125,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             actions: StatusBarController.Actions(
                 showPopup: { [weak self] group in self?.popupController.toggle(groupID: group.id) },
                 openAll: { [weak self] group in self?.openAll(group) },
+                hideAll: { [weak self] group in self?.hideAll(group) },
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
                 showSettings: { [weak self] in self?.showSettingsWindow(nil) },
                 showAbout: { [weak self] in self?.showAboutWindow(nil) },
@@ -236,6 +239,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         LaunchReportPresenter.presentProblems(in: quitAll(group, mode: mode))
     }
 
+    private func hideAll(_ group: DockGroup) {
+        LaunchReportPresenter.presentProblems(in: terminator.hideAll(group))
+    }
+
     // MARK: - Global shortcuts
 
     /// Shortcut *n* shows or hides the *n*-th group's popup.
@@ -288,6 +295,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if let group = group(named: name) { openAll(group) }
         case .quitGroup(let name, let mode):
             if let group = group(named: name) { closeAll(group, mode: mode) }
+        case .hideGroup(let name):
+            if let group = group(named: name) { hideAll(group) }
         case .showShortcut(let digit):
             if let group = GroupShortcuts.group(forDigit: digit, in: store.groups) {
                 popupController.show(groupID: group.id)

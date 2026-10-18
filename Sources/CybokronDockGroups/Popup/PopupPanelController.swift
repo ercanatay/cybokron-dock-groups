@@ -17,6 +17,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let open: (AppReference, DockGroup) -> Void
         let openAll: (DockGroup) -> Void
         let closeAll: (DockGroup, QuitMode) -> Void
+        let hideAll: (DockGroup) -> Void
         let manageGroups: () -> Void
     }
 
@@ -249,6 +250,11 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 guard let self, let group = self.group(withID: id) else { return }
                 self.close(reason: .appAction)
                 self.actions.closeAll(group, mode)
+            },
+            hideAll: { [weak self] in
+                guard let self, let group = self.group(withID: id) else { return }
+                self.close(reason: .appAction)
+                self.actions.hideAll(group)
             },
             manageGroups: { [weak self] in
                 self?.close(reason: .appAction)

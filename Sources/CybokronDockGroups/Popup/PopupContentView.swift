@@ -8,8 +8,9 @@ enum PopupMetrics {
     static let footerHeight: CGFloat = 28
     /// Header, footer and the two hairlines between them and the grid.
     static let chromeHeight: CGFloat = headerHeight + footerHeight + 2
-    /// Narrowest popup; keeps the header readable for one-column groups.
-    static let minimumWidth: CGFloat = 380
+    /// Narrowest popup; keeps the header (name, Open All, Hide All, Close All) readable for
+    /// one-column groups.
+    static let minimumWidth: CGFloat = 440
     static let headerTileSize: CGFloat = 30
     static let iconSize: CGFloat = 52
 
@@ -53,6 +54,8 @@ struct PopupActions {
     let open: (AppReference) -> Void
     let openAll: () -> Void
     let closeAll: (QuitMode) -> Void
+    /// Hides the running apps; apps that aren't running are left alone.
+    let hideAll: () -> Void
     let manageGroups: () -> Void
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
@@ -80,7 +83,8 @@ private struct CellDrag: Equatable {
     var isInRemovalArea: Bool
 }
 
-/// The popup: the group's tile and name with Open All / Close All, the app grid, and a hint line.
+/// The popup: the group's tile and name with Open All / Hide All / Close All, the app grid, and a
+/// hint line.
 ///
 /// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
 /// the group, as with the Dock. In Free Layout a dragged app goes to the cell it's dropped on
@@ -149,6 +153,13 @@ struct PopupContentView: View {
                 .help(content.isMostUsed
                     ? "Open every app in this list; running apps come to the front."
                     : "Open every app in this group; running apps come to the front.")
+            Button("Hide All", action: actions.hideAll)
+                .buttonStyle(PillButtonStyle(tint: PanelPalette.indigo, filled: false))
+                .fixedSize()
+                .disabled(runningCount == 0)
+                .help(content.isMostUsed
+                    ? "Hide this list's running apps; apps that aren't running stay closed."
+                    : "Hide this group's running apps; apps that aren't running stay closed.")
             Button(quitMode == .force ? "Force Quit" : "Close All") {
                 // The keys held during the click decide, even if no flags change was seen.
                 let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags
