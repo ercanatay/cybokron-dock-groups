@@ -1,4 +1,3 @@
-import Combine
 import DockGroupsCore
 import SwiftUI
 
@@ -125,16 +124,16 @@ struct PopupSettingsView: View {
     }
 }
 
-/// Whether minimized windows can be restored: that needs Accessibility access. Checked again while
-/// shown, since access is granted in System Settings, which doesn't tell the app.
+/// Whether minimized windows can be restored: that needs Accessibility access. Access is granted in
+/// System Settings, which doesn't tell the app, so `AccessibilityTrustMonitor` reads it again while
+/// this shows (every second until granted, and whenever the app becomes active again).
 private struct WindowRestoreAccessStatus: View {
-    @State private var isTrusted = AccessibilityAccess.isTrusted
-    private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    @ObservedObject private var access = AccessibilityTrustMonitor.shared
 
     var body: some View {
         Group {
-            if isTrusted {
-                Label("Minimized windows come back too", systemImage: "checkmark.circle.fill")
+            if access.isTrusted {
+                Label("Accessibility access granted: minimized windows come back too", systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.green)
             } else {
                 LabeledContent {
@@ -143,10 +142,11 @@ private struct WindowRestoreAccessStatus: View {
                     Label("Restoring minimized windows requires Accessibility access", systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
                     Text("Allow \(AppInfo.name) under Privacy & Security → Accessibility. Until then, hidden apps still come back, and apps are asked to reopen as from the Dock. Standalone group icons need the access for their own apps.")
+                    Text(AccessibilityAccess.staleEntryHint)
                 }
             }
         }
-        .onAppear { isTrusted = AccessibilityAccess.isTrusted }
-        .onReceive(refresh) { _ in isTrusted = AccessibilityAccess.isTrusted }
+        .onAppear { access.beginObserving() }
+        .onDisappear { access.endObserving() }
     }
 }

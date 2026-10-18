@@ -8,7 +8,7 @@ import OSLog
 /// a local one for key presses while this app or its popup has the keyboard, and a global one for
 /// key presses in other apps. macOS delivers other apps' key presses only to apps allowed under
 /// Privacy & Security → Accessibility, so the monitor asks for that access — once, the first time
-/// shortcuts are on — and keeps checking until it's granted.
+/// shortcuts are on — and keeps checking until it's granted (through `AccessibilityTrustMonitor`).
 ///
 /// A global monitor observes key presses without consuming them: the app in front receives the
 /// key press as well.
@@ -21,22 +21,28 @@ final class GlobalShortcutMonitor: ObservableObject {
     static let didPromptAccessibilityKey = "didPromptAccessibility"
 
     private let preferences: PreferencesStore
+    private let trust: AccessibilityTrustMonitor
     private let defaults: UserDefaults
     private let onShortcut: (Int) -> Void
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Shortcuts")
 
     private var localMonitor: Any?
     private var globalMonitor: Any?
-    private var trustTimer: Timer?
+    /// Whether this monitor asked `trust` to keep checking access.
+    private var isWatchingTrust = false
     private var subscriptions: Set<AnyCancellable> = []
     /// The settings the monitors were installed for.
     private var installed: (enabled: Bool, modifiers: ShortcutModifiers)?
 
-    init(preferences: PreferencesStore, defaults: UserDefaults = .standard, onShortcut: @escaping (Int) -> Void) {
+    /// - Parameter trust: the access monitor; `AccessibilityTrustMonitor.shared` when `nil`.
+    init(preferences: PreferencesStore, trust: AccessibilityTrustMonitor? = nil, defaults: UserDefaults = .standard,
+         onShortcut: @escaping (Int) -> Void) {
         self.preferences = preferences
+        let trust = trust ?? .shared
+        self.trust = trust
         self.defaults = defaults
         self.onShortcut = onShortcut
-        isAccessibilityTrusted = AXIsProcessTrusted()
+        isAccessibilityTrusted = trust.isTrusted
     }
 
     /// Starts following the shortcut preferences. Call once the app has finished launching.
@@ -46,8 +52,9 @@ final class GlobalShortcutMonitor: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.applyPreferences() }
             .store(in: &subscriptions)
-        NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
-            .sink { [weak self] _ in self?.refreshTrust() }
+        // The monitor reads access again when the app becomes active and while it's watched.
+        trust.$isTrusted
+            .sink { [weak self] trusted in self?.trustChanged(to: trusted) }
             .store(in: &subscriptions)
         applyPreferences()
     }
@@ -126,15 +133,21 @@ final class GlobalShortcutMonitor: ObservableObject {
     private func promptForAccessibilityOnce() {
         refreshTrust()
         guard !isAccessibilityTrusted, !defaults.bool(forKey: Self.didPromptAccessibilityKey) else { return }
-        isAccessibilityTrusted = AccessibilityAccess.promptOnce(rememberedBy: Self.didPromptAccessibilityKey, defaults: defaults)
+        AccessibilityAccess.promptOnce(rememberedBy: Self.didPromptAccessibilityKey, defaults: defaults)
         logger.notice("Asked for Accessibility access for the global shortcuts")
+        refreshTrust()
     }
 
+    /// Reads access again now.
     func refreshTrust() {
-        let trusted = AXIsProcessTrusted()
+        trust.refresh()
+        trustChanged(to: trust.isTrusted)
+    }
+
+    private func trustChanged(to trusted: Bool) {
         guard trusted != isAccessibilityTrusted else { return }
         isAccessibilityTrusted = trusted
-        logger.notice("Accessibility access \(trusted ? "granted" : "revoked", privacy: .public)")
+        logger.notice("Accessibility access for the global shortcuts \(trusted ? "granted" : "revoked", privacy: .public)")
         guard let installed, installed.enabled else { return }
         if trusted {
             installGlobalMonitor(modifiers: installed.modifiers)
@@ -144,16 +157,17 @@ final class GlobalShortcutMonitor: ObservableObject {
         }
     }
 
-    /// Access is granted in System Settings, which doesn't notify the app; check every few seconds.
+    /// Access is granted in System Settings, which doesn't notify the app; `trust` checks every
+    /// second while it's missing.
     private func startWatchingTrust() {
-        guard trustTimer == nil else { return }
-        trustTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.refreshTrust() }
-        }
+        guard !isWatchingTrust else { return }
+        isWatchingTrust = true
+        trust.beginObserving()
     }
 
     private func stopWatchingTrust() {
-        trustTimer?.invalidate()
-        trustTimer = nil
+        guard isWatchingTrust else { return }
+        isWatchingTrust = false
+        trust.endObserving()
     }
 }

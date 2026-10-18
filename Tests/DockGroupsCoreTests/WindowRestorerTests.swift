@@ -104,6 +104,19 @@ struct WindowRestorerTests {
         #expect(!WindowRestorer(accessibility: FakeAccessibility(isTrusted: false, windows: [])).canRestoreMinimizedWindows)
     }
 
+    @Test func accessGrantedWhileRunningWorksOnTheNextRestore() {
+        let window = FakeWindow(isMinimized: true)
+        let accessibility = FakeAccessibility(isTrusted: false, windows: [window])
+        let restorer = WindowRestorer(accessibility: accessibility)
+
+        #expect(restorer.restore(FakeApplication(isHidden: false)).restoredWindowCount == 0)
+        accessibility.isTrusted = true
+
+        #expect(restorer.canRestoreMinimizedWindows, "access isn't cached")
+        #expect(restorer.restore(FakeApplication(isHidden: false)).restoredWindowCount == 1)
+        #expect(window.restoreCount == 1)
+    }
+
     // MARK: - Opening an app
 
     @Test func openingARunningAppReopensItWhenRestoringWindows() async {
@@ -188,7 +201,7 @@ private final class FakeWindow: AccessibleWindow {
 
 @MainActor
 private final class FakeAccessibility: WindowAccessibility {
-    let isTrusted: Bool
+    var isTrusted: Bool
     private let windows: [FakeWindow]?
     private(set) var readCount = 0
     private(set) var requestedProcess: pid_t?

@@ -13,7 +13,11 @@ enum AccessibilityAccess {
     private static let settingsURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
     private static let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Accessibility")
 
-    static var isTrusted: Bool { AXIsProcessTrusted() }
+    /// For an app that is already switched on in the list but still lacks access. macOS ties the
+    /// entry to the app's code signature; an ad hoc signed build (as this one is unless notarized)
+    /// gets a new signature with every build and update, so an older entry stops matching while its
+    /// switch stays on.
+    static let staleEntryHint = "Already switched on? After an update the entry may belong to the previous version: select \(AppInfo.name), remove it with −, then add the app again with +."
 
     /// Shows the system's Accessibility prompt, which also lists the app under Privacy & Security →
     /// Accessibility, unless access is granted or the prompt was shown for `key` before. Returns

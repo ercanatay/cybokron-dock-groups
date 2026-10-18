@@ -75,6 +75,7 @@ struct ShortcutsSettingsView: View {
                 Label("Needs Accessibility access", systemImage: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
                 Text("To notice the shortcuts while you work in other apps, allow \(AppInfo.name) under Privacy & Security → Accessibility. Until then they work only while its popup or a window of it is active.")
+                Text(AccessibilityAccess.staleEntryHint)
             }
         }
     }
