@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Keyboard navigation in the popup**: the arrow keys move a selection through the grid (stopping
+  at the edges, scrolling it into view, skipping empty Free Layout cells), Return opens the selected
+  app exactly as clicking it does (running apps come to the front; launches count for Most Used),
+  Tab / ⇧Tab switch to the next / previous group in the menu bar menu's order (Most Used last), and
+  Escape still closes the popup.
+- **Type-to-filter in the popup**: typing letters or digits narrows the grid to the apps whose name
+  matches — case and accents ignored (`c` finds “Ç…”, `i` finds “ı”), names starting with the text
+  first, then names with a word starting with it, then the rest. Return opens the selected (by
+  default the best) match, Delete removes the last letter, Escape clears the filter, and when nothing
+  matches the popup says so. The popup keeps its size and position while filtering.
+- **Export Diagnostics** in Settings → Backup: **Copy** puts a plain-text report on the clipboard
+  ("Copied" for a moment), **Save to File…** saves it as a .txt. It lists the app version and build,
+  macOS and the Mac's model, where the app is installed, Accessibility access, the popup and other
+  settings, the last update check and its result, the group names with their app counts (no app
+  names or paths), and the latest errors the app logged (with the home folder shortened to `~`).
+
 ### Fixed
 
 - The About window's "Find Me Online" buttons showed no icons: their SVG path data was handed to

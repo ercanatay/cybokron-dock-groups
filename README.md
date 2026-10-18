@@ -35,6 +35,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
   name.
+- **Keyboard in the popup**: the arrow keys select an app and Return opens it; typing filters the
+  apps by name (case and accents don't matter, `cal` finds “Çalışma”), Delete or Escape clears the
+  filter; Tab / ⇧Tab switch to the next / previous group (and Most Used), and Escape closes the popup.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are
@@ -137,6 +140,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json` (only the latest
   import's).
   Most Used launch counts aren't part of a backup.
+- **Export Diagnostics** (Settings → Backup → Diagnostics): **Copy** or **Save to File…** a plain-text
+  report to attach to a GitHub issue — app and macOS versions, Mac model, settings, update checks,
+  group names with app counts (never the apps themselves) and recent errors; nothing is sent anywhere.
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
