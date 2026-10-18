@@ -9,12 +9,15 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/popup-panel.png" width="320" alt="Group popup over the Dock"><br><sub>Group popup over the Dock</sub></td>
-    <td align="center"><img src="docs/screenshots/groups-window.png" width="480" alt="Group management window"><br><sub>Group management window</sub></td>
+    <td align="center"><img src="docs/screenshots/popup-panel.png" width="380" alt="Group popup over the Dock with Open All, Hide All and Close All, and a website next to the apps"><br><sub>Group popup with apps and a website</sub></td>
+    <td align="center"><img src="docs/screenshots/popup-filter.png" width="380" alt="Group popup filtered by typing “mic”"><br><sub>Type to filter, Return to open</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/settings.png" width="360" alt="Settings window"><br><sub>Settings</sub></td>
-    <td align="center"><img src="docs/screenshots/about.png" width="300" alt="About window"><br><sub>About</sub></td>
+    <td align="center" colspan="2"><img src="docs/screenshots/groups-window.png" width="640" alt="Group management window with Add Website, Sort A→Z and Hide All"><br><sub>Group management window</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/settings.png" width="360" alt="Settings → Updates with Check Now and Other Versions"><br><sub>Settings → Updates, with Other Versions…</sub></td>
+    <td align="center"><img src="docs/screenshots/about.png" width="300" alt="About window with social profiles, support links and books"><br><sub>About</sub></td>
   </tr>
 </table>
 
@@ -158,6 +161,9 @@ popup is already showing, or there are no groups yet, it shows the group window 
 Get the universal disk image (`Cybokron-Dock-Groups-<version>-universal.dmg`) from the
 [releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and drag the app
 to Applications.
+[cybokron.com/dock-groups/](https://cybokron.com/dock-groups/) describes the app in 26 languages, and
+[cybokron.com/dock-groups/download/](https://cybokron.com/dock-groups/download/) always downloads the
+latest release's disk image.
 
 All published releases (v0.5.0 to v0.5.6) are **signed ad hoc**, not with a Developer ID, and aren't
 notarized, so macOS shows an “Apple could not verify …” warning the first time you open a downloaded
