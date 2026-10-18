@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Κατάσταση HTTP %ld.";
 "core.update.install.copyFailed" = "Η αντιγραφή της εφαρμογής απέτυχε: %@";
 "core.mostUsed.name" = "Πιο χρησιμοποιημένα";
+
+/* Changelog */
+"changelog.tab" = "Αρχείο αλλαγών";
+"changelog.currentVersion" = "Τρέχουσα έκδοση: %@";
+"changelog.refresh" = "Ανανέωση";
+"changelog.refresh.help" = "Φόρτωση των πιο πρόσφατων σημειώσεων έκδοσης από το GitHub";
+"changelog.lastUpdated" = "Τελευταία ενημέρωση %@";
+"changelog.header" = "Σημειώσεις έκδοσης";
+"changelog.footer" = "Προέρχονται από τις εκδόσεις του έργου στο GitHub. Ένα αντίγραφο παραμένει σε αυτό το Mac, οπότε οι σημειώσεις εμφανίζονται και εκτός σύνδεσης.";
+"changelog.latest" = "Νεότερη";
+"changelog.installed" = "Εγκατεστημένη";
+"changelog.prerelease" = "Προέκδοση";
+"changelog.noNotes" = "Δεν υπάρχουν σημειώσεις έκδοσης για αυτή την έκδοση.";
+"changelog.loading" = "Φόρτωση σημειώσεων έκδοσης από το GitHub…";
+"changelog.unavailable" = "Οι σημειώσεις έκδοσης δεν είναι διαθέσιμες";
+"changelog.error.cached" = "Δεν ήταν δυνατή η φόρτωση των σημειώσεων έκδοσης — εμφανίζεται το αποθηκευμένο αντίγραφο.";
+"changelog.retry" = "Κάντε κλικ στην Ανανέωση για να δοκιμάσετε ξανά.";
+"changelog.openRelease" = "Προβολή στο GitHub";

@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP állapot: %ld.";
 "core.update.install.copyFailed" = "Az alkalmazás másolása nem sikerült: %@";
 "core.mostUsed.name" = "Leggyakrabban használtak";
+
+/* Changelog */
+"changelog.tab" = "Változásnapló";
+"changelog.currentVersion" = "Jelenlegi verzió: %@";
+"changelog.refresh" = "Frissítés";
+"changelog.refresh.help" = "A legfrissebb kiadási jegyzetek betöltése a GitHubról";
+"changelog.lastUpdated" = "Utoljára frissítve: %@";
+"changelog.header" = "Kiadási jegyzetek";
+"changelog.footer" = "A projekt GitHub-kiadásaiból származnak. Egy másolat ezen a Mac-en marad, így a jegyzetek offline is megjelennek.";
+"changelog.latest" = "Legújabb";
+"changelog.installed" = "Telepítve";
+"changelog.prerelease" = "Előzetes kiadás";
+"changelog.noNotes" = "Ehhez a verzióhoz nincsenek kiadási jegyzetek.";
+"changelog.loading" = "Kiadási jegyzetek betöltése a GitHubról…";
+"changelog.unavailable" = "A kiadási jegyzetek nem érhetők el";
+"changelog.error.cached" = "A kiadási jegyzetek nem tölthetők be — a gyorsítótárazott másolat látható.";
+"changelog.retry" = "Kattintson a Frissítés gombra az újrapróbálkozáshoz.";
+"changelog.openRelease" = "Megtekintés a GitHubon";

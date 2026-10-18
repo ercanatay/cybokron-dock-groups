@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Starea HTTP %ld.";
 "core.update.install.copyFailed" = "Copierea aplicației a eșuat: %@";
 "core.mostUsed.name" = "Cele mai utilizate";
+
+/* Changelog */
+"changelog.tab" = "Jurnal de modificări";
+"changelog.currentVersion" = "Versiunea curentă: %@";
+"changelog.refresh" = "Reîmprospătează";
+"changelog.refresh.help" = "Încarcă cele mai recente note de lansare de pe GitHub";
+"changelog.lastUpdated" = "Ultima actualizare %@";
+"changelog.header" = "Note de lansare";
+"changelog.footer" = "Provin din lansările proiectului de pe GitHub. O copie rămâne pe acest Mac, așa că notele se văd și offline.";
+"changelog.latest" = "Cea mai recentă";
+"changelog.installed" = "Instalată";
+"changelog.prerelease" = "Pre-lansare";
+"changelog.noNotes" = "Nu există note de lansare pentru această versiune.";
+"changelog.loading" = "Se încarcă notele de lansare de pe GitHub…";
+"changelog.unavailable" = "Notele de lansare nu sunt disponibile";
+"changelog.error.cached" = "Notele de lansare nu au putut fi încărcate — se afișează copia din cache.";
+"changelog.retry" = "Apasă Reîmprospătează pentru a încerca din nou.";
+"changelog.openRelease" = "Vezi pe GitHub";

@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Stav HTTP %ld.";
 "core.update.install.copyFailed" = "Kopírování aplikace selhalo: %@";
 "core.mostUsed.name" = "Nejpoužívanější";
+
+/* Changelog */
+"changelog.tab" = "Protokol změn";
+"changelog.currentVersion" = "Aktuální verze: %@";
+"changelog.refresh" = "Obnovit";
+"changelog.refresh.help" = "Načíst nejnovější poznámky k vydání z GitHubu";
+"changelog.lastUpdated" = "Poslední aktualizace %@";
+"changelog.header" = "Poznámky k vydání";
+"changelog.footer" = "Pochází z vydání projektu na GitHubu. Kopie zůstává v tomto Macu, takže poznámky se zobrazí i offline.";
+"changelog.latest" = "Nejnovější";
+"changelog.installed" = "Nainstalováno";
+"changelog.prerelease" = "Předběžná verze";
+"changelog.noNotes" = "Pro tuto verzi nejsou žádné poznámky k vydání.";
+"changelog.loading" = "Načítání poznámek k vydání z GitHubu…";
+"changelog.unavailable" = "Poznámky k vydání nejsou k dispozici";
+"changelog.error.cached" = "Poznámky k vydání nelze načíst — zobrazuje se uložená kopie.";
+"changelog.retry" = "Pro opakování klikněte na Obnovit.";
+"changelog.openRelease" = "Zobrazit na GitHubu";

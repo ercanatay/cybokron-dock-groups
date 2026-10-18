@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP статус %ld.";
 "core.update.install.copyFailed" = "Копирането на приложението се провали: %@";
 "core.mostUsed.name" = "Най-използвани";
+
+/* Changelog */
+"changelog.tab" = "Промени";
+"changelog.currentVersion" = "Текуща версия: %@";
+"changelog.refresh" = "Обнови";
+"changelog.refresh.help" = "Зареждане на последните бележки към версиите от GitHub";
+"changelog.lastUpdated" = "Последна актуализация %@";
+"changelog.header" = "Бележки към версията";
+"changelog.footer" = "Взети от версиите на проекта в GitHub. Копие се пази на този Mac, така че бележките се показват и без връзка.";
+"changelog.latest" = "Последна";
+"changelog.installed" = "Инсталирана";
+"changelog.prerelease" = "Предварителна версия";
+"changelog.noNotes" = "Няма бележки към тази версия.";
+"changelog.loading" = "Зареждане на бележките към версиите от GitHub…";
+"changelog.unavailable" = "Бележките към версията не са налични";
+"changelog.error.cached" = "Бележките към версията не можаха да се заредят — показва се запазеното копие.";
+"changelog.retry" = "Щракнете върху Обнови, за да опитате отново.";
+"changelog.openRelease" = "Преглед в GitHub";
