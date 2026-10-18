@@ -1,14 +1,25 @@
+import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// Global keyboard shortcuts, plus where else groups can be controlled from: Siri, the Shortcuts
-/// app and the URL scheme.
+/// Global keyboard shortcuts, plus where else groups can be controlled from: what to ask Siri for
+/// a group, the Shortcuts app and the URL scheme's links, each phrase and link with a Copy button.
+/// The App Intents themselves are defined in `DockGroupsShortcuts`; this only spells them out.
 struct ShortcutsSettingsView: View {
     @ObservedObject var preferences: PreferencesStore
     @ObservedObject var store: GroupStore
     @ObservedObject var shortcuts: GlobalShortcutMonitor
 
+    /// The group whose phrases and links are shown; the first group when unset or deleted.
+    @State private var invocationGroupID: DockGroup.ID?
+    /// The phrase or link copied last, which its button confirms for a moment.
+    @State private var copiedText: String?
+
     private var settings: PopupPreferences { preferences.preferences }
+
+    private var invocationGroup: DockGroup? {
+        invocationGroupID.flatMap(store.group(withID:)) ?? store.groups.first
+    }
 
     var body: some View {
         Form {
@@ -17,10 +28,12 @@ struct ShortcutsSettingsView: View {
                 assignedGroupsSection
             }
             siriSection
+            linksSection
         }
         .formStyle(.grouped)
-        .frame(width: 480)
-        .fixedSize(horizontal: false, vertical: true)
+        // With every group's phrases and links this tab is the tallest; the form scrolls instead
+        // of growing past the screen.
+        .frame(width: 480, height: 640)
         .onAppear { shortcuts.refreshTrust() }
     }
 
@@ -95,33 +108,91 @@ struct ShortcutsSettingsView: View {
     }
 
     private var siriSection: some View {
-        // Examples with the first group, so they work as written.
-        let exampleName = store.groups.first?.name ?? "Work"
-        let exampleSlug = store.groups.first.map { GroupLookup.slug(for: $0.name) }.flatMap { $0.isEmpty ? nil : $0 } ?? "work"
-        return Section {
-            LabeledContent("Siri") {
-                Text("“Launch \(exampleName) in \(AppInfo.name)”")
+        Section {
+            if let group = invocationGroup {
+                Picker("Group", selection: invocationGroupBinding(selected: group.id)) {
+                    ForEach(store.groups) { group in
+                        Text("\(group.emoji)  \(group.name)").tag(group.id)
+                    }
+                }
+                ForEach(GroupInvocations.siriPhrases(groupName: group.name, appName: AppInfo.name)) { phrase in
+                    copyRow(phrase, text: Text("“\(phrase.text)”"))
+                }
+            } else {
+                Text("Add a group to see what to ask Siri for it.")
                     .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.trailing)
             }
-            LabeledContent("Shortcuts app") {
-                Text("Launch Group · Quit Group · Show Group")
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.trailing)
-            }
-            LabeledContent("URL") {
-                Text("\(URLCommand.scheme)://open/\(exampleSlug)")
-                    .font(.system(.body, design: .monospaced))
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
+            LabeledContent {
+                Button("Open Shortcuts", action: openShortcutsApp)
+            } label: {
+                Text("Shortcuts app")
+                Text("Launch Group, Quit Group and Show Group are actions there and in Spotlight: add them to your own shortcuts, with your own trigger.")
             }
         } header: {
-            Text("Siri, Shortcuts and Links")
+            Text("Siri and Shortcuts")
         } footer: {
-            Text("The actions also appear in Spotlight and the Shortcuts app, where you can give them your own trigger. Links take open, launch or quit with a group's name or ID, for example from a script.")
+            Text("Ask Siri with these words, by voice or by typing. They use the group's current name; shortcuts you build keep working after a rename.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    private var linksSection: some View {
+        Section {
+            if let group = invocationGroup {
+                ForEach(GroupInvocations.links(for: group, in: store.groups)) { link in
+                    copyRow(link, text: Text(link.text).font(.system(.body, design: .monospaced)))
+                }
+            } else {
+                Text("Add a group to see its links.")
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text("Links")
+        } footer: {
+            Text("Open a link from a script or another app, e.g. with `open` in Terminal. A group is named by its name (case, accents and punctuation don't matter) or, when the name is ambiguous, its ID. Add ?mode=force to a quit link to force quit.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// A phrase or link with its action underneath and a Copy button.
+    private func copyRow(_ invocation: GroupInvocation, text: Text) -> some View {
+        LabeledContent {
+            Button(copiedText == invocation.text ? "Copied" : "Copy") { copy(invocation.text) }
+                .help("Copy “\(invocation.text)” to the clipboard.")
+        } label: {
+            text
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .textSelection(.enabled)
+                .help(invocation.text)
+            Text(invocation.title)
+        }
+    }
+
+    private func invocationGroupBinding(selected id: DockGroup.ID) -> Binding<DockGroup.ID> {
+        Binding(
+            get: { id },
+            set: { invocationGroupID = $0 }
+        )
+    }
+
+    private func copy(_ text: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
+        copiedText = text
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            if copiedText == text {
+                copiedText = nil
+            }
+        }
+    }
+
+    private func openShortcutsApp() {
+        guard let url = URL(string: "shortcuts://") else { return }
+        NSWorkspace.shared.open(url)
     }
 
     private func binding<Value>(_ keyPath: WritableKeyPath<PopupPreferences, Value>) -> Binding<Value> {
