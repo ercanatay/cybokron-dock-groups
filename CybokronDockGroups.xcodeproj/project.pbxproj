@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02B69A20AAA8C5644635016F /* GroupMoving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C61665D92B0AF6A0D26450E /* GroupMoving.swift */; };
 		02DBF76E7D7A550F56116EA1 /* AgentPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3680A0091065D2D5CA9FD6 /* AgentPlanner.swift */; };
 		03CCD8D8B9953272976870F2 /* AppReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994BD907AE7F69808146B00A /* AppReference.swift */; };
 		048603F8EC101AC5F1D319F2 /* AgentIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = D738F21A891404F13D9EA917 /* AgentIcon.swift */; };
@@ -227,6 +228,7 @@
 		994DE318DC1EB7C814672890 /* AgentBundleLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBundleLayout.swift; sourceTree = "<group>"; };
 		9983C8AD4CBF5C4EC1E9893F /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		9A9098CAAF2A8F38CA3A8A99 /* RunningAppsMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningAppsMonitor.swift; sourceTree = "<group>"; };
+		9C61665D92B0AF6A0D26450E /* GroupMoving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMoving.swift; sourceTree = "<group>"; };
 		9D2910543B6521799B99E5C2 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 		9E6AF56C61E37C0803DBFCF6 /* CybokronDockGroups.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CybokronDockGroups.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3E7A596264D74C7E326849B /* BackupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSettingsView.swift; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 			children = (
 				7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */,
 				1BFB3BEC6E712399D629ACCB /* DisplayNames.swift */,
+				9C61665D92B0AF6A0D26450E /* GroupMoving.swift */,
 				BFC7BC59B449CFA72316D99D /* LaunchReportPresenter.swift */,
 				9A9098CAAF2A8F38CA3A8A99 /* RunningAppsMonitor.swift */,
 				72BA58F5FCD042EED1E77712 /* UsageMonitor.swift */,
@@ -800,6 +803,7 @@
 				D294CFCCDC4C25C52B15E437 /* GroupEntity.swift in Sources */,
 				E001E64BAADA4F5664B95F97 /* GroupIntentSupport.swift in Sources */,
 				645E84F0CFE8CD2A2FD3E790 /* GroupIntents.swift in Sources */,
+				02B69A20AAA8C5644635016F /* GroupMoving.swift in Sources */,
 				7495ED03D2A519746C220115 /* GroupSidebarView.swift in Sources */,
 				FDDE3C6D841C4A227EDF632A /* LaunchReportPresenter.swift in Sources */,
 				A7ABF95427D56CE54B7EC92C /* MainMenuBuilder.swift in Sources */,

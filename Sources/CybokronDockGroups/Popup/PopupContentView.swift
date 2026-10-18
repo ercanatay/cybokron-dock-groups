@@ -46,6 +46,8 @@ struct PopupContent {
     let usesFrostedGlass: Bool
     /// Whether apps can be reordered and removed; `false` for the Most Used list and in agents.
     let isEditable: Bool
+    /// The groups an app can be moved to from its context menu; empty unless the popup is editable.
+    let moveTargets: [GroupMoveTarget]
     /// The Most Used list rather than one of the user's groups.
     let isMostUsed: Bool
 }
@@ -63,6 +65,8 @@ struct PopupActions {
     let arrangeApps: ([String: Int]) -> Void
     /// Takes the app out of the group; the app itself isn't affected.
     let removeApp: (AppReference) -> Void
+    /// Moves the app to the end of another group.
+    let moveAppToGroup: (AppReference, DockGroup.ID) -> Void
     /// Sorts the group's apps by name, A to Z.
     let sortApps: () -> Void
     /// Whether the pointer is far enough outside the popup for a drop to remove the dragged app.
@@ -87,8 +91,9 @@ private struct CellDrag: Equatable {
 /// hint line.
 ///
 /// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
-/// the group, as with the Dock. In Free Layout a dragged app goes to the cell it's dropped on
-/// (swapping places with the app there) and the others stay put. The Most Used list is read-only.
+/// the group, as with the Dock; their context menu moves them to another group. In Free Layout a
+/// dragged app goes to the cell it's dropped on (swapping places with the app there) and the others
+/// stay put. The Most Used list is read-only.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -335,6 +340,9 @@ struct PopupContentView: View {
             move(cell, by: 1)
         } remove: {
             actions.removeApp(cell.app)
+        })
+        .modifier(MoveToGroupContextMenu(targets: content.moveTargets) { destination in
+            actions.moveAppToGroup(cell.app, destination)
         })
     }
 

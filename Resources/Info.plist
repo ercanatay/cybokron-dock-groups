@@ -47,5 +47,18 @@
 	<string>Copyright © 2026 Ercan Atay (Cybokron). Released under the MIT License.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>App in a Cybokron Dock Groups group</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.cybokron.dockgroups.group-app</string>
+		</dict>
+	</array>
 </dict>
 </plist>

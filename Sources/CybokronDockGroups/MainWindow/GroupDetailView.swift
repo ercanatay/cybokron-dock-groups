@@ -96,9 +96,17 @@ struct GroupDetailView: View {
                 Text("No apps yet. Use “Add Apps…” to choose apps for this group.")
                     .foregroundStyle(.secondary)
             } else {
+                let moveTargets = GroupMoveTarget.targets(in: store.groups, excluding: group.id)
                 ForEach(group.apps) { app in
                     AppRowView(app: app) {
                         store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: group.id)
+                    }
+                    .modifier(MoveToGroupContextMenu(targets: moveTargets) { destination in
+                        store.moveApp(bundleIdentifier: app.bundleIdentifier, fromGroup: group.id, toGroup: destination)
+                    })
+                    // Dropped on another group in the sidebar, the app moves there.
+                    .onDrag {
+                        GroupAppDrag(groupID: group.id, bundleIdentifier: app.bundleIdentifier).itemProvider()
                     }
                 }
                 .onMove { source, destination in
@@ -120,6 +128,12 @@ struct GroupDetailView: View {
                 Button("Hide All") { actions.hideAll(group) }
                     .disabled(group.apps.isEmpty)
                     .help("Hide this group's running apps. Apps that aren't running stay closed.")
+            }
+        } footer: {
+            if !group.apps.isEmpty, store.groups.count > 1 {
+                Text("To move an app to another group, drag it onto that group in the sidebar, or use Move to in its context menu.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }

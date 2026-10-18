@@ -178,6 +178,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let freeLayout = popupPreferences.usesFreeLayout && group.id != MostUsedGroup.id
             ? FreeLayout(apps: group.apps, savedSlots: group.freeLayoutSlots, slotCount: layout.slotCount)
             : nil
+        let isEditable = allowsEditing && group.id != MostUsedGroup.id
 
         // Keep the popup on screen: a grid taller than the screen allows scrolls instead.
         let maximum = PopupPlacement.maximumSize(on: dock.screen)
@@ -201,7 +202,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             gridHeight: gridHeight,
             scrolls: layout.contentHeight(metrics: metrics) > gridHeight + 0.5,
             usesFrostedGlass: popupPreferences.usesFrostedGlass,
-            isEditable: allowsEditing && group.id != MostUsedGroup.id,
+            isEditable: isEditable,
+            moveTargets: isEditable ? GroupMoveTarget.targets(in: store.groups, excluding: group.id) : [],
             isMostUsed: group.id == MostUsedGroup.id
         )
 
@@ -274,6 +276,11 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Removing \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public)")
                 self.store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id)
+            },
+            moveAppToGroup: { [weak self] app, destination in
+                guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
+                self.logger.notice("Moving \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public) to group \(destination, privacy: .public)")
+                self.store.moveApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id, toGroup: destination)
             },
             sortApps: { [weak self] in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
