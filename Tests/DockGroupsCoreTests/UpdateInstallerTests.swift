@@ -43,6 +43,128 @@ final class FakeDiskImageTools: ToolRunning, @unchecked Sendable {
     }
 }
 
+/// Runs tools through `base`, but tries a failed `hdiutil attach` again after each of `delays`: on a
+/// busy CI machine attaching sometimes fails at first with "Resource temporarily unavailable". Other
+/// tools and other failures pass straight through; once every retry failed, the last failure is
+/// returned as it is. Only for the tests that use the real hdiutil.
+struct DiskImageAttachRetryingRunner: ToolRunning {
+    static let defaultDelays: [Duration] = [.milliseconds(500), .seconds(1), .seconds(2)]
+
+    let base: ToolRunning
+    let delays: [Duration]
+    let sleep: @Sendable (Duration) async -> Void
+
+    init(
+        base: ToolRunning = SystemToolRunner(),
+        delays: [Duration] = DiskImageAttachRetryingRunner.defaultDelays,
+        sleep: @escaping @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) }
+    ) {
+        self.base = base
+        self.delays = delays
+        self.sleep = sleep
+    }
+
+    func run(_ tool: URL, arguments: [String]) async throws -> ToolResult {
+        var result = try await base.run(tool, arguments: arguments)
+        guard tool.lastPathComponent == "hdiutil", arguments.first == "attach" else { return result }
+        for delay in delays where !result.succeeded {
+            await sleep(delay)
+            result = try await base.run(tool, arguments: arguments)
+        }
+        return result
+    }
+}
+
+/// Fails `hdiutil attach` the first `failures` times, then succeeds; records every call.
+final class FlakyAttachTools: ToolRunning, @unchecked Sendable {
+    private let lock = NSLock()
+    private var remainingFailures: Int
+    private var _calls: [[String]] = []
+
+    init(failures: Int) {
+        remainingFailures = failures
+    }
+
+    var calls: [[String]] { lock.withLock { _calls } }
+
+    func run(_ tool: URL, arguments: [String]) async throws -> ToolResult {
+        lock.withLock {
+            _calls.append([tool.lastPathComponent] + arguments)
+            guard remainingFailures > 0 else { return ToolResult(status: 0, output: "") }
+            remainingFailures -= 1
+            return ToolResult(status: 1, output: "hdiutil: attach failed - Resource temporarily unavailable")
+        }
+    }
+}
+
+/// Records the delays it was asked to wait, without waiting.
+final class RecordedSleeps: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _delays: [Duration] = []
+
+    var delays: [Duration] { lock.withLock { _delays } }
+
+    func sleep(_ delay: Duration) async {
+        lock.withLock { _delays.append(delay) }
+    }
+}
+
+@Suite("Disk image attach retries (test support)")
+struct DiskImageAttachRetryTests {
+    private let attach = ["attach", "-readonly", "-nobrowse", "/tmp/x.dmg"]
+
+    @Test func transientFailuresAreRetriedUntilAttachSucceeds() async throws {
+        let tools = FlakyAttachTools(failures: 2)
+        let sleeps = RecordedSleeps()
+        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: sleeps.sleep)
+
+        let result = try await runner.run(UpdateInstaller.hdiutil, arguments: attach)
+
+        #expect(result.succeeded)
+        #expect(tools.calls.count == 3)
+        #expect(sleeps.delays == [.milliseconds(500), .seconds(1)])
+    }
+
+    @Test func persistentFailureIsReportedAfterThreeRetries() async throws {
+        let tools = FlakyAttachTools(failures: 10)
+        let sleeps = RecordedSleeps()
+        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: sleeps.sleep)
+
+        let result = try await runner.run(UpdateInstaller.hdiutil, arguments: attach)
+
+        #expect(!result.succeeded)
+        #expect(result.output.contains("Resource temporarily unavailable"))
+        #expect(tools.calls.count == 4)
+        #expect(sleeps.delays == [.milliseconds(500), .seconds(1), .seconds(2)])
+    }
+
+    @Test func persistentFailureStillFailsStaging() async throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let sleeps = RecordedSleeps()
+        let runner = DiskImageAttachRetryingRunner(base: FlakyAttachTools(failures: 10), sleep: sleeps.sleep)
+        let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")), tools: runner)
+
+        await #expect(throws: UpdateInstallError.mountFailed("hdiutil: attach failed - Resource temporarily unavailable")) {
+            try await installer.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: "Any")
+        }
+        #expect(sleeps.delays.count == 3)
+    }
+
+    @Test func otherToolsAndDetachAreNotRetried() async throws {
+        let sleeps = RecordedSleeps()
+        let tools = FlakyAttachTools(failures: 10)
+        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: sleeps.sleep)
+
+        let detach = try await runner.run(UpdateInstaller.hdiutil, arguments: ["detach", "/tmp/mount"])
+        let ditto = try await runner.run(UpdateInstaller.ditto, arguments: ["a", "b"])
+
+        #expect(!detach.succeeded && !ditto.succeeded)
+        #expect(tools.calls.count == 2)
+        #expect(sleeps.delays.isEmpty)
+    }
+}
+
 @Suite("Update installer")
 struct UpdateInstallerTests {
     static let appName = "Cybokron Dock Groups"
@@ -228,7 +350,11 @@ struct UpdateInstallerTests {
             "create", "-quiet", "-volname", "Cybokron Update Test", "-srcfolder", source.path, "-format", "UDZO", "-ov", image.path,
         ])
         try #require(created.succeeded, "hdiutil create: \(created.output)")
-        let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")))
+        // Attaching can fail transiently on a busy machine ("Resource temporarily unavailable").
+        let installer = UpdateInstaller(
+            directories: UpdateDirectories(root: temporary.url.appending(path: "updates")),
+            tools: DiskImageAttachRetryingRunner()
+        )
 
         let staged = try await installer.stageApp(fromDiskImage: image, appName: Self.appName)
 
