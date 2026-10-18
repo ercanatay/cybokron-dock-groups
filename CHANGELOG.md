@@ -5,6 +5,22 @@ All notable changes to Cybokron Dock Groups are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- The About window's "Find Me Online" buttons showed no icons: their SVG path data was handed to
+  SwiftUI's `Path(String)`, which only reads its own path description format and returned nothing.
+  The glyphs are now parsed by an SVG path parser of their own (all SVG path commands, arcs
+  included) and drawn in every build; a glyph that can't be read shows a globe instead of an empty
+  button.
+- The Accessibility status in Settings → Popup (*Restore windows…*) and Settings → Shortcuts & Siri
+  turns green as soon as access is granted: one shared monitor reads the access again when the app
+  becomes active (coming back from System Settings), when macOS announces an Accessibility change,
+  when the status appears, and every second while access is missing — and stops polling once it's
+  granted. The warning also explains how to replace an entry left by an earlier ad hoc signed
+  version, which stays switched on without granting access to the new one.
+
 ## [0.5.3] - 2026-10-18
 
 ### Added
@@ -148,6 +164,7 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.3...HEAD
 [0.5.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.0...v0.5.1

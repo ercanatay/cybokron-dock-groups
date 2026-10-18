@@ -281,6 +281,9 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - Remove the app from the Accessibility list, minimize an app's windows and click it: macOS asks
      for access, and the app is asked to reopen as from the Dock meanwhile. The prompt appears only
      once; `defaults delete com.cybokron.dockgroups didPromptAccessibilityForWindows` brings it back.
+   - Without access, keep Settings → Popup open on the orange warning and allow the app in Privacy &
+     Security → Accessibility: within a second, or as soon as you switch back, the warning turns
+     into the green "Accessibility access granted" line.
    - Choose the app from the Most Used menu, or from a standalone group's Dock menu: same results.
    - Turn the setting off: a click only brings the app to the front, hidden and minimized windows
      stay where they are.
