@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Tiếng Việt)
+  Cybokron Dock Groups
+
+  Bản dịch tiếng Việt của từng khóa. Giữ nguyên các chỗ giữ chỗ: %@ là văn bản, %ld là số, còn %1$@, %2$ld … được
+  đánh số để bản dịch có thể đổi thứ tự. Các khóa kết thúc bằng .one/.other là dạng số ít (số lượng 1) và số nhiều.
+  Tên ứng dụng "Cybokron Dock Groups", "DockGroups", "GitHub", "Siri", các ký hiệu phím (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc)
+  và tên tệp được giữ nguyên.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Hủy";
+"common.add" = "Thêm";
+"common.copy" = "Sao chép";
+"common.copied" = "Đã sao chép";
+"common.close" = "Đóng";
+"common.done" = "Xong";
+"common.install" = "Cài đặt";
+"common.tryAgain" = "Thử lại";
+"common.openAll" = "Mở tất cả";
+"common.hideAll" = "Ẩn tất cả";
+"common.closeAll" = "Đóng tất cả";
+"common.forceQuit" = "Buộc thoát";
+"common.addApps" = "Thêm ứng dụng…";
+"common.addWebsite" = "Thêm trang web…";
+"common.showInFinder" = "Hiện trong Finder";
+"common.removeFromGroup" = "Xóa khỏi nhóm";
+"common.moveTo" = "Chuyển đến";
+"common.default" = "Mặc định";
+"common.auto" = "Tự động";
+"common.changelog" = "Nhật ký thay đổi";
+"common.links" = "Liên kết";
+"common.openReleasesPage" = "Mở trang phát hành";
+"common.openPrivacySettings" = "Mở Quyền riêng tư và Bảo mật…";
+"common.checkForUpdates" = "Kiểm tra cập nhật…";
+"common.settings" = "Cài đặt…";
+"common.noLaunchesYet" = "Chưa ghi nhận lượt mở nào";
+"common.noAppsInGroup" = "Nhóm này chưa có ứng dụng nào";
+"common.about" = "Giới thiệu %@";
+"common.hideApp" = "Ẩn %@";
+"common.quitApp" = "Thoát %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Đang cài đặt phiên bản %@…";
+"common.update.restarting" = "Đã cài đặt phiên bản %@ — đang khởi động lại…";
+"common.appCount.one" = "1 ứng dụng";
+"common.appCount.other" = "%ld ứng dụng";
+"common.groupCount.one" = "1 nhóm";
+"common.groupCount.other" = "%ld nhóm";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Nhóm";
+"menuBar.noGroups" = "Chưa có nhóm nào";
+"menuBar.manageGroups" = "Quản lý nhóm…";
+"menuBar.mostUsed.empty.tooltip" = "Hãy mở ứng dụng như bình thường; những ứng dụng bạn mở nhiều nhất sẽ hiện ở đây.";
+"menuBar.mostUsed.show" = "Hiện mục dùng nhiều nhất";
+"menuBar.mostUsed.show.tooltip" = "Hiện các ứng dụng bạn mở nhiều nhất trong một cửa sổ bật lên.";
+"menuBar.checkForUpdates.tooltip" = "Tìm phiên bản %@ mới hơn trên GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "Mở %@. Đã mở một lần.";
+"menuBar.mostUsed.app.tooltip.other" = "Mở %1$@. Đã mở %2$ld lần.";
+"menuBar.group.tooltip" = "Hiện các ứng dụng trong “%@”. Giữ ⌥ để mở tất cả cùng lúc, hoặc ⇧⌥ để ẩn những ứng dụng đang chạy.";
+"menuBar.group.tooltip.shortcut" = "Hiện các ứng dụng trong “%1$@”. Giữ ⌥ để mở tất cả cùng lúc, hoặc ⇧⌥ để ẩn những ứng dụng đang chạy. Phím tắt: %2$@.";
+"menuBar.group.openAll" = "Mở tất cả trong “%@”";
+"menuBar.group.openAll.tooltip.one" = "Mở ứng dụng trong “%@”";
+"menuBar.group.openAll.tooltip.other" = "Mở tất cả %1$ld ứng dụng trong “%2$@”";
+"menuBar.group.noApps" = "“%@” chưa có ứng dụng nào.";
+"menuBar.group.hideAll" = "Ẩn tất cả trong “%@”";
+"menuBar.group.hideAll.tooltip" = "Ẩn các ứng dụng đang chạy trong “%@”. Ứng dụng không chạy vẫn đóng.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Chỉnh sửa";
+"mainMenu.undo" = "Hoàn tác";
+"mainMenu.redo" = "Làm lại";
+"mainMenu.cut" = "Cắt";
+"mainMenu.paste" = "Dán";
+"mainMenu.selectAll" = "Chọn tất cả";
+"mainMenu.window" = "Cửa sổ";
+"mainMenu.minimize" = "Thu nhỏ";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Mở mọi ứng dụng trong nhóm này; ứng dụng đang chạy sẽ được đưa lên trước.";
+"popup.openAll.help.mostUsed" = "Mở mọi ứng dụng trong danh sách này; ứng dụng đang chạy sẽ được đưa lên trước.";
+"popup.hideAll.help.group" = "Ẩn các ứng dụng đang chạy của nhóm này; ứng dụng không chạy vẫn đóng.";
+"popup.hideAll.help.mostUsed" = "Ẩn các ứng dụng đang chạy của danh sách này; ứng dụng không chạy vẫn đóng.";
+"popup.closeAll.help.group" = "Thoát các ứng dụng đang chạy của nhóm này. ⌘-nhấp để buộc thoát mà không lưu.";
+"popup.closeAll.help.mostUsed" = "Thoát các ứng dụng đang chạy của danh sách này. ⌘-nhấp để buộc thoát mà không lưu.";
+"popup.summary.websites.one" = "1 trang web";
+"popup.summary.websites.other" = "%ld trang web";
+"popup.summary.running" = "%ld đang chạy";
+"popup.summary.byLaunches" = "theo lượt mở";
+"popup.filter.noMatch" = "Không có ứng dụng nào khớp với “%@”";
+"popup.filter.noMatch.hint" = "Nhấn Delete hoặc Esc để xóa bộ lọc.";
+"popup.empty.mostUsed.hint" = "Hãy mở ứng dụng như bình thường để bắt đầu tạo lịch sử của bạn.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Sắp xếp các ứng dụng trong nhóm này theo tên, từ A đến Z.";
+"popup.footer.sortAZ.accessibility" = "Sắp xếp từ A đến Z";
+"popup.footer.filter.matches" = "Bộ lọc: “%@”  ·  ↩ mở ứng dụng đã chọn  ·  esc xóa";
+"popup.footer.filter.noMatch" = "Bộ lọc: “%@”  ·  không khớp  ·  ⌫ hoặc esc xóa";
+"popup.footer.hint.mostUsed" = "Xếp hạng theo số lần bạn mở  ·  ⌘-nhấp Đóng tất cả để buộc thoát";
+"popup.footer.hint.group" = "Đóng tất cả:  ⌥-nhấp thoát bình thường  ·  ⌘-nhấp buộc thoát";
+"popup.footer.drag.remove" = "Thả để xóa %@ khỏi nhóm này";
+"popup.footer.drag.free" = "Thả %@ vào ô bất kỳ; thả lên ứng dụng khác để đổi chỗ  ·  kéo ra ngoài để xóa";
+"popup.footer.drag.ordered" = "Thả để đặt %@  ·  kéo ra khỏi cửa sổ bật lên để xóa";
+"popup.cell.accessibility.website" = "Trang web %@";
+"popup.cell.hint.website" = "Mở trang web trong trình duyệt của bạn";
+"popup.cell.hint.running" = "Đưa ứng dụng lên trước";
+"popup.cell.hint.open" = "Mở ứng dụng";
+"popup.cell.help.openWebsite" = "Mở %@ trong trình duyệt của bạn.";
+"popup.cell.help.bringToFront" = "Đưa %@ lên trước.";
+"popup.cell.help.openApp" = "Mở %@.";
+"popup.cell.help.missing" = "%@ không có trên Mac này.";
+"popup.cell.help.drag.freeItem" = "Kéo vào ô bất kỳ hoặc lên mục khác để đổi chỗ, hoặc kéo ra khỏi cửa sổ bật lên để xóa khỏi nhóm.";
+"popup.cell.help.drag.freeApp" = "Kéo vào ô bất kỳ hoặc lên ứng dụng khác để đổi chỗ, hoặc kéo ra khỏi cửa sổ bật lên để xóa khỏi nhóm.";
+"popup.cell.help.drag.ordered" = "Kéo để sắp xếp lại, hoặc kéo ra khỏi cửa sổ bật lên để xóa khỏi nhóm.";
+"popup.cell.help.drag.missing" = "Kéo ra khỏi cửa sổ bật lên để xóa khỏi nhóm.";
+"popup.menu.open" = "Mở";
+"popup.menu.copyURL" = "Sao chép URL";
+"popup.accessibility.moveEarlier" = "Chuyển lên trước";
+"popup.accessibility.moveLater" = "Chuyển xuống sau";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Chưa có nhóm nào";
+"groupWindow.empty.noSelection" = "Chưa chọn nhóm nào";
+"groupWindow.empty.noGroups.description" = "Thêm một nhóm để tập hợp các ứng dụng bạn dùng cùng nhau.";
+"groupWindow.empty.noSelection.description" = "Chọn một nhóm để chỉnh sửa.";
+"groupWindow.addGroup" = "Thêm nhóm";
+"groupWindow.rename.title" = "Đổi tên nhóm";
+"groupWindow.rename.confirm" = "Đổi tên";
+"groupWindow.rename.message" = "Nhập tên mới cho nhóm.";
+"groupWindow.delete.title" = "Xóa “%@”?";
+"groupWindow.delete.confirm" = "Xóa nhóm";
+"groupWindow.delete.message.standalone" = "Thao tác này xóa nhóm cùng danh sách ứng dụng và biểu tượng Dock riêng của nhóm. Bản thân các ứng dụng không bị ảnh hưởng.";
+"groupWindow.delete.message" = "Thao tác này xóa nhóm cùng danh sách ứng dụng. Bản thân các ứng dụng không bị ảnh hưởng.";
+"groupWindow.sidebar.rename" = "Đổi tên…";
+"groupWindow.sidebar.delete" = "Xóa…";
+"groupWindow.sidebar.add.help" = "Thêm nhóm";
+"groupWindow.sidebar.delete.help" = "Xóa nhóm đã chọn";
+"groupWindow.addApps.problem.title" = "Một số ứng dụng không thể thêm";
+"groupWindow.section.group" = "Nhóm";
+"groupWindow.name" = "Tên";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Chọn…";
+"groupWindow.section.apps" = "Ứng dụng";
+"groupWindow.apps.empty" = "Chưa có ứng dụng nào. Dùng “%1$@” để chọn ứng dụng cho nhóm này, hoặc “%2$@” để thêm liên kết web.";
+"groupWindow.addWebsite.help" = "Thêm một liên kết web vào nhóm này. Liên kết sẽ mở trong trình duyệt mặc định của bạn.";
+"groupWindow.sortAZ" = "Sắp xếp A→Z";
+"groupWindow.sortAZ.help" = "Sắp xếp các ứng dụng trong nhóm này theo tên, từ A đến Z. Kéo để tự sắp xếp lại.";
+"groupWindow.showPopup" = "Hiện cửa sổ bật lên";
+"groupWindow.showPopup.help" = "Hiện cửa sổ bật lên của nhóm này phía trên Dock.";
+"groupWindow.hideAll.help" = "Ẩn các ứng dụng đang chạy của nhóm này. Ứng dụng không chạy vẫn đóng.";
+"groupWindow.apps.moveHint" = "Để chuyển ứng dụng sang nhóm khác, kéo nó vào nhóm đó ở thanh bên, hoặc dùng %@ trong menu ngữ cảnh của nó.";
+"groupWindow.app.notFound" = "Không tìm thấy trên Mac này · %@";
+"groupWindow.app.remove.website" = "Xóa %@ khỏi nhóm này.";
+"groupWindow.app.remove" = "Xóa %@ khỏi nhóm này. Bản thân ứng dụng không bị ảnh hưởng.";
+"groupWindow.section.dockTile" = "Ô Dock";
+"groupWindow.tile.preview" = "Xem trước";
+"groupWindow.tile.shows" = "Hiển thị";
+"groupWindow.tile.kind.grid" = "Lưới biểu tượng ứng dụng";
+"groupWindow.tile.background" = "Nền";
+"groupWindow.tile.backgroundColor" = "Màu nền";
+"groupWindow.tile.pinned" = "Giữ ô được ghim trên Dock";
+"groupWindow.tile.preview.accessibility" = "Xem trước ô, %ld điểm";
+"groupWindow.section.standalone" = "Độc lập";
+"groupWindow.standalone.toggle" = "Biểu tượng Dock độc lập";
+"groupWindow.standalone.help" = "Cấp cho nhóm này một ứng dụng riêng, với biểu tượng riêng trên Dock.";
+"groupWindow.standalone.settingUp" = "Đang thiết lập biểu tượng Dock…";
+"groupWindow.standalone.removing" = "Đang xóa biểu tượng Dock…";
+"groupWindow.standalone.groupApp" = "Ứng dụng nhóm";
+"groupWindow.standalone.updateDockIcon" = "Cập nhật biểu tượng Dock";
+"groupWindow.standalone.updateDockIcon.help" = "Khởi động lại Dock với bộ nhớ đệm biểu tượng mới, để ô hiển thị biểu tượng hiện tại của nhóm.";
+"groupWindow.standalone.staleIcon" = "Dock vẫn hiện biểu tượng cũ.";
+"groupWindow.standalone.footer" = "Cấp cho nhóm một ứng dụng nhỏ riêng, dùng ô ở trên làm biểu tượng, nằm ở cuối Dock. Nhấp vào sẽ hiện cửa sổ bật lên của nhóm (⌥-nhấp để mở tất cả ứng dụng của nhóm), ngay cả khi %@ không chạy; nhấp chuột phải sẽ liệt kê các ứng dụng của nhóm (Cài đặt → Cửa sổ bật lên). Tắt tùy chọn này, xóa nhóm hoặc kéo biểu tượng ra khỏi Dock sẽ gỡ ứng dụng đó. Thêm hoặc xóa biểu tượng sẽ khởi động lại Dock trong giây lát.";
+"groupWindow.section.popup" = "Cửa sổ bật lên";
+"groupWindow.popup.columns" = "Cột";
+"groupWindow.popup.maxRows" = "Số hàng tối đa";
+"groupWindow.popup.appNames" = "Tên ứng dụng";
+"groupWindow.popup.show" = "Hiện";
+"groupWindow.popup.hide" = "Ẩn";
+"groupWindow.popup.position" = "Vị trí";
+"groupWindow.popup.footer" = "“%@” theo cài đặt cửa sổ bật lên chung của ứng dụng.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Đặc";
+"choice.tileBackground.gradient" = "Chuyển màu";
+"choice.tileBackground.glass" = "Kính";
+"choice.popupAnchor.dockCenter" = "Căn giữa phía trên Dock";
+"choice.popupAnchor.dockIcon" = "Phía trên biểu tượng được nhấp";
+"choice.theme.dark" = "Tối";
+"choice.theme.light" = "Sáng";
+"choice.theme.system" = "Theo hệ thống";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Thêm trang web";
+"addWebsite.title" = "Thêm trang web vào “%@”";
+"addWebsite.address" = "Địa chỉ:";
+"addWebsite.address.accessibility" = "Địa chỉ trang web";
+"addWebsite.name" = "Tên:";
+"addWebsite.name.accessibility" = "Tên trang web, không bắt buộc";
+"addWebsite.name.placeholder" = "Không bắt buộc";
+"addWebsite.hint" = "Mở trong trình duyệt mặc định của bạn. Để trống tên để dùng địa chỉ của trang.";
+"addWebsite.duplicate" = "“%@” đã có trong nhóm này.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Thêm ứng dụng vào nhóm";
+"appPicker.message" = "Chọn các ứng dụng để thêm vào “%@”.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "Không thể mở các ứng dụng trong “%@”.";
+"problems.launch.someFailed" = "Không thể mở một số ứng dụng trong “%@”.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "không tìm thấy trên Mac này.";
+"problems.launch.opened" = "đã mở.";
+"problems.quit.force" = "Không thể buộc thoát một số ứng dụng trong “%@”.";
+"problems.quit.graceful" = "Không thể yêu cầu một số ứng dụng trong “%@” thoát.";
+"problems.hide" = "Không thể ẩn một số ứng dụng trong “%@”.";
+"problems.standalone.failed" = "“%@” không thể có biểu tượng Dock riêng.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Ứng dụng của nhóm này không thể mở nhóm.";
+"agent.damaged.message" = "%1$@\n\nTrong %2$@, hãy tắt rồi bật lại Độc lập cho nhóm để ứng dụng được dựng lại.";
+"agent.error.groupMismatch" = "Cài đặt của ứng dụng này thuộc về nhóm khác.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Đã bật rồi? Sau khi cập nhật, mục này có thể thuộc phiên bản trước: chọn %@, xóa bằng −, rồi thêm lại ứng dụng bằng +.";
+
+/* Settings window */
+"settings.window.title" = "Cài đặt";
+
+/* Settings tabs */
+"settings.tab.popup" = "Cửa sổ bật lên";
+"settings.tab.shortcuts" = "Phím tắt & Siri";
+"settings.tab.updates" = "Cập nhật";
+"settings.tab.backup" = "Sao lưu";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Ngôn ngữ";
+"general.language.system" = "Hệ thống (%1$@)";
+"general.language.restartNote" = "Ngôn ngữ mới có hiệu lực sau khi ứng dụng khởi động lại.";
+"general.language.restartNow" = "Khởi động lại ngay";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Giao diện";
+"settings.popup.frostedGlass" = "Nền kính mờ";
+"settings.popup.appearance.header" = "Giao diện cửa sổ bật lên";
+"settings.popup.appearance.footer" = "Giao diện chỉ áp dụng cho cửa sổ bật lên; cửa sổ này theo giao diện macOS của bạn.";
+"settings.popup.columns" = "Cột";
+"settings.popup.columns.detail" = "Tự động giữ chiều rộng chuẩn của cửa sổ bật lên; nhập một số sẽ làm cửa sổ chỉ rộng bằng những gì nhóm cần.";
+"settings.popup.maxRows" = "Số hàng tối đa";
+"settings.popup.maxRows.detail" = "Giới hạn chiều cao cửa sổ bật lên; nhóm lớn hơn sẽ cuộn.";
+"settings.popup.showNames" = "Hiện tên ứng dụng";
+"settings.popup.position" = "Vị trí";
+"settings.popup.position.detail" = "Phía trên biểu tượng được nhấp sẽ mở cửa sổ bật lên phía trên biểu tượng Dock của nhóm, hoặc dưới biểu tượng thanh menu khi chọn từ menu của nó. Cửa sổ bật lên mở bằng phím tắt, liên kết hoặc Siri luôn căn giữa phía trên Dock.";
+"settings.popup.layout.header" = "Bố cục cửa sổ bật lên";
+"settings.popup.layout.footer" = "Đây là mặc định cho mọi nhóm. Mỗi nhóm có thể ghi đè trong Quản lý nhóm.";
+"settings.popup.freeLayout" = "Bố cục tự do";
+"settings.popup.freeLayout.detail" = "Ứng dụng giữ nguyên ở ô bạn kéo đến, các ứng dụng khác không di chuyển; thả một ứng dụng lên ứng dụng khác sẽ đổi chỗ hai ứng dụng.";
+"settings.popup.arranging.header" = "Sắp xếp ứng dụng";
+"settings.popup.arranging.footer" = "Khi tắt, các ứng dụng của nhóm lấp đầy cửa sổ bật lên theo thứ tự và tự nhường chỗ khi bạn di chuyển một ứng dụng. A→Z trong cửa sổ bật lên sắp xếp nhóm theo tên ở cả hai chế độ.";
+"settings.popup.restoreWindows" = "Khôi phục cửa sổ khi mở lại ứng dụng đang chạy";
+"settings.popup.restoreWindows.detail" = "Nhấp vào ứng dụng đang chạy sẽ đưa lại các cửa sổ đã ẩn và thu nhỏ, giống như khi nhấp vào ứng dụng trên Dock. Khi tắt, ứng dụng chỉ được đưa lên trước.";
+"settings.popup.runningApps.header" = "Ứng dụng đang chạy";
+"settings.popup.dockMenus" = "Menu trên biểu tượng Dock của nhóm";
+"settings.popup.dockMenus.detail" = "Nhấp chuột phải vào biểu tượng Dock của nhóm độc lập để xem ứng dụng của nhóm, Mở tất cả, Ẩn tất cả và Đóng tất cả, sau khi biểu tượng đã được nhấp. Khi đó ứng dụng của nhóm sẽ hiện là đang chạy trên Dock và trong ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Biểu tượng Dock độc lập";
+"settings.popup.ax.granted" = "Đã cấp quyền Trợ năng: cửa sổ đã thu nhỏ cũng được khôi phục";
+"settings.popup.ax.required" = "Khôi phục cửa sổ đã thu nhỏ cần quyền Trợ năng";
+"settings.popup.ax.detail" = "Hãy cho phép %@ trong Quyền riêng tư và Bảo mật → Trợ năng. Cho đến lúc đó, các ứng dụng đã ẩn vẫn được đưa lại, và ứng dụng được yêu cầu mở lại như khi mở từ Dock. Biểu tượng nhóm độc lập cần quyền này cho chính các ứng dụng của nhóm.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Mở cửa sổ bật lên của nhóm bằng phím tắt";
+"settings.shortcuts.modifiers" = "Phím bổ trợ";
+"settings.shortcuts.keys" = "Phím tắt";
+"settings.shortcuts.keys.detail" = "Giữ các phím này và nhấn 1 cho nhóm đầu tiên, 2 cho nhóm thứ hai, v.v. Nhấn lại để đóng cửa sổ bật lên.";
+"settings.shortcuts.header" = "Phím tắt";
+"settings.shortcuts.ax.granted" = "Hoạt động trong mọi ứng dụng";
+"settings.shortcuts.ax.needed" = "Cần quyền Trợ năng";
+"settings.shortcuts.ax.detail" = "Để nhận phím tắt khi bạn làm việc trong ứng dụng khác, hãy cho phép %@ trong Quyền riêng tư và Bảo mật → Trợ năng. Cho đến lúc đó, phím tắt chỉ hoạt động khi cửa sổ bật lên của nó hoặc một cửa sổ của nó đang hoạt động.";
+"settings.shortcuts.noGroups" = "Chưa có nhóm nào.";
+"settings.shortcuts.assigned.header" = "Nhóm đã gán";
+"settings.shortcuts.assigned.footer.limit" = "Chỉ chín nhóm đầu tiên có phím tắt. Kéo các nhóm trong Quản lý nhóm để đổi thứ tự.";
+"settings.shortcuts.assigned.footer" = "Phím tắt theo thứ tự các nhóm trong Quản lý nhóm.";
+"settings.shortcuts.siri.group" = "Nhóm";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "Thêm một nhóm để xem bạn có thể yêu cầu Siri điều gì.";
+"settings.shortcuts.openShortcuts" = "Mở Lối tắt";
+"settings.shortcuts.shortcutsApp" = "Ứng dụng Lối tắt";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group và Show Group là các thao tác ở đó cũng như trong Spotlight: hãy thêm chúng vào lối tắt của riêng bạn, với điều kiện kích hoạt của bạn.";
+"settings.shortcuts.siri.header" = "Siri và Lối tắt";
+"settings.shortcuts.siri.footer" = "Yêu cầu Siri bằng các từ này, bằng giọng nói hoặc gõ chữ. Chúng dùng tên hiện tại của nhóm; lối tắt bạn tạo vẫn hoạt động sau khi đổi tên.";
+"settings.shortcuts.links.noGroups" = "Thêm một nhóm để xem liên kết của nhóm.";
+"settings.shortcuts.links.footer" = "Mở liên kết từ một tập lệnh hoặc ứng dụng khác, ví dụ bằng `open` trong Terminal. Nhóm được gọi bằng tên (không phân biệt chữ hoa, dấu và dấu câu) hoặc, khi tên bị trùng, bằng ID của nhóm. Thêm ?mode=force vào liên kết thoát để buộc thoát.";
+"settings.shortcuts.copy.help" = "Sao chép “%@” vào bộ nhớ tạm.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Hiện mục dùng nhiều nhất trên thanh menu";
+"settings.mostUsed.appsShown" = "Số ứng dụng hiện";
+"settings.mostUsed.appsShown.detail" = "Các ứng dụng được mở nhiều nhất, trong menu và trong cửa sổ bật lên Dùng nhiều nhất.";
+"settings.mostUsed.sessionLength" = "Độ dài phiên";
+"settings.mostUsed.together" = "Mở cùng nhau trong vòng";
+"settings.mostUsed.together.detail" = "Các ứng dụng được mở trong khoảng thời gian này của nhau được tính là dùng cùng nhau, nên sẽ được xếp lên một chút.";
+"settings.mostUsed.footer" = "Ứng dụng được xếp hạng theo số lần bạn mở, từ Dock, Finder, Spotlight hoặc một nhóm. Lượt mở vẫn được đếm ngay cả khi danh sách bị ẩn.";
+"settings.mostUsed.recorded" = "Đã ghi";
+"settings.mostUsed.clear" = "Xóa lịch sử…";
+"settings.mostUsed.history" = "Lịch sử";
+"settings.mostUsed.history.detail" = "Chỉ lưu trên Mac này, trong usage-stats.json và usage-cooccurrence.json ở Application Support.";
+"settings.mostUsed.usageHistory.header" = "Lịch sử sử dụng";
+"settings.mostUsed.clear.confirm.title" = "Xóa lịch sử sử dụng?";
+"settings.mostUsed.clear.confirm.button" = "Xóa lịch sử";
+"settings.mostUsed.clear.confirm.message" = "Danh sách Dùng nhiều nhất sẽ bắt đầu lại từ đầu. Các nhóm và ứng dụng của bạn không bị ảnh hưởng.";
+"settings.mostUsed.summary.none" = "Chưa có lượt mở nào";
+"settings.mostUsed.summary.launches.one" = "1 lượt mở";
+"settings.mostUsed.summary.launches.other" = "%ld lượt mở";
+"settings.mostUsed.summary" = "%1$@ trên %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Tự động kiểm tra cập nhật";
+"settings.updates.currentVersion" = "Phiên bản hiện tại";
+"settings.updates.lastChecked" = "Kiểm tra lần cuối";
+"settings.updates.checkNow" = "Kiểm tra ngay";
+"settings.updates.otherVersions" = "Phiên bản khác…";
+"settings.updates.footer" = "Kiểm tra các bản phát hành GitHub của dự án khi ứng dụng khởi động và mỗi 6 giờ; chỉ số phiên bản của ứng dụng được gửi kèm. Phiên bản mới chỉ được cài đặt sau khi bạn chọn Tải xuống và Cài đặt. Phiên bản khác… cài đặt bất kỳ bản phát hành nào đã đăng, cũ hoặc mới; quay lại bản cũ sẽ bỏ qua các bản mới hơn khi kiểm tra tự động.";
+"settings.updates.viewChangelog" = "Xem nhật ký thay đổi";
+"settings.updates.latestPath" = "Quay lại lộ trình mới nhất: mọi bản mới hơn đều được đề xuất";
+"settings.updates.skipped" = "Các phiên bản mới hơn đã bỏ qua: %@";
+"settings.updates.clear" = "Xóa";
+"settings.updates.clear.help" = "Cho phép kiểm tra tự động đề xuất lại các phiên bản này";
+"settings.updates.never" = "Không bao giờ";
+"settings.updates.status.idle" = "Chưa kiểm tra kể từ khi ứng dụng khởi động";
+"settings.updates.status.checking" = "Đang kiểm tra…";
+"settings.updates.status.upToDate" = "Bạn đang dùng phiên bản mới nhất (v%@)";
+"settings.updates.status.available" = "Có phiên bản %@";
+"settings.updates.showUpdate" = "Hiện bản cập nhật…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Phiên bản khác";
+"settings.otherVersions.intro" = "Cài đặt bất kỳ bản phát hành nào đã đăng của %@, cũ hoặc mới. Ứng dụng sẽ thoát và mở lại dưới dạng phiên bản bạn chọn.";
+"settings.otherVersions.releasesLink" = "Mở trang phát hành trên GitHub";
+"settings.otherVersions.loading" = "Đang tải các bản phát hành từ GitHub…";
+"settings.otherVersions.none" = "GitHub không liệt kê bản phát hành nào.";
+"settings.otherVersions.current" = "Hiện tại";
+"settings.otherVersions.noDownload" = "Không có bản tải xuống";
+"settings.otherVersions.install.help" = "Cài đặt phiên bản %@";
+"settings.otherVersions.install.noImage" = "Bản phát hành này không có ảnh đĩa để cài đặt.";
+"settings.otherVersions.confirm.title" = "Cài đặt phiên bản %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ sẽ thoát và mở lại dưới dạng phiên bản %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Phiên bản %@ không thể tự cập nhật: để quay lại, hãy tải phiên bản mới hơn từ trang phát hành.";
+"settings.otherVersions.confirm.skips" = "Khi đó kiểm tra tự động sẽ bỏ qua các phiên bản mới hơn (%@); Kiểm tra cập nhật… vẫn đề xuất chúng.";
+"settings.otherVersions.confirm.older" = "Phiên bản cũ có thể không biết về các tính năng được thêm sau đó; hãy cân nhắc xuất bản sao lưu trước (Cài đặt → Sao lưu).";
+"settings.otherVersions.confirm.upgrade" = "Các phiên bản đã bỏ qua sẽ được xóa, nên kiểm tra tự động sẽ đề xuất lại mọi bản phát hành mới hơn.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Xuất cài đặt…";
+"settings.backup.export" = "Xuất";
+"settings.backup.export.detail" = "Lưu các nhóm và cài đặt của bạn vào tệp .dockgroups.";
+"settings.backup.import.button" = "Nhập cài đặt…";
+"settings.backup.import" = "Nhập";
+"settings.backup.import.detail" = "Thay thế các nhóm và cài đặt của bạn bằng những gì có trong tệp sao lưu, hoặc gộp các nhóm mới của bản sao lưu vào nhóm của bạn.";
+"settings.backup.footer" = "Bản sao lưu gồm các nhóm, ứng dụng của chúng và mọi cài đặt. Số lượt mở của Dùng nhiều nhất không được bao gồm. Tệp nằm ở bất kỳ nơi nào bạn lưu nó.";
+"settings.backup.status.exported" = "Đã xuất ra “%@”";
+"settings.backup.status.restored" = "Đã khôi phục %1$@ với %2$@";
+"settings.backup.status.merged" = "Đã gộp %@ từ bản sao lưu";
+"settings.backup.status.mergedSkipped" = "Đã gộp %1$@ từ bản sao lưu; %2$ld đã có sẵn ở đây";
+"settings.backup.exportPanel.title" = "Xuất cài đặt";
+"settings.backup.exportPanel.message" = "Lưu các nhóm và cài đặt của bạn vào tệp sao lưu.";
+"settings.backup.exportFailed" = "Không thể xuất cài đặt";
+"settings.backup.importPanel.title" = "Nhập cài đặt";
+"settings.backup.importPanel.message" = "Chọn một bản sao lưu %@ để khôi phục.";
+"settings.backup.readFailed" = "Không thể đọc tệp";
+"settings.backup.confirm.title" = "Nhập các nhóm và cài đặt trong bản sao lưu này?";
+"settings.backup.confirm.replaceAll" = "Thay thế tất cả";
+"settings.backup.confirm.merge" = "Gộp";
+"settings.backup.restoreFailed" = "Không thể khôi phục bản sao lưu";
+"settings.backup.restoreFailed.kept" = "%@ Các nhóm và cài đặt hiện tại của bạn được giữ nguyên.";
+"settings.backup.mergeFailed" = "Không thể gộp bản sao lưu";
+"settings.backup.mergeFailed.kept" = "%@ Các nhóm hiện tại của bạn được giữ nguyên.";
+"settings.backup.rejected.notABackup" = "Hãy chọn tệp .dockgroups được tạo bằng Xuất cài đặt…. Không có gì bị thay đổi.";
+"settings.backup.rejected.newer" = "Không có gì bị thay đổi.";
+"settings.backup.confirm.noGroups" = "Bản sao lưu không có nhóm nào.";
+"settings.backup.confirm.noGroups.exported" = "Bản sao lưu không có nhóm nào, được xuất %@.";
+"settings.backup.confirm.contents" = "Bản sao lưu có %1$@ với %2$@.";
+"settings.backup.confirm.contents.exported" = "Bản sao lưu có %1$@ với %2$@, được xuất %3$@.";
+"settings.backup.confirm.replace" = "Thay thế tất cả sẽ dùng các nhóm và cài đặt trong bản sao lưu thay cho của bạn.";
+"settings.backup.confirm.replaced.one" = "1 nhóm hiện tại trùng tên với một nhóm trong bản sao lưu sẽ bị thay bằng nhóm đó.";
+"settings.backup.confirm.replaced.other" = "%ld nhóm hiện tại trùng tên với các nhóm trong bản sao lưu sẽ bị thay bằng các nhóm đó.";
+"settings.backup.confirm.removed.one" = "1 nhóm hiện tại không có trong bản sao lưu sẽ bị xóa.";
+"settings.backup.confirm.removed.other" = "%ld nhóm hiện tại không có trong bản sao lưu sẽ bị xóa.";
+"settings.backup.confirm.replaceSettings" = "Cài đặt của bạn (cửa sổ bật lên, phím tắt, Dùng nhiều nhất và cập nhật) cũng sẽ bị thay thế.";
+"settings.backup.confirm.merge.nothing" = "Gộp giữ nguyên các nhóm và cài đặt của bạn và không thêm gì.";
+"settings.backup.confirm.merge.allHere" = "Gộp giữ nguyên các nhóm và cài đặt của bạn; mọi nhóm trong bản sao lưu đều đã có ở đây, nên không thêm gì.";
+"settings.backup.confirm.merge.adds" = "Gộp giữ nguyên các nhóm và cài đặt của bạn, đồng thời thêm %1$@ với %2$@ từ bản sao lưu.";
+"settings.backup.confirm.skipped.one" = "1 nhóm đã có ở đây (trùng tên) sẽ bị bỏ qua.";
+"settings.backup.confirm.skipped.other" = "%ld nhóm đã có ở đây (trùng tên) sẽ bị bỏ qua.";
+"settings.backup.confirm.final" = "Số lượt mở của Dùng nhiều nhất được giữ lại. Một bản sao các tệp hiện tại được lưu bên cạnh chúng trong Application Support. Thao tác này không thể hoàn tác.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Lưu thành tệp…";
+"settings.diagnostics.export" = "Xuất chẩn đoán";
+"settings.diagnostics.export.detail" = "Một báo cáo văn bản để đính kèm vào vấn đề GitHub hoặc yêu cầu hỗ trợ.";
+"settings.diagnostics.header" = "Chẩn đoán";
+"settings.diagnostics.footer" = "Liệt kê phiên bản ứng dụng và macOS, kiểu máy Mac của bạn, nơi ứng dụng được cài đặt, quyền Trợ năng, cài đặt của bạn, các lần kiểm tra cập nhật, tên nhóm kèm số ứng dụng, và các lỗi gần đây. Không liệt kê các ứng dụng trong nhóm của bạn. Không có gì được gửi đi đâu cả.";
+"settings.diagnostics.copied" = "Đã sao chép chẩn đoán vào bộ nhớ tạm";
+"settings.diagnostics.saved" = "Đã lưu vào “%@”";
+"settings.diagnostics.failed" = "Không thể lưu báo cáo: %@";
+"settings.diagnostics.panel.title" = "Lưu chẩn đoán";
+"settings.diagnostics.panel.message" = "Lưu báo cáo chẩn đoán thành tệp văn bản, ví dụ để đính kèm vào vấn đề GitHub.";
+"settings.diagnostics.panel.prompt" = "Lưu";
+
+/* Software Update window */
+"updateWindow.title" = "Cập nhật phần mềm";
+"updateWindow.checking" = "Đang kiểm tra cập nhật…";
+"updateWindow.upToDate.title" = "Bạn đang dùng phiên bản mới nhất!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ là phiên bản mới nhất hiện có.";
+"updateWindow.available.title" = "Có phiên bản mới của %@!";
+"updateWindow.available.message" = "Có phiên bản %1$@ — bạn đang dùng %2$@.";
+"updateWindow.available.noImage" = "Bản phát hành này không có ảnh đĩa để cài đặt tự động; hãy tải xuống từ trang phát hành của nó.";
+"updateWindow.available.question" = "Bạn có muốn tải xuống và cài đặt ngay bây giờ không?";
+"updateWindow.skip" = "Bỏ qua phiên bản này";
+"updateWindow.remindLater" = "Nhắc tôi sau";
+"updateWindow.openReleasePage" = "Mở trang phát hành";
+"updateWindow.downloadAndInstall" = "Tải xuống và cài đặt";
+"updateWindow.downloading" = "Đang tải phiên bản %@…";
+"updateWindow.restartsWhenDone" = "%@ sẽ khởi động lại khi xong.";
+"updateWindow.reopening" = "%@ đang được mở lại.";
+"updateWindow.dryRun.title" = "Chạy thử đã xong";
+"updateWindow.dryRun.message" = "Phiên bản %1$@ đã được tải xuống, xác minh và sao chép tới %2$@. Không có gì bị thay thế.";
+"updateWindow.checkFailed" = "Không thể kiểm tra cập nhật";
+"updateWindow.installFailed" = "Không thể cài đặt phiên bản %@";
+"updateWindow.link.releases" = "Bản phát hành";
+"updateWindow.link.releasePage" = "Trang phát hành";
+"updateWindow.releaseNotes" = "Ghi chú phát hành";
+"updateWindow.releaseNotes.none" = "Bản phát hành này không có ghi chú.";
+"updateWindow.relaunchFailed" = "Phiên bản %@ đã được cài đặt, nhưng ứng dụng không thể tự khởi động lại. Hãy thoát rồi mở lại.";
+
+/* About window */
+"about.section.findMe" = "Tìm tôi trên mạng";
+"about.section.support" = "Ủng hộ dự án này";
+"about.section.books" = "Sách của tôi";
+"about.section.software" = "Phần mềm mã nguồn mở của tôi";
+"about.fullList" = "Danh sách đầy đủ tại github.com/ercanatay";
+"about.section.blogs" = "Blog Medium";
+"about.icon.accessibility" = "Biểu tượng %@";
+"about.version" = "Phiên bản %@ · mã nguồn mở, Giấy phép MIT";
+"about.website" = "Trang web";
+"about.sourceCode" = "Mã nguồn";
+"about.license" = "Giấy phép";
+"about.reportBug" = "Tìm thấy lỗi? Mở một vấn đề";
+"about.inspiredBy" = "Lấy cảm hứng từ chức năng của DockGroups. %@ là một triển khai độc lập, nguyên bản được viết từ đầu; không chứa mã hay hình ảnh nào của DockGroups.";
+"about.project.dockGroups" = "Ứng dụng này · Nhóm Dock cho macOS";
+"about.project.intelComputerUse" = "Tự động hóa màn hình macOS gốc cho Mac Intel qua MCP.";
+"about.project.exchangeRate" = "Trình theo dõi tỷ giá và danh mục đầu tư PHP/MySQL với thu thập trực tiếp + cập nhật bản phát hành GitHub.";
+"about.project.backlinkChecker" = "Kiểm tra anchor, dofollow/nofollow và trạng thái HTTP của backlink.";
+"about.project.consentManager" = "Plugin bản dịch Consent Manager cho YOOtheme Pro 5 (WordPress.org).";
+"about.project.antigravityUpdater" = "Trình cập nhật macOS nhẹ cho Antigravity Tools, 21 ngôn ngữ.";
+"about.project.widgetVisibility" = "Plugin WP không cần Jetpack để điều khiển hiển thị widget, có hỗ trợ con cháu.";
+"about.project.forbiddenContent" = "Phát hiện từ khóa cấm (ví dụ 'Casino') trong tiêu đề bài viết — giống công cụ kiểm tra WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Show %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Launch %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Quit %1$@ in %2$@";
+"core.invocation.showPopup" = "Hiện cửa sổ bật lên";
+"core.invocation.openAll" = "Mở tất cả";
+"core.invocation.hideAll" = "Ẩn tất cả";
+"core.invocation.closeAll" = "Đóng tất cả";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Chưa thiết lập trình duyệt web nào để mở nó.";
+"core.launch.notOpened" = "Ứng dụng chưa được mở.";
+"core.group.defaultName" = "Nhóm mới";
+"core.website.error.empty" = "Nhập một địa chỉ web.";
+"core.website.error.invalid" = "Đây không phải là địa chỉ web hợp lệ.";
+"core.website.error.scheme" = "Chỉ có thể thêm địa chỉ http và https, không thêm “%@:”.";
+"core.website.error.credentials" = "Xóa tên người dùng và mật khẩu khỏi địa chỉ.";
+"core.persistence.groups.newer" = "Tệp nhóm được lưu bởi phiên bản Cybokron Dock Groups mới hơn (định dạng %ld).";
+"core.backup.error.notABackup" = "Tệp này không phải là bản sao lưu của Cybokron Dock Groups.";
+"core.backup.error.newer" = "Bản sao lưu này được tạo bằng phiên bản Cybokron Dock Groups mới hơn (định dạng sao lưu %ld). Hãy cập nhật ứng dụng để khôi phục.";
+"core.persistence.usage.newer" = "Thống kê sử dụng được lưu bởi phiên bản Cybokron Dock Groups mới hơn (định dạng %ld).";
+"core.agent.configuration.newer" = "Cài đặt của nhóm được lưu bởi phiên bản Cybokron Dock Groups mới hơn (định dạng %ld).";
+"core.agent.error.icon" = "Không thể vẽ biểu tượng của nhóm.";
+"core.agent.error.bundleWrite" = "Không thể tạo ứng dụng của nhóm: %@";
+"core.agent.error.toolMissing" = "Thiếu một công cụ hệ thống cần thiết: %@.";
+"core.agent.error.signing" = "macOS yêu cầu mọi ứng dụng phải được ký mã, và việc ký ứng dụng của nhóm đã thất bại trên Mac này, nên không có gì được cài đặt.";
+"core.agent.error.registration" = "macOS không đăng ký được ứng dụng của nhóm: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups không đọc được tệp thực thi của chính nó: %@";
+"core.agent.error.noExecutable" = "Ứng dụng không có tệp thực thi.";
+"core.dock.saveFailed" = "Không thể thay đổi cài đặt của Dock.";
+"core.store.loadFailed.title" = "Không thể tải các nhóm của bạn";
+"core.store.loadFailed.kept" = "%1$@ Bắt đầu với danh sách nhóm trống. Một bản sao đã được giữ tại “%2$@”.";
+"core.store.loadFailed.empty" = "%@ Bắt đầu với danh sách nhóm trống.";
+"core.store.loadFailed.suspended" = "%@ Để bảo vệ tệp hiện có, các thay đổi sẽ không được lưu cho đến khi ứng dụng khởi động lại.";
+"core.store.saveFailed.title" = "Không thể lưu các thay đổi của bạn";
+"core.preferences.saveFailed" = "Không thể lưu cài đặt của bạn: %@";
+"core.websiteIcon.accessibility" = "Trang web";
+"core.update.check.notHTTP" = "Phản hồi không phải HTTP.";
+"core.update.check.malformed" = "Không đọc được thông tin bản phát hành từ GitHub.";
+"core.update.check.unsupportedTag" = "Bản phát hành mới nhất (“%@”) không được gắn thẻ số phiên bản.";
+"core.update.check.noRelease" = "Chưa có bản phát hành nào được đăng.";
+"core.update.check.rateLimited" = "GitHub đang giới hạn yêu cầu lúc này. Hãy thử lại sau một giờ.";
+"core.update.check.httpStatus" = "GitHub trả về trạng thái HTTP %ld.";
+"core.update.check.network" = "Không thể kết nối tới GitHub: %@";
+"core.update.check.noVersion" = "Bản ứng dụng này không có số phiên bản nên không thể so sánh.";
+"core.update.install.insecureURL" = "Địa chỉ tải bản cập nhật không an toàn (%@).";
+"core.update.install.downloadFailed" = "Không thể tải bản cập nhật: %@";
+"core.update.install.sizeMismatch" = "Bản cập nhật đã tải không đầy đủ (%1$ld trên %2$ld byte).";
+"core.update.install.checksum" = "Bản cập nhật đã tải không khớp với checksum đã đăng, nên không được cài đặt.";
+"core.update.install.mountFailed" = "Không thể mở ảnh đĩa của bản cập nhật: %@";
+"core.update.install.appNotFound" = "Ảnh đĩa của bản cập nhật không chứa ứng dụng.";
+"core.update.install.wrongApp" = "Ảnh đĩa của bản cập nhật chứa một ứng dụng khác (%@).";
+"core.update.install.versionMismatch" = "Ứng dụng đã tải là phiên bản %1$@, nhưng bản phát hành là %2$@.";
+"core.update.install.replaceFailed" = "Không thể đặt phiên bản mới vào vị trí, nên phiên bản hiện tại được giữ lại: %@";
+"core.update.install.rollbackFailed" = "Cập nhật thất bại và không thể khôi phục phiên bản trước. Phiên bản đó được giữ tại %@.";
+"core.update.location.translocated" = "macOS đang chạy bản sao này từ một vị trí tạm chỉ đọc. Hãy chuyển ứng dụng vào thư mục Applications, mở từ đó rồi thử lại.";
+"core.update.location.notFound" = "Không tìm thấy ứng dụng đang chạy tại %@.";
+"core.update.location.readOnly" = "Ứng dụng đang chạy từ một ổ đĩa chỉ đọc, chẳng hạn ảnh đĩa của nó. Hãy sao chép vào thư mục Applications trước.";
+"core.update.location.noPermission" = "Bạn không có quyền thay thế ứng dụng trong “%@”. Hãy tải phiên bản mới từ trang phát hành.";
+"core.update.install.noFile" = "Máy chủ không gửi tệp nào.";
+"core.update.install.httpStatus" = "Trạng thái HTTP %ld.";
+"core.update.install.copyFailed" = "Sao chép ứng dụng thất bại: %@";
+"core.mostUsed.name" = "Dùng nhiều nhất";

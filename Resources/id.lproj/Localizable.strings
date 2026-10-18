@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Bahasa Indonesia)
+  Cybokron Dock Groups
+
+  Teks bahasa Indonesia untuk setiap kunci. Placeholder tetap dipertahankan: %@ adalah teks, %ld angka,
+  dan %1$@, %2$ld … diberi nomor agar urutannya bisa diubah dalam terjemahan. Kunci berakhiran .one/.other
+  adalah bentuk tunggal (jumlah 1) dan jamak. Nama app "Cybokron Dock Groups", "DockGroups", "GitHub",
+  "Siri", simbol tombol (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) dan nama file tetap sama.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Batal";
+"common.add" = "Tambah";
+"common.copy" = "Salin";
+"common.copied" = "Disalin";
+"common.close" = "Tutup";
+"common.done" = "Selesai";
+"common.install" = "Pasang";
+"common.tryAgain" = "Coba Lagi";
+"common.openAll" = "Buka Semua";
+"common.hideAll" = "Sembunyikan Semua";
+"common.closeAll" = "Tutup Semua";
+"common.forceQuit" = "Paksa Berhenti";
+"common.addApps" = "Tambah App…";
+"common.addWebsite" = "Tambah Situs Web…";
+"common.showInFinder" = "Tampilkan di Finder";
+"common.removeFromGroup" = "Hapus dari Grup";
+"common.moveTo" = "Pindahkan ke";
+"common.default" = "Bawaan";
+"common.auto" = "Otomatis";
+"common.changelog" = "Catatan Perubahan";
+"common.links" = "Tautan";
+"common.openReleasesPage" = "Buka Halaman Rilis";
+"common.openPrivacySettings" = "Buka Privasi & Keamanan…";
+"common.checkForUpdates" = "Periksa Pembaruan…";
+"common.settings" = "Pengaturan…";
+"common.noLaunchesYet" = "Belum ada peluncuran yang dicatat";
+"common.noAppsInGroup" = "Belum ada app di grup ini";
+"common.about" = "Tentang %@";
+"common.hideApp" = "Sembunyikan %@";
+"common.quitApp" = "Keluar dari %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Memasang versi %@…";
+"common.update.restarting" = "Versi %@ terpasang — memulai ulang…";
+"common.appCount.one" = "1 app";
+"common.appCount.other" = "%ld app";
+"common.groupCount.one" = "1 grup";
+"common.groupCount.other" = "%ld grup";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Grup";
+"menuBar.noGroups" = "Belum ada grup";
+"menuBar.manageGroups" = "Kelola Grup…";
+"menuBar.mostUsed.empty.tooltip" = "Buka app seperti biasa; yang paling sering Anda buka akan muncul di sini.";
+"menuBar.mostUsed.show" = "Tampilkan Paling Sering Dipakai";
+"menuBar.mostUsed.show.tooltip" = "Tampilkan app yang paling sering dibuka dalam jendela pop-up.";
+"menuBar.checkForUpdates.tooltip" = "Cari versi %@ yang lebih baru di GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "Buka %@. Dibuka sekali.";
+"menuBar.mostUsed.app.tooltip.other" = "Buka %1$@. Dibuka %2$ld kali.";
+"menuBar.group.tooltip" = "Tampilkan app di “%@”. Tahan ⌥ untuk membuka semuanya sekaligus, atau ⇧⌥ untuk menyembunyikan yang sedang berjalan.";
+"menuBar.group.tooltip.shortcut" = "Tampilkan app di “%1$@”. Tahan ⌥ untuk membuka semuanya sekaligus, atau ⇧⌥ untuk menyembunyikan yang sedang berjalan. Pintasan: %2$@.";
+"menuBar.group.openAll" = "Buka Semua di “%@”";
+"menuBar.group.openAll.tooltip.one" = "Buka app di “%@”";
+"menuBar.group.openAll.tooltip.other" = "Buka semua %1$ld app di “%2$@”";
+"menuBar.group.noApps" = "“%@” belum punya app.";
+"menuBar.group.hideAll" = "Sembunyikan Semua di “%@”";
+"menuBar.group.hideAll.tooltip" = "Sembunyikan app yang sedang berjalan di “%@”. App yang tidak berjalan tetap tertutup.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Edit";
+"mainMenu.undo" = "Urungkan";
+"mainMenu.redo" = "Ulangi";
+"mainMenu.cut" = "Potong";
+"mainMenu.paste" = "Tempel";
+"mainMenu.selectAll" = "Pilih Semua";
+"mainMenu.window" = "Jendela";
+"mainMenu.minimize" = "Kecilkan";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Buka setiap app di grup ini; app yang sedang berjalan akan dibawa ke depan.";
+"popup.openAll.help.mostUsed" = "Buka setiap app di daftar ini; app yang sedang berjalan akan dibawa ke depan.";
+"popup.hideAll.help.group" = "Sembunyikan app grup ini yang sedang berjalan; app yang tidak berjalan tetap tertutup.";
+"popup.hideAll.help.mostUsed" = "Sembunyikan app daftar ini yang sedang berjalan; app yang tidak berjalan tetap tertutup.";
+"popup.closeAll.help.group" = "Keluar dari app grup ini yang sedang berjalan. ⌘-klik untuk paksa berhenti tanpa menyimpan.";
+"popup.closeAll.help.mostUsed" = "Keluar dari app daftar ini yang sedang berjalan. ⌘-klik untuk paksa berhenti tanpa menyimpan.";
+"popup.summary.websites.one" = "1 situs web";
+"popup.summary.websites.other" = "%ld situs web";
+"popup.summary.running" = "%ld berjalan";
+"popup.summary.byLaunches" = "berdasarkan peluncuran";
+"popup.filter.noMatch" = "Tidak ada app yang cocok dengan “%@”";
+"popup.filter.noMatch.hint" = "Tekan Delete atau Esc untuk menghapus filter.";
+"popup.empty.mostUsed.hint" = "Buka app seperti biasa untuk mulai membangun riwayat Anda.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Urutkan app di grup ini menurut nama, A ke Z.";
+"popup.footer.sortAZ.accessibility" = "Urutkan A ke Z";
+"popup.footer.filter.matches" = "Filter: “%@”  ·  ↩ membuka app yang dipilih  ·  esc menghapus";
+"popup.footer.filter.noMatch" = "Filter: “%@”  ·  tidak ada yang cocok  ·  ⌫ atau esc menghapus";
+"popup.footer.hint.mostUsed" = "Diurutkan berdasarkan seberapa sering dibuka  ·  ⌘-klik Tutup Semua untuk paksa berhenti";
+"popup.footer.hint.group" = "Tutup Semua:  ⌥-klik keluar secara normal  ·  ⌘-klik paksa berhenti";
+"popup.footer.drag.remove" = "Lepaskan untuk menghapus %@ dari grup ini";
+"popup.footer.drag.free" = "Jatuhkan %@ di sel mana pun; di atas app lain untuk menukar  ·  seret keluar untuk menghapus";
+"popup.footer.drag.ordered" = "Jatuhkan untuk menempatkan %@  ·  seret keluar dari pop-up untuk menghapusnya";
+"popup.cell.accessibility.website" = "Situs web %@";
+"popup.cell.hint.website" = "Membuka situs web di peramban Anda";
+"popup.cell.hint.running" = "Membawa app ke depan";
+"popup.cell.hint.open" = "Membuka app";
+"popup.cell.help.openWebsite" = "Buka %@ di peramban Anda.";
+"popup.cell.help.bringToFront" = "Bawa %@ ke depan.";
+"popup.cell.help.openApp" = "Buka %@.";
+"popup.cell.help.missing" = "%@ tidak ada di Mac ini.";
+"popup.cell.help.drag.freeItem" = "Seret ke sel mana pun atau ke item lain untuk menukarnya, atau keluar dari pop-up untuk menghapusnya dari grup.";
+"popup.cell.help.drag.freeApp" = "Seret ke sel mana pun atau ke app lain untuk menukarnya, atau keluar dari pop-up untuk menghapusnya dari grup.";
+"popup.cell.help.drag.ordered" = "Seret untuk mengatur ulang, atau keluar dari pop-up untuk menghapusnya dari grup.";
+"popup.cell.help.drag.missing" = "Seret keluar dari pop-up untuk menghapusnya dari grup.";
+"popup.menu.open" = "Buka";
+"popup.menu.copyURL" = "Salin URL";
+"popup.accessibility.moveEarlier" = "Pindah ke Sebelumnya";
+"popup.accessibility.moveLater" = "Pindah ke Berikutnya";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Belum Ada Grup";
+"groupWindow.empty.noSelection" = "Belum Ada Grup Dipilih";
+"groupWindow.empty.noGroups.description" = "Tambahkan grup untuk mengumpulkan app yang Anda pakai bersama.";
+"groupWindow.empty.noSelection.description" = "Pilih grup untuk mengeditnya.";
+"groupWindow.addGroup" = "Tambah Grup";
+"groupWindow.rename.title" = "Ganti Nama Grup";
+"groupWindow.rename.confirm" = "Ganti Nama";
+"groupWindow.rename.message" = "Masukkan nama baru untuk grup.";
+"groupWindow.delete.title" = "Hapus “%@”?";
+"groupWindow.delete.confirm" = "Hapus Grup";
+"groupWindow.delete.message.standalone" = "Ini menghapus grup beserta daftar app-nya, dan ikon Dock-nya sendiri. App-app itu sendiri tidak terpengaruh.";
+"groupWindow.delete.message" = "Ini menghapus grup beserta daftar app-nya. App-app itu sendiri tidak terpengaruh.";
+"groupWindow.sidebar.rename" = "Ganti Nama…";
+"groupWindow.sidebar.delete" = "Hapus…";
+"groupWindow.sidebar.add.help" = "Tambah grup";
+"groupWindow.sidebar.delete.help" = "Hapus grup yang dipilih";
+"groupWindow.addApps.problem.title" = "Beberapa app tidak dapat ditambahkan";
+"groupWindow.section.group" = "Grup";
+"groupWindow.name" = "Nama";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Pilih…";
+"groupWindow.section.apps" = "App";
+"groupWindow.apps.empty" = "Belum ada app. Gunakan “%1$@” untuk memilih app bagi grup ini, atau “%2$@” untuk tautan web.";
+"groupWindow.addWebsite.help" = "Tambahkan tautan web ke grup ini. Tautan dibuka di peramban bawaan Anda.";
+"groupWindow.sortAZ" = "Urutkan A→Z";
+"groupWindow.sortAZ.help" = "Urutkan app di grup ini menurut nama, A ke Z. Seret untuk mengatur ulang secara manual.";
+"groupWindow.showPopup" = "Tampilkan Pop-up";
+"groupWindow.showPopup.help" = "Tampilkan pop-up grup ini di atas Dock.";
+"groupWindow.hideAll.help" = "Sembunyikan app grup ini yang sedang berjalan. App yang tidak berjalan tetap tertutup.";
+"groupWindow.apps.moveHint" = "Untuk memindahkan app ke grup lain, seret ke grup itu di sidebar, atau gunakan %@ pada menu kontekstunya.";
+"groupWindow.app.notFound" = "Tidak ditemukan di Mac ini · %@";
+"groupWindow.app.remove.website" = "Hapus %@ dari grup ini.";
+"groupWindow.app.remove" = "Hapus %@ dari grup ini. App itu sendiri tidak terpengaruh.";
+"groupWindow.section.dockTile" = "Ubin Dock";
+"groupWindow.tile.preview" = "Pratinjau";
+"groupWindow.tile.shows" = "Menampilkan";
+"groupWindow.tile.kind.grid" = "Kisi Ikon App";
+"groupWindow.tile.background" = "Latar Belakang";
+"groupWindow.tile.backgroundColor" = "Warna Latar Belakang";
+"groupWindow.tile.pinned" = "Biarkan ubin tetap di Dock";
+"groupWindow.tile.preview.accessibility" = "Pratinjau ubin, %ld poin";
+"groupWindow.section.standalone" = "Mandiri";
+"groupWindow.standalone.toggle" = "Ikon Dock mandiri";
+"groupWindow.standalone.help" = "Berikan grup ini app sendiri, dengan ikonnya sendiri di Dock.";
+"groupWindow.standalone.settingUp" = "Menyiapkan ikon Dock…";
+"groupWindow.standalone.removing" = "Menghapus ikon Dock…";
+"groupWindow.standalone.groupApp" = "App Grup";
+"groupWindow.standalone.updateDockIcon" = "Perbarui Ikon Dock";
+"groupWindow.standalone.updateDockIcon.help" = "Mulai ulang Dock dengan cache ikon baru, agar ubin menampilkan ikon grup yang terkini.";
+"groupWindow.standalone.staleIcon" = "Dock masih menampilkan ikon sebelumnya.";
+"groupWindow.standalone.footer" = "Memberi grup ini app kecil sendiri, dengan ubin di atas sebagai ikonnya, di ujung Dock. Mengkliknya menampilkan pop-up grup (⌥-klik membuka semua app-nya), bahkan saat %@ tidak berjalan; mengklik kanan menampilkan daftar app grup (Pengaturan → Pop-up). Mematikan ini, menghapus grup, atau menyeret ikon keluar dari Dock akan menghapus app itu. Menambah atau menghapus ikon memulai ulang Dock sebentar.";
+"groupWindow.section.popup" = "Pop-up";
+"groupWindow.popup.columns" = "Kolom";
+"groupWindow.popup.maxRows" = "Baris Maksimum";
+"groupWindow.popup.appNames" = "Nama App";
+"groupWindow.popup.show" = "Tampilkan";
+"groupWindow.popup.hide" = "Sembunyikan";
+"groupWindow.popup.position" = "Posisi";
+"groupWindow.popup.footer" = "“%@” mengikuti pengaturan pop-up untuk seluruh app.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Polos";
+"choice.tileBackground.gradient" = "Gradasi";
+"choice.tileBackground.glass" = "Kaca";
+"choice.popupAnchor.dockCenter" = "Di Tengah Atas Dock";
+"choice.popupAnchor.dockIcon" = "Di Atas Ikon yang Diklik";
+"choice.theme.dark" = "Gelap";
+"choice.theme.light" = "Terang";
+"choice.theme.system" = "Sesuai Sistem";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Tambah Situs Web";
+"addWebsite.title" = "Tambah Situs Web ke “%@”";
+"addWebsite.address" = "Alamat:";
+"addWebsite.address.accessibility" = "Alamat situs web";
+"addWebsite.name" = "Nama:";
+"addWebsite.name.accessibility" = "Nama situs web, opsional";
+"addWebsite.name.placeholder" = "Opsional";
+"addWebsite.hint" = "Dibuka di peramban bawaan Anda. Kosongkan nama untuk memakai alamat situs.";
+"addWebsite.duplicate" = "“%@” sudah ada di grup ini.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Tambah App ke Grup";
+"appPicker.message" = "Pilih app yang akan ditambahkan ke “%@”.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "App di “%@” tidak dapat dibuka.";
+"problems.launch.someFailed" = "Beberapa app di “%@” tidak dapat dibuka.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "tidak ditemukan di Mac ini.";
+"problems.launch.opened" = "dibuka.";
+"problems.quit.force" = "Beberapa app di “%@” tidak dapat dipaksa berhenti.";
+"problems.quit.graceful" = "Beberapa app di “%@” tidak dapat diminta untuk keluar.";
+"problems.hide" = "Beberapa app di “%@” tidak dapat disembunyikan.";
+"problems.standalone.failed" = "“%@” tidak dapat memperoleh ikon Dock-nya sendiri.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "App grup ini tidak dapat membuka grupnya.";
+"agent.damaged.message" = "%1$@\n\nDi %2$@, matikan lalu nyalakan lagi Mandiri untuk grup agar app-nya dibangun ulang.";
+"agent.error.groupMismatch" = "Pengaturan app ini milik grup lain.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Sudah dinyalakan? Setelah pembaruan, entri mungkin milik versi sebelumnya: pilih %@, hapus dengan −, lalu tambahkan lagi app dengan +.";
+
+/* Settings window */
+"settings.window.title" = "Pengaturan";
+
+/* Settings tabs */
+"settings.tab.popup" = "Pop-up";
+"settings.tab.shortcuts" = "Pintasan & Siri";
+"settings.tab.updates" = "Pembaruan";
+"settings.tab.backup" = "Cadangan";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Bahasa";
+"general.language.system" = "Sistem (%1$@)";
+"general.language.restartNote" = "Bahasa baru berlaku setelah app dimulai ulang.";
+"general.language.restartNow" = "Mulai Ulang Sekarang";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Tema";
+"settings.popup.frostedGlass" = "Latar kaca buram";
+"settings.popup.appearance.header" = "Tampilan Pop-up";
+"settings.popup.appearance.footer" = "Tema hanya berlaku untuk pop-up; jendela ini mengikuti tampilan macOS Anda.";
+"settings.popup.columns" = "Kolom";
+"settings.popup.columns.detail" = "Otomatis mempertahankan lebar pop-up standar; angka membuat pop-up selebar yang dibutuhkan grup.";
+"settings.popup.maxRows" = "Baris maksimum";
+"settings.popup.maxRows.detail" = "Membatasi tinggi pop-up; grup yang lebih besar akan digulir.";
+"settings.popup.showNames" = "Tampilkan nama app";
+"settings.popup.position" = "Posisi";
+"settings.popup.position.detail" = "Di atas ikon yang diklik membuka pop-up di atas ikon Dock grupnya, atau di bawah ikon bilah menu bila dipilih dari menunya. Pop-up yang dibuka dengan pintasan, tautan, atau Siri tetap di tengah atas Dock.";
+"settings.popup.layout.header" = "Tata Letak Pop-up";
+"settings.popup.layout.footer" = "Ini adalah bawaan untuk setiap grup. Setiap grup dapat menggantinya di Kelola Grup.";
+"settings.popup.freeLayout" = "Tata letak bebas";
+"settings.popup.freeLayout.detail" = "App tetap di sel tempat Anda menyeretnya, dan yang lain tidak bergeser; menjatuhkan app di atas app lain akan menukar keduanya.";
+"settings.popup.arranging.header" = "Menata App";
+"settings.popup.arranging.footer" = "Dimatikan, app grup mengisi pop-up secara berurutan dan memberi ruang saat Anda memindahkan satu. A→Z di pop-up mengurutkan grup menurut nama dalam kedua mode.";
+"settings.popup.restoreWindows" = "Pulihkan jendela saat membuka kembali app yang sedang berjalan";
+"settings.popup.restoreWindows.detail" = "Mengklik app yang sedang berjalan mengembalikan jendela yang disembunyikan dan diperkecil, seperti saat mengkliknya di Dock. Jika mati, app hanya dibawa ke depan.";
+"settings.popup.runningApps.header" = "App yang Sedang Berjalan";
+"settings.popup.dockMenus" = "Menu pada ikon Dock grup";
+"settings.popup.dockMenus.detail" = "Klik kanan ikon Dock grup mandiri untuk app-nya, Buka Semua, Sembunyikan Semua dan Tutup Semua, setelah ikon itu pernah diklik. App-nya kemudian tampil sebagai berjalan di Dock dan di ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Ikon Dock Mandiri";
+"settings.popup.ax.granted" = "Akses Aksesibilitas diberikan: jendela yang diperkecil juga kembali";
+"settings.popup.ax.required" = "Memulihkan jendela yang diperkecil memerlukan akses Aksesibilitas";
+"settings.popup.ax.detail" = "Izinkan %@ di Privasi & Keamanan → Aksesibilitas. Sampai itu, app yang disembunyikan tetap kembali, dan app diminta dibuka ulang seperti dari Dock. Ikon grup mandiri memerlukan akses itu untuk app-nya sendiri.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Buka pop-up grup dengan pintasan keyboard";
+"settings.shortcuts.modifiers" = "Tombol modifier";
+"settings.shortcuts.keys" = "Tombol pintasan";
+"settings.shortcuts.keys.detail" = "Tahan tombol-tombol ini dan tekan 1 untuk grup pertama, 2 untuk grup kedua, dan seterusnya. Tekan lagi untuk menutup pop-up.";
+"settings.shortcuts.header" = "Pintasan Keyboard";
+"settings.shortcuts.ax.granted" = "Berfungsi di setiap app";
+"settings.shortcuts.ax.needed" = "Memerlukan akses Aksesibilitas";
+"settings.shortcuts.ax.detail" = "Agar pintasan terdeteksi saat Anda bekerja di app lain, izinkan %@ di Privasi & Keamanan → Aksesibilitas. Sampai itu, pintasan hanya berfungsi saat pop-up-nya atau jendelanya aktif.";
+"settings.shortcuts.noGroups" = "Belum ada grup.";
+"settings.shortcuts.assigned.header" = "Grup yang Ditetapkan";
+"settings.shortcuts.assigned.footer.limit" = "Hanya sembilan grup pertama yang memiliki pintasan. Seret grup di Kelola Grup untuk mengubah urutan.";
+"settings.shortcuts.assigned.footer" = "Pintasan mengikuti urutan grup di Kelola Grup.";
+"settings.shortcuts.siri.group" = "Grup";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "Tambahkan grup untuk melihat apa yang bisa Anda minta ke Siri.";
+"settings.shortcuts.openShortcuts" = "Buka Pintasan";
+"settings.shortcuts.shortcutsApp" = "App Pintasan";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group dan Show Group adalah aksi di sana dan di Spotlight: tambahkan ke pintasan Anda sendiri, dengan pemicu Anda sendiri.";
+"settings.shortcuts.siri.header" = "Siri dan Pintasan";
+"settings.shortcuts.siri.footer" = "Minta Siri dengan kata-kata ini, dengan suara atau mengetik. Kata-kata itu memakai nama grup yang terkini; pintasan yang Anda buat tetap berfungsi setelah diganti nama.";
+"settings.shortcuts.links.noGroups" = "Tambahkan grup untuk melihat tautannya.";
+"settings.shortcuts.links.footer" = "Buka tautan dari skrip atau app lain, misalnya dengan `open` di Terminal. Grup dinamai dengan namanya (huruf besar/kecil, aksen dan tanda baca diabaikan) atau, jika namanya ambigu, dengan ID-nya. Tambahkan ?mode=force pada tautan keluar untuk memaksa berhenti.";
+"settings.shortcuts.copy.help" = "Salin “%@” ke papan klip.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Tampilkan Paling Sering Dipakai di bilah menu";
+"settings.mostUsed.appsShown" = "App yang ditampilkan";
+"settings.mostUsed.appsShown.detail" = "App yang paling sering dibuka, di menu dan di pop-up Paling Sering Dipakai.";
+"settings.mostUsed.sessionLength" = "Panjang sesi";
+"settings.mostUsed.together" = "Dibuka bersamaan dalam";
+"settings.mostUsed.together.detail" = "App yang dibuka dalam rentang waktu ini satu sama lain dihitung sebagai dipakai bersamaan, sehingga naik sedikit.";
+"settings.mostUsed.footer" = "App diurutkan berdasarkan seberapa sering Anda membukanya, dari Dock, Finder, Spotlight atau grup. Peluncuran tetap dihitung meski daftar disembunyikan.";
+"settings.mostUsed.recorded" = "Tercatat";
+"settings.mostUsed.clear" = "Hapus Riwayat…";
+"settings.mostUsed.history" = "Riwayat";
+"settings.mostUsed.history.detail" = "Disimpan hanya di Mac ini, di usage-stats.json dan usage-cooccurrence.json dalam Application Support.";
+"settings.mostUsed.usageHistory.header" = "Riwayat Penggunaan";
+"settings.mostUsed.clear.confirm.title" = "Hapus riwayat penggunaan?";
+"settings.mostUsed.clear.confirm.button" = "Hapus Riwayat";
+"settings.mostUsed.clear.confirm.message" = "Daftar Paling Sering Dipakai dimulai dari awal. Grup dan app Anda tidak terpengaruh.";
+"settings.mostUsed.summary.none" = "Belum ada peluncuran";
+"settings.mostUsed.summary.launches.one" = "1 peluncuran";
+"settings.mostUsed.summary.launches.other" = "%ld peluncuran";
+"settings.mostUsed.summary" = "%1$@ dari %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Periksa pembaruan secara otomatis";
+"settings.updates.currentVersion" = "Versi saat ini";
+"settings.updates.lastChecked" = "Terakhir diperiksa";
+"settings.updates.checkNow" = "Periksa Sekarang";
+"settings.updates.otherVersions" = "Versi Lain…";
+"settings.updates.footer" = "Memeriksa rilis GitHub proyek saat app dimulai dan setiap 6 jam; hanya nomor versi app yang dikirim. Versi baru hanya dipasang setelah Anda memilih Unduh dan Pasang. Versi Lain… memasang rilis mana pun yang diterbitkan, lebih lama atau lebih baru; kembali ke versi lama akan melewati versi yang lebih baru saat pemeriksaan otomatis.";
+"settings.updates.viewChangelog" = "Lihat Catatan Perubahan";
+"settings.updates.latestPath" = "Kembali ke jalur terbaru: setiap rilis yang lebih baru ditawarkan";
+"settings.updates.skipped" = "Versi lebih baru yang dilewati: %@";
+"settings.updates.clear" = "Hapus";
+"settings.updates.clear.help" = "Biarkan pemeriksaan otomatis menawarkan versi ini lagi";
+"settings.updates.never" = "Tidak pernah";
+"settings.updates.status.idle" = "Belum diperiksa sejak app dimulai";
+"settings.updates.status.checking" = "Memeriksa…";
+"settings.updates.status.upToDate" = "Anda sudah memakai versi terbaru (v%@)";
+"settings.updates.status.available" = "Versi %@ tersedia";
+"settings.updates.showUpdate" = "Tampilkan Pembaruan…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Versi Lain";
+"settings.otherVersions.intro" = "Pasang rilis %@ mana pun yang diterbitkan, lebih lama atau lebih baru. App akan keluar dan dibuka kembali sebagai versi yang Anda pilih.";
+"settings.otherVersions.releasesLink" = "Buka Halaman Rilis di GitHub";
+"settings.otherVersions.loading" = "Memuat rilis dari GitHub…";
+"settings.otherVersions.none" = "GitHub tidak mencantumkan rilis yang diterbitkan.";
+"settings.otherVersions.current" = "Saat ini";
+"settings.otherVersions.noDownload" = "Tidak ada unduhan";
+"settings.otherVersions.install.help" = "Pasang versi %@";
+"settings.otherVersions.install.noImage" = "Rilis ini tidak memiliki image disk untuk dipasang.";
+"settings.otherVersions.confirm.title" = "Pasang versi %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ keluar dan dibuka kembali sebagai versi %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Versi %@ tidak dapat memperbarui dirinya sendiri: untuk kembali, unduh versi yang lebih baru dari halaman rilis.";
+"settings.otherVersions.confirm.skips" = "Pemeriksaan otomatis lalu melewati versi yang lebih baru (%@); Periksa Pembaruan… tetap menawarkannya.";
+"settings.otherVersions.confirm.older" = "Versi lama mungkin tidak mengenal fitur yang ditambahkan sesudahnya; pertimbangkan untuk mengekspor cadangan dulu (Pengaturan → Cadangan).";
+"settings.otherVersions.confirm.upgrade" = "Versi yang dilewati dihapus, sehingga pemeriksaan otomatis menawarkan setiap rilis yang lebih baru lagi.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Ekspor Pengaturan…";
+"settings.backup.export" = "Ekspor";
+"settings.backup.export.detail" = "Menyimpan grup dan pengaturan Anda ke file .dockgroups.";
+"settings.backup.import.button" = "Impor Pengaturan…";
+"settings.backup.import" = "Impor";
+"settings.backup.import.detail" = "Mengganti grup dan pengaturan Anda dengan yang ada di file cadangan, atau menggabungkan grup baru dari cadangan ke grup Anda.";
+"settings.backup.footer" = "Cadangan berisi grup, app-nya, dan semua pengaturan. Jumlah peluncuran Paling Sering Dipakai tidak disertakan. File tetap berada di tempat Anda menyimpannya.";
+"settings.backup.status.exported" = "Diekspor ke “%@”";
+"settings.backup.status.restored" = "Memulihkan %1$@ dengan %2$@";
+"settings.backup.status.merged" = "Menggabungkan %@ dari cadangan";
+"settings.backup.status.mergedSkipped" = "Menggabungkan %1$@ dari cadangan; %2$ld sudah ada di sini";
+"settings.backup.exportPanel.title" = "Ekspor Pengaturan";
+"settings.backup.exportPanel.message" = "Simpan grup dan pengaturan Anda ke file cadangan.";
+"settings.backup.exportFailed" = "Pengaturan tidak dapat diekspor";
+"settings.backup.importPanel.title" = "Impor Pengaturan";
+"settings.backup.importPanel.message" = "Pilih cadangan %@ untuk dipulihkan.";
+"settings.backup.readFailed" = "File tidak dapat dibaca";
+"settings.backup.confirm.title" = "Impor grup dan pengaturan dalam cadangan ini?";
+"settings.backup.confirm.replaceAll" = "Ganti Semua";
+"settings.backup.confirm.merge" = "Gabungkan";
+"settings.backup.restoreFailed" = "Cadangan tidak dapat dipulihkan";
+"settings.backup.restoreFailed.kept" = "%@ Grup dan pengaturan Anda saat ini tetap disimpan.";
+"settings.backup.mergeFailed" = "Cadangan tidak dapat digabungkan";
+"settings.backup.mergeFailed.kept" = "%@ Grup Anda saat ini tetap disimpan.";
+"settings.backup.rejected.notABackup" = "Pilih file .dockgroups yang dibuat dengan Ekspor Pengaturan…. Tidak ada yang diubah.";
+"settings.backup.rejected.newer" = "Tidak ada yang diubah.";
+"settings.backup.confirm.noGroups" = "Cadangan tidak memiliki grup.";
+"settings.backup.confirm.noGroups.exported" = "Cadangan tidak memiliki grup, diekspor %@.";
+"settings.backup.confirm.contents" = "Cadangan memiliki %1$@ dengan %2$@.";
+"settings.backup.confirm.contents.exported" = "Cadangan memiliki %1$@ dengan %2$@, diekspor %3$@.";
+"settings.backup.confirm.replace" = "Ganti Semua memakai grup dan pengaturan dari cadangan sebagai pengganti milik Anda.";
+"settings.backup.confirm.replaced.one" = "1 grup saat ini dengan nama yang sama seperti grup di cadangan akan diganti olehnya.";
+"settings.backup.confirm.replaced.other" = "%ld grup saat ini dengan nama yang sama seperti grup di cadangan akan diganti olehnya.";
+"settings.backup.confirm.removed.one" = "1 grup saat ini yang tidak ada di cadangan akan dihapus.";
+"settings.backup.confirm.removed.other" = "%ld grup saat ini yang tidak ada di cadangan akan dihapus.";
+"settings.backup.confirm.replaceSettings" = "Pengaturan Anda (pop-up, pintasan, Paling Sering Dipakai dan pembaruan) juga akan diganti.";
+"settings.backup.confirm.merge.nothing" = "Gabungkan mempertahankan grup dan pengaturan Anda serta tidak menambahkan apa pun.";
+"settings.backup.confirm.merge.allHere" = "Gabungkan mempertahankan grup dan pengaturan Anda; setiap grup di cadangan sudah ada di sini, jadi tidak ada yang ditambahkan.";
+"settings.backup.confirm.merge.adds" = "Gabungkan mempertahankan grup dan pengaturan Anda serta menambahkan %1$@ dengan %2$@ dari cadangan.";
+"settings.backup.confirm.skipped.one" = "1 grup yang sudah ada di sini (nama sama) akan dilewati.";
+"settings.backup.confirm.skipped.other" = "%ld grup yang sudah ada di sini (nama sama) akan dilewati.";
+"settings.backup.confirm.final" = "Jumlah peluncuran Paling Sering Dipakai dipertahankan. Salinan file Anda saat ini disimpan di sebelahnya di Application Support. Ini tidak dapat dibatalkan.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Simpan ke File…";
+"settings.diagnostics.export" = "Ekspor Diagnostik";
+"settings.diagnostics.export.detail" = "Laporan teks untuk dilampirkan pada isu GitHub atau permintaan dukungan.";
+"settings.diagnostics.header" = "Diagnostik";
+"settings.diagnostics.footer" = "Mencantumkan versi app dan macOS, model Mac Anda, lokasi pemasangan app, akses Aksesibilitas, pengaturan Anda, pemeriksaan pembaruan, nama grup beserta jumlah app-nya, dan kesalahan terbaru. Daftar app dalam grup Anda tidak disertakan. Tidak ada yang dikirim ke mana pun.";
+"settings.diagnostics.copied" = "Diagnostik disalin ke papan klip";
+"settings.diagnostics.saved" = "Disimpan ke “%@”";
+"settings.diagnostics.failed" = "Laporan tidak dapat disimpan: %@";
+"settings.diagnostics.panel.title" = "Simpan Diagnostik";
+"settings.diagnostics.panel.message" = "Simpan laporan diagnostik sebagai file teks, misalnya untuk dilampirkan pada isu GitHub.";
+"settings.diagnostics.panel.prompt" = "Simpan";
+
+/* Software Update window */
+"updateWindow.title" = "Pembaruan Perangkat Lunak";
+"updateWindow.checking" = "Memeriksa pembaruan…";
+"updateWindow.upToDate.title" = "Anda sudah memakai versi terbaru!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ adalah versi terbaru yang tersedia.";
+"updateWindow.available.title" = "Versi baru %@ tersedia!";
+"updateWindow.available.message" = "Versi %1$@ tersedia — Anda memakai %2$@.";
+"updateWindow.available.noImage" = "Rilis ini tidak memiliki image disk untuk pemasangan otomatis; unduh dari halaman rilisnya.";
+"updateWindow.available.question" = "Apakah Anda ingin mengunduh dan memasangnya sekarang?";
+"updateWindow.skip" = "Lewati Versi Ini";
+"updateWindow.remindLater" = "Ingatkan Nanti";
+"updateWindow.openReleasePage" = "Buka Halaman Rilis";
+"updateWindow.downloadAndInstall" = "Unduh dan Pasang";
+"updateWindow.downloading" = "Mengunduh versi %@…";
+"updateWindow.restartsWhenDone" = "%@ dimulai ulang setelah selesai.";
+"updateWindow.reopening" = "%@ sedang dibuka kembali.";
+"updateWindow.dryRun.title" = "Uji coba selesai";
+"updateWindow.dryRun.message" = "Versi %1$@ telah diunduh, diverifikasi dan disalin ke %2$@. Tidak ada yang diganti.";
+"updateWindow.checkFailed" = "Pembaruan tidak dapat diperiksa";
+"updateWindow.installFailed" = "Versi %@ tidak dapat dipasang";
+"updateWindow.link.releases" = "Rilis";
+"updateWindow.link.releasePage" = "Halaman Rilis";
+"updateWindow.releaseNotes" = "Catatan Rilis";
+"updateWindow.releaseNotes.none" = "Rilis ini tidak memiliki catatan.";
+"updateWindow.relaunchFailed" = "Versi %@ sudah terpasang, tetapi app tidak dapat memulai ulang dirinya sendiri. Keluarlah lalu buka lagi.";
+
+/* About window */
+"about.section.findMe" = "Temukan Saya di Internet";
+"about.section.support" = "Dukung Proyek Ini";
+"about.section.books" = "Buku Saya";
+"about.section.software" = "Perangkat Lunak Open Source Saya";
+"about.fullList" = "Daftar lengkap di github.com/ercanatay";
+"about.section.blogs" = "Blog Medium";
+"about.icon.accessibility" = "Ikon %@";
+"about.version" = "Versi %@ · open source, lisensi MIT";
+"about.website" = "Situs Web";
+"about.sourceCode" = "Kode Sumber";
+"about.license" = "Lisensi";
+"about.reportBug" = "Menemukan bug? Buka isu";
+"about.inspiredBy" = "Terinspirasi dari fungsi DockGroups. %@ adalah implementasi mandiri dan orisinal yang ditulis dari nol; tidak berisi kode atau grafis dari DockGroups.";
+"about.project.dockGroups" = "App ini · Grup Dock untuk macOS";
+"about.project.intelComputerUse" = "Otomatisasi desktop macOS native untuk Mac Intel melalui MCP.";
+"about.project.exchangeRate" = "Pelacak kurs dan portofolio PHP/MySQL dengan scrape langsung + pembaruan rilis GitHub.";
+"about.project.backlinkChecker" = "Periksa anchor, dofollow/nofollow dan status HTTP dari backlink.";
+"about.project.consentManager" = "Plugin terjemahan Consent Manager untuk YOOtheme Pro 5 (WordPress.org).";
+"about.project.antigravityUpdater" = "Pembaru macOS ringan untuk Antigravity Tools, 21 bahasa.";
+"about.project.widgetVisibility" = "Plugin WP tanpa Jetpack untuk visibilitas widget dengan dukungan turunan.";
+"about.project.forbiddenContent" = "Mendeteksi kata terlarang (mis. 'Casino') di judul posting — seperti pemeriksa audit WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "Show %1$@ in %2$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "Launch %1$@ in %2$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "Quit %1$@ in %2$@";
+"core.invocation.showPopup" = "Tampilkan Pop-up";
+"core.invocation.openAll" = "Buka Semua";
+"core.invocation.hideAll" = "Sembunyikan Semua";
+"core.invocation.closeAll" = "Tutup Semua";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Tidak ada peramban web yang disiapkan untuk membukanya.";
+"core.launch.notOpened" = "App tidak dibuka.";
+"core.group.defaultName" = "Grup Baru";
+"core.website.error.empty" = "Masukkan alamat web.";
+"core.website.error.invalid" = "Ini bukan alamat web yang valid.";
+"core.website.error.scheme" = "Hanya alamat http dan https yang dapat ditambahkan, bukan “%@:”.";
+"core.website.error.credentials" = "Hapus nama pengguna dan kata sandi dari alamat.";
+"core.persistence.groups.newer" = "File grup disimpan oleh versi Cybokron Dock Groups yang lebih baru (format %ld).";
+"core.backup.error.notABackup" = "File ini bukan cadangan Cybokron Dock Groups.";
+"core.backup.error.newer" = "Cadangan ini dibuat dengan versi Cybokron Dock Groups yang lebih baru (format cadangan %ld). Perbarui app untuk memulihkannya.";
+"core.persistence.usage.newer" = "Statistik penggunaan disimpan oleh versi Cybokron Dock Groups yang lebih baru (format %ld).";
+"core.agent.configuration.newer" = "Pengaturan grup disimpan oleh versi Cybokron Dock Groups yang lebih baru (format %ld).";
+"core.agent.error.icon" = "Ikon grup tidak dapat digambar.";
+"core.agent.error.bundleWrite" = "App grup tidak dapat dibuat: %@";
+"core.agent.error.toolMissing" = "Alat sistem yang dibutuhkan tidak ada: %@.";
+"core.agent.error.signing" = "macOS mewajibkan setiap app ditandatangani kode, dan penandatanganan app grup gagal di Mac ini, jadi tidak ada yang dipasang.";
+"core.agent.error.registration" = "macOS tidak mendaftarkan app grup: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups tidak dapat membaca executable-nya sendiri: %@";
+"core.agent.error.noExecutable" = "App tidak memiliki executable.";
+"core.dock.saveFailed" = "Pengaturan Dock tidak dapat diubah.";
+"core.store.loadFailed.title" = "Grup Anda tidak dapat dimuat";
+"core.store.loadFailed.kept" = "%1$@ Memulai dengan daftar grup kosong. Salinan disimpan di “%2$@”.";
+"core.store.loadFailed.empty" = "%@ Memulai dengan daftar grup kosong.";
+"core.store.loadFailed.suspended" = "%@ Untuk melindungi file yang ada, perubahan tidak akan disimpan sampai app dimulai ulang.";
+"core.store.saveFailed.title" = "Perubahan Anda tidak dapat disimpan";
+"core.preferences.saveFailed" = "Pengaturan Anda tidak dapat disimpan: %@";
+"core.websiteIcon.accessibility" = "Situs Web";
+"core.update.check.notHTTP" = "Jawabannya bukan HTTP.";
+"core.update.check.malformed" = "Informasi rilis dari GitHub tidak dapat dibaca.";
+"core.update.check.unsupportedTag" = "Rilis terbaru (“%@”) tidak diberi tag nomor versi.";
+"core.update.check.noRelease" = "Belum ada rilis yang diterbitkan.";
+"core.update.check.rateLimited" = "GitHub sedang membatasi permintaan. Coba lagi dalam satu jam.";
+"core.update.check.httpStatus" = "GitHub menjawab dengan status HTTP %ld.";
+"core.update.check.network" = "GitHub tidak dapat dihubungi: %@";
+"core.update.check.noVersion" = "Salinan app ini tidak memiliki nomor versi, sehingga tidak dapat dibandingkan.";
+"core.update.install.insecureURL" = "Alamat unduhan pembaruan tidak aman (%@).";
+"core.update.install.downloadFailed" = "Pembaruan tidak dapat diunduh: %@";
+"core.update.install.sizeMismatch" = "Pembaruan yang diunduh tidak lengkap (%1$ld dari %2$ld byte).";
+"core.update.install.checksum" = "Pembaruan yang diunduh tidak cocok dengan checksum yang diterbitkan, sehingga tidak dipasang.";
+"core.update.install.mountFailed" = "Image disk pembaruan tidak dapat dibuka: %@";
+"core.update.install.appNotFound" = "Image disk pembaruan tidak berisi app.";
+"core.update.install.wrongApp" = "Image disk pembaruan berisi app lain (%@).";
+"core.update.install.versionMismatch" = "App yang diunduh adalah versi %1$@, tetapi rilisnya %2$@.";
+"core.update.install.replaceFailed" = "Versi baru tidak dapat dipasang, jadi versi saat ini tetap disimpan: %@";
+"core.update.install.rollbackFailed" = "Pembaruan gagal dan versi sebelumnya tidak dapat dikembalikan. Disimpan di %@.";
+"core.update.location.translocated" = "macOS menjalankan salinan ini dari lokasi sementara hanya-baca. Pindahkan app ke folder Aplikasi Anda, buka dari sana, lalu coba lagi.";
+"core.update.location.notFound" = "App yang berjalan tidak ditemukan di %@.";
+"core.update.location.readOnly" = "App berjalan dari volume hanya-baca, seperti image disk-nya. Salin dulu ke folder Aplikasi Anda.";
+"core.update.location.noPermission" = "Anda tidak memiliki izin untuk mengganti app di “%@”. Unduh versi baru dari halaman rilis.";
+"core.update.install.noFile" = "Server tidak mengirim file.";
+"core.update.install.httpStatus" = "Status HTTP %ld.";
+"core.update.install.copyFailed" = "Gagal menyalin app: %@";
+"core.mostUsed.name" = "Paling Sering Dipakai";
