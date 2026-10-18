@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Scrollable Settings panes**: every Settings tab now has the same fixed height and scrolls, instead
+  of the window growing past the screen (Popup, Updates, Backup, Most Used were cut off).
+
 ### Added
 
 - **Localization framework**: the app's user-facing text — menus, popup, group window, Settings,

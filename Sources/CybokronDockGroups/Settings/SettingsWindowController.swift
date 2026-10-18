@@ -89,5 +89,8 @@ private struct SettingsView: View {
                 .tabItem { Label(L10n.Settings.backupTab, systemImage: "externaldrive") }
         }
         .padding(.top, 8)
+        // Fixed pane height: each tab's grouped Form scrolls inside it instead of growing the
+        // window past the screen.
+        .frame(height: 640)
     }
 }
