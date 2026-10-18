@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Settings panes in a sidebar**: Popup, Shortcuts & Siri, Most Used, Updates and Backup are now
+  listed in a sidebar on the left (on the right in right-to-left languages), as in System Settings,
+  instead of a tab bar across the top. The panes keep their width and scroll as before, the window
+  is still as tall as the screen has room for (at most 640 points), and the pane last shown is
+  selected again the next time Settings opens.
+
 ## [0.5.8] - 2026-10-18
 
 ### Fixed

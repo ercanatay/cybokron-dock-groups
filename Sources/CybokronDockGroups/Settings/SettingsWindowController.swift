@@ -3,13 +3,13 @@ import DockGroupsCore
 import SwiftUI
 
 /// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, the Most Used list, updates, and
-/// backups with the diagnostics report, each in its own tab.
+/// backups with the diagnostics report, each in its own pane, picked from a sidebar.
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
-    /// The tabs' height on a screen with room for it; shorter screens get shorter tabs.
+    /// The panes' height on a screen with room for it; shorter screens get shorter panes.
     private static let idealPaneHeight: CGFloat = 640
-    /// The tabs don't shrink below this, however short the screen.
+    /// The panes don't shrink below this, however short the screen.
     private static let minimumPaneHeight: CGFloat = 320
     /// Room kept between the window and the edges of the screen's usable area.
     private static let screenMargin: CGFloat = 40
@@ -75,7 +75,7 @@ final class SettingsWindowController: NSWindowController {
         window?.makeKeyAndOrderFront(nil)
     }
 
-    /// Makes the tabs as tall as the screen the window is on has room for, and keeps the whole
+    /// Makes the panes as tall as the screen the window is on has room for, and keeps the whole
     /// window inside that screen's usable area: a frame saved on a bigger screen could otherwise
     /// leave its bottom out of reach.
     private func fitToScreen() {
@@ -95,7 +95,43 @@ final class SettingsWindowController: NSWindowController {
     }
 }
 
+/// The Settings window's panes, in sidebar order.
+private enum SettingsPane: String, CaseIterable, Identifiable {
+    case popup
+    case shortcuts
+    case mostUsed
+    case updates
+    case backup
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .popup: L10n.Settings.popupTab
+        case .shortcuts: L10n.Settings.shortcutsTab
+        case .mostUsed: MostUsedGroup.name
+        case .updates: L10n.Settings.updatesTab
+        case .backup: L10n.Settings.backupTab
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .popup: "rectangle.grid.2x2"
+        case .shortcuts: "keyboard"
+        case .mostUsed: "star"
+        case .updates: "arrow.triangle.2.circlepath"
+        case .backup: "externaldrive"
+        }
+    }
+}
+
+/// The panes listed in a sidebar, as in System Settings, with the selected one beside it. The
+/// sidebar takes the leading edge, so the right in right-to-left languages.
 private struct SettingsView: View {
+    /// Fits the longest pane name; the panes keep their own 480-point width beside it.
+    private static let sidebarWidth: CGFloat = 180
+
     let preferences: PreferencesStore
     let store: GroupStore
     let usage: UsageStore
@@ -106,23 +142,39 @@ private struct SettingsView: View {
     /// Set by `SettingsWindowController` to fit the screen.
     var paneHeight: CGFloat
 
+    /// The pane shown, kept across launches as the window's frame is.
+    @AppStorage("SettingsSelectedPane") private var selectedPane: SettingsPane = .popup
+
     var body: some View {
-        TabView {
-            PopupSettingsView(preferences: preferences)
-                .tabItem { Label(L10n.Settings.popupTab, systemImage: "rectangle.grid.2x2") }
-            ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts)
-                .tabItem { Label(L10n.Settings.shortcutsTab, systemImage: "keyboard") }
-            MostUsedSettingsView(preferences: preferences, usage: usage)
-                .tabItem { Label(MostUsedGroup.name, systemImage: "star") }
-            UpdatesSettingsView(preferences: preferences, updater: updater)
-                .tabItem { Label(L10n.Settings.updatesTab, systemImage: "arrow.triangle.2.circlepath") }
-            BackupSettingsView(backup: backup, diagnostics: diagnostics)
-                .tabItem { Label(L10n.Settings.backupTab, systemImage: "externaldrive") }
+        HStack(spacing: 0) {
+            // A required selection: one pane stays selected, whatever is clicked.
+            List(SettingsPane.allCases, selection: $selectedPane) { pane in
+                Label(pane.title, systemImage: pane.systemImage)
+            }
+            .listStyle(.sidebar)
+            .frame(width: Self.sidebarWidth)
+            Divider()
+            paneView
         }
-        .padding(.top, 8)
-        // The window is as tall as this; each tab's grouped Form fills it and scrolls. The tabs
+        // The window is as tall as this; each pane's grouped Form fills it and scrolls. The panes
         // must not fix their own height (or `fixedSize` it): the form would then grow past the
-        // window, cut off its bottom and cover the tab bar.
+        // window and cut off its bottom.
         .frame(height: paneHeight)
+    }
+
+    @ViewBuilder
+    private var paneView: some View {
+        switch selectedPane {
+        case .popup:
+            PopupSettingsView(preferences: preferences)
+        case .shortcuts:
+            ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts)
+        case .mostUsed:
+            MostUsedSettingsView(preferences: preferences, usage: usage)
+        case .updates:
+            UpdatesSettingsView(preferences: preferences, updater: updater)
+        case .backup:
+            BackupSettingsView(backup: backup, diagnostics: diagnostics)
+        }
     }
 }
