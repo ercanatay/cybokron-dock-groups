@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP ステータス %ld。";
 "core.update.install.copyFailed" = "アプリのコピーに失敗しました：%@";
 "core.mostUsed.name" = "よく使うアプリ";
+
+/* Changelog */
+"changelog.tab" = "変更履歴";
+"changelog.currentVersion" = "現在のバージョン：%@";
+"changelog.refresh" = "更新";
+"changelog.refresh.help" = "GitHub から最新のリリースノートを読み込みます";
+"changelog.lastUpdated" = "最終更新 %@";
+"changelog.header" = "リリースノート";
+"changelog.footer" = "プロジェクトの GitHub リリースから取得しています。このMacにもコピーを保存するため、オフラインでも表示できます。";
+"changelog.latest" = "最新";
+"changelog.installed" = "インストール済み";
+"changelog.prerelease" = "プレリリース";
+"changelog.noNotes" = "このバージョンのリリースノートはありません。";
+"changelog.loading" = "GitHub からリリースノートを読み込んでいます…";
+"changelog.unavailable" = "リリースノートを利用できません";
+"changelog.error.cached" = "リリースノートを読み込めませんでした。キャッシュされたコピーを表示しています。";
+"changelog.retry" = "「更新」をクリックして再試行してください。";
+"changelog.openRelease" = "GitHub で表示";

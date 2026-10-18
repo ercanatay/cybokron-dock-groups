@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Status HTTP %ld.";
 "core.update.install.copyFailed" = "Gagal menyalin app: %@";
 "core.mostUsed.name" = "Paling Sering Dipakai";
+
+/* Changelog */
+"changelog.tab" = "Catatan Perubahan";
+"changelog.currentVersion" = "Versi saat ini: %@";
+"changelog.refresh" = "Segarkan";
+"changelog.refresh.help" = "Muat catatan rilis terbaru dari GitHub";
+"changelog.lastUpdated" = "Terakhir diperbarui %@";
+"changelog.header" = "Catatan Rilis";
+"changelog.footer" = "Diambil dari rilis GitHub proyek. Salinan tetap disimpan di Mac ini, sehingga catatan tetap tampil saat offline.";
+"changelog.latest" = "Terbaru";
+"changelog.installed" = "Terpasang";
+"changelog.prerelease" = "Pra-rilis";
+"changelog.noNotes" = "Tidak ada catatan rilis untuk versi ini.";
+"changelog.loading" = "Memuat catatan rilis dari GitHub…";
+"changelog.unavailable" = "Catatan rilis tidak tersedia";
+"changelog.error.cached" = "Tidak dapat memuat catatan rilis — menampilkan salinan cache.";
+"changelog.retry" = "Klik Segarkan untuk mencoba lagi.";
+"changelog.openRelease" = "Lihat di GitHub";

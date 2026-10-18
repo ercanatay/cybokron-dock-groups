@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP 状态 %ld。";
 "core.update.install.copyFailed" = "拷贝 App 失败：%@";
 "core.mostUsed.name" = "最常用";
+
+/* Changelog */
+"changelog.tab" = "更新日志";
+"changelog.currentVersion" = "当前版本：%@";
+"changelog.refresh" = "刷新";
+"changelog.refresh.help" = "从 GitHub 加载最新发行说明";
+"changelog.lastUpdated" = "上次更新于 %@";
+"changelog.header" = "发行说明";
+"changelog.footer" = "内容来自项目的 GitHub 发布页。此 Mac 上会保存一份副本，因此离线时也能查看这些说明。";
+"changelog.latest" = "最新";
+"changelog.installed" = "已安装";
+"changelog.prerelease" = "预发布";
+"changelog.noNotes" = "此版本没有发行说明。";
+"changelog.loading" = "正在从 GitHub 加载发行说明…";
+"changelog.unavailable" = "发行说明不可用";
+"changelog.error.cached" = "无法加载发行说明，正在显示缓存副本。";
+"changelog.retry" = "点击“刷新”重试。";
+"changelog.openRelease" = "在 GitHub 上查看";

@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP 상태 %ld.";
 "core.update.install.copyFailed" = "앱 복사에 실패했습니다: %@";
 "core.mostUsed.name" = "자주 사용하는 항목";
+
+/* Changelog */
+"changelog.tab" = "변경 내역";
+"changelog.currentVersion" = "현재 버전: %@";
+"changelog.refresh" = "새로 고침";
+"changelog.refresh.help" = "GitHub에서 최신 릴리스 노트를 불러옵니다";
+"changelog.lastUpdated" = "마지막 업데이트 %@";
+"changelog.header" = "릴리스 노트";
+"changelog.footer" = "프로젝트의 GitHub 릴리스에서 가져옵니다. 이 Mac에도 사본이 저장되므로 오프라인에서도 노트를 볼 수 있습니다.";
+"changelog.latest" = "최신";
+"changelog.installed" = "설치됨";
+"changelog.prerelease" = "사전 릴리스";
+"changelog.noNotes" = "이 버전에는 릴리스 노트가 없습니다.";
+"changelog.loading" = "GitHub에서 릴리스 노트를 불러오는 중…";
+"changelog.unavailable" = "릴리스 노트를 사용할 수 없습니다";
+"changelog.error.cached" = "릴리스 노트를 불러오지 못했습니다. 캐시된 사본을 표시합니다.";
+"changelog.retry" = "다시 시도하려면 새로 고침을 클릭하세요.";
+"changelog.openRelease" = "GitHub에서 보기";

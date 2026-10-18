@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "Trạng thái HTTP %ld.";
 "core.update.install.copyFailed" = "Sao chép ứng dụng thất bại: %@";
 "core.mostUsed.name" = "Dùng nhiều nhất";
+
+/* Changelog */
+"changelog.tab" = "Nhật ký thay đổi";
+"changelog.currentVersion" = "Phiên bản hiện tại: %@";
+"changelog.refresh" = "Làm mới";
+"changelog.refresh.help" = "Tải ghi chú phát hành mới nhất từ GitHub";
+"changelog.lastUpdated" = "Cập nhật lần cuối %@";
+"changelog.header" = "Ghi chú phát hành";
+"changelog.footer" = "Lấy từ các bản phát hành GitHub của dự án. Một bản sao được lưu trên Mac này, nên ghi chú vẫn hiển thị khi ngoại tuyến.";
+"changelog.latest" = "Mới nhất";
+"changelog.installed" = "Đã cài đặt";
+"changelog.prerelease" = "Bản thử nghiệm";
+"changelog.noNotes" = "Không có ghi chú phát hành cho phiên bản này.";
+"changelog.loading" = "Đang tải ghi chú phát hành từ GitHub…";
+"changelog.unavailable" = "Không có ghi chú phát hành";
+"changelog.error.cached" = "Không thể tải ghi chú phát hành — đang hiển thị bản sao đã lưu.";
+"changelog.retry" = "Nhấn Làm mới để thử lại.";
+"changelog.openRelease" = "Xem trên GitHub";
