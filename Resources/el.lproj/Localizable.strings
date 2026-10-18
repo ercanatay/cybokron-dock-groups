@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Ελληνικά)
+  Cybokron Dock Groups
+
+  Το ελληνικό κείμενο κάθε κλειδιού. Τα placeholders διατηρούνται: το %@ είναι κείμενο, το %ld αριθμός, και
+  τα %1$@, %2$ld … είναι αριθμημένα ώστε να μπορεί να αλλάξει η σειρά στη μετάφραση. Τα κλειδιά
+  που τελειώνουν σε .one/.other είναι ο ενικός (πλήθος 1) και ο πληθυντικός. Το όνομα της εφαρμογής «Cybokron Dock Groups»,
+  «DockGroups», «GitHub», «Siri», τα σύμβολα πλήκτρων (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) και τα ονόματα αρχείων μένουν αμετάβλητα.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Ακύρωση";
+"common.add" = "Προσθήκη";
+"common.copy" = "Αντιγραφή";
+"common.copied" = "Αντιγράφηκε";
+"common.close" = "Κλείσιμο";
+"common.done" = "Τέλος";
+"common.install" = "Εγκατάσταση";
+"common.tryAgain" = "Δοκιμάστε ξανά";
+"common.openAll" = "Άνοιγμα όλων";
+"common.hideAll" = "Απόκρυψη όλων";
+"common.closeAll" = "Κλείσιμο όλων";
+"common.forceQuit" = "Αναγκαστικό κλείσιμο";
+"common.addApps" = "Προσθήκη εφαρμογών…";
+"common.addWebsite" = "Προσθήκη ιστότοπου…";
+"common.showInFinder" = "Εμφάνιση στο Finder";
+"common.removeFromGroup" = "Αφαίρεση από την ομάδα";
+"common.moveTo" = "Μετακίνηση σε";
+"common.default" = "Προεπιλογή";
+"common.auto" = "Αυτόματο";
+"common.changelog" = "Αρχείο αλλαγών";
+"common.links" = "Σύνδεσμοι";
+"common.openReleasesPage" = "Άνοιγμα σελίδας εκδόσεων";
+"common.openPrivacySettings" = "Άνοιγμα Απορρήτου και ασφάλειας…";
+"common.checkForUpdates" = "Έλεγχος για ενημερώσεις…";
+"common.settings" = "Ρυθμίσεις…";
+"common.noLaunchesYet" = "Δεν έχουν καταγραφεί εκκινήσεις ακόμα";
+"common.noAppsInGroup" = "Δεν υπάρχουν εφαρμογές σε αυτή την ομάδα ακόμα";
+"common.about" = "Σχετικά με το %@";
+"common.hideApp" = "Απόκρυψη του %@";
+"common.quitApp" = "Έξοδος από το %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Εγκατάσταση της έκδοσης %@…";
+"common.update.restarting" = "Εγκαταστάθηκε η έκδοση %@ — γίνεται επανεκκίνηση…";
+"common.appCount.one" = "1 εφαρμογή";
+"common.appCount.other" = "%ld εφαρμογές";
+"common.groupCount.one" = "1 ομάδα";
+"common.groupCount.other" = "%ld ομάδες";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Ομάδες";
+"menuBar.noGroups" = "Δεν υπάρχουν ομάδες ακόμα";
+"menuBar.manageGroups" = "Διαχείριση ομάδων…";
+"menuBar.mostUsed.empty.tooltip" = "Ανοίξτε εφαρμογές κανονικά· όσες ανοίγετε συχνότερα θα εμφανίζονται εδώ.";
+"menuBar.mostUsed.show" = "Εμφάνιση των πιο χρησιμοποιημένων";
+"menuBar.mostUsed.show.tooltip" = "Εμφάνιση των πιο χρησιμοποιημένων εφαρμογών σας σε αναδυόμενο παράθυρο.";
+"menuBar.checkForUpdates.tooltip" = "Αναζήτηση νεότερης έκδοσης του %@ στο GitHub.";
+"menuBar.mostUsed.app.tooltip.one" = "Άνοιγμα του %@. Ανοίχτηκε μία φορά.";
+"menuBar.mostUsed.app.tooltip.other" = "Άνοιγμα του %1$@. Ανοίχτηκε %2$ld φορές.";
+"menuBar.group.tooltip" = "Εμφάνιση των εφαρμογών στο «%@». Κρατήστε πατημένο ⌥ για να ανοίξουν όλες μαζί, ή ⇧⌥ για να αποκρυφτούν όσες τρέχουν.";
+"menuBar.group.tooltip.shortcut" = "Εμφάνιση των εφαρμογών στο «%1$@». Κρατήστε πατημένο ⌥ για να ανοίξουν όλες μαζί, ή ⇧⌥ για να αποκρυφτούν όσες τρέχουν. Συντόμευση: %2$@.";
+"menuBar.group.openAll" = "Άνοιγμα όλων στο «%@»";
+"menuBar.group.openAll.tooltip.one" = "Άνοιγμα της εφαρμογής στο «%@»";
+"menuBar.group.openAll.tooltip.other" = "Άνοιγμα και των %1$ld εφαρμογών στο «%2$@»";
+"menuBar.group.noApps" = "Το «%@» δεν έχει εφαρμογές ακόμα.";
+"menuBar.group.hideAll" = "Απόκρυψη όλων στο «%@»";
+"menuBar.group.hideAll.tooltip" = "Απόκρυψη των εφαρμογών που τρέχουν στο «%@». Οι εφαρμογές που δεν τρέχουν παραμένουν κλειστές.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Επεξεργασία";
+"mainMenu.undo" = "Αναίρεση";
+"mainMenu.redo" = "Επανάληψη";
+"mainMenu.cut" = "Αποκοπή";
+"mainMenu.paste" = "Επικόλληση";
+"mainMenu.selectAll" = "Επιλογή όλων";
+"mainMenu.window" = "Παράθυρο";
+"mainMenu.minimize" = "Ελαχιστοποίηση";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Άνοιγμα όλων των εφαρμογών αυτής της ομάδας· οι εφαρμογές που τρέχουν έρχονται στο προσκήνιο.";
+"popup.openAll.help.mostUsed" = "Άνοιγμα όλων των εφαρμογών αυτής της λίστας· οι εφαρμογές που τρέχουν έρχονται στο προσκήνιο.";
+"popup.hideAll.help.group" = "Απόκρυψη των εφαρμογών αυτής της ομάδας που τρέχουν· οι εφαρμογές που δεν τρέχουν παραμένουν κλειστές.";
+"popup.hideAll.help.mostUsed" = "Απόκρυψη των εφαρμογών αυτής της λίστας που τρέχουν· οι εφαρμογές που δεν τρέχουν παραμένουν κλειστές.";
+"popup.closeAll.help.group" = "Έξοδος από τις εφαρμογές αυτής της ομάδας που τρέχουν. ⌘-κλικ για αναγκαστική έξοδο χωρίς αποθήκευση.";
+"popup.closeAll.help.mostUsed" = "Έξοδος από τις εφαρμογές αυτής της λίστας που τρέχουν. ⌘-κλικ για αναγκαστική έξοδο χωρίς αποθήκευση.";
+"popup.summary.websites.one" = "1 ιστότοπος";
+"popup.summary.websites.other" = "%ld ιστότοποι";
+"popup.summary.running" = "%ld σε λειτουργία";
+"popup.summary.byLaunches" = "ανά εκκινήσεις";
+"popup.filter.noMatch" = "Δεν βρέθηκαν εφαρμογές για το «%@»";
+"popup.filter.noMatch.hint" = "Πατήστε Delete ή Esc για να καθαρίσετε το φίλτρο.";
+"popup.empty.mostUsed.hint" = "Ανοίξτε εφαρμογές κανονικά για να αρχίσει να δημιουργείται το ιστορικό σας.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Ταξινόμηση των εφαρμογών αυτής της ομάδας κατά όνομα, από το A στο Z.";
+"popup.footer.sortAZ.accessibility" = "Ταξινόμηση από το A στο Z";
+"popup.footer.filter.matches" = "Φίλτρο: «%@»  ·  ↩ ανοίγει την επιλεγμένη εφαρμογή  ·  esc καθαρίζει";
+"popup.footer.filter.noMatch" = "Φίλτρο: «%@»  ·  καμία αντιστοιχία  ·  ⌫ ή esc καθαρίζει";
+"popup.footer.hint.mostUsed" = "Κατάταξη ανά συχνότητα ανοίγματος  ·  ⌘-κλικ στο Κλείσιμο όλων για αναγκαστική έξοδο";
+"popup.footer.hint.group" = "Κλείσιμο όλων:  ⌥-κλικ κάνει κανονική έξοδο  ·  ⌘-κλικ κάνει αναγκαστική έξοδο";
+"popup.footer.drag.remove" = "Αφήστε για να αφαιρεθεί το %@ από αυτή την ομάδα";
+"popup.footer.drag.free" = "Αφήστε το %@ σε οποιοδήποτε κελί· σε άλλη εφαρμογή για ανταλλαγή  ·  σύρετε έξω για αφαίρεση";
+"popup.footer.drag.ordered" = "Αφήστε για να τοποθετηθεί το %@  ·  σύρετε έξω από το αναδυόμενο παράθυρο για αφαίρεση";
+"popup.cell.accessibility.website" = "Ιστότοπος %@";
+"popup.cell.hint.website" = "Ανοίγει τον ιστότοπο στο πρόγραμμα περιήγησης";
+"popup.cell.hint.running" = "Φέρνει την εφαρμογή στο προσκήνιο";
+"popup.cell.hint.open" = "Ανοίγει την εφαρμογή";
+"popup.cell.help.openWebsite" = "Άνοιγμα του %@ στο πρόγραμμα περιήγησης.";
+"popup.cell.help.bringToFront" = "Φέρε το %@ στο προσκήνιο.";
+"popup.cell.help.openApp" = "Άνοιγμα του %@.";
+"popup.cell.help.missing" = "Το %@ δεν βρίσκεται σε αυτό το Mac.";
+"popup.cell.help.drag.freeItem" = "Σύρετε σε οποιοδήποτε κελί ή πάνω σε άλλο στοιχείο για ανταλλαγή, ή έξω από το αναδυόμενο παράθυρο για αφαίρεση από την ομάδα.";
+"popup.cell.help.drag.freeApp" = "Σύρετε σε οποιοδήποτε κελί ή πάνω σε άλλη εφαρμογή για ανταλλαγή, ή έξω από το αναδυόμενο παράθυρο για αφαίρεση από την ομάδα.";
+"popup.cell.help.drag.ordered" = "Σύρετε για αναδιάταξη, ή έξω από το αναδυόμενο παράθυρο για αφαίρεση από την ομάδα.";
+"popup.cell.help.drag.missing" = "Σύρετέ το έξω από το αναδυόμενο παράθυρο για αφαίρεση από την ομάδα.";
+"popup.menu.open" = "Άνοιγμα";
+"popup.menu.copyURL" = "Αντιγραφή URL";
+"popup.accessibility.moveEarlier" = "Μετακίνηση πιο πριν";
+"popup.accessibility.moveLater" = "Μετακίνηση πιο μετά";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Δεν υπάρχουν ομάδες ακόμα";
+"groupWindow.empty.noSelection" = "Δεν έχει επιλεγεί ομάδα";
+"groupWindow.empty.noGroups.description" = "Προσθέστε μια ομάδα για να συγκεντρώσετε εφαρμογές που χρησιμοποιείτε μαζί.";
+"groupWindow.empty.noSelection.description" = "Επιλέξτε μια ομάδα για να την επεξεργαστείτε.";
+"groupWindow.addGroup" = "Προσθήκη ομάδας";
+"groupWindow.rename.title" = "Μετονομασία ομάδας";
+"groupWindow.rename.confirm" = "Μετονομασία";
+"groupWindow.rename.message" = "Εισαγάγετε ένα νέο όνομα για την ομάδα.";
+"groupWindow.delete.title" = "Διαγραφή του «%@»;";
+"groupWindow.delete.confirm" = "Διαγραφή ομάδας";
+"groupWindow.delete.message.standalone" = "Αυτό αφαιρεί την ομάδα και τη λίστα εφαρμογών της, καθώς και το δικό της εικονίδιο στο Dock. Οι ίδιες οι εφαρμογές δεν επηρεάζονται.";
+"groupWindow.delete.message" = "Αυτό αφαιρεί την ομάδα και τη λίστα εφαρμογών της. Οι ίδιες οι εφαρμογές δεν επηρεάζονται.";
+"groupWindow.sidebar.rename" = "Μετονομασία…";
+"groupWindow.sidebar.delete" = "Διαγραφή…";
+"groupWindow.sidebar.add.help" = "Προσθήκη ομάδας";
+"groupWindow.sidebar.delete.help" = "Διαγραφή της επιλεγμένης ομάδας";
+"groupWindow.addApps.problem.title" = "Ορισμένες εφαρμογές δεν μπόρεσαν να προστεθούν";
+"groupWindow.section.group" = "Ομάδα";
+"groupWindow.name" = "Όνομα";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Επιλογή…";
+"groupWindow.section.apps" = "Εφαρμογές";
+"groupWindow.apps.empty" = "Δεν υπάρχουν εφαρμογές ακόμα. Χρησιμοποιήστε το «%1$@» για να επιλέξετε εφαρμογές για αυτή την ομάδα, ή το «%2$@» για σύνδεσμο ιστότοπου.";
+"groupWindow.addWebsite.help" = "Προσθήκη συνδέσμου ιστότοπου σε αυτή την ομάδα. Ανοίγει στο προεπιλεγμένο πρόγραμμα περιήγησης.";
+"groupWindow.sortAZ" = "Ταξινόμηση A→Z";
+"groupWindow.sortAZ.help" = "Ταξινόμηση των εφαρμογών αυτής της ομάδας κατά όνομα, από το A στο Z. Σύρετέ τις για αναδιάταξη με το χέρι.";
+"groupWindow.showPopup" = "Εμφάνιση αναδυόμενου παραθύρου";
+"groupWindow.showPopup.help" = "Εμφάνιση του αναδυόμενου παραθύρου αυτής της ομάδας πάνω από το Dock.";
+"groupWindow.hideAll.help" = "Απόκρυψη των εφαρμογών αυτής της ομάδας που τρέχουν. Οι εφαρμογές που δεν τρέχουν παραμένουν κλειστές.";
+"groupWindow.apps.moveHint" = "Για να μετακινήσετε μια εφαρμογή σε άλλη ομάδα, σύρετέ την πάνω στην ομάδα στην πλαϊνή στήλη, ή χρησιμοποιήστε το %@ στο μενού περιβάλλοντος της.";
+"groupWindow.app.notFound" = "Δεν βρέθηκε σε αυτό το Mac · %@";
+"groupWindow.app.remove.website" = "Αφαίρεση του %@ από αυτή την ομάδα.";
+"groupWindow.app.remove" = "Αφαίρεση του %@ από αυτή την ομάδα. Η ίδια η εφαρμογή δεν επηρεάζεται.";
+"groupWindow.section.dockTile" = "Πλακίδιο Dock";
+"groupWindow.tile.preview" = "Προεπισκόπηση";
+"groupWindow.tile.shows" = "Εμφανίζει";
+"groupWindow.tile.kind.grid" = "Πλέγμα εικονιδίων εφαρμογών";
+"groupWindow.tile.background" = "Φόντο";
+"groupWindow.tile.backgroundColor" = "Χρώμα φόντου";
+"groupWindow.tile.pinned" = "Διατήρηση του πλακιδίου στο Dock";
+"groupWindow.tile.preview.accessibility" = "Προεπισκόπηση πλακιδίου, %ld σημεία";
+"groupWindow.section.standalone" = "Αυτόνομο";
+"groupWindow.standalone.toggle" = "Αυτόνομο εικονίδιο Dock";
+"groupWindow.standalone.help" = "Δώστε στην ομάδα τη δική της εφαρμογή, με δικό της εικονίδιο στο Dock.";
+"groupWindow.standalone.settingUp" = "Ρύθμιση του εικονιδίου Dock…";
+"groupWindow.standalone.removing" = "Αφαίρεση του εικονιδίου Dock…";
+"groupWindow.standalone.groupApp" = "Εφαρμογή ομάδας";
+"groupWindow.standalone.updateDockIcon" = "Ενημέρωση εικονιδίου Dock";
+"groupWindow.standalone.updateDockIcon.help" = "Επανεκκίνηση του Dock με νέα προσωρινή μνήμη εικονιδίων, ώστε το πλακίδιο να δείχνει το τρέχον εικονίδιο της ομάδας.";
+"groupWindow.standalone.staleIcon" = "Το Dock εξακολουθεί να δείχνει το προηγούμενο εικονίδιο.";
+"groupWindow.standalone.footer" = "Δίνει στην ομάδα τη δική της μικρή εφαρμογή, με το πλακίδιο παραπάνω ως εικονίδιο, στο τέλος του Dock. Με κλικ εμφανίζεται το αναδυόμενο παράθυρο της ομάδας (⌥-κλικ ανοίγει όλες τις εφαρμογές της), ακόμη και όταν το %@ δεν τρέχει· με δεξί κλικ εμφανίζεται η λίστα των εφαρμογών της ομάδας (Ρυθμίσεις → Αναδυόμενο παράθυρο). Η απενεργοποίηση αυτής της επιλογής, η διαγραφή της ομάδας ή η μεταφορά του εικονιδίου έξω από το Dock αφαιρεί αυτή την εφαρμογή. Η προσθήκη ή αφαίρεση του εικονιδίου κάνει επανεκκίνηση του Dock για λίγο.";
+"groupWindow.section.popup" = "Αναδυόμενο παράθυρο";
+"groupWindow.popup.columns" = "Στήλες";
+"groupWindow.popup.maxRows" = "Μέγιστες γραμμές";
+"groupWindow.popup.appNames" = "Ονόματα εφαρμογών";
+"groupWindow.popup.show" = "Εμφάνιση";
+"groupWindow.popup.hide" = "Απόκρυψη";
+"groupWindow.popup.position" = "Θέση";
+"groupWindow.popup.footer" = "Το «%@» ακολουθεί τις ρυθμίσεις αναδυόμενου παραθύρου για όλη την εφαρμογή.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Συμπαγές";
+"choice.tileBackground.gradient" = "Διαβάθμιση";
+"choice.tileBackground.glass" = "Γυαλί";
+"choice.popupAnchor.dockCenter" = "Κεντραρισμένο πάνω από το Dock";
+"choice.popupAnchor.dockIcon" = "Πάνω από το πατημένο εικονίδιο";
+"choice.theme.dark" = "Σκούρο";
+"choice.theme.light" = "Ανοιχτό";
+"choice.theme.system" = "Όπως το σύστημα";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Προσθήκη ιστότοπου";
+"addWebsite.title" = "Προσθήκη ιστότοπου στο «%@»";
+"addWebsite.address" = "Διεύθυνση:";
+"addWebsite.address.accessibility" = "Διεύθυνση ιστότοπου";
+"addWebsite.name" = "Όνομα:";
+"addWebsite.name.accessibility" = "Όνομα ιστότοπου, προαιρετικό";
+"addWebsite.name.placeholder" = "Προαιρετικό";
+"addWebsite.hint" = "Ανοίγει στο προεπιλεγμένο πρόγραμμα περιήγησης. Αφήστε το όνομα κενό για να χρησιμοποιηθεί η διεύθυνση του ιστότοπου.";
+"addWebsite.duplicate" = "Το «%@» υπάρχει ήδη σε αυτή την ομάδα.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Προσθήκη εφαρμογών στην ομάδα";
+"appPicker.message" = "Επιλέξτε τις εφαρμογές που θα προστεθούν στο «%@».";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "Οι εφαρμογές στο «%@» δεν μπόρεσαν να ανοίξουν.";
+"problems.launch.someFailed" = "Ορισμένες εφαρμογές στο «%@» δεν μπόρεσαν να ανοίξουν.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "δεν βρέθηκε σε αυτό το Mac.";
+"problems.launch.opened" = "άνοιξε.";
+"problems.quit.force" = "Ορισμένες εφαρμογές στο «%@» δεν μπόρεσαν να κλείσουν αναγκαστικά.";
+"problems.quit.graceful" = "Ορισμένες εφαρμογές στο «%@» δεν μπόρεσαν να λάβουν εντολή κλεισίματος.";
+"problems.hide" = "Ορισμένες εφαρμογές στο «%@» δεν μπόρεσαν να αποκρυφτούν.";
+"problems.standalone.failed" = "Το «%@» δεν μπόρεσε να αποκτήσει το δικό του εικονίδιο στο Dock.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Η εφαρμογή αυτής της ομάδας δεν μπορεί να ανοίξει την ομάδα της.";
+"agent.damaged.message" = "%1$@\n\nΣτο %2$@, απενεργοποιήστε και ξανανεργοποιήστε το Αυτόνομο για την ομάδα, ώστε να ξαναδημιουργήσει την εφαρμογή της.";
+"agent.error.groupMismatch" = "Οι ρυθμίσεις της εφαρμογής ανήκουν σε άλλη ομάδα.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Είναι ήδη ενεργοποιημένη; Μετά από ενημέρωση η καταχώρηση μπορεί να ανήκει στην προηγούμενη έκδοση: επιλέξτε το %@, αφαιρέστε το με −, και μετά προσθέστε ξανά την εφαρμογή με +.";
+
+/* Settings window */
+"settings.window.title" = "Ρυθμίσεις";
+
+/* Settings tabs */
+"settings.tab.popup" = "Αναδυόμενο παράθυρο";
+"settings.tab.shortcuts" = "Συντομεύσεις και Siri";
+"settings.tab.updates" = "Ενημερώσεις";
+"settings.tab.backup" = "Αντίγραφο ασφαλείας";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Γλώσσα";
+"general.language.system" = "Σύστημα (%1$@)";
+"general.language.restartNote" = "Η νέα γλώσσα ισχύει μετά την επανεκκίνηση της εφαρμογής.";
+"general.language.restartNow" = "Επανεκκίνηση τώρα";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Θέμα";
+"settings.popup.frostedGlass" = "Φόντο από θολό γυαλί";
+"settings.popup.appearance.header" = "Εμφάνιση αναδυόμενου παραθύρου";
+"settings.popup.appearance.footer" = "Το θέμα ισχύει μόνο για το αναδυόμενο παράθυρο· αυτό το παράθυρο ακολουθεί την εμφάνιση του macOS.";
+"settings.popup.columns" = "Στήλες";
+"settings.popup.columns.detail" = "Το «Αυτόματο» κρατά το τυπικό πλάτος αναδυόμενου παραθύρου· ένας αριθμός κάνει το παράθυρο όσο πλατύ χρειάζεται η ομάδα.";
+"settings.popup.maxRows" = "Μέγιστες γραμμές";
+"settings.popup.maxRows.detail" = "Περιορίζει το ύψος του αναδυόμενου παραθύρου· οι μεγαλύτερες ομάδες κάνουν κύλιση.";
+"settings.popup.showNames" = "Εμφάνιση ονομάτων εφαρμογών";
+"settings.popup.position" = "Θέση";
+"settings.popup.position.detail" = "Το «Πάνω από το πατημένο εικονίδιο» ανοίγει το αναδυόμενο παράθυρο πάνω από το εικονίδιο της ομάδας στο Dock, ή κάτω από το εικονίδιο της γραμμής μενού όταν επιλέγεται από το μενού του. Τα αναδυόμενα παράθυρα που ανοίγουν με συντόμευση, σύνδεσμο ή Siri παραμένουν κεντραρισμένα πάνω από το Dock.";
+"settings.popup.layout.header" = "Διάταξη αναδυόμενου παραθύρου";
+"settings.popup.layout.footer" = "Αυτές είναι οι προεπιλογές για κάθε ομάδα. Κάθε ομάδα μπορεί να τις αλλάξει στη Διαχείριση ομάδων.";
+"settings.popup.freeLayout" = "Ελεύθερη διάταξη";
+"settings.popup.freeLayout.detail" = "Οι εφαρμογές μένουν στο κελί στο οποίο τις σύρετε, και οι υπόλοιπες δεν μετακινούνται· αφήνοντας μια εφαρμογή πάνω σε άλλη, οι δύο ανταλλάσσονται.";
+"settings.popup.arranging.header" = "Τακτοποίηση εφαρμογών";
+"settings.popup.arranging.footer" = "Όταν είναι απενεργοποιημένο, οι εφαρμογές μιας ομάδας γεμίζουν το αναδυόμενο παράθυρο με τη σειρά και δημιουργούν χώρο όταν μετακινείτε μία. Το A→Z στο αναδυόμενο παράθυρο ταξινομεί πάντα μια ομάδα κατά όνομα, και στις δύο περιπτώσεις.";
+"settings.popup.restoreWindows" = "Επαναφορά παραθύρων όταν ανοίγει ξανά μια εφαρμογή που τρέχει";
+"settings.popup.restoreWindows.detail" = "Με κλικ σε εφαρμογή που τρέχει επανέρχονται τα κρυφά και ελαχιστοποιημένα παράθυρά της, όπως συμβαίνει με κλικ στο Dock. Όταν είναι απενεργοποιημένο, η εφαρμογή απλώς έρχεται στο προσκήνιο.";
+"settings.popup.runningApps.header" = "Εφαρμογές που τρέχουν";
+"settings.popup.dockMenus" = "Μενού στα εικονίδια ομάδων του Dock";
+"settings.popup.dockMenus.detail" = "Με δεξί κλικ στο εικονίδιο αυτόνομης ομάδας στο Dock εμφανίζονται οι εφαρμογές της, το Άνοιγμα όλων, η Απόκρυψη όλων και το Κλείσιμο όλων, αφού γίνει κλικ στο εικονίδιο. Η εφαρμογή της εμφανίζεται τότε ως σε λειτουργία στο Dock και στο ⌘-Tab.";
+"settings.popup.standaloneIcons.header" = "Αυτόνομα εικονίδια Dock";
+"settings.popup.ax.granted" = "Η πρόσβαση προσβασιμότητας έχει δοθεί: επανέρχονται και τα ελαχιστοποιημένα παράθυρα";
+"settings.popup.ax.required" = "Η επαναφορά ελαχιστοποιημένων παραθύρων απαιτεί πρόσβαση προσβασιμότητας";
+"settings.popup.ax.detail" = "Επιτρέψτε το %@ στις Ρυθμίσεις συστήματος → Απόρρητο και ασφάλεια → Προσβασιμότητα. Μέχρι τότε, οι κρυφές εφαρμογές επανέρχονται κανονικά και τους ζητείται να ανοίξουν ξανά όπως από το Dock. Τα αυτόνομα εικονίδια ομάδων χρειάζονται αυτή την πρόσβαση για τις δικές τους εφαρμογές.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Άνοιγμα αναδυόμενων παραθύρων ομάδων με συντομεύσεις πληκτρολογίου";
+"settings.shortcuts.modifiers" = "Πλήκτρα τροποποίησης";
+"settings.shortcuts.keys" = "Πλήκτρα συντόμευσης";
+"settings.shortcuts.keys.detail" = "Κρατήστε αυτά τα πλήκτρα και πατήστε 1 για την πρώτη ομάδα, 2 για τη δεύτερη, και ούτω καθεξής. Πατήστε ξανά για να κλείσει το αναδυόμενο παράθυρο.";
+"settings.shortcuts.header" = "Συντομεύσεις πληκτρολογίου";
+"settings.shortcuts.ax.granted" = "Λειτουργεί σε κάθε εφαρμογή";
+"settings.shortcuts.ax.needed" = "Απαιτεί πρόσβαση προσβασιμότητας";
+"settings.shortcuts.ax.detail" = "Για να αναγνωρίζονται οι συντομεύσεις ενώ εργάζεστε σε άλλες εφαρμογές, επιτρέψτε το %@ στις Ρυθμίσεις συστήματος → Απόρρητο και ασφάλεια → Προσβασιμότητα. Μέχρι τότε λειτουργούν μόνο όταν είναι ενεργό το αναδυόμενο παράθυρό της ή ένα παράθυρό της.";
+"settings.shortcuts.noGroups" = "Δεν υπάρχουν ομάδες ακόμα.";
+"settings.shortcuts.assigned.header" = "Αντιστοιχισμένες ομάδες";
+"settings.shortcuts.assigned.footer.limit" = "Μόνο οι πρώτες εννέα ομάδες έχουν συντομεύσεις. Σύρετε τις ομάδες στη Διαχείριση ομάδων για να αλλάξετε τη σειρά.";
+"settings.shortcuts.assigned.footer" = "Οι συντομεύσεις ακολουθούν τη σειρά των ομάδων στη Διαχείριση ομάδων.";
+"settings.shortcuts.siri.group" = "Ομάδα";
+"settings.shortcuts.siri.quoted" = "«%@»";
+"settings.shortcuts.siri.noGroups" = "Προσθέστε μια ομάδα για να δείτε τι μπορείτε να ζητήσετε από τον Siri γι' αυτήν.";
+"settings.shortcuts.openShortcuts" = "Άνοιγμα Συντομεύσεων";
+"settings.shortcuts.shortcutsApp" = "Εφαρμογή Συντομεύσεις";
+"settings.shortcuts.shortcutsApp.detail" = "Οι ενέργειες Εκκίνηση ομάδας, Έξοδος από ομάδα και Εμφάνιση ομάδας υπάρχουν εκεί και στο Spotlight: προσθέστε τες στις δικές σας συντομεύσεις, με τη δική σας εντολή εκκίνησης.";
+"settings.shortcuts.siri.header" = "Siri και Συντομεύσεις";
+"settings.shortcuts.siri.footer" = "Ζητήστε από τον Siri με αυτές τις φράσεις, με φωνή ή πληκτρολογώντας. Χρησιμοποιούν το τρέχον όνομα της ομάδας· οι συντομεύσεις που δημιουργείτε συνεχίζουν να λειτουργούν μετά από μετονομασία.";
+"settings.shortcuts.links.noGroups" = "Προσθέστε μια ομάδα για να δείτε τους συνδέσμους της.";
+"settings.shortcuts.links.footer" = "Ανοίξτε έναν σύνδεσμο από σενάριο ή άλλη εφαρμογή, π.χ. με το `open` στο Terminal. Μια ομάδα αναγνωρίζεται με το όνομά της (τα κεφαλαία, οι τόνοι και τα σημεία στίξης δεν μετρούν) ή, όταν το όνομα είναι διφορούμενο, με το ID της. Προσθέστε ?mode=force σε σύνδεσμο εξόδου για αναγκαστική έξοδο.";
+"settings.shortcuts.copy.help" = "Αντιγραφή του «%@» στο πρόχειρο.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Εμφάνιση των πιο χρησιμοποιημένων στη γραμμή μενού";
+"settings.mostUsed.appsShown" = "Εμφανιζόμενες εφαρμογές";
+"settings.mostUsed.appsShown.detail" = "Οι πιο ανοιγμένες εφαρμογές, στο μενού και στο αναδυόμενο παράθυρο των πιο χρησιμοποιημένων.";
+"settings.mostUsed.sessionLength" = "Διάρκεια συνεδρίας";
+"settings.mostUsed.together" = "Ανοιγμένες μαζί εντός";
+"settings.mostUsed.together.detail" = "Οι εφαρμογές που ανοίγονται μέσα σε αυτό το χρονικό διάστημα μεταξύ τους θεωρούνται χρησιμοποιημένες μαζί, κάτι που τις ανεβάζει λίγο στην κατάταξη.";
+"settings.mostUsed.footer" = "Οι εφαρμογές κατατάσσονται ανά συχνότητα ανοίγματος, από το Dock, το Finder, το Spotlight ή μια ομάδα. Οι εκκινήσεις μετρούνται ακόμα και όταν η λίστα είναι κρυφή.";
+"settings.mostUsed.recorded" = "Καταγεγραμμένες";
+"settings.mostUsed.clear" = "Εκκαθάριση ιστορικού…";
+"settings.mostUsed.history" = "Ιστορικό";
+"settings.mostUsed.history.detail" = "Αποθηκεύεται μόνο σε αυτό το Mac, στα αρχεία usage-stats.json και usage-cooccurrence.json στο Application Support.";
+"settings.mostUsed.usageHistory.header" = "Ιστορικό χρήσης";
+"settings.mostUsed.clear.confirm.title" = "Εκκαθάριση του ιστορικού χρήσης;";
+"settings.mostUsed.clear.confirm.button" = "Εκκαθάριση ιστορικού";
+"settings.mostUsed.clear.confirm.message" = "Η λίστα των πιο χρησιμοποιημένων θα ξεκινήσει από την αρχή. Οι ομάδες και οι εφαρμογές σας δεν επηρεάζονται.";
+"settings.mostUsed.summary.none" = "Δεν υπάρχουν ακόμα εκκινήσεις";
+"settings.mostUsed.summary.launches.one" = "1 εκκίνηση";
+"settings.mostUsed.summary.launches.other" = "%ld εκκινήσεις";
+"settings.mostUsed.summary" = "%1$@ από %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Αυτόματος έλεγχος για ενημερώσεις";
+"settings.updates.currentVersion" = "Τρέχουσα έκδοση";
+"settings.updates.lastChecked" = "Τελευταίος έλεγχος";
+"settings.updates.checkNow" = "Έλεγχος τώρα";
+"settings.updates.otherVersions" = "Άλλες εκδόσεις…";
+"settings.updates.footer" = "Ο έλεγχος γίνεται στις εκδόσεις του έργου στο GitHub κατά την εκκίνηση και κάθε 6 ώρες· στέλνεται μόνο ο αριθμός έκδοσης της εφαρμογής. Μια νέα έκδοση εγκαθίσταται μόνο αφού επιλέξετε Λήψη και εγκατάσταση. Οι Άλλες εκδόσεις… εγκαθιστούν οποιαδήποτε δημοσιευμένη έκδοση, παλαιότερη ή νεότερη· η επιστροφή σε παλαιότερη παραλείπει τις νεότερες στους αυτόματους ελέγχους.";
+"settings.updates.viewChangelog" = "Προβολή αρχείου αλλαγών";
+"settings.updates.latestPath" = "Επιστροφή στην τελευταία διαδρομή: προσφέρεται κάθε νεότερη έκδοση";
+"settings.updates.skipped" = "Παραλειμμένες νεότερες εκδόσεις: %@";
+"settings.updates.clear" = "Εκκαθάριση";
+"settings.updates.clear.help" = "Να προσφέρονται ξανά αυτές οι εκδόσεις από τους αυτόματους ελέγχους";
+"settings.updates.never" = "Ποτέ";
+"settings.updates.status.idle" = "Δεν έχει γίνει έλεγχος από την εκκίνηση της εφαρμογής";
+"settings.updates.status.checking" = "Έλεγχος…";
+"settings.updates.status.upToDate" = "Είστε ενημερωμένοι (v%@)";
+"settings.updates.status.available" = "Διατίθεται η έκδοση %@";
+"settings.updates.showUpdate" = "Εμφάνιση ενημέρωσης…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Άλλες εκδόσεις";
+"settings.otherVersions.intro" = "Εγκαταστήστε οποιαδήποτε δημοσιευμένη έκδοση του %@, παλαιότερη ή νεότερη. Η εφαρμογή κλείνει και ανοίγει ξανά ως η έκδοση που επιλέξατε.";
+"settings.otherVersions.releasesLink" = "Άνοιγμα σελίδας εκδόσεων στο GitHub";
+"settings.otherVersions.loading" = "Φόρτωση εκδόσεων από το GitHub…";
+"settings.otherVersions.none" = "Το GitHub δεν εμφανίζει δημοσιευμένες εκδόσεις.";
+"settings.otherVersions.current" = "Τρέχουσα";
+"settings.otherVersions.noDownload" = "Χωρίς λήψη";
+"settings.otherVersions.install.help" = "Εγκατάσταση της έκδοσης %@";
+"settings.otherVersions.install.noImage" = "Αυτή η έκδοση δεν έχει εικόνα δίσκου για εγκατάσταση.";
+"settings.otherVersions.confirm.title" = "Εγκατάσταση της έκδοσης %@;";
+"settings.otherVersions.confirm.quits" = "Το %1$@ κλείνει και ανοίγει ξανά ως η έκδοση %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Η έκδοση %@ δεν μπορεί να ενημερωθεί μόνη της: για να επιστρέψετε, κατεβάστε μια νεότερη έκδοση από τη σελίδα εκδόσεων.";
+"settings.otherVersions.confirm.skips" = "Οι αυτόματοι έλεγχοι τότε παραλείπουν τις νεότερες εκδόσεις (%@)· το Έλεγχος για ενημερώσεις… τις προσφέρει ακόμα.";
+"settings.otherVersions.confirm.older" = "Μια παλαιότερη έκδοση ενδέχεται να μην γνωρίζει λειτουργίες που προστέθηκαν αργότερα· σκεφτείτε να εξαγάγετε πρώτα αντίγραφο ασφαλείας (Ρυθμίσεις → Αντίγραφο ασφαλείας).";
+"settings.otherVersions.confirm.upgrade" = "Οι παραλειμμένες εκδόσεις εκκαθαρίζονται, ώστε οι αυτόματοι έλεγχοι να προσφέρουν ξανά κάθε νεότερη έκδοση.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Εξαγωγή ρυθμίσεων…";
+"settings.backup.export" = "Εξαγωγή";
+"settings.backup.export.detail" = "Αποθηκεύει τις ομάδες και τις ρυθμίσεις σας σε αρχείο .dockgroups.";
+"settings.backup.import.button" = "Εισαγωγή ρυθμίσεων…";
+"settings.backup.import" = "Εισαγωγή";
+"settings.backup.import.detail" = "Αντικαθιστά τις ομάδες και τις ρυθμίσεις σας με εκείνες ενός αρχείου αντιγράφου ασφαλείας, ή συγχωνεύει τις νέες ομάδες του αντιγράφου με τις δικές σας.";
+"settings.backup.footer" = "Το αντίγραφο περιέχει τις ομάδες σας, τις εφαρμογές τους και κάθε ρύθμιση. Οι μετρήσεις εκκινήσεων των Πιο χρησιμοποιημένων δεν περιλαμβάνονται. Το αρχείο παραμένει όπου το αποθηκεύσετε.";
+"settings.backup.status.exported" = "Εξήχθη στο «%@»";
+"settings.backup.status.restored" = "Επαναφέρθηκαν %1$@ με %2$@";
+"settings.backup.status.merged" = "Συγχωνεύτηκαν %@ από το αντίγραφο";
+"settings.backup.status.mergedSkipped" = "Συγχωνεύτηκαν %1$@ από το αντίγραφο· %2$ld υπήρχαν ήδη εδώ";
+"settings.backup.exportPanel.title" = "Εξαγωγή ρυθμίσεων";
+"settings.backup.exportPanel.message" = "Αποθηκεύστε τις ομάδες και τις ρυθμίσεις σας σε αρχείο αντιγράφου ασφαλείας.";
+"settings.backup.exportFailed" = "Οι ρυθμίσεις δεν μπόρεσαν να εξαχθούν";
+"settings.backup.importPanel.title" = "Εισαγωγή ρυθμίσεων";
+"settings.backup.importPanel.message" = "Επιλέξτε ένα αντίγραφο %@ για επαναφορά.";
+"settings.backup.readFailed" = "Το αρχείο δεν μπόρεσε να διαβαστεί";
+"settings.backup.confirm.title" = "Εισαγωγή των ομάδων και των ρυθμίσεων αυτού του αντιγράφου;";
+"settings.backup.confirm.replaceAll" = "Αντικατάσταση όλων";
+"settings.backup.confirm.merge" = "Συγχώνευση";
+"settings.backup.restoreFailed" = "Το αντίγραφο ασφαλείας δεν μπόρεσε να επαναφερθεί";
+"settings.backup.restoreFailed.kept" = "%@ Οι τρέχουσες ομάδες και ρυθμίσεις σας διατηρήθηκαν.";
+"settings.backup.mergeFailed" = "Το αντίγραφο ασφαλείας δεν μπόρεσε να συγχωνευθεί";
+"settings.backup.mergeFailed.kept" = "%@ Οι τρέχουσες ομάδες σας διατηρήθηκαν.";
+"settings.backup.rejected.notABackup" = "Επιλέξτε ένα αρχείο .dockgroups που δημιουργήθηκε με την Εξαγωγή ρυθμίσεων…. Δεν άλλαξε τίποτα.";
+"settings.backup.rejected.newer" = "Δεν άλλαξε τίποτα.";
+"settings.backup.confirm.noGroups" = "Το αντίγραφο δεν έχει ομάδες.";
+"settings.backup.confirm.noGroups.exported" = "Το αντίγραφο δεν έχει ομάδες, εξήχθη %@.";
+"settings.backup.confirm.contents" = "Το αντίγραφο έχει %1$@ με %2$@.";
+"settings.backup.confirm.contents.exported" = "Το αντίγραφο έχει %1$@ με %2$@, εξήχθη %3$@.";
+"settings.backup.confirm.replace" = "Η Αντικατάσταση όλων χρησιμοποιεί τις ομάδες και τις ρυθμίσεις του αντιγράφου αντί για τις δικές σας.";
+"settings.backup.confirm.replaced.one" = "1 τρέχουσα ομάδα με το ίδιο όνομα με μια ομάδα του αντιγράφου θα αντικατασταθεί από αυτήν.";
+"settings.backup.confirm.replaced.other" = "%ld τρέχουσες ομάδες με το ίδιο όνομα με μια ομάδα του αντιγράφου θα αντικατασταθούν από αυτές.";
+"settings.backup.confirm.removed.one" = "1 τρέχουσα ομάδα που δεν υπάρχει στο αντίγραφο θα αφαιρεθεί.";
+"settings.backup.confirm.removed.other" = "%ld τρέχουσες ομάδες που δεν υπάρχουν στο αντίγραφο θα αφαιρεθούν.";
+"settings.backup.confirm.replaceSettings" = "Και οι ρυθμίσεις σας (αναδυόμενο παράθυρο, συντομεύσεις, Πιο χρησιμοποιημένα και ενημερώσεις) θα αντικατασταθούν.";
+"settings.backup.confirm.merge.nothing" = "Η συγχώνευση κρατά τις ομάδες και τις ρυθμίσεις σας και δεν προσθέτει τίποτα.";
+"settings.backup.confirm.merge.allHere" = "Η συγχώνευση κρατά τις ομάδες και τις ρυθμίσεις σας· κάθε ομάδα του αντιγράφου υπάρχει ήδη εδώ, οπότε δεν προστίθεται τίποτα.";
+"settings.backup.confirm.merge.adds" = "Η συγχώνευση κρατά τις ομάδες και τις ρυθμίσεις σας και προσθέτει %1$@ με %2$@ από το αντίγραφο.";
+"settings.backup.confirm.skipped.one" = "1 ομάδα που υπάρχει ήδη εδώ (με το ίδιο όνομα) θα παραλειφθεί.";
+"settings.backup.confirm.skipped.other" = "%ld ομάδες που υπάρχουν ήδη εδώ (με το ίδιο όνομα) θα παραλειφθούν.";
+"settings.backup.confirm.final" = "Οι μετρήσεις εκκινήσεων των Πιο χρησιμοποιημένων διατηρούνται. Ένα αντίγραφο των τρεχόντων αρχείων σας αποθηκεύεται δίπλα τους στο Application Support. Αυτό δεν μπορεί να αναιρεθεί.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Αποθήκευση σε αρχείο…";
+"settings.diagnostics.export" = "Εξαγωγή διαγνωστικών";
+"settings.diagnostics.export.detail" = "Αναφορά κειμένου για επισύναψη σε ζήτημα του GitHub ή σε αίτημα υποστήριξης.";
+"settings.diagnostics.header" = "Διαγνωστικά";
+"settings.diagnostics.footer" = "Καταγράφει τις εκδόσεις της εφαρμογής και του macOS, το μοντέλο του Mac σας, πού είναι εγκατεστημένη η εφαρμογή, την πρόσβαση προσβασιμότητας, τις ρυθμίσεις σας, τους ελέγχους ενημερώσεων, τα ονόματα των ομάδων με το πλήθος των εφαρμογών τους και τα πρόσφατα σφάλματα. Δεν καταγράφει τις εφαρμογές των ομάδων σας. Τίποτα δεν αποστέλλεται οπουδήποτε.";
+"settings.diagnostics.copied" = "Τα διαγνωστικά αντιγράφηκαν στο πρόχειρο";
+"settings.diagnostics.saved" = "Αποθηκεύτηκε στο «%@»";
+"settings.diagnostics.failed" = "Η αναφορά δεν μπόρεσε να αποθηκευτεί: %@";
+"settings.diagnostics.panel.title" = "Αποθήκευση διαγνωστικών";
+"settings.diagnostics.panel.message" = "Αποθηκεύστε την αναφορά διαγνωστικών ως αρχείο κειμένου, π.χ. για επισύναψη σε ζήτημα του GitHub.";
+"settings.diagnostics.panel.prompt" = "Αποθήκευση";
+
+/* Software Update window */
+"updateWindow.title" = "Ενημέρωση λογισμικού";
+"updateWindow.checking" = "Έλεγχος για ενημερώσεις…";
+"updateWindow.upToDate.title" = "Είστε ενημερωμένοι!";
+"updateWindow.upToDate.message" = "Το %1$@ %2$@ είναι η νεότερη διαθέσιμη έκδοση.";
+"updateWindow.available.title" = "Διατίθεται νέα έκδοση του %@!";
+"updateWindow.available.message" = "Η έκδοση %1$@ είναι διαθέσιμη — εσείς έχετε την %2$@.";
+"updateWindow.available.noImage" = "Αυτή η έκδοση δεν έχει εικόνα δίσκου για αυτόματη εγκατάσταση· κατεβάστε την από τη σελίδα της έκδοσης.";
+"updateWindow.available.question" = "Θέλετε να την κατεβάσετε και να την εγκαταστήσετε τώρα;";
+"updateWindow.skip" = "Παράλειψη αυτής της έκδοσης";
+"updateWindow.remindLater" = "Υπενθύμιση αργότερα";
+"updateWindow.openReleasePage" = "Άνοιγμα σελίδας έκδοσης";
+"updateWindow.downloadAndInstall" = "Λήψη και εγκατάσταση";
+"updateWindow.downloading" = "Λήψη της έκδοσης %@…";
+"updateWindow.restartsWhenDone" = "Το %@ κάνει επανεκκίνηση όταν τελειώσει.";
+"updateWindow.reopening" = "Το %@ ανοίγει ξανά.";
+"updateWindow.dryRun.title" = "Η δοκιμαστική εκτέλεση ολοκληρώθηκε";
+"updateWindow.dryRun.message" = "Η έκδοση %1$@ κατέβηκε, ελέγχθηκε και αντιγράφηκε στο %2$@. Τίποτα δεν αντικαταστάθηκε.";
+"updateWindow.checkFailed" = "Δεν ήταν δυνατός ο έλεγχος για ενημερώσεις";
+"updateWindow.installFailed" = "Η έκδοση %@ δεν μπόρεσε να εγκατασταθεί";
+"updateWindow.link.releases" = "Εκδόσεις";
+"updateWindow.link.releasePage" = "Σελίδα έκδοσης";
+"updateWindow.releaseNotes" = "Σημειώσεις έκδοσης";
+"updateWindow.releaseNotes.none" = "Αυτή η έκδοση δεν έχει σημειώσεις.";
+"updateWindow.relaunchFailed" = "Η έκδοση %@ είναι εγκατεστημένη, αλλά η εφαρμογή δεν μπόρεσε να κάνει επανεκκίνηση. Κλείστε την και ανοίξτε την ξανά.";
+
+/* About window */
+"about.section.findMe" = "Βρείτε με στο διαδίκτυο";
+"about.section.support" = "Υποστηρίξτε αυτό το έργο";
+"about.section.books" = "Τα βιβλία μου";
+"about.section.software" = "Το λογισμικό ανοιχτού κώδικα μου";
+"about.fullList" = "Πλήρης λίστα στο github.com/ercanatay";
+"about.section.blogs" = "Ιστολόγια στο Medium";
+"about.icon.accessibility" = "Εικονίδιο %@";
+"about.version" = "Έκδοση %@ · ανοιχτός κώδικας, άδεια MIT";
+"about.website" = "Ιστότοπος";
+"about.sourceCode" = "Πηγαίος κώδικας";
+"about.license" = "Άδεια";
+"about.reportBug" = "Βρήκατε σφάλμα; Ανοίξτε ένα ζήτημα";
+"about.inspiredBy" = "Εμπνευσμένο από τη λειτουργικότητα του DockGroups. Το %@ είναι ανεξάρτητη, πρωτότυπη υλοποίηση γραμμένη από το μηδέν· δεν περιέχει κώδικα ή γραφικά από το DockGroups.";
+"about.project.dockGroups" = "Αυτή η εφαρμογή · ομάδες Dock για macOS";
+"about.project.intelComputerUse" = "Εγγενής αυτοματοποίηση επιφάνειας εργασίας macOS για Intel Mac μέσω MCP.";
+"about.project.exchangeRate" = "Παρακολούθηση συναλλαγματικών ισοτιμιών και χαρτοφυλακίου σε PHP/MySQL, με ζωντανή άντληση δεδομένων και ενημερώσεις εκδόσεων GitHub.";
+"about.project.backlinkChecker" = "Έλεγχος κειμένων άγκυρας, dofollow/nofollow και καταστάσεων HTTP των backlinks.";
+"about.project.consentManager" = "Μεταφράσεις του YOOtheme Pro 5 Consent Manager, πρόσθετο WordPress (WordPress.org).";
+"about.project.antigravityUpdater" = "Ελαφρύ πρόγραμμα ενημέρωσης macOS για το Antigravity Tools, σε 21 γλώσσες.";
+"about.project.widgetVisibility" = "Πρόσθετο WP χωρίς Jetpack για ορατότητα widgets με υποστήριξη απογόνων.";
+"about.project.forbiddenContent" = "Εντοπίζει απαγορευμένες λέξεις-κλειδιά (π.χ. «Casino») στους τίτλους άρθρων — σαν έλεγχος ελέγχου WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Εμφάνιση ομάδας";
+"core.invocation.showGroup.phrase" = "Εμφάνισε το %1$@ στο %2$@";
+"core.invocation.launchGroup" = "Εκκίνηση ομάδας";
+"core.invocation.launchGroup.phrase" = "Εκκίνησε το %1$@ στο %2$@";
+"core.invocation.quitGroup" = "Έξοδος από ομάδα";
+"core.invocation.quitGroup.phrase" = "Κλείσε το %1$@ στο %2$@";
+"core.invocation.showPopup" = "Εμφάνιση αναδυόμενου παραθύρου";
+"core.invocation.openAll" = "Άνοιγμα όλων";
+"core.invocation.hideAll" = "Απόκρυψη όλων";
+"core.invocation.closeAll" = "Κλείσιμο όλων";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Δεν έχει ρυθμιστεί πρόγραμμα περιήγησης για να το ανοίξει.";
+"core.launch.notOpened" = "Η εφαρμογή δεν άνοιξε.";
+"core.group.defaultName" = "Νέα ομάδα";
+"core.website.error.empty" = "Εισαγάγετε μια διεύθυνση ιστότοπου.";
+"core.website.error.invalid" = "Αυτή δεν είναι έγκυρη διεύθυνση ιστότοπου.";
+"core.website.error.scheme" = "Μπορούν να προστεθούν μόνο διευθύνσεις http και https, όχι «%@:».";
+"core.website.error.credentials" = "Αφαιρέστε το όνομα χρήστη και τον κωδικό από τη διεύθυνση.";
+"core.persistence.groups.newer" = "Το αρχείο ομάδων αποθηκεύτηκε από νεότερη έκδοση του Cybokron Dock Groups (μορφή %ld).";
+"core.backup.error.notABackup" = "Αυτό το αρχείο δεν είναι αντίγραφο ασφαλείας του Cybokron Dock Groups.";
+"core.backup.error.newer" = "Αυτό το αντίγραφο δημιουργήθηκε με νεότερη έκδοση του Cybokron Dock Groups (μορφή αντιγράφου %ld). Ενημερώστε την εφαρμογή για να το επαναφέρετε.";
+"core.persistence.usage.newer" = "Τα στατιστικά χρήσης αποθηκεύτηκαν από νεότερη έκδοση του Cybokron Dock Groups (μορφή %ld).";
+"core.agent.configuration.newer" = "Οι ρυθμίσεις της ομάδας αποθηκεύτηκαν από νεότερη έκδοση του Cybokron Dock Groups (μορφή %ld).";
+"core.agent.error.icon" = "Δεν ήταν δυνατή η σχεδίαση του εικονιδίου της ομάδας.";
+"core.agent.error.bundleWrite" = "Η εφαρμογή της ομάδας δεν μπόρεσε να δημιουργηθεί: %@";
+"core.agent.error.toolMissing" = "Λείπει ένα εργαλείο του συστήματος που χρειάζεται: %@.";
+"core.agent.error.signing" = "Το macOS απαιτεί κάθε εφαρμογή να είναι υπογεγραμμένη με κώδικα, και η υπογραφή της εφαρμογής της ομάδας απέτυχε σε αυτό το Mac, οπότε δεν εγκαταστάθηκε τίποτα.";
+"core.agent.error.registration" = "Το macOS δεν κατέγραψε την εφαρμογή της ομάδας: %@";
+"core.agent.error.hostUnavailable" = "Το Cybokron Dock Groups δεν μπόρεσε να διαβάσει το δικό του εκτελέσιμο: %@";
+"core.agent.error.noExecutable" = "Η εφαρμογή δεν έχει εκτελέσιμο.";
+"core.dock.saveFailed" = "Οι ρυθμίσεις του Dock δεν μπόρεσαν να αλλάξουν.";
+"core.store.loadFailed.title" = "Οι ομάδες σας δεν μπόρεσαν να φορτωθούν";
+"core.store.loadFailed.kept" = "%1$@ Ξεκινά με κενή λίστα ομάδων. Ένα αντίγραφο διατηρήθηκε στο «%2$@».";
+"core.store.loadFailed.empty" = "%@ Ξεκινά με κενή λίστα ομάδων.";
+"core.store.loadFailed.suspended" = "%@ Για την προστασία του υπάρχοντος αρχείου, οι αλλαγές δεν θα αποθηκευτούν μέχρι να γίνει επανεκκίνηση της εφαρμογής.";
+"core.store.saveFailed.title" = "Οι αλλαγές σας δεν μπόρεσαν να αποθηκευτούν";
+"core.preferences.saveFailed" = "Οι ρυθμίσεις σας δεν μπόρεσαν να αποθηκευτούν: %@";
+"core.websiteIcon.accessibility" = "Ιστότοπος";
+"core.update.check.notHTTP" = "Η απάντηση δεν ήταν HTTP.";
+"core.update.check.malformed" = "Οι πληροφορίες έκδοσης από το GitHub δεν μπόρεσαν να διαβαστούν.";
+"core.update.check.unsupportedTag" = "Η τελευταία έκδοση («%@») δεν έχει ετικέτα με αριθμό έκδοσης.";
+"core.update.check.noRelease" = "Δεν έχει δημοσιευθεί ακόμα καμία έκδοση.";
+"core.update.check.rateLimited" = "Το GitHub περιορίζει τα αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε μία ώρα.";
+"core.update.check.httpStatus" = "Το GitHub απάντησε με κατάσταση HTTP %ld.";
+"core.update.check.network" = "Δεν ήταν δυνατή η σύνδεση με το GitHub: %@";
+"core.update.check.noVersion" = "Αυτό το αντίγραφο της εφαρμογής δεν έχει αριθμό έκδοσης, οπότε δεν μπορεί να συγκριθεί.";
+"core.update.install.insecureURL" = "Η διεύθυνση λήψης της ενημέρωσης δεν είναι ασφαλής (%@).";
+"core.update.install.downloadFailed" = "Η ενημέρωση δεν μπόρεσε να κατέβει: %@";
+"core.update.install.sizeMismatch" = "Η ληφθείσα ενημέρωση είναι ατελής (%1$ld από %2$ld byte).";
+"core.update.install.checksum" = "Η ληφθείσα ενημέρωση δεν ταιριάζει με το δημοσιευμένο άθροισμα ελέγχου της, οπότε δεν εγκαταστάθηκε.";
+"core.update.install.mountFailed" = "Η εικόνα δίσκου της ενημέρωσης δεν μπόρεσε να ανοίξει: %@";
+"core.update.install.appNotFound" = "Η εικόνα δίσκου της ενημέρωσης δεν περιέχει την εφαρμογή.";
+"core.update.install.wrongApp" = "Η εικόνα δίσκου της ενημέρωσης περιέχει άλλη εφαρμογή (%@).";
+"core.update.install.versionMismatch" = "Η ληφθείσα εφαρμογή είναι η έκδοση %1$@, αλλά η κυκλοφορία είναι η %2$@.";
+"core.update.install.replaceFailed" = "Η νέα έκδοση δεν μπόρεσε να τοποθετηθεί στη θέση της, οπότε διατηρήθηκε η τρέχουσα: %@";
+"core.update.install.rollbackFailed" = "Η ενημέρωση απέτυχε και η προηγούμενη έκδοση δεν μπόρεσε να επανέλθει. Διατηρείται στο %@.";
+"core.update.location.translocated" = "Το macOS εκτελεί αυτό το αντίγραφο από προσωρινή τοποθεσία μόνο για ανάγνωση. Μετακινήστε την εφαρμογή στον φάκελο Εφαρμογές, ανοίξτε την από εκεί και δοκιμάστε ξανά.";
+"core.update.location.notFound" = "Η εκτελούμενη εφαρμογή δεν βρέθηκε στο %@.";
+"core.update.location.readOnly" = "Η εφαρμογή εκτελείται από δίσκο μόνο για ανάγνωση, όπως η εικόνα δίσκου της. Αντιγράψτε την πρώτα στον φάκελο Εφαρμογές.";
+"core.update.location.noPermission" = "Δεν έχετε δικαίωμα αντικατάστασης της εφαρμογής στο «%@». Κατεβάστε αντί αυτού τη νέα έκδοση από τη σελίδα εκδόσεων.";
+"core.update.install.noFile" = "Ο διακομιστής δεν έστειλε αρχείο.";
+"core.update.install.httpStatus" = "Κατάσταση HTTP %ld.";
+"core.update.install.copyFailed" = "Η αντιγραφή της εφαρμογής απέτυχε: %@";
+"core.mostUsed.name" = "Πιο χρησιμοποιημένα";
