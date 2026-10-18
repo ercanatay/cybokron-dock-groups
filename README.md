@@ -110,6 +110,11 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
   standalone groups' apps, and `update-state.json` / `updates/` for the updater (last check,
   skipped version, downloads and the previous version's backup).
+- **Backup** (Settings → Backup): **Export Settings…** saves the groups and the settings to a
+  `.dockgroups` file (JSON); **Import Settings…** replaces them with a backup's, after asking, and
+  keeps the files it replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json`
+  (only the latest import's).
+  Most Used launch counts aren't part of a backup.
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a

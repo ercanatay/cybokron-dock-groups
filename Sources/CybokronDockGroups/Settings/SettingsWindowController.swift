@@ -2,11 +2,12 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// The Settings window (⌘,): popup settings, shortcuts, the Most Used list and updates, each in its
-/// own tab.
+/// The Settings window (⌘,): popup settings, shortcuts, the Most Used list, updates and backups,
+/// each in its own tab.
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
+    private let backup: SettingsBackupController
 
     init(
         preferences: PreferencesStore,
@@ -15,8 +16,16 @@ final class SettingsWindowController: NSWindowController {
         shortcuts: GlobalShortcutMonitor,
         updater: AutoUpdater
     ) {
+        let backup = SettingsBackupController(store: store, preferences: preferences)
         let hostingController = NSHostingController(
-            rootView: SettingsView(preferences: preferences, store: store, usage: usage, shortcuts: shortcuts, updater: updater)
+            rootView: SettingsView(
+                preferences: preferences,
+                store: store,
+                usage: usage,
+                shortcuts: shortcuts,
+                updater: updater,
+                backup: backup
+            )
         )
         hostingController.sizingOptions = [.preferredContentSize]
 
@@ -28,6 +37,8 @@ final class SettingsWindowController: NSWindowController {
             window.center()
         }
         window.setFrameAutosaveName(Self.frameAutosaveName)
+        backup.window = window
+        self.backup = backup
         super.init(window: window)
     }
 
@@ -50,6 +61,7 @@ private struct SettingsView: View {
     let usage: UsageStore
     let shortcuts: GlobalShortcutMonitor
     let updater: AutoUpdater
+    let backup: SettingsBackupController
 
     var body: some View {
         TabView {
@@ -61,6 +73,8 @@ private struct SettingsView: View {
                 .tabItem { Label("Most Used", systemImage: "star") }
             UpdatesSettingsView(preferences: preferences, updater: updater)
                 .tabItem { Label("Updates", systemImage: "arrow.triangle.2.circlepath") }
+            BackupSettingsView(backup: backup)
+                .tabItem { Label("Backup", systemImage: "externaldrive") }
         }
         .padding(.top, 8)
     }

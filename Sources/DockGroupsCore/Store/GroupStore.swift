@@ -181,6 +181,50 @@ public final class GroupStore: ObservableObject {
         scheduleSave()
     }
 
+    // MARK: - Restoring
+
+    /// Replaces the whole group list, as restoring a backup does: groups of the same name are
+    /// replaced by the new ones and groups not in `newGroups` are removed. The current file is
+    /// first copied next to itself (`groups.pre-import-<timestamp>.json`), and the new list is
+    /// written before it's shown, so if anything fails nothing changes. The groups are cleaned up
+    /// the way edits are: blank names and emoji get defaults, duplicate apps are dropped, and of
+    /// groups sharing an identifier only the first is kept.
+    /// - Returns: The copy of the previous file, or `nil` when nothing had been saved.
+    @discardableResult
+    public func replaceGroups(with newGroups: [DockGroup]) throws -> URL? {
+        try replaceGroups(with: newGroups, copyLabel: "pre-import")
+    }
+
+    /// `replaceGroups(with:)`; without a `copyLabel` the current file isn't copied first.
+    @discardableResult
+    func replaceGroups(with newGroups: [DockGroup], copyLabel: String?) throws -> URL? {
+        // The copy should hold what's on screen, not an older write.
+        if !isSavingSuspended {
+            flushPendingSave()
+        }
+        let copyURL = try copyLabel.flatMap { try persistence.preserveCopy(label: $0) }
+        let sanitized = Self.sanitizedForRestore(newGroups)
+        try persistence.saveGroups(sanitized)
+        groups = sanitized
+        // The unreadable file that suspended saving was just copied aside and replaced.
+        isSavingSuspended = false
+        issue = nil
+        return copyURL
+    }
+
+    private static func sanitizedForRestore(_ groups: [DockGroup]) -> [DockGroup] {
+        var seenIDs = Set<DockGroup.ID>()
+        return groups.compactMap { group in
+            guard seenIDs.insert(group.id).inserted else { return nil }
+            var sanitized = group
+            sanitized.name = DockGroup.sanitizedName(group.name) ?? DockGroup.defaultName
+            sanitized.emoji = DockGroup.sanitizedEmoji(group.emoji) ?? DockGroup.defaultEmoji
+            sanitized.apps = removingDuplicates(group.apps)
+            sanitized.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: sanitized.apps)
+            return sanitized
+        }
+    }
+
     // MARK: - Persistence
 
     /// Writes a pending change right away. Call before the app quits.

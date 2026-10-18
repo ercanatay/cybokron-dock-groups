@@ -8,6 +8,13 @@ public protocol PreferencesPersisting {
     /// Moves a saved file that couldn't be loaded out of the way. Returns the new location, or
     /// `nil` when there was nothing to move.
     func preserveUnreadableData() throws -> URL?
+    /// Copies the saved file next to itself before it's replaced wholesale, as restoring a backup
+    /// does. Returns the copy's location, or `nil` when there's nothing saved (or nothing on disk).
+    func preserveCopy(label: String) throws -> URL?
+}
+
+extension PreferencesPersisting {
+    public func preserveCopy(label: String) throws -> URL? { nil }
 }
 
 /// On-disk form of the preferences: a flat JSON object with a format version next to the settings.
@@ -66,5 +73,9 @@ public struct JSONFilePreferencesPersistence: PreferencesPersisting {
 
     public func preserveUnreadableData() throws -> URL? {
         try JSONFileSupport.moveAside(fileURL)
+    }
+
+    public func preserveCopy(label: String) throws -> URL? {
+        try JSONFileSupport.copyAside(fileURL, label: label)
     }
 }

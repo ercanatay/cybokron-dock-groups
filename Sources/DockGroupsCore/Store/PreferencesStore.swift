@@ -37,6 +37,27 @@ public final class PreferencesStore: ObservableObject {
         scheduleSave()
     }
 
+    /// Replaces all preferences, as restoring a backup does. The current file is first copied next
+    /// to itself (`preferences.pre-import-<timestamp>.json`), and the new preferences are written
+    /// before they take effect, so if anything fails nothing changes.
+    /// - Returns: The copy of the previous file, or `nil` when nothing had been saved.
+    @discardableResult
+    public func replacePreferences(with newPreferences: PopupPreferences) throws -> URL? {
+        try replacePreferences(with: newPreferences, copyLabel: "pre-import")
+    }
+
+    /// `replacePreferences(with:)`; without a `copyLabel` the current file isn't copied first.
+    @discardableResult
+    func replacePreferences(with newPreferences: PopupPreferences, copyLabel: String?) throws -> URL? {
+        flushPendingSave()
+        let copyURL = try copyLabel.flatMap { try persistence.preserveCopy(label: $0) }
+        let sanitized = newPreferences.sanitized()
+        try persistence.savePreferences(sanitized)
+        preferences = sanitized
+        saveProblem = nil
+        return copyURL
+    }
+
     /// Writes a pending change right away. Call before the app quits.
     public func flushPendingSave() {
         guard let pendingSave else { return }

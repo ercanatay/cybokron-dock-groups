@@ -8,6 +8,13 @@ public protocol GroupPersisting {
     /// Moves saved data that couldn't be loaded out of the way so later saves don't overwrite it.
     /// Returns the new location, or `nil` when there was nothing to move.
     func preserveUnreadableData() throws -> URL?
+    /// Copies the saved file next to itself before it's replaced wholesale, as restoring a backup
+    /// does. Returns the copy's location, or `nil` when there's nothing saved (or nothing on disk).
+    func preserveCopy(label: String) throws -> URL?
+}
+
+extension GroupPersisting {
+    public func preserveCopy(label: String) throws -> URL? { nil }
 }
 
 public enum GroupPersistenceError: LocalizedError, Equatable, Sendable {
@@ -63,5 +70,9 @@ public struct JSONFileGroupPersistence: GroupPersisting {
 
     public func preserveUnreadableData() throws -> URL? {
         try JSONFileSupport.moveAside(fileURL)
+    }
+
+    public func preserveCopy(label: String) throws -> URL? {
+        try JSONFileSupport.copyAside(fileURL, label: label)
     }
 }
