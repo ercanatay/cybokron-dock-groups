@@ -5,8 +5,10 @@ import OSLog
 import QuartzCore
 import SwiftUI
 
-/// Shows a group's popup: positions the panel over the Dock, keeps it in sync with the group and
-/// the popup preferences while it's open, and closes it on Escape, an outside click or focus loss.
+/// Shows a group's popup: positions the panel over the Dock — or, with the group's position set to
+/// "above the clicked icon", at the icon it was opened from (`PopupSource`) — keeps it in sync with
+/// the group and the popup preferences while it's open, and closes it on Escape, an outside click
+/// or focus loss.
 ///
 /// The Most Used list (`MostUsedGroup.id`) opens like a group, read-only: its apps can be opened
 /// but not reordered or removed. A standalone agent shows its group read-only too
@@ -46,6 +48,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private var subscriptions: Set<AnyCancellable> = []
     /// Bumped by every show and close, so a finished fade-out doesn't hide a popup shown since.
     private var transition = 0
+    /// What the open popup was opened from; it stays in place while its content changes.
+    private var source: PopupSource = .unspecified
 
     /// The group whose popup is open, `nil` while closed.
     private(set) var groupID: DockGroup.ID?
@@ -90,11 +94,11 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
 
     // MARK: - Showing and closing
 
-    func toggle(groupID id: DockGroup.ID) {
+    func toggle(groupID id: DockGroup.ID, source: PopupSource = .unspecified) {
         if groupID == id {
             close(reason: .toggled)
         } else {
-            show(groupID: id)
+            show(groupID: id, source: source)
         }
     }
 
@@ -103,8 +107,12 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         id == MostUsedGroup.id ? mostUsed?.group() : store.group(withID: id)
     }
 
-    func show(groupID id: DockGroup.ID) {
-        guard let group = group(withID: id), let frame = update(for: group) else { return }
+    /// Shows the group's popup. `source` is the icon it was opened from, if any: the group's
+    /// "above the clicked icon" position opens it there, and without one over the Dock's center.
+    func show(groupID id: DockGroup.ID, source: PopupSource = .unspecified) {
+        guard let group = group(withID: id) else { return }
+        self.source = source
+        guard let frame = update(for: group) else { return }
         let wasShown = groupID != nil && panel.isVisible
         groupID = id
         lastGroupID = id
@@ -169,9 +177,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
 
     /// Puts `group`'s content into the panel and returns the panel's frame.
     private func update(for group: DockGroup) -> CGRect? {
-        guard let dock = DockScreenReader.current() else { return nil }
         let popupPreferences = preferences.preferences
         let settings = popupPreferences.resolved(with: group.popup)
+        guard let dock = DockScreenReader.current(anchor: settings.anchor, source: source) else { return nil }
         let metrics = PopupMetrics.grid(showsTitles: settings.showsTitles)
         let layout = PopupGridLayout(itemCount: group.apps.count, columns: settings.columns, maxRows: settings.maxRows)
         // Free Layout arranges the user's groups; the Most Used list stays ranked.
@@ -230,9 +238,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             border: (isDark ? PanelPalette.dark : PanelPalette.light).border
         )
 
-        // Until Dock tiles exist the clicked tile's location is unknown, so "above the clicked
-        // icon" centers over the Dock as well.
-        return PopupPlacement.frame(size: size, anchor: settings.anchor, dockEdge: dock.edge, screen: dock.screen)
+        return PopupPlacement.frame(size: size, anchor: settings.anchor, dockEdge: dock.edge, screen: dock.screen, source: source)
     }
 
     /// Actions look the group up when they run, so they always act on its current state.
@@ -348,17 +354,35 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     }
 }
 
-/// Reads where the Dock is: its screen and edge.
+/// Reads where the Dock is: its edge, and the screen a popup opens on.
 @MainActor
 enum DockScreenReader {
-    static func current() -> (edge: DockEdge, screen: ScreenGeometry)? {
-        let screens = NSScreen.screens.map { ScreenGeometry(frame: $0.frame, visibleFrame: $0.visibleFrame) }
+    /// The Dock's edge and the popup's screen: the one with the clicked icon for `.dockIcon`
+    /// (`PopupPlacement.screenIndex`), else the Dock's.
+    static func current(anchor: PopupAnchor, source: PopupSource) -> (edge: DockEdge, screen: ScreenGeometry)? {
+        let screens = self.screens()
+        guard let edge = edge(on: screens) else { return nil }
+        let index = PopupPlacement.screenIndex(
+            anchor: anchor,
+            source: source,
+            edge: edge,
+            screens: screens,
+            mouseLocation: NSEvent.mouseLocation
+        ) ?? 0
+        return (edge, screens[index])
+    }
+
+    /// Every screen, the primary one (with the menu bar) first.
+    static func screens() -> [ScreenGeometry] {
+        NSScreen.screens.map { ScreenGeometry(frame: $0.frame, visibleFrame: $0.visibleFrame) }
+    }
+
+    /// The Dock's edge; `nil` without screens.
+    static func edge(on screens: [ScreenGeometry]) -> DockEdge? {
         guard let primary = screens.first else { return nil }
         // The Dock stores its edge as "bottom", "left" or "right"; the key is absent until the user
         // moves the Dock away from the bottom.
         let orientation = UserDefaults(suiteName: "com.apple.dock")?.string(forKey: "orientation") ?? "bottom"
-        let edge = DockEdge(orientation: orientation, screen: primary)
-        let index = PopupPlacement.dockScreenIndex(edge: edge, screens: screens, mouseLocation: NSEvent.mouseLocation) ?? 0
-        return (edge, screens[index])
+        return DockEdge(orientation: orientation, screen: primary)
     }
 }

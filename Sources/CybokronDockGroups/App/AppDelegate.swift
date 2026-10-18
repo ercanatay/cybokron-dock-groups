@@ -123,7 +123,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusBarController = StatusBarController(
             store: store,
             actions: StatusBarController.Actions(
-                showPopup: { [weak self] group in self?.popupController.toggle(groupID: group.id) },
+                showPopup: { [weak self] group in
+                    guard let self else { return }
+                    self.popupController.toggle(groupID: group.id, source: self.menuBarSource)
+                },
                 openAll: { [weak self] group in self?.openAll(group) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
@@ -136,7 +139,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 },
                 shortcutTitle: { [weak self] group in self?.shortcutTitle(for: group) },
                 mostUsedEntries: { [weak self] in self?.mostUsed.entries() },
-                showMostUsedPopup: { [weak self] in self?.popupController.toggle(groupID: MostUsedGroup.id) },
+                showMostUsedPopup: { [weak self] in
+                    guard let self else { return }
+                    self.popupController.toggle(groupID: MostUsedGroup.id, source: self.menuBarSource)
+                },
                 openMostUsedApp: { [weak self] app in self?.open(app, in: MostUsedGroup.group(with: [])) },
                 appIcon: { [weak self] app in self?.menuIcon(for: app) ?? NSImage() }
             )
@@ -218,6 +224,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Target of the Check for Updates… menu items: shows the update window, which follows the check.
     @objc func checkForUpdates(_ sender: Any?) {
         updater.checkForUpdatesFromMenu()
+    }
+
+    /// Popups chosen from the menu bar menu open under its item when their position is "above the
+    /// clicked icon".
+    private var menuBarSource: PopupSource {
+        statusBarController?.itemFrame.map(PopupSource.menuBarItem) ?? .unspecified
     }
 
     // MARK: - Group actions

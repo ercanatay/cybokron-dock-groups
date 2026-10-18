@@ -76,6 +76,8 @@ struct PopupPlacementTests {
         frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
         visibleFrame: CGRect(x: 0, y: 80, width: 1440, height: 795)
     )
+    /// A status item in the menu bar above `bottomDockScreen`'s visible frame.
+    private let menuBarItem = CGRect(x: 1100, y: 876, width: 28, height: 24)
 
     @Test func centersOverABottomDock() {
         let frame = PopupPlacement.frame(size: size, anchor: .dockCenter, dockEdge: .bottom, screen: bottomDockScreen)
@@ -107,11 +109,11 @@ struct PopupPlacementTests {
     @Test func aboveTheIconFollowsTheIconAndStaysOnScreen() {
         let centered = PopupPlacement.frame(
             size: size, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
-            iconLocation: CGPoint(x: 500, y: 40)
+            source: .dockTile(CGPoint(x: 500, y: 40))
         )
         let nearEdge = PopupPlacement.frame(
             size: size, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
-            iconLocation: CGPoint(x: 1420, y: 40)
+            source: .dockTile(CGPoint(x: 1420, y: 40))
         )
 
         #expect(centered.midX == 500)
@@ -128,9 +130,73 @@ struct PopupPlacementTests {
     @Test func centeredAnchorIgnoresTheIconLocation() {
         let frame = PopupPlacement.frame(
             size: size, anchor: .dockCenter, dockEdge: .bottom, screen: bottomDockScreen,
-            iconLocation: CGPoint(x: 100, y: 40)
+            source: .dockTile(CGPoint(x: 100, y: 40))
         )
+        let fromMenuBar = PopupPlacement.frame(
+            size: size, anchor: .dockCenter, dockEdge: .bottom, screen: bottomDockScreen,
+            source: .menuBarItem(menuBarItem)
+        )
+
         #expect(frame.midX == 720)
+        #expect(fromMenuBar == frame)
+    }
+
+    @Test func aboveTheIconFollowsATileBesideASideDock() {
+        let leftScreen = ScreenGeometry(
+            frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+            visibleFrame: CGRect(x: 70, y: 0, width: 1370, height: 875)
+        )
+
+        let frame = PopupPlacement.frame(
+            size: size, anchor: .dockIcon, dockEdge: .left, screen: leftScreen,
+            source: .dockTile(CGPoint(x: 35, y: 300))
+        )
+
+        #expect(frame.minX == 70 + PopupPlacement.dockGap)
+        #expect(frame.midY == 300)
+    }
+
+    @Test func aboveTheIconHangsFromTheMenuBarItem() {
+        let frame = PopupPlacement.frame(
+            size: size, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
+            source: .menuBarItem(menuBarItem)
+        )
+
+        #expect(frame.midX == menuBarItem.midX)
+        #expect(frame.maxY == 875 - PopupPlacement.menuBarGap)
+        #expect(frame.size == size)
+    }
+
+    @Test func menuBarPopupStaysOnScreenAndBelowTheMenuBar() {
+        let nearRightEdge = CGRect(x: 1410, y: 876, width: 28, height: 24)
+        let tall = CGSize(width: 400, height: 2000)
+
+        let frame = PopupPlacement.frame(
+            size: size, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
+            source: .menuBarItem(nearRightEdge)
+        )
+        let tallFrame = PopupPlacement.frame(
+            size: tall, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
+            source: .menuBarItem(menuBarItem)
+        )
+
+        #expect(frame.maxX == 1440 - PopupPlacement.screenMargin)
+        #expect(frame.maxY == 875 - PopupPlacement.menuBarGap)
+        #expect(tallFrame.maxY == 875 - PopupPlacement.menuBarGap, "the header stays visible")
+    }
+
+    @Test func iconOffTheScreenCountsAsNoIcon() {
+        let hiddenItem = CGRect(x: 3000, y: 876, width: 28, height: 24)
+        let centered = PopupPlacement.frame(size: size, anchor: .dockCenter, dockEdge: .bottom, screen: bottomDockScreen)
+
+        #expect(PopupPlacement.frame(
+            size: size, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
+            source: .menuBarItem(hiddenItem)
+        ) == centered)
+        #expect(PopupPlacement.frame(
+            size: size, anchor: .dockIcon, dockEdge: .bottom, screen: bottomDockScreen,
+            source: .dockTile(CGPoint(x: -50, y: 40))
+        ) == centered)
     }
 
     @Test func oversizedPopupKeepsItsTopVisible() {
@@ -181,5 +247,76 @@ struct PopupPlacementTests {
         #expect(PopupPlacement.dockScreenIndex(edge: .bottom, screens: [main, external], mouseLocation: CGPoint(x: 2000, y: 500)) == 1)
         #expect(PopupPlacement.dockScreenIndex(edge: .bottom, screens: [main, external], mouseLocation: nil) == 0)
         #expect(PopupPlacement.dockScreenIndex(edge: .bottom, screens: [], mouseLocation: nil) == nil)
+    }
+}
+
+@Suite("Popup source")
+struct PopupSourceTests {
+    /// The built-in display with the Dock at the bottom, and an external display to its right.
+    private let main = ScreenGeometry(
+        frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+        visibleFrame: CGRect(x: 0, y: 80, width: 1440, height: 795)
+    )
+    private let external = ScreenGeometry(
+        frame: CGRect(x: 1440, y: -180, width: 1920, height: 1080),
+        visibleFrame: CGRect(x: 1440, y: -180, width: 1920, height: 1055)
+    )
+    private var screens: [ScreenGeometry] { [main, external] }
+
+    @Test func locationIsTheTileOrTheMenuBarItemCenter() {
+        #expect(PopupSource.unspecified.location == nil)
+        #expect(PopupSource.dockTile(CGPoint(x: 10, y: 20)).location == CGPoint(x: 10, y: 20))
+        #expect(PopupSource.menuBarItem(CGRect(x: 100, y: 876, width: 20, height: 24)).location == CGPoint(x: 110, y: 888))
+    }
+
+    @Test func aboveTheIconOpensOnTheScreenWithTheIcon() {
+        let tileOnExternal = PopupSource.dockTile(CGPoint(x: 2400, y: -150))
+        let itemOnExternal = PopupSource.menuBarItem(CGRect(x: 3000, y: 876, width: 28, height: 24))
+
+        #expect(PopupPlacement.screenIndex(anchor: .dockIcon, source: tileOnExternal, edge: .bottom, screens: screens, mouseLocation: nil) == 1)
+        #expect(PopupPlacement.screenIndex(anchor: .dockIcon, source: itemOnExternal, edge: .bottom, screens: screens, mouseLocation: nil) == 1)
+    }
+
+    @Test func otherwiseTheDockScreenIsUsed() {
+        let tileOnExternal = PopupSource.dockTile(CGPoint(x: 2400, y: -150))
+        let nowhere = PopupSource.dockTile(CGPoint(x: -500, y: -500))
+
+        #expect(PopupPlacement.screenIndex(anchor: .dockCenter, source: tileOnExternal, edge: .bottom, screens: screens, mouseLocation: nil) == 0)
+        #expect(PopupPlacement.screenIndex(anchor: .dockIcon, source: .unspecified, edge: .bottom, screens: screens, mouseLocation: nil) == 0)
+        #expect(PopupPlacement.screenIndex(anchor: .dockIcon, source: nowhere, edge: .bottom, screens: screens, mouseLocation: nil) == 0)
+        #expect(PopupPlacement.screenIndex(anchor: .dockIcon, source: .unspecified, edge: .bottom, screens: [], mouseLocation: nil) == nil)
+    }
+
+    @Test func clicksOnTheDockAreTileClicks() {
+        let onMainDock = CGPoint(x: 700, y: 30)
+        let onHiddenExternalDock = CGPoint(x: 2000, y: -170)
+
+        #expect(PopupPlacement.dockTileSource(pointer: onMainDock, edge: .bottom, screens: screens) == .dockTile(onMainDock))
+        #expect(PopupPlacement.dockTileSource(pointer: onHiddenExternalDock, edge: .bottom, screens: screens) == .dockTile(onHiddenExternalDock))
+    }
+
+    @Test func clicksAwayFromTheDockAreNot() {
+        #expect(PopupPlacement.dockTileSource(pointer: CGPoint(x: 700, y: 500), edge: .bottom, screens: screens) == .unspecified)
+        #expect(PopupPlacement.dockTileSource(pointer: CGPoint(x: 700, y: 30), edge: .left, screens: screens) == .unspecified)
+        #expect(PopupPlacement.dockTileSource(pointer: CGPoint(x: -100, y: 30), edge: .bottom, screens: screens) == .unspecified)
+    }
+
+    @Test func sideDocksAreMeasuredFromTheirEdge() {
+        let onLeftDock = CGPoint(x: 40, y: 450)
+        let onRightDock = CGPoint(x: 3340, y: 300)
+
+        #expect(PopupPlacement.dockTileSource(pointer: onLeftDock, edge: .left, screens: screens) == .dockTile(onLeftDock))
+        #expect(PopupPlacement.dockTileSource(pointer: onRightDock, edge: .right, screens: screens) == .dockTile(onRightDock))
+        #expect(PopupPlacement.dockTileSource(pointer: CGPoint(x: 2400, y: 300), edge: .right, screens: screens) == .unspecified)
+    }
+
+    @Test func aDockWiderThanTheReachCountsWhole() {
+        let wideDock = ScreenGeometry(
+            frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+            visibleFrame: CGRect(x: 0, y: 200, width: 1440, height: 675)
+        )
+        let pointer = CGPoint(x: 700, y: 190)
+
+        #expect(PopupPlacement.dockTileSource(pointer: pointer, edge: .bottom, screens: [wideDock]) == .dockTile(pointer))
     }
 }

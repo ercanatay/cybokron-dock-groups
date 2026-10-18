@@ -59,7 +59,7 @@ struct PopupSettingsView: View {
                     .fixedSize()
                 } label: {
                     Text("Position")
-                    Text("Popups opened from the menu bar are centered over the Dock.")
+                    Text("Above the clicked icon opens a popup over its group's Dock icon, or under the menu bar icon when chosen from its menu. Popups opened with a shortcut, a link or Siri stay centered over the Dock.")
                 }
             } header: {
                 Text("Popup Layout")

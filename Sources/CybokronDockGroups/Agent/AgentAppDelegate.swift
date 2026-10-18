@@ -5,9 +5,10 @@ import OSLog
 
 /// Runs the app as a standalone group's agent: the small app with the group's own Dock icon.
 ///
-/// Started from its Dock tile, the agent shows the group's popup over the Dock; clicking the tile
-/// again hides it, and clicking it with ⌥ held opens all of the group's apps right away. The popup
-/// opens apps, Open All, Hide All and Close All as in the main app, but doesn't change the group:
+/// Started from its Dock tile, the agent shows the group's popup over the Dock — above the tile when
+/// the group's position is "above the clicked icon" (`DockTileLocator`); clicking the tile again
+/// hides it, and clicking it with ⌥ held opens all of the group's apps right away. The popup opens
+/// apps, Open All, Hide All and Close All as in the main app, but doesn't change the group:
 /// reordering and removing apps happen in the main app.
 ///
 /// Right-clicking (or Control-clicking) the tile shows the group's apps — checked while running —
@@ -116,7 +117,13 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
             // Hidden when the popup closed last; a hidden app's windows stay off screen.
             NSApp.unhideWithoutActivation()
         }
-        popupController.show(groupID: groupID)
+        popupController.show(groupID: groupID, source: tileSource(for: group))
+    }
+
+    /// The tile the popup opens above, looked up only when the group's position asks for it.
+    private func tileSource(for group: DockGroup) -> PopupSource {
+        guard preferences?.preferences.resolved(with: group.popup).anchor == .dockIcon else { return .unspecified }
+        return DockTileLocator.source(forTileOf: bundleURL)
     }
 
     // MARK: - Configuration

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02463B2C336AA785F8B67B90 /* DockTileLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2385FA0870C49C963667017 /* DockTileLocator.swift */; };
 		02B69A20AAA8C5644635016F /* GroupMoving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C61665D92B0AF6A0D26450E /* GroupMoving.swift */; };
 		02DBF76E7D7A550F56116EA1 /* AgentPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3680A0091065D2D5CA9FD6 /* AgentPlanner.swift */; };
 		03CCD8D8B9953272976870F2 /* AppReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994BD907AE7F69808146B00A /* AppReference.swift */; };
@@ -244,6 +245,7 @@
 		B07FE6B5A848EFDF8A5BBE59 /* ReleaseFeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseFeedTests.swift; sourceTree = "<group>"; };
 		B0C5527DE1A4280F1737104F /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		B1AB275097327F311E2C1C3F /* ReleaseInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseInfo.swift; sourceTree = "<group>"; };
+		B2385FA0870C49C963667017 /* DockTileLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockTileLocator.swift; sourceTree = "<group>"; };
 		BAD00B8920D9002314BAFE6C /* GroupShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupShortcuts.swift; sourceTree = "<group>"; };
 		BCCFBA8CF08D9467419865DB /* MoveBetweenGroupsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveBetweenGroupsTests.swift; sourceTree = "<group>"; };
 		BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDockGroupsCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -493,6 +495,7 @@
 			isa = PBXGroup;
 			children = (
 				79B854A1363C8CFD95BAEE6D /* AgentAppDelegate.swift */,
+				B2385FA0870C49C963667017 /* DockTileLocator.swift */,
 			);
 			path = Agent;
 			sourceTree = "<group>";
@@ -798,6 +801,7 @@
 				092EF77DAF1657D8F0F32B6E /* CybokronDockGroupsMain.swift in Sources */,
 				C1C99DBD8A834A04E609B252 /* DisplayNames.swift in Sources */,
 				5FA927E37E1E0D72D3068912 /* DockGroupsShortcuts.swift in Sources */,
+				02463B2C336AA785F8B67B90 /* DockTileLocator.swift in Sources */,
 				AC318D31CE4D2D539A376B28 /* GlobalShortcutMonitor.swift in Sources */,
 				130A65569AB2D833016610B4 /* GroupDetailView.swift in Sources */,
 				D294CFCCDC4C25C52B15E437 /* GroupEntity.swift in Sources */,

@@ -4,7 +4,9 @@ import Foundation
 public enum PopupAnchor: String, Codable, CaseIterable, Sendable {
     /// Centered over the Dock.
     case dockCenter
-    /// Above the group's Dock tile (needs Accessibility access to locate the tile).
+    /// At the clicked icon: above a standalone group's Dock tile, or under the menu bar item when
+    /// the group is chosen from its menu. Popups opened without an icon (shortcuts, links, Siri)
+    /// are centered over the Dock (`PopupSource`).
     case dockIcon
 }
 

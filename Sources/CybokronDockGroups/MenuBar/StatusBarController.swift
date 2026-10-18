@@ -54,6 +54,13 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         rebuildMenu()
     }
 
+    /// The menu bar item's frame on screen, which popups chosen from its menu can hang from;
+    /// `nil` while it isn't shown.
+    var itemFrame: CGRect? {
+        guard let button = statusItem.button, let window = button.window, window.isVisible else { return nil }
+        return window.convertToScreen(button.convert(button.bounds, to: nil))
+    }
+
     /// Rebuilt right before the menu opens, so it always reflects the current groups.
     func menuNeedsUpdate(_ menu: NSMenu) {
         rebuildMenu()
