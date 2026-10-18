@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Other Versions…** in Settings → Updates: lists the project's published GitHub releases (no
+  drafts or prereleases), newest first, with their dates; the running one is marked *Current*. Each
+  other release has **Install** (disabled with "No download" when it has no universal DMG), which
+  asks first, then downloads, checks and installs it in the update window exactly like an update —
+  older or newer — and relaunches. When the list can't be loaded (offline, GitHub's rate limit) it
+  says why, with **Try Again** and a link to the releases page.
+- Going back to an older version skips every newer published release (and the one left behind) in
+  automatic checks, so the app doesn't keep offering what you just left; **Check for Updates…**
+  still offers them. Going up from Other Versions… clears the skipped versions. Settings → Updates
+  shows them ("Skipped newer versions: …", with **Clear**) or "Back on the latest path".
+
+### Changed
+
+- `update-state.json` keeps a list of skipped versions (`skippedVersions`); the newest is also
+  written as `skippedVersion`, the key versions up to 0.5.5 read, so an older version installed
+  from Other Versions… keeps quiet about the newest release too. The diagnostics report lists them.
+
 ## [0.5.5] - 2026-10-18
 
 ### Added

@@ -128,14 +128,16 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   Install** downloads the universal DMG, checks its size and SHA-256 checksum, copies the app out of
   the read-only mounted image, moves the running app to `updates/backups/`, puts the new one in its
   place and relaunches — putting the previous one back if that fails. The update window shows its
-  progress and tells you when the app restarts. See [CHANGELOG.md](CHANGELOG.md).
+  progress and tells you when the app restarts. **Other Versions…** in Settings → Updates lists the
+  published releases and installs any of them the same way, older or newer; after going back,
+  automatic checks skip the newer versions until you go up again. See [CHANGELOG.md](CHANGELOG.md).
 - **About** window with a "Find Me Online" row of social profile icons (LinkedIn, X, GitHub, YouTube
   and more).
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
   `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
   standalone groups' apps, and `update-state.json` / `updates/` for the updater (last check,
-  skipped version, downloads and the previous version's backup).
+  skipped versions, downloads and the previous version's backup).
 - **Backup** (Settings → Backup): **Export Settings…** saves the groups and the settings to a
   `.dockgroups` file (JSON); **Import Settings…** asks first, then either **Replace All** (the
   backup's groups and settings instead of yours) or **Merge** (adds the backup's groups whose name you
@@ -260,6 +262,9 @@ python3 -m http.server 8765 --bind 127.0.0.1 &   # serves ./latest.json and the 
 open --env CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json \
      --env CYBOKRON_UPDATE_DRY_RUN=1 "build/debug/Cybokron Dock Groups.app"
 ```
+
+`CYBOKRON_RELEASES_FEED_URL` does the same for **Other Versions…**: point it at a JSON list shaped
+like GitHub's `/releases` answer (e.g. `http://127.0.0.1:8765/releases.json`).
 
 The scripts work around two Command Line Tools limitations automatically: they pick a macOS SDK
 whose SwiftUI doesn't need Xcode's macro plugins, and they point the compiler at swift-testing's
