@@ -11,10 +11,10 @@ enum LaunchReportPresenter {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = problems.count == report.entries.count
-            ? "The apps in “\(report.groupName)” couldn't be opened."
-            : "Some apps in “\(report.groupName)” couldn't be opened."
+            ? L10n.Problems.noneOpened(report.groupName)
+            : L10n.Problems.someNotOpened(report.groupName)
         alert.informativeText = problems
-            .map { "• \($0.app.name): \(description(of: $0.outcome))" }
+            .map { L10n.Problems.launchItem($0.app.name, reason: description(of: $0.outcome)) }
             .joined(separator: "\n")
         NSApp.activate()
         alert.runModal()
@@ -27,8 +27,8 @@ enum LaunchReportPresenter {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = report.mode == .force
-            ? "Some apps in “\(report.groupName)” couldn't be force quit."
-            : "Some apps in “\(report.groupName)” couldn't be asked to quit."
+            ? L10n.Problems.notForceQuit(report.groupName)
+            : L10n.Problems.notAskedToQuit(report.groupName)
         alert.informativeText = report.refused.map { "• \($0.name)" }.joined(separator: "\n")
         NSApp.activate()
         alert.runModal()
@@ -40,7 +40,7 @@ enum LaunchReportPresenter {
 
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "Some apps in “\(report.groupName)” couldn't be hidden."
+        alert.messageText = L10n.Problems.notHidden(report.groupName)
         alert.informativeText = report.refused.map { "• \($0.name)" }.joined(separator: "\n")
         NSApp.activate()
         alert.runModal()
@@ -48,9 +48,9 @@ enum LaunchReportPresenter {
 
     private static func description(of outcome: LaunchReport.Outcome) -> String {
         switch outcome {
-        case .notFound: return "not found on this Mac."
+        case .notFound: return L10n.Problems.notFound
         case .failed(let reason): return reason
-        case .launched, .activated: return "opened."
+        case .launched, .activated: return L10n.Problems.opened
         }
     }
 }

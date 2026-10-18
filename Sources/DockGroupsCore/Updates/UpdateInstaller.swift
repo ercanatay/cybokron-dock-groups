@@ -28,27 +28,27 @@ public enum UpdateInstallError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .insecureDownloadURL(let url):
-            return "The update's download address isn't secure (\(url))."
+            return Localization.format("core.update.install.insecureURL", "The update's download address isn't secure (%@).", url)
         case .downloadFailed(let reason):
-            return "The update couldn't be downloaded: \(reason)"
+            return Localization.format("core.update.install.downloadFailed", "The update couldn't be downloaded: %@", reason)
         case .sizeMismatch(let expected, let actual):
-            return "The downloaded update is incomplete (\(actual) of \(expected) bytes)."
+            return Localization.format("core.update.install.sizeMismatch", "The downloaded update is incomplete (%1$ld of %2$ld bytes).", actual, expected)
         case .checksumMismatch:
-            return "The downloaded update doesn't match its published checksum, so it wasn't installed."
+            return Localization.string("core.update.install.checksum", "The downloaded update doesn't match its published checksum, so it wasn't installed.")
         case .mountFailed(let reason):
-            return "The update's disk image couldn't be opened: \(reason)"
+            return Localization.format("core.update.install.mountFailed", "The update's disk image couldn't be opened: %@", reason)
         case .appNotFound:
-            return "The update's disk image doesn't contain the app."
+            return Localization.string("core.update.install.appNotFound", "The update's disk image doesn't contain the app.")
         case .wrongApp(let identifier):
-            return "The update's disk image contains another app (\(identifier))."
+            return Localization.format("core.update.install.wrongApp", "The update's disk image contains another app (%@).", identifier)
         case .versionMismatch(let expected, let found):
-            return "The downloaded app is version \(found), but the release is \(expected)."
+            return Localization.format("core.update.install.versionMismatch", "The downloaded app is version %1$@, but the release is %2$@.", found, expected)
         case .locationNotWritable(let reason):
             return reason
         case .replaceFailed(let reason):
-            return "The new version couldn't be put in place, so the current one was kept: \(reason)"
+            return Localization.format("core.update.install.replaceFailed", "The new version couldn't be put in place, so the current one was kept: %@", reason)
         case .rollbackFailed(let backupPath):
-            return "The update failed and the previous version couldn't be put back. It's kept at \(backupPath)."
+            return Localization.format("core.update.install.rollbackFailed", "The update failed and the previous version couldn't be put back. It's kept at %@.", backupPath)
         }
     }
 }
@@ -113,17 +113,17 @@ public struct UpdateInstaller: Sendable {
     public static func installLocationProblem(for bundleURL: URL, fileManager: FileManager = .default) -> String? {
         let path = bundleURL.standardizedFileURL.path
         if path.contains("/AppTranslocation/") {
-            return "macOS runs this copy from a temporary read-only location. Move the app to your Applications folder, open it from there, and try again."
+            return Localization.string("core.update.location.translocated", "macOS runs this copy from a temporary read-only location. Move the app to your Applications folder, open it from there, and try again.")
         }
         guard fileManager.fileExists(atPath: path) else {
-            return "The running app wasn't found at \(path)."
+            return Localization.format("core.update.location.notFound", "The running app wasn't found at %@.", path)
         }
         if (try? bundleURL.resourceValues(forKeys: [.volumeIsReadOnlyKey]).volumeIsReadOnly) == true {
-            return "The app runs from a read-only volume, such as its disk image. Copy it to your Applications folder first."
+            return Localization.string("core.update.location.readOnly", "The app runs from a read-only volume, such as its disk image. Copy it to your Applications folder first.")
         }
         let folder = bundleURL.deletingLastPathComponent().path
         guard fileManager.isWritableFile(atPath: folder) else {
-            return "You don't have permission to replace the app in “\(folder)”. Download the new version from the releases page instead."
+            return Localization.format("core.update.location.noPermission", "You don't have permission to replace the app in “%@”. Download the new version from the releases page instead.", folder)
         }
         return nil
     }
@@ -174,11 +174,11 @@ public struct UpdateInstaller: Sendable {
                         return
                     }
                     guard let http = response as? HTTPURLResponse, let location else {
-                        continuation.resume(throwing: UpdateInstallError.downloadFailed("The server sent no file."))
+                        continuation.resume(throwing: UpdateInstallError.downloadFailed(Localization.string("core.update.install.noFile", "The server sent no file.")))
                         return
                     }
                     guard http.statusCode == 200 else {
-                        continuation.resume(throwing: UpdateInstallError.downloadFailed("HTTP status \(http.statusCode)."))
+                        continuation.resume(throwing: UpdateInstallError.downloadFailed(Localization.format("core.update.install.httpStatus", "HTTP status %ld.", http.statusCode)))
                         return
                     }
                     // Redirects are followed; they must stay secure too.
@@ -267,7 +267,8 @@ public struct UpdateInstaller: Sendable {
             let staged = directories.staging.appending(path: source.lastPathComponent, directoryHint: .isDirectory)
             let copy = try await tools.run(Self.ditto, arguments: [source.path, staged.path])
             guard copy.succeeded else {
-                throw UpdateInstallError.mountFailed("Copying the app failed: \(copy.output.isEmpty ? "ditto exited with \(copy.status)" : copy.output)")
+                let detail = copy.output.isEmpty ? "ditto exited with \(copy.status)" : copy.output
+                throw UpdateInstallError.mountFailed(Localization.format("core.update.install.copyFailed", "Copying the app failed: %@", detail))
             }
             result = .success(staged)
         } catch {

@@ -392,7 +392,7 @@ final class StandaloneController: ObservableObject {
     private func presentFailure(_ error: Error, groupName: String) {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "“\(groupName)” couldn't get its own Dock icon."
+        alert.messageText = L10n.Problems.noDockIcon(groupName)
         alert.informativeText = error.localizedDescription
         NSApp.activate()
         alert.runModal()

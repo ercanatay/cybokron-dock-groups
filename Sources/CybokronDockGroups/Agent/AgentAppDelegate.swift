@@ -215,7 +215,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.autoenablesItems = false
         if group.apps.isEmpty {
-            let placeholder = NSMenuItem(title: "No apps in this group yet", action: nil, keyEquivalent: "")
+            let placeholder = NSMenuItem(title: L10n.Common.noAppsInGroup, action: nil, keyEquivalent: "")
             placeholder.isEnabled = false
             menu.addItem(placeholder)
         }
@@ -230,9 +230,9 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         }
         menu.addItem(.separator())
         let hasRunningApps = runningApps.runningCount(in: group) > 0
-        menu.addItem(dockMenuItem("Open All", action: #selector(openAllFromDockMenu(_:)), isEnabled: !group.apps.isEmpty))
-        menu.addItem(dockMenuItem("Hide All", action: #selector(hideAllFromDockMenu(_:)), isEnabled: hasRunningApps))
-        menu.addItem(dockMenuItem("Close All", action: #selector(closeAllFromDockMenu(_:)), isEnabled: hasRunningApps))
+        menu.addItem(dockMenuItem(L10n.Common.openAll, action: #selector(openAllFromDockMenu(_:)), isEnabled: !group.apps.isEmpty))
+        menu.addItem(dockMenuItem(L10n.Common.hideAll, action: #selector(hideAllFromDockMenu(_:)), isEnabled: hasRunningApps))
+        menu.addItem(dockMenuItem(L10n.Common.closeAll, action: #selector(closeAllFromDockMenu(_:)), isEnabled: hasRunningApps))
         return menu
     }
 
@@ -303,8 +303,8 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     private func presentDamagedBundleAlert(_ error: Error) {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "This group's app can't open its group."
-        alert.informativeText = "\(error.localizedDescription)\n\nIn Cybokron Dock Groups, turn Standalone off and on again for the group to rebuild its app."
+        alert.messageText = L10n.Agent.damagedTitle
+        alert.informativeText = L10n.Agent.damagedMessage(error.localizedDescription, appName: AppInfo.name)
         NSApp.activate()
         alert.runModal()
     }
@@ -314,7 +314,7 @@ enum AgentLaunchError: LocalizedError {
     case groupMismatch
 
     var errorDescription: String? {
-        "The app's settings belong to another group."
+        L10n.Agent.groupMismatch
     }
 }
 

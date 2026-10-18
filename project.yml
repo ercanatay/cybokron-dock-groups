@@ -47,7 +47,11 @@ targets:
     platform: macOS
     sources:
       - path: Sources/CybokronDockGroups
-      - path: Resources/Assets.xcassets
+      # The asset catalog and every <language>.lproj folder of string tables (a variant group per
+      # table, so new languages are picked up by `xcodegen generate`).
+      - path: Resources
+        excludes:
+          - Info.plist
       - path: Resources/Info.plist
         buildPhase: none
     dependencies:

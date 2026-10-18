@@ -36,9 +36,9 @@ final class SettingsBackupController: ObservableObject {
 
     func exportSettings() {
         let panel = NSSavePanel()
-        panel.title = "Export Settings"
-        panel.message = "Save your groups and settings to a backup file."
-        panel.prompt = "Export"
+        panel.title = L10n.Settings.Backup.exportPanelTitle
+        panel.message = L10n.Settings.Backup.exportPanelMessage
+        panel.prompt = L10n.Settings.Backup.export
         panel.nameFieldStringValue = SettingsBackup.defaultFileName()
         panel.allowedContentTypes = [Self.backupType]
         panel.canCreateDirectories = true
@@ -60,7 +60,7 @@ final class SettingsBackupController: ObservableObject {
                 status = .exported(fileName: url.lastPathComponent)
             case .failure(let error):
                 presentAlert(
-                    title: "The settings couldn't be exported",
+                    title: L10n.Settings.Backup.exportFailed,
                     message: error.localizedDescription,
                     style: .warning
                 )
@@ -72,9 +72,9 @@ final class SettingsBackupController: ObservableObject {
 
     func importSettings() {
         let panel = NSOpenPanel()
-        panel.title = "Import Settings"
-        panel.message = "Choose a Cybokron Dock Groups backup to restore."
-        panel.prompt = "Import"
+        panel.title = L10n.Settings.Backup.importPanelTitle
+        panel.message = L10n.Settings.Backup.importPanelMessage(AppInfo.name)
+        panel.prompt = L10n.Settings.Backup.importLabel
         panel.allowedContentTypes = [Self.backupType, .json]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
@@ -97,7 +97,7 @@ final class SettingsBackupController: ObservableObject {
             case .failure(let error as SettingsBackupError):
                 presentAlert(title: error.localizedDescription, message: Self.rejectionDetail(for: error), style: .warning)
             case .failure(let error):
-                presentAlert(title: "The file couldn't be read", message: error.localizedDescription, style: .warning)
+                presentAlert(title: L10n.Settings.Backup.readFailed, message: error.localizedDescription, style: .warning)
             }
         }
     }
@@ -106,11 +106,11 @@ final class SettingsBackupController: ObservableObject {
         let summary = SettingsRestoreSummary(backup: backup, currentGroups: store.groups)
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "Import the groups and settings in this backup?"
+        alert.messageText = L10n.Settings.Backup.confirmTitle
         alert.informativeText = Self.confirmationDetail(for: summary, exportedAt: backup.exportedAt)
-        alert.addButton(withTitle: "Replace All")
-        alert.addButton(withTitle: "Merge")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: L10n.Settings.Backup.replaceAll)
+        alert.addButton(withTitle: L10n.Settings.Backup.merge)
+        alert.addButton(withTitle: L10n.Common.cancel)
         alert.buttons.first?.hasDestructiveAction = true
         present(alert) { [weak self] response in
             switch response {
@@ -127,8 +127,8 @@ final class SettingsBackupController: ObservableObject {
             status = .imported(groupCount: backup.groups.count, appCount: backup.appCount)
         } catch {
             presentAlert(
-                title: "The backup couldn't be restored",
-                message: "\(error.localizedDescription) Your current groups and settings were kept.",
+                title: L10n.Settings.Backup.restoreFailed,
+                message: L10n.Settings.Backup.restoreFailedDetail(error.localizedDescription),
                 style: .warning
             )
         }
@@ -143,8 +143,8 @@ final class SettingsBackupController: ObservableObject {
             )
         } catch {
             presentAlert(
-                title: "The backup couldn't be merged",
-                message: "\(error.localizedDescription) Your current groups were kept.",
+                title: L10n.Settings.Backup.mergeFailed,
+                message: L10n.Settings.Backup.mergeFailedDetail(error.localizedDescription),
                 style: .warning
             )
         }
@@ -155,48 +155,51 @@ final class SettingsBackupController: ObservableObject {
     private static func rejectionDetail(for error: SettingsBackupError) -> String {
         switch error {
         case .notABackup:
-            return "Choose a .dockgroups file made with Export Settings…. Nothing was changed."
+            return L10n.Settings.Backup.notABackupDetail
         case .newerSchemaVersion:
-            return "Nothing was changed."
+            return L10n.Settings.Backup.nothingChanged
         }
     }
 
     private static func confirmationDetail(for summary: SettingsRestoreSummary, exportedAt: Date) -> String {
+        typealias Texts = L10n.Settings.Backup
         var lines: [String] = []
         let exported = exportedAt.timeIntervalSince1970 > 0
-            ? ", exported \(exportedAt.formatted(date: .abbreviated, time: .shortened))" : ""
-        if summary.groupCount == 0 {
-            lines.append("The backup has no groups\(exported).")
-        } else {
-            lines.append("The backup has \(count(summary.groupCount, "group")) with \(count(summary.appCount, "app"))\(exported).")
+            ? exportedAt.formatted(date: .abbreviated, time: .shortened) : nil
+        let groups = L10n.Common.groupCount(summary.groupCount)
+        let apps = L10n.Common.appCount(summary.appCount)
+        switch (summary.groupCount, exported) {
+        case (0, nil): lines.append(Texts.confirmNoGroups)
+        case (0, let date?): lines.append(Texts.confirmNoGroups(exported: date))
+        case (_, nil): lines.append(Texts.confirmContents(groups: groups, apps: apps))
+        case (_, let date?): lines.append(Texts.confirmContents(groups: groups, apps: apps, exported: date))
         }
 
-        var replace = "Replace All uses the backup's groups and settings instead of yours."
+        var replace = [Texts.confirmReplace]
         if summary.replacedGroupCount > 0 {
-            replace += " \(count(summary.replacedGroupCount, "current group")) with the same name as a group in the backup will be replaced by it."
+            replace.append(Texts.confirmReplaced(summary.replacedGroupCount))
         }
         if summary.removedGroupCount > 0 {
-            replace += " \(count(summary.removedGroupCount, "current group")) not in the backup will be removed."
+            replace.append(Texts.confirmRemoved(summary.removedGroupCount))
         }
-        replace += " Your settings (popup, shortcuts, Most Used and updates) will be replaced too."
-        lines.append(replace)
+        replace.append(Texts.confirmReplaceSettings)
+        lines.append(replace.joined(separator: " "))
 
-        var merge = summary.groupCount == 0
-            ? "Merge keeps your groups and settings and adds nothing."
+        var merge = [summary.groupCount == 0
+            ? Texts.confirmMergeNothing
             : summary.mergedGroupCount == 0
-            ? "Merge keeps your groups and settings; every group in the backup is already here, so it adds nothing."
-            : "Merge keeps your groups and settings and adds \(count(summary.mergedGroupCount, "group")) with \(count(summary.mergedAppCount, "app")) from the backup."
+            ? Texts.confirmMergeAllHere
+            : Texts.confirmMergeAdds(
+                groups: L10n.Common.groupCount(summary.mergedGroupCount),
+                apps: L10n.Common.appCount(summary.mergedAppCount)
+            )]
         if summary.mergedGroupCount > 0, summary.skippedGroupCount > 0 {
-            merge += " \(count(summary.skippedGroupCount, "group")) already here (same name) will be skipped."
+            merge.append(Texts.confirmSkipped(summary.skippedGroupCount))
         }
-        lines.append(merge)
+        lines.append(merge.joined(separator: " "))
 
-        lines.append("The Most Used launch counts are kept. A copy of your current files is saved next to them in Application Support. This can't be undone.")
+        lines.append(Texts.confirmFinal)
         return lines.joined(separator: "\n\n")
-    }
-
-    private static func count(_ value: Int, _ noun: String) -> String {
-        "\(value) \(noun)\(value == 1 ? "" : "s")"
     }
 
     // MARK: - Presentation

@@ -13,13 +13,13 @@ public enum WebsiteAddressError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .empty:
-            return "Enter a web address."
+            return Localization.string("core.website.error.empty", "Enter a web address.")
         case .invalid:
-            return "This isn't a valid web address."
+            return Localization.string("core.website.error.invalid", "This isn't a valid web address.")
         case .unsupportedScheme(let scheme):
-            return "Only http and https addresses can be added, not “\(scheme):”."
+            return Localization.format("core.website.error.scheme", "Only http and https addresses can be added, not “%@:”.", scheme)
         case .containsCredentials:
-            return "Remove the user name and password from the address."
+            return Localization.string("core.website.error.credentials", "Remove the user name and password from the address.")
         }
     }
 }

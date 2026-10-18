@@ -23,7 +23,7 @@ public enum GroupPersistenceError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .unsupportedFormatVersion(let version):
-            return "The groups file was saved by a newer version of Cybokron Dock Groups (format \(version))."
+            return Localization.format("core.persistence.groups.newer", "The groups file was saved by a newer version of Cybokron Dock Groups (format %ld).", version)
         }
     }
 }

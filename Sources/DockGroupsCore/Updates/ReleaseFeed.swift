@@ -88,7 +88,7 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
             throw UpdateCheckError.network(error.localizedDescription)
         }
         guard let http = response as? HTTPURLResponse else {
-            throw UpdateCheckError.network("The answer wasn't HTTP.")
+            throw UpdateCheckError.network(Localization.string("core.update.check.notHTTP", "The answer wasn't HTTP."))
         }
         switch http.statusCode {
         case 200:

@@ -95,6 +95,20 @@ mkdir -p "$ICONSET"
 cp Resources/Assets.xcassets/AppIcon.appiconset/icon_*.png "$ICONSET/"
 iconutil --convert icns --output "$APP/Contents/Resources/AppIcon.icns" "$ICONSET"
 
+# The string tables, as Xcode's resources phase copies them: every Resources/<language>.lproj
+# folder (en.lproj holds the English text; translations add folders of their own).
+for lproj in Resources/*.lproj; do
+    [[ -d "$lproj" ]] || continue
+    cp -R "$lproj" "$APP/Contents/Resources/"
+done
+if [[ ! -f "$APP/Contents/Resources/en.lproj/Localizable.strings" ]]; then
+    echo "error: Resources/en.lproj/Localizable.strings is missing" >&2
+    exit 1
+fi
+for table in "$APP"/Contents/Resources/*.lproj/*.strings; do
+    plutil -lint "$table" >/dev/null
+done
+
 extract_app_intents_metadata() {
     local sources="$WORK_DIR/appintents-sources.txt" const_values="$WORK_DIR/appintents-constvalues.txt"
     local scratch="${SWIFTPM_SCRATCH_PATH:-$ROOT/.build}" marker="" file

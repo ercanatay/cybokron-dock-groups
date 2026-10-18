@@ -11,7 +11,7 @@ public enum WebsiteIcon {
             draw(in: rect)
             return true
         }
-        image.accessibilityDescription = "Website"
+        image.accessibilityDescription = Localization.string("core.websiteIcon.accessibility", "Website")
         return image
     }()
 

@@ -42,36 +42,37 @@ struct MainWindowView: View {
                     .id(group.id)
             } else {
                 ContentUnavailableView {
-                    Label(store.groups.isEmpty ? "No Groups Yet" : "No Group Selected", systemImage: "square.grid.2x2")
+                    Label(
+                        store.groups.isEmpty ? L10n.GroupWindow.noGroupsTitle : L10n.GroupWindow.noSelectionTitle,
+                        systemImage: "square.grid.2x2"
+                    )
                 } description: {
-                    Text(store.groups.isEmpty ? "Add a group to collect apps you use together." : "Select a group to edit it.")
+                    Text(store.groups.isEmpty ? L10n.GroupWindow.noGroupsDescription : L10n.GroupWindow.noSelectionDescription)
                 } actions: {
                     if store.groups.isEmpty {
-                        Button("Add a Group", action: addGroup)
+                        Button(L10n.GroupWindow.addGroup, action: addGroup)
                     }
                 }
             }
         }
         .frame(minWidth: 680, minHeight: 440)
-        .alert("Rename Group", isPresented: $isRenaming) {
-            TextField("Name", text: $renameText)
-            Button("Rename", action: commitRename)
-            Button("Cancel", role: .cancel) {}
+        .alert(L10n.GroupWindow.renameTitle, isPresented: $isRenaming) {
+            TextField(L10n.GroupWindow.name, text: $renameText)
+            Button(L10n.GroupWindow.rename, action: commitRename)
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text("Enter a new name for the group.")
+            Text(L10n.GroupWindow.renameMessage)
         }
         .confirmationDialog(
-            "Delete “\(deletionCandidate?.name ?? "")”?",
+            L10n.GroupWindow.deleteTitle(deletionCandidate?.name ?? ""),
             isPresented: $isConfirmingDeletion,
             titleVisibility: .visible,
             presenting: deletionCandidate
         ) { group in
-            Button("Delete Group", role: .destructive) { delete(group) }
-            Button("Cancel", role: .cancel) {}
+            Button(L10n.GroupWindow.deleteGroup, role: .destructive) { delete(group) }
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: { group in
-            Text(group.isStandalone
-                ? "This removes the group and its app list, and its own Dock icon. The apps themselves aren't affected."
-                : "This removes the group and its app list. The apps themselves aren't affected.")
+            Text(group.isStandalone ? L10n.GroupWindow.deleteMessageStandalone : L10n.GroupWindow.deleteMessage)
         }
         .alert(
             store.issue?.title ?? "",
@@ -81,7 +82,7 @@ struct MainWindowView: View {
             ),
             presenting: store.issue
         ) { _ in
-            Button("OK") { store.dismissIssue() }
+            Button(L10n.Common.ok) { store.dismissIssue() }
         } message: { issue in
             Text(issue.message)
         }

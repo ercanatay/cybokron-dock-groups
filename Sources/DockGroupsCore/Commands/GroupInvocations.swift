@@ -20,12 +20,22 @@ public struct GroupInvocation: Hashable, Sendable, Identifiable {
 public enum GroupInvocations {
     /// What to ask Siri for the group: the first phrase of each of the app's App Shortcuts with
     /// the group's name, titled like the actions in the Shortcuts app. The App Shortcuts phrases
-    /// (`DockGroupsShortcuts`) must be literals and can't share these strings: keep both in step.
+    /// (`DockGroupsShortcuts`) must be literals and can't share these strings: keep both in step,
+    /// translations included (a translated phrase here must be the one Siri accepts).
     public static func siriPhrases(groupName: String, appName: String) -> [GroupInvocation] {
         [
-            GroupInvocation(title: "Show Group", text: "Show \(groupName) in \(appName)"),
-            GroupInvocation(title: "Launch Group", text: "Launch \(groupName) in \(appName)"),
-            GroupInvocation(title: "Quit Group", text: "Quit \(groupName) in \(appName)"),
+            GroupInvocation(
+                title: Localization.string("core.invocation.showGroup", "Show Group"),
+                text: Localization.format("core.invocation.showGroup.phrase", "Show %1$@ in %2$@", groupName, appName)
+            ),
+            GroupInvocation(
+                title: Localization.string("core.invocation.launchGroup", "Launch Group"),
+                text: Localization.format("core.invocation.launchGroup.phrase", "Launch %1$@ in %2$@", groupName, appName)
+            ),
+            GroupInvocation(
+                title: Localization.string("core.invocation.quitGroup", "Quit Group"),
+                text: Localization.format("core.invocation.quitGroup.phrase", "Quit %1$@ in %2$@", groupName, appName)
+            ),
         ]
     }
 
@@ -36,10 +46,10 @@ public enum GroupInvocations {
         let token = linkToken(for: group, in: groups)
         let base = "\(URLCommand.scheme)://"
         return [
-            GroupInvocation(title: "Show Popup", text: "\(base)open/\(token)"),
-            GroupInvocation(title: "Open All", text: "\(base)launch/\(token)"),
-            GroupInvocation(title: "Hide All", text: "\(base)hide/\(token)"),
-            GroupInvocation(title: "Close All", text: "\(base)quit/\(token)"),
+            GroupInvocation(title: Localization.string("core.invocation.showPopup", "Show Popup"), text: "\(base)open/\(token)"),
+            GroupInvocation(title: Localization.string("core.invocation.openAll", "Open All"), text: "\(base)launch/\(token)"),
+            GroupInvocation(title: Localization.string("core.invocation.hideAll", "Hide All"), text: "\(base)hide/\(token)"),
+            GroupInvocation(title: Localization.string("core.invocation.closeAll", "Close All"), text: "\(base)quit/\(token)"),
         ]
     }
 

@@ -72,9 +72,9 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
     private func rebuildMenu() {
         menu.removeAllItems()
-        menu.addItem(.sectionHeader(title: "Groups"))
+        menu.addItem(.sectionHeader(title: L10n.MenuBar.groupsHeader))
         if store.groups.isEmpty {
-            let placeholder = NSMenuItem(title: "No groups yet", action: nil, keyEquivalent: "")
+            let placeholder = NSMenuItem(title: L10n.MenuBar.noGroups, action: nil, keyEquivalent: "")
             placeholder.isEnabled = false
             menu.addItem(placeholder)
         } else {
@@ -87,23 +87,23 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         addMostUsedSection()
 
         menu.addItem(.separator())
-        let manage = NSMenuItem(title: "Manage Groups…", action: #selector(showMainWindow(_:)), keyEquivalent: "g")
+        let manage = NSMenuItem(title: L10n.MenuBar.manageGroups, action: #selector(showMainWindow(_:)), keyEquivalent: "g")
         manage.target = self
         menu.addItem(manage)
-        let settings = NSMenuItem(title: "Settings…", action: #selector(showSettings(_:)), keyEquivalent: ",")
+        let settings = NSMenuItem(title: L10n.Common.settings, action: #selector(showSettings(_:)), keyEquivalent: ",")
         settings.target = self
         menu.addItem(settings)
-        let about = NSMenuItem(title: "About \(AppInfo.name)", action: #selector(showAbout(_:)), keyEquivalent: "")
+        let about = NSMenuItem(title: L10n.Common.about(AppInfo.name), action: #selector(showAbout(_:)), keyEquivalent: "")
         about.target = self
         menu.addItem(about)
-        let updates = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates(_:)), keyEquivalent: "")
+        let updates = NSMenuItem(title: L10n.Common.checkForUpdates, action: #selector(checkForUpdates(_:)), keyEquivalent: "")
         updates.target = self
-        updates.toolTip = "Look for a newer version of \(AppInfo.name) on GitHub."
+        updates.toolTip = L10n.MenuBar.checkForUpdatesTooltip(AppInfo.name)
         menu.addItem(updates)
 
         menu.addItem(.separator())
         let quit = NSMenuItem(
-            title: "Quit \(AppInfo.name)",
+            title: L10n.Common.quitApp(AppInfo.name),
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
@@ -116,17 +116,17 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(.sectionHeader(title: MostUsedGroup.name))
         guard !entries.isEmpty else {
-            let placeholder = NSMenuItem(title: "No launches tracked yet", action: nil, keyEquivalent: "")
+            let placeholder = NSMenuItem(title: L10n.Common.noLaunchesYet, action: nil, keyEquivalent: "")
             placeholder.isEnabled = false
-            placeholder.toolTip = "Open apps as usual; the ones you open most will appear here."
+            placeholder.toolTip = L10n.MenuBar.noLaunchesTooltip
             menu.addItem(placeholder)
             return
         }
         let group = MostUsedGroup.group(with: entries)
-        let show = NSMenuItem(title: "Show Most Used", action: #selector(showMostUsed(_:)), keyEquivalent: "")
+        let show = NSMenuItem(title: L10n.MenuBar.showMostUsed, action: #selector(showMostUsed(_:)), keyEquivalent: "")
         show.target = self
         show.image = actions.tileImage(group)
-        show.toolTip = "Show your most opened apps in a popup."
+        show.toolTip = L10n.MenuBar.showMostUsedTooltip
         menu.addItem(show)
         for entry in entries {
             let item = NSMenuItem(title: entry.app.name, action: #selector(openMostUsedApp(_:)), keyEquivalent: "")
@@ -134,8 +134,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
             item.representedObject = entry.app
             item.image = actions.appIcon(entry.app)
             item.indentationLevel = 1
-            let times = entry.launchCount == 1 ? "once" : "\(entry.launchCount) times"
-            item.toolTip = "Open \(entry.app.name). Opened \(times)."
+            item.toolTip = L10n.MenuBar.mostUsedAppTooltip(entry.app.name, launchCount: entry.launchCount)
             menu.addItem(item)
         }
     }
@@ -148,14 +147,14 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         item.keyEquivalentModifierMask = []
         let appCount = group.apps.count
         item.badge = appCount > 0 ? NSMenuItemBadge(count: appCount) : nil
-        let shortcut = actions.shortcutTitle(group).map { " Shortcut: \($0)." } ?? ""
-        item.toolTip = "Show the apps in “\(group.name)”. Hold ⌥ to open them all at once, or ⇧⌥ to hide the running ones.\(shortcut)"
+        item.toolTip = actions.shortcutTitle(group).map { L10n.MenuBar.groupTooltip(group.name, shortcut: $0) }
+            ?? L10n.MenuBar.groupTooltip(group.name)
         return item
     }
 
     /// Replaces the group's item while ⌥ is held.
     private func openAllItem(for group: DockGroup) -> NSMenuItem {
-        let item = NSMenuItem(title: "Open All in “\(group.name)”", action: #selector(openGroup(_:)), keyEquivalent: "")
+        let item = NSMenuItem(title: L10n.MenuBar.openAllIn(group.name), action: #selector(openGroup(_:)), keyEquivalent: "")
         item.target = self
         item.representedObject = group.id
         item.image = actions.tileImage(group)
@@ -164,14 +163,14 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let appCount = group.apps.count
         item.isEnabled = appCount > 0
         item.toolTip = appCount > 0
-            ? "Open all \(appCount) \(appCount == 1 ? "app" : "apps") in “\(group.name)”"
-            : "“\(group.name)” has no apps yet."
+            ? L10n.MenuBar.openAllTooltip(group.name, appCount: appCount)
+            : L10n.MenuBar.noAppsTooltip(group.name)
         return item
     }
 
     /// Replaces the group's item while ⇧⌥ is held. Apps that aren't running are left alone.
     private func hideAllItem(for group: DockGroup) -> NSMenuItem {
-        let item = NSMenuItem(title: "Hide All in “\(group.name)”", action: #selector(hideGroup(_:)), keyEquivalent: "")
+        let item = NSMenuItem(title: L10n.MenuBar.hideAllIn(group.name), action: #selector(hideGroup(_:)), keyEquivalent: "")
         item.target = self
         item.representedObject = group.id
         item.image = actions.tileImage(group)
@@ -179,8 +178,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         item.isAlternate = true
         item.isEnabled = !group.apps.isEmpty
         item.toolTip = group.apps.isEmpty
-            ? "“\(group.name)” has no apps yet."
-            : "Hide the running apps in “\(group.name)”. Apps that aren't running stay closed."
+            ? L10n.MenuBar.noAppsTooltip(group.name)
+            : L10n.MenuBar.hideAllTooltip(group.name)
         return item
     }
 

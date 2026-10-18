@@ -12,19 +12,19 @@ struct OtherVersionsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Other Versions")
+            Text(L10n.Settings.OtherVersions.title)
                 .font(.headline)
-            Text("Install any published release of \(AppInfo.name), older or newer. The app quits and reopens as the version you pick.")
+            Text(L10n.Settings.OtherVersions.intro(AppInfo.name))
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             content
                 .frame(height: 260)
             HStack {
-                Link("Open Releases Page on GitHub", destination: UpdateLinks.releasesPage)
+                Link(L10n.Settings.OtherVersions.releasesOnGitHub, destination: UpdateLinks.releasesPage)
                     .font(.callout)
                 Spacer()
-                Button("Done", action: dismiss)
+                Button(L10n.Common.done, action: dismiss)
                     .keyboardShortcut(.cancelAction)
             }
         }
@@ -36,8 +36,8 @@ struct OtherVersionsView: View {
             isPresented: Binding(get: { pending != nil }, set: { if !$0 { pending = nil } }),
             presenting: pending
         ) { pending in
-            Button("Cancel", role: .cancel) {}
-            Button("Install") {
+            Button(L10n.Common.cancel, role: .cancel) {}
+            Button(L10n.Common.install) {
                 dismiss()
                 updater.installPicked(pending.release, from: pending.releases)
             }
@@ -52,7 +52,7 @@ struct OtherVersionsView: View {
         case .idle, .loading:
             VStack(spacing: 8) {
                 ProgressView()
-                Text("Loading releases from GitHub…")
+                Text(L10n.Settings.OtherVersions.loading)
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -64,12 +64,12 @@ struct OtherVersionsView: View {
                     .multilineTextAlignment(.center)
                     .textSelection(.enabled)
                     .fixedSize(horizontal: false, vertical: true)
-                Button("Try Again") { updater.loadReleases(force: true) }
+                Button(L10n.Common.tryAgain) { updater.loadReleases(force: true) }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
         case .loaded(let releases) where releases.isEmpty:
-            Text("GitHub lists no published releases.")
+            Text(L10n.Settings.OtherVersions.none)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -86,7 +86,7 @@ struct OtherVersionsView: View {
         let hasInstaller = release.installerAsset != nil
         return HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("v\(release.version.description)")
+                Text(L10n.Common.version(release.version.description))
                     .font(.body.monospacedDigit().weight(isCurrent ? .semibold : .regular))
                 if let date = release.publishedAt {
                     Text(date.formatted(date: .abbreviated, time: .omitted))
@@ -95,7 +95,7 @@ struct OtherVersionsView: View {
                 }
             }
             if isCurrent {
-                Text("Current")
+                Text(L10n.Settings.OtherVersions.current)
                     .font(.caption.weight(.semibold))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -105,15 +105,17 @@ struct OtherVersionsView: View {
             Spacer()
             if !isCurrent {
                 if !hasInstaller {
-                    Text("No download")
+                    Text(L10n.Settings.OtherVersions.noDownload)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Button("Install") {
+                Button(L10n.Common.install) {
                     pending = PendingInstall(release: release, releases: releases, current: updater.currentVersion)
                 }
                 .disabled(!hasInstaller || updater.isBusy)
-                .help(hasInstaller ? "Install version \(release.version.description)" : "This release has no disk image to install from.")
+                .help(hasInstaller
+                    ? L10n.Settings.OtherVersions.installHelp(release.version.description)
+                    : L10n.Settings.OtherVersions.noDiskImage)
             }
         }
         .padding(.vertical, 2)
@@ -134,22 +136,22 @@ private struct PendingInstall {
     }
 
     var title: String {
-        "Install version \(target.description)?"
+        L10n.Settings.OtherVersions.confirmTitle(target.description)
     }
 
     var message: String {
-        var parts = ["\(AppInfo.name) quits and reopens as version \(target.description)."]
+        var parts = [L10n.Settings.OtherVersions.confirmQuits(AppInfo.name, version: target.description)]
         switch change {
         case .downgrade:
             let newer = current.map { ReleaseHistory.versionsSkipped(goingBackTo: target, from: $0, in: releases) }?.map(\.description) ?? []
             if target < ReleaseHistory.firstSelfUpdatingVersion {
-                parts.append("Version \(target.description) can't update itself: to come back, download a newer version from the releases page.")
+                parts.append(L10n.Settings.OtherVersions.confirmCantUpdate(target.description))
             } else if !newer.isEmpty {
-                parts.append("Automatic checks then skip the newer versions (\(newer.joined(separator: ", "))); Check for Updates… still offers them.")
+                parts.append(L10n.Settings.OtherVersions.confirmSkips(newer.joined(separator: ", ")))
             }
-            parts.append("An older version may not know about features added since; consider exporting a backup first (Settings → Backup).")
+            parts.append(L10n.Settings.OtherVersions.confirmOlder)
         case .upgrade:
-            parts.append("Skipped versions are cleared, so automatic checks offer every newer release again.")
+            parts.append(L10n.Settings.OtherVersions.confirmUpgrade)
         case .reinstall, nil:
             break
         }

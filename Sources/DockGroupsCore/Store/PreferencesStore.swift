@@ -100,7 +100,7 @@ public final class PreferencesStore: ObservableObject {
             saveProblem = nil
         } catch {
             logger.error("Saving preferences failed: \(String(describing: error), privacy: .public)")
-            saveProblem = "Your settings couldn't be saved: \(error.localizedDescription)"
+            saveProblem = Localization.format("core.preferences.saveFailed", "Your settings couldn't be saved: %@", error.localizedDescription)
         }
     }
 }

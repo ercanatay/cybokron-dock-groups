@@ -23,7 +23,7 @@ struct AppRowView: View {
                         Text(identity)
                             .foregroundStyle(.secondary)
                     } else if location == nil {
-                        Text("Not found on this Mac · \(identity)")
+                        Text(L10n.GroupWindow.appNotFound(identity))
                             .foregroundStyle(.orange)
                     } else {
                         Text(identity)
@@ -40,9 +40,7 @@ struct AppRowView: View {
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.borderless)
-            .help(app.isWebsite
-                ? "Remove \(app.name) from this group."
-                : "Remove \(app.name) from this group. The app itself isn't affected.")
+            .help(app.isWebsite ? L10n.GroupWindow.removeWebsiteHelp(app.name) : L10n.GroupWindow.removeAppHelp(app.name))
         }
         .padding(.vertical, 2)
     }

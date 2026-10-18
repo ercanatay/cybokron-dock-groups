@@ -5,9 +5,9 @@ import SwiftUI
 extension TileBackgroundStyle {
     var title: String {
         switch self {
-        case .solid: return "Solid"
-        case .gradient: return "Gradient"
-        case .glass: return "Glass"
+        case .solid: return L10n.Choices.tileSolid
+        case .gradient: return L10n.Choices.tileGradient
+        case .glass: return L10n.Choices.tileGlass
         }
     }
 }
@@ -15,9 +15,18 @@ extension TileBackgroundStyle {
 extension PopupAnchor {
     var title: String {
         switch self {
-        case .dockCenter: return "Centered Over the Dock"
-        case .dockIcon: return "Above the Clicked Icon"
+        case .dockCenter: return L10n.Choices.anchorDockCenter
+        case .dockIcon: return L10n.Choices.anchorDockIcon
         }
+    }
+}
+
+extension Text {
+    /// Text with its inline Markdown (`code`, **bold**, links) rendered, as `Text` does for string
+    /// literals; a looked-up string (`L10n`) would otherwise show its Markdown as it is.
+    init(markdown: String) {
+        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        self.init((try? AttributedString(markdown: markdown, options: options)) ?? AttributedString(markdown))
     }
 }
 

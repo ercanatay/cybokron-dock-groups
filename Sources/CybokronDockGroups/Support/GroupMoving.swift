@@ -25,7 +25,7 @@ struct MoveToGroupContextMenu: ViewModifier {
             content
         } else {
             content.contextMenu {
-                Menu("Move to") {
+                Menu(L10n.Common.moveTo) {
                     ForEach(targets) { target in
                         Button(target.title) { move(target.id) }
                     }

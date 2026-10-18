@@ -12,9 +12,9 @@ enum AppPicker {
         completion: @escaping ([URL]) -> Void
     ) {
         let panel = NSOpenPanel()
-        panel.title = "Add Apps to Group"
-        panel.message = "Choose the apps to add to “\(groupName)”."
-        panel.prompt = "Add"
+        panel.title = L10n.AppPicker.title
+        panel.message = L10n.AppPicker.message(groupName)
+        panel.prompt = L10n.Common.add
         panel.allowedContentTypes = [.applicationBundle]
         panel.allowsMultipleSelection = true
         panel.canChooseFiles = true

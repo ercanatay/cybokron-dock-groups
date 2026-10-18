@@ -18,9 +18,9 @@ enum MainMenuBuilder {
     /// group: Hide and Quit. It shows only while the agent is active, that is while its popup is open.
     static func makeAgentMenu(groupName: String) -> NSMenu {
         let menu = NSMenu(title: groupName)
-        menu.addItem(withTitle: "Hide \(groupName)", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        menu.addItem(withTitle: L10n.Common.hideApp(groupName), action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit \(groupName)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        menu.addItem(withTitle: L10n.Common.quitApp(groupName), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         let mainMenu = NSMenu()
         mainMenu.addItem(submenuItem(menu))
         return mainMenu
@@ -29,34 +29,34 @@ enum MainMenuBuilder {
     private static func appMenu() -> NSMenu {
         let menu = NSMenu(title: AppInfo.name)
         // No target: the responder chain delivers these to the app delegate.
-        menu.addItem(withTitle: "About \(AppInfo.name)", action: #selector(AppDelegate.showAboutWindow(_:)), keyEquivalent: "")
-        menu.addItem(withTitle: "Check for Updates…", action: #selector(AppDelegate.checkForUpdates(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: L10n.Common.about(AppInfo.name), action: #selector(AppDelegate.showAboutWindow(_:)), keyEquivalent: "")
+        menu.addItem(withTitle: L10n.Common.checkForUpdates, action: #selector(AppDelegate.checkForUpdates(_:)), keyEquivalent: "")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Settings…", action: #selector(AppDelegate.showSettingsWindow(_:)), keyEquivalent: ",")
+        menu.addItem(withTitle: L10n.Common.settings, action: #selector(AppDelegate.showSettingsWindow(_:)), keyEquivalent: ",")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Hide \(AppInfo.name)", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        menu.addItem(withTitle: L10n.Common.hideApp(AppInfo.name), action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit \(AppInfo.name)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        menu.addItem(withTitle: L10n.Common.quitApp(AppInfo.name), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         return menu
     }
 
     private static func editMenu() -> NSMenu {
-        let menu = NSMenu(title: "Edit")
-        menu.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
-        let redo = menu.addItem(withTitle: "Redo", action: Selector(("redo:")), keyEquivalent: "z")
+        let menu = NSMenu(title: L10n.MainMenu.edit)
+        menu.addItem(withTitle: L10n.MainMenu.undo, action: Selector(("undo:")), keyEquivalent: "z")
+        let redo = menu.addItem(withTitle: L10n.MainMenu.redo, action: Selector(("redo:")), keyEquivalent: "z")
         redo.keyEquivalentModifierMask = [.command, .shift]
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        menu.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        menu.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        menu.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        menu.addItem(withTitle: L10n.MainMenu.cut, action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        menu.addItem(withTitle: L10n.Common.copy, action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        menu.addItem(withTitle: L10n.MainMenu.paste, action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        menu.addItem(withTitle: L10n.MainMenu.selectAll, action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         return menu
     }
 
     private static func windowMenu() -> NSMenu {
-        let menu = NSMenu(title: "Window")
-        menu.addItem(withTitle: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
-        menu.addItem(withTitle: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        let menu = NSMenu(title: L10n.MainMenu.window)
+        menu.addItem(withTitle: L10n.Common.close, action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        menu.addItem(withTitle: L10n.MainMenu.minimize, action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
         return menu
     }
 

@@ -56,21 +56,21 @@ enum AboutData {
     ]
 
     static let projects = [
-        Link(title: "cybokron-dock-groups", subtitle: "This app · Dock groups for macOS",
+        Link(title: "cybokron-dock-groups", subtitle: L10n.About.Project.dockGroups,
              symbol: "square.stack.3d.up.fill", url: url("https://github.com/ercanatay/cybokron-dock-groups")),
-        Link(title: "intel-computer-use", subtitle: "Native macOS desktop automation for Intel Macs via MCP.",
+        Link(title: "intel-computer-use", subtitle: L10n.About.Project.intelComputerUse,
              symbol: "desktopcomputer", url: url("https://github.com/ercanatay/intel-computer-use")),
-        Link(title: "cybokron-exchange-rate-and-portfolio-tracking", subtitle: "PHP/MySQL exchange rate & portfolio tracker with live scrape + GitHub release updates.",
+        Link(title: "cybokron-exchange-rate-and-portfolio-tracking", subtitle: L10n.About.Project.exchangeRate,
              symbol: "chart.line.uptrend.xyaxis", url: url("https://github.com/ercanatay/cybokron-exchange-rate-and-portfolio-tracking")),
-        Link(title: "cybokron-backlink-checker", subtitle: "Check anchors, dofollow/nofollow and HTTP statuses of backlinks.",
+        Link(title: "cybokron-backlink-checker", subtitle: L10n.About.Project.backlinkChecker,
              symbol: "link", url: url("https://github.com/ercanatay/cybokron-backlink-checker")),
-        Link(title: "cybokron-consent-manager-translations-yootheme", subtitle: "YOOtheme Pro 5 Consent Manager translations plugin (WordPress.org).",
+        Link(title: "cybokron-consent-manager-translations-yootheme", subtitle: L10n.About.Project.consentManager,
              symbol: "globe", url: url("https://github.com/ercanatay/cybokron-consent-manager-translations-yootheme")),
-        Link(title: "cybokron-antigravity-manager-updater", subtitle: "Lightweight macOS updater for Antigravity Tools, 21 languages.",
+        Link(title: "cybokron-antigravity-manager-updater", subtitle: L10n.About.Project.antigravityUpdater,
              symbol: "arrow.triangle.2.circlepath", url: url("https://github.com/ercanatay/cybokron-antigravity-manager-updater")),
-        Link(title: "cybokron-advanced-widget-visibility", subtitle: "Jetpack-free WP plugin for widget visibility with descendant support.",
+        Link(title: "cybokron-advanced-widget-visibility", subtitle: L10n.About.Project.widgetVisibility,
              symbol: "eye", url: url("https://github.com/ercanatay/cybokron-advanced-widget-visibility")),
-        Link(title: "cybokron-forbidden-content-checker", subtitle: "Detects forbidden keywords (e.g. 'Casino') in post titles — like a WP audit checker.",
+        Link(title: "cybokron-forbidden-content-checker", subtitle: L10n.About.Project.forbiddenContent,
              symbol: "exclamationmark.shield", url: url("https://github.com/ercanatay/cybokron-forbidden-content-checker")),
     ]
 

@@ -313,17 +313,27 @@ public final class GroupStore: ObservableObject {
             groups = []
             do {
                 let backupURL = try persistence.preserveUnreadableData()
-                let kept = backupURL.map { " A copy was kept at “\($0.path)”." } ?? ""
+                let reason = loadError.localizedDescription
                 issue = GroupStoreIssue(
-                    title: "Your groups couldn't be loaded",
-                    message: "\(loadError.localizedDescription) Starting with an empty group list.\(kept)"
+                    title: Localization.string("core.store.loadFailed.title", "Your groups couldn't be loaded"),
+                    message: backupURL.map { backup in
+                        Localization.format(
+                            "core.store.loadFailed.kept",
+                            "%1$@ Starting with an empty group list. A copy was kept at “%2$@”.",
+                            reason, backup.path
+                        )
+                    } ?? Localization.format("core.store.loadFailed.empty", "%@ Starting with an empty group list.", reason)
                 )
             } catch let moveError {
                 logger.error("Preserving unreadable groups failed: \(String(describing: moveError), privacy: .public)")
                 isSavingSuspended = true
                 issue = GroupStoreIssue(
-                    title: "Your groups couldn't be loaded",
-                    message: "\(loadError.localizedDescription) To protect the existing file, changes won't be saved until the app is restarted."
+                    title: Localization.string("core.store.loadFailed.title", "Your groups couldn't be loaded"),
+                    message: Localization.format(
+                        "core.store.loadFailed.suspended",
+                        "%@ To protect the existing file, changes won't be saved until the app is restarted.",
+                        loadError.localizedDescription
+                    )
                 )
             }
         }
@@ -351,7 +361,7 @@ public final class GroupStore: ObservableObject {
             logger.error("Saving groups failed: \(String(describing: error), privacy: .public)")
             if issue == nil {
                 issue = GroupStoreIssue(
-                    title: "Your changes couldn't be saved",
+                    title: Localization.string("core.store.saveFailed.title", "Your changes couldn't be saved"),
                     message: error.localizedDescription
                 )
             }

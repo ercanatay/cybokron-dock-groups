@@ -34,13 +34,13 @@ struct GroupSidebarView: View {
                         }
                     }
                     .contextMenu {
-                        Button("Open All") { onOpenAll(group) }
+                        Button(L10n.Common.openAll) { onOpenAll(group) }
                             .disabled(group.apps.isEmpty)
-                        Button("Hide All") { onHideAll(group) }
+                        Button(L10n.Common.hideAll) { onHideAll(group) }
                             .disabled(group.apps.isEmpty)
-                        Button("Rename…") { onRename(group) }
+                        Button(L10n.GroupWindow.renameMenu) { onRename(group) }
                         Divider()
-                        Button("Delete…", role: .destructive) { onDelete(group) }
+                        Button(L10n.GroupWindow.deleteMenu, role: .destructive) { onDelete(group) }
                     }
             }
             .onMove { source, destination in
@@ -76,7 +76,7 @@ struct GroupSidebarView: View {
                     Image(systemName: "plus")
                         .frame(width: 22, height: 22)
                 }
-                .help("Add a group")
+                .help(L10n.GroupWindow.addGroupHelp)
 
                 Button {
                     if let selectedGroup { onDelete(selectedGroup) }
@@ -84,12 +84,12 @@ struct GroupSidebarView: View {
                     Image(systemName: "minus")
                         .frame(width: 22, height: 22)
                 }
-                .help("Delete the selected group")
+                .help(L10n.GroupWindow.deleteGroupHelp)
                 .disabled(selectedGroup == nil)
 
                 Spacer()
 
-                Text("^[\(store.groups.count) group](inflect: true)")
+                Text(L10n.Common.groupCount(store.groups.count))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -113,11 +113,11 @@ private struct GroupSidebarRow: View {
             Text(group.name)
                 .lineLimit(1)
             Spacer(minLength: 4)
-            Text("\(group.apps.count)")
+            Text(verbatim: "\(group.apps.count)")
                 .font(.caption)
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
-                .help(Text("^[\(group.apps.count) app](inflect: true)"))
+                .help(L10n.Common.appCount(group.apps.count))
         }
         .padding(.vertical, 2)
         .overlay {

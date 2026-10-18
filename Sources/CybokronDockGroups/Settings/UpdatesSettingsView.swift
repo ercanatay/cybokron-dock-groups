@@ -13,45 +13,45 @@ struct UpdatesSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Automatically check for updates", isOn: binding(\.automaticallyChecksForUpdates))
-                LabeledContent("Current version") {
-                    Text("v\(AppInfo.version)")
+                Toggle(L10n.Settings.Updates.automatic, isOn: binding(\.automaticallyChecksForUpdates))
+                LabeledContent(L10n.Settings.Updates.currentVersion) {
+                    Text(L10n.Common.version(AppInfo.version))
                         .foregroundStyle(.secondary)
                         .textSelection(.enabled)
                 }
-                LabeledContent("Last checked") {
+                LabeledContent(L10n.Settings.Updates.lastChecked) {
                     Text(lastChecked)
                         .foregroundStyle(.secondary)
                 }
                 LabeledContent {
-                    Button("Check Now") { updater.checkNow() }
+                    Button(L10n.Settings.Updates.checkNow) { updater.checkNow() }
                         .disabled(updater.isBusy)
                 } label: {
                     status
                 }
                 LabeledContent {
-                    Button("Other Versions…") { isShowingOtherVersions = true }
+                    Button(L10n.Settings.Updates.otherVersions) { isShowingOtherVersions = true }
                         .disabled(updater.isBusy)
                 } label: {
                     skippedVersions
                 }
             } header: {
-                Text("Updates")
+                Text(L10n.Settings.updatesTab)
             } footer: {
-                Text("Checks the project's GitHub releases at launch and every 6 hours; only the app's version number is sent along. A new version is installed only after you choose Download and Install. Other Versions… installs any published release, older or newer; going back skips the newer ones in automatic checks.")
+                Text(L10n.Settings.Updates.footer)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
                 Link(destination: UpdateLinks.releasesPage) {
-                    Label("Open Releases Page", systemImage: "arrow.up.right.square")
+                    Label(L10n.Common.openReleasesPage, systemImage: "arrow.up.right.square")
                 }
                 Link(destination: UpdateLinks.changelog) {
-                    Label("View Changelog", systemImage: "doc.text")
+                    Label(L10n.Settings.Updates.viewChangelog, systemImage: "doc.text")
                 }
             } header: {
-                Text("Links")
+                Text(L10n.Common.links)
             }
         }
         .formStyle(.grouped)
@@ -71,24 +71,24 @@ struct UpdatesSettingsView: View {
             return version > current
         }
         if newer.isEmpty {
-            Text("Back on the latest path: every newer release is offered")
+            Text(L10n.Settings.Updates.latestPath)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         } else {
             HStack(spacing: 8) {
-                Text("Skipped newer versions: \(newer.joined(separator: ", "))")
+                Text(L10n.Settings.Updates.skippedVersions(newer.joined(separator: ", ")))
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
                     .fixedSize(horizontal: false, vertical: true)
-                Button("Clear") { updater.clearSkippedVersions() }
+                Button(L10n.Settings.Updates.clear) { updater.clearSkippedVersions() }
                     .controlSize(.small)
-                    .help("Let automatic checks offer these versions again")
+                    .help(L10n.Settings.Updates.clearHelp)
             }
         }
     }
 
     private var lastChecked: String {
-        guard let date = updater.lastCheckDate else { return "Never" }
+        guard let date = updater.lastCheckDate else { return L10n.Settings.Updates.never }
         return date.formatted(date: .abbreviated, time: .shortened)
     }
 
@@ -97,32 +97,32 @@ struct UpdatesSettingsView: View {
     private var status: some View {
         switch updater.status {
         case .idle:
-            Text("Not checked since the app started")
+            Text(L10n.Settings.Updates.notChecked)
                 .foregroundStyle(.secondary)
         case .checking:
             HStack(spacing: 6) {
                 ProgressView().controlSize(.small)
-                Text("Checking…")
+                Text(L10n.Settings.Updates.checking)
             }
         case .upToDate(let version):
-            Label("You're up to date (v\(version.description))", systemImage: "checkmark.circle.fill")
+            Label(L10n.Settings.Updates.upToDate(version.description), systemImage: "checkmark.circle.fill")
                 .foregroundStyle(.green)
         case .available(let release, _), .stagedForDryRun(let release, _):
             HStack(spacing: 8) {
-                Label("Version \(release.version.description) is available", systemImage: "arrow.down.circle.fill")
+                Label(L10n.Settings.Updates.available(release.version.description), systemImage: "arrow.down.circle.fill")
                     .foregroundStyle(.blue)
-                Button("Show Update…") { updater.showWindow() }
+                Button(L10n.Settings.Updates.showUpdate) { updater.showWindow() }
                     .controlSize(.small)
             }
         case .downloading(let release, _), .installing(let release):
             HStack(spacing: 6) {
                 ProgressView().controlSize(.small)
-                Text("Installing version \(release.version.description)…")
+                Text(L10n.Common.installingVersion(release.version.description))
             }
         case .restarting(let release):
             HStack(spacing: 6) {
                 ProgressView().controlSize(.small)
-                Text("Installed version \(release.version.description) — restarting…")
+                Text(L10n.Common.installedRestarting(release.version.description))
             }
         case .checkFailed(let message), .installFailed(_, _, let message):
             Label(message, systemImage: "exclamationmark.triangle.fill")

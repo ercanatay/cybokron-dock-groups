@@ -5,7 +5,8 @@ import Foundation
 /// The order of groups is the order of the list kept by `GroupStore`, and it is persisted as-is;
 /// the order of `apps` is the display order inside the group.
 public struct DockGroup: Identifiable, Hashable, Sendable {
-    public static let defaultName = "New Group"
+    /// The name of a new group, in the user's language.
+    public static var defaultName: String { Localization.string("core.group.defaultName", "New Group") }
     public static let defaultEmoji = "🗂️"
 
     public let id: UUID

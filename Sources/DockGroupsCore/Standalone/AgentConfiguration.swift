@@ -55,7 +55,7 @@ public enum AgentConfigurationError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .unsupportedFormatVersion(let version):
-            return "The group's settings were saved by a newer version of Cybokron Dock Groups (format \(version))."
+            return Localization.format("core.agent.configuration.newer", "The group's settings were saved by a newer version of Cybokron Dock Groups (format %ld).", version)
         }
     }
 }

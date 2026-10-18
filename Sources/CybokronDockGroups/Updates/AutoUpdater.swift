@@ -369,7 +369,7 @@ final class AutoUpdater: ObservableObject {
             status = .installFailed(
                 release,
                 asset: nil,
-                message: "Version \(release.version) is installed, but the app couldn't restart itself. Quit it and open it again."
+                message: L10n.UpdateWindow.relaunchFailed(release.version.description)
             )
             return
         }

@@ -59,13 +59,13 @@ struct GroupDetailView: View {
             if focusedField != .emoji { emojiDraft = newEmoji }
         }
         .alert(
-            "Some apps couldn't be added",
+            L10n.GroupWindow.addAppsProblemTitle,
             isPresented: Binding(
                 get: { addAppsProblem != nil },
                 set: { isPresented in if !isPresented { addAppsProblem = nil } }
             )
         ) {
-            Button("OK") { addAppsProblem = nil }
+            Button(L10n.Common.ok) { addAppsProblem = nil }
         } message: {
             Text(addAppsProblem ?? "")
         }
@@ -81,18 +81,18 @@ struct GroupDetailView: View {
     // MARK: - Sections
 
     private var identitySection: some View {
-        Section("Group") {
-            TextField("Name", text: $nameDraft)
+        Section(L10n.GroupWindow.groupSection) {
+            TextField(L10n.GroupWindow.name, text: $nameDraft)
                 .focused($focusedField, equals: .name)
                 .onSubmit { nameDraft = storedGroup.name }
-            LabeledContent("Emoji") {
+            LabeledContent(L10n.GroupWindow.emoji) {
                 HStack {
-                    TextField("Emoji", text: $emojiDraft)
+                    TextField(L10n.GroupWindow.emoji, text: $emojiDraft)
                         .labelsHidden()
                         .multilineTextAlignment(.center)
                         .frame(width: 56)
                         .focused($focusedField, equals: .emoji)
-                    Button("Choose…", action: showCharacterPalette)
+                    Button(L10n.GroupWindow.chooseEmoji, action: showCharacterPalette)
                 }
             }
         }
@@ -101,7 +101,7 @@ struct GroupDetailView: View {
     private var appsSection: some View {
         Section {
             if group.apps.isEmpty {
-                Text("No apps yet. Use “Add Apps…” to choose apps for this group, or “Add Website…” for a web link.")
+                Text(L10n.GroupWindow.noApps(addApps: L10n.Common.addApps, addWebsite: L10n.Common.addWebsite))
                     .foregroundStyle(.secondary)
             } else {
                 let moveTargets = GroupMoveTarget.targets(in: store.groups, excluding: group.id)
@@ -123,25 +123,25 @@ struct GroupDetailView: View {
             }
         } header: {
             HStack {
-                Text("Apps")
+                Text(L10n.GroupWindow.appsSection)
                 Spacer()
-                Button("Add Apps…", action: addApps)
-                Button("Add Website…") { isAddingWebsite = true }
-                    .help("Add a web link to this group. It opens in your default browser.")
-                Button("Sort A→Z") { store.sortAppsByName(inGroup: group.id) }
+                Button(L10n.Common.addApps, action: addApps)
+                Button(L10n.Common.addWebsite) { isAddingWebsite = true }
+                    .help(L10n.GroupWindow.addWebsiteHelp)
+                Button(L10n.GroupWindow.sortAZ) { store.sortAppsByName(inGroup: group.id) }
                     .disabled(group.apps.count < 2)
-                    .help("Sort the apps in this group by name, A to Z. Drag them to reorder by hand.")
-                Button("Show Popup") { actions.showPopup(group) }
-                    .help("Show this group's popup over the Dock.")
-                Button("Open All") { actions.openAll(group) }
+                    .help(L10n.GroupWindow.sortAZHelp)
+                Button(L10n.GroupWindow.showPopup) { actions.showPopup(group) }
+                    .help(L10n.GroupWindow.showPopupHelp)
+                Button(L10n.Common.openAll) { actions.openAll(group) }
                     .disabled(group.apps.isEmpty)
-                Button("Hide All") { actions.hideAll(group) }
+                Button(L10n.Common.hideAll) { actions.hideAll(group) }
                     .disabled(group.apps.isEmpty)
-                    .help("Hide this group's running apps. Apps that aren't running stay closed.")
+                    .help(L10n.GroupWindow.hideAllHelp)
             }
         } footer: {
             if !group.apps.isEmpty, store.groups.count > 1 {
-                Text("To move an app to another group, drag it onto that group in the sidebar, or use Move to in its context menu.")
+                Text(L10n.GroupWindow.moveHint(moveTo: L10n.Common.moveTo))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -149,41 +149,41 @@ struct GroupDetailView: View {
     }
 
     private var tileSection: some View {
-        Section("Dock Tile") {
-            LabeledContent("Preview") {
+        Section(L10n.GroupWindow.dockTileSection) {
+            LabeledContent(L10n.GroupWindow.preview) {
                 HStack(alignment: .bottom, spacing: 14) {
                     tilePreview(pointSize: 64)
                     tilePreview(pointSize: 32)
                     tilePreview(pointSize: StatusBarController.menuTileSize)
                 }
             }
-            Picker("Shows", selection: binding(\.tile.kind)) {
-                Text("Emoji").tag(TileKind.emoji)
-                Text("App Icon Grid").tag(TileKind.grid)
+            Picker(L10n.GroupWindow.shows, selection: binding(\.tile.kind)) {
+                Text(L10n.GroupWindow.emoji).tag(TileKind.emoji)
+                Text(L10n.GroupWindow.appIconGrid).tag(TileKind.grid)
             }
             .pickerStyle(.segmented)
-            Picker("Background", selection: binding(\.tile.backgroundStyle)) {
+            Picker(L10n.GroupWindow.background, selection: binding(\.tile.backgroundStyle)) {
                 ForEach(TileBackgroundStyle.allCases, id: \.self) { style in
                     Text(style.title).tag(style)
                 }
             }
-            ColorPicker("Background Color", selection: backgroundColorBinding, supportsOpacity: false)
-            Toggle("Keep the tile pinned in the Dock", isOn: binding(\.isPinned))
+            ColorPicker(L10n.GroupWindow.backgroundColor, selection: backgroundColorBinding, supportsOpacity: false)
+            Toggle(L10n.GroupWindow.keepPinned, isOn: binding(\.isPinned))
         }
     }
 
     private var standaloneSection: some View {
         let status = standalone.status(for: group.id)
         return Section {
-            Toggle("Standalone Dock icon", isOn: standaloneBinding)
+            Toggle(L10n.GroupWindow.standaloneToggle, isOn: standaloneBinding)
                 .disabled(status == .working)
-                .help("Give this group its own app, with its own icon in the Dock.")
+                .help(L10n.GroupWindow.standaloneHelp)
             switch status {
             case .working:
                 HStack(spacing: 8) {
                     ProgressView()
                         .controlSize(.small)
-                    Text(group.isStandalone ? "Setting up the Dock icon…" : "Removing the Dock icon…")
+                    Text(group.isStandalone ? L10n.GroupWindow.settingUpDockIcon : L10n.GroupWindow.removingDockIcon)
                         .foregroundStyle(.secondary)
                 }
             case .failed(let message):
@@ -192,24 +192,24 @@ struct GroupDetailView: View {
                     .fixedSize(horizontal: false, vertical: true)
             case nil:
                 if group.isStandalone, standalone.agentURL(for: group.id) != nil {
-                    LabeledContent("Group App") {
-                        Button("Show in Finder") { standalone.revealAgent(for: group.id) }
+                    LabeledContent(L10n.GroupWindow.groupApp) {
+                        Button(L10n.Common.showInFinder) { standalone.revealAgent(for: group.id) }
                     }
                     if standalone.staleDockIcons.contains(group.id) {
                         LabeledContent {
-                            Button("Update Dock Icon") { standalone.refreshDockIcons() }
-                                .help("Restart the Dock with a fresh icon cache, so the tile shows the group's current icon.")
+                            Button(L10n.GroupWindow.updateDockIcon) { standalone.refreshDockIcons() }
+                                .help(L10n.GroupWindow.updateDockIconHelp)
                         } label: {
-                            Text("The Dock still shows the previous icon.")
+                            Text(L10n.GroupWindow.staleDockIcon)
                                 .foregroundStyle(.secondary)
                         }
                     }
                 }
             }
         } header: {
-            Text("Standalone")
+            Text(L10n.GroupWindow.standaloneSection)
         } footer: {
-            Text("Gives the group its own small app, with the tile above as its icon, at the end of the Dock. Clicking it shows the group's popup (⌥-click opens all of its apps), even while Cybokron Dock Groups isn't running; right-clicking it lists the group's apps (Settings → Popup). Turning this off, deleting the group or dragging the icon out of the Dock removes that app. Adding or removing the icon restarts the Dock for a moment.")
+            Text(L10n.GroupWindow.standaloneFooter(AppInfo.name))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -217,34 +217,34 @@ struct GroupDetailView: View {
 
     private var popupSection: some View {
         Section {
-            Picker("Columns", selection: binding(\.popup.columns)) {
-                Text("Default").tag(PopupColumns?.none)
-                Text("Auto").tag(PopupColumns?.some(.auto))
+            Picker(L10n.GroupWindow.columns, selection: binding(\.popup.columns)) {
+                Text(L10n.Common.defaultOption).tag(PopupColumns?.none)
+                Text(L10n.Common.auto).tag(PopupColumns?.some(.auto))
                 ForEach(Array(PopupOverrides.allowedCountRange), id: \.self) { count in
-                    Text("\(count)").tag(PopupColumns?.some(.fixed(count)))
+                    Text(verbatim: "\(count)").tag(PopupColumns?.some(.fixed(count)))
                 }
             }
-            Picker("Maximum Rows", selection: binding(\.popup.maxRows)) {
-                Text("Default").tag(Int?.none)
+            Picker(L10n.GroupWindow.maximumRows, selection: binding(\.popup.maxRows)) {
+                Text(L10n.Common.defaultOption).tag(Int?.none)
                 ForEach(Array(PopupOverrides.allowedCountRange), id: \.self) { count in
-                    Text("\(count)").tag(Int?.some(count))
+                    Text(verbatim: "\(count)").tag(Int?.some(count))
                 }
             }
-            Picker("App Names", selection: binding(\.popup.showsTitles)) {
-                Text("Default").tag(Bool?.none)
-                Text("Show").tag(Bool?.some(true))
-                Text("Hide").tag(Bool?.some(false))
+            Picker(L10n.GroupWindow.appNames, selection: binding(\.popup.showsTitles)) {
+                Text(L10n.Common.defaultOption).tag(Bool?.none)
+                Text(L10n.GroupWindow.show).tag(Bool?.some(true))
+                Text(L10n.GroupWindow.hide).tag(Bool?.some(false))
             }
-            Picker("Position", selection: binding(\.popup.anchor)) {
-                Text("Default").tag(PopupAnchor?.none)
+            Picker(L10n.GroupWindow.position, selection: binding(\.popup.anchor)) {
+                Text(L10n.Common.defaultOption).tag(PopupAnchor?.none)
                 ForEach(PopupAnchor.allCases, id: \.self) { anchor in
                     Text(anchor.title).tag(PopupAnchor?.some(anchor))
                 }
             }
         } header: {
-            Text("Popup")
+            Text(L10n.GroupWindow.popupSection)
         } footer: {
-            Text("“Default” follows the app-wide popup settings.")
+            Text(L10n.GroupWindow.popupFooter(defaultOption: L10n.Common.defaultOption))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -255,7 +255,7 @@ struct GroupDetailView: View {
             .resizable()
             .interpolation(.high)
             .frame(width: pointSize, height: pointSize)
-            .accessibilityLabel("Tile preview, \(Int(pointSize)) points")
+            .accessibilityLabel(L10n.GroupWindow.tilePreviewAccessibility(points: Int(pointSize)))
     }
 
     // MARK: - Bindings

@@ -41,40 +41,40 @@ struct ShortcutsSettingsView: View {
 
     private var keyboardSection: some View {
         Section {
-            Toggle("Open group popups with keyboard shortcuts", isOn: binding(\.shortcutsEnabled))
+            Toggle(L10n.Settings.Shortcuts.enable, isOn: binding(\.shortcutsEnabled))
             LabeledContent {
-                Picker("Modifier keys", selection: binding(\.shortcutModifiers)) {
+                Picker(L10n.Settings.Shortcuts.modifierKeys, selection: binding(\.shortcutModifiers)) {
                     ForEach(ShortcutModifiers.allCases, id: \.self) { modifiers in
-                        Text("\(modifiers.symbols) 1…9").tag(modifiers)
+                        Text(verbatim: "\(modifiers.symbols) 1…9").tag(modifiers)
                     }
                 }
                 .labelsHidden()
                 .fixedSize()
             } label: {
-                Text("Shortcut keys")
-                Text("Hold these keys and press 1 for the first group, 2 for the second, and so on. Press it again to close the popup.")
+                Text(L10n.Settings.Shortcuts.shortcutKeys)
+                Text(L10n.Settings.Shortcuts.shortcutKeysDetail)
             }
             .disabled(!settings.shortcutsEnabled)
             if settings.shortcutsEnabled {
                 accessibilityStatus
             }
         } header: {
-            Text("Keyboard Shortcuts")
+            Text(L10n.Settings.Shortcuts.keyboardHeader)
         }
     }
 
     @ViewBuilder
     private var accessibilityStatus: some View {
         if shortcuts.isAccessibilityTrusted {
-            Label("Works in every app", systemImage: "checkmark.circle.fill")
+            Label(L10n.Settings.Shortcuts.worksEverywhere, systemImage: "checkmark.circle.fill")
                 .foregroundStyle(.green)
         } else {
             LabeledContent {
-                Button("Open Privacy & Security…", action: shortcuts.openAccessibilitySettings)
+                Button(L10n.Common.openPrivacySettings, action: shortcuts.openAccessibilitySettings)
             } label: {
-                Label("Needs Accessibility access", systemImage: "exclamationmark.triangle.fill")
+                Label(L10n.Settings.Shortcuts.needsAccess, systemImage: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
-                Text("To notice the shortcuts while you work in other apps, allow \(AppInfo.name) under Privacy & Security → Accessibility. Until then they work only while its popup or a window of it is active.")
+                Text(L10n.Settings.Shortcuts.accessDetail(AppInfo.name))
                 Text(AccessibilityAccess.staleEntryHint)
             }
         }
@@ -83,7 +83,7 @@ struct ShortcutsSettingsView: View {
     private var assignedGroupsSection: some View {
         Section {
             if store.groups.isEmpty {
-                Text("No groups yet.")
+                Text(L10n.Settings.Shortcuts.noGroups)
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(Array(store.groups.prefix(GroupShortcuts.digits.upperBound).enumerated()), id: \.element.id) { index, group in
@@ -92,17 +92,17 @@ struct ShortcutsSettingsView: View {
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
                     } label: {
-                        Text("\(group.emoji)  \(group.name)")
+                        Text(verbatim: "\(group.emoji)  \(group.name)")
                             .lineLimit(1)
                     }
                 }
             }
         } header: {
-            Text("Assigned Groups")
+            Text(L10n.Settings.Shortcuts.assignedHeader)
         } footer: {
             Text(store.groups.count > GroupShortcuts.digits.upperBound
-                ? "Only the first nine groups have shortcuts. Drag groups in Manage Groups to change the order."
-                : "Shortcuts follow the order of the groups in Manage Groups.")
+                ? L10n.Settings.Shortcuts.assignedFooterLimit
+                : L10n.Settings.Shortcuts.assignedFooter)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -111,28 +111,28 @@ struct ShortcutsSettingsView: View {
     private var siriSection: some View {
         Section {
             if let group = invocationGroup {
-                Picker("Group", selection: invocationGroupBinding(selected: group.id)) {
+                Picker(L10n.Settings.Shortcuts.group, selection: invocationGroupBinding(selected: group.id)) {
                     ForEach(store.groups) { group in
-                        Text("\(group.emoji)  \(group.name)").tag(group.id)
+                        Text(verbatim: "\(group.emoji)  \(group.name)").tag(group.id)
                     }
                 }
                 ForEach(GroupInvocations.siriPhrases(groupName: group.name, appName: AppInfo.name)) { phrase in
-                    copyRow(phrase, text: Text("“\(phrase.text)”"))
+                    copyRow(phrase, text: Text(L10n.Settings.Shortcuts.quotedPhrase(phrase.text)))
                 }
             } else {
-                Text("Add a group to see what to ask Siri for it.")
+                Text(L10n.Settings.Shortcuts.siriNoGroups)
                     .foregroundStyle(.secondary)
             }
             LabeledContent {
-                Button("Open Shortcuts", action: openShortcutsApp)
+                Button(L10n.Settings.Shortcuts.openShortcuts, action: openShortcutsApp)
             } label: {
-                Text("Shortcuts app")
-                Text("Launch Group, Quit Group and Show Group are actions there and in Spotlight: add them to your own shortcuts, with your own trigger.")
+                Text(L10n.Settings.Shortcuts.shortcutsApp)
+                Text(L10n.Settings.Shortcuts.shortcutsAppDetail)
             }
         } header: {
-            Text("Siri and Shortcuts")
+            Text(L10n.Settings.Shortcuts.siriHeader)
         } footer: {
-            Text("Ask Siri with these words, by voice or by typing. They use the group's current name; shortcuts you build keep working after a rename.")
+            Text(L10n.Settings.Shortcuts.siriFooter)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -145,13 +145,13 @@ struct ShortcutsSettingsView: View {
                     copyRow(link, text: Text(link.text).font(.system(.body, design: .monospaced)))
                 }
             } else {
-                Text("Add a group to see its links.")
+                Text(L10n.Settings.Shortcuts.linksNoGroups)
                     .foregroundStyle(.secondary)
             }
         } header: {
-            Text("Links")
+            Text(L10n.Common.links)
         } footer: {
-            Text("Open a link from a script or another app, e.g. with `open` in Terminal. A group is named by its name (case, accents and punctuation don't matter) or, when the name is ambiguous, its ID. Add ?mode=force to a quit link to force quit.")
+            Text(markdown: L10n.Settings.Shortcuts.linksFooter)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -160,8 +160,8 @@ struct ShortcutsSettingsView: View {
     /// A phrase or link with its action underneath and a Copy button.
     private func copyRow(_ invocation: GroupInvocation, text: Text) -> some View {
         LabeledContent {
-            Button(copiedText == invocation.text ? "Copied" : "Copy") { copy(invocation.text) }
-                .help("Copy “\(invocation.text)” to the clipboard.")
+            Button(copiedText == invocation.text ? L10n.Common.copied : L10n.Common.copy) { copy(invocation.text) }
+                .help(L10n.Settings.Shortcuts.copyHelp(invocation.text))
         } label: {
             text
                 .lineLimit(1)

@@ -49,9 +49,9 @@ final class DiagnosticsController: ObservableObject {
 
     func saveToFile() {
         let panel = NSSavePanel()
-        panel.title = "Save Diagnostics"
-        panel.message = "Save the diagnostics report as a text file, e.g. to attach to a GitHub issue."
-        panel.prompt = "Save"
+        panel.title = L10n.Settings.Diagnostics.panelTitle
+        panel.message = L10n.Settings.Diagnostics.panelMessage
+        panel.prompt = L10n.Settings.Diagnostics.panelPrompt
         panel.nameFieldStringValue = DiagnosticsReport.fileName(for: Date())
         panel.allowedContentTypes = [.plainText]
         panel.canCreateDirectories = true

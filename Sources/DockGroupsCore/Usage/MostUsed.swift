@@ -61,7 +61,8 @@ public enum MostUsedRanking {
 public enum MostUsedGroup {
     /// Fixed identifier, distinct from the random identifiers of the user's groups.
     public static let id = UUID(uuidString: "00000000-0000-4000-8000-0000000057ED")!
-    public static let name = "Most Used"
+    /// The list's name, in the user's language.
+    public static var name: String { Localization.string("core.mostUsed.name", "Most Used") }
     public static let symbol = "★"
     public static let tile = TileAppearance(
         kind: .emoji,

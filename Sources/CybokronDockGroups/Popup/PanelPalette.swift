@@ -62,9 +62,9 @@ extension PanelTheme {
 
     var title: String {
         switch self {
-        case .dark: return "Dark"
-        case .light: return "Light"
-        case .system: return "Match System"
+        case .dark: return L10n.Choices.themeDark
+        case .light: return L10n.Choices.themeLight
+        case .system: return L10n.Choices.themeSystem
         }
     }
 }

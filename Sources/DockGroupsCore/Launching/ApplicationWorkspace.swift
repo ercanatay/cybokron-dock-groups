@@ -119,7 +119,7 @@ public enum WebsiteOpeningError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .noBrowser:
-            return "No web browser is set up to open it."
+            return Localization.string("core.launch.noBrowser", "No web browser is set up to open it.")
         }
     }
 }

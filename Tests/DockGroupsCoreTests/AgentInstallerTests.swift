@@ -84,6 +84,43 @@ struct AgentInstallerTests {
         #expect(AgentDirectory.scan(agents).map(\.bundleURL.lastPathComponent) == ["work-stuff.app"])
     }
 
+    @Test func bundleGetsTheHostsStringTables() async throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let resources = temporary.url.appending(path: "HostResources", directoryHint: .isDirectory)
+        for (language, text) in [("en", "Open All"), ("tr", "Tümünü Aç")] {
+            let folder = resources.appending(path: "\(language).lproj", directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try Data("\"common.openAll\" = \"\(text)\";\n".utf8).write(to: folder.appending(path: "Localizable.strings"))
+        }
+        // Not string tables: a folder without one, and a file.
+        try FileManager.default.createDirectory(at: resources.appending(path: "de.lproj"), withIntermediateDirectories: true)
+        try Data().write(to: resources.appending(path: "AppIcon.icns"))
+        let base = try makeHost(in: temporary)
+        let host = AgentHost(
+            executableURL: base.executableURL, version: base.version, build: base.build,
+            minimumSystemVersion: base.minimumSystemVersion, executableDigest: base.executableDigest,
+            localizationsURL: resources
+        )
+        #expect(host.stringTables().map(\.language) == ["en", "tr"])
+        let agents = temporary.url.appending(path: "Agents", directoryHint: .isDirectory)
+        let installer = AgentInstaller(directory: agents, tools: RecordingToolRunner(), simulatesSigningFailure: false)
+        let group = DockGroup(name: "Work Stuff", isStandalone: true)
+
+        let url = try await installer.install(input(for: group, host: host))
+
+        let layout = AgentBundleLayout(bundleURL: url)
+        for language in ["en", "tr"] {
+            let folder = layout.localizationURL(for: language)
+            let table = try #require(NSDictionary(contentsOf: folder.appending(path: "Localizable.strings")))
+            #expect(table["common.openAll"] as? String == (language == "en" ? "Open All" : "Tümünü Aç"))
+            // Every language names the agent after the group, so the Dock shows the name in each.
+            let names = try #require(NSDictionary(contentsOf: folder.appending(path: "InfoPlist.strings")))
+            #expect(names["CFBundleDisplayName"] as? String == "Work Stuff")
+        }
+        #expect(!FileManager.default.fileExists(atPath: layout.localizationURL(for: "de").path))
+    }
+
     @Test func reinstallingReplacesTheBundle() async throws {
         let temporary = try TemporaryDirectory()
         defer { temporary.remove() }

@@ -9,49 +9,49 @@ struct PopupSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker("Theme", selection: binding(\.theme)) {
+                Picker(L10n.Settings.Popup.theme, selection: binding(\.theme)) {
                     ForEach(PanelTheme.allCases, id: \.self) { theme in
                         Text(theme.title).tag(theme)
                     }
                 }
-                Toggle("Frosted glass background", isOn: binding(\.usesFrostedGlass))
+                Toggle(L10n.Settings.Popup.frostedGlass, isOn: binding(\.usesFrostedGlass))
             } header: {
-                Text("Popup Appearance")
+                Text(L10n.Settings.Popup.appearanceHeader)
             } footer: {
-                Text("The theme applies to the popup only; this window follows your macOS appearance.")
+                Text(L10n.Settings.Popup.appearanceFooter)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
                 LabeledContent {
-                    Picker("Columns", selection: binding(\.columns)) {
-                        Text("Auto").tag(PopupColumns.auto)
+                    Picker(L10n.Settings.Popup.columns, selection: binding(\.columns)) {
+                        Text(L10n.Common.auto).tag(PopupColumns.auto)
                         ForEach(Array(PopupOverrides.allowedCountRange), id: \.self) { count in
-                            Text("\(count)").tag(PopupColumns.fixed(count))
+                            Text(verbatim: "\(count)").tag(PopupColumns.fixed(count))
                         }
                     }
                     .labelsHidden()
                     .fixedSize()
                 } label: {
-                    Text("Columns")
-                    Text("Auto keeps the standard popup width; a number makes the popup only as wide as the group needs.")
+                    Text(L10n.Settings.Popup.columns)
+                    Text(L10n.Settings.Popup.columnsDetail)
                 }
                 LabeledContent {
-                    Picker("Maximum rows", selection: binding(\.maxRows)) {
+                    Picker(L10n.Settings.Popup.maximumRows, selection: binding(\.maxRows)) {
                         ForEach(Array(PopupOverrides.allowedCountRange), id: \.self) { count in
-                            Text("\(count)").tag(count)
+                            Text(verbatim: "\(count)").tag(count)
                         }
                     }
                     .labelsHidden()
                     .fixedSize()
                 } label: {
-                    Text("Maximum rows")
-                    Text("Limits the popup's height; larger groups scroll.")
+                    Text(L10n.Settings.Popup.maximumRows)
+                    Text(L10n.Settings.Popup.maximumRowsDetail)
                 }
-                Toggle("Show app names", isOn: binding(\.showsTitles))
+                Toggle(L10n.Settings.Popup.showAppNames, isOn: binding(\.showsTitles))
                 LabeledContent {
-                    Picker("Position", selection: binding(\.anchor)) {
+                    Picker(L10n.Settings.Popup.position, selection: binding(\.anchor)) {
                         ForEach(PopupAnchor.allCases, id: \.self) { anchor in
                             Text(anchor.title).tag(anchor)
                         }
@@ -59,49 +59,49 @@ struct PopupSettingsView: View {
                     .labelsHidden()
                     .fixedSize()
                 } label: {
-                    Text("Position")
-                    Text("Above the clicked icon opens a popup over its group's Dock icon, or under the menu bar icon when chosen from its menu. Popups opened with a shortcut, a link or Siri stay centered over the Dock.")
+                    Text(L10n.Settings.Popup.position)
+                    Text(L10n.Settings.Popup.positionDetail)
                 }
             } header: {
-                Text("Popup Layout")
+                Text(L10n.Settings.Popup.layoutHeader)
             } footer: {
-                Text("These are the defaults for every group. Each group can override them under Manage Groups.")
+                Text(L10n.Settings.Popup.layoutFooter)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
                 Toggle(isOn: binding(\.usesFreeLayout)) {
-                    Text("Free layout")
-                    Text("Apps stay in the cell you drag them to, and the others don't move; dropping an app on another swaps the two.")
+                    Text(L10n.Settings.Popup.freeLayout)
+                    Text(L10n.Settings.Popup.freeLayoutDetail)
                 }
             } header: {
-                Text("Arranging Apps")
+                Text(L10n.Settings.Popup.arrangingHeader)
             } footer: {
-                Text("Off, a group's apps fill the popup in order and make room when you move one. A→Z in the popup sorts a group by name either way.")
+                Text(L10n.Settings.Popup.arrangingFooter)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
                 Toggle(isOn: binding(\.restoresWindowsOfRunningApps)) {
-                    Text("Restore windows when reopening an app that is running")
-                    Text("Clicking a running app brings back its hidden and minimized windows, as clicking it in the Dock does. Off, the app only comes to the front.")
+                    Text(L10n.Settings.Popup.restoreWindows)
+                    Text(L10n.Settings.Popup.restoreWindowsDetail)
                 }
                 if preferences.preferences.restoresWindowsOfRunningApps {
                     WindowRestoreAccessStatus()
                 }
             } header: {
-                Text("Running Apps")
+                Text(L10n.Settings.Popup.runningAppsHeader)
             }
 
             Section {
                 Toggle(isOn: binding(\.showsStandaloneDockMenus)) {
-                    Text("Menu on group Dock icons")
-                    Text("Right-click a standalone group's Dock icon for its apps, Open All, Hide All and Close All, once the icon was clicked. Its app then shows as running in the Dock and in ⌘-Tab.")
+                    Text(L10n.Settings.Popup.dockMenus)
+                    Text(L10n.Settings.Popup.dockMenusDetail)
                 }
             } header: {
-                Text("Standalone Dock Icons")
+                Text(L10n.Settings.Popup.standaloneIconsHeader)
             }
 
             if let problem = preferences.saveProblem {
@@ -133,15 +133,15 @@ private struct WindowRestoreAccessStatus: View {
     var body: some View {
         Group {
             if access.isTrusted {
-                Label("Accessibility access granted: minimized windows come back too", systemImage: "checkmark.circle.fill")
+                Label(L10n.Settings.Popup.accessGranted, systemImage: "checkmark.circle.fill")
                     .foregroundStyle(.green)
             } else {
                 LabeledContent {
-                    Button("Open Privacy & Security…", action: AccessibilityAccess.openSettings)
+                    Button(L10n.Common.openPrivacySettings, action: AccessibilityAccess.openSettings)
                 } label: {
-                    Label("Restoring minimized windows requires Accessibility access", systemImage: "exclamationmark.triangle.fill")
+                    Label(L10n.Settings.Popup.accessRequired, systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
-                    Text("Allow \(AppInfo.name) under Privacy & Security → Accessibility. Until then, hidden apps still come back, and apps are asked to reopen as from the Dock. Standalone group icons need the access for their own apps.")
+                    Text(L10n.Settings.Popup.accessDetail(AppInfo.name))
                     Text(AccessibilityAccess.staleEntryHint)
                 }
             }

@@ -20,17 +20,17 @@ public enum AgentInstallError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .iconRenderFailed:
-            return "The group's icon couldn't be drawn."
+            return Localization.string("core.agent.error.icon", "The group's icon couldn't be drawn.")
         case .bundleWriteFailed(let reason):
-            return "The group's app couldn't be created: \(reason)"
+            return Localization.format("core.agent.error.bundleWrite", "The group's app couldn't be created: %@", reason)
         case .toolMissing(let path):
-            return "A system tool this needs is missing: \(path)."
+            return Localization.format("core.agent.error.toolMissing", "A system tool this needs is missing: %@.", path)
         case .signingFailed, .verificationFailed:
-            return "macOS requires every app to be code-signed, and signing the group's app failed on this Mac, so nothing was installed."
+            return Localization.string("core.agent.error.signing", "macOS requires every app to be code-signed, and signing the group's app failed on this Mac, so nothing was installed.")
         case .registrationFailed(let reason):
-            return "macOS didn't register the group's app: \(reason)"
+            return Localization.format("core.agent.error.registration", "macOS didn't register the group's app: %@", reason)
         case .hostUnavailable(let reason):
-            return "Cybokron Dock Groups couldn't read its own executable: \(reason)"
+            return Localization.format("core.agent.error.hostUnavailable", "Cybokron Dock Groups couldn't read its own executable: %@", reason)
         }
     }
 }
@@ -39,7 +39,7 @@ extension AgentHost {
     /// The running main app as the source of agents.
     public static func current(bundle: Bundle = .main) throws -> AgentHost {
         guard let executableURL = bundle.executableURL else {
-            throw AgentInstallError.hostUnavailable("The app has no executable.")
+            throw AgentInstallError.hostUnavailable(Localization.string("core.agent.error.noExecutable", "The app has no executable."))
         }
         let data: Data
         do {
@@ -53,7 +53,8 @@ extension AgentHost {
             version: info["CFBundleShortVersionString"] as? String ?? "0",
             build: info["CFBundleVersion"] as? String ?? "0",
             minimumSystemVersion: info["LSMinimumSystemVersion"] as? String ?? "14.0",
-            executableDigest: digest(of: data)
+            executableDigest: digest(of: data),
+            localizationsURL: bundle.resourceURL
         )
     }
 
@@ -202,8 +203,24 @@ public struct AgentInstaller: Sendable {
             .write(to: layout.infoPlistURL)
         try Data("APPL????".utf8).write(to: layout.pkgInfoURL)
         try AgentInfoPlist.localizedStrings(groupName: group.name).write(to: layout.localizedStringsURL)
+        try copyStringTables(from: input.host, groupName: group.name, into: layout)
         try input.configuration.encoded().write(to: layout.configurationURL)
         try input.icns.write(to: layout.iconURL)
+    }
+
+    /// The main app's string tables, one `<language>.lproj` each, so the agent's popup and menus
+    /// use the user's language. Every such folder gets the group's name in an `InfoPlist.strings`
+    /// too: the Dock and Finder look for the name in the language they picked.
+    private func copyStringTables(from host: AgentHost, groupName: String, into layout: AgentBundleLayout) throws {
+        let fileManager = FileManager.default
+        let infoPlistStrings = AgentInfoPlist.localizedStrings(groupName: groupName)
+        for (language, source) in host.stringTables(fileManager: fileManager) {
+            let folder = layout.localizationURL(for: language)
+            try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
+            let table = folder.appending(path: AgentBundleLayout.stringTableFileName, directoryHint: .notDirectory)
+            try fileManager.copyItem(at: source, to: table)
+            try infoPlistStrings.write(to: folder.appending(path: AgentBundleLayout.infoPlistStringsFileName, directoryHint: .notDirectory))
+        }
     }
 
     private func sign(_ bundleURL: URL) async throws {

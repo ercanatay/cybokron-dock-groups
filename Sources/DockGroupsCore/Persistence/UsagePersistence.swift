@@ -19,7 +19,7 @@ public enum UsagePersistenceError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .unsupportedFormatVersion(let version):
-            return "The usage statistics were saved by a newer version of Cybokron Dock Groups (format \(version))."
+            return Localization.format("core.persistence.usage.newer", "The usage statistics were saved by a newer version of Cybokron Dock Groups (format %ld).", version)
         }
     }
 }

@@ -39,7 +39,7 @@ final class SettingsWindowController: NSWindowController {
         hostingController.sizingOptions = [.preferredContentSize]
 
         let window = NSWindow(contentViewController: hostingController)
-        window.title = "Settings"
+        window.title = L10n.Settings.windowTitle
         window.styleMask = [.titled, .closable]
         window.isReleasedWhenClosed = false
         if !window.setFrameUsingName(Self.frameAutosaveName) {
@@ -78,15 +78,15 @@ private struct SettingsView: View {
     var body: some View {
         TabView {
             PopupSettingsView(preferences: preferences)
-                .tabItem { Label("Popup", systemImage: "rectangle.grid.2x2") }
+                .tabItem { Label(L10n.Settings.popupTab, systemImage: "rectangle.grid.2x2") }
             ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts)
-                .tabItem { Label("Shortcuts & Siri", systemImage: "keyboard") }
+                .tabItem { Label(L10n.Settings.shortcutsTab, systemImage: "keyboard") }
             MostUsedSettingsView(preferences: preferences, usage: usage)
-                .tabItem { Label("Most Used", systemImage: "star") }
+                .tabItem { Label(MostUsedGroup.name, systemImage: "star") }
             UpdatesSettingsView(preferences: preferences, updater: updater)
-                .tabItem { Label("Updates", systemImage: "arrow.triangle.2.circlepath") }
+                .tabItem { Label(L10n.Settings.updatesTab, systemImage: "arrow.triangle.2.circlepath") }
             BackupSettingsView(backup: backup, diagnostics: diagnostics)
-                .tabItem { Label("Backup", systemImage: "externaldrive") }
+                .tabItem { Label(L10n.Settings.backupTab, systemImage: "externaldrive") }
         }
         .padding(.top, 8)
     }

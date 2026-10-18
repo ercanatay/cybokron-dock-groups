@@ -18,22 +18,22 @@ struct AddWebsiteView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Add Website to “\(groupName)”")
+            Text(L10n.AddWebsite.title(groupName))
                 .font(.headline)
             Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 10, verticalSpacing: 10) {
                 GridRow {
-                    Text("Address:")
+                    Text(L10n.AddWebsite.address)
                         .gridColumnAlignment(.trailing)
                     TextField("https://example.com", text: $address)
                         .textFieldStyle(.roundedBorder)
                         .focused($isAddressFocused)
-                        .accessibilityLabel("Website address")
+                        .accessibilityLabel(L10n.AddWebsite.addressAccessibility)
                 }
                 GridRow {
-                    Text("Name:")
+                    Text(L10n.AddWebsite.name)
                     TextField(namePlaceholder, text: $name)
                         .textFieldStyle(.roundedBorder)
-                        .accessibilityLabel("Website name, optional")
+                        .accessibilityLabel(L10n.AddWebsite.nameAccessibility)
                 }
             }
             Group {
@@ -41,7 +41,7 @@ struct AddWebsiteView: View {
                     Label(problem, systemImage: "exclamationmark.triangle.fill")
                         .foregroundStyle(.red)
                 } else {
-                    Text("Opens in your default browser. Leave the name empty to use the site's address.")
+                    Text(L10n.AddWebsite.hint)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -49,9 +49,9 @@ struct AddWebsiteView: View {
             .fixedSize(horizontal: false, vertical: true)
             HStack {
                 Spacer()
-                Button("Cancel", role: .cancel, action: dismiss)
+                Button(L10n.Common.cancel, role: .cancel, action: dismiss)
                     .keyboardShortcut(.cancelAction)
-                Button("Add", action: submit)
+                Button(L10n.Common.add, action: submit)
                     .keyboardShortcut(.defaultAction)
                     .disabled(address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
@@ -64,7 +64,7 @@ struct AddWebsiteView: View {
 
     /// The name the website gets when the field is left empty.
     private var namePlaceholder: String {
-        (try? WebsiteAddress.parse(address)).map(WebsiteAddress.defaultName(for:)) ?? "Optional"
+        (try? WebsiteAddress.parse(address)).map(WebsiteAddress.defaultName(for:)) ?? L10n.AddWebsite.namePlaceholder
     }
 
     private func submit() {
@@ -73,7 +73,7 @@ struct AddWebsiteView: View {
             if add(website) {
                 dismiss()
             } else {
-                problem = "“\(website.websiteURL?.absoluteString ?? website.name)” is already in this group."
+                problem = L10n.AddWebsite.alreadyInGroup(website.websiteURL?.absoluteString ?? website.name)
             }
         } catch {
             problem = error.localizedDescription
@@ -104,7 +104,7 @@ final class AddWebsiteWindowController {
         let window = self.window ?? makeWindow()
         // A fresh view each time, so the fields start empty.
         window.contentViewController = NSHostingController(rootView: view)
-        window.title = "Add Website"
+        window.title = L10n.AddWebsite.windowTitle
         self.window = window
         NSApp.activate()
         window.center()

@@ -10,7 +10,7 @@ final class AboutWindowController: NSWindowController {
         hostingController.sizingOptions = []
 
         let window = NSWindow(contentViewController: hostingController)
-        window.title = "About \(AppInfo.name)"
+        window.title = L10n.Common.about(AppInfo.name)
         window.styleMask = [.titled, .closable]
         window.isReleasedWhenClosed = false
         window.setContentSize(NSSize(width: AboutView.width, height: 720))
@@ -48,23 +48,23 @@ private struct AboutView: View {
                 socialSection
                 supportSection
                 header
-                section("My Books") {
+                section(L10n.About.books) {
                     VStack(spacing: 8) {
                         ForEach(AboutData.books) { BookCard(book: $0, palette: palette) }
                     }
                 }
-                section("My Open Source Software") {
+                section(L10n.About.openSource) {
                     VStack(spacing: 8) {
                         ForEach(AboutData.projects) { project in
                             LinkRow(title: project.title, subtitle: project.subtitle, symbol: project.symbol,
                                     url: project.url, palette: palette)
                         }
-                        Text("Full list at github.com/ercanatay")
+                        Text(L10n.About.fullList)
                             .font(.caption)
                             .foregroundStyle(palette.secondaryText)
                     }
                 }
-                section("Medium Blogs") {
+                section(L10n.About.blogs) {
                     VStack(spacing: 8) {
                         ForEach(AboutData.blogs) { blog in
                             LinkRow(title: blog.title, subtitle: blog.subtitle, symbol: "text.book.closed",
@@ -82,7 +82,7 @@ private struct AboutView: View {
     }
 
     private var socialSection: some View {
-        section("Find Me Online") {
+        section(L10n.About.findMeOnline) {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 6), spacing: 8) {
                 ForEach(SocialProfile.all) { SocialButton(profile: $0, palette: palette) }
             }
@@ -90,7 +90,7 @@ private struct AboutView: View {
     }
 
     private var supportSection: some View {
-        section("Support This Project") {
+        section(L10n.About.supportProject) {
             HStack(spacing: 8) {
                 ForEach(AboutData.donations) { donation in
                     Button { NSWorkspace.shared.open(donation.url) } label: {
@@ -118,22 +118,22 @@ private struct AboutView: View {
                 .resizable()
                 .interpolation(.high)
                 .frame(width: Self.iconSize, height: Self.iconSize)
-                .accessibilityLabel("\(AppInfo.name) icon")
+                .accessibilityLabel(L10n.About.iconAccessibility(AppInfo.name))
             Text(AppInfo.name)
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(palette.primaryText)
-            Text("Version \(AppInfo.version) · open source, MIT License")
+            Text(L10n.About.version(AppInfo.version))
                 .foregroundStyle(palette.secondaryText)
                 .textSelection(.enabled)
             VStack(spacing: 4) {
-                Link("Website", destination: AboutData.websiteURL)
+                Link(L10n.About.website, destination: AboutData.websiteURL)
                     .help(AboutData.websiteURL.absoluteString)
                 HStack(spacing: 16) {
-                    Link("Source Code", destination: AppInfo.repositoryURL)
-                    Link("License", destination: AppInfo.licenseURL)
-                    Link("Changelog", destination: UpdateLinks.changelog)
+                    Link(L10n.About.sourceCode, destination: AppInfo.repositoryURL)
+                    Link(L10n.About.license, destination: AppInfo.licenseURL)
+                    Link(L10n.Common.changelog, destination: UpdateLinks.changelog)
                 }
-                Link("Found a bug? Open an issue", destination: AboutData.issuesURL)
+                Link(L10n.About.reportBug, destination: AboutData.issuesURL)
             }
             .tint(PanelPalette.teal)
             .font(.callout)
@@ -142,7 +142,7 @@ private struct AboutView: View {
 
     private var footer: some View {
         VStack(spacing: 6) {
-            Text("Inspired by the functionality of DockGroups. Cybokron Dock Groups is an independent, original implementation written from scratch; it contains no code or artwork from DockGroups.")
+            Text(L10n.About.inspiredBy(AppInfo.name))
                 .font(.callout)
             if let copyright = AppInfo.copyright {
                 Text(copyright).font(.caption)
@@ -155,7 +155,7 @@ private struct AboutView: View {
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title.uppercased())
+            Text(title.localizedUppercase)
                 .font(.caption.weight(.semibold))
                 .tracking(0.8)
                 .foregroundStyle(PanelPalette.teal)

@@ -122,7 +122,7 @@ public final class GroupLauncher {
         }
 
         let entries = zip(group.apps, outcomes).map { app, outcome in
-            LaunchReport.Entry(app: app, outcome: outcome ?? .failed(reason: "The app wasn't opened."))
+            LaunchReport.Entry(app: app, outcome: outcome ?? .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened.")))
         }
         let report = LaunchReport(groupName: group.name, entries: entries)
         for problem in report.problems {

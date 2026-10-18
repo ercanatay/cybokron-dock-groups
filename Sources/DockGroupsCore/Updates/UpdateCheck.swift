@@ -20,19 +20,19 @@ public enum UpdateCheckError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .malformedRelease:
-            return "The release information from GitHub couldn't be read."
+            return Localization.string("core.update.check.malformed", "The release information from GitHub couldn't be read.")
         case .unsupportedTag(let tag):
-            return "The latest release (“\(tag)”) isn't tagged with a version number."
+            return Localization.format("core.update.check.unsupportedTag", "The latest release (“%@”) isn't tagged with a version number.", tag)
         case .noPublishedRelease:
-            return "No release has been published yet."
+            return Localization.string("core.update.check.noRelease", "No release has been published yet.")
         case .rateLimited:
-            return "GitHub is limiting requests right now. Try again in an hour."
+            return Localization.string("core.update.check.rateLimited", "GitHub is limiting requests right now. Try again in an hour.")
         case .httpStatus(let status):
-            return "GitHub answered with HTTP status \(status)."
+            return Localization.format("core.update.check.httpStatus", "GitHub answered with HTTP status %ld.", status)
         case .network(let reason):
-            return "GitHub couldn't be reached: \(reason)"
+            return Localization.format("core.update.check.network", "GitHub couldn't be reached: %@", reason)
         case .unknownCurrentVersion:
-            return "This copy of the app has no version number, so it can't be compared."
+            return Localization.string("core.update.check.noVersion", "This copy of the app has no version number, so it can't be compared.")
         }
     }
 }

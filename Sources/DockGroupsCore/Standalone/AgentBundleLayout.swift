@@ -8,7 +8,14 @@ import Foundation
 ///     <slug>.app/Contents/Resources/AppIcon.icns          (the group's tile)
 ///     <slug>.app/Contents/Resources/group-config.json     (AgentConfiguration)
 ///     <slug>.app/Contents/Resources/en.lproj/InfoPlist.strings  (the name the Dock and Finder show)
+///     <slug>.app/Contents/Resources/<language>.lproj/Localizable.strings
+///                                                         (the main app's string tables, each
+///                                                         language with its own InfoPlist.strings)
 public struct AgentBundleLayout: Equatable, Sendable {
+    /// The string tables of the app's text, one per language (`Localization`).
+    public static let stringTableFileName = "Localizable.strings"
+    public static let infoPlistStringsFileName = "InfoPlist.strings"
+
     public static let iconName = "AppIcon"
     public static let iconFileName = "AppIcon.icns"
 
@@ -31,7 +38,12 @@ public struct AgentBundleLayout: Equatable, Sendable {
         resourcesURL.appending(path: AgentConfiguration.fileName, directoryHint: .notDirectory)
     }
     public var localizedStringsURL: URL {
-        resourcesURL.appending(components: "en.lproj", "InfoPlist.strings", directoryHint: .notDirectory)
+        localizationURL(for: "en").appending(path: Self.infoPlistStringsFileName, directoryHint: .notDirectory)
+    }
+
+    /// The folder of one language's strings, e.g. `en.lproj`.
+    public func localizationURL(for language: String) -> URL {
+        resourcesURL.appending(path: "\(language).lproj", directoryHint: .isDirectory)
     }
 }
 
@@ -44,13 +56,37 @@ public struct AgentHost: Equatable, Sendable {
     public let minimumSystemVersion: String
     /// SHA-256 of the executable (hex), recorded in the agent to notice when the main app changed.
     public let executableDigest: String
+    /// The folder with the main app's `<language>.lproj` string tables (its `Contents/Resources`),
+    /// copied into every agent so its popup and menus speak the user's language; `nil` copies none.
+    public let localizationsURL: URL?
 
-    public init(executableURL: URL, version: String, build: String, minimumSystemVersion: String, executableDigest: String) {
+    public init(
+        executableURL: URL,
+        version: String,
+        build: String,
+        minimumSystemVersion: String,
+        executableDigest: String,
+        localizationsURL: URL? = nil
+    ) {
         self.executableURL = executableURL
         self.version = version
         self.build = build
         self.minimumSystemVersion = minimumSystemVersion
         self.executableDigest = executableDigest
+        self.localizationsURL = localizationsURL
+    }
+
+    /// The string tables in `localizationsURL`: each `<language>.lproj` folder's
+    /// `Localizable.strings`, by language.
+    public func stringTables(fileManager: FileManager = .default) -> [(language: String, url: URL)] {
+        guard let localizationsURL,
+              let names = try? fileManager.contentsOfDirectory(atPath: localizationsURL.path)
+        else { return [] }
+        return names.filter { $0.hasSuffix(".lproj") }.sorted().compactMap { name in
+            let table = localizationsURL.appending(components: name, AgentBundleLayout.stringTableFileName, directoryHint: .notDirectory)
+            guard name.count > ".lproj".count, fileManager.fileExists(atPath: table.path) else { return nil }
+            return (String(name.dropLast(".lproj".count)), table)
+        }
     }
 }
 

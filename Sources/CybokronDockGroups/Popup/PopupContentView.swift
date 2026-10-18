@@ -166,21 +166,17 @@ struct PopupContentView: View {
                     .lineLimit(1)
             }
             Spacer(minLength: 8)
-            Button("Open All", action: actions.openAll)
+            Button(L10n.Common.openAll, action: actions.openAll)
                 .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: true))
                 .fixedSize()
                 .disabled(group.apps.isEmpty)
-                .help(content.isMostUsed
-                    ? "Open every app in this list; running apps come to the front."
-                    : "Open every app in this group; running apps come to the front.")
-            Button("Hide All", action: actions.hideAll)
+                .help(content.isMostUsed ? L10n.Popup.openAllHelpMostUsed : L10n.Popup.openAllHelpGroup)
+            Button(L10n.Common.hideAll, action: actions.hideAll)
                 .buttonStyle(PillButtonStyle(tint: PanelPalette.indigo, filled: false))
                 .fixedSize()
                 .disabled(runningCount == 0)
-                .help(content.isMostUsed
-                    ? "Hide this list's running apps; apps that aren't running stay closed."
-                    : "Hide this group's running apps; apps that aren't running stay closed.")
-            Button(quitMode == .force ? "Force Quit" : "Close All") {
+                .help(content.isMostUsed ? L10n.Popup.hideAllHelpMostUsed : L10n.Popup.hideAllHelpGroup)
+            Button(quitMode == .force ? L10n.Common.forceQuit : L10n.Common.closeAll) {
                 // The keys held during the click decide, even if no flags change was seen.
                 let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.modifierFlags
                 actions.closeAll(QuitMode(modifierFlags: flags))
@@ -188,9 +184,7 @@ struct PopupContentView: View {
             .buttonStyle(PillButtonStyle(tint: quitMode == .force ? PanelPalette.warning : PanelPalette.indigo, filled: false))
             .fixedSize()
             .disabled(runningCount == 0)
-            .help(content.isMostUsed
-                ? "Quit this list's running apps. ⌘-click to force quit without saving."
-                : "Quit this group's running apps. ⌘-click to force quit without saving.")
+            .help(content.isMostUsed ? L10n.Popup.closeAllHelpMostUsed : L10n.Popup.closeAllHelpGroup)
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.headerHeight)
@@ -199,12 +193,17 @@ struct PopupContentView: View {
     private func summary(runningCount: Int) -> String {
         let websiteCount = content.group.apps.filter(\.isWebsite).count
         let appCount = content.group.apps.count - websiteCount
-        var apps = appCount == 1 ? "1 app" : "\(appCount) apps"
+        var parts = [L10n.Common.appCount(appCount)]
         if websiteCount > 0 {
-            apps += websiteCount == 1 ? " · 1 website" : " · \(websiteCount) websites"
+            parts.append(L10n.Popup.websiteCount(websiteCount))
         }
-        let counts = runningCount > 0 ? "\(apps) · \(runningCount) running" : apps
-        return content.isMostUsed ? "\(counts) · by launches" : counts
+        if runningCount > 0 {
+            parts.append(L10n.Popup.runningCount(runningCount))
+        }
+        if content.isMostUsed {
+            parts.append(L10n.Popup.byLaunches)
+        }
+        return parts.joined(separator: " · ")
     }
 
     // MARK: - Grid
@@ -270,12 +269,12 @@ struct PopupContentView: View {
         let matches = content.navigationItems(query: keyboard.query).cells
         if matches.isEmpty {
             VStack(spacing: 4) {
-                Text("No apps match “\(keyboard.query)”")
+                Text(L10n.Popup.noMatch(keyboard.query))
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(palette.secondaryText)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                Text("Press Delete or Esc to clear the filter.")
+                Text(L10n.Popup.noMatchHint)
                     .font(.system(size: 11))
                     .foregroundStyle(palette.secondaryText)
             }
@@ -343,7 +342,7 @@ struct PopupContentView: View {
             Color.clear
                 .contentShape(Rectangle())
                 .contextMenu {
-                    Button("Add Website…", action: addWebsite)
+                    Button(L10n.Common.addWebsite, action: addWebsite)
                 }
         }
     }
@@ -587,24 +586,24 @@ struct PopupContentView: View {
     private func emptyState(_ palette: PanelPalette) -> some View {
         if !content.isMostUsed {
             VStack(spacing: 6) {
-                Text("No apps in this group yet")
+                Text(L10n.Common.noAppsInGroup)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(palette.secondaryText)
                 HStack(spacing: 8) {
-                    Button("Add Apps…", action: actions.manageGroups)
+                    Button(L10n.Common.addApps, action: actions.manageGroups)
                         .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
                     if content.isEditable, let addWebsite = actions.addWebsite {
-                        Button("Add Website…", action: addWebsite)
+                        Button(L10n.Common.addWebsite, action: addWebsite)
                             .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
                     }
                 }
             }
         } else {
             VStack(spacing: 4) {
-                Text("No launches tracked yet")
+                Text(L10n.Common.noLaunchesYet)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(palette.secondaryText)
-                Text("Open apps as usual to start building your history.")
+                Text(L10n.Popup.mostUsedEmptyHint)
                     .font(.system(size: 11))
                     .foregroundStyle(palette.secondaryText)
             }
@@ -626,13 +625,13 @@ struct PopupContentView: View {
             // Per-group "Sort A→Z": a one-off sort of this group's apps by name, saved like a drag.
             if content.isEditable, content.cells.count > 1, drag == nil, !keyboard.isFiltering {
                 Button(action: actions.sortApps) {
-                    Label("A→Z", systemImage: "arrow.up.arrow.down")
+                    Label(L10n.Popup.footerSortAZ, systemImage: "arrow.up.arrow.down")
                         .font(.system(size: 10.5, weight: .semibold))
                 }
                 .buttonStyle(FooterButtonStyle(tint: PanelPalette.teal))
                 .fixedSize()
-                .help("Sort the apps in this group by name, A to Z.")
-                .accessibilityLabel("Sort A to Z")
+                .help(L10n.Popup.footerSortAZHelp)
+                .accessibilityLabel(L10n.Popup.footerSortAZAccessibility)
             }
         }
         .padding(.horizontal, 14)
@@ -642,21 +641,17 @@ struct PopupContentView: View {
     private var footerText: String {
         if keyboard.isFiltering, drag == nil {
             let hasMatches = !content.navigationItems(query: keyboard.query).cells.isEmpty
-            return hasMatches
-                ? "Filter: “\(keyboard.query)”  ·  ↩ opens the selected app  ·  esc clears"
-                : "Filter: “\(keyboard.query)”  ·  no match  ·  ⌫ or esc clears"
+            return hasMatches ? L10n.Popup.footerFilter(keyboard.query) : L10n.Popup.footerFilterNoMatch(keyboard.query)
         }
         guard let drag, let cell = content.cells.first(where: { $0.id == drag.id }) else {
-            return content.isMostUsed
-                ? "Ranked by how often you open them  ·  ⌘-click Close All to force quit"
-                : "Close All:  ⌥-click quits normally  ·  ⌘-click force quits"
+            return content.isMostUsed ? L10n.Popup.footerHintMostUsed : L10n.Popup.footerHintGroup
         }
         if drag.isInRemovalArea {
-            return "Release to remove \(cell.app.name) from this group"
+            return L10n.Popup.footerReleaseToRemove(cell.app.name)
         }
         return content.freeLayout != nil
-            ? "Drop \(cell.app.name) on any cell; on another app to swap  ·  drag out to remove"
-            : "Drop to place \(cell.app.name)  ·  drag out of the popup to remove it"
+            ? L10n.Popup.footerDropFree(cell.app.name)
+            : L10n.Popup.footerDropOrdered(cell.app.name)
     }
 }
 
@@ -717,29 +712,26 @@ private struct PopupAppCell: View {
         .shadow(color: .black.opacity(isDragged ? 0.3 : 0), radius: 10, y: 4)
         .onHover { isHovered = $0 }
         .help(helpText)
-        .accessibilityLabel(cell.app.isWebsite ? "Website \(cell.app.name)" : cell.app.name)
+        .accessibilityLabel(cell.app.isWebsite ? L10n.Popup.websiteAccessibility(cell.app.name) : cell.app.name)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityHint(cell.app.isWebsite ? "Opens the website in your browser" : (isRunning ? "Brings the app to the front" : "Opens the app"))
+        .accessibilityHint(cell.app.isWebsite ? L10n.Popup.websiteHint : (isRunning ? L10n.Popup.runningAppHint : L10n.Popup.appHint))
     }
 
+    /// What clicking the item does and, in editable groups, how it can be dragged.
     private var helpText: String {
+        let action: String
+        let drag: String
         if cell.app.isWebsite {
-            let action = "Open \(cell.app.websiteURL?.absoluteString ?? cell.app.name) in your browser"
-            guard isEditable else { return "\(action)." }
-            return isFreeLayout
-                ? "\(action). Drag to any cell or onto another item to swap them, or out of the popup to remove it from the group."
-                : "\(action). Drag to reorder, or out of the popup to remove it from the group."
+            action = L10n.Popup.helpOpenWebsite(cell.app.websiteURL?.absoluteString ?? cell.app.name)
+            drag = isFreeLayout ? L10n.Popup.helpDragFreeItem : L10n.Popup.helpDragOrdered
+        } else if !cell.isInstalled {
+            action = L10n.Popup.helpMissing(cell.app.name)
+            drag = L10n.Popup.helpDragOutMissing
+        } else {
+            action = isRunning ? L10n.Popup.helpBringToFront(cell.app.name) : L10n.Popup.helpOpenApp(cell.app.name)
+            drag = isFreeLayout ? L10n.Popup.helpDragFreeApp : L10n.Popup.helpDragOrdered
         }
-        guard cell.isInstalled else {
-            return isEditable
-                ? "\(cell.app.name) isn't on this Mac. Drag it out of the popup to remove it from the group."
-                : "\(cell.app.name) isn't on this Mac."
-        }
-        let action = isRunning ? "Bring \(cell.app.name) to the front" : "Open \(cell.app.name)"
-        guard isEditable else { return "\(action)." }
-        return isFreeLayout
-            ? "\(action). Drag to any cell or onto another app to swap them, or out of the popup to remove it from the group."
-            : "\(action). Drag to reorder, or out of the popup to remove it from the group."
+        return isEditable ? "\(action) \(drag)" : action
     }
 }
 
@@ -754,30 +746,30 @@ private struct PopupCellContextMenu: ViewModifier {
 
     func body(content: Content) -> some View {
         content.contextMenu {
-            Button("Open") { actions.open(cell.app) }
+            Button(L10n.Popup.menuOpen) { actions.open(cell.app) }
             if let url = cell.app.websiteURL {
-                Button("Copy URL") {
+                Button(L10n.Popup.menuCopyURL) {
                     let pasteboard = NSPasteboard.general
                     pasteboard.clearContents()
                     pasteboard.setString(url.absoluteString, forType: .string)
                     pasteboard.setString(url.absoluteString, forType: .URL)
                 }
             } else if cell.isInstalled {
-                Button("Show in Finder") { actions.showInFinder(cell.app) }
+                Button(L10n.Common.showInFinder) { actions.showInFinder(cell.app) }
             }
             if isEditable {
                 Divider()
                 if !moveTargets.isEmpty {
-                    Menu("Move to") {
+                    Menu(L10n.Common.moveTo) {
                         ForEach(moveTargets) { target in
                             Button(target.title) { actions.moveAppToGroup(cell.app, target.id) }
                         }
                     }
                 }
-                Button("Remove from Group") { actions.removeApp(cell.app) }
+                Button(L10n.Common.removeFromGroup) { actions.removeApp(cell.app) }
                 if let addWebsite = actions.addWebsite {
                     Divider()
-                    Button("Add Website…", action: addWebsite)
+                    Button(L10n.Common.addWebsite, action: addWebsite)
                 }
             }
         }
@@ -801,9 +793,9 @@ private struct EditingAccessibilityActions: ViewModifier {
     func body(content: Content) -> some View {
         if isEnabled {
             content
-                .accessibilityAction(named: "Move Earlier", moveEarlier)
-                .accessibilityAction(named: "Move Later", moveLater)
-                .accessibilityAction(named: "Remove from Group", remove)
+                .accessibilityAction(named: L10n.Popup.moveEarlier, moveEarlier)
+                .accessibilityAction(named: L10n.Popup.moveLater, moveLater)
+                .accessibilityAction(named: L10n.Common.removeFromGroup, remove)
         } else {
             content
         }

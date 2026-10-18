@@ -10,9 +10,9 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .notABackup:
-            return "This file isn't a Cybokron Dock Groups backup."
+            return Localization.string("core.backup.error.notABackup", "This file isn't a Cybokron Dock Groups backup.")
         case .newerSchemaVersion(let version):
-            return "This backup was made with a newer version of Cybokron Dock Groups (backup format \(version)). Update the app to restore it."
+            return Localization.format("core.backup.error.newer", "This backup was made with a newer version of Cybokron Dock Groups (backup format %ld). Update the app to restore it.", version)
         }
     }
 }

@@ -159,7 +159,7 @@ public enum DockTileStoreError: LocalizedError, Equatable, Sendable {
     case saveFailed
 
     public var errorDescription: String? {
-        "The Dock's settings couldn't be changed."
+        Localization.string("core.dock.saveFailed", "The Dock's settings couldn't be changed.")
     }
 }
 

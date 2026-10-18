@@ -12,7 +12,7 @@ final class UpdateWindowController: NSWindowController {
         hostingController.sizingOptions = [.preferredContentSize]
 
         let window = NSWindow(contentViewController: hostingController)
-        window.title = "Software Update"
+        window.title = L10n.UpdateWindow.title
         window.styleMask = [.titled, .closable]
         window.isReleasedWhenClosed = false
         super.init(window: window)
@@ -62,106 +62,109 @@ private struct UpdateView: View {
     private var content: some View {
         switch updater.status {
         case .idle, .checking:
-            title("Checking for updates…")
+            title(L10n.UpdateWindow.checking)
             ProgressView()
                 .progressViewStyle(.linear)
             buttons {
                 Spacer()
-                Button("Cancel") { updater.remindLater() }
+                Button(L10n.Common.cancel) { updater.remindLater() }
                     .keyboardShortcut(.cancelAction)
             }
 
         case .upToDate(let version):
-            title("You're up to date!")
-            Text("\(AppInfo.name) \(version.description) is the newest version available.")
+            title(L10n.UpdateWindow.upToDateTitle)
+            Text(L10n.UpdateWindow.upToDateMessage(AppInfo.name, version: version.description))
                 .foregroundStyle(.secondary)
             links(pageURL: nil)
             buttons {
                 Spacer()
-                Button("OK") { updater.remindLater() }
+                Button(L10n.Common.ok) { updater.remindLater() }
                     .keyboardShortcut(.defaultAction)
             }
 
         case .available(let release, let asset):
-            title("A new version of \(AppInfo.name) is available!")
-            Text("Version \(release.version.description) is available — you have \(currentVersionText). \(asset == nil ? "This release has no disk image for automatic installation; download it from its release page." : "Would you like to download and install it now?")")
+            title(L10n.UpdateWindow.availableTitle(AppInfo.name))
+            Text([
+                L10n.UpdateWindow.availableMessage(release.version.description, current: currentVersionText),
+                asset == nil ? L10n.UpdateWindow.availableNoDiskImage : L10n.UpdateWindow.availableQuestion,
+            ].joined(separator: " "))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             ReleaseNotesView(release: release)
             links(pageURL: release.pageURL)
             buttons {
-                Button("Skip This Version") { updater.skip(release) }
+                Button(L10n.UpdateWindow.skipVersion) { updater.skip(release) }
                 Spacer()
-                Button("Remind Me Later") { updater.remindLater() }
+                Button(L10n.UpdateWindow.remindLater) { updater.remindLater() }
                     .keyboardShortcut(.cancelAction)
                 if asset == nil {
-                    Button("Open Release Page") { open(release.pageURL ?? UpdateLinks.releasesPage) }
+                    Button(L10n.UpdateWindow.openReleasePage) { open(release.pageURL ?? UpdateLinks.releasesPage) }
                         .keyboardShortcut(.defaultAction)
                 } else {
-                    Button("Download and Install") { updater.downloadAndInstall() }
+                    Button(L10n.UpdateWindow.downloadAndInstall) { updater.downloadAndInstall() }
                         .keyboardShortcut(.defaultAction)
                 }
             }
 
         case .downloading(let release, let fraction):
-            title("Downloading version \(release.version.description)…")
+            title(L10n.UpdateWindow.downloading(release.version.description))
             ProgressView(value: min(max(fraction, 0), 1))
                 .progressViewStyle(.linear)
-            Text("\(Int((fraction * 100).rounded())) %")
+            Text(min(max(fraction, 0), 1), format: .percent.precision(.fractionLength(0)))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
 
         case .installing(let release):
-            title("Installing version \(release.version.description)…")
+            title(L10n.Common.installingVersion(release.version.description))
             ProgressView()
                 .progressViewStyle(.linear)
-            Text("\(AppInfo.name) restarts when it's done.")
+            Text(L10n.UpdateWindow.restartsWhenDone(AppInfo.name))
                 .foregroundStyle(.secondary)
 
         case .restarting(let release):
-            title("Installed version \(release.version.description) — restarting…")
+            title(L10n.Common.installedRestarting(release.version.description))
             ProgressView()
                 .progressViewStyle(.linear)
-            Text("\(AppInfo.name) is reopening.")
+            Text(L10n.UpdateWindow.reopening(AppInfo.name))
                 .foregroundStyle(.secondary)
 
         case .stagedForDryRun(let release, let path):
-            title("Dry run finished")
-            Text("Version \(release.version.description) was downloaded, verified and copied to \(path). Nothing was replaced.")
+            title(L10n.UpdateWindow.dryRunTitle)
+            Text(L10n.UpdateWindow.dryRunMessage(release.version.description, path: path))
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
                 .fixedSize(horizontal: false, vertical: true)
             buttons {
                 Spacer()
-                Button("OK") { updater.remindLater() }
+                Button(L10n.Common.ok) { updater.remindLater() }
                     .keyboardShortcut(.defaultAction)
             }
 
         case .checkFailed(let message):
-            title("Couldn't check for updates")
+            title(L10n.UpdateWindow.checkFailed)
             failure(message)
             links(pageURL: nil)
             buttons {
-                Button("Open Releases Page") { open(UpdateLinks.releasesPage) }
+                Button(L10n.Common.openReleasesPage) { open(UpdateLinks.releasesPage) }
                 Spacer()
-                Button("Close") { updater.remindLater() }
+                Button(L10n.Common.close) { updater.remindLater() }
                     .keyboardShortcut(.cancelAction)
-                Button("Try Again") { updater.checkNow() }
+                Button(L10n.Common.tryAgain) { updater.checkNow() }
                     .keyboardShortcut(.defaultAction)
             }
 
         case .installFailed(let release, let asset, let message):
-            title("Version \(release.version.description) couldn't be installed")
+            title(L10n.UpdateWindow.installFailed(release.version.description))
             failure(message)
             links(pageURL: release.pageURL)
             buttons {
-                Button("Open Release Page") { open(release.pageURL ?? UpdateLinks.releasesPage) }
+                Button(L10n.UpdateWindow.openReleasePage) { open(release.pageURL ?? UpdateLinks.releasesPage) }
                 Spacer()
-                Button("Close") { updater.remindLater() }
+                Button(L10n.Common.close) { updater.remindLater() }
                     .keyboardShortcut(.cancelAction)
                 if asset != nil {
-                    Button("Try Again") { updater.downloadAndInstall() }
+                    Button(L10n.Common.tryAgain) { updater.downloadAndInstall() }
                         .keyboardShortcut(.defaultAction)
                 }
             }
@@ -187,8 +190,11 @@ private struct UpdateView: View {
 
     private func links(pageURL: URL?) -> some View {
         HStack(spacing: 16) {
-            Link("Changelog", destination: UpdateLinks.changelog)
-            Link(pageURL == nil ? "Releases" : "Release Page", destination: pageURL ?? UpdateLinks.releasesPage)
+            Link(L10n.Common.changelog, destination: UpdateLinks.changelog)
+            Link(
+                pageURL == nil ? L10n.UpdateWindow.releasesLink : L10n.UpdateWindow.releasePageLink,
+                destination: pageURL ?? UpdateLinks.releasesPage
+            )
         }
         .font(.callout)
     }
@@ -212,7 +218,7 @@ private struct ReleaseNotesView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Release Notes")
+            Text(L10n.UpdateWindow.releaseNotes)
                 .font(.subheadline.weight(.semibold))
             ScrollView {
                 Text(notes)
@@ -228,7 +234,7 @@ private struct ReleaseNotesView: View {
 
     private var notes: AttributedString {
         let text = release.notes.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return AttributedString("This release has no notes.") }
+        guard !text.isEmpty else { return AttributedString(L10n.UpdateWindow.noReleaseNotes) }
         let simplified = text
             .components(separatedBy: .newlines)
             .map(Self.simplify)

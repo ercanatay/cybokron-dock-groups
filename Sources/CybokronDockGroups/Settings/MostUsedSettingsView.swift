@@ -14,22 +14,22 @@ struct MostUsedSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Show Most Used in the menu bar", isOn: binding(\.showsMostUsed))
+                Toggle(L10n.Settings.MostUsed.show, isOn: binding(\.showsMostUsed))
                 LabeledContent {
-                    Picker("Apps shown", selection: binding(\.mostUsedLimit)) {
+                    Picker(L10n.Settings.MostUsed.appsShown, selection: binding(\.mostUsedLimit)) {
                         ForEach(MostUsedRanking.allowedLimits, id: \.self) { limit in
-                            Text("\(limit)").tag(limit)
+                            Text(verbatim: "\(limit)").tag(limit)
                         }
                     }
                     .labelsHidden()
                     .fixedSize()
                 } label: {
-                    Text("Apps shown")
-                    Text("The most opened apps, in the menu and in the Most Used popup.")
+                    Text(L10n.Settings.MostUsed.appsShown)
+                    Text(L10n.Settings.MostUsed.appsShownDetail)
                 }
                 .disabled(!settings.showsMostUsed)
                 LabeledContent {
-                    Picker("Session length", selection: binding(\.mostUsedSessionSeconds)) {
+                    Picker(L10n.Settings.MostUsed.sessionLength, selection: binding(\.mostUsedSessionSeconds)) {
                         ForEach(PopupPreferences.allowedMostUsedSessionSeconds, id: \.self) { seconds in
                             Text(Self.title(forSessionSeconds: seconds)).tag(seconds)
                         }
@@ -37,54 +37,55 @@ struct MostUsedSettingsView: View {
                     .labelsHidden()
                     .fixedSize()
                 } label: {
-                    Text("Opened together within")
-                    Text("Apps opened within this time of each other count as used together, which moves them up a little.")
+                    Text(L10n.Settings.MostUsed.openedTogether)
+                    Text(L10n.Settings.MostUsed.openedTogetherDetail)
                 }
             } header: {
-                Text("Most Used")
+                Text(MostUsedGroup.name)
             } footer: {
-                Text("Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted even while the list is hidden.")
+                Text(L10n.Settings.MostUsed.footer)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
-                LabeledContent("Recorded") {
+                LabeledContent(L10n.Settings.MostUsed.recorded) {
                     Text(summary)
                         .foregroundStyle(.secondary)
                 }
                 LabeledContent {
-                    Button("Clear History…") { confirmsClearing = true }
+                    Button(L10n.Settings.MostUsed.clearHistoryEllipsis) { confirmsClearing = true }
                         .disabled(usage.stats.isEmpty)
                 } label: {
-                    Text("History")
-                    Text("Stored on this Mac only, in usage-stats.json and usage-cooccurrence.json in Application Support.")
+                    Text(L10n.Settings.MostUsed.history)
+                    Text(L10n.Settings.MostUsed.historyDetail)
                 }
             } header: {
-                Text("Usage History")
+                Text(L10n.Settings.MostUsed.usageHistoryHeader)
             }
         }
         .formStyle(.grouped)
         .frame(width: 480)
         .fixedSize(horizontal: false, vertical: true)
-        .confirmationDialog("Clear the usage history?", isPresented: $confirmsClearing) {
-            Button("Clear History", role: .destructive) { usage.clearHistory() }
+        .confirmationDialog(L10n.Settings.MostUsed.clearConfirmTitle, isPresented: $confirmsClearing) {
+            Button(L10n.Settings.MostUsed.clearHistory, role: .destructive) { usage.clearHistory() }
         } message: {
-            Text("The Most Used list starts over. Your groups and apps aren't affected.")
+            Text(L10n.Settings.MostUsed.clearConfirmMessage)
         }
     }
 
     private var summary: String {
         let stats = usage.stats
-        guard !stats.isEmpty else { return "No launches yet" }
-        let launches = stats.totalLaunchCount
-        let apps = stats.apps.count
-        return "\(launches) \(launches == 1 ? "launch" : "launches") of \(apps) \(apps == 1 ? "app" : "apps")"
+        guard !stats.isEmpty else { return L10n.Settings.MostUsed.noLaunches }
+        return L10n.Settings.MostUsed.summary(
+            launches: L10n.Settings.MostUsed.launchCount(stats.totalLaunchCount),
+            apps: L10n.Common.appCount(stats.apps.count)
+        )
     }
 
+    /// "15 minutes", "1 hour", in the user's language.
     static func title(forSessionSeconds seconds: Int) -> String {
-        let minutes = seconds / 60
-        return minutes == 60 ? "1 hour" : "\(minutes) minutes"
+        Duration.seconds(seconds).formatted(.units(allowed: [.hours, .minutes], width: .wide))
     }
 
     private func binding<Value>(_ keyPath: WritableKeyPath<PopupPreferences, Value>) -> Binding<Value> {
