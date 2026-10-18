@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-19
+
+### Added
+
+- Settings → Changelog tab: release notes fetched from GitHub Releases shown as an accordion (latest open by default, Latest/Installed/Pre-release badges), current-version display, manual refresh with cache (works offline from `changelog-cache.json`)
+
 ## [0.6.0] - 2026-10-19
 
 ### Added
@@ -277,7 +283,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.7...v0.5.8
