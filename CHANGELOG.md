@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - The About window shows a "Find Me Online" row with social profile icons (LinkedIn, X, Instagram,
-  YouTube, TikTok, Threads, Reddit, Pinterest, Steam, WordPress.org, GitHub, Medium, Facebook, Vimeo,
+  YouTube, TikTok, Threads, Pinterest, Steam, WordPress.org, GitHub, Medium, Facebook, Vimeo,
   Flickr, Ekşi Sözlük, Wikipedia).
 - **Hide All** hides a group's running apps (apps that aren't running stay closed): in the popup
   next to Open All and Close All, with ⇧⌥ in the menu bar menu, in the group window and a group's

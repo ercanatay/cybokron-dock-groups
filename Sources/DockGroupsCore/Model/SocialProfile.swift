@@ -14,7 +14,6 @@ public struct SocialProfile: Identifiable, Equatable, Sendable {
         make("youtube", "YouTube", "https://www.youtube.com/@ErcanAtay"),
         make("tiktok", "TikTok", "https://www.tiktok.com/@ercanatay"),
         make("threads", "Threads", "https://www.threads.net/@ercanatay"),
-        make("reddit", "Reddit", "https://www.reddit.com/user/ercanatay/"),
         make("pinterest", "Pinterest", "https://www.pinterest.com/ercanatay/"),
         make("steam", "Steam", "https://steamcommunity.com/id/cybokron/"),
         make("wordpress", "WordPress.org", "https://profiles.wordpress.org/cybokron/"),

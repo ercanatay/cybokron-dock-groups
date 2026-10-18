@@ -3,8 +3,8 @@ import Testing
 @testable import DockGroupsCore
 
 struct SocialProfileTests {
-    @Test func hasSeventeenProfiles() {
-        #expect(SocialProfile.all.count == 17)
+    @Test func hasSixteenProfiles() {
+        #expect(SocialProfile.all.count == 16)
     }
 
     @Test func urlsAreHTTPSWithAHost() {
