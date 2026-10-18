@@ -479,7 +479,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.diagnostics.panel.message` | Save the diagnostics report as a text file, e.g. to attach to a GitHub issue. |
 | `settings.diagnostics.panel.prompt` | Save |
 
-## Settings → Changelog (English only for now: translations show this English text until they add these keys)
+## Settings → Changelog (fully translated; `awaitingTranslation` is empty)
 
 | Key | English |
 | --- | --- |

@@ -33,9 +33,9 @@ struct LocalizationTests {
 
     /// Key prefixes of texts added after the last translation pass, still English only:
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
-    /// and the keys they do have keep the English placeholders. Remove a prefix once every language
-    /// has its keys.
-    static let awaitingTranslation = ["changelog."]
+    /// and the keys they do have keep the English placeholders. Currently none: add a prefix here
+    /// when new untranslated keys are added, and remove it once every language has its keys.
+    static let awaitingTranslation: [String] = []
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }
