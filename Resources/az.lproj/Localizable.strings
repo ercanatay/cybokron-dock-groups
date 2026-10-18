@@ -520,3 +520,21 @@
 "core.update.install.httpStatus" = "HTTP statusu %ld.";
 "core.update.install.copyFailed" = "Tətbiqin kopyalanması alınmadı: %@";
 "core.mostUsed.name" = "Ən çox istifadə";
+
+/* Changelog */
+"changelog.tab" = "Dəyişikliklər";
+"changelog.currentVersion" = "Cari versiya: %@";
+"changelog.refresh" = "Yenilə";
+"changelog.refresh.help" = "Ən son buraxılış qeydlərini GitHub-dan yüklə";
+"changelog.lastUpdated" = "Son yenilənmə %@";
+"changelog.header" = "Buraxılış qeydləri";
+"changelog.footer" = "Layihənin GitHub buraxılışlarından götürülüb. Bir nüsxə bu Mac-də saxlanılır, ona görə qeydlər oflayn da görünür.";
+"changelog.latest" = "Ən yeni";
+"changelog.installed" = "Quraşdırılıb";
+"changelog.prerelease" = "Önburaxılış";
+"changelog.noNotes" = "Bu versiya üçün buraxılış qeydi yoxdur.";
+"changelog.loading" = "Buraxılış qeydləri GitHub-dan yüklənir…";
+"changelog.unavailable" = "Buraxılış qeydləri əlçatan deyil";
+"changelog.error.cached" = "Buraxılış qeydləri yüklənmədi — önbelleğe alınmış nüsxə göstərilir.";
+"changelog.retry" = "Yenidən cəhd etmək üçün Yenilə düyməsinə klikləyin.";
+"changelog.openRelease" = "GitHub-da bax";

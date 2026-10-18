@@ -518,3 +518,21 @@
 "core.update.install.httpStatus" = "HTTP durumu %ld.";
 "core.update.install.copyFailed" = "Uygulama kopyalanamadı: %@";
 "core.mostUsed.name" = "En Çok Kullanılan";
+
+/* Changelog */
+"changelog.tab" = "Değişiklik Günlüğü";
+"changelog.currentVersion" = "Mevcut sürüm: %@";
+"changelog.refresh" = "Yenile";
+"changelog.refresh.help" = "En son sürüm notlarını GitHub'dan yükle";
+"changelog.lastUpdated" = "Son güncelleme %@";
+"changelog.header" = "Sürüm Notları";
+"changelog.footer" = "GitHub sürümlerinden alınmıştır. Bir kopya bu Mac'te saklanır, bu yüzden notlar çevrimdışıyken de görünür.";
+"changelog.latest" = "En yeni";
+"changelog.installed" = "Kurulu";
+"changelog.prerelease" = "Ön sürüm";
+"changelog.noNotes" = "Bu sürüm için sürüm notu yok.";
+"changelog.loading" = "GitHub'dan sürüm notları yükleniyor…";
+"changelog.unavailable" = "Sürüm notları kullanılamıyor";
+"changelog.error.cached" = "Sürüm notları yüklenemedi — önbellekteki kopya gösteriliyor.";
+"changelog.retry" = "Tekrar denemek için Yenile'ye tıklayın.";
+"changelog.openRelease" = "GitHub'da görüntüle";
