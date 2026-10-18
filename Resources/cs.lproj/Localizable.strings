@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (Čeština)
+  Cybokron Dock Groups
+
+  Český text každého klíče. Zástupné znaky zůstávají: %@ je text, %ld číslo a %1$@, %2$ld … jsou
+  číslované, aby překlad mohl změnit jejich pořadí. Klíče končící na .one/.other jsou jednotné číslo
+  (počet 1) a množné číslo. Název aplikace „Cybokron Dock Groups“, „DockGroups“, „GitHub“, „Siri“, symboly
+  kláves (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) a názvy souborů zůstávají beze změny.
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "OK";
+"common.cancel" = "Zrušit";
+"common.add" = "Přidat";
+"common.copy" = "Kopírovat";
+"common.copied" = "Zkopírováno";
+"common.close" = "Zavřít";
+"common.done" = "Hotovo";
+"common.install" = "Nainstalovat";
+"common.tryAgain" = "Zkusit znovu";
+"common.openAll" = "Otevřít vše";
+"common.hideAll" = "Skrýt vše";
+"common.closeAll" = "Zavřít vše";
+"common.forceQuit" = "Vynucené ukončení";
+"common.addApps" = "Přidat aplikace…";
+"common.addWebsite" = "Přidat web…";
+"common.showInFinder" = "Zobrazit ve Findru";
+"common.removeFromGroup" = "Odebrat ze skupiny";
+"common.moveTo" = "Přesunout do";
+"common.default" = "Výchozí";
+"common.auto" = "Automaticky";
+"common.changelog" = "Seznam změn";
+"common.links" = "Odkazy";
+"common.openReleasesPage" = "Otevřít stránku vydání";
+"common.openPrivacySettings" = "Otevřít Soukromí a zabezpečení…";
+"common.checkForUpdates" = "Zkontrolovat aktualizace…";
+"common.settings" = "Nastavení…";
+"common.noLaunchesYet" = "Zatím nejsou zaznamenána žádná spuštění";
+"common.noAppsInGroup" = "Tato skupina zatím nemá žádné aplikace";
+"common.about" = "O aplikaci %@";
+"common.hideApp" = "Skrýt %@";
+"common.quitApp" = "Ukončit %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "Instalace verze %@…";
+"common.update.restarting" = "Verze %@ nainstalována — restartování…";
+"common.appCount.one" = "1 aplikace";
+"common.appCount.other" = "%ld aplikací";
+"common.groupCount.one" = "1 skupina";
+"common.groupCount.other" = "%ld skupin";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "Skupiny";
+"menuBar.noGroups" = "Zatím žádné skupiny";
+"menuBar.manageGroups" = "Spravovat skupiny…";
+"menuBar.mostUsed.empty.tooltip" = "Otevírejte aplikace jako obvykle; ty, které otevíráte nejčastěji, se zobrazí zde.";
+"menuBar.mostUsed.show" = "Zobrazit nejpoužívanější";
+"menuBar.mostUsed.show.tooltip" = "Zobrazit nejčastěji otevírané aplikace ve vyskakovacím okně.";
+"menuBar.checkForUpdates.tooltip" = "Vyhledat na GitHubu novější verzi aplikace %@.";
+"menuBar.mostUsed.app.tooltip.one" = "Otevřít %@. Otevřeno jednou.";
+"menuBar.mostUsed.app.tooltip.other" = "Otevřít %1$@. Otevřeno %2$ld krát.";
+"menuBar.group.tooltip" = "Zobrazit aplikace v „%@“. Podržte ⌥ pro otevření všech najednou, nebo ⇧⌥ pro skrytí spuštěných.";
+"menuBar.group.tooltip.shortcut" = "Zobrazit aplikace v „%1$@“. Podržte ⌥ pro otevření všech najednou, nebo ⇧⌥ pro skrytí spuštěných. Zkratka: %2$@.";
+"menuBar.group.openAll" = "Otevřít vše v „%@“";
+"menuBar.group.openAll.tooltip.one" = "Otevřít aplikaci v „%@“";
+"menuBar.group.openAll.tooltip.other" = "Otevřít všech %1$ld aplikací v „%2$@“";
+"menuBar.group.noApps" = "„%@“ zatím nemá žádné aplikace.";
+"menuBar.group.hideAll" = "Skrýt vše v „%@“";
+"menuBar.group.hideAll.tooltip" = "Skrýt spuštěné aplikace v „%@“. Aplikace, které neběží, zůstanou zavřené.";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "Úpravy";
+"mainMenu.undo" = "Zpět";
+"mainMenu.redo" = "Znovu";
+"mainMenu.cut" = "Vyjmout";
+"mainMenu.paste" = "Vložit";
+"mainMenu.selectAll" = "Vybrat vše";
+"mainMenu.window" = "Okno";
+"mainMenu.minimize" = "Minimalizovat";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "Otevřít každou aplikaci v této skupině; spuštěné aplikace se přesunou do popředí.";
+"popup.openAll.help.mostUsed" = "Otevřít každou aplikaci v tomto seznamu; spuštěné aplikace se přesunou do popředí.";
+"popup.hideAll.help.group" = "Skrýt spuštěné aplikace této skupiny; aplikace, které neběží, zůstanou zavřené.";
+"popup.hideAll.help.mostUsed" = "Skrýt spuštěné aplikace z tohoto seznamu; aplikace, které neběží, zůstanou zavřené.";
+"popup.closeAll.help.group" = "Ukončit spuštěné aplikace této skupiny. ⌘-klik vynutí ukončení bez uložení.";
+"popup.closeAll.help.mostUsed" = "Ukončit spuštěné aplikace z tohoto seznamu. ⌘-klik vynutí ukončení bez uložení.";
+"popup.summary.websites.one" = "1 web";
+"popup.summary.websites.other" = "%ld webů";
+"popup.summary.running" = "spuštěno: %ld";
+"popup.summary.byLaunches" = "podle spuštění";
+"popup.filter.noMatch" = "Žádná aplikace neodpovídá „%@“";
+"popup.filter.noMatch.hint" = "Stiskněte Delete nebo Esc pro vymazání filtru.";
+"popup.empty.mostUsed.hint" = "Otevírejte aplikace jako obvykle a začněte budovat historii.";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "Seřadit aplikace v této skupině podle názvu, od A do Z.";
+"popup.footer.sortAZ.accessibility" = "Seřadit od A do Z";
+"popup.footer.filter.matches" = "Filtr: „%@“  ·  ↩ otevře vybranou aplikaci  ·  esc vymaže";
+"popup.footer.filter.noMatch" = "Filtr: „%@“  ·  žádná shoda  ·  ⌫ nebo esc vymaže";
+"popup.footer.hint.mostUsed" = "Seřazeno podle počtu otevření  ·  ⌘-klik na Zavřít vše vynutí ukončení";
+"popup.footer.hint.group" = "Zavřít vše:  ⌥-klik ukončí normálně  ·  ⌘-klik vynutí ukončení";
+"popup.footer.drag.remove" = "Uvolněte pro odebrání %@ z této skupiny";
+"popup.footer.drag.free" = "Pusťte %@ na libovolné buňce; na jiné aplikaci pro prohození  ·  přetažením ven odeberete";
+"popup.footer.drag.ordered" = "Pusťte pro umístění %@  ·  přetažením z okna ji odeberete";
+"popup.cell.accessibility.website" = "Web %@";
+"popup.cell.hint.website" = "Otevře web ve vašem prohlížeči";
+"popup.cell.hint.running" = "Přenese aplikaci do popředí";
+"popup.cell.hint.open" = "Otevře aplikaci";
+"popup.cell.help.openWebsite" = "Otevřít %@ ve vašem prohlížeči.";
+"popup.cell.help.bringToFront" = "Přenést %@ do popředí.";
+"popup.cell.help.openApp" = "Otevřít %@.";
+"popup.cell.help.missing" = "%@ na tomto Macu není.";
+"popup.cell.help.drag.freeItem" = "Přetáhněte na libovolnou buňku nebo na jinou položku pro prohození, nebo z okna pro odebrání ze skupiny.";
+"popup.cell.help.drag.freeApp" = "Přetáhněte na libovolnou buňku nebo na jinou aplikaci pro prohození, nebo z okna pro odebrání ze skupiny.";
+"popup.cell.help.drag.ordered" = "Přetažením změníte pořadí, nebo z okna pro odebrání ze skupiny.";
+"popup.cell.help.drag.missing" = "Přetáhněte z okna pro odebrání ze skupiny.";
+"popup.menu.open" = "Otevřít";
+"popup.menu.copyURL" = "Kopírovat URL";
+"popup.accessibility.moveEarlier" = "Přesunout dříve";
+"popup.accessibility.moveLater" = "Přesunout později";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "Zatím žádné skupiny";
+"groupWindow.empty.noSelection" = "Není vybrána žádná skupina";
+"groupWindow.empty.noGroups.description" = "Přidejte skupinu, která seskupí aplikace, které používáte společně.";
+"groupWindow.empty.noSelection.description" = "Vyberte skupinu k úpravě.";
+"groupWindow.addGroup" = "Přidat skupinu";
+"groupWindow.rename.title" = "Přejmenovat skupinu";
+"groupWindow.rename.confirm" = "Přejmenovat";
+"groupWindow.rename.message" = "Zadejte nový název skupiny.";
+"groupWindow.delete.title" = "Smazat „%@“?";
+"groupWindow.delete.confirm" = "Smazat skupinu";
+"groupWindow.delete.message.standalone" = "Tím se odstraní skupina i její seznam aplikací a její vlastní ikona v Docku. Samotné aplikace nejsou dotčeny.";
+"groupWindow.delete.message" = "Tím se odstraní skupina a její seznam aplikací. Samotné aplikace nejsou dotčeny.";
+"groupWindow.sidebar.rename" = "Přejmenovat…";
+"groupWindow.sidebar.delete" = "Smazat…";
+"groupWindow.sidebar.add.help" = "Přidat skupinu";
+"groupWindow.sidebar.delete.help" = "Smazat vybranou skupinu";
+"groupWindow.addApps.problem.title" = "Některé aplikace nebylo možné přidat";
+"groupWindow.section.group" = "Skupina";
+"groupWindow.name" = "Název";
+"groupWindow.emoji" = "Emoji";
+"groupWindow.emoji.choose" = "Vybrat…";
+"groupWindow.section.apps" = "Aplikace";
+"groupWindow.apps.empty" = "Zatím žádné aplikace. Použijte „%1$@“ pro výběr aplikací pro tuto skupinu, nebo „%2$@“ pro webový odkaz.";
+"groupWindow.addWebsite.help" = "Přidat do této skupiny webový odkaz. Otevře se ve výchozím prohlížeči.";
+"groupWindow.sortAZ" = "Seřadit A→Z";
+"groupWindow.sortAZ.help" = "Seřadit aplikace v této skupině podle názvu, od A do Z. Přetažením je můžete seřadit ručně.";
+"groupWindow.showPopup" = "Zobrazit okno";
+"groupWindow.showPopup.help" = "Zobrazit vyskakovací okno této skupiny nad Dockem.";
+"groupWindow.hideAll.help" = "Skrýt spuštěné aplikace této skupiny. Aplikace, které neběží, zůstanou zavřené.";
+"groupWindow.apps.moveHint" = "Chcete-li přesunout aplikaci do jiné skupiny, přetáhněte ji na tuto skupinu v postranním panelu, nebo použijte %@ v jejím kontextovém menu.";
+"groupWindow.app.notFound" = "Na tomto Macu nenalezeno · %@";
+"groupWindow.app.remove.website" = "Odebrat %@ z této skupiny.";
+"groupWindow.app.remove" = "Odebrat %@ z této skupiny. Samotná aplikace není dotčena.";
+"groupWindow.section.dockTile" = "Dlaždice v Docku";
+"groupWindow.tile.preview" = "Náhled";
+"groupWindow.tile.shows" = "Zobrazuje";
+"groupWindow.tile.kind.grid" = "Mřížka ikon aplikací";
+"groupWindow.tile.background" = "Pozadí";
+"groupWindow.tile.backgroundColor" = "Barva pozadí";
+"groupWindow.tile.pinned" = "Ponechat dlaždici připnutou v Docku";
+"groupWindow.tile.preview.accessibility" = "Náhled dlaždice, %ld bodů";
+"groupWindow.section.standalone" = "Samostatná";
+"groupWindow.standalone.toggle" = "Samostatná ikona v Docku";
+"groupWindow.standalone.help" = "Dát této skupině vlastní aplikaci s vlastní ikonou v Docku.";
+"groupWindow.standalone.settingUp" = "Nastavování ikony v Docku…";
+"groupWindow.standalone.removing" = "Odstraňování ikony z Docku…";
+"groupWindow.standalone.groupApp" = "Aplikace skupiny";
+"groupWindow.standalone.updateDockIcon" = "Aktualizovat ikonu v Docku";
+"groupWindow.standalone.updateDockIcon.help" = "Restartovat Dock s čerstvou mezipamětí ikon, aby dlaždice zobrazila aktuální ikonu skupiny.";
+"groupWindow.standalone.staleIcon" = "Dock stále zobrazuje předchozí ikonu.";
+"groupWindow.standalone.footer" = "Dá skupině vlastní malou aplikaci, s výše uvedenou dlaždicí jako ikonou, na konec Docku. Kliknutí zobrazí vyskakovací okno skupiny (⌥-klik otevře všechny její aplikace), i když %@ neběží; kliknutí pravým tlačítkem vypíše aplikace skupiny (Nastavení → Okno). Vypnutí této volby, smazání skupiny nebo přetažení ikony z Docku tuto aplikaci odstraní. Přidání nebo odebrání ikony na chvíli restartuje Dock.";
+"groupWindow.section.popup" = "Okno";
+"groupWindow.popup.columns" = "Sloupce";
+"groupWindow.popup.maxRows" = "Maximální počet řádků";
+"groupWindow.popup.appNames" = "Názvy aplikací";
+"groupWindow.popup.show" = "Zobrazit";
+"groupWindow.popup.hide" = "Skrýt";
+"groupWindow.popup.position" = "Umístění";
+"groupWindow.popup.footer" = "„%@“ se řídí nastaveními vyskakovacího okna pro celou aplikaci.";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "Jednobarevné";
+"choice.tileBackground.gradient" = "Přechod";
+"choice.tileBackground.glass" = "Sklo";
+"choice.popupAnchor.dockCenter" = "Vycentrováno nad Dockem";
+"choice.popupAnchor.dockIcon" = "Nad kliknutou ikonou";
+"choice.theme.dark" = "Tmavý";
+"choice.theme.light" = "Světlý";
+"choice.theme.system" = "Podle systému";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "Přidat web";
+"addWebsite.title" = "Přidat web do „%@“";
+"addWebsite.address" = "Adresa:";
+"addWebsite.address.accessibility" = "Adresa webu";
+"addWebsite.name" = "Název:";
+"addWebsite.name.accessibility" = "Název webu, volitelný";
+"addWebsite.name.placeholder" = "Volitelné";
+"addWebsite.hint" = "Otevře se ve výchozím prohlížeči. Ponechte název prázdný, chcete-li použít adresu webu.";
+"addWebsite.duplicate" = "„%@“ je již v této skupině.";
+
+/* Add Apps open panel */
+"appPicker.title" = "Přidat aplikace do skupiny";
+"appPicker.message" = "Vyberte aplikace, které chcete přidat do „%@“.";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "Aplikace v „%@“ nebylo možné otevřít.";
+"problems.launch.someFailed" = "Některé aplikace v „%@“ nebylo možné otevřít.";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "na tomto Macu nenalezeno.";
+"problems.launch.opened" = "otevřeno.";
+"problems.quit.force" = "Některé aplikace v „%@“ nebylo možné vynuceně ukončit.";
+"problems.quit.graceful" = "Některým aplikacím v „%@“ nebylo možné poslat žádost o ukončení.";
+"problems.hide" = "Některé aplikace v „%@“ nebylo možné skrýt.";
+"problems.standalone.failed" = "„%@“ nemohla získat vlastní ikonu v Docku.";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "Aplikace této skupiny nemůže otevřít svou skupinu.";
+"agent.damaged.message" = "%1$@\n\nV %2$@ vypněte a znovu zapněte Samostatnou pro danou skupinu, aby si aplikaci znovu sestavila.";
+"agent.error.groupMismatch" = "Nastavení aplikace patří jiné skupině.";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "Už zapnuto? Po aktualizaci může položka patřit předchozí verzi: vyberte %@, odeberte ji tlačítkem −, a poté aplikaci znovu přidejte tlačítkem +.";
+
+/* Settings window */
+"settings.window.title" = "Nastavení";
+
+/* Settings tabs */
+"settings.tab.popup" = "Okno";
+"settings.tab.shortcuts" = "Zkratky a Siri";
+"settings.tab.updates" = "Aktualizace";
+"settings.tab.backup" = "Záloha";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "Jazyk";
+"general.language.system" = "Systémový (%1$@)";
+"general.language.restartNote" = "Nový jazyk se projeví po restartování aplikace.";
+"general.language.restartNow" = "Restartovat nyní";
+
+/* Settings → Popup */
+"settings.popup.theme" = "Motiv";
+"settings.popup.frostedGlass" = "Pozadí z matného skla";
+"settings.popup.appearance.header" = "Vzhled okna";
+"settings.popup.appearance.footer" = "Motiv platí jen pro vyskakovací okno; toto okno se řídí vzhledem macOS.";
+"settings.popup.columns" = "Sloupce";
+"settings.popup.columns.detail" = "Automaticky zachová standardní šířku okna; číslo nastaví šířku jen na tu, kterou skupina potřebuje.";
+"settings.popup.maxRows" = "Maximální počet řádků";
+"settings.popup.maxRows.detail" = "Omezuje výšku okna; větší skupiny se posouvají.";
+"settings.popup.showNames" = "Zobrazit názvy aplikací";
+"settings.popup.position" = "Umístění";
+"settings.popup.position.detail" = "Nad kliknutou ikonou otevře okno nad ikonou skupiny v Docku, nebo pod ikonou v liště menu, pokud je zvoleno v jejím menu. Okna otevřená zkratkou, odkazem nebo Siri zůstávají vycentrována nad Dockem.";
+"settings.popup.layout.header" = "Rozložení okna";
+"settings.popup.layout.footer" = "Toto jsou výchozí hodnoty pro každou skupinu. Každá skupina je může přepsat v části Spravovat skupiny.";
+"settings.popup.freeLayout" = "Volné rozložení";
+"settings.popup.freeLayout.detail" = "Aplikace zůstanou v buňce, do které je přetáhnete, a ostatní se nepohnou; přetažení aplikace na jinou je prohodí.";
+"settings.popup.arranging.header" = "Uspořádání aplikací";
+"settings.popup.arranging.footer" = "Vypnuto: aplikace skupiny vyplní okno postupně a při přesunutí jedné uvolní místo. A→Z v okně seřadí skupinu podle názvu v obou případech.";
+"settings.popup.restoreWindows" = "Obnovit okna při znovuotevření běžící aplikace";
+"settings.popup.restoreWindows.detail" = "Kliknutí na běžící aplikaci obnoví její skrytá a minimalizovaná okna, jako kliknutí v Docku. Vypnuto: aplikace se jen přenese do popředí.";
+"settings.popup.runningApps.header" = "Běžící aplikace";
+"settings.popup.dockMenus" = "Menu u ikon skupin v Docku";
+"settings.popup.dockMenus.detail" = "Pravé kliknutí na samostatnou ikonu skupiny v Docku zobrazí její aplikace, Otevřít vše, Skrýt vše a Zavřít vše, jakmile byla ikona kliknuta. Její aplikace se pak v Docku a v ⌘-Tab zobrazuje jako běžící.";
+"settings.popup.standaloneIcons.header" = "Samostatné ikony v Docku";
+"settings.popup.ax.granted" = "Přístup k Usnadnění přístupu povolen: vrátí se i minimalizovaná okna";
+"settings.popup.ax.required" = "Obnovení minimalizovaných oken vyžaduje přístup k Usnadnění přístupu";
+"settings.popup.ax.detail" = "Povolte %@ v Nastavení systému → Soukromí a zabezpečení → Usnadnění přístupu. Dokud to neuděláte, skryté aplikace se stále vrátí a aplikace budou požádány o znovuotevření jako z Docku. Samostatné ikony skupin potřebují přístup pro své vlastní aplikace.";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "Otevírat okna skupin klávesovými zkratkami";
+"settings.shortcuts.modifiers" = "Modifikační klávesy";
+"settings.shortcuts.keys" = "Klávesy zkratky";
+"settings.shortcuts.keys.detail" = "Podržte tyto klávesy a stiskněte 1 pro první skupinu, 2 pro druhou atd. Stisknutím znovu okno zavřete.";
+"settings.shortcuts.header" = "Klávesové zkratky";
+"settings.shortcuts.ax.granted" = "Funguje ve všech aplikacích";
+"settings.shortcuts.ax.needed" = "Vyžaduje přístup k Usnadnění přístupu";
+"settings.shortcuts.ax.detail" = "Aby zkratky fungovaly při práci v jiných aplikacích, povolte %@ v Nastavení systému → Soukromí a zabezpečení → Usnadnění přístupu. Dokud to neuděláte, fungují jen tehdy, když je aktivní jeho okno nebo okno jeho skupiny.";
+"settings.shortcuts.noGroups" = "Zatím žádné skupiny.";
+"settings.shortcuts.assigned.header" = "Přiřazené skupiny";
+"settings.shortcuts.assigned.footer.limit" = "Zkratky mají jen prvních devět skupin. Změnu pořadí provedete přetažením skupin ve Spravovat skupiny.";
+"settings.shortcuts.assigned.footer" = "Zkratky se řídí pořadím skupin ve Spravovat skupiny.";
+"settings.shortcuts.siri.group" = "Skupina";
+"settings.shortcuts.siri.quoted" = "„%@“";
+"settings.shortcuts.siri.noGroups" = "Přidejte skupinu, abyste viděli, o co pro ni požádat Siri.";
+"settings.shortcuts.openShortcuts" = "Otevřít Zástupce";
+"settings.shortcuts.shortcutsApp" = "Aplikace Zástupci";
+"settings.shortcuts.shortcutsApp.detail" = "Spustit skupinu, Ukončit skupinu a Zobrazit skupinu jsou tam i ve Spotlightu k dispozici jako akce: přidejte je do svých vlastních zástupců s vlastním spouštěčem.";
+"settings.shortcuts.siri.header" = "Siri a Zástupci";
+"settings.shortcuts.siri.footer" = "Požádejte Siri těmito slovy, hlasem nebo psaním. Používají aktuální název skupiny; zástupci, které vytvoříte, fungují i po přejmenování.";
+"settings.shortcuts.links.noGroups" = "Přidejte skupinu, abyste viděli její odkazy.";
+"settings.shortcuts.links.footer" = "Otevřete odkaz ze skriptu nebo jiné aplikace, např. příkazem `open` v Terminálu. Skupina se určuje podle názvu (velikost písmen, diakritika a interpunkce nehrají roli), nebo, je-li název nejednoznačný, podle ID. Chcete-li vynutit ukončení, přidejte k odkazu pro ukončení ?mode=force.";
+"settings.shortcuts.copy.help" = "Zkopírovat „%@“ do schránky.";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "Zobrazit nejpoužívanější v liště menu";
+"settings.mostUsed.appsShown" = "Zobrazené aplikace";
+"settings.mostUsed.appsShown.detail" = "Nejčastěji otevírané aplikace, v menu i v okně Nejpoužívanější.";
+"settings.mostUsed.sessionLength" = "Délka relace";
+"settings.mostUsed.together" = "Otevřeno společně během";
+"settings.mostUsed.together.detail" = "Aplikace otevřené v tomto časovém rozmezí od sebe se počítají jako používané společně, což je mírně posune výš.";
+"settings.mostUsed.footer" = "Aplikace jsou seřazeny podle počtu otevření z Docku, Findru, Spotlightu nebo skupiny. Spuštění se počítají i tehdy, když je seznam skrytý.";
+"settings.mostUsed.recorded" = "Zaznamenáno";
+"settings.mostUsed.clear" = "Vymazat historii…";
+"settings.mostUsed.history" = "Historie";
+"settings.mostUsed.history.detail" = "Ukládá se pouze na tomto Macu, v souborech usage-stats.json a usage-cooccurrence.json v Application Support.";
+"settings.mostUsed.usageHistory.header" = "Historie použití";
+"settings.mostUsed.clear.confirm.title" = "Vymazat historii použití?";
+"settings.mostUsed.clear.confirm.button" = "Vymazat historii";
+"settings.mostUsed.clear.confirm.message" = "Seznam Nejpoužívanější začne od začátku. Vaše skupiny a aplikace nejsou dotčeny.";
+"settings.mostUsed.summary.none" = "Zatím žádná spuštění";
+"settings.mostUsed.summary.launches.one" = "1 spuštění";
+"settings.mostUsed.summary.launches.other" = "%ld spuštění";
+"settings.mostUsed.summary" = "%1$@ z %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "Automaticky kontrolovat aktualizace";
+"settings.updates.currentVersion" = "Aktuální verze";
+"settings.updates.lastChecked" = "Naposledy kontrolováno";
+"settings.updates.checkNow" = "Zkontrolovat nyní";
+"settings.updates.otherVersions" = "Jiné verze…";
+"settings.updates.footer" = "Kontroluje vydání projektu na GitHubu při spuštění a každých 6 hodin; odesílá se pouze číslo verze aplikace. Nová verze se nainstaluje až poté, co zvolíte Stáhnout a nainstalovat. Jiné verze… nainstalují libovolné zveřejněné vydání, starší i novější; návrat ke starší verzi přeskakuje novější při automatických kontrolách.";
+"settings.updates.viewChangelog" = "Zobrazit seznam změn";
+"settings.updates.latestPath" = "Návrat k nejnovější cestě: nabízí se každé novější vydání";
+"settings.updates.skipped" = "Přeskočené novější verze: %@";
+"settings.updates.clear" = "Vymazat";
+"settings.updates.clear.help" = "Nechat automatické kontroly znovu nabízet tyto verze";
+"settings.updates.never" = "Nikdy";
+"settings.updates.status.idle" = "Od spuštění aplikace nekontrolováno";
+"settings.updates.status.checking" = "Kontrola…";
+"settings.updates.status.upToDate" = "Máte nejnovější verzi (v%@)";
+"settings.updates.status.available" = "Je k dispozici verze %@";
+"settings.updates.showUpdate" = "Zobrazit aktualizaci…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "Jiné verze";
+"settings.otherVersions.intro" = "Nainstalujte libovolné zveřejněné vydání aplikace %@, starší i novější. Aplikace se ukončí a znovu otevře jako vybraná verze.";
+"settings.otherVersions.releasesLink" = "Otevřít stránku vydání na GitHubu";
+"settings.otherVersions.loading" = "Načítání vydání z GitHubu…";
+"settings.otherVersions.none" = "GitHub neuvádí žádná zveřejněná vydání.";
+"settings.otherVersions.current" = "Aktuální";
+"settings.otherVersions.noDownload" = "Bez ke stažení";
+"settings.otherVersions.install.help" = "Nainstalovat verzi %@";
+"settings.otherVersions.install.noImage" = "Toto vydání nemá disková obraz, ze kterého by šlo nainstalovat.";
+"settings.otherVersions.confirm.title" = "Nainstalovat verzi %@?";
+"settings.otherVersions.confirm.quits" = "%1$@ se ukončí a znovu otevře jako verze %2$@.";
+"settings.otherVersions.confirm.cantUpdate" = "Verze %@ se nedokáže aktualizovat sama: chcete-li se vrátit, stáhněte novější verzi ze stránky vydání.";
+"settings.otherVersions.confirm.skips" = "Automatické kontroly pak přeskočí novější verze (%@); Zkontrolovat aktualizace… je přesto nabídne.";
+"settings.otherVersions.confirm.older" = "Starší verze nemusí znát funkce přidané později; zvažte nejprve export zálohy (Nastavení → Záloha).";
+"settings.otherVersions.confirm.upgrade" = "Přeskočené verze budou vymazány, takže automatické kontroly znovu nabídnou každé novější vydání.";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "Exportovat nastavení…";
+"settings.backup.export" = "Exportovat";
+"settings.backup.export.detail" = "Uloží vaše skupiny a nastavení do souboru .dockgroups.";
+"settings.backup.import.button" = "Importovat nastavení…";
+"settings.backup.import" = "Importovat";
+"settings.backup.import.detail" = "Nahradí vaše skupiny a nastavení těmi ze zálohového souboru, nebo sloučí nové skupiny ze zálohy s vašimi.";
+"settings.backup.footer" = "Záloha obsahuje vaše skupiny, jejich aplikace a všechna nastavení. Počty spuštění pro Nejpoužívanější nejsou zahrnuty. Soubor zůstává tam, kam ho uložíte.";
+"settings.backup.status.exported" = "Exportováno do „%@“";
+"settings.backup.status.restored" = "Obnoveno: %1$@ s %2$@";
+"settings.backup.status.merged" = "Sloučeno %@ ze zálohy";
+"settings.backup.status.mergedSkipped" = "Sloučeno %1$@ ze zálohy; %2$ld už tu je";
+"settings.backup.exportPanel.title" = "Exportovat nastavení";
+"settings.backup.exportPanel.message" = "Uložte skupiny a nastavení do zálohového souboru.";
+"settings.backup.exportFailed" = "Nastavení nebylo možné exportovat";
+"settings.backup.importPanel.title" = "Importovat nastavení";
+"settings.backup.importPanel.message" = "Vyberte zálohu %@ k obnovení.";
+"settings.backup.readFailed" = "Soubor nebylo možné přečíst";
+"settings.backup.confirm.title" = "Importovat skupiny a nastavení z této zálohy?";
+"settings.backup.confirm.replaceAll" = "Nahradit vše";
+"settings.backup.confirm.merge" = "Sloučit";
+"settings.backup.restoreFailed" = "Zálohu nebylo možné obnovit";
+"settings.backup.restoreFailed.kept" = "%@ Vaše aktuální skupiny a nastavení byly zachovány.";
+"settings.backup.mergeFailed" = "Zálohu nebylo možné sloučit";
+"settings.backup.mergeFailed.kept" = "%@ Vaše aktuální skupiny byly zachovány.";
+"settings.backup.rejected.notABackup" = "Vyberte soubor .dockgroups vytvořený pomocí Exportovat nastavení…. Nic nebylo změněno.";
+"settings.backup.rejected.newer" = "Nic nebylo změněno.";
+"settings.backup.confirm.noGroups" = "Záloha neobsahuje žádné skupiny.";
+"settings.backup.confirm.noGroups.exported" = "Záloha neobsahuje žádné skupiny, exportována %@.";
+"settings.backup.confirm.contents" = "Záloha obsahuje %1$@ s %2$@.";
+"settings.backup.confirm.contents.exported" = "Záloha obsahuje %1$@ s %2$@, exportována %3$@.";
+"settings.backup.confirm.replace" = "Nahradit vše použije skupiny a nastavení ze zálohy místo vašich.";
+"settings.backup.confirm.replaced.one" = "1 aktuální skupina se stejným názvem jako skupina v záloze bude jí nahrazena.";
+"settings.backup.confirm.replaced.other" = "%ld aktuálních skupin se stejným názvem jako skupiny v záloze bude jimi nahrazeno.";
+"settings.backup.confirm.removed.one" = "1 aktuální skupina, která není v záloze, bude odstraněna.";
+"settings.backup.confirm.removed.other" = "%ld aktuálních skupin, které nejsou v záloze, bude odstraněno.";
+"settings.backup.confirm.replaceSettings" = "Vaše nastavení (okno, zkratky, Nejpoužívanější a aktualizace) budou také nahrazena.";
+"settings.backup.confirm.merge.nothing" = "Sloučení zachová vaše skupiny a nastavení a nic nepřidá.";
+"settings.backup.confirm.merge.allHere" = "Sloučení zachová vaše skupiny a nastavení; všechny skupiny ze zálohy už tu jsou, takže nic nepřidá.";
+"settings.backup.confirm.merge.adds" = "Sloučení zachová vaše skupiny a nastavení a přidá %1$@ s %2$@ ze zálohy.";
+"settings.backup.confirm.skipped.one" = "1 skupina, která už tu je (se stejným názvem), bude přeskočena.";
+"settings.backup.confirm.skipped.other" = "%ld skupin, které už tu jsou (se stejným názvem), bude přeskočeno.";
+"settings.backup.confirm.final" = "Počty spuštění pro Nejpoužívanější zůstanou zachovány. Kopie vašich aktuálních souborů se uloží vedle nich v Application Support. Tuto akci nelze vrátit zpět.";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "Uložit do souboru…";
+"settings.diagnostics.export" = "Exportovat diagnostiku";
+"settings.diagnostics.export.detail" = "Textová zpráva k přiložení k hlášení na GitHubu nebo žádosti o podporu.";
+"settings.diagnostics.header" = "Diagnostika";
+"settings.diagnostics.footer" = "Uvádí verze aplikace a macOS, model vašeho Macu, umístění instalace aplikace, přístup k Usnadnění přístupu, vaše nastavení, kontroly aktualizací, názvy skupin s počtem aplikací a nedávné chyby. Neuvádí seznam aplikací ve vašich skupinách. Nic se nikam neodesílá.";
+"settings.diagnostics.copied" = "Diagnostika zkopírována do schránky";
+"settings.diagnostics.saved" = "Uloženo do „%@“";
+"settings.diagnostics.failed" = "Zprávu nebylo možné uložit: %@";
+"settings.diagnostics.panel.title" = "Uložit diagnostiku";
+"settings.diagnostics.panel.message" = "Uložte diagnostickou zprávu jako textový soubor, např. k přiložení k hlášení na GitHubu.";
+"settings.diagnostics.panel.prompt" = "Uložit";
+
+/* Software Update window */
+"updateWindow.title" = "Aktualizace softwaru";
+"updateWindow.checking" = "Kontrola aktualizací…";
+"updateWindow.upToDate.title" = "Máte nejnovější verzi!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ je nejnovější dostupná verze.";
+"updateWindow.available.title" = "Je k dispozici nová verze aplikace %@!";
+"updateWindow.available.message" = "Verze %1$@ je k dispozici — vy máte %2$@.";
+"updateWindow.available.noImage" = "Toto vydání nemá disk. obraz pro automatickou instalaci; stáhněte jej ze stránky vydání.";
+"updateWindow.available.question" = "Chcete ji nyní stáhnout a nainstalovat?";
+"updateWindow.skip" = "Přeskočit tuto verzi";
+"updateWindow.remindLater" = "Připomenout později";
+"updateWindow.openReleasePage" = "Otevřít stránku vydání";
+"updateWindow.downloadAndInstall" = "Stáhnout a nainstalovat";
+"updateWindow.downloading" = "Stahování verze %@…";
+"updateWindow.restartsWhenDone" = "%@ se po dokončení restartuje.";
+"updateWindow.reopening" = "%@ se znovu otevírá.";
+"updateWindow.dryRun.title" = "Zkušební běh dokončen";
+"updateWindow.dryRun.message" = "Verze %1$@ byla stažena, ověřena a zkopírována do %2$@. Nic nebylo nahrazeno.";
+"updateWindow.checkFailed" = "Aktualizace nebylo možné zkontrolovat";
+"updateWindow.installFailed" = "Verzi %@ nebylo možné nainstalovat";
+"updateWindow.link.releases" = "Vydání";
+"updateWindow.link.releasePage" = "Stránka vydání";
+"updateWindow.releaseNotes" = "Poznámky k vydání";
+"updateWindow.releaseNotes.none" = "Toto vydání nemá žádné poznámky.";
+"updateWindow.relaunchFailed" = "Verze %@ je nainstalována, ale aplikace se nemohla sama restartovat. Ukončete ji a znovu otevřete.";
+
+/* About window */
+"about.section.findMe" = "Najděte mě online";
+"about.section.support" = "Podpořte tento projekt";
+"about.section.books" = "Moje knihy";
+"about.section.software" = "Můj open source software";
+"about.fullList" = "Úplný seznam na github.com/ercanatay";
+"about.section.blogs" = "Blogy na Medium";
+"about.icon.accessibility" = "Ikona %@";
+"about.version" = "Verze %@ · open source, licence MIT";
+"about.website" = "Web";
+"about.sourceCode" = "Zdrojový kód";
+"about.license" = "Licence";
+"about.reportBug" = "Našli jste chybu? Otevřete hlášení";
+"about.inspiredBy" = "Inspirováno funkcemi DockGroups. %@ je nezávislá, původní implementace napsaná od začátku; neobsahuje žádný kód ani grafiku z DockGroups.";
+"about.project.dockGroups" = "Tato aplikace · skupiny Docku pro macOS";
+"about.project.intelComputerUse" = "Nativní automatizace plochy macOS pro Maci s procesorem Intel přes MCP.";
+"about.project.exchangeRate" = "Sledování směnných kurzů a portfolia v PHP/MySQL s živým stahováním a aktualizacemi z vydání na GitHubu.";
+"about.project.backlinkChecker" = "Kontroluje kotvy, dofollow/nofollow a stavy HTTP zpětných odkazů.";
+"about.project.consentManager" = "Překladový plugin pro YOOtheme Pro 5 Consent Manager (WordPress.org).";
+"about.project.antigravityUpdater" = "Lehký aktualizátor pro macOS pro Antigravity Tools, 21 jazyků.";
+"about.project.widgetVisibility" = "Plugin pro WP bez Jetpacku pro viditelnost widgetů s podporou potomků.";
+"about.project.forbiddenContent" = "Odhaluje zakázaná klíčová slova (např. 'Casino') v názvech příspěvků — jako kontrola auditu WP.";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Zobrazit skupinu";
+"core.invocation.showGroup.phrase" = "Zobraz %1$@ v %2$@";
+"core.invocation.launchGroup" = "Spustit skupinu";
+"core.invocation.launchGroup.phrase" = "Spusť %1$@ v %2$@";
+"core.invocation.quitGroup" = "Ukončit skupinu";
+"core.invocation.quitGroup.phrase" = "Ukonči %1$@ v %2$@";
+"core.invocation.showPopup" = "Zobrazit okno";
+"core.invocation.openAll" = "Otevřít vše";
+"core.invocation.hideAll" = "Skrýt vše";
+"core.invocation.closeAll" = "Zavřít vše";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "Pro její otevření není nastaven žádný webový prohlížeč.";
+"core.launch.notOpened" = "Aplikace nebyla otevřena.";
+"core.group.defaultName" = "Nová skupina";
+"core.website.error.empty" = "Zadejte webovou adresu.";
+"core.website.error.invalid" = "Toto není platná webová adresa.";
+"core.website.error.scheme" = "Lze přidat jen adresy http a https, ne „%@:“.";
+"core.website.error.credentials" = "Odstraňte z adresy uživatelské jméno a heslo.";
+"core.persistence.groups.newer" = "Soubor skupin uložila novější verze Cybokron Dock Groups (formát %ld).";
+"core.backup.error.notABackup" = "Tento soubor není zálohou Cybokron Dock Groups.";
+"core.backup.error.newer" = "Tato záloha byla vytvořena novější verzí Cybokron Dock Groups (formát zálohy %ld). Chcete-li ji obnovit, aktualizujte aplikaci.";
+"core.persistence.usage.newer" = "Statistiky použití uložila novější verze Cybokron Dock Groups (formát %ld).";
+"core.agent.configuration.newer" = "Nastavení skupiny uložila novější verze Cybokron Dock Groups (formát %ld).";
+"core.agent.error.icon" = "Ikonu skupiny nebylo možné vykreslit.";
+"core.agent.error.bundleWrite" = "Aplikaci skupiny nebylo možné vytvořit: %@";
+"core.agent.error.toolMissing" = "Chybí systémový nástroj potřebný k tomu: %@.";
+"core.agent.error.signing" = "macOS vyžaduje, aby byla každá aplikace podepsaná kódem, a podepsání aplikace skupiny na tomto Macu selhalo, takže nic nebylo nainstalováno.";
+"core.agent.error.registration" = "macOS nezaregistroval aplikaci skupiny: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups nemohl přečíst svůj vlastní spustitelný soubor: %@";
+"core.agent.error.noExecutable" = "Aplikace nemá spustitelný soubor.";
+"core.dock.saveFailed" = "Nastavení Docku nebylo možné změnit.";
+"core.store.loadFailed.title" = "Vaše skupiny nebylo možné načíst";
+"core.store.loadFailed.kept" = "%1$@ Spouští se s prázdným seznamem skupin. Kopie byla zachována v „%2$@“.";
+"core.store.loadFailed.empty" = "%@ Spouští se s prázdným seznamem skupin.";
+"core.store.loadFailed.suspended" = "%@ Aby byl chráněn stávající soubor, změny se neuloží, dokud se aplikace znovu nespustí.";
+"core.store.saveFailed.title" = "Vaše změny nebylo možné uložit";
+"core.preferences.saveFailed" = "Vaše nastavení nebylo možné uložit: %@";
+"core.websiteIcon.accessibility" = "Web";
+"core.update.check.notHTTP" = "Odpověď nebyla HTTP.";
+"core.update.check.malformed" = "Informace o vydání z GitHubu nebylo možné přečíst.";
+"core.update.check.unsupportedTag" = "Nejnovější vydání („%@“) nemá označení číslem verze.";
+"core.update.check.noRelease" = "Zatím nebylo zveřejněno žádné vydání.";
+"core.update.check.rateLimited" = "GitHub nyní omezuje počet požadavků. Zkuste to znovu za hodinu.";
+"core.update.check.httpStatus" = "GitHub odpověděl stavem HTTP %ld.";
+"core.update.check.network" = "GitHub nebyl dosažitelný: %@";
+"core.update.check.noVersion" = "Tato kopie aplikace nemá číslo verze, takže ji nelze porovnat.";
+"core.update.install.insecureURL" = "Adresa ke stažení aktualizace není zabezpečená (%@).";
+"core.update.install.downloadFailed" = "Aktualizaci nebylo možné stáhnout: %@";
+"core.update.install.sizeMismatch" = "Stažená aktualizace je neúplná (%1$ld z %2$ld bajtů).";
+"core.update.install.checksum" = "Stažená aktualizace neodpovídá zveřejněnému kontrolnímu součtu, takže nebyla nainstalována.";
+"core.update.install.mountFailed" = "Disk. obraz aktualizace nebylo možné otevřít: %@";
+"core.update.install.appNotFound" = "Disk. obraz aktualizace aplikaci neobsahuje.";
+"core.update.install.wrongApp" = "Disk. obraz aktualizace obsahuje jinou aplikaci (%@).";
+"core.update.install.versionMismatch" = "Stažená aplikace má verzi %1$@, ale vydání je %2$@.";
+"core.update.install.replaceFailed" = "Novou verzi nebylo možné umístit na místo, takže byla ponechána stávající: %@";
+"core.update.install.rollbackFailed" = "Aktualizace selhala a předchozí verzi se nepodařilo vrátit zpět. Je uložena v %@.";
+"core.update.location.translocated" = "macOS spouští tuto kopii z dočasného umístění jen pro čtení. Přesuňte aplikaci do složky Applications, otevřete ji odtud a zkuste to znovu.";
+"core.update.location.notFound" = "Běžící aplikace nebyla nalezena v %@.";
+"core.update.location.readOnly" = "Aplikace běží z oddílu jen pro čtení, například z disk. obrazu. Nejprve ji zkopírujte do složky Applications.";
+"core.update.location.noPermission" = "Nemáte oprávnění nahradit aplikaci v „%@“. Stáhněte místo toho novou verzi ze stránky vydání.";
+"core.update.install.noFile" = "Server neposlal žádný soubor.";
+"core.update.install.httpStatus" = "Stav HTTP %ld.";
+"core.update.install.copyFailed" = "Kopírování aplikace selhalo: %@";
+"core.mostUsed.name" = "Nejpoužívanější";
