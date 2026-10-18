@@ -3,7 +3,7 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: early development (phase E — standalone Dock icons).
+> Status: in active development — current release v0.5.6.
 
 ## Screenshots
 
@@ -159,24 +159,21 @@ Get the universal disk image (`Cybokron-Dock-Groups-<version>-universal.dmg`) fr
 [releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and drag the app
 to Applications.
 
-Releases from v0.5.2 on are **signed and notarized**: the app and the disk image are signed with the
-Developer ID Application certificate (hardened runtime), and the
-disk image is notarized by Apple with the ticket stapled to it. They open without a Gatekeeper
-warning. To check a download:
+All published releases (v0.5.0 to v0.5.6) are **signed ad hoc**, not with a Developer ID, and aren't
+notarized, so macOS shows an “Apple could not verify …” warning the first time you open a downloaded
+copy. See the next section for how to open it.
 
-```sh
-spctl -a -t open --context context:primary-signature -vv Cybokron-Dock-Groups-<version>-universal.dmg
-# → accepted, source=Notarized Developer ID
-```
+The release workflow can already sign with a Developer ID Application certificate (hardened runtime),
+notarize the disk image with `notarytool` and staple the ticket. It does so only when the repository
+variable `NOTARIZE_ENABLED` is `true`; the first notarized release will come out once it is turned on.
+Accessibility access then has to be allowed once more in Privacy & Security → Accessibility, because
+the signature identity changes from ad hoc to Developer ID; after that it carries over from one
+signed release to the next.
 
-Because signed releases keep the same signature identity, Accessibility access carries over from one
-signed release to the next. Coming from an ad hoc signed build (v0.5.0, v0.5.1 or your own build),
-allow it once more in Privacy & Security → Accessibility.
+### Opening a downloaded release the first time
 
-### Opening v0.5.0 / v0.5.1 and your own builds the first time
-
-These builds are signed ad hoc only, so macOS blocks the first open of a downloaded copy
-(“Apple could not verify …”). Either:
+Every published release so far (v0.5.0 to v0.5.6) is signed ad hoc only, so macOS blocks the first
+open of a downloaded copy (“Apple could not verify …”). Either:
 
 - try to open the app once, then go to **System Settings → Privacy & Security**, choose
   **Open Anyway** next to the message about Cybokron Dock Groups and confirm; or
@@ -184,7 +181,7 @@ These builds are signed ad hoc only, so macOS blocks the first open of a downloa
   copied app:
 
   ```sh
-  xattr -dr com.apple.quarantine ~/Downloads/Cybokron-Dock-Groups-0.5.1-universal.dmg
+  xattr -dr com.apple.quarantine ~/Downloads/Cybokron-Dock-Groups-<version>-universal.dmg
   xattr -dr com.apple.quarantine "/Applications/Cybokron Dock Groups.app"
   ```
 
@@ -209,7 +206,8 @@ xcodebuild -project CybokronDockGroups.xcodeproj -scheme CybokronDockGroups test
 ```
 
 Builds are signed ad hoc, so no developer account is needed. Release builds are universal
-(arm64 + x86_64). Only the CI release job signs with the Developer ID certificate (see below).
+(arm64 + x86_64). The CI release job signs with the Developer ID certificate only when the `NOTARIZE_ENABLED`
+repository variable is `true` (see below).
 
 ### Command Line Tools only (SwiftPM)
 
@@ -234,11 +232,13 @@ app with it (`--options runtime --timestamp`) and `make-dmg.sh` signs the DMG to
 CODESIGN_IDENTITY=<SHA-1 from `security find-identity -v -p codesigning`> scripts/make-dmg.sh
 ```
 
-For `v*` tags, CI does this with the Developer ID certificate from the repository secrets
+For `v*` tags, when the `NOTARIZE_ENABLED` repository variable is `true`, CI does this with the
+Developer ID certificate from the repository secrets
 (`APPLE_DEVID_CERT_P12`, `APPLE_DEVID_CERT_PASSWORD`) in a temporary keychain, notarizes the DMG with
 `notarytool` and an App Store Connect API key (`APPLE_ASC_KEY_P8`, `APPLE_ASC_KEY_ID`,
 `APPLE_ASC_ISSUER_ID`), staples and verifies it (team `APPLE_TEAM_ID`), and attaches it to a draft
-release.
+release. While `NOTARIZE_ENABLED` is `false` (the current state), CI skips signing and
+notarization and attaches an ad hoc signed DMG to the draft release instead.
 
 With Xcode installed, `build-app.sh` also extracts the App Intents metadata
 (`Contents/Resources/Metadata.appintents`) that Siri and the Shortcuts app read, as Xcode does;

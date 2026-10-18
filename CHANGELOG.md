@@ -136,11 +136,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Developer ID signed and Apple notarized releases: the release workflow signs the
-  app and the disk image with the Developer ID Application certificate (hardened runtime, secure
-  timestamp), notarizes the disk image with `notarytool`, staples the ticket and checks it with
-  `stapler validate`, `codesign` and `spctl` before attaching it to the draft release. Releases open
-  without a Gatekeeper warning.
+- Developer ID signing and Apple notarization in the release workflow: when the repository variable
+  `NOTARIZE_ENABLED` is `true`, it signs the app and the disk image with the Developer ID Application
+  certificate (hardened runtime, secure timestamp), notarizes the disk image with `notarytool`,
+  staples the ticket and checks it with `stapler validate`, `codesign` and `spctl` before attaching
+  it to the draft release. While the variable is `false`, the releases are signed ad hoc and open
+  with a Gatekeeper warning; the first notarized release comes out once the pipeline runs.
 - `CODESIGN_IDENTITY` for `scripts/build-app.sh` and `scripts/make-dmg.sh`: set to a signing
   identity's SHA-1, it signs the app (and the DMG) with that identity instead of ad hoc. Without it,
   builds are signed ad hoc as before.
@@ -160,7 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The README explains the signed releases and how to open the ad hoc signed v0.5.0 and v0.5.1 the
+- The README explains how to open the ad hoc signed releases the
   first time (Privacy & Security → Open Anyway, or `xattr -dr com.apple.quarantine`).
 - Accessibility access needs to be allowed once more when moving from an ad hoc signed build to a
   signed release; afterwards it carries over between signed releases.
