@@ -21,10 +21,11 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 ## Features (so far)
 
 - Menu bar item listing your groups with their tiles. Choosing a group shows its **popup**; holding
-  ⌥ while choosing opens all of its apps right away.
+  ⌥ while choosing opens all of its apps right away, holding ⇧⌥ hides its running apps.
 - Group popup: a floating panel over the Dock (it doesn't take focus from the app you're using)
   with the group's app icons in a grid and a running indicator per app. Click an app to open it or
-  bring it to the front; **Open All** opens every app; **Close All** quits the group's running apps
+  bring it to the front; **Open All** opens every app; **Hide All** hides the group's running apps
+  (apps that aren't running stay closed); **Close All** quits the group's running apps
   normally, ⌘-click force quits them. Escape, a click elsewhere, or switching apps closes it.
 - In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
   remove it from the group (the app itself isn't touched). The new order is saved right away.
@@ -49,6 +50,7 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   | `cybokrondockgroups://open/<group>` | Shows the group's popup |
   | `cybokrondockgroups://launch/<group>` | Open All |
   | `cybokrondockgroups://quit/<group>` | Close All; add `?mode=force` to force quit |
+  | `cybokrondockgroups://hide/<group>` | Hide All |
   | `cybokrondockgroups://shortcut/<1…9>` | Shows the popup of the group with that shortcut |
   | `cybokrondockgroups://close` · `settings` · `groups` | Closes the popup · opens Settings · the group window |
 
@@ -57,7 +59,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   within 5 seconds.
 - **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
-  reorder or remove them. Deleting a group never touches the apps themselves. Apps without a
+  reorder or remove them; **Open All** and **Hide All** there too (and in a group's context menu).
+  Deleting a group never touches the apps themselves. Apps without a
   bundle identifier (hand-made wrapper apps, for example) can be added too: they're kept by their
   location, so they work as long as they stay where they were added.
 - Group tiles drawn by the app: the group's emoji, or a 2×2 / 3×3 grid of its first app icons, on a
@@ -74,7 +77,7 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   its own small app, with the group's tile (emoji or app icon grid) as its icon, at the end of the
   Dock. Clicking it shows the group's popup over the Dock, clicking it again hides it, and ⌥-clicking
   it opens all of the group's apps right away — even while Cybokron Dock Groups isn't running. The
-  popup opens apps, Open All and Close All as usual; apps are reordered and removed in the main app.
+  popup opens apps, Open All, Hide All and Close All as usual; apps are reordered and removed in the main app.
   - The group's app lives in `~/Library/Application Support/Cybokron/DockGroups/Agents/<name>.app`
     (`calisma-alani.app` for “Çalışma Alanı”). It's a copy of this app's own executable with its own
     Info.plist (bundle identifier `com.cybokron.dockgroups.agent.<group ID>`, no Dock icon of its own
@@ -114,9 +117,11 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   standalone groups' apps, and `update-state.json` / `updates/` for the updater (last check,
   skipped version, downloads and the previous version's backup).
 - **Backup** (Settings → Backup): **Export Settings…** saves the groups and the settings to a
-  `.dockgroups` file (JSON); **Import Settings…** replaces them with a backup's, after asking, and
-  keeps the files it replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json`
-  (only the latest import's).
+  `.dockgroups` file (JSON); **Import Settings…** asks first, then either **Replace All** (the
+  backup's groups and settings instead of yours) or **Merge** (adds the backup's groups whose name you
+  don't have yet after yours; your groups and settings stay as they are). It keeps the files it
+  replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json` (only the latest
+  import's).
   Most Used launch counts aren't part of a backup.
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,

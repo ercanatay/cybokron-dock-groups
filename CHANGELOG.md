@@ -12,9 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The About window shows a "Find Me Online" row with social profile icons (LinkedIn, X, Instagram,
   YouTube, TikTok, Threads, Reddit, Pinterest, Steam, WordPress.org, GitHub, Medium, Facebook, Vimeo,
   Flickr, Ekşi Sözlük, Wikipedia).
+- **Hide All** hides a group's running apps (apps that aren't running stay closed): in the popup
+  next to Open All and Close All, with ⇧⌥ in the menu bar menu, in the group window and a group's
+  context menu, and as `cybokrondockgroups://hide/<group>`.
+- **Merge** when importing a backup: adds the backup's groups whose name (or ID) isn't there yet
+  after the current ones, leaving the current groups and all settings as they are. The groups file
+  is copied aside first, as with Replace All.
 
 ### Changed
 
+- The import confirmation offers **Replace All**, **Merge** and **Cancel**, and explains what each
+  would change.
+- The popup is at least 440 points wide (was 380), so the group name stays readable next to the
+  header buttons.
 - The Update window now shows the installation stages: "Installing version X…" while the update
   replaces the app, then "Installed version X — restarting…" with a short "is reopening" note just
   before the app relaunches.
