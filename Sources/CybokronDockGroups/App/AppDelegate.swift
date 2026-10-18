@@ -56,7 +56,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         store: store,
         usage: usage,
         shortcuts: shortcutMonitor,
-        updater: updater
+        updater: updater,
+        isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil }
     )
     private lazy var aboutWindowController = AboutWindowController()
     private lazy var updater = AutoUpdater(preferences: preferences)

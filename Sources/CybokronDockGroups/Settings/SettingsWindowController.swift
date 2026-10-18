@@ -2,21 +2,29 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// The Settings window (⌘,): popup settings, shortcuts and Siri, the Most Used list, updates and
-/// backups, each in its own tab.
+/// The Settings window (⌘,): popup settings, shortcuts and Siri, the Most Used list, updates, and
+/// backups with the diagnostics report, each in its own tab.
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
     private let backup: SettingsBackupController
+    private let diagnostics: DiagnosticsController
 
     init(
         preferences: PreferencesStore,
         store: GroupStore,
         usage: UsageStore,
         shortcuts: GlobalShortcutMonitor,
-        updater: AutoUpdater
+        updater: AutoUpdater,
+        isStatusItemShown: @escaping () -> Bool
     ) {
         let backup = SettingsBackupController(store: store, preferences: preferences)
+        let diagnostics = DiagnosticsController(
+            preferences: preferences,
+            store: store,
+            updater: updater,
+            isStatusItemShown: isStatusItemShown
+        )
         let hostingController = NSHostingController(
             rootView: SettingsView(
                 preferences: preferences,
@@ -24,7 +32,8 @@ final class SettingsWindowController: NSWindowController {
                 usage: usage,
                 shortcuts: shortcuts,
                 updater: updater,
-                backup: backup
+                backup: backup,
+                diagnostics: diagnostics
             )
         )
         hostingController.sizingOptions = [.preferredContentSize]
@@ -38,7 +47,9 @@ final class SettingsWindowController: NSWindowController {
         }
         window.setFrameAutosaveName(Self.frameAutosaveName)
         backup.window = window
+        diagnostics.window = window
         self.backup = backup
+        self.diagnostics = diagnostics
         super.init(window: window)
     }
 
@@ -62,6 +73,7 @@ private struct SettingsView: View {
     let shortcuts: GlobalShortcutMonitor
     let updater: AutoUpdater
     let backup: SettingsBackupController
+    let diagnostics: DiagnosticsController
 
     var body: some View {
         TabView {
@@ -73,7 +85,7 @@ private struct SettingsView: View {
                 .tabItem { Label("Most Used", systemImage: "star") }
             UpdatesSettingsView(preferences: preferences, updater: updater)
                 .tabItem { Label("Updates", systemImage: "arrow.triangle.2.circlepath") }
-            BackupSettingsView(backup: backup)
+            BackupSettingsView(backup: backup, diagnostics: diagnostics)
                 .tabItem { Label("Backup", systemImage: "externaldrive") }
         }
         .padding(.top, 8)
