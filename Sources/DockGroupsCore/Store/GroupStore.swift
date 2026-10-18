@@ -140,6 +140,34 @@ public final class GroupStore: ObservableObject {
         scheduleSave()
     }
 
+    /// Moves an app to another group, as "Move to" and dropping it on a group in the sidebar do:
+    /// it leaves `source` — and its Free Layout cell there, the other apps keep theirs — and joins
+    /// the end of `destination`'s list. When `destination` already has the app, it only leaves
+    /// `source`, so no group lists it twice. Both groups change in one step and one save.
+    /// - Returns: Whether anything changed; `false` when the groups are the same, either is
+    ///   unknown, or `source` doesn't have the app.
+    @discardableResult
+    public func moveApp(bundleIdentifier: String, fromGroup source: DockGroup.ID, toGroup destination: DockGroup.ID) -> Bool {
+        guard source != destination,
+              let sourceIndex = index(of: source),
+              let destinationIndex = index(of: destination)
+        else { return false }
+        let target = bundleIdentifier.lowercased()
+        var updated = groups
+        guard let app = updated[sourceIndex].apps.first(where: { $0.normalizedBundleIdentifier == target }) else {
+            return false
+        }
+        updated[sourceIndex].apps.removeAll { $0.normalizedBundleIdentifier == target }
+        updated[sourceIndex].freeLayoutSlots[target] = nil
+        if !updated[destinationIndex].apps.contains(where: { $0.normalizedBundleIdentifier == target }) {
+            // Without a Free Layout cell of its own, it takes the first free cell there.
+            updated[destinationIndex].apps.append(app)
+        }
+        groups = updated
+        scheduleSave()
+        return true
+    }
+
     /// Moves one app so it ends up at `index` of the group's list (clamped to the list), as
     /// dropping it on that slot of the popup grid does.
     public func moveApp(bundleIdentifier: String, inGroup id: DockGroup.ID, to index: Int) {

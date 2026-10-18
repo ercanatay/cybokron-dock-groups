@@ -20,11 +20,13 @@ public struct UsageTracker: Sendable {
         "com.apple.spotlight",
         "com.apple.finder",
     ]
-    /// Helper processes of system frameworks.
+    /// Helper processes of system frameworks, and the standalone groups' own apps, which run as
+    /// regular apps while their Dock menus are on.
     static let excludedBundleIdentifierPrefixes = [
         "com.apple.webkit.",
         "com.apple.security.",
         "com.apple.accessibility.",
+        AgentIdentity.bundleIdentifierPrefix,
     ]
 
     /// Whether launches of the app with this bundle identifier are recorded at all.

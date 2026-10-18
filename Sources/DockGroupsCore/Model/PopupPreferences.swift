@@ -10,7 +10,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
 /// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, the
-/// Most Used list, and whether the app looks for updates on its own.
+/// Most Used list, the standalone groups' Dock menus, and whether the app looks for updates on its
+/// own.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
     public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
@@ -43,6 +44,11 @@ public struct PopupPreferences: Hashable, Sendable {
     /// Whether the app checks GitHub for a new release at launch and every six hours. "Check for
     /// Updates…" works either way.
     public var automaticallyChecksForUpdates: Bool
+    /// Whether a standalone group's Dock icon has a menu (right-click or Control-click) with the
+    /// group's apps, Open All, Hide All and Close All. The Dock asks only apps it shows as running
+    /// for a menu, so with this on a running group agent is a regular app: it has a running
+    /// indicator in the Dock and appears in the app switcher.
+    public var showsStandaloneDockMenus: Bool
 
     public init(
         theme: PanelTheme = .dark,
@@ -57,7 +63,8 @@ public struct PopupPreferences: Hashable, Sendable {
         showsMostUsed: Bool = true,
         mostUsedLimit: Int = MostUsedRanking.defaultLimit,
         mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds,
-        automaticallyChecksForUpdates: Bool = true
+        automaticallyChecksForUpdates: Bool = true,
+        showsStandaloneDockMenus: Bool = true
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -72,6 +79,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.mostUsedLimit = mostUsedLimit
         self.mostUsedSessionSeconds = mostUsedSessionSeconds
         self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
+        self.showsStandaloneDockMenus = showsStandaloneDockMenus
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -136,6 +144,7 @@ extension PopupPreferences: Codable {
         case mostUsedLimit
         case mostUsedSessionSeconds
         case automaticallyChecksForUpdates
+        case showsStandaloneDockMenus = "standaloneDockMenu"
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -164,5 +173,7 @@ extension PopupPreferences: Codable {
             ?? defaults.mostUsedSessionSeconds
         automaticallyChecksForUpdates = container.decodeLeniently(Bool.self, forKey: .automaticallyChecksForUpdates)
             ?? defaults.automaticallyChecksForUpdates
+        showsStandaloneDockMenus = container.decodeLeniently(Bool.self, forKey: .showsStandaloneDockMenus)
+            ?? defaults.showsStandaloneDockMenus
     }
 }

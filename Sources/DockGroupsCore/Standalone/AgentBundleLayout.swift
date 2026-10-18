@@ -62,7 +62,9 @@ public enum AgentInfoPlist {
     public static let sourceDigestKey = "CybokronAgentSourceDigest"
 
     /// A minimal Info.plist: an agent app (`LSUIElement`, so no Dock icon of its own while it runs and
-    /// no menu bar) that runs once at a time, without URL schemes or App Intents.
+    /// no menu bar — unless it makes itself a regular app for its tile's Dock menu, see
+    /// `PopupPreferences.showsStandaloneDockMenus`) that runs once at a time, without URL schemes or
+    /// App Intents.
     ///
     /// Finder and the Dock show an app's file name unless the bundle has a localized display name and
     /// its file name equals the unlocalized one; so `CFBundleDisplayName` is the folder name here and
