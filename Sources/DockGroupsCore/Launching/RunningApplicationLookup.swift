@@ -6,6 +6,8 @@ import AppKit
 public enum RunningApplicationLookup {
     /// The running instances of the app whose `AppReference.bundleIdentifier` is `identifier`.
     public static func runningApplications(identifiedBy identifier: String, workspace: NSWorkspace = .shared) -> [NSRunningApplication] {
+        // A website is never running.
+        guard !WebsiteAddress.looksLikeAddress(identifier) else { return [] }
         let app = AppReference(bundleIdentifier: identifier, name: "")
         guard app.isIdentifiedByPath else {
             return NSRunningApplication.runningApplications(withBundleIdentifier: identifier)

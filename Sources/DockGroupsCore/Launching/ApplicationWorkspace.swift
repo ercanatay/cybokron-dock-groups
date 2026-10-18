@@ -15,6 +15,9 @@ public protocol ApplicationWorkspace: AnyObject {
     func locateApplication(_ app: AppReference) -> URL?
     /// Launches the app at `url`, finishing once it has started.
     func launchApplication(at url: URL) async throws
+    /// Opens web addresses in the default browser, all in one request so they arrive together
+    /// (as tabs of one window, in browsers that do so), and brings the browser to the front.
+    func openWebsites(_ urls: [URL]) async throws
 }
 
 extension ApplicationWorkspace {
@@ -70,6 +73,23 @@ public final class SystemApplicationWorkspace: ApplicationWorkspace {
         }
     }
 
+    public func openWebsites(_ urls: [URL]) async throws {
+        guard let first = urls.first else { return }
+        guard let browserURL = workspace.urlForApplication(toOpen: first) else {
+            throw WebsiteOpeningError.noBrowser
+        }
+        let configuration = Self.activatingConfiguration()
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            workspace.open(urls, withApplicationAt: browserURL, configuration: configuration) { _, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
     private func runningApplication(bundleIdentifier: String) -> NSRunningApplication? {
         RunningApplicationLookup.runningApplications(identifiedBy: bundleIdentifier, workspace: workspace)
             .first { !$0.isTerminated }
@@ -88,5 +108,18 @@ public final class SystemApplicationWorkspace: ApplicationWorkspace {
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true
         return configuration
+    }
+}
+
+/// Why websites couldn't be opened.
+public enum WebsiteOpeningError: LocalizedError, Equatable, Sendable {
+    /// No app on this Mac opens web pages.
+    case noBrowser
+
+    public var errorDescription: String? {
+        switch self {
+        case .noBrowser:
+            return "No web browser is set up to open it."
+        }
     }
 }

@@ -114,6 +114,19 @@ struct GroupTerminatorTests {
         #expect(apps.hidden.isEmpty)
     }
 
+    @Test func websitesAreLeftAloneByCloseAllAndHideAll() throws {
+        let website = AppReference(websiteURL: try WebsiteAddress.parse("github.com"))
+        // Even if something claimed to run under the website's identity, it's never touched.
+        let apps = FakeRunningApplications(running: [editor.bundleIdentifier: [11], website.bundleIdentifier: [99]])
+        let group = DockGroup(name: "Mixed", apps: [website, editor])
+        let terminator = GroupTerminator(applications: apps, ownProcessIdentifier: ownPID)
+
+        #expect(!terminator.hasRunningApps(DockGroup(name: "Web", apps: [website])))
+        #expect(terminator.hideAll(group).hidden == [editor])
+        #expect(terminator.closeAll(group, mode: .force).quit == [editor])
+        #expect(apps.hidden == [11] && apps.forceTerminated == [11])
+    }
+
     @Test func hasRunningAppsSeesAnyRunningMember() {
         let apps = FakeRunningApplications(running: [browser.bundleIdentifier: [13]])
         let terminator = GroupTerminator(applications: apps, ownProcessIdentifier: ownPID)
@@ -227,4 +240,6 @@ private final class SingleAppWorkspace: ApplicationWorkspace {
     func launchApplication(at url: URL) async throws {
         launched.append(url.deletingPathExtension().lastPathComponent)
     }
+
+    func openWebsites(_ urls: [URL]) async throws {}
 }

@@ -113,6 +113,7 @@ private final class LocatingWorkspace: ApplicationWorkspace {
     func launchApplication(at url: URL) async throws {
         launched.append(url)
     }
+    func openWebsites(_ urls: [URL]) async throws {}
 }
 
 @MainActor

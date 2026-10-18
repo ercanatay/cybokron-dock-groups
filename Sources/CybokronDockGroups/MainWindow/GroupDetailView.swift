@@ -15,6 +15,7 @@ struct GroupDetailView: View {
     @State private var emojiDraft: String
     @FocusState private var focusedField: Field?
     @State private var addAppsProblem: String?
+    @State private var isAddingWebsite = false
 
     private enum Field: Hashable {
         case name, emoji
@@ -68,6 +69,13 @@ struct GroupDetailView: View {
         } message: {
             Text(addAppsProblem ?? "")
         }
+        .sheet(isPresented: $isAddingWebsite) {
+            AddWebsiteView(
+                groupName: storedGroup.name,
+                add: { website in store.addApps([website], toGroup: group.id) > 0 },
+                dismiss: { isAddingWebsite = false }
+            )
+        }
     }
 
     // MARK: - Sections
@@ -93,7 +101,7 @@ struct GroupDetailView: View {
     private var appsSection: some View {
         Section {
             if group.apps.isEmpty {
-                Text("No apps yet. Use “Add Apps…” to choose apps for this group.")
+                Text("No apps yet. Use “Add Apps…” to choose apps for this group, or “Add Website…” for a web link.")
                     .foregroundStyle(.secondary)
             } else {
                 let moveTargets = GroupMoveTarget.targets(in: store.groups, excluding: group.id)
@@ -118,6 +126,8 @@ struct GroupDetailView: View {
                 Text("Apps")
                 Spacer()
                 Button("Add Apps…", action: addApps)
+                Button("Add Website…") { isAddingWebsite = true }
+                    .help("Add a web link to this group. It opens in your default browser.")
                 Button("Sort A→Z") { store.sortAppsByName(inGroup: group.id) }
                     .disabled(group.apps.count < 2)
                     .help("Sort the apps in this group by name, A to Z. Drag them to reorder by hand.")

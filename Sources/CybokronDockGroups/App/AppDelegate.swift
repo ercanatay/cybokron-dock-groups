@@ -60,6 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil }
     )
     private lazy var aboutWindowController = AboutWindowController()
+    private lazy var addWebsiteWindowController = AddWebsiteWindowController(store: store)
     private lazy var updater = AutoUpdater(preferences: preferences)
     private lazy var updateWindowController = UpdateWindowController(updater: updater)
     private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(preferences: preferences) { [weak self] digit in
@@ -77,7 +78,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             openAll: { [weak self] group in self?.openAll(group) },
             closeAll: { [weak self] group, mode in self?.closeAll(group, mode: mode) },
             hideAll: { [weak self] group in self?.hideAll(group) },
-            manageGroups: { [weak self] in self?.mainWindowController.show() }
+            manageGroups: { [weak self] in self?.mainWindowController.show() },
+            addWebsite: { [weak self] group in self?.addWebsiteWindowController.show(for: group) }
         )
     )
 
@@ -236,10 +238,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Group actions
 
     /// Opens an app from a popup or the Most Used menu; a running one comes back with its windows
-    /// when Settings → Popup → Running Apps says so.
+    /// when Settings → Popup → Running Apps says so. A website opens in the default browser.
     private func open(_ app: AppReference, in group: DockGroup) {
         let restoresWindows = preferences.preferences.restoresWindowsOfRunningApps
-        if restoresWindows {
+        if restoresWindows, !app.isWebsite {
             AccessibilityAccess.promptOnceForRestoringWindows(of: app)
         }
         Task { @MainActor in

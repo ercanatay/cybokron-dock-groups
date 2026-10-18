@@ -26,6 +26,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let closeAll: (DockGroup, QuitMode) -> Void
         let hideAll: (DockGroup) -> Void
         let manageGroups: () -> Void
+        /// Asks for a website to add to the group; `nil` where groups can't be edited.
+        var addWebsite: ((DockGroup) -> Void)?
     }
 
     /// Why the popup closed; logged at debug level to diagnose unexpected closes.
@@ -293,9 +295,21 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 self?.close(reason: .appAction)
                 self?.actions.manageGroups()
             },
+            addWebsite: allowsEditing && id != MostUsedGroup.id && actions.addWebsite != nil
+                ? { [weak self] in
+                    guard let self, let group = self.group(withID: id) else { return }
+                    self.close(reason: .appAction)
+                    self.actions.addWebsite?(group)
+                }
+                : nil,
+            showInFinder: { [weak self] app in
+                guard let location = app.resolvedURL() else { return }
+                self?.close(reason: .appAction)
+                NSWorkspace.shared.activateFileViewerSelecting([location])
+            },
             moveApp: { [weak self] app, index in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
-                self.logger.notice("Moving \(app.bundleIdentifier, privacy: .public) to \(index) in group \(id, privacy: .public)")
+                self.logger.notice("Moving \(app.logIdentity, privacy: .public) to \(index) in group \(id, privacy: .public)")
                 self.store.moveApp(bundleIdentifier: app.bundleIdentifier, inGroup: id, to: index)
             },
             arrangeApps: { [weak self] slots in
@@ -305,12 +319,12 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             },
             removeApp: { [weak self] app in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
-                self.logger.notice("Removing \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public)")
+                self.logger.notice("Removing \(app.logIdentity, privacy: .public) from group \(id, privacy: .public)")
                 self.store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id)
             },
             moveAppToGroup: { [weak self] app, destination in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
-                self.logger.notice("Moving \(app.bundleIdentifier, privacy: .public) from group \(id, privacy: .public) to group \(destination, privacy: .public)")
+                self.logger.notice("Moving \(app.logIdentity, privacy: .public) from group \(id, privacy: .public) to group \(destination, privacy: .public)")
                 self.store.moveApp(bundleIdentifier: app.bundleIdentifier, fromGroup: id, toGroup: destination)
             },
             sortApps: { [weak self] in

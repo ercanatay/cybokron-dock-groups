@@ -59,6 +59,10 @@ struct PopupActions {
     /// Hides the running apps; apps that aren't running are left alone.
     let hideAll: () -> Void
     let manageGroups: () -> Void
+    /// Asks for a website to add to the group; `nil` where the group can't be edited.
+    let addWebsite: (() -> Void)?
+    /// Shows the app in Finder.
+    let showInFinder: (AppReference) -> Void
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
     /// Free Layout: puts the apps in these cells (`FreeLayout.slots`).
@@ -97,6 +101,10 @@ private struct CellDrag: Equatable {
 ///
 /// The keyboard (handled by `PopupPanelController`) selects apps and filters them by name: while
 /// filtering, the matches are shown packed from the first cell, best first, and can't be dragged.
+///
+/// A group can hold websites too: they show a globe, open in the default browser and have no
+/// running indicator. Each item's context menu opens it, copies a website's address or shows an
+/// app in Finder, moves it to another group or removes it, and adds a website.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -151,7 +159,7 @@ struct PopupContentView: View {
                     .foregroundStyle(palette.primaryText)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                Text(summary(appCount: group.apps.count, runningCount: runningCount))
+                Text(summary(runningCount: runningCount))
                     .accessibilityIdentifier("popup-summary")
                     .font(.system(size: 11))
                     .foregroundStyle(palette.secondaryText)
@@ -188,8 +196,13 @@ struct PopupContentView: View {
         .frame(height: PopupMetrics.headerHeight)
     }
 
-    private func summary(appCount: Int, runningCount: Int) -> String {
-        let apps = appCount == 1 ? "1 app" : "\(appCount) apps"
+    private func summary(runningCount: Int) -> String {
+        let websiteCount = content.group.apps.filter(\.isWebsite).count
+        let appCount = content.group.apps.count - websiteCount
+        var apps = appCount == 1 ? "1 app" : "\(appCount) apps"
+        if websiteCount > 0 {
+            apps += websiteCount == 1 ? " · 1 website" : " · \(websiteCount) websites"
+        }
         let counts = runningCount > 0 ? "\(apps) · \(runningCount) running" : apps
         return content.isMostUsed ? "\(counts) · by launches" : counts
     }
@@ -228,6 +241,7 @@ struct PopupContentView: View {
                     )
                     .coordinateSpace(name: Self.gridSpace)
                     .frame(maxWidth: .infinity)
+                    .background(addWebsiteContextMenuArea)
                 }
                 .scrollDisabled(!content.scrolls)
                 .scrollIndicators(content.scrolls ? .automatic : .hidden)
@@ -310,9 +324,28 @@ struct PopupContentView: View {
             actions.open(cell.app)
         }
         .offset(x: origin.x, y: origin.y)
-        .modifier(MoveToGroupContextMenu(targets: content.moveTargets) { destination in
-            actions.moveAppToGroup(cell.app, destination)
-        })
+        .modifier(cellContextMenu(cell))
+    }
+
+    private func cellContextMenu(_ cell: PopupCell) -> PopupCellContextMenu {
+        PopupCellContextMenu(
+            cell: cell,
+            moveTargets: content.moveTargets,
+            isEditable: content.isEditable,
+            actions: actions
+        )
+    }
+
+    /// The empty part of the grid: right-clicking it offers "Add Website…".
+    @ViewBuilder
+    private var addWebsiteContextMenuArea: some View {
+        if content.isEditable, let addWebsite = actions.addWebsite {
+            Color.clear
+                .contentShape(Rectangle())
+                .contextMenu {
+                    Button("Add Website…", action: addWebsite)
+                }
+        }
     }
 
     /// Invisible views in the cells' places for `ScrollViewProxy.scrollTo`: the cells themselves are
@@ -445,9 +478,7 @@ struct PopupContentView: View {
         } remove: {
             actions.removeApp(cell.app)
         })
-        .modifier(MoveToGroupContextMenu(targets: content.moveTargets) { destination in
-            actions.moveAppToGroup(cell.app, destination)
-        })
+        .modifier(cellContextMenu(cell))
     }
 
     // MARK: - Dragging
@@ -559,8 +590,14 @@ struct PopupContentView: View {
                 Text("No apps in this group yet")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(palette.secondaryText)
-                Button("Add Apps…", action: actions.manageGroups)
-                    .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+                HStack(spacing: 8) {
+                    Button("Add Apps…", action: actions.manageGroups)
+                        .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+                    if content.isEditable, let addWebsite = actions.addWebsite {
+                        Button("Add Website…", action: addWebsite)
+                            .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+                    }
+                }
             }
         } else {
             VStack(spacing: 4) {
@@ -680,12 +717,19 @@ private struct PopupAppCell: View {
         .shadow(color: .black.opacity(isDragged ? 0.3 : 0), radius: 10, y: 4)
         .onHover { isHovered = $0 }
         .help(helpText)
-        .accessibilityLabel(cell.app.name)
+        .accessibilityLabel(cell.app.isWebsite ? "Website \(cell.app.name)" : cell.app.name)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityHint(isRunning ? "Brings the app to the front" : "Opens the app")
+        .accessibilityHint(cell.app.isWebsite ? "Opens the website in your browser" : (isRunning ? "Brings the app to the front" : "Opens the app"))
     }
 
     private var helpText: String {
+        if cell.app.isWebsite {
+            let action = "Open \(cell.app.websiteURL?.absoluteString ?? cell.app.name) in your browser"
+            guard isEditable else { return "\(action)." }
+            return isFreeLayout
+                ? "\(action). Drag to any cell or onto another item to swap them, or out of the popup to remove it from the group."
+                : "\(action). Drag to reorder, or out of the popup to remove it from the group."
+        }
         guard cell.isInstalled else {
             return isEditable
                 ? "\(cell.app.name) isn't on this Mac. Drag it out of the popup to remove it from the group."
@@ -696,6 +740,47 @@ private struct PopupAppCell: View {
         return isFreeLayout
             ? "\(action). Drag to any cell or onto another app to swap them, or out of the popup to remove it from the group."
             : "\(action). Drag to reorder, or out of the popup to remove it from the group."
+    }
+}
+
+/// The context menu of an item in the popup grid: Open; Copy URL for a website or Show in Finder
+/// for an app; and in editable groups Move to (the other groups), Remove from Group and Add
+/// Website….
+private struct PopupCellContextMenu: ViewModifier {
+    let cell: PopupCell
+    let moveTargets: [GroupMoveTarget]
+    let isEditable: Bool
+    let actions: PopupActions
+
+    func body(content: Content) -> some View {
+        content.contextMenu {
+            Button("Open") { actions.open(cell.app) }
+            if let url = cell.app.websiteURL {
+                Button("Copy URL") {
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()
+                    pasteboard.setString(url.absoluteString, forType: .string)
+                    pasteboard.setString(url.absoluteString, forType: .URL)
+                }
+            } else if cell.isInstalled {
+                Button("Show in Finder") { actions.showInFinder(cell.app) }
+            }
+            if isEditable {
+                Divider()
+                if !moveTargets.isEmpty {
+                    Menu("Move to") {
+                        ForEach(moveTargets) { target in
+                            Button(target.title) { actions.moveAppToGroup(cell.app, target.id) }
+                        }
+                    }
+                }
+                Button("Remove from Group") { actions.removeApp(cell.app) }
+                if let addWebsite = actions.addWebsite {
+                    Divider()
+                    Button("Add Website…", action: addWebsite)
+                }
+            }
+        }
     }
 }
 

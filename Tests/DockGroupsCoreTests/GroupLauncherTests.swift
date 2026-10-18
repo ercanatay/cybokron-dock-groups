@@ -42,13 +42,49 @@ struct GroupLauncherTests {
         #expect(workspace.launched.isEmpty)
     }
 
+    @Test func openAllOpensTheWebsitesTogetherInOneRequest() async throws {
+        let github = AppReference(websiteURL: try WebsiteAddress.parse("github.com"))
+        let docs = AppReference(websiteURL: try WebsiteAddress.parse("https://developer.apple.com/documentation"), name: "Docs")
+        let workspace = FakeWorkspace(installed: [installed.bundleIdentifier])
+        let group = DockGroup(name: "Web", apps: [github, installed, docs])
+
+        let report = await GroupLauncher(workspace: workspace).openAll(group)
+
+        #expect(report.entries.map(\.outcome) == [.launched, .launched, .launched])
+        #expect(workspace.websiteRequests == [["https://github.com", "https://developer.apple.com/documentation"]])
+        #expect(workspace.launched == [installed.bundleIdentifier])
+        // Websites are never looked up or activated as apps.
+        #expect(workspace.activated.isEmpty)
+    }
+
+    @Test func openingAWebsiteUsesTheBrowser() async throws {
+        let github = AppReference(websiteURL: try WebsiteAddress.parse("github.com"))
+        let workspace = FakeWorkspace()
+
+        let report = await GroupLauncher(workspace: workspace).open(github, inGroup: DockGroup(name: "Web", apps: [github]))
+
+        #expect(report.entries.map(\.outcome) == [.launched])
+        #expect(workspace.websiteRequests == [["https://github.com"]])
+        #expect(workspace.launched.isEmpty)
+    }
+
+    @Test func aRefusedWebsiteIsReported() async throws {
+        let github = AppReference(websiteURL: try WebsiteAddress.parse("github.com"))
+        let workspace = FakeWorkspace(refusesWebsites: true)
+
+        let report = await GroupLauncher(workspace: workspace).openAll(DockGroup(name: "Web", apps: [github]))
+
+        #expect(report.problems.map(\.app) == [github])
+        #expect(report.entries.map(\.outcome) == [.failed(reason: FakeWorkspace.LaunchError().localizedDescription)])
+    }
+
     @Test func emptyGroupDoesNothing() async {
         let workspace = FakeWorkspace()
 
         let report = await GroupLauncher(workspace: workspace).openAll(DockGroup(name: "Empty"))
 
         #expect(report.entries.isEmpty)
-        #expect(workspace.launched.isEmpty && workspace.activated.isEmpty)
+        #expect(workspace.launched.isEmpty && workspace.activated.isEmpty && workspace.websiteRequests.isEmpty)
     }
 }
 
@@ -61,13 +97,17 @@ private final class FakeWorkspace: ApplicationWorkspace {
     private let running: Set<String>
     private let installed: Set<String>
     private let failing: Set<String>
+    private let refusesWebsites: Bool
     private(set) var activated: [String] = []
     private(set) var launched: [String] = []
+    /// Each request to open websites, with its addresses.
+    private(set) var websiteRequests: [[String]] = []
 
-    init(running: Set<String> = [], installed: Set<String> = [], failing: Set<String> = []) {
+    init(running: Set<String> = [], installed: Set<String> = [], failing: Set<String> = [], refusesWebsites: Bool = false) {
         self.running = running
         self.installed = installed
         self.failing = failing
+        self.refusesWebsites = refusesWebsites
     }
 
     func activateRunningApplication(bundleIdentifier: String) -> Bool {
@@ -84,6 +124,13 @@ private final class FakeWorkspace: ApplicationWorkspace {
         let bundleIdentifier = url.deletingPathExtension().lastPathComponent
         launched.append(bundleIdentifier)
         if failing.contains(bundleIdentifier) {
+            throw LaunchError()
+        }
+    }
+
+    func openWebsites(_ urls: [URL]) async throws {
+        websiteRequests.append(urls.map(\.absoluteString))
+        if refusesWebsites {
             throw LaunchError()
         }
     }

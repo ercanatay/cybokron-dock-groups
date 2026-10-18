@@ -131,8 +131,10 @@ public final class GroupTerminator {
         return HideReport(groupName: group.name, hidden: hidden, refused: refused)
     }
 
+    /// Websites have no process: Close All and Hide All leave them alone.
     private func runningInstances(of app: AppReference) -> [any QuittableApplication] {
-        applications.runningApplications(bundleIdentifier: app.bundleIdentifier).filter {
+        guard !app.isWebsite else { return [] }
+        return applications.runningApplications(bundleIdentifier: app.bundleIdentifier).filter {
             !$0.isTerminated && $0.processIdentifier != ownProcessIdentifier
         }
     }

@@ -29,10 +29,11 @@ public struct UsageTracker: Sendable {
         AgentIdentity.bundleIdentifierPrefix,
     ]
 
-    /// Whether launches of the app with this bundle identifier are recorded at all.
+    /// Whether launches of the app with this bundle identifier are recorded at all. Websites
+    /// (`AppReference.Kind.website`) never are: Most Used lists apps only.
     public static func isTracked(bundleIdentifier: String) -> Bool {
         let key = UsageStats.key(for: bundleIdentifier)
-        guard !key.isEmpty, !excludedBundleIdentifiers.contains(key) else { return false }
+        guard !key.isEmpty, !excludedBundleIdentifiers.contains(key), !WebsiteAddress.looksLikeAddress(key) else { return false }
         return !excludedBundleIdentifierPrefixes.contains { key.hasPrefix($0) }
     }
 

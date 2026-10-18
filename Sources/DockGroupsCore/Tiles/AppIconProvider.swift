@@ -4,9 +4,9 @@ import UniformTypeIdentifiers
 /// Supplies the icons shown for a group's apps.
 @MainActor
 public protocol AppIconProviding: AnyObject {
-    /// The app's icon, or a generic app icon when the app isn't on this Mac.
+    /// The app's icon, or a generic app icon when the app isn't on this Mac; a globe for websites.
     func icon(for app: AppReference) -> NSImage
-    /// Whether the app can be found on this Mac.
+    /// Whether the app can be found on this Mac. Websites always can be opened.
     func isInstalled(_ app: AppReference) -> Bool
 }
 
@@ -22,6 +22,9 @@ public final class WorkspaceAppIconProvider: AppIconProviding {
     }
 
     public func icon(for app: AppReference) -> NSImage {
+        if app.isWebsite {
+            return WebsiteIcon.image
+        }
         let key = app.normalizedBundleIdentifier
         if let icon = icons[key] {
             return icon
@@ -35,6 +38,6 @@ public final class WorkspaceAppIconProvider: AppIconProviding {
     }
 
     public func isInstalled(_ app: AppReference) -> Bool {
-        app.resolvedURL(workspace: workspace) != nil
+        app.isWebsite || app.resolvedURL(workspace: workspace) != nil
     }
 }
