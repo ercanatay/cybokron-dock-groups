@@ -17,6 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CODESIGN_IDENTITY` for `scripts/build-app.sh` and `scripts/make-dmg.sh`: set to a signing
   identity's SHA-1, it signs the app (and the DMG) with that identity instead of ad hoc. Without it,
   builds are signed ad hoc as before.
+- Apps without a bundle identifier can now be added to groups; they are identified by their location
+  (path), like Half-Life style applets.
+- Sort a group's apps A→Z, from the popup bar and the group window.
+- Free layout (Settings → Popup): dragged apps stay in their cell or swap with the app already
+  there; the slots are remembered per group.
+- Export and import of settings as a backup (`.dockgroups` file, `schemaVersion` 1), with an
+  automatic safety copy of the current settings before an import.
+- The About window links to the website.
+
+### Fixed
+
+- URL scheme commands with several copies of the app installed: only one copy keeps running, and a
+  second copy hands the URL to the running app and quits (#4).
 
 ### Changed
 
