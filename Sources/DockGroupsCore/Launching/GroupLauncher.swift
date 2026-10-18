@@ -48,10 +48,15 @@ public final class GroupLauncher {
     }
 
     /// Opens one of the group's apps, as clicking it in the popup does: brings it to the front when
-    /// it's running and starts it otherwise. The report has a single entry.
-    public func open(_ app: AppReference, inGroup group: DockGroup) async -> LaunchReport {
+    /// it's running and starts it otherwise. With `restoringWindows`, a running app also gets its
+    /// hidden and minimized windows back, as from a click on its Dock icon
+    /// (`PopupPreferences.restoresWindowsOfRunningApps`). The report has a single entry.
+    public func open(_ app: AppReference, inGroup group: DockGroup, restoringWindows: Bool = false) async -> LaunchReport {
         let outcome: LaunchReport.Outcome
-        if workspace.activateRunningApplication(bundleIdentifier: app.bundleIdentifier) {
+        let wasRunning = restoringWindows
+            ? workspace.reopenRunningApplication(bundleIdentifier: app.bundleIdentifier)
+            : workspace.activateRunningApplication(bundleIdentifier: app.bundleIdentifier)
+        if wasRunning {
             outcome = .activated
         } else if let url = workspace.locateApplication(app) {
             do {

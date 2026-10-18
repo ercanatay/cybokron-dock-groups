@@ -19,7 +19,6 @@ final class GlobalShortcutMonitor: ObservableObject {
 
     /// Remembers that the system's Accessibility prompt was shown, so it appears only once.
     static let didPromptAccessibilityKey = "didPromptAccessibility"
-    private static let privacySettingsURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
 
     private let preferences: PreferencesStore
     private let defaults: UserDefaults
@@ -55,7 +54,7 @@ final class GlobalShortcutMonitor: ObservableObject {
 
     /// Opens the Accessibility list in System Settings, where the app can be allowed.
     func openAccessibilitySettings() {
-        NSWorkspace.shared.open(Self.privacySettingsURL)
+        AccessibilityAccess.openSettings()
     }
 
     // MARK: - Monitors
@@ -127,9 +126,7 @@ final class GlobalShortcutMonitor: ObservableObject {
     private func promptForAccessibilityOnce() {
         refreshTrust()
         guard !isAccessibilityTrusted, !defaults.bool(forKey: Self.didPromptAccessibilityKey) else { return }
-        defaults.set(true, forKey: Self.didPromptAccessibilityKey)
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        isAccessibilityTrusted = AXIsProcessTrustedWithOptions(options)
+        isAccessibilityTrusted = AccessibilityAccess.promptOnce(rememberedBy: Self.didPromptAccessibilityKey, defaults: defaults)
         logger.notice("Asked for Accessibility access for the global shortcuts")
     }
 

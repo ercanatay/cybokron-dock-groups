@@ -9,7 +9,8 @@ import OSLog
 /// the group's position is "above the clicked icon" (`DockTileLocator`); clicking the tile again
 /// hides it, and clicking it with ⌥ held opens all of the group's apps right away. The popup opens
 /// apps, Open All, Hide All and Close All as in the main app, but doesn't change the group:
-/// reordering and removing apps happen in the main app.
+/// reordering and removing apps happen in the main app. Restoring a running app's minimized windows
+/// needs Accessibility access for the agent itself; it never asks for it.
 ///
 /// Right-clicking (or Control-clicking) the tile shows the group's apps — checked while running —
 /// with Open All, Hide All and Close All (`applicationDockMenu(_:)`). The Dock asks only apps it
@@ -273,8 +274,9 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Actions
 
     private func open(_ app: AppReference, in group: DockGroup) {
+        let restoresWindows = preferences?.preferences.restoresWindowsOfRunningApps ?? PopupPreferences().restoresWindowsOfRunningApps
         Task { @MainActor in
-            LaunchReportPresenter.presentProblems(in: await launcher.open(app, inGroup: group))
+            LaunchReportPresenter.presentProblems(in: await launcher.open(app, inGroup: group, restoringWindows: restoresWindows))
         }
     }
 

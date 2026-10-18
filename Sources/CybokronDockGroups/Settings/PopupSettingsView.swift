@@ -1,7 +1,9 @@
+import Combine
 import DockGroupsCore
 import SwiftUI
 
-/// App-wide popup settings: look of the panel, and the layout defaults groups can override.
+/// App-wide popup settings: look of the panel, the layout defaults groups can override, and what
+/// opening a running app does.
 struct PopupSettingsView: View {
     @ObservedObject var preferences: PreferencesStore
 
@@ -83,6 +85,18 @@ struct PopupSettingsView: View {
             }
 
             Section {
+                Toggle(isOn: binding(\.restoresWindowsOfRunningApps)) {
+                    Text("Restore windows when reopening an app that is running")
+                    Text("Clicking a running app brings back its hidden and minimized windows, as clicking it in the Dock does. Off, the app only comes to the front.")
+                }
+                if preferences.preferences.restoresWindowsOfRunningApps {
+                    WindowRestoreAccessStatus()
+                }
+            } header: {
+                Text("Running Apps")
+            }
+
+            Section {
                 Toggle(isOn: binding(\.showsStandaloneDockMenus)) {
                     Text("Menu on group Dock icons")
                     Text("Right-click a standalone group's Dock icon for its apps, Open All, Hide All and Close All, once the icon was clicked. Its app then shows as running in the Dock and in ⌘-Tab.")
@@ -108,5 +122,31 @@ struct PopupSettingsView: View {
             get: { preferences.preferences[keyPath: keyPath] },
             set: { newValue in preferences.update { $0[keyPath: keyPath] = newValue } }
         )
+    }
+}
+
+/// Whether minimized windows can be restored: that needs Accessibility access. Checked again while
+/// shown, since access is granted in System Settings, which doesn't tell the app.
+private struct WindowRestoreAccessStatus: View {
+    @State private var isTrusted = AccessibilityAccess.isTrusted
+    private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        Group {
+            if isTrusted {
+                Label("Minimized windows come back too", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            } else {
+                LabeledContent {
+                    Button("Open Privacy & Security…", action: AccessibilityAccess.openSettings)
+                } label: {
+                    Label("Restoring minimized windows requires Accessibility access", systemImage: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                    Text("Allow \(AppInfo.name) under Privacy & Security → Accessibility. Until then, hidden apps still come back, and apps are asked to reopen as from the Dock. Standalone group icons need the access for their own apps.")
+                }
+            }
+        }
+        .onAppear { isTrusted = AccessibilityAccess.isTrusted }
+        .onReceive(refresh) { _ in isTrusted = AccessibilityAccess.isTrusted }
     }
 }

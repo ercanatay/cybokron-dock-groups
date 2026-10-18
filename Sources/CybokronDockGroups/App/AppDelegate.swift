@@ -234,9 +234,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Group actions
 
+    /// Opens an app from a popup or the Most Used menu; a running one comes back with its windows
+    /// when Settings → Popup → Running Apps says so.
     private func open(_ app: AppReference, in group: DockGroup) {
+        let restoresWindows = preferences.preferences.restoresWindowsOfRunningApps
+        if restoresWindows {
+            AccessibilityAccess.promptOnceForRestoringWindows(of: app)
+        }
         Task { @MainActor in
-            let report = await launcher.open(app, inGroup: group)
+            let report = await launcher.open(app, inGroup: group, restoringWindows: restoresWindows)
             LaunchReportPresenter.presentProblems(in: report)
         }
     }

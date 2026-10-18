@@ -10,8 +10,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
 /// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, the
-/// Most Used list, the standalone groups' Dock menus, and whether the app looks for updates on its
-/// own.
+/// Most Used list, the standalone groups' Dock menus, restoring running apps' windows, and whether
+/// the app looks for updates on its own.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
     public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
@@ -49,6 +49,11 @@ public struct PopupPreferences: Hashable, Sendable {
     /// for a menu, so with this on a running group agent is a regular app: it has a running
     /// indicator in the Dock and appears in the app switcher.
     public var showsStandaloneDockMenus: Bool
+    /// Whether opening an app that is already running (from a popup, the Most Used menu or a Dock
+    /// menu) brings its windows back as clicking it in the Dock does: un-hides it, restores its
+    /// windows from the Dock when all of them are minimized (with Accessibility access), and
+    /// otherwise asks it to reopen. Off, the app is only brought to the front.
+    public var restoresWindowsOfRunningApps: Bool
 
     public init(
         theme: PanelTheme = .dark,
@@ -64,7 +69,8 @@ public struct PopupPreferences: Hashable, Sendable {
         mostUsedLimit: Int = MostUsedRanking.defaultLimit,
         mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds,
         automaticallyChecksForUpdates: Bool = true,
-        showsStandaloneDockMenus: Bool = true
+        showsStandaloneDockMenus: Bool = true,
+        restoresWindowsOfRunningApps: Bool = true
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -80,6 +86,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.mostUsedSessionSeconds = mostUsedSessionSeconds
         self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
         self.showsStandaloneDockMenus = showsStandaloneDockMenus
+        self.restoresWindowsOfRunningApps = restoresWindowsOfRunningApps
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -145,6 +152,7 @@ extension PopupPreferences: Codable {
         case mostUsedSessionSeconds
         case automaticallyChecksForUpdates
         case showsStandaloneDockMenus = "standaloneDockMenu"
+        case restoresWindowsOfRunningApps = "restoreRunningAppWindows"
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -175,5 +183,7 @@ extension PopupPreferences: Codable {
             ?? defaults.automaticallyChecksForUpdates
         showsStandaloneDockMenus = container.decodeLeniently(Bool.self, forKey: .showsStandaloneDockMenus)
             ?? defaults.showsStandaloneDockMenus
+        restoresWindowsOfRunningApps = container.decodeLeniently(Bool.self, forKey: .restoresWindowsOfRunningApps)
+            ?? defaults.restoresWindowsOfRunningApps
     }
 }
