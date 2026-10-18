@@ -37,12 +37,13 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   saved with the group, and the group's app list follows them row by row.
 - Global keyboard shortcuts: ⌃⌥1 shows the first group's popup, ⌃⌥2 the second, and so on up to
   9; pressing it again closes the popup. The modifier keys can be changed, or the shortcuts turned
-  off, in Settings → Shortcuts. To notice them while you work in other apps, the app needs
+  off, in Settings → Shortcuts & Siri. To notice them while you work in other apps, the app needs
   Accessibility access (Privacy & Security → Accessibility); it asks once. The shortcuts are
   observed, not taken over, so the app in front also receives the key press.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
   optionally force quit) and **Show Group** (the popup) actions, and phrases such as “Launch Work in
-  Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames.
+  Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames. Settings →
+  Shortcuts & Siri spells out a group's phrases and links, each with a Copy button.
 - Links, e.g. from scripts or other apps (`open "cybokrondockgroups://open/work"`):
 
   | Link | Does |
@@ -60,6 +61,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
   reorder or remove them; **Open All** and **Hide All** there too (and in a group's context menu).
+  **Move to** in an app's context menu (there and in the popup), or dragging the app onto another
+  group in the sidebar, moves it to that group; a group that already has the app keeps one copy.
   Deleting a group never touches the apps themselves. Apps without a
   bundle identifier (hand-made wrapper apps, for example) can be added too: they're kept by their
   location, so they work as long as they stay where they were added.
@@ -78,14 +81,18 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   Dock. Clicking it shows the group's popup over the Dock, clicking it again hides it, and ⌥-clicking
   it opens all of the group's apps right away — even while Cybokron Dock Groups isn't running. The
   popup opens apps, Open All, Hide All and Close All as usual; apps are reordered and removed in the main app.
+  Right-clicking (or Control-clicking) the icon lists the group's apps — checked while running — with
+  Open All, Hide All and Close All. macOS asks only running apps for such a menu, so it appears once
+  the icon was clicked, and while *Menu on group Dock icons* (Settings → Popup, on by default) is on
+  the group's app shows as running in the Dock and in ⌘-Tab.
   - The group's app lives in `~/Library/Application Support/Cybokron/DockGroups/Agents/<name>.app`
     (`calisma-alani.app` for “Çalışma Alanı”). It's a copy of this app's own executable with its own
-    Info.plist (bundle identifier `com.cybokron.dockgroups.agent.<group ID>`, no Dock icon of its own
-    while running, no menu bar item, shortcuts, Siri actions or links), the group's settings in
-    `Contents/Resources/group-config.json` and the icon as `AppIcon.icns` (16 to 1024 pixels). It's
-    signed ad hoc with `codesign` and verified before it's moved into place; if signing fails, nothing
-    is installed and the setting turns itself off again. It's then registered with LaunchServices
-    (`lsregister -f`).
+    Info.plist (bundle identifier `com.cybokron.dockgroups.agent.<group ID>`, `LSUIElement` — it
+    makes itself a regular app only for the Dock menu — and no menu bar item, shortcuts, Siri actions
+    or links), the group's settings in `Contents/Resources/group-config.json` and the icon as
+    `AppIcon.icns` (16 to 1024 pixels). It's signed ad hoc with `codesign` and verified before it's
+    moved into place; if signing fails, nothing is installed and the setting turns itself off again.
+    It's then registered with LaunchServices (`lsregister -f`).
   - The tile is added to the Dock's app list (`persistent-apps` in the `com.apple.dock` preferences,
     as `defaults write` would) and the Dock restarts for a moment (`killall Dock`) to show it. Only
     tiles of the groups' apps are added, updated or removed; the rest of the Dock stays as it is.

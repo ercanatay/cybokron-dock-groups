@@ -18,6 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Merge** when importing a backup: adds the backup's groups whose name (or ID) isn't there yet
   after the current ones, leaving the current groups and all settings as they are. The groups file
   is copied aside first, as with Replace All.
+- **Dock menu for standalone groups**: right-click (or Control-click) a standalone group's Dock icon
+  for its apps — checked while running; choose one to open it or bring it to the front — and Open
+  All, Hide All and Close All. The Dock shows the menu once the icon was clicked and the group's app
+  runs. Settings → Popup → *Menu on group Dock icons* (on by default) turns it off; while it's on,
+  the group's app shows as running in the Dock and in the app switcher (it's still never counted in
+  Most Used).
+- **Move to**: an app's context menu in the popup and in the group window moves it to another
+  group, and so does dragging it from the group window onto a group in the sidebar. It joins the end
+  of that group (in Free Layout, the first free cell); a group that already has it keeps just its
+  own copy.
+- Settings → **Shortcuts & Siri** (was Shortcuts) spells out, for a group you pick, what to ask
+  Siri (“Launch Work in Cybokron Dock Groups”, Quit, Show) and its four links, each with a Copy
+  button, and opens the Shortcuts app.
 
 ### Changed
 
