@@ -31,10 +31,12 @@
 		22B7C64C51C2E15CB9DC16E1 /* GroupTerminatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F2253286180CBCA294854D /* GroupTerminatorTests.swift */; };
 		2CFB607E8F24F9F4E818D144 /* ShortcutsSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667B522D17812ED938698F95 /* ShortcutsSettingsView.swift */; };
 		305936C26E745BEC00DE19AA /* PopupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056659382DC22FBC5FC3A912 /* PopupSettingsView.swift */; };
+		31F724BAB09462341B2E5BA1 /* RunningApplicationLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A027660E679C7B4E0B67C /* RunningApplicationLookup.swift */; };
 		322F8CBB4774FEC607A1401D /* UpdateCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B5322E99EA54EBAE2EA4AD /* UpdateCheck.swift */; };
 		325583A0BEE693EB87C608DD /* AgentAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B854A1363C8CFD95BAEE6D /* AgentAppDelegate.swift */; };
 		391690A5C96C99C87E8519D2 /* TileImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13FA88676F0FB930141A3918 /* TileImageCache.swift */; };
 		3B0DE9AC2AECF808C2E8A4C5 /* libDockGroupsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */; };
+		3C4326E575B2EBF6357517E3 /* PathIdentifiedAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C8EDE18D836E1B44E32A43 /* PathIdentifiedAppTests.swift */; };
 		425CFE12A9D688C18A2F05D8 /* SecondCopyHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D1CAC5A97E5F0FA956055 /* SecondCopyHandoff.swift */; };
 		450D4EDBC7E78B7A66E0BD4E /* PopupPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468B22320653764608FF0CF /* PopupPanel.swift */; };
 		4D779D910731F57A8EB71E41 /* DockGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7DDE2E6A92F7A941A6B668 /* DockGroup.swift */; };
@@ -152,6 +154,7 @@
 		1F95FC064EFF1C6D2597EEF7 /* PopupContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupContentView.swift; sourceTree = "<group>"; };
 		2503E00EE4DC8ED74902660C /* ApplicationWorkspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationWorkspace.swift; sourceTree = "<group>"; };
 		2A22FD8F9E1099E382CFD66D /* UpdatesSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesSettingsView.swift; sourceTree = "<group>"; };
+		2A7A027660E679C7B4E0B67C /* RunningApplicationLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningApplicationLookup.swift; sourceTree = "<group>"; };
 		2E907092CE95713A2FF02644 /* GroupIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIntents.swift; sourceTree = "<group>"; };
 		30FFA0365D0830EFFB829133 /* InstanceHandoffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceHandoffTests.swift; sourceTree = "<group>"; };
 		346D8E3D56FAC77F400AFFBF /* GroupIntentSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIntentSupport.swift; sourceTree = "<group>"; };
@@ -212,6 +215,7 @@
 		A4B5322E99EA54EBAE2EA4AD /* UpdateCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheck.swift; sourceTree = "<group>"; };
 		A5152845B656E4B3B3015DE6 /* ReportSummaries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSummaries.swift; sourceTree = "<group>"; };
 		A86C2FCD33619FECB563A0AC /* AgentInstallerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentInstallerTests.swift; sourceTree = "<group>"; };
+		A9C8EDE18D836E1B44E32A43 /* PathIdentifiedAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathIdentifiedAppTests.swift; sourceTree = "<group>"; };
 		AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupLauncher.swift; sourceTree = "<group>"; };
 		AC9CCEB44CEA9E79B1C008E8 /* AgentDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDirectory.swift; sourceTree = "<group>"; };
 		ACDC60218E7F9A86D5162161 /* GroupSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSidebarView.swift; sourceTree = "<group>"; };
@@ -509,6 +513,7 @@
 				54AAAF01792CF3ED5DEA7A3E /* GroupStoreTests.swift */,
 				06F2253286180CBCA294854D /* GroupTerminatorTests.swift */,
 				30FFA0365D0830EFFB829133 /* InstanceHandoffTests.swift */,
+				A9C8EDE18D836E1B44E32A43 /* PathIdentifiedAppTests.swift */,
 				755FF6B51BC76DACD761EA59 /* PopupDragTests.swift */,
 				915C545290EE98ED1FEC88D1 /* PopupLayoutTests.swift */,
 				FA3185825EF35AC54DE92D41 /* PopupPreferencesTests.swift */,
@@ -552,6 +557,7 @@
 				AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */,
 				599B104E5C4A021A7B768970 /* GroupTerminator.swift */,
 				A5152845B656E4B3B3015DE6 /* ReportSummaries.swift */,
+				2A7A027660E679C7B4E0B67C /* RunningApplicationLookup.swift */,
 			);
 			path = Launching;
 			sourceTree = "<group>";
@@ -816,6 +822,7 @@
 				55CA6C229D0665CC6F49BAF3 /* ReleaseFeed.swift in Sources */,
 				04BFCB558CC2A1E369D77B99 /* ReleaseInfo.swift in Sources */,
 				FC5205E832B5B8A7BBAD20A8 /* ReportSummaries.swift in Sources */,
+				31F724BAB09462341B2E5BA1 /* RunningApplicationLookup.swift in Sources */,
 				BD4EAB1ABE735D34D507D4D1 /* SemanticVersion.swift in Sources */,
 				E4BA0EED222A8ADADA40059C /* SystemTools.swift in Sources */,
 				9C55BDFD9985B003409CDE51 /* TileAppearance.swift in Sources */,
@@ -849,6 +856,7 @@
 				8F9D2D97160AA2F384DCCB09 /* GroupStoreTests.swift in Sources */,
 				22B7C64C51C2E15CB9DC16E1 /* GroupTerminatorTests.swift in Sources */,
 				53BEE0DDC31220E825B94763 /* InstanceHandoffTests.swift in Sources */,
+				3C4326E575B2EBF6357517E3 /* PathIdentifiedAppTests.swift in Sources */,
 				D17C6D52D1D1FD7825918967 /* PopupDragTests.swift in Sources */,
 				82ADFF1CA44D0C45FDA4639E /* PopupLayoutTests.swift in Sources */,
 				A2074F93752DAD33ECA79C43 /* PopupPreferencesTests.swift in Sources */,

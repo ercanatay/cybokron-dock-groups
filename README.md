@@ -51,7 +51,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   within 5 seconds.
 - **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
-  reorder or remove them. Deleting a group never touches the apps themselves.
+  reorder or remove them. Deleting a group never touches the apps themselves. Apps without a
+  bundle identifier (hand-made wrapper apps, for example) can be added too: they're kept by their
+  location, so they work as long as they stay where they were added.
 - Group tiles drawn by the app: the group's emoji, or a 2×2 / 3×3 grid of its first app icons, on a
   solid, gradient or glass background in the color you pick. They appear in the menu, the popup
   header and a live preview in the group window.

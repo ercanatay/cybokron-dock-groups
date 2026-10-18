@@ -8,6 +8,9 @@ import DockGroupsCore
 final class RunningAppsMonitor: ObservableObject {
     /// Lowercased bundle identifiers of the running apps.
     @Published private(set) var runningBundleIdentifiers: Set<String> = []
+    /// Normalized bundle locations of the running apps that have no bundle identifier, for the
+    /// group apps identified by path.
+    @Published private(set) var runningPathIdentities: Set<String> = []
 
     private let workspace: NSWorkspace
     private var observers: [NSObjectProtocol] = []
@@ -28,7 +31,9 @@ final class RunningAppsMonitor: ObservableObject {
     }
 
     func isRunning(_ app: AppReference) -> Bool {
-        runningBundleIdentifiers.contains(app.bundleIdentifier.lowercased())
+        app.isIdentifiedByPath
+            ? runningPathIdentities.contains(app.normalizedBundleIdentifier)
+            : runningBundleIdentifiers.contains(app.normalizedBundleIdentifier)
     }
 
     func runningCount(in group: DockGroup) -> Int {
@@ -36,13 +41,14 @@ final class RunningAppsMonitor: ObservableObject {
     }
 
     private func reload() {
-        let running = Set(
-            workspace.runningApplications
-                .filter { !$0.isTerminated }
-                .compactMap { $0.bundleIdentifier?.lowercased() }
-        )
+        let applications = workspace.runningApplications.filter { !$0.isTerminated }
+        let running = Set(applications.compactMap { $0.bundleIdentifier?.lowercased() })
         if running != runningBundleIdentifiers {
             runningBundleIdentifiers = running
+        }
+        let pathIdentities = Set(applications.compactMap(RunningApplicationLookup.pathIdentity(of:)))
+        if pathIdentities != runningPathIdentities {
+            runningPathIdentities = pathIdentities
         }
     }
 }

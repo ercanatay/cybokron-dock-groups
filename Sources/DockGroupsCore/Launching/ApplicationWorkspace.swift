@@ -4,6 +4,8 @@ import AppKit
 @MainActor
 public protocol ApplicationWorkspace: AnyObject {
     /// Brings a running instance of the app to the front. Returns `false` when it isn't running.
+    /// `bundleIdentifier` is the app's `AppReference.bundleIdentifier`: its location for apps
+    /// identified by path.
     func activateRunningApplication(bundleIdentifier: String) -> Bool
     /// Where the app lives on this Mac, or `nil` when it isn't installed.
     func locateApplication(_ app: AppReference) -> URL?
@@ -21,7 +23,7 @@ public final class SystemApplicationWorkspace: ApplicationWorkspace {
     }
 
     public func activateRunningApplication(bundleIdentifier: String) -> Bool {
-        let running = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+        let running = RunningApplicationLookup.runningApplications(identifiedBy: bundleIdentifier, workspace: workspace)
         guard let app = running.first(where: { !$0.isTerminated }) else { return false }
         if !app.activate(options: [.activateAllWindows]), let bundleURL = app.bundleURL {
             // macOS may refuse an activation request from an app that isn't frontmost. Asking

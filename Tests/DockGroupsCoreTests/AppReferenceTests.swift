@@ -15,6 +15,7 @@ struct AppReferenceTests {
         let app = try AppReference(applicationURL: appURL)
 
         #expect(app.bundleIdentifier == "com.example.sample")
+        #expect(!app.isIdentifiedByPath)
         #expect(app.name == "Sample App")
         #expect(app.path == appURL.standardizedFileURL.path)
     }
@@ -27,14 +28,17 @@ struct AppReferenceTests {
         #expect(try AppReference(applicationURL: appURL).name == "Nameless")
     }
 
-    @Test func rejectsBundleWithoutIdentifier() throws {
+    @Test func bundleWithoutIdentifierIsIdentifiedByItsLocation() throws {
         let directory = try TemporaryDirectory()
         defer { directory.remove() }
         let appURL = try directory.makeAppBundle(named: "NoID", info: ["CFBundleName": "No ID"])
 
-        #expect(throws: AppReferenceError.missingBundleIdentifier(path: appURL.standardizedFileURL.path)) {
-            try AppReference(applicationURL: appURL)
-        }
+        let app = try AppReference(applicationURL: appURL)
+
+        #expect(app.isIdentifiedByPath)
+        #expect(app.bundleIdentifier == appURL.resolvingSymlinksInPath().standardizedFileURL.path)
+        #expect(app.name == "No ID")
+        #expect(app.path == appURL.standardizedFileURL.path)
     }
 
     @Test func rejectsNonApplications() throws {

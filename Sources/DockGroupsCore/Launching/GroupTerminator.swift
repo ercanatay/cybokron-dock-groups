@@ -29,6 +29,8 @@ extension NSRunningApplication: QuittableApplication {}
 /// Finds running instances of an app.
 @MainActor
 public protocol RunningApplicationsProviding: AnyObject {
+    /// `bundleIdentifier` is the app's `AppReference.bundleIdentifier`: its location for apps
+    /// identified by path.
     func runningApplications(bundleIdentifier: String) -> [any QuittableApplication]
 }
 
@@ -38,7 +40,7 @@ public final class SystemRunningApplications: RunningApplicationsProviding {
     public init() {}
 
     public func runningApplications(bundleIdentifier: String) -> [any QuittableApplication] {
-        NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+        RunningApplicationLookup.runningApplications(identifiedBy: bundleIdentifier)
     }
 }
 

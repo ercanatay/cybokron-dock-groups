@@ -2,7 +2,8 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// One member app: icon, name, bundle identifier, and a button that removes it from the group.
+/// One member app: icon, name, bundle identifier (or location, for an app without one), and a
+/// button that removes it from the group.
 struct AppRowView: View {
     let app: AppReference
     let onRemove: () -> Void
@@ -19,10 +20,10 @@ struct AppRowView: View {
                     .lineLimit(1)
                 Group {
                     if location == nil {
-                        Text("Not found on this Mac · \(app.bundleIdentifier)")
+                        Text("Not found on this Mac · \(identity)")
                             .foregroundStyle(.orange)
                     } else {
-                        Text(app.bundleIdentifier)
+                        Text(identity)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -39,6 +40,11 @@ struct AppRowView: View {
             .help("Remove \(app.name) from this group. The app itself isn't affected.")
         }
         .padding(.vertical, 2)
+    }
+
+    /// The bundle identifier, or the app's location (as `~/…`) when it has none.
+    private var identity: String {
+        app.isIdentifiedByPath ? (app.bundleIdentifier as NSString).abbreviatingWithTildeInPath : app.bundleIdentifier
     }
 
     private func icon(at location: URL?) -> NSImage {
