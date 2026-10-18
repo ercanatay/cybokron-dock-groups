@@ -185,7 +185,7 @@ struct GroupDetailView: View {
         } header: {
             Text("Standalone")
         } footer: {
-            Text("Gives the group its own small app, with the tile above as its icon, at the end of the Dock. Clicking it shows the group's popup (⌥-click opens all of its apps), even while Cybokron Dock Groups isn't running. Turning this off, deleting the group or dragging the icon out of the Dock removes that app. Adding or removing the icon restarts the Dock for a moment.")
+            Text("Gives the group its own small app, with the tile above as its icon, at the end of the Dock. Clicking it shows the group's popup (⌥-click opens all of its apps), even while Cybokron Dock Groups isn't running; right-clicking it lists the group's apps (Settings → Popup). Turning this off, deleting the group or dragging the icon out of the Dock removes that app. Adding or removing the icon restarts the Dock for a moment.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

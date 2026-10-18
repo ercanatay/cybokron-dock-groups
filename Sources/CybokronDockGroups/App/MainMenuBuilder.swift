@@ -14,6 +14,18 @@ enum MainMenuBuilder {
         return mainMenu
     }
 
+    /// The main menu of a standalone group's agent while it runs as a regular app, named after the
+    /// group: Hide and Quit. It shows only while the agent is active, that is while its popup is open.
+    static func makeAgentMenu(groupName: String) -> NSMenu {
+        let menu = NSMenu(title: groupName)
+        menu.addItem(withTitle: "Hide \(groupName)", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "Quit \(groupName)", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let mainMenu = NSMenu()
+        mainMenu.addItem(submenuItem(menu))
+        return mainMenu
+    }
+
     private static func appMenu() -> NSMenu {
         let menu = NSMenu(title: AppInfo.name)
         // No target: the responder chain delivers these to the app delegate.

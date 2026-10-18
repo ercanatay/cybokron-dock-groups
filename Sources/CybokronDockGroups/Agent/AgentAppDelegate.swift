@@ -10,6 +10,13 @@ import OSLog
 /// opens apps, Open All, Hide All and Close All as in the main app, but doesn't change the group:
 /// reordering and removing apps happen in the main app.
 ///
+/// Right-clicking (or Control-clicking) the tile shows the group's apps — checked while running —
+/// with Open All, Hide All and Close All (`applicationDockMenu(_:)`). The Dock asks only apps it
+/// shows as running for such a menu, so while `PopupPreferences.showsStandaloneDockMenus` is on the
+/// agent runs as a regular app: a running indicator under its tile, an entry in the app switcher
+/// and, while the popup is open, a menu bar with Hide and Quit. With it off, the agent stays out of
+/// both, like the `LSUIElement` app its bundle declares, and the Dock shows only its own items.
+///
 /// The group comes from the bundle's `group-config.json` only, so the agent works while the main
 /// app isn't running; the main app rewrites the file when the group changes and tells the agent
 /// with `AgentNotification.configurationChanged`. Agents have no menu bar item, global shortcuts,
@@ -25,6 +32,9 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     private let launcher = GroupLauncher()
     private let terminator = GroupTerminator()
     private let icons = WorkspaceAppIconProvider()
+    private let runningApps = RunningAppsMonitor()
+    /// Read before the app finishes launching, so the activation policy is in place first.
+    private var launchConfiguration: Result<AgentConfiguration, Error>?
     private var store: GroupStore?
     private var preferences: PreferencesStore?
     private var popupController: PopupPanelController?
@@ -35,10 +45,19 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         super.init()
     }
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        let configuration = Result { try loadConfiguration() }
+        launchConfiguration = configuration
+        if case .success(let configuration) = configuration {
+            applyDockPresence(for: configuration)
+        }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         let configuration: AgentConfiguration
         do {
-            configuration = try loadConfiguration()
+            configuration = try (launchConfiguration ?? Result { try loadConfiguration() }).get()
+            launchConfiguration = nil
         } catch {
             logger.error("Agent \(self.groupID, privacy: .public) can't start: \(String(describing: error), privacy: .public)")
             presentDamagedBundleAlert(error)
@@ -123,7 +142,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
             preferences: preferences,
             tiles: tiles,
             icons: icons,
-            runningApps: RunningAppsMonitor(),
+            runningApps: runningApps,
             mostUsed: nil,
             allowsEditing: false,
             actions: PopupPanelController.Actions(
@@ -155,10 +174,93 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
             let configuration = try loadConfiguration()
             store?.updateGroup(groupID) { $0 = configuration.group }
             preferences?.update { $0 = configuration.preferences }
+            applyDockPresence(for: configuration)
             logger.notice("Agent \(self.groupID, privacy: .public) reloaded its configuration")
         } catch {
             logger.error("Agent \(self.groupID, privacy: .public): reloading the configuration failed: \(String(describing: error), privacy: .public)")
         }
+    }
+
+    // MARK: - Dock menu
+
+    /// Runs the agent as a regular app while its Dock menu is on — the Dock asks only apps it shows
+    /// as running for a menu — and as an agent app without a Dock presence otherwise. The menu bar
+    /// it then gets (shown only while the agent is active, that is while its popup is open) has just
+    /// Hide and Quit, named after the group.
+    private func applyDockPresence(for configuration: AgentConfiguration) {
+        let showsDockMenu = configuration.preferences.showsStandaloneDockMenus
+        NSApp.mainMenu = showsDockMenu ? MainMenuBuilder.makeAgentMenu(groupName: configuration.group.name) : nil
+        let policy: NSApplication.ActivationPolicy = showsDockMenu ? .regular : .accessory
+        guard NSApp.activationPolicy() != policy else { return }
+        if !NSApp.setActivationPolicy(policy) {
+            logger.error("Agent \(self.groupID, privacy: .public) couldn't switch to activation policy \(policy.rawValue)")
+        }
+    }
+
+    /// The tile's menu, asked for on every right-click or Control-click. The Dock draws it itself,
+    /// without item images, so the apps are listed by name, checked while they run; it adds its
+    /// own items (Options, Show All Windows, Hide, Quit) below.
+    func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
+        guard preferences?.preferences.showsStandaloneDockMenus == true,
+              let group = store?.group(withID: groupID)
+        else { return nil }
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        if group.apps.isEmpty {
+            let placeholder = NSMenuItem(title: "No apps in this group yet", action: nil, keyEquivalent: "")
+            placeholder.isEnabled = false
+            menu.addItem(placeholder)
+        }
+        for app in group.apps {
+            let item = NSMenuItem(title: app.name, action: #selector(openAppFromDockMenu(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = app.bundleIdentifier
+            let isRunning = runningApps.isRunning(app)
+            item.state = isRunning ? .on : .off
+            item.isEnabled = isRunning || icons.isInstalled(app)
+            menu.addItem(item)
+        }
+        menu.addItem(.separator())
+        let hasRunningApps = runningApps.runningCount(in: group) > 0
+        menu.addItem(dockMenuItem("Open All", action: #selector(openAllFromDockMenu(_:)), isEnabled: !group.apps.isEmpty))
+        menu.addItem(dockMenuItem("Hide All", action: #selector(hideAllFromDockMenu(_:)), isEnabled: hasRunningApps))
+        menu.addItem(dockMenuItem("Close All", action: #selector(closeAllFromDockMenu(_:)), isEnabled: hasRunningApps))
+        return menu
+    }
+
+    private func dockMenuItem(_ title: String, action: Selector, isEnabled: Bool) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+        item.target = self
+        item.isEnabled = isEnabled
+        return item
+    }
+
+    /// Opens the app, or brings it to the front when it's running.
+    @objc private func openAppFromDockMenu(_ sender: NSMenuItem) {
+        guard let group = store?.group(withID: groupID),
+              let identifier = (sender.representedObject as? String)?.lowercased(),
+              let app = group.apps.first(where: { $0.normalizedBundleIdentifier == identifier })
+        else { return }
+        popupController?.close(reason: .appAction)
+        open(app, in: group)
+    }
+
+    @objc private func openAllFromDockMenu(_ sender: NSMenuItem) {
+        guard let group = store?.group(withID: groupID) else { return }
+        popupController?.close(reason: .appAction)
+        openAll(group)
+    }
+
+    @objc private func hideAllFromDockMenu(_ sender: NSMenuItem) {
+        guard let group = store?.group(withID: groupID) else { return }
+        popupController?.close(reason: .appAction)
+        hideAll(group)
+    }
+
+    @objc private func closeAllFromDockMenu(_ sender: NSMenuItem) {
+        guard let group = store?.group(withID: groupID) else { return }
+        popupController?.close(reason: .appAction)
+        closeAll(group, mode: .graceful)
     }
 
     // MARK: - Actions

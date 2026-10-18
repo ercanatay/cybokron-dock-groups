@@ -82,6 +82,15 @@ struct PopupSettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section {
+                Toggle(isOn: binding(\.showsStandaloneDockMenus)) {
+                    Text("Menu on group Dock icons")
+                    Text("Right-click a standalone group's Dock icon for its apps, Open All, Hide All and Close All, once the icon was clicked. Its app then shows as running in the Dock and in ⌘-Tab.")
+                }
+            } header: {
+                Text("Standalone Dock Icons")
+            }
+
             if let problem = preferences.saveProblem {
                 Section {
                     Label(problem, systemImage: "exclamationmark.triangle.fill")
