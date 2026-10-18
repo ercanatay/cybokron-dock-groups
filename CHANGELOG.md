@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.7] - 2026-10-18
+
 ### Fixed
 
 - **Scrollable Settings panes**: every Settings tab now has the same fixed height and scrolls, instead
@@ -246,7 +248,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.3...v0.5.4

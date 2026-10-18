@@ -24,7 +24,7 @@ esac
 
 APP_NAME="Cybokron Dock Groups"
 BUNDLE_ID="com.cybokron.dockgroups"
-MARKETING_VERSION="0.5.6"
+MARKETING_VERSION="0.5.7"
 BUILD_NUMBER="1"
 MINIMUM_MACOS="14.0"
 PRODUCT="CybokronDockGroups"
