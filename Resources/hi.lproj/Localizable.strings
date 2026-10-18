@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (हिन्दी)
+  Cybokron Dock Groups
+
+  हर कुंजी का हिन्दी पाठ। प्लेसहोल्डर सुरक्षित रहते हैं: %@ पाठ है, %ld एक संख्या है, और
+  %1$@, %2$ld … क्रमांकित हैं ताकि अनुवाद में क्रम बदला जा सके। .one/.other पर खत्म होने वाली कुंजियाँ
+  गिनती 1 का एकवचन और बहुवचन पाठ हैं। ऐप का नाम „Cybokron Dock Groups“, „DockGroups“, „GitHub“, „Siri“,
+  कुंजी-प्रतीक (⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc) और फ़ाइल नाम अपरिवर्तित रहते हैं।
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "ठीक है";
+"common.cancel" = "रद्द करें";
+"common.add" = "जोड़ें";
+"common.copy" = "कॉपी करें";
+"common.copied" = "कॉपी हो गया";
+"common.close" = "बंद करें";
+"common.done" = "हो गया";
+"common.install" = "इंस्टॉल करें";
+"common.tryAgain" = "फिर से कोशिश करें";
+"common.openAll" = "सभी खोलें";
+"common.hideAll" = "सभी छिपाएँ";
+"common.closeAll" = "सभी बंद करें";
+"common.forceQuit" = "ज़बरन बंद करें";
+"common.addApps" = "ऐप जोड़ें…";
+"common.addWebsite" = "वेबसाइट जोड़ें…";
+"common.showInFinder" = "Finder में दिखाएँ";
+"common.removeFromGroup" = "समूह से हटाएँ";
+"common.moveTo" = "इसमें ले जाएँ";
+"common.default" = "डिफ़ॉल्ट";
+"common.auto" = "स्वचालित";
+"common.changelog" = "बदलाव लॉग";
+"common.links" = "लिंक";
+"common.openReleasesPage" = "रिलीज़ पेज खोलें";
+"common.openPrivacySettings" = "गोपनीयता और सुरक्षा खोलें…";
+"common.checkForUpdates" = "अपडेट जाँचें…";
+"common.settings" = "सेटिंग्स…";
+"common.noLaunchesYet" = "अभी तक कोई लॉन्च दर्ज नहीं";
+"common.noAppsInGroup" = "इस समूह में अभी कोई ऐप नहीं है";
+"common.about" = "%@ के बारे में";
+"common.hideApp" = "%@ छिपाएँ";
+"common.quitApp" = "%@ बंद करें";
+"common.versionShort" = "v%@";
+"common.update.installing" = "संस्करण %@ इंस्टॉल हो रहा है…";
+"common.update.restarting" = "संस्करण %@ इंस्टॉल हो गया — फिर से शुरू हो रहा है…";
+"common.appCount.one" = "1 ऐप";
+"common.appCount.other" = "%ld ऐप";
+"common.groupCount.one" = "1 समूह";
+"common.groupCount.other" = "%ld समूह";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "समूह";
+"menuBar.noGroups" = "अभी कोई समूह नहीं";
+"menuBar.manageGroups" = "समूह प्रबंधित करें…";
+"menuBar.mostUsed.empty.tooltip" = "ऐप्स सामान्य रूप से खोलें; जिन्हें आप सबसे ज़्यादा खोलेंगे वे यहाँ दिखेंगे।";
+"menuBar.mostUsed.show" = "सबसे ज़्यादा उपयोग किए गए दिखाएँ";
+"menuBar.mostUsed.show.tooltip" = "आपके सबसे ज़्यादा खोले गए ऐप्स एक पॉपअप में दिखाएँ।";
+"menuBar.checkForUpdates.tooltip" = "GitHub पर %@ का नया संस्करण खोजें।";
+"menuBar.mostUsed.app.tooltip.one" = "%@ खोलें। एक बार खोला गया।";
+"menuBar.mostUsed.app.tooltip.other" = "%1$@ खोलें। %2$ld बार खोला गया।";
+"menuBar.group.tooltip" = "“%@” के ऐप्स दिखाएँ। सभी एक साथ खोलने के लिए ⌥ दबाए रखें, या चल रहे ऐप्स छिपाने के लिए ⇧⌥।";
+"menuBar.group.tooltip.shortcut" = "“%1$@” के ऐप्स दिखाएँ। सभी एक साथ खोलने के लिए ⌥ दबाए रखें, या चल रहे ऐप्स छिपाने के लिए ⇧⌥। शॉर्टकट: %2$@।";
+"menuBar.group.openAll" = "“%@” में सभी खोलें";
+"menuBar.group.openAll.tooltip.one" = "“%@” में ऐप खोलें";
+"menuBar.group.openAll.tooltip.other" = "“%2$@” में सभी %1$ld ऐप खोलें";
+"menuBar.group.noApps" = "“%@” में अभी कोई ऐप नहीं है।";
+"menuBar.group.hideAll" = "“%@” में सभी छिपाएँ";
+"menuBar.group.hideAll.tooltip" = "“%@” में चल रहे ऐप्स छिपाएँ। जो ऐप्स नहीं चल रहे, वे बंद ही रहेंगे।";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "संपादित करें";
+"mainMenu.undo" = "पूर्ववत करें";
+"mainMenu.redo" = "फिर से करें";
+"mainMenu.cut" = "काटें";
+"mainMenu.paste" = "चिपकाएँ";
+"mainMenu.selectAll" = "सभी चुनें";
+"mainMenu.window" = "विंडो";
+"mainMenu.minimize" = "छोटा करें";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "इस समूह का हर ऐप खोलें; चल रहे ऐप्स सामने आ जाएँगे।";
+"popup.openAll.help.mostUsed" = "इस सूची का हर ऐप खोलें; चल रहे ऐप्स सामने आ जाएँगे।";
+"popup.hideAll.help.group" = "इस समूह के चल रहे ऐप्स छिपाएँ; जो ऐप्स नहीं चल रहे, वे बंद ही रहेंगे।";
+"popup.hideAll.help.mostUsed" = "इस सूची के चल रहे ऐप्स छिपाएँ; जो ऐप्स नहीं चल रहे, वे बंद ही रहेंगे।";
+"popup.closeAll.help.group" = "इस समूह के चल रहे ऐप्स बंद करें। बिना सहेजे ज़बरन बंद करने के लिए ⌘-क्लिक करें।";
+"popup.closeAll.help.mostUsed" = "इस सूची के चल रहे ऐप्स बंद करें। बिना सहेजे ज़बरन बंद करने के लिए ⌘-क्लिक करें।";
+"popup.summary.websites.one" = "1 वेबसाइट";
+"popup.summary.websites.other" = "%ld वेबसाइटें";
+"popup.summary.running" = "%ld चल रहे";
+"popup.summary.byLaunches" = "लॉन्च के अनुसार";
+"popup.filter.noMatch" = "कोई ऐप “%@” से मेल नहीं खाता";
+"popup.filter.noMatch.hint" = "फ़िल्टर हटाने के लिए Delete या Esc दबाएँ।";
+"popup.empty.mostUsed.hint" = "अपना इतिहास बनाने के लिए ऐप्स सामान्य रूप से खोलें।";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "इस समूह के ऐप्स नाम के अनुसार A से Z क्रम में लगाएँ।";
+"popup.footer.sortAZ.accessibility" = "A से Z क्रम में लगाएँ";
+"popup.footer.filter.matches" = "फ़िल्टर: “%@”  ·  ↩ चुना हुआ ऐप खोलता है  ·  esc साफ़ करता है";
+"popup.footer.filter.noMatch" = "फ़िल्टर: “%@”  ·  कोई मेल नहीं  ·  ⌫ या esc साफ़ करता है";
+"popup.footer.hint.mostUsed" = "कितनी बार खोले गए, उसके अनुसार क्रम  ·  ज़बरन बंद करने के लिए ⌘-क्लिक करें Close All पर";
+"popup.footer.hint.group" = "Close All:  ⌥-क्लिक सामान्य रूप से बंद करता है  ·  ⌘-क्लिक ज़बरन बंद करता है";
+"popup.footer.drag.remove" = "%@ को इस समूह से हटाने के लिए छोड़ें";
+"popup.footer.drag.free" = "%@ को किसी भी खाने में छोड़ें; दूसरे ऐप पर छोड़ने से अदला-बदली होगी  ·  बाहर खींचकर हटाएँ";
+"popup.footer.drag.ordered" = "%@ को जगह देने के लिए छोड़ें  ·  हटाने के लिए पॉपअप से बाहर खींचें";
+"popup.cell.accessibility.website" = "वेबसाइट %@";
+"popup.cell.hint.website" = "ब्राउज़र में वेबसाइट खोलता है";
+"popup.cell.hint.running" = "ऐप को सामने लाता है";
+"popup.cell.hint.open" = "ऐप खोलता है";
+"popup.cell.help.openWebsite" = "अपने ब्राउज़र में %@ खोलें।";
+"popup.cell.help.bringToFront" = "%@ को सामने लाएँ।";
+"popup.cell.help.openApp" = "%@ खोलें।";
+"popup.cell.help.missing" = "%@ इस Mac पर नहीं है।";
+"popup.cell.help.drag.freeItem" = "अदला-बदली के लिए किसी भी खाने या दूसरे आइटम पर खींचें, या समूह से हटाने के लिए पॉपअप से बाहर खींचें।";
+"popup.cell.help.drag.freeApp" = "अदला-बदली के लिए किसी भी खाने या दूसरे ऐप पर खींचें, या समूह से हटाने के लिए पॉपअप से बाहर खींचें।";
+"popup.cell.help.drag.ordered" = "क्रम बदलने के लिए खींचें, या समूह से हटाने के लिए पॉपअप से बाहर खींचें।";
+"popup.cell.help.drag.missing" = "समूह से हटाने के लिए इसे पॉपअप से बाहर खींचें।";
+"popup.menu.open" = "खोलें";
+"popup.menu.copyURL" = "URL कॉपी करें";
+"popup.accessibility.moveEarlier" = "पहले ले जाएँ";
+"popup.accessibility.moveLater" = "बाद में ले जाएँ";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "अभी कोई समूह नहीं";
+"groupWindow.empty.noSelection" = "कोई समूह चुना नहीं गया";
+"groupWindow.empty.noGroups.description" = "उन ऐप्स को इकट्ठा करने के लिए एक समूह जोड़ें जिन्हें आप साथ उपयोग करते हैं।";
+"groupWindow.empty.noSelection.description" = "संपादित करने के लिए कोई समूह चुनें।";
+"groupWindow.addGroup" = "एक समूह जोड़ें";
+"groupWindow.rename.title" = "समूह का नाम बदलें";
+"groupWindow.rename.confirm" = "नाम बदलें";
+"groupWindow.rename.message" = "समूह के लिए नया नाम दर्ज करें।";
+"groupWindow.delete.title" = "“%@” हटाएँ?";
+"groupWindow.delete.confirm" = "समूह हटाएँ";
+"groupWindow.delete.message.standalone" = "इससे समूह, उसकी ऐप सूची और उसका अपना Dock आइकन हट जाएँगे। ऐप्स स्वयं प्रभावित नहीं होंगे।";
+"groupWindow.delete.message" = "इससे समूह और उसकी ऐप सूची हट जाएगी। ऐप्स स्वयं प्रभावित नहीं होंगे।";
+"groupWindow.sidebar.rename" = "नाम बदलें…";
+"groupWindow.sidebar.delete" = "हटाएँ…";
+"groupWindow.sidebar.add.help" = "एक समूह जोड़ें";
+"groupWindow.sidebar.delete.help" = "चुना हुआ समूह हटाएँ";
+"groupWindow.addApps.problem.title" = "कुछ ऐप्स जोड़े नहीं जा सके";
+"groupWindow.section.group" = "समूह";
+"groupWindow.name" = "नाम";
+"groupWindow.emoji" = "इमोजी";
+"groupWindow.emoji.choose" = "चुनें…";
+"groupWindow.section.apps" = "ऐप्स";
+"groupWindow.apps.empty" = "अभी कोई ऐप नहीं है। इस समूह के लिए ऐप चुनने हेतु “%1$@” का, या वेब लिंक के लिए “%2$@” का उपयोग करें।";
+"groupWindow.addWebsite.help" = "इस समूह में एक वेब लिंक जोड़ें। यह आपके डिफ़ॉल्ट ब्राउज़र में खुलेगा।";
+"groupWindow.sortAZ" = "A→Z क्रम में लगाएँ";
+"groupWindow.sortAZ.help" = "इस समूह के ऐप्स नाम के अनुसार A से Z क्रम में लगाएँ। हाथ से क्रम बदलने के लिए उन्हें खींचें।";
+"groupWindow.showPopup" = "पॉपअप दिखाएँ";
+"groupWindow.showPopup.help" = "इस समूह का पॉपअप Dock के ऊपर दिखाएँ।";
+"groupWindow.hideAll.help" = "इस समूह के चल रहे ऐप्स छिपाएँ। जो ऐप्स नहीं चल रहे, वे बंद ही रहेंगे।";
+"groupWindow.apps.moveHint" = "किसी ऐप को दूसरे समूह में ले जाने के लिए उसे साइडबार में उस समूह पर खींचें, या उसके संदर्भ मेनू में %@ का उपयोग करें।";
+"groupWindow.app.notFound" = "इस Mac पर नहीं मिला · %@";
+"groupWindow.app.remove.website" = "इस समूह से %@ हटाएँ।";
+"groupWindow.app.remove" = "इस समूह से %@ हटाएँ। ऐप स्वयं प्रभावित नहीं होगा।";
+"groupWindow.section.dockTile" = "Dock टाइल";
+"groupWindow.tile.preview" = "पूर्वावलोकन";
+"groupWindow.tile.shows" = "दिखाता है";
+"groupWindow.tile.kind.grid" = "ऐप आइकन ग्रिड";
+"groupWindow.tile.background" = "पृष्ठभूमि";
+"groupWindow.tile.backgroundColor" = "पृष्ठभूमि का रंग";
+"groupWindow.tile.pinned" = "टाइल को Dock में पिन रखें";
+"groupWindow.tile.preview.accessibility" = "टाइल पूर्वावलोकन, %ld पॉइंट";
+"groupWindow.section.standalone" = "स्वतंत्र";
+"groupWindow.standalone.toggle" = "स्वतंत्र Dock आइकन";
+"groupWindow.standalone.help" = "इस समूह को उसका अपना ऐप दें, जिसका अपना आइकन Dock में हो।";
+"groupWindow.standalone.settingUp" = "Dock आइकन सेट हो रहा है…";
+"groupWindow.standalone.removing" = "Dock आइकन हटाया जा रहा है…";
+"groupWindow.standalone.groupApp" = "समूह ऐप";
+"groupWindow.standalone.updateDockIcon" = "Dock आइकन अपडेट करें";
+"groupWindow.standalone.updateDockIcon.help" = "ताज़ा आइकन कैश के साथ Dock को फिर से शुरू करें, ताकि टाइल समूह का मौजूदा आइकन दिखाए।";
+"groupWindow.standalone.staleIcon" = "Dock अब भी पिछला आइकन दिखा रहा है।";
+"groupWindow.standalone.footer" = "समूह को उसका अपना छोटा ऐप देता है, जिसका आइकन ऊपर की टाइल होती है, और Dock के अंत में रखता है। उस पर क्लिक करने से समूह का पॉपअप दिखता है (⌥-क्लिक उसके सभी ऐप्स खोलता है), भले ही %@ न चल रहा हो; उस पर राइट-क्लिक करने से समूह के ऐप्स की सूची मिलती है (सेटिंग्स → पॉपअप)। इसे बंद करने, समूह हटाने या आइकन को Dock से बाहर खींचने पर वह ऐप हट जाता है। आइकन जोड़ने या हटाने पर Dock थोड़ी देर के लिए फिर से शुरू होता है।";
+"groupWindow.section.popup" = "पॉपअप";
+"groupWindow.popup.columns" = "कॉलम";
+"groupWindow.popup.maxRows" = "अधिकतम पंक्तियाँ";
+"groupWindow.popup.appNames" = "ऐप के नाम";
+"groupWindow.popup.show" = "दिखाएँ";
+"groupWindow.popup.hide" = "छिपाएँ";
+"groupWindow.popup.position" = "स्थिति";
+"groupWindow.popup.footer" = "“%@” ऐप-व्यापी पॉपअप सेटिंग्स का पालन करता है।";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "ठोस";
+"choice.tileBackground.gradient" = "ग्रेडिएंट";
+"choice.tileBackground.glass" = "काँच";
+"choice.popupAnchor.dockCenter" = "Dock के ऊपर बीच में";
+"choice.popupAnchor.dockIcon" = "क्लिक किए गए आइकन के ऊपर";
+"choice.theme.dark" = "गहरा";
+"choice.theme.light" = "हल्का";
+"choice.theme.system" = "सिस्टम के अनुसार";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "वेबसाइट जोड़ें";
+"addWebsite.title" = "“%@” में वेबसाइट जोड़ें";
+"addWebsite.address" = "पता:";
+"addWebsite.address.accessibility" = "वेबसाइट का पता";
+"addWebsite.name" = "नाम:";
+"addWebsite.name.accessibility" = "वेबसाइट का नाम, वैकल्पिक";
+"addWebsite.name.placeholder" = "वैकल्पिक";
+"addWebsite.hint" = "आपके डिफ़ॉल्ट ब्राउज़र में खुलता है। साइट का पता इस्तेमाल करने के लिए नाम खाली छोड़ें।";
+"addWebsite.duplicate" = "“%@” इस समूह में पहले से है।";
+
+/* Add Apps open panel */
+"appPicker.title" = "समूह में ऐप्स जोड़ें";
+"appPicker.message" = "“%@” में जोड़ने के लिए ऐप्स चुनें।";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "“%@” के ऐप्स खोले नहीं जा सके।";
+"problems.launch.someFailed" = "“%@” के कुछ ऐप्स खोले नहीं जा सके।";
+"problems.launch.item" = "• %1$@: %2$@";
+"problems.launch.notFound" = "इस Mac पर नहीं मिला।";
+"problems.launch.opened" = "खुल गया।";
+"problems.quit.force" = "“%@” के कुछ ऐप्स ज़बरन बंद नहीं किए जा सके।";
+"problems.quit.graceful" = "“%@” के कुछ ऐप्स से बंद होने का अनुरोध नहीं किया जा सका।";
+"problems.hide" = "“%@” के कुछ ऐप्स छिपाए नहीं जा सके।";
+"problems.standalone.failed" = "“%@” को उसका अपना Dock आइकन नहीं मिल सका।";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "इस समूह का ऐप अपना समूह नहीं खोल सकता।";
+"agent.damaged.message" = "%1$@\n\n%2$@ में स्वतंत्र को बंद करके फिर से चालू करें, ताकि समूह अपना ऐप दोबारा बना सके।";
+"agent.error.groupMismatch" = "ऐप की सेटिंग्स किसी दूसरे समूह की हैं।";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "क्या यह पहले से चालू है? अपडेट के बाद प्रविष्टि पिछले संस्करण की हो सकती है: %@ चुनें, उसे − से हटाएँ, फिर + से ऐप दोबारा जोड़ें।";
+
+/* Settings window */
+"settings.window.title" = "सेटिंग्स";
+
+/* Settings tabs */
+"settings.tab.popup" = "पॉपअप";
+"settings.tab.shortcuts" = "शॉर्टकट और Siri";
+"settings.tab.updates" = "अपडेट";
+"settings.tab.backup" = "बैकअप";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "भाषा";
+"general.language.system" = "सिस्टम (%1$@)";
+"general.language.restartNote" = "नई भाषा ऐप के फिर से शुरू होने के बाद लागू होगी।";
+"general.language.restartNow" = "अभी फिर से शुरू करें";
+
+/* Settings → Popup */
+"settings.popup.theme" = "थीम";
+"settings.popup.frostedGlass" = "फ़्रॉस्टेड ग्लास पृष्ठभूमि";
+"settings.popup.appearance.header" = "पॉपअप दिखावट";
+"settings.popup.appearance.footer" = "थीम केवल पॉपअप पर लागू होती है; यह विंडो आपकी macOS दिखावट का पालन करती है।";
+"settings.popup.columns" = "कॉलम";
+"settings.popup.columns.detail" = "स्वचालित मानक पॉपअप चौड़ाई रखता है; कोई संख्या पॉपअप को केवल उतना चौड़ा बनाती है जितना समूह को चाहिए।";
+"settings.popup.maxRows" = "अधिकतम पंक्तियाँ";
+"settings.popup.maxRows.detail" = "पॉपअप की ऊँचाई सीमित करता है; बड़े समूह स्क्रॉल होते हैं।";
+"settings.popup.showNames" = "ऐप के नाम दिखाएँ";
+"settings.popup.position" = "स्थिति";
+"settings.popup.position.detail" = "क्लिक किए गए आइकन के ऊपर चुनने पर पॉपअप उसके समूह के Dock आइकन पर खुलता है, या मेनू से चुनने पर मेनू बार आइकन के नीचे। शॉर्टकट, लिंक या Siri से खुले पॉपअप Dock के ऊपर बीच में रहते हैं।";
+"settings.popup.layout.header" = "पॉपअप लेआउट";
+"settings.popup.layout.footer" = "ये हर समूह के लिए डिफ़ॉल्ट हैं। हर समूह समूह प्रबंधित करें में इन्हें बदल सकता है।";
+"settings.popup.freeLayout" = "मुक्त लेआउट";
+"settings.popup.freeLayout.detail" = "ऐप्स उसी खाने में रहते हैं जहाँ आप उन्हें खींचते हैं, और बाकी नहीं हिलते; किसी ऐप को दूसरे पर छोड़ने से दोनों की अदला-बदली होती है।";
+"settings.popup.arranging.header" = "ऐप्स की व्यवस्था";
+"settings.popup.arranging.footer" = "बंद होने पर समूह के ऐप्स क्रम से पॉपअप भरते हैं और किसी एक को हिलाने पर जगह बनाते हैं। पॉपअप में A→Z दोनों तरह से समूह को नाम के अनुसार क्रम देता है।";
+"settings.popup.restoreWindows" = "चल रहे ऐप को दोबारा खोलने पर विंडो वापस लाएँ";
+"settings.popup.restoreWindows.detail" = "चल रहे ऐप पर क्लिक करने से उसकी छिपी और छोटी की गई विंडो वापस आती हैं, जैसे Dock में क्लिक करने पर आती हैं। बंद होने पर ऐप केवल सामने आता है।";
+"settings.popup.runningApps.header" = "चल रहे ऐप्स";
+"settings.popup.dockMenus" = "समूह के Dock आइकन पर मेनू";
+"settings.popup.dockMenus.detail" = "आइकन पर क्लिक होने के बाद, स्वतंत्र समूह के Dock आइकन पर राइट-क्लिक करके उसके ऐप्स, सभी खोलें, सभी छिपाएँ और सभी बंद करें पाएँ। तब उसका ऐप Dock और ⌘-Tab में चल रहा दिखता है।";
+"settings.popup.standaloneIcons.header" = "स्वतंत्र Dock आइकन";
+"settings.popup.ax.granted" = "एक्सेसिबिलिटी की अनुमति है: छोटी की गई विंडो भी वापस आएँगी";
+"settings.popup.ax.required" = "छोटी की गई विंडो वापस लाने के लिए एक्सेसिबिलिटी की अनुमति चाहिए";
+"settings.popup.ax.detail" = "गोपनीयता और सुरक्षा → एक्सेसिबिलिटी में %@ की अनुमति दें। तब तक छिपे ऐप्स फिर भी वापस आएँगे, और ऐप्स से Dock की तरह दोबारा खुलने का अनुरोध होगा। स्वतंत्र समूह आइकन को अपने ऐप्स के लिए अनुमति चाहिए।";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "कीबोर्ड शॉर्टकट से समूह पॉपअप खोलें";
+"settings.shortcuts.modifiers" = "मॉडिफ़ायर कुंजियाँ";
+"settings.shortcuts.keys" = "शॉर्टकट कुंजियाँ";
+"settings.shortcuts.keys.detail" = "ये कुंजियाँ दबाए रखें और पहले समूह के लिए 1, दूसरे के लिए 2 दबाएँ, और इसी तरह। पॉपअप बंद करने के लिए फिर से दबाएँ।";
+"settings.shortcuts.header" = "कीबोर्ड शॉर्टकट";
+"settings.shortcuts.ax.granted" = "हर ऐप में काम करता है";
+"settings.shortcuts.ax.needed" = "एक्सेसिबिलिटी की अनुमति चाहिए";
+"settings.shortcuts.ax.detail" = "दूसरे ऐप्स में काम करते समय शॉर्टकट पहचानने के लिए गोपनीयता और सुरक्षा → एक्सेसिबिलिटी में %@ की अनुमति दें। तब तक वे केवल तब काम करते हैं जब उसका पॉपअप या उसकी कोई विंडो सक्रिय हो।";
+"settings.shortcuts.noGroups" = "अभी कोई समूह नहीं।";
+"settings.shortcuts.assigned.header" = "सौंपे गए समूह";
+"settings.shortcuts.assigned.footer.limit" = "केवल पहले नौ समूहों के शॉर्टकट हैं। क्रम बदलने के लिए समूह प्रबंधित करें में समूह खींचें।";
+"settings.shortcuts.assigned.footer" = "शॉर्टकट समूह प्रबंधित करें के क्रम का पालन करते हैं।";
+"settings.shortcuts.siri.group" = "समूह";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "समूह के लिए Siri से क्या पूछें, यह देखने के लिए एक समूह जोड़ें।";
+"settings.shortcuts.openShortcuts" = "शॉर्टकट खोलें";
+"settings.shortcuts.shortcutsApp" = "शॉर्टकट ऐप";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group और Show Group वहाँ और Spotlight में क्रियाएँ हैं: इन्हें अपने शॉर्टकट में, अपने ट्रिगर के साथ जोड़ें।";
+"settings.shortcuts.siri.header" = "Siri और शॉर्टकट";
+"settings.shortcuts.siri.footer" = "इन शब्दों से Siri से बोलकर या टाइप करके पूछें। वे समूह का मौजूदा नाम इस्तेमाल करते हैं; नाम बदलने के बाद भी आपके बनाए शॉर्टकट काम करते रहते हैं।";
+"settings.shortcuts.links.noGroups" = "उसके लिंक देखने के लिए एक समूह जोड़ें।";
+"settings.shortcuts.links.footer" = "किसी स्क्रिप्ट या दूसरे ऐप से लिंक खोलें, जैसे Terminal में `open` से। समूह को उसके नाम से पहचाना जाता है (अक्षर का आकार, मात्राएँ और विराम चिह्न मायने नहीं रखते) या, नाम अस्पष्ट हो तो, उसके ID से। ज़बरन बंद करने के लिए बंद होने वाले लिंक में ?mode=force जोड़ें।";
+"settings.shortcuts.copy.help" = "“%@” क्लिपबोर्ड पर कॉपी करें।";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "मेनू बार में सबसे ज़्यादा उपयोग किए गए दिखाएँ";
+"settings.mostUsed.appsShown" = "दिखाए गए ऐप्स";
+"settings.mostUsed.appsShown.detail" = "सबसे ज़्यादा खोले गए ऐप्स, मेनू में और सबसे ज़्यादा उपयोग पॉपअप में।";
+"settings.mostUsed.sessionLength" = "सत्र की अवधि";
+"settings.mostUsed.together" = "इतने समय के भीतर साथ खोले गए";
+"settings.mostUsed.together.detail" = "इस समय के भीतर एक-दूसरे के करीब खोले गए ऐप्स साथ उपयोग माने जाते हैं, जिससे वे थोड़ा ऊपर आते हैं।";
+"settings.mostUsed.footer" = "ऐप्स कितनी बार खोले गए, इसके अनुसार क्रम में रहते हैं — Dock, Finder, Spotlight या समूह से। सूची छिपी होने पर भी लॉन्च गिने जाते हैं।";
+"settings.mostUsed.recorded" = "दर्ज";
+"settings.mostUsed.clear" = "इतिहास मिटाएँ…";
+"settings.mostUsed.history" = "इतिहास";
+"settings.mostUsed.history.detail" = "केवल इसी Mac पर, Application Support में usage-stats.json और usage-cooccurrence.json में सहेजा जाता है।";
+"settings.mostUsed.usageHistory.header" = "उपयोग इतिहास";
+"settings.mostUsed.clear.confirm.title" = "उपयोग इतिहास मिटाएँ?";
+"settings.mostUsed.clear.confirm.button" = "इतिहास मिटाएँ";
+"settings.mostUsed.clear.confirm.message" = "सबसे ज़्यादा उपयोग की सूची फिर से शुरू होगी। आपके समूह और ऐप्स प्रभावित नहीं होंगे।";
+"settings.mostUsed.summary.none" = "अभी कोई लॉन्च नहीं";
+"settings.mostUsed.summary.launches.one" = "1 लॉन्च";
+"settings.mostUsed.summary.launches.other" = "%ld लॉन्च";
+"settings.mostUsed.summary" = "%2$@ में से %1$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "अपडेट स्वचालित रूप से जाँचें";
+"settings.updates.currentVersion" = "वर्तमान संस्करण";
+"settings.updates.lastChecked" = "आखिरी बार जाँचा गया";
+"settings.updates.checkNow" = "अभी जाँचें";
+"settings.updates.otherVersions" = "अन्य संस्करण…";
+"settings.updates.footer" = "ऐप लॉन्च होने पर और हर 6 घंटे में प्रोजेक्ट की GitHub रिलीज़ जाँचता है; केवल ऐप का संस्करण नंबर भेजा जाता है। नया संस्करण तभी इंस्टॉल होता है जब आप डाउनलोड और इंस्टॉल चुनें। अन्य संस्करण… कोई भी प्रकाशित रिलीज़ इंस्टॉल कर सकता है, पुराना या नया; पीछे लौटने पर स्वचालित जाँच में नए संस्करण छोड़ दिए जाते हैं।";
+"settings.updates.viewChangelog" = "बदलाव लॉग देखें";
+"settings.updates.latestPath" = "नवीनतम पथ पर वापस: हर नई रिलीज़ की पेशकश होगी";
+"settings.updates.skipped" = "छोड़े गए नए संस्करण: %@";
+"settings.updates.clear" = "साफ़ करें";
+"settings.updates.clear.help" = "स्वचालित जाँच को इन संस्करणों की पेशकश फिर से करने दें";
+"settings.updates.never" = "कभी नहीं";
+"settings.updates.status.idle" = "ऐप शुरू होने के बाद जाँचा नहीं गया";
+"settings.updates.status.checking" = "जाँच हो रही है…";
+"settings.updates.status.upToDate" = "आप नवीनतम पर हैं (v%@)";
+"settings.updates.status.available" = "संस्करण %@ उपलब्ध है";
+"settings.updates.showUpdate" = "अपडेट दिखाएँ…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "अन्य संस्करण";
+"settings.otherVersions.intro" = "%@ का कोई भी प्रकाशित संस्करण इंस्टॉल करें, पुराना या नया। ऐप बंद होकर आपके चुने संस्करण के रूप में फिर खुलेगा।";
+"settings.otherVersions.releasesLink" = "GitHub पर रिलीज़ पेज खोलें";
+"settings.otherVersions.loading" = "GitHub से रिलीज़ लोड हो रही हैं…";
+"settings.otherVersions.none" = "GitHub पर कोई प्रकाशित रिलीज़ सूचीबद्ध नहीं है।";
+"settings.otherVersions.current" = "वर्तमान";
+"settings.otherVersions.noDownload" = "डाउनलोड उपलब्ध नहीं";
+"settings.otherVersions.install.help" = "संस्करण %@ इंस्टॉल करें";
+"settings.otherVersions.install.noImage" = "इस रिलीज़ में इंस्टॉल करने के लिए कोई डिस्क इमेज नहीं है।";
+"settings.otherVersions.confirm.title" = "संस्करण %@ इंस्टॉल करें?";
+"settings.otherVersions.confirm.quits" = "%1$@ बंद होकर संस्करण %2$@ के रूप में फिर खुलेगा।";
+"settings.otherVersions.confirm.cantUpdate" = "संस्करण %@ स्वयं अपडेट नहीं हो सकता: वापस आने के लिए, रिलीज़ पेज से नया संस्करण डाउनलोड करें।";
+"settings.otherVersions.confirm.skips" = "फिर स्वचालित जाँच नए संस्करण (%@) छोड़ देगी; अपडेट जाँचें… फिर भी उन्हें पेश करेगा।";
+"settings.otherVersions.confirm.older" = "पुराना संस्करण उन सुविधाओं को नहीं जानता होगा जो बाद में जुड़ीं; पहले बैकअप निर्यात करने पर विचार करें (सेटिंग्स → बैकअप)।";
+"settings.otherVersions.confirm.upgrade" = "छोड़े गए संस्करण साफ़ हो जाएँगे, ताकि स्वचालित जाँच हर नई रिलीज़ फिर से पेश करे।";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "सेटिंग्स निर्यात करें…";
+"settings.backup.export" = "निर्यात";
+"settings.backup.export.detail" = "आपके समूह और सेटिंग्स एक .dockgroups फ़ाइल में सहेजता है।";
+"settings.backup.import.button" = "सेटिंग्स आयात करें…";
+"settings.backup.import" = "आयात";
+"settings.backup.import.detail" = "बैकअप फ़ाइल के समूह और सेटिंग्स से आपके समूह और सेटिंग्स बदल देता है, या बैकअप के नए समूह आपके समूहों में मिला देता है।";
+"settings.backup.footer" = "बैकअप में आपके समूह, उनके ऐप्स और हर सेटिंग होती है। सबसे ज़्यादा उपयोग की लॉन्च गिनती शामिल नहीं होती। फ़ाइल वहीं रहती है जहाँ आप उसे सहेजते हैं।";
+"settings.backup.status.exported" = "“%@” में निर्यात किया गया";
+"settings.backup.status.restored" = "%2$@ के साथ %1$@ बहाल किए गए";
+"settings.backup.status.merged" = "बैकअप से %@ मिलाए गए";
+"settings.backup.status.mergedSkipped" = "बैकअप से %1$@ मिलाए गए; %2$ld पहले से यहाँ हैं";
+"settings.backup.exportPanel.title" = "सेटिंग्स निर्यात करें";
+"settings.backup.exportPanel.message" = "अपने समूह और सेटिंग्स एक बैकअप फ़ाइल में सहेजें।";
+"settings.backup.exportFailed" = "सेटिंग्स निर्यात नहीं हो सकीं";
+"settings.backup.importPanel.title" = "सेटिंग्स आयात करें";
+"settings.backup.importPanel.message" = "बहाल करने के लिए %@ बैकअप चुनें।";
+"settings.backup.readFailed" = "फ़ाइल पढ़ी नहीं जा सकी";
+"settings.backup.confirm.title" = "इस बैकअप के समूह और सेटिंग्स आयात करें?";
+"settings.backup.confirm.replaceAll" = "सब बदलें";
+"settings.backup.confirm.merge" = "मिलाएँ";
+"settings.backup.restoreFailed" = "बैकअप बहाल नहीं हो सका";
+"settings.backup.restoreFailed.kept" = "%@ आपके मौजूदा समूह और सेटिंग्स रखे गए।";
+"settings.backup.mergeFailed" = "बैकअप मिलाया नहीं जा सका";
+"settings.backup.mergeFailed.kept" = "%@ आपके मौजूदा समूह रखे गए।";
+"settings.backup.rejected.notABackup" = "सेटिंग्स निर्यात से बनी .dockgroups फ़ाइल चुनें। कुछ भी नहीं बदला गया।";
+"settings.backup.rejected.newer" = "कुछ भी नहीं बदला गया।";
+"settings.backup.confirm.noGroups" = "बैकअप में कोई समूह नहीं है।";
+"settings.backup.confirm.noGroups.exported" = "बैकअप में कोई समूह नहीं है, %@ निर्यात किया गया।";
+"settings.backup.confirm.contents" = "बैकअप में %1$@ हैं, %2$@ के साथ।";
+"settings.backup.confirm.contents.exported" = "बैकअप में %1$@ हैं, %2$@ के साथ, %3$@ निर्यात किया गया।";
+"settings.backup.confirm.replace" = "सब बदलें आपके समूहों और सेटिंग्स की जगह बैकअप के समूह और सेटिंग्स इस्तेमाल करता है।";
+"settings.backup.confirm.replaced.one" = "बैकअप के किसी समूह के समान नाम वाला 1 मौजूदा समूह उससे बदल दिया जाएगा।";
+"settings.backup.confirm.replaced.other" = "बैकअप के किसी समूह के समान नाम वाले %ld मौजूदा समूह उससे बदल दिए जाएँगे।";
+"settings.backup.confirm.removed.one" = "बैकअप में न होने वाला 1 मौजूदा समूह हटा दिया जाएगा।";
+"settings.backup.confirm.removed.other" = "बैकअप में न होने वाले %ld मौजूदा समूह हटा दिए जाएँगे।";
+"settings.backup.confirm.replaceSettings" = "आपकी सेटिंग्स (पॉपअप, शॉर्टकट, सबसे ज़्यादा उपयोग और अपडेट) भी बदल दी जाएँगी।";
+"settings.backup.confirm.merge.nothing" = "मिलाने से आपके समूह और सेटिंग्स रहते हैं और कुछ नहीं जुड़ता।";
+"settings.backup.confirm.merge.allHere" = "मिलाने से आपके समूह और सेटिंग्स रहते हैं; बैकअप का हर समूह पहले से यहाँ है, इसलिए कुछ नहीं जुड़ता।";
+"settings.backup.confirm.merge.adds" = "मिलाने से आपके समूह और सेटिंग्स रहते हैं, और बैकअप से %2$@ के साथ %1$@ जुड़ते हैं।";
+"settings.backup.confirm.skipped.one" = "पहले से यहाँ मौजूद (समान नाम वाला) 1 समूह छोड़ा जाएगा।";
+"settings.backup.confirm.skipped.other" = "पहले से यहाँ मौजूद (समान नाम वाले) %ld समूह छोड़े जाएँगे।";
+"settings.backup.confirm.final" = "सबसे ज़्यादा उपयोग की लॉन्च गिनती रखी जाएगी। आपकी मौजूदा फ़ाइलों की एक प्रति Application Support में उनके पास सहेजी जाएगी। इसे पलटा नहीं जा सकता।";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "फ़ाइल में सहेजें…";
+"settings.diagnostics.export" = "डायग्नोस्टिक्स निर्यात करें";
+"settings.diagnostics.export.detail" = "GitHub issue या सहायता अनुरोध के साथ जोड़ने के लिए एक टेक्स्ट रिपोर्ट।";
+"settings.diagnostics.header" = "डायग्नोस्टिक्स";
+"settings.diagnostics.footer" = "ऐप और macOS के संस्करण, आपके Mac का मॉडल, ऐप कहाँ इंस्टॉल है, एक्सेसिबिलिटी की अनुमति, आपकी सेटिंग्स, अपडेट जाँच, आपके समूहों के नाम उनके ऐप्स की संख्या के साथ, और हाल की त्रुटियाँ सूचीबद्ध करता है। इसमें आपके समूहों के ऐप्स सूचीबद्ध नहीं होते। कुछ भी कहीं नहीं भेजा जाता।";
+"settings.diagnostics.copied" = "डायग्नोस्टिक्स क्लिपबोर्ड पर कॉपी हुए";
+"settings.diagnostics.saved" = "“%@” में सहेजा गया";
+"settings.diagnostics.failed" = "रिपोर्ट सहेजी नहीं जा सकी: %@";
+"settings.diagnostics.panel.title" = "डायग्नोस्टिक्स सहेजें";
+"settings.diagnostics.panel.message" = "डायग्नोस्टिक्स रिपोर्ट को टेक्स्ट फ़ाइल के रूप में सहेजें, जैसे GitHub issue में जोड़ने के लिए।";
+"settings.diagnostics.panel.prompt" = "सहेजें";
+
+/* Software Update window */
+"updateWindow.title" = "सॉफ़्टवेयर अपडेट";
+"updateWindow.checking" = "अपडेट जाँचे जा रहे हैं…";
+"updateWindow.upToDate.title" = "आप नवीनतम पर हैं!";
+"updateWindow.upToDate.message" = "%1$@ %2$@ उपलब्ध सबसे नया संस्करण है।";
+"updateWindow.available.title" = "%@ का नया संस्करण उपलब्ध है!";
+"updateWindow.available.message" = "संस्करण %1$@ उपलब्ध है — आपके पास %2$@ है।";
+"updateWindow.available.noImage" = "इस रिलीज़ में स्वचालित इंस्टॉलेशन के लिए डिस्क इमेज नहीं है; इसे उसके रिलीज़ पेज से डाउनलोड करें।";
+"updateWindow.available.question" = "क्या आप इसे अभी डाउनलोड और इंस्टॉल करना चाहेंगे?";
+"updateWindow.skip" = "यह संस्करण छोड़ें";
+"updateWindow.remindLater" = "बाद में याद दिलाएँ";
+"updateWindow.openReleasePage" = "रिलीज़ पेज खोलें";
+"updateWindow.downloadAndInstall" = "डाउनलोड और इंस्टॉल करें";
+"updateWindow.downloading" = "संस्करण %@ डाउनलोड हो रहा है…";
+"updateWindow.restartsWhenDone" = "पूरा होने पर %@ फिर से शुरू होगा।";
+"updateWindow.reopening" = "%@ फिर से खुल रहा है।";
+"updateWindow.dryRun.title" = "ड्राई रन पूरा हुआ";
+"updateWindow.dryRun.message" = "संस्करण %1$@ डाउनलोड, सत्यापित और %2$@ पर कॉपी किया गया। कुछ भी बदला नहीं गया।";
+"updateWindow.checkFailed" = "अपडेट जाँचे नहीं जा सके";
+"updateWindow.installFailed" = "संस्करण %@ इंस्टॉल नहीं हो सका";
+"updateWindow.link.releases" = "रिलीज़";
+"updateWindow.link.releasePage" = "रिलीज़ पेज";
+"updateWindow.releaseNotes" = "रिलीज़ नोट्स";
+"updateWindow.releaseNotes.none" = "इस रिलीज़ में कोई नोट्स नहीं हैं।";
+"updateWindow.relaunchFailed" = "संस्करण %@ इंस्टॉल हो गया है, पर ऐप स्वयं फिर से शुरू नहीं हो सका। इसे बंद करके फिर से खोलें।";
+
+/* About window */
+"about.section.findMe" = "ऑनलाइन मुझे खोजें";
+"about.section.support" = "इस प्रोजेक्ट का समर्थन करें";
+"about.section.books" = "मेरी पुस्तकें";
+"about.section.software" = "मेरा ओपन सोर्स सॉफ़्टवेयर";
+"about.fullList" = "पूरी सूची github.com/ercanatay पर";
+"about.section.blogs" = "Medium ब्लॉग";
+"about.icon.accessibility" = "%@ आइकन";
+"about.version" = "संस्करण %@ · ओपन सोर्स, MIT लाइसेंस";
+"about.website" = "वेबसाइट";
+"about.sourceCode" = "स्रोत कोड";
+"about.license" = "लाइसेंस";
+"about.reportBug" = "कोई बग मिला? एक issue खोलें";
+"about.inspiredBy" = "DockGroups की कार्यक्षमता से प्रेरित। %@ एक स्वतंत्र, मौलिक कार्यान्वयन है जो शुरू से लिखा गया है; इसमें DockGroups का कोई कोड या चित्र नहीं है।";
+"about.project.dockGroups" = "यह ऐप · macOS के लिए Dock समूह";
+"about.project.intelComputerUse" = "MCP के माध्यम से Intel Mac के लिए नेटिव macOS डेस्कटॉप ऑटोमेशन।";
+"about.project.exchangeRate" = "लाइव स्क्रेप और GitHub रिलीज़ अपडेट के साथ PHP/MySQL विनिमय दर और पोर्टफ़ोलियो ट्रैकर।";
+"about.project.backlinkChecker" = "बैकलिंक के एंकर, dofollow/nofollow और HTTP स्थिति जाँचें।";
+"about.project.consentManager" = "YOOtheme Pro 5 Consent Manager अनुवाद प्लगइन (WordPress.org)।";
+"about.project.antigravityUpdater" = "Antigravity Tools के लिए हल्का macOS अपडेटर, 21 भाषाएँ।";
+"about.project.widgetVisibility" = "विजेट दृश्यता के लिए Jetpack-मुक्त WP प्लगइन, वंशज समर्थन के साथ।";
+"about.project.forbiddenContent" = "पोस्ट शीर्षकों में वर्जित शब्द (जैसे 'Casino') पहचानता है — WP ऑडिट जाँचकर्ता की तरह।";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "%2$@ में %1$@ दिखाओ";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "%2$@ में %1$@ लॉन्च करो";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "%2$@ में %1$@ बंद करो";
+"core.invocation.showPopup" = "Show Popup";
+"core.invocation.openAll" = "Open All";
+"core.invocation.hideAll" = "Hide All";
+"core.invocation.closeAll" = "Close All";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "इसे खोलने के लिए कोई वेब ब्राउज़र सेट नहीं है।";
+"core.launch.notOpened" = "ऐप नहीं खुला।";
+"core.group.defaultName" = "नया समूह";
+"core.website.error.empty" = "एक वेब पता दर्ज करें।";
+"core.website.error.invalid" = "यह मान्य वेब पता नहीं है।";
+"core.website.error.scheme" = "केवल http और https पते जोड़े जा सकते हैं, “%@:” नहीं।";
+"core.website.error.credentials" = "पते से उपयोगकर्ता नाम और पासवर्ड हटाएँ।";
+"core.persistence.groups.newer" = "समूह फ़ाइल Cybokron Dock Groups के एक नए संस्करण ने सहेजी थी (प्रारूप %ld)।";
+"core.backup.error.notABackup" = "यह फ़ाइल Cybokron Dock Groups का बैकअप नहीं है।";
+"core.backup.error.newer" = "यह बैकअप Cybokron Dock Groups के एक नए संस्करण से बना था (बैकअप प्रारूप %ld)। इसे बहाल करने के लिए ऐप अपडेट करें।";
+"core.persistence.usage.newer" = "उपयोग आँकड़े Cybokron Dock Groups के एक नए संस्करण ने सहेजे थे (प्रारूप %ld)।";
+"core.agent.configuration.newer" = "समूह की सेटिंग्स Cybokron Dock Groups के एक नए संस्करण ने सहेजी थीं (प्रारूप %ld)।";
+"core.agent.error.icon" = "समूह का आइकन बनाया नहीं जा सका।";
+"core.agent.error.bundleWrite" = "समूह का ऐप बनाया नहीं जा सका: %@";
+"core.agent.error.toolMissing" = "इसके लिए ज़रूरी एक सिस्टम टूल गायब है: %@।";
+"core.agent.error.signing" = "macOS को हर ऐप का कोड-साइन होना ज़रूरी है, और इस Mac पर समूह के ऐप पर साइन करना विफल रहा, इसलिए कुछ भी इंस्टॉल नहीं हुआ।";
+"core.agent.error.registration" = "macOS ने समूह के ऐप को पंजीकृत नहीं किया: %@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups अपनी ही executable नहीं पढ़ सका: %@";
+"core.agent.error.noExecutable" = "ऐप में कोई executable नहीं है।";
+"core.dock.saveFailed" = "Dock की सेटिंग्स बदली नहीं जा सकीं।";
+"core.store.loadFailed.title" = "आपके समूह लोड नहीं हो सके";
+"core.store.loadFailed.kept" = "%1$@ खाली समूह सूची से शुरू हो रहा है। एक प्रति “%2$@” पर रखी गई है।";
+"core.store.loadFailed.empty" = "%@ खाली समूह सूची से शुरू हो रहा है।";
+"core.store.loadFailed.suspended" = "%@ मौजूदा फ़ाइल की सुरक्षा के लिए, ऐप फिर से शुरू होने तक बदलाव सहेजे नहीं जाएँगे।";
+"core.store.saveFailed.title" = "आपके बदलाव सहेजे नहीं जा सके";
+"core.preferences.saveFailed" = "आपकी सेटिंग्स सहेजी नहीं जा सकीं: %@";
+"core.websiteIcon.accessibility" = "वेबसाइट";
+"core.update.check.notHTTP" = "उत्तर HTTP नहीं था।";
+"core.update.check.malformed" = "GitHub से रिलीज़ की जानकारी पढ़ी नहीं जा सकी।";
+"core.update.check.unsupportedTag" = "नवीनतम रिलीज़ (“%@”) पर संस्करण संख्या का टैग नहीं है।";
+"core.update.check.noRelease" = "अभी तक कोई रिलीज़ प्रकाशित नहीं हुई है।";
+"core.update.check.rateLimited" = "GitHub अभी अनुरोधों को सीमित कर रहा है। एक घंटे बाद फिर कोशिश करें।";
+"core.update.check.httpStatus" = "GitHub ने HTTP स्थिति %ld के साथ उत्तर दिया।";
+"core.update.check.network" = "GitHub तक पहुँचा नहीं जा सका: %@";
+"core.update.check.noVersion" = "ऐप की इस प्रति में संस्करण संख्या नहीं है, इसलिए तुलना नहीं हो सकती।";
+"core.update.install.insecureURL" = "अपडेट का डाउनलोड पता सुरक्षित नहीं है (%@)।";
+"core.update.install.downloadFailed" = "अपडेट डाउनलोड नहीं हो सका: %@";
+"core.update.install.sizeMismatch" = "डाउनलोड किया गया अपडेट अधूरा है (%2$ld में से %1$ld बाइट)।";
+"core.update.install.checksum" = "डाउनलोड किया गया अपडेट अपने प्रकाशित checksum से मेल नहीं खाता, इसलिए इंस्टॉल नहीं किया गया।";
+"core.update.install.mountFailed" = "अपडेट की डिस्क इमेज नहीं खुल सकी: %@";
+"core.update.install.appNotFound" = "अपडेट की डिस्क इमेज में ऐप नहीं है।";
+"core.update.install.wrongApp" = "अपडेट की डिस्क इमेज में कोई दूसरा ऐप है (%@)।";
+"core.update.install.versionMismatch" = "डाउनलोड किया गया ऐप संस्करण %1$@ है, पर रिलीज़ %2$@ है।";
+"core.update.install.replaceFailed" = "नया संस्करण अपनी जगह नहीं रखा जा सका, इसलिए मौजूदा संस्करण रखा गया: %@";
+"core.update.install.rollbackFailed" = "अपडेट विफल रहा और पिछला संस्करण वापस नहीं रखा जा सका। वह %@ पर रखा गया है।";
+"core.update.location.translocated" = "macOS इस प्रति को एक अस्थायी केवल-पढ़ने योग्य स्थान से चला रहा है। ऐप को अपने Applications फ़ोल्डर में ले जाएँ, वहाँ से खोलें और फिर कोशिश करें।";
+"core.update.location.notFound" = "चल रहा ऐप %@ पर नहीं मिला।";
+"core.update.location.readOnly" = "ऐप केवल-पढ़ने योग्य वॉल्यूम से चल रहा है, जैसे उसकी डिस्क इमेज। पहले उसे अपने Applications फ़ोल्डर में कॉपी करें।";
+"core.update.location.noPermission" = "आपके पास “%@” में ऐप बदलने की अनुमति नहीं है। इसके बजाय रिलीज़ पेज से नया संस्करण डाउनलोड करें।";
+"core.update.install.noFile" = "सर्वर ने कोई फ़ाइल नहीं भेजी।";
+"core.update.install.httpStatus" = "HTTP स्थिति %ld।";
+"core.update.install.copyFailed" = "ऐप कॉपी करना विफल रहा: %@";
+"core.mostUsed.name" = "सबसे ज़्यादा उपयोग";

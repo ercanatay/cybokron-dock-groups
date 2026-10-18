@@ -1,0 +1,522 @@
+/*
+  Localizable.strings (简体中文)
+  Cybokron Dock Groups
+
+  每个键的简体中文文本。占位符保持不变：%@ 为文本，%ld 为数字，%1$@、%2$ld … 带编号，
+  以便译文调整顺序。以 .one/.other 结尾的键分别是数量为 1 时的单数文本和复数文本。
+  应用名称 “Cybokron Dock Groups”、“DockGroups”、“GitHub”、“Siri”、按键符号（⌘ ⌥ ⇧ ⌃ ↩ ⌫ esc）
+  和文件名保持不变。
+*/
+
+/* Shared: buttons, menu items and phrases used in several places */
+"common.ok" = "好";
+"common.cancel" = "取消";
+"common.add" = "添加";
+"common.copy" = "拷贝";
+"common.copied" = "已拷贝";
+"common.close" = "关闭";
+"common.done" = "完成";
+"common.install" = "安装";
+"common.tryAgain" = "重试";
+"common.openAll" = "全部打开";
+"common.hideAll" = "全部隐藏";
+"common.closeAll" = "全部关闭";
+"common.forceQuit" = "强制退出";
+"common.addApps" = "添加App…";
+"common.addWebsite" = "添加网站…";
+"common.showInFinder" = "在访达中显示";
+"common.removeFromGroup" = "从分组中移除";
+"common.moveTo" = "移动到";
+"common.default" = "默认";
+"common.auto" = "自动";
+"common.changelog" = "更新日志";
+"common.links" = "链接";
+"common.openReleasesPage" = "打开发布页面";
+"common.openPrivacySettings" = "打开隐私与安全性…";
+"common.checkForUpdates" = "检查更新…";
+"common.settings" = "设置…";
+"common.noLaunchesYet" = "尚未记录任何启动";
+"common.noAppsInGroup" = "此分组中尚无App";
+"common.about" = "关于 %@";
+"common.hideApp" = "隐藏 %@";
+"common.quitApp" = "退出 %@";
+"common.versionShort" = "v%@";
+"common.update.installing" = "正在安装版本 %@…";
+"common.update.restarting" = "已安装版本 %@ — 正在重新启动…";
+"common.appCount.one" = "1 个App";
+"common.appCount.other" = "%ld 个App";
+"common.groupCount.one" = "1 个分组";
+"common.groupCount.other" = "%ld 个分组";
+
+/* Menu bar item and its menu */
+"menuBar.groupsHeader" = "分组";
+"menuBar.noGroups" = "尚无分组";
+"menuBar.manageGroups" = "管理分组…";
+"menuBar.mostUsed.empty.tooltip" = "照常打开App；你最常打开的会出现在这里。";
+"menuBar.mostUsed.show" = "显示最常用";
+"menuBar.mostUsed.show.tooltip" = "在弹出窗口中显示你最常打开的App。";
+"menuBar.checkForUpdates.tooltip" = "在 GitHub 上查找 %@ 的较新版本。";
+"menuBar.mostUsed.app.tooltip.one" = "打开 %@。已打开过一次。";
+"menuBar.mostUsed.app.tooltip.other" = "打开 %1$@。已打开过 %2$ld 次。";
+"menuBar.group.tooltip" = "显示“%@”中的App。按住 ⌥ 可一次全部打开，或按 ⇧⌥ 隐藏正在运行的App。";
+"menuBar.group.tooltip.shortcut" = "显示“%1$@”中的App。按住 ⌥ 可一次全部打开，或按 ⇧⌥ 隐藏正在运行的App。快捷键：%2$@。";
+"menuBar.group.openAll" = "全部打开“%@”";
+"menuBar.group.openAll.tooltip.one" = "打开“%@”中的App";
+"menuBar.group.openAll.tooltip.other" = "打开“%2$@”中的全部 %1$ld 个App";
+"menuBar.group.noApps" = "“%@”中尚无App。";
+"menuBar.group.hideAll" = "全部隐藏“%@”";
+"menuBar.group.hideAll.tooltip" = "隐藏“%@”中正在运行的App。未运行的App保持关闭。";
+
+/* Main menu (its shortcuts work while a window of the app is active) */
+"mainMenu.edit" = "编辑";
+"mainMenu.undo" = "撤销";
+"mainMenu.redo" = "重做";
+"mainMenu.cut" = "剪切";
+"mainMenu.paste" = "粘贴";
+"mainMenu.selectAll" = "全选";
+"mainMenu.window" = "窗口";
+"mainMenu.minimize" = "最小化";
+
+/* Group popup over the Dock */
+"popup.openAll.help.group" = "打开此分组中的每个App；正在运行的App会被置于前台。";
+"popup.openAll.help.mostUsed" = "打开此列表中的每个App；正在运行的App会被置于前台。";
+"popup.hideAll.help.group" = "隐藏此分组中正在运行的App；未运行的App保持关闭。";
+"popup.hideAll.help.mostUsed" = "隐藏此列表中正在运行的App；未运行的App保持关闭。";
+"popup.closeAll.help.group" = "退出此分组中正在运行的App。按住 ⌘ 点击可不保存而强制退出。";
+"popup.closeAll.help.mostUsed" = "退出此列表中正在运行的App。按住 ⌘ 点击可不保存而强制退出。";
+"popup.summary.websites.one" = "1 个网站";
+"popup.summary.websites.other" = "%ld 个网站";
+"popup.summary.running" = "%ld 个正在运行";
+"popup.summary.byLaunches" = "按启动次数";
+"popup.filter.noMatch" = "没有与“%@”匹配的App";
+"popup.filter.noMatch.hint" = "按 Delete 或 Esc 清除筛选。";
+"popup.empty.mostUsed.hint" = "照常打开App，开始积累使用记录。";
+"popup.footer.sortAZ" = "A→Z";
+"popup.footer.sortAZ.help" = "按名称从 A 到 Z 排序此分组中的App。";
+"popup.footer.sortAZ.accessibility" = "从 A 到 Z 排序";
+"popup.footer.filter.matches" = "筛选：“%@”  ·  ↩ 打开所选App  ·  esc 清除";
+"popup.footer.filter.noMatch" = "筛选：“%@”  ·  无匹配  ·  ⌫ 或 esc 清除";
+"popup.footer.hint.mostUsed" = "按打开次数排序  ·  ⌘ 点击“全部关闭”可强制退出";
+"popup.footer.hint.group" = "全部关闭：⌥ 点击正常退出  ·  ⌘ 点击强制退出";
+"popup.footer.drag.remove" = "松开即可将 %@ 从此分组中移除";
+"popup.footer.drag.free" = "将 %@ 放到任意格子；拖到另一个App上可交换位置  ·  拖出即可移除";
+"popup.footer.drag.ordered" = "松开即可放置 %@  ·  拖出弹出窗口即可移除";
+"popup.cell.accessibility.website" = "网站 %@";
+"popup.cell.hint.website" = "在浏览器中打开网站";
+"popup.cell.hint.running" = "将App置于前台";
+"popup.cell.hint.open" = "打开App";
+"popup.cell.help.openWebsite" = "在浏览器中打开 %@。";
+"popup.cell.help.bringToFront" = "将 %@ 置于前台。";
+"popup.cell.help.openApp" = "打开 %@。";
+"popup.cell.help.missing" = "这台 Mac 上没有 %@。";
+"popup.cell.help.drag.freeItem" = "拖到任意格子或其他项目上可交换位置，拖出弹出窗口即可将其从分组中移除。";
+"popup.cell.help.drag.freeApp" = "拖到任意格子或其他App上可交换位置，拖出弹出窗口即可将其从分组中移除。";
+"popup.cell.help.drag.ordered" = "拖动可重新排序，拖出弹出窗口即可将其从分组中移除。";
+"popup.cell.help.drag.missing" = "将其拖出弹出窗口即可从分组中移除。";
+"popup.menu.open" = "打开";
+"popup.menu.copyURL" = "拷贝 URL";
+"popup.accessibility.moveEarlier" = "前移";
+"popup.accessibility.moveLater" = "后移";
+
+/* Group window (Manage Groups…) */
+"groupWindow.empty.noGroups" = "尚无分组";
+"groupWindow.empty.noSelection" = "未选择分组";
+"groupWindow.empty.noGroups.description" = "添加一个分组，用来收集你经常一起使用的App。";
+"groupWindow.empty.noSelection.description" = "选择一个分组进行编辑。";
+"groupWindow.addGroup" = "添加分组";
+"groupWindow.rename.title" = "重命名分组";
+"groupWindow.rename.confirm" = "重命名";
+"groupWindow.rename.message" = "为分组输入新名称。";
+"groupWindow.delete.title" = "删除“%@”？";
+"groupWindow.delete.confirm" = "删除分组";
+"groupWindow.delete.message.standalone" = "这将删除该分组、其App列表及其自己的程序坞图标。App本身不受影响。";
+"groupWindow.delete.message" = "这将删除该分组及其App列表。App本身不受影响。";
+"groupWindow.sidebar.rename" = "重命名…";
+"groupWindow.sidebar.delete" = "删除…";
+"groupWindow.sidebar.add.help" = "添加分组";
+"groupWindow.sidebar.delete.help" = "删除所选分组";
+"groupWindow.addApps.problem.title" = "部分App无法添加";
+"groupWindow.section.group" = "分组";
+"groupWindow.name" = "名称";
+"groupWindow.emoji" = "表情符号";
+"groupWindow.emoji.choose" = "选择…";
+"groupWindow.section.apps" = "App";
+"groupWindow.apps.empty" = "尚无App。使用“%1$@”为此分组选择App，或使用“%2$@”添加网页链接。";
+"groupWindow.addWebsite.help" = "为此分组添加网页链接。它将在你的默认浏览器中打开。";
+"groupWindow.sortAZ" = "按 A→Z 排序";
+"groupWindow.sortAZ.help" = "按名称从 A 到 Z 排序此分组中的App。拖动它们可手动调整顺序。";
+"groupWindow.showPopup" = "显示弹出窗口";
+"groupWindow.showPopup.help" = "在程序坞上方显示此分组的弹出窗口。";
+"groupWindow.hideAll.help" = "隐藏此分组中正在运行的App。未运行的App保持关闭。";
+"groupWindow.apps.moveHint" = "要将App移到另一个分组，请将其拖到侧边栏中的该分组上，或使用其上下文菜单中的 %@。";
+"groupWindow.app.notFound" = "在这台 Mac 上未找到 · %@";
+"groupWindow.app.remove.website" = "从此分组中移除 %@。";
+"groupWindow.app.remove" = "从此分组中移除 %@。App 本身不受影响。";
+"groupWindow.section.dockTile" = "程序坞图块";
+"groupWindow.tile.preview" = "预览";
+"groupWindow.tile.shows" = "显示";
+"groupWindow.tile.kind.grid" = "App 图标网格";
+"groupWindow.tile.background" = "背景";
+"groupWindow.tile.backgroundColor" = "背景颜色";
+"groupWindow.tile.pinned" = "将图块固定在程序坞中";
+"groupWindow.tile.preview.accessibility" = "图块预览，%ld 点";
+"groupWindow.section.standalone" = "独立";
+"groupWindow.standalone.toggle" = "独立程序坞图标";
+"groupWindow.standalone.help" = "为此分组提供其自己的App，并在程序坞中拥有自己的图标。";
+"groupWindow.standalone.settingUp" = "正在设置程序坞图标…";
+"groupWindow.standalone.removing" = "正在移除程序坞图标…";
+"groupWindow.standalone.groupApp" = "分组 App";
+"groupWindow.standalone.updateDockIcon" = "更新程序坞图标";
+"groupWindow.standalone.updateDockIcon.help" = "使用新的图标缓存重新启动程序坞，使图块显示分组的当前图标。";
+"groupWindow.standalone.staleIcon" = "程序坞仍显示旧图标。";
+"groupWindow.standalone.footer" = "为分组提供一个小型独立App，以上方图块为图标，位于程序坞末尾。点击它会显示该分组的弹出窗口（⌥ 点击可打开其全部App），即使 %@ 未在运行；右键点击它会列出该分组的App（设置 → 弹出窗口）。关闭此选项、删除分组或将图标拖出程序坞，都会移除该App。添加或移除图标时，程序坞会短暂重新启动。";
+"groupWindow.section.popup" = "弹出窗口";
+"groupWindow.popup.columns" = "列数";
+"groupWindow.popup.maxRows" = "最大行数";
+"groupWindow.popup.appNames" = "App 名称";
+"groupWindow.popup.show" = "显示";
+"groupWindow.popup.hide" = "隐藏";
+"groupWindow.popup.position" = "位置";
+"groupWindow.popup.footer" = "“%@”遵循全局弹出窗口设置。";
+
+/* Picker choices */
+"choice.tileBackground.solid" = "纯色";
+"choice.tileBackground.gradient" = "渐变";
+"choice.tileBackground.glass" = "玻璃";
+"choice.popupAnchor.dockCenter" = "居中于程序坞上方";
+"choice.popupAnchor.dockIcon" = "位于所点图标上方";
+"choice.theme.dark" = "深色";
+"choice.theme.light" = "浅色";
+"choice.theme.system" = "跟随系统";
+
+/* Add Website sheet and window */
+"addWebsite.windowTitle" = "添加网站";
+"addWebsite.title" = "向“%@”添加网站";
+"addWebsite.address" = "地址：";
+"addWebsite.address.accessibility" = "网站地址";
+"addWebsite.name" = "名称：";
+"addWebsite.name.accessibility" = "网站名称，可选";
+"addWebsite.name.placeholder" = "可选";
+"addWebsite.hint" = "在默认浏览器中打开。若名称留空，则使用网站地址。";
+"addWebsite.duplicate" = "“%@”已在此分组中。";
+
+/* Add Apps open panel */
+"appPicker.title" = "将App添加到分组";
+"appPicker.message" = "选择要添加到“%@”的App。";
+
+/* Alerts about apps that could not be opened, quit or hidden */
+"problems.launch.allFailed" = "无法打开“%@”中的App。";
+"problems.launch.someFailed" = "无法打开“%@”中的部分App。";
+"problems.launch.item" = "• %1$@：%2$@";
+"problems.launch.notFound" = "在这台 Mac 上未找到。";
+"problems.launch.opened" = "已打开。";
+"problems.quit.force" = "无法强制退出“%@”中的部分App。";
+"problems.quit.graceful" = "无法请求“%@”中的部分App退出。";
+"problems.hide" = "无法隐藏“%@”中的部分App。";
+"problems.standalone.failed" = "“%@”无法获得其自己的程序坞图标。";
+
+/* A standalone group's own app */
+"agent.damaged.title" = "此分组的App无法打开其分组。";
+"agent.damaged.message" = "%1$@\n\n请在“%2$@”中先关闭再打开该分组的“独立”选项，以便分组重建其App。";
+"agent.error.groupMismatch" = "该App的设置属于另一个分组。";
+
+/* Accessibility access */
+"accessibility.staleEntryHint" = "已经打开了？更新后，该条目可能属于旧版本：选择 %@，用 − 将其移除，然后用 + 重新添加App。";
+
+/* Settings window */
+"settings.window.title" = "设置";
+
+/* Settings tabs */
+"settings.tab.popup" = "弹出窗口";
+"settings.tab.shortcuts" = "快捷键与 Siri";
+"settings.tab.updates" = "更新";
+"settings.tab.backup" = "备份";
+
+/* Settings → Language (at the top of the Popup tab) */
+"general.language" = "语言";
+"general.language.system" = "系统（%1$@）";
+"general.language.restartNote" = "新语言将在App重新启动后生效。";
+"general.language.restartNow" = "立即重新启动";
+
+/* Settings → Popup */
+"settings.popup.theme" = "主题";
+"settings.popup.frostedGlass" = "磨砂玻璃背景";
+"settings.popup.appearance.header" = "弹出窗口外观";
+"settings.popup.appearance.footer" = "主题仅应用于弹出窗口；此窗口跟随你的 macOS 外观。";
+"settings.popup.columns" = "列数";
+"settings.popup.columns.detail" = "“自动”保持标准弹出窗口宽度；指定数字则使弹出窗口的宽度恰好满足分组所需。";
+"settings.popup.maxRows" = "最大行数";
+"settings.popup.maxRows.detail" = "限制弹出窗口的高度；分组较大时可滚动。";
+"settings.popup.showNames" = "显示App名称";
+"settings.popup.position" = "位置";
+"settings.popup.position.detail" = "选择“位于所点图标上方”时，弹出窗口会出现在其分组的程序坞图标上方；从菜单选择时，则出现在菜单栏图标下方。通过快捷键、链接或 Siri 打开的弹出窗口始终居中于程序坞上方。";
+"settings.popup.layout.header" = "弹出窗口布局";
+"settings.popup.layout.footer" = "这些是每个分组的默认值。每个分组可在“管理分组”中分别覆盖。";
+"settings.popup.freeLayout" = "自由布局";
+"settings.popup.freeLayout.detail" = "App 会停留在你拖到的格子中，其他App不会移动；将一个App放到另一个App上会交换两者位置。";
+"settings.popup.arranging.header" = "排列App";
+"settings.popup.arranging.footer" = "关闭时，分组的App会按顺序填满弹出窗口，移动其中一个时会腾出位置。无论哪种方式，弹出窗口中的 A→Z 都会按名称对分组排序。";
+"settings.popup.restoreWindows" = "重新打开正在运行的App时恢复窗口";
+"settings.popup.restoreWindows.detail" = "点击正在运行的App会恢复其隐藏和最小化的窗口，与在程序坞中点击的效果相同。关闭时，App 只会被置于前台。";
+"settings.popup.runningApps.header" = "正在运行的App";
+"settings.popup.dockMenus" = "分组程序坞图标上的菜单";
+"settings.popup.dockMenus.detail" = "点击过独立分组的程序坞图标后，右键点击它即可看到其App、全部打开、全部隐藏和全部关闭。之后，其App会在程序坞和 ⌘-Tab 中显示为正在运行。";
+"settings.popup.standaloneIcons.header" = "独立程序坞图标";
+"settings.popup.ax.granted" = "已授予辅助功能权限：最小化的窗口也会恢复";
+"settings.popup.ax.required" = "恢复最小化的窗口需要辅助功能权限";
+"settings.popup.ax.detail" = "请在“隐私与安全性”→“辅助功能”中允许 %@。在此之前，隐藏的App仍会恢复，并会以程序坞的方式请求重新打开App。独立分组图标需要其自身App获得该权限。";
+
+/* Settings → Shortcuts & Siri */
+"settings.shortcuts.enable" = "使用键盘快捷键打开分组弹出窗口";
+"settings.shortcuts.modifiers" = "修饰键";
+"settings.shortcuts.keys" = "快捷键";
+"settings.shortcuts.keys.detail" = "按住这些键，然后按 1 打开第一个分组，按 2 打开第二个分组，依此类推。再次按下即可关闭弹出窗口。";
+"settings.shortcuts.header" = "键盘快捷键";
+"settings.shortcuts.ax.granted" = "在所有App中均可使用";
+"settings.shortcuts.ax.needed" = "需要辅助功能权限";
+"settings.shortcuts.ax.detail" = "要在你使用其他App时也能识别快捷键，请在“隐私与安全性”→“辅助功能”中允许 %@。在此之前，快捷键仅在其弹出窗口或其窗口处于活动状态时有效。";
+"settings.shortcuts.noGroups" = "尚无分组。";
+"settings.shortcuts.assigned.header" = "已分配的分组";
+"settings.shortcuts.assigned.footer.limit" = "只有前九个分组有快捷键。在“管理分组”中拖动分组可更改顺序。";
+"settings.shortcuts.assigned.footer" = "快捷键按“管理分组”中分组的顺序分配。";
+"settings.shortcuts.siri.group" = "分组";
+"settings.shortcuts.siri.quoted" = "“%@”";
+"settings.shortcuts.siri.noGroups" = "添加一个分组，即可查看可以对 Siri 说什么。";
+"settings.shortcuts.openShortcuts" = "打开快捷指令";
+"settings.shortcuts.shortcutsApp" = "快捷指令 App";
+"settings.shortcuts.shortcutsApp.detail" = "“启动分组”、“退出分组”和“显示分组”是那里以及在聚焦搜索中可用的操作：将它们添加到你自己的快捷指令中，并设置你自己的触发方式。";
+"settings.shortcuts.siri.header" = "Siri 与快捷指令";
+"settings.shortcuts.siri.footer" = "用这些词语通过语音或输入向 Siri 发出指令。它们使用分组的当前名称；重命名后，你创建的快捷指令仍然有效。";
+"settings.shortcuts.links.noGroups" = "添加一个分组，即可查看其链接。";
+"settings.shortcuts.links.footer" = "可从脚本或其他App打开链接，例如在“终端”中使用 `open`。分组通过其名称来指定（大小写、重音符号和标点均不影响匹配）；如果名称有歧义，则使用其 ID。若要强制退出，请在退出链接后添加 ?mode=force。";
+"settings.shortcuts.copy.help" = "将“%@”拷贝到剪贴板。";
+
+/* Settings → Most Used */
+"settings.mostUsed.show" = "在菜单栏中显示最常用";
+"settings.mostUsed.appsShown" = "显示的App数";
+"settings.mostUsed.appsShown.detail" = "最常打开的App，显示在菜单和“最常用”弹出窗口中。";
+"settings.mostUsed.sessionLength" = "会话时长";
+"settings.mostUsed.together" = "在此时间内一起打开";
+"settings.mostUsed.together.detail" = "在此时间间隔内先后打开的App会被视为一起使用，从而略微提升其排名。";
+"settings.mostUsed.footer" = "App 按你从程序坞、访达、聚焦搜索或分组打开它们的次数排序。即使列表被隐藏，启动次数也会被统计。";
+"settings.mostUsed.recorded" = "已记录";
+"settings.mostUsed.clear" = "清除历史记录…";
+"settings.mostUsed.history" = "历史记录";
+"settings.mostUsed.history.detail" = "仅存储在这台 Mac 上，位于“应用程序支持”中的 usage-stats.json 和 usage-cooccurrence.json 文件里。";
+"settings.mostUsed.usageHistory.header" = "使用历史";
+"settings.mostUsed.clear.confirm.title" = "清除使用历史？";
+"settings.mostUsed.clear.confirm.button" = "清除历史记录";
+"settings.mostUsed.clear.confirm.message" = "“最常用”列表将重新开始。你的分组和App不受影响。";
+"settings.mostUsed.summary.none" = "尚无启动记录";
+"settings.mostUsed.summary.launches.one" = "1 次启动";
+"settings.mostUsed.summary.launches.other" = "%ld 次启动";
+"settings.mostUsed.summary" = "%1$@ / %2$@";
+
+/* Settings → Updates */
+"settings.updates.automatic" = "自动检查更新";
+"settings.updates.currentVersion" = "当前版本";
+"settings.updates.lastChecked" = "上次检查";
+"settings.updates.checkNow" = "立即检查";
+"settings.updates.otherVersions" = "其他版本…";
+"settings.updates.footer" = "App 会在启动时以及每 6 小时检查一次项目的 GitHub 发布版本；仅会发送 App 的版本号。只有在你选择“下载并安装”后才会安装新版本。“其他版本…”可安装任何已发布的版本，无论新旧；回退到旧版本后，自动检查将跳过较新的版本。";
+"settings.updates.viewChangelog" = "查看更新日志";
+"settings.updates.latestPath" = "回到最新路径：提供每一个更新的版本";
+"settings.updates.skipped" = "已跳过的较新版本：%@";
+"settings.updates.clear" = "清除";
+"settings.updates.clear.help" = "让自动检查重新提供这些版本";
+"settings.updates.never" = "从不";
+"settings.updates.status.idle" = "自 App 启动后尚未检查";
+"settings.updates.status.checking" = "正在检查…";
+"settings.updates.status.upToDate" = "你已是最新版本（v%@）";
+"settings.updates.status.available" = "版本 %@ 可用";
+"settings.updates.showUpdate" = "显示更新…";
+
+/* Settings → Updates → Other Versions… */
+"settings.otherVersions.title" = "其他版本";
+"settings.otherVersions.intro" = "安装 %@ 的任何已发布版本，无论新旧。App 将退出，并以你所选的版本重新打开。";
+"settings.otherVersions.releasesLink" = "在 GitHub 上打开发布页面";
+"settings.otherVersions.loading" = "正在从 GitHub 加载发布版本…";
+"settings.otherVersions.none" = "GitHub 上没有列出任何已发布的版本。";
+"settings.otherVersions.current" = "当前";
+"settings.otherVersions.noDownload" = "无下载";
+"settings.otherVersions.install.help" = "安装版本 %@";
+"settings.otherVersions.install.noImage" = "此版本没有可用于安装的磁盘映像。";
+"settings.otherVersions.confirm.title" = "安装版本 %@？";
+"settings.otherVersions.confirm.quits" = "%1$@ 将退出，并以版本 %2$@ 重新打开。";
+"settings.otherVersions.confirm.cantUpdate" = "版本 %@ 无法自行更新：如需回到此版本，请从发布页面下载。";
+"settings.otherVersions.confirm.skips" = "之后自动检查将跳过较新的版本（%@）；“检查更新…”仍会提供它们。";
+"settings.otherVersions.confirm.older" = "旧版本可能不了解之后新增的功能；请考虑先导出备份（设置 → 备份）。";
+"settings.otherVersions.confirm.upgrade" = "已跳过的版本将被清除，因此自动检查会再次提供所有较新的版本。";
+
+/* Settings → Backup */
+"settings.backup.export.button" = "导出设置…";
+"settings.backup.export" = "导出";
+"settings.backup.export.detail" = "将你的分组和设置保存到 .dockgroups 文件。";
+"settings.backup.import.button" = "导入设置…";
+"settings.backup.import" = "导入";
+"settings.backup.import.detail" = "用备份文件中的分组和设置替换你的分组和设置，或将备份中新增的分组合并到你的分组中。";
+"settings.backup.footer" = "备份包含你的分组、其中的App以及所有设置。“最常用”的启动次数不包括在内。文件保存在你选择的位置。";
+"settings.backup.status.exported" = "已导出到“%@”";
+"settings.backup.status.restored" = "已恢复 %1$@，包含 %2$@";
+"settings.backup.status.merged" = "已从备份合并 %@";
+"settings.backup.status.mergedSkipped" = "已从备份合并 %1$@；其中 %2$ld 个已存在";
+"settings.backup.exportPanel.title" = "导出设置";
+"settings.backup.exportPanel.message" = "将你的分组和设置保存到备份文件。";
+"settings.backup.exportFailed" = "无法导出设置";
+"settings.backup.importPanel.title" = "导入设置";
+"settings.backup.importPanel.message" = "选择要恢复的 %@ 备份。";
+"settings.backup.readFailed" = "无法读取该文件";
+"settings.backup.confirm.title" = "导入此备份中的分组和设置？";
+"settings.backup.confirm.replaceAll" = "全部替换";
+"settings.backup.confirm.merge" = "合并";
+"settings.backup.restoreFailed" = "无法恢复备份";
+"settings.backup.restoreFailed.kept" = "%@ 你当前的分组和设置已保留。";
+"settings.backup.mergeFailed" = "无法合并备份";
+"settings.backup.mergeFailed.kept" = "%@ 你当前的分组已保留。";
+"settings.backup.rejected.notABackup" = "请选择使用“导出设置…”创建的 .dockgroups 文件。未作任何更改。";
+"settings.backup.rejected.newer" = "未作任何更改。";
+"settings.backup.confirm.noGroups" = "备份中没有分组。";
+"settings.backup.confirm.noGroups.exported" = "备份中没有分组，导出于 %@。";
+"settings.backup.confirm.contents" = "备份包含 %1$@，共 %2$@。";
+"settings.backup.confirm.contents.exported" = "备份包含 %1$@，共 %2$@，导出于 %3$@。";
+"settings.backup.confirm.replace" = "“全部替换”将使用备份中的分组和设置，而不是你的。";
+"settings.backup.confirm.replaced.one" = "当前与备份中某个分组同名的 1 个分组将被其替换。";
+"settings.backup.confirm.replaced.other" = "当前与备份中某个分组同名的 %ld 个分组将被其替换。";
+"settings.backup.confirm.removed.one" = "当前不在备份中的 1 个分组将被移除。";
+"settings.backup.confirm.removed.other" = "当前不在备份中的 %ld 个分组将被移除。";
+"settings.backup.confirm.replaceSettings" = "你的设置（弹出窗口、快捷键、最常用和更新）也将被替换。";
+"settings.backup.confirm.merge.nothing" = "“合并”会保留你的分组和设置，且不添加任何内容。";
+"settings.backup.confirm.merge.allHere" = "“合并”会保留你的分组和设置；备份中的每个分组都已存在，因此不会添加任何内容。";
+"settings.backup.confirm.merge.adds" = "“合并”会保留你的分组和设置，并从备份添加 %1$@，共 %2$@。";
+"settings.backup.confirm.skipped.one" = "已存在（同名）的 1 个分组将被跳过。";
+"settings.backup.confirm.skipped.other" = "已存在（同名）的 %ld 个分组将被跳过。";
+"settings.backup.confirm.final" = "“最常用”的启动次数将被保留。你当前文件的副本会保存在“应用程序支持”中的同一位置。此操作无法撤销。";
+
+/* Settings → Backup → Diagnostics */
+"settings.diagnostics.save" = "存储为文件…";
+"settings.diagnostics.export" = "导出诊断信息";
+"settings.diagnostics.export.detail" = "一份文本报告，可附加到 GitHub issue 或支持请求中。";
+"settings.diagnostics.header" = "诊断";
+"settings.diagnostics.footer" = "列出 App 与 macOS 版本、你的 Mac 型号、App 的安装位置、辅助功能权限、你的设置、更新检查、分组名称及其 App 数量，以及最近的错误。它不列出分组中的 App。内容不会发送到任何地方。";
+"settings.diagnostics.copied" = "诊断信息已拷贝到剪贴板";
+"settings.diagnostics.saved" = "已保存到“%@”";
+"settings.diagnostics.failed" = "无法保存报告：%@";
+"settings.diagnostics.panel.title" = "存储诊断信息";
+"settings.diagnostics.panel.message" = "将诊断报告保存为文本文件，例如用于附加到 GitHub issue。";
+"settings.diagnostics.panel.prompt" = "存储";
+
+/* Software Update window */
+"updateWindow.title" = "软件更新";
+"updateWindow.checking" = "正在检查更新…";
+"updateWindow.upToDate.title" = "你已是最新版本！";
+"updateWindow.upToDate.message" = "%1$@ %2$@ 是可用的最新版本。";
+"updateWindow.available.title" = "%@ 有新版本可用！";
+"updateWindow.available.message" = "版本 %1$@ 可用 — 你当前的版本是 %2$@。";
+"updateWindow.available.noImage" = "此版本没有可用于自动安装的磁盘映像；请从其发布页面下载。";
+"updateWindow.available.question" = "要立即下载并安装吗？";
+"updateWindow.skip" = "跳过此版本";
+"updateWindow.remindLater" = "稍后提醒";
+"updateWindow.openReleasePage" = "打开发布页面";
+"updateWindow.downloadAndInstall" = "下载并安装";
+"updateWindow.downloading" = "正在下载版本 %@…";
+"updateWindow.restartsWhenDone" = "完成后 %@ 将重新启动。";
+"updateWindow.reopening" = "%@ 正在重新打开。";
+"updateWindow.dryRun.title" = "试运行完成";
+"updateWindow.dryRun.message" = "版本 %1$@ 已下载、验证并拷贝到 %2$@。未替换任何内容。";
+"updateWindow.checkFailed" = "无法检查更新";
+"updateWindow.installFailed" = "无法安装版本 %@";
+"updateWindow.link.releases" = "发布版本";
+"updateWindow.link.releasePage" = "发布页面";
+"updateWindow.releaseNotes" = "发布说明";
+"updateWindow.releaseNotes.none" = "此版本没有发布说明。";
+"updateWindow.relaunchFailed" = "版本 %@ 已安装，但 App 无法自行重新启动。请退出后重新打开。";
+
+/* About window */
+"about.section.findMe" = "在线找到我";
+"about.section.support" = "支持本项目";
+"about.section.books" = "我的书籍";
+"about.section.software" = "我的开源软件";
+"about.fullList" = "完整列表见 github.com/ercanatay";
+"about.section.blogs" = "Medium 博客";
+"about.icon.accessibility" = "%@ 图标";
+"about.version" = "版本 %@ · 开源，MIT 许可证";
+"about.website" = "网站";
+"about.sourceCode" = "源代码";
+"about.license" = "许可证";
+"about.reportBug" = "发现错误？请提交 issue";
+"about.inspiredBy" = "灵感来自 DockGroups 的功能。%@ 是一个独立的原创实现，从零开始编写；不包含 DockGroups 的任何代码或图稿。";
+"about.project.dockGroups" = "本 App · macOS 程序坞分组";
+"about.project.intelComputerUse" = "通过 MCP 为 Intel Mac 提供原生 macOS 桌面自动化。";
+"about.project.exchangeRate" = "PHP/MySQL 汇率与投资组合跟踪器，支持实时抓取和 GitHub 发布更新。";
+"about.project.backlinkChecker" = "检查反向链接的锚文本、dofollow/nofollow 及 HTTP 状态。";
+"about.project.consentManager" = "YOOtheme Pro 5 Consent Manager 翻译插件（WordPress.org）。";
+"about.project.antigravityUpdater" = "适用于 Antigravity Tools 的轻量级 macOS 更新程序，支持 21 种语言。";
+"about.project.widgetVisibility" = "无需 Jetpack 的 WP 插件，用于控制小工具可见性，支持子级。";
+"about.project.forbiddenContent" = "检测文章标题中的违禁词（例如 'Casino'），类似 WP 审核检查工具。";
+
+/* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
+"core.invocation.showGroup" = "Show Group";
+"core.invocation.showGroup.phrase" = "在 %2$@ 中显示 %1$@";
+"core.invocation.launchGroup" = "Launch Group";
+"core.invocation.launchGroup.phrase" = "在 %2$@ 中启动 %1$@";
+"core.invocation.quitGroup" = "Quit Group";
+"core.invocation.quitGroup.phrase" = "在 %2$@ 中退出 %1$@";
+"core.invocation.showPopup" = "Show Popup";
+"core.invocation.openAll" = "Open All";
+"core.invocation.hideAll" = "Hide All";
+"core.invocation.closeAll" = "Close All";
+
+/* Messages from the app's core: errors, the Most Used name, the default group name */
+"core.launch.noBrowser" = "未设置可用于打开它的网页浏览器。";
+"core.launch.notOpened" = "App 未打开。";
+"core.group.defaultName" = "新建分组";
+"core.website.error.empty" = "请输入网址。";
+"core.website.error.invalid" = "这不是有效的网址。";
+"core.website.error.scheme" = "只能添加 http 和 https 地址，不能添加“%@:”。";
+"core.website.error.credentials" = "请从地址中移除用户名和密码。";
+"core.persistence.groups.newer" = "分组文件由更新版本的 Cybokron Dock Groups 保存（格式 %ld）。";
+"core.backup.error.notABackup" = "此文件不是 Cybokron Dock Groups 备份。";
+"core.backup.error.newer" = "此备份由更新版本的 Cybokron Dock Groups 创建（备份格式 %ld）。请更新 App 后再恢复。";
+"core.persistence.usage.newer" = "使用统计数据由更新版本的 Cybokron Dock Groups 保存（格式 %ld）。";
+"core.agent.configuration.newer" = "分组的设置由更新版本的 Cybokron Dock Groups 保存（格式 %ld）。";
+"core.agent.error.icon" = "无法绘制分组的图标。";
+"core.agent.error.bundleWrite" = "无法创建分组的 App：%@";
+"core.agent.error.toolMissing" = "缺少此功能所需的系统工具：%@。";
+"core.agent.error.signing" = "macOS 要求每个 App 都经过代码签名，而在这台 Mac 上为分组的 App 签名失败，因此未安装任何内容。";
+"core.agent.error.registration" = "macOS 未能注册分组的 App：%@";
+"core.agent.error.hostUnavailable" = "Cybokron Dock Groups 无法读取其自身的可执行文件：%@";
+"core.agent.error.noExecutable" = "该 App 没有可执行文件。";
+"core.dock.saveFailed" = "无法更改程序坞的设置。";
+"core.store.loadFailed.title" = "无法加载你的分组";
+"core.store.loadFailed.kept" = "%1$@ 将以空的分组列表开始。副本已保留在“%2$@”。";
+"core.store.loadFailed.empty" = "%@ 将以空的分组列表开始。";
+"core.store.loadFailed.suspended" = "%@ 为保护现有文件，在 App 重新启动之前不会保存更改。";
+"core.store.saveFailed.title" = "无法保存你的更改";
+"core.preferences.saveFailed" = "无法保存你的设置：%@";
+"core.websiteIcon.accessibility" = "网站";
+"core.update.check.notHTTP" = "响应不是 HTTP。";
+"core.update.check.malformed" = "无法读取 GitHub 的发布信息。";
+"core.update.check.unsupportedTag" = "最新发布版本（“%@”）没有带版本号的标签。";
+"core.update.check.noRelease" = "尚未发布任何版本。";
+"core.update.check.rateLimited" = "GitHub 目前正在限制请求。请一小时后重试。";
+"core.update.check.httpStatus" = "GitHub 返回了 HTTP 状态 %ld。";
+"core.update.check.network" = "无法连接到 GitHub：%@";
+"core.update.check.noVersion" = "此 App 副本没有版本号，因此无法比较。";
+"core.update.install.insecureURL" = "更新的下载地址不安全（%@）。";
+"core.update.install.downloadFailed" = "无法下载更新：%@";
+"core.update.install.sizeMismatch" = "下载的更新不完整（%2$ld 字节中的 %1$ld 字节）。";
+"core.update.install.checksum" = "下载的更新与其发布的校验和不匹配，因此未安装。";
+"core.update.install.mountFailed" = "无法打开更新的磁盘映像：%@";
+"core.update.install.appNotFound" = "更新的磁盘映像中不包含该 App。";
+"core.update.install.wrongApp" = "更新的磁盘映像中包含另一个 App（%@）。";
+"core.update.install.versionMismatch" = "下载的 App 版本为 %1$@，但发布版本为 %2$@。";
+"core.update.install.replaceFailed" = "无法将新版本放到位，因此保留了当前版本：%@";
+"core.update.install.rollbackFailed" = "更新失败，且无法恢复之前的版本。它保存在 %@。";
+"core.update.location.translocated" = "macOS 正从临时的只读位置运行此副本。请将 App 移至“应用程序”文件夹，从那里打开后再试。";
+"core.update.location.notFound" = "未在 %@ 找到正在运行的 App。";
+"core.update.location.readOnly" = "App 从只读卷运行，例如其磁盘映像。请先将其拷贝到“应用程序”文件夹。";
+"core.update.location.noPermission" = "你没有权限替换“%@”中的 App。请改从发布页面下载新版本。";
+"core.update.install.noFile" = "服务器未发送任何文件。";
+"core.update.install.httpStatus" = "HTTP 状态 %ld。";
+"core.update.install.copyFailed" = "拷贝 App 失败：%@";
+"core.mostUsed.name" = "最常用";
