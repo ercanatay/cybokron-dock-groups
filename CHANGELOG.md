@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.9] - 2026-10-18
+
 ### Changed
 
 - **Settings panes in a sidebar**: Popup, Shortcuts & Siri, Most Used, Updates and Backup are now
@@ -266,7 +268,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.8...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.9...HEAD
+[0.5.9]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.5...v0.5.6
