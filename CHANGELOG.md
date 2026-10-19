@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-10-19
+
+### Fixed
+
+- Release notes security: links in update-window and settings changelog notes are now filtered to https/mailto only; release page URL must be https
+- Dock safety: if the Dock's persistent-apps list cannot be read, groups are no longer closed or rewritten; a timestamped backup of the Dock is kept (last 6) before every write, and failed writes keep pending dock additions instead of silently disabling groups
+- Safety: clicking a `cybokrondockgroups://quit/...` link now shows a confirmation dialog, with a distinct "Force Quit Apps" button for `?mode=force`
+- Backup restore/merge now re-adds missing Dock icons for standalone groups instead of disabling them on the next launch
+- Downloaded update is verified with `codesign --verify --strict` (Developer ID builds also require a matching Team ID; ad-hoc builds still accepted)
+- Miscellaneous: automatic update checks are skipped while the update window shows an offer or failure; "install picked" while an update is under way warns instead of failing silently; less risky `copyAside` write order plus collision-safe filenames; release notes script handles fenced code blocks; diagnostics report redacts the home directory; DMG name matching compares the full version number; localization test now catches mixed positional and non-positional placeholders
+
+### Added
+
+- CI release now reproduces the version section from CHANGELOG.md as the release body; a version-consistency check (`scripts/check-version.sh`) runs before test and release jobs
+
 ## [0.6.1] - 2026-10-19
 
 ### Added
@@ -283,7 +298,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.8...v0.5.9
