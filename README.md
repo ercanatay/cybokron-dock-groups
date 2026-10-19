@@ -109,6 +109,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   - The tile is added to the Dock's app list (`persistent-apps` in the `com.apple.dock` preferences,
     as `defaults write` would) and the Dock restarts for a moment (`killall Dock`) to show it. Only
     tiles of the groups' apps are added, updated or removed; the rest of the Dock stays as it is.
+    Before each change the list is copied to `dock-backups/` (the newest six copies are kept), and
+    while it can't be read the app doesn't touch the Dock or turn any group off.
   - Changes to the group (or to the popup settings it uses) rebuild its app shortly afterwards, and a
     running copy reloads them. Renaming the group moves the app to its new name and updates its tile.
     The Dock caches tile icons, so after an icon change the group's settings offer **Update Dock

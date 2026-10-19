@@ -104,17 +104,26 @@ struct DockTileListTests {
 }
 
 /// Keeps the Dock's list in memory, as `SystemDockTileStore` keeps it in the Dock's preferences.
+/// `isReadable = false` stands for a list that can't be read, `failsToSave` for one that can't be
+/// written.
 final class InMemoryDockTileStore: DockTileStoring {
     var entries: [DockTileEntry]
+    var isReadable = true
+    var failsToSave = false
     private(set) var saveCount = 0
+    private(set) var failedSaveCount = 0
 
     init(entries: [DockTileEntry] = []) {
         self.entries = entries
     }
 
-    func loadPersistentApps() -> [DockTileEntry] { entries }
+    func loadPersistentApps() -> [DockTileEntry]? { isReadable ? entries : nil }
 
     func savePersistentApps(_ entries: [DockTileEntry]) throws {
+        guard !failsToSave else {
+            failedSaveCount += 1
+            throw DockTileStoreError.saveFailed
+        }
         self.entries = entries
         saveCount += 1
     }
@@ -129,11 +138,13 @@ struct DockTileStoreRoundTripTests {
         let id = AgentIdentity.bundleIdentifier(for: UUID())
         let url = URL(fileURLWithPath: "/tmp/Agents/work.app", isDirectory: true)
 
-        try store.savePersistentApps(#require(DockTileList.upserting(bundleIdentifier: id, bundleURL: url, label: "Work", in: store.loadPersistentApps())))
-        #expect(DockTileList.agentBundleIdentifiers(in: store.loadPersistentApps()) == [id])
+        let original = try #require(store.loadPersistentApps())
+        try store.savePersistentApps(#require(DockTileList.upserting(bundleIdentifier: id, bundleURL: url, label: "Work", in: original)))
+        let added = try #require(store.loadPersistentApps())
+        #expect(DockTileList.agentBundleIdentifiers(in: added) == [id])
 
-        try store.savePersistentApps(#require(DockTileList.removing(bundleIdentifiers: [id], from: store.loadPersistentApps())))
-        #expect(DockTileList.bundleIdentifiers(in: store.loadPersistentApps()) == ["com.apple.Safari"])
+        try store.savePersistentApps(#require(DockTileList.removing(bundleIdentifiers: [id], from: added)))
+        #expect(DockTileList.bundleIdentifiers(in: try #require(store.loadPersistentApps())) == ["com.apple.Safari"])
         #expect(store.saveCount == 2)
     }
 }

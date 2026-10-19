@@ -151,7 +151,9 @@ public enum DockTileList {
 
 /// Reads and writes the Dock's app list.
 public protocol DockTileStoring: AnyObject {
-    func loadPersistentApps() -> [DockTileEntry]
+    /// The list, `nil` when it can't be read (no `persistent-apps` value, or not a list): then
+    /// nothing may be decided from it — an unknown list doesn't mean the tiles are gone.
+    func loadPersistentApps() -> [DockTileEntry]?
     func savePersistentApps(_ entries: [DockTileEntry]) throws
 }
 
@@ -169,10 +171,11 @@ public enum DockTileStoreError: LocalizedError, Equatable, Sendable {
 public final class SystemDockTileStore: DockTileStoring {
     public init() {}
 
-    public func loadPersistentApps() -> [DockTileEntry] {
+    public func loadPersistentApps() -> [DockTileEntry]? {
         let domain = DockTileList.domain as CFString
         CFPreferencesAppSynchronize(domain)
-        return CFPreferencesCopyAppValue(DockTileList.persistentAppsKey as CFString, domain) as? [DockTileEntry] ?? []
+        guard let value = CFPreferencesCopyAppValue(DockTileList.persistentAppsKey as CFString, domain) else { return nil }
+        return value as? [DockTileEntry]
     }
 
     public func savePersistentApps(_ entries: [DockTileEntry]) throws {

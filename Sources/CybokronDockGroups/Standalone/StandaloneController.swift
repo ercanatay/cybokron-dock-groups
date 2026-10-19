@@ -17,6 +17,9 @@ import OSLog
 /// - At launch, agents of no standalone group are removed unless they're running ("stranded"
 ///   agents), and groups whose tile was dragged out of the Dock have Standalone turned off; the
 ///   latter is checked again whenever the group window opens.
+/// - The Dock's app list is only edited through `AgentDockTiles`: when it can't be read nothing is
+///   decided from it (no group is turned off, no tile removed), and it's copied aside before every
+///   change.
 ///
 /// All of this runs one step at a time, in order.
 @MainActor
@@ -41,7 +44,7 @@ final class StandaloneController: ObservableObject {
     private let preferences: PreferencesStore
     private let icons: AppIconProviding
     private let installer: AgentInstaller
-    private let dock: DockTileStoring
+    private let dockTiles: AgentDockTiles
     private let dockRestarter: DockRestarter
     private var host: AgentHost?
     private var queueTail: Task<Void, Never>?
@@ -49,9 +52,8 @@ final class StandaloneController: ObservableObject {
     /// The standalone groups as of the last pass. A group that drops out was turned off or deleted,
     /// so its agent is quit even while running.
     private var knownStandaloneIDs: Set<DockGroup.ID> = []
-    /// Groups just turned on, whose tile the next pass adds to the Dock. Other passes only update
-    /// tiles that are there: a tile the user removed doesn't come back.
-    private var pendingDockAdditions: Set<DockGroup.ID> = []
+    /// Groups whose status shows that writing the Dock's list failed; cleared once it works.
+    private var dockSaveFailures: Set<DockGroup.ID> = []
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Standalone")
 
     init(
@@ -66,7 +68,7 @@ final class StandaloneController: ObservableObject {
         self.preferences = preferences
         self.icons = icons
         self.installer = installer
-        self.dock = dock
+        dockTiles = AgentDockTiles(store: dock)
         self.dockRestarter = dockRestarter
     }
 
@@ -106,9 +108,9 @@ final class StandaloneController: ObservableObject {
     func setStandalone(_ isOn: Bool, for id: DockGroup.ID) {
         guard let group = store.group(withID: id), group.isStandalone != isOn else { return }
         if isOn {
-            pendingDockAdditions.insert(id)
+            dockTiles.requestAddition(of: id)
         } else {
-            pendingDockAdditions.remove(id)
+            dockTiles.cancelAddition(of: id)
         }
         statuses[id] = .working
         store.updateGroup(id) { $0.isStandalone = isOn }
@@ -143,7 +145,7 @@ final class StandaloneController: ObservableObject {
         enqueue { [weak self] in
             guard let self else { return }
             self.logger.notice("Refreshing the Dock's icons")
-            await self.dockRestarter.restart(clearingIconCache: true)
+            await self.restartDock(clearingIconCache: true)
             self.staleDockIcons.removeAll()
         }
     }
@@ -159,13 +161,13 @@ final class StandaloneController: ObservableObject {
     }
 
     /// Turns Standalone off for groups whose agent tile isn't in the Dock any more. Returns whether
-    /// it did for any group.
+    /// it did for any group. Does nothing when the Dock's list can't be read.
     @discardableResult
     private func turnOffGroupsRemovedFromDock() -> Bool {
-        let candidates = store.groups.filter { $0.isStandalone && !pendingDockAdditions.contains($0.id) }
-        guard !candidates.isEmpty else { return false }
-        let inDock = DockTileList.bundleIdentifiers(in: dock.loadPersistentApps())
-        let removed = AgentPlanner.groupsRemovedFromDock(standaloneGroupIDs: candidates.map(\.id), dockBundleIdentifiers: inDock)
+        guard let removed = dockTiles.groupsRemovedFromDock(among: store.groups) else {
+            logger.error("The Dock's app list couldn't be read; not checking for removed group tiles")
+            return false
+        }
         for id in removed {
             logger.notice("The Dock tile of group \(id, privacy: .public) was removed; turning Standalone off")
             store.updateGroup(id) { $0.isStandalone = false }
@@ -224,7 +226,7 @@ final class StandaloneController: ObservableObject {
         }
 
         let installedByGroup = Dictionary(installed.compactMap { agent in agent.groupID.map { ($0, agent) } }, uniquingKeysWith: { first, _ in first })
-        let tilesInDock = DockTileList.agentBundleIdentifiers(in: dock.loadPersistentApps()).map { $0.lowercased() }
+        let tilesInDock = dockTiles.agentBundleIdentifiersInDock() ?? []
         for build in plan.builds {
             let id = build.agent.groupID
             statuses[id] = .working
@@ -243,11 +245,8 @@ final class StandaloneController: ObservableObject {
             }
         }
 
-        let dockChanged = updateDock(desired: desired, failed: Set(failures.keys))
-        pendingDockAdditions.subtract(desired.map(\.groupID))
-        pendingDockAdditions.formIntersection(currentIDs)
-        if dockChanged {
-            await dockRestarter.restart()
+        if updateDock(desired: desired, failed: Set(failures.keys), standaloneIDs: currentIDs) {
+            await restartDock()
         }
         return failures
     }
@@ -303,38 +302,54 @@ final class StandaloneController: ObservableObject {
     }
 
     /// Adds tiles for groups just turned on, updates moved and renamed ones, and removes those of
-    /// agents that are gone. Returns whether the Dock's list changed (and the Dock needs a restart).
-    private func updateDock(desired: [DesiredAgent], failed: Set<DockGroup.ID>) -> Bool {
-        let original = dock.loadPersistentApps()
-        var entries = original
-        var changed = false
-        let wanted = Set(desired.filter { !failed.contains($0.groupID) }.map { $0.bundleIdentifier.lowercased() })
-        let unwanted = DockTileList.agentBundleIdentifiers(in: entries).filter { !wanted.contains($0.lowercased()) }
-        if let updated = DockTileList.removing(bundleIdentifiers: unwanted, from: entries) {
-            entries = updated
-            changed = true
-        }
-        for agent in desired where !failed.contains(agent.groupID) {
+    /// agents that are gone (see `AgentDockTiles.apply`). Returns whether the Dock's list changed
+    /// (and the Dock needs a restart). When the list can't be read nothing happens; when it can't be
+    /// written the affected groups show the failure and their tiles are tried again next time.
+    private func updateDock(desired: [DesiredAgent], failed: Set<DockGroup.ID>, standaloneIDs: Set<DockGroup.ID>) -> Bool {
+        let tiles = desired.filter { !failed.contains($0.groupID) }.map { agent -> AgentTile in
             let url = installer.bundleURL(folderName: agent.folderName)
-            guard FileManager.default.fileExists(atPath: url.path) else { continue }
-            let label = agent.configuration.group.name
-            let updated = pendingDockAdditions.contains(agent.groupID)
-                ? DockTileList.upserting(bundleIdentifier: agent.bundleIdentifier, bundleURL: url, label: label, in: entries)
-                : DockTileList.updating(bundleIdentifier: agent.bundleIdentifier, bundleURL: url, label: label, in: entries)
-            if let updated {
-                entries = updated
-                changed = true
-            }
+            return AgentTile(
+                groupID: agent.groupID,
+                bundleIdentifier: agent.bundleIdentifier,
+                label: agent.configuration.group.name,
+                bundleURL: FileManager.default.fileExists(atPath: url.path) ? url : nil
+            )
         }
-        guard changed else { return false }
-        do {
-            try dock.savePersistentApps(entries)
-        } catch {
-            logger.error("Updating the Dock failed: \(String(describing: error), privacy: .public)")
+        switch dockTiles.apply(tiles, standaloneGroupIDs: standaloneIDs) {
+        case .unreadable:
+            logger.error("The Dock's app list couldn't be read; leaving the Dock as it is")
+            return false
+        case .unchanged:
+            clearDockSaveFailures()
+            return false
+        case .saved(let previousCount, let count):
+            clearDockSaveFailures()
+            logger.notice("Dock tiles changed (\(previousCount, privacy: .public) → \(count, privacy: .public) apps); restarting the Dock")
+            return true
+        case .saveFailed(let message, let groupIDs):
+            logger.error("Updating the Dock failed: \(message, privacy: .public)")
+            for id in groupIDs where standaloneIDs.contains(id) {
+                statuses[id] = .failed(message)
+                dockSaveFailures.insert(id)
+            }
             return false
         }
-        logger.notice("Dock tiles changed (\(original.count, privacy: .public) → \(entries.count, privacy: .public) apps); restarting the Dock")
-        return true
+    }
+
+    private func clearDockSaveFailures() {
+        for id in dockSaveFailures where statuses[id] != .working {
+            statuses[id] = nil
+        }
+        dockSaveFailures.removeAll()
+    }
+
+    /// `killall Dock`, logging whether it worked.
+    private func restartDock(clearingIconCache: Bool = false) async {
+        if await dockRestarter.restart(clearingIconCache: clearingIconCache) {
+            logger.notice("The Dock restarted")
+        } else {
+            logger.error("Restarting the Dock (killall Dock) failed")
+        }
     }
 
     // MARK: - Helpers
@@ -358,7 +373,7 @@ final class StandaloneController: ObservableObject {
     }
 
     private func hasAgentTilesInDock() -> Bool {
-        !DockTileList.agentBundleIdentifiers(in: dock.loadPersistentApps()).isEmpty
+        !(dockTiles.agentBundleIdentifiersInDock() ?? []).isEmpty
     }
 
     private func runningAgentBundleIdentifiers() -> Set<String> {

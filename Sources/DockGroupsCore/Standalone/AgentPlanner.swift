@@ -127,8 +127,10 @@ public enum AgentPlanner {
     /// Standalone groups whose agent tile is no longer in the Dock — the user dragged it out — so
     /// their Standalone setting should be turned off.
     ///
-    /// - Parameter dockBundleIdentifiers: Bundle identifiers of the Dock's app tiles (any case).
-    public static func groupsRemovedFromDock(standaloneGroupIDs: [UUID], dockBundleIdentifiers: Set<String>) -> [UUID] {
+    /// - Parameter dockBundleIdentifiers: Bundle identifiers of the Dock's app tiles (any case);
+    ///   `nil` when the Dock's list couldn't be read, and then no group counts as removed.
+    public static func groupsRemovedFromDock(standaloneGroupIDs: [UUID], dockBundleIdentifiers: Set<String>?) -> [UUID] {
+        guard let dockBundleIdentifiers else { return [] }
         let inDock = Set(dockBundleIdentifiers.map { $0.lowercased() })
         return standaloneGroupIDs.filter { !inDock.contains(AgentIdentity.bundleIdentifier(for: $0).lowercased()) }
     }
