@@ -109,6 +109,12 @@ public struct CommandThrottle: Sendable {
         return true
     }
 
+    /// Starts `key`'s cooldown again at `now`, e.g. once a question the request asked is answered:
+    /// repeats that arrived meanwhile, or right after, are swallowed instead of asking again.
+    public mutating func restartCooldown(for key: String, at now: Date = Date()) {
+        lastAccepted[key] = now
+    }
+
     /// A clock that went backwards ends the cooldown rather than extending it.
     private func isCoolingDown(since accepted: Date, now: Date) -> Bool {
         let elapsed = now.timeIntervalSince(accepted)

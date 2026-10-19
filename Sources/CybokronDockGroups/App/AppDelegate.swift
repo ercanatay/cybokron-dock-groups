@@ -33,6 +33,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// only hands its URLs over to that copy and quits.
     private var secondCopyHandoff: SecondCopyHandoff?
     private var urlThrottle = CommandThrottle()
+    /// Close All from every source; a link asks first.
+    private lazy var quitRequests = GroupQuitRequests(prompt: QuitConfirmationAlert()) { [terminator] group, mode in
+        terminator.closeAll(group, mode: mode)
+    }
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
     private let urlLogger = Logger(subsystem: "com.cybokron.dockgroups", category: "URLScheme")
 
@@ -76,7 +80,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         actions: PopupPanelController.Actions(
             open: { [weak self] app, group in self?.open(app, in: group) },
             openAll: { [weak self] group in self?.openAll(group) },
-            closeAll: { [weak self] group, mode in self?.closeAll(group, mode: mode) },
+            closeAll: { [weak self] group, mode in _ = self?.closeAll(group, mode: mode, from: .userAction) },
             hideAll: { [weak self] group in self?.hideAll(group) },
             manageGroups: { [weak self] in self?.mainWindowController.show() },
             addWebsite: { [weak self] group in self?.addWebsiteWindowController.show(for: group) }
@@ -256,8 +260,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func closeAll(_ group: DockGroup, mode: QuitMode) {
-        LaunchReportPresenter.presentProblems(in: quitAll(group, mode: mode))
+    /// Quits the group's running apps, asking first when a link asked (`QuitRequestSource`).
+    private func closeAll(_ group: DockGroup, mode: QuitMode, from source: QuitRequestSource) -> GroupQuitRequests.Outcome {
+        let outcome = quitRequests.request(group, mode: mode, from: source)
+        if let report = outcome.report {
+            LaunchReportPresenter.presentProblems(in: report)
+        }
+        return outcome
     }
 
     private func hideAll(_ group: DockGroup) {
@@ -315,7 +324,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .launchGroup(let name):
             if let group = group(named: name) { openAll(group) }
         case .quitGroup(let name, let mode):
-            if let group = group(named: name) { closeAll(group, mode: mode) }
+            guard let group = group(named: name) else { return }
+            switch closeAll(group, mode: mode, from: .link) {
+            case .quit:
+                urlLogger.notice("Quitting the apps of group \(group.id, privacy: .public) (\(mode.rawValue, privacy: .public)): confirmed")
+            case .declined:
+                urlLogger.notice("Quitting the apps of group \(group.id, privacy: .public): cancelled")
+            case .dropped:
+                urlLogger.notice("Ignored quitting the apps of group \(group.id, privacy: .public): another link's question is showing")
+                return
+            }
+            // The cooldown starts once the question is answered, so links that came while it showed
+            // (or right after) don't ask again.
+            urlThrottle.restartCooldown(for: command.throttleKey)
         case .hideGroup(let name):
             if let group = group(named: name) { hideAll(group) }
         case .showShortcut(let digit):
@@ -358,7 +379,8 @@ extension AppDelegate: GroupIntentHandling {
         await launcher.openAll(group)
     }
 
+    /// Siri and Shortcuts are the user's own requests: they never ask (`QuitRequestSource.intent`).
     func quitAll(_ group: DockGroup, mode: QuitMode) -> QuitReport {
-        terminator.closeAll(group, mode: mode)
+        quitRequests.request(group, mode: mode, from: .intent).report ?? terminator.closeAll(group, mode: mode)
     }
 }

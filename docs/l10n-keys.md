@@ -14,7 +14,7 @@ they're translated; `LocalizationTests.awaitingTranslation` lists them.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-479 keys.
+485 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -627,3 +627,14 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.update.install.httpStatus` | HTTP status %ld. |
 | `core.update.install.copyFailed` | Copying the app failed: %@ |
 | `core.mostUsed.name` | Most Used |
+
+## Question a `cybokrondockgroups://quit/…` link asks (English only for now: translations show this English text until they add these keys)
+
+| Key | English |
+| --- | --- |
+| `core.quitConfirmation.title` | All apps in “%@” will be quit. Continue? |
+| `core.quitConfirmation.message` | A link opened by another app, a script or a web page asked to quit the running apps of this group. |
+| `core.quitConfirmation.force` | Force quit: the apps end right away, and unsaved changes are lost. |
+| `core.quitConfirmation.quit` | Quit Apps |
+| `core.quitConfirmation.forceQuit` | Force Quit Apps |
+| `core.quitConfirmation.cancel` | Cancel |
