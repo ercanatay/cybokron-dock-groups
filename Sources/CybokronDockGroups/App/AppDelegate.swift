@@ -61,7 +61,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         usage: usage,
         shortcuts: shortcutMonitor,
         updater: updater,
-        isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil }
+        isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil },
+        // Standalone groups from a backup get their Dock tiles instead of being turned off.
+        groupsRestored: { [weak self] groups in self?.standalone.adoptRestoredGroups(groups) }
     )
     private lazy var aboutWindowController = AboutWindowController()
     private lazy var addWebsiteWindowController = AddWebsiteWindowController(store: store)

@@ -20,6 +20,8 @@ import OSLog
 /// - The Dock's app list is only edited through `AgentDockTiles`: when it can't be read nothing is
 ///   decided from it (no group is turned off, no tile removed), and it's copied aside before every
 ///   change.
+/// - Standalone groups restored or merged from a backup get their tiles added
+///   (`adoptRestoredGroups`) rather than being turned off for lacking one.
 ///
 /// All of this runs one step at a time, in order.
 @MainActor
@@ -123,6 +125,17 @@ final class StandaloneController: ObservableObject {
             self.knownStandaloneIDs.remove(id)
             self.statuses[id] = .failed(error.localizedDescription)
             self.presentFailure(error, groupName: group.name)
+        }
+    }
+
+    /// Groups just restored or merged from a backup: standalone ones whose tile isn't in the Dock
+    /// get it on the next pass (which follows the store's change), instead of being turned off
+    /// because it's missing. Call right after the store took the groups.
+    func adoptRestoredGroups(_ groups: [DockGroup]) {
+        dockTiles.adoptRestored(groups)
+        let pending = groups.filter { dockTiles.pendingAdditions.contains($0.id) }
+        if !pending.isEmpty {
+            logger.notice("Restored standalone groups get their Dock tiles: \(pending.map(\.id.uuidString).joined(separator: ", "), privacy: .public)")
         }
     }
 

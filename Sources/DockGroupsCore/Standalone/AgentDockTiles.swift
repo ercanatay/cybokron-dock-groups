@@ -37,7 +37,7 @@ public final class AgentDockTiles {
         case saveFailed(message: String, groupIDs: Set<UUID>)
     }
 
-    /// Groups whose tile the next pass adds (just turned on). Other
+    /// Groups whose tile the next pass adds (just turned on, or restored from a backup). Other
     /// passes only update tiles that are there: a tile the user removed doesn't come back.
     public private(set) var pendingAdditions: Set<UUID> = []
 
@@ -59,6 +59,19 @@ public final class AgentDockTiles {
     /// The group was turned off before its tile was added.
     public func cancelAddition(of groupID: UUID) {
         pendingAdditions.remove(groupID)
+    }
+
+    /// Groups restored or merged from a backup: the standalone ones without a tile in the Dock get
+    /// one on the next pass, instead of being turned off because it's missing. With the Dock's list
+    /// unreadable all of them wait for theirs (adding updates a tile that's there).
+    public func adoptRestored(_ groups: [DockGroup]) {
+        let standalone = groups.filter(\.isStandalone).map(\.id)
+        guard !standalone.isEmpty else { return }
+        let inDock = agentBundleIdentifiersInDock()
+        let missing = standalone.filter { id in
+            inDock.map { !$0.contains(AgentIdentity.bundleIdentifier(for: id).lowercased()) } ?? true
+        }
+        pendingAdditions.formUnion(missing)
     }
 
     /// Standalone groups among `groups` whose tile isn't in the Dock any more (the user dragged it

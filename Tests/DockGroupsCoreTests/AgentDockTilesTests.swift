@@ -159,6 +159,80 @@ struct AgentDockTilesTests {
         #expect(tiles.pendingAdditions.isEmpty)
     }
 
+    // MARK: - Restored groups
+
+    @MainActor
+    private func stores() -> (GroupStore, PreferencesStore) {
+        (
+            GroupStore(persistence: JSONFileGroupPersistence(fileURL: temporary.url.appending(path: "groups.json")), saveDelay: .zero),
+            PreferencesStore(persistence: JSONFilePreferencesPersistence(fileURL: temporary.url.appending(path: "preferences.json")), saveDelay: .zero)
+        )
+    }
+
+    @MainActor
+    @Test func restoredStandaloneGroupsGetTheirTilesInsteadOfBeingTurnedOff() throws {
+        defer { temporary.remove() }
+        let kept = group("Kept")
+        let work = group("Work")
+        let notes = group("Notes", standalone: false)
+        let (groups, preferences) = stores()
+        let backup = try SettingsBackup.decode(from: SettingsBackup(appVersion: "0.6.1", groups: [kept, work, notes], preferences: PopupPreferences()).encoded())
+        try backup.restore(to: groups, preferences: preferences)
+        let store = InMemoryDockTileStore(entries: [Self.safari, entry(for: kept)])
+        let tiles = AgentDockTiles(store: store, backups: backups)
+
+        // Without being adopted, the restored group would count as dragged out of the Dock.
+        #expect(tiles.groupsRemovedFromDock(among: groups.groups) == [work.id])
+
+        tiles.adoptRestored(groups.groups)
+
+        #expect(tiles.pendingAdditions == [work.id], "the group whose tile is there keeps it as it is")
+        #expect(tiles.groupsRemovedFromDock(among: groups.groups) == [], "no group is turned off")
+
+        // The pass that follows the restore adds the missing tile.
+        let standalone = groups.groups.filter(\.isStandalone)
+        let outcome = tiles.apply(standalone.map { tile(for: $0) }, standaloneGroupIDs: Set(standalone.map(\.id)))
+
+        #expect(outcome == .saved(previousCount: 2, count: 3))
+        #expect(bundleIdentifiers(store) == ["com.apple.Safari", AgentIdentity.bundleIdentifier(for: kept.id), AgentIdentity.bundleIdentifier(for: work.id)])
+        #expect(tiles.pendingAdditions.isEmpty)
+        #expect(tiles.groupsRemovedFromDock(among: groups.groups) == [])
+        #expect(groups.groups.filter(\.isStandalone).map(\.id) == [kept.id, work.id])
+    }
+
+    @MainActor
+    @Test func mergedStandaloneGroupsGetTheirTiles() throws {
+        defer { temporary.remove() }
+        let (groups, _) = stores()
+        groups.addGroup(named: "Mine")
+        let merged = group("Merged")
+        let result = try SettingsBackup(appVersion: "0.6.1", groups: [merged], preferences: PopupPreferences()).merge(into: groups)
+        let store = InMemoryDockTileStore(entries: [Self.safari])
+        let tiles = AgentDockTiles(store: store, backups: backups)
+
+        tiles.adoptRestored(result.addedGroups)
+
+        #expect(tiles.pendingAdditions == [merged.id])
+        #expect(tiles.groupsRemovedFromDock(among: groups.groups) == [])
+        #expect(tiles.apply([tile(for: merged)], standaloneGroupIDs: [merged.id]) == .saved(previousCount: 1, count: 2))
+    }
+
+    @Test func restoredGroupsWaitForAnUnreadableDock() {
+        defer { temporary.remove() }
+        let work = group("Work")
+        let store = InMemoryDockTileStore(entries: [Self.safari, entry(for: work)])
+        store.isReadable = false
+        let tiles = AgentDockTiles(store: store, backups: backups)
+
+        tiles.adoptRestored([work, group("Notes", standalone: false)])
+
+        // Adding updates a tile that's there, so waiting for every standalone group is safe.
+        #expect(tiles.pendingAdditions == [work.id])
+        store.isReadable = true
+        #expect(tiles.apply([tile(for: work)], standaloneGroupIDs: [work.id]) == .unchanged)
+        #expect(store.entries.count == 2, "no second tile")
+    }
+
     // MARK: - Backups
 
     @Test func theListIsCopiedBeforeEachChange() throws {

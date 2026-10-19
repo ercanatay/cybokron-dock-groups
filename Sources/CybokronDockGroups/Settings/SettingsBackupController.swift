@@ -23,13 +23,17 @@ final class SettingsBackupController: ObservableObject {
 
     private let store: GroupStore
     private let preferences: PreferencesStore
+    /// Told about the groups a restore or merge put in the store, so standalone ones get their
+    /// Dock tiles (`StandaloneController.adoptRestoredGroups`).
+    private let groupsRestored: ([DockGroup]) -> Void
 
     /// `.dockgroups` files are JSON.
     static let backupType = UTType(filenameExtension: SettingsBackup.fileExtension, conformingTo: .json) ?? .json
 
-    init(store: GroupStore, preferences: PreferencesStore) {
+    init(store: GroupStore, preferences: PreferencesStore, groupsRestored: @escaping ([DockGroup]) -> Void = { _ in }) {
         self.store = store
         self.preferences = preferences
+        self.groupsRestored = groupsRestored
     }
 
     // MARK: - Export
@@ -124,6 +128,7 @@ final class SettingsBackupController: ObservableObject {
     private func restore(_ backup: SettingsBackup) {
         do {
             try backup.restore(to: store, preferences: preferences)
+            groupsRestored(store.groups)
             status = .imported(groupCount: backup.groups.count, appCount: backup.appCount)
         } catch {
             presentAlert(
@@ -137,6 +142,7 @@ final class SettingsBackupController: ObservableObject {
     private func merge(_ backup: SettingsBackup) {
         do {
             let result = try backup.merge(into: store)
+            groupsRestored(result.addedGroups)
             status = .merged(
                 addedGroupCount: result.addedGroups.count,
                 skippedGroupCount: backup.groups.count - result.addedGroups.count
