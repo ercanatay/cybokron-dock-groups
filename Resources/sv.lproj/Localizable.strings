@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Det gick inte att hämta versionsanteckningarna — visar den sparade kopian.";
 "changelog.retry" = "Klicka på Uppdatera för att försöka igen.";
 "changelog.openRelease" = "Visa på GitHub";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Alla appar i “%@” kommer att avslutas. Vill du fortsätta?";
+"core.quitConfirmation.message" = "En länk som öppnats av en annan app, ett skript eller en webbsida har begärt att de körande apparna i den här gruppen avslutas.";
+"core.quitConfirmation.force" = "Tvinga avslut: apparna avslutas direkt och osparade ändringar försvinner.";
+"core.quitConfirmation.quit" = "Avsluta appar";
+"core.quitConfirmation.forceQuit" = "Tvinga avslut av appar";
+"core.quitConfirmation.cancel" = "Avbryt";
+"core.update.install.invalidSignature" = "Den nedladdade appens kodsignatur är ogiltig, så den installerades inte: %@";
+"core.update.install.wrongSigner" = "Den nedladdade appen är signerad av en annan utvecklare (team %1$@ i stället för %2$@), så den installerades inte.";
+"settings.otherVersions.busy.title" = "En uppdatering pågår";
+"settings.otherVersions.busy.message" = "%@ söker efter eller installerar en uppdatering just nu. Försök igen när den är klar.";

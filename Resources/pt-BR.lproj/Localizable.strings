@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Não foi possível carregar as notas de versão — mostrando a cópia em cache.";
 "changelog.retry" = "Clique em Atualizar para tentar novamente.";
 "changelog.openRelease" = "Ver no GitHub";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Todos os apps em “%@” serão fechados. Continuar?";
+"core.quitConfirmation.message" = "Um link aberto por outro app, um script ou uma página da web pediu para fechar os apps em execução deste grupo.";
+"core.quitConfirmation.force" = "Forçar saída: os apps terminam imediatamente e as alterações não salvas serão perdidas.";
+"core.quitConfirmation.quit" = "Fechar Apps";
+"core.quitConfirmation.forceQuit" = "Forçar Fechamento dos Apps";
+"core.quitConfirmation.cancel" = "Cancelar";
+"core.update.install.invalidSignature" = "A assinatura de código do app baixado não é válida, por isso ele não foi instalado: %@";
+"core.update.install.wrongSigner" = "O app baixado está assinado por outro desenvolvedor (equipe %1$@ em vez de %2$@), por isso não foi instalado.";
+"settings.otherVersions.busy.title" = "Uma atualização está em andamento";
+"settings.otherVersions.busy.message" = "%@ está verificando ou instalando uma atualização agora. Tente novamente quando terminar.";

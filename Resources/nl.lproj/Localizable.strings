@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Releasenotities konden niet worden geladen — de gecachte kopie wordt getoond.";
 "changelog.retry" = "Klik op Vernieuwen om het opnieuw te proberen.";
 "changelog.openRelease" = "Bekijken op GitHub";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Alle apps in “%@” worden afgesloten. Doorgaan?";
+"core.quitConfirmation.message" = "Een link die door een andere app, een script of een webpagina is geopend, heeft gevraagd de actieve apps van deze groep af te sluiten.";
+"core.quitConfirmation.force" = "Geforceerd afsluiten: de apps stoppen meteen en niet-opgeslagen wijzigingen gaan verloren.";
+"core.quitConfirmation.quit" = "Apps afsluiten";
+"core.quitConfirmation.forceQuit" = "Apps geforceerd afsluiten";
+"core.quitConfirmation.cancel" = "Annuleren";
+"core.update.install.invalidSignature" = "De codehandtekening van de gedownloade app is ongeldig, dus die is niet geïnstalleerd: %@";
+"core.update.install.wrongSigner" = "De gedownloade app is ondertekend door een andere ontwikkelaar (team %1$@ in plaats van %2$@), dus die is niet geïnstalleerd.";
+"settings.otherVersions.busy.title" = "Er is een update bezig";
+"settings.otherVersions.busy.message" = "%@ controleert of installeert nu een update. Probeer het opnieuw zodra dat klaar is.";

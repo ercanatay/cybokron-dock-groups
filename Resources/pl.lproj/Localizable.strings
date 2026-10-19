@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Nie udało się załadować informacji o wydaniu — pokazywana jest kopia z pamięci podręcznej.";
 "changelog.retry" = "Kliknij Odśwież, aby spróbować ponownie.";
 "changelog.openRelease" = "Zobacz na GitHub";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Wszystkie aplikacje w „%@” zostaną zamknięte. Kontynuować?";
+"core.quitConfirmation.message" = "Link otwarty przez inną aplikację, skrypt lub stronę internetową zażądał zamknięcia uruchomionych aplikacji tej grupy.";
+"core.quitConfirmation.force" = "Wymuś zamknięcie: aplikacje zakończą działanie od razu, a niezapisane zmiany zostaną utracone.";
+"core.quitConfirmation.quit" = "Zamknij aplikacje";
+"core.quitConfirmation.forceQuit" = "Wymuś zamknięcie aplikacji";
+"core.quitConfirmation.cancel" = "Anuluj";
+"core.update.install.invalidSignature" = "Podpis kodu pobranej aplikacji jest nieprawidłowy, dlatego nie została zainstalowana: %@";
+"core.update.install.wrongSigner" = "Pobrana aplikacja jest podpisana przez innego dewelopera (zespół %1$@ zamiast %2$@), dlatego nie została zainstalowana.";
+"settings.otherVersions.busy.title" = "Trwa aktualizacja";
+"settings.otherVersions.busy.message" = "%@ właśnie sprawdza lub instaluje aktualizację. Spróbuj ponownie, gdy się zakończy.";
