@@ -314,6 +314,9 @@ final class AutoUpdater: ObservableObject {
                     bundleIdentifier: Bundle.main.bundleIdentifier ?? "",
                     version: release.version
                 )
+                // A Developer ID signed version must come from the running copy's team.
+                let runningTeam = await installer.signature(ofAppAt: appURL)?.signingTeam
+                try await installer.verifySignature(ofStagedApp: staged, expectedTeamIdentifier: runningTeam)
                 if isDryRun {
                     self?.logger.notice("Dry run: staged \(staged.path, privacy: .public); nothing replaced")
                     self?.status = .stagedForDryRun(release, path: staged.path)

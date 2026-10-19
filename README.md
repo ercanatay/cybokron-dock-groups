@@ -132,8 +132,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   checks shortly after launch and every 6 hours (Settings → Updates turns that off; only the app's
   version number is sent). A newer version is offered with its release notes; **Download and
   Install** downloads the universal DMG, checks its size and SHA-256 checksum, copies the app out of
-  the read-only mounted image, moves the running app to `updates/backups/`, puts the new one in its
-  place and relaunches — putting the previous one back if that fails. The update window shows its
+  the read-only mounted image, checks its code signature (`codesign --verify --strict`; a Developer
+  ID signed version must come from the running app's team), moves the running app to
+  `updates/backups/`, puts the new one in its place and relaunches — putting the previous one back if that fails. The update window shows its
   progress and tells you when the app restarts. **Other Versions…** in Settings → Updates lists the
   published releases and installs any of them the same way, older or newer; after going back,
   automatic checks skip the newer versions until you go up again. See [CHANGELOG.md](CHANGELOG.md).

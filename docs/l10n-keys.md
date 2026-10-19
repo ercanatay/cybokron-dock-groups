@@ -14,7 +14,7 @@ they're translated; `LocalizationTests.awaitingTranslation` lists them.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-485 keys.
+487 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -638,3 +638,10 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.quitConfirmation.quit` | Quit Apps |
 | `core.quitConfirmation.forceQuit` | Force Quit Apps |
 | `core.quitConfirmation.cancel` | Cancel |
+
+## Update installation: the downloaded app's code signature (English only for now: translations show this English text until they add these keys)
+
+| Key | English |
+| --- | --- |
+| `core.update.install.invalidSignature` | The downloaded app's code signature isn't valid, so it wasn't installed: %@ |
+| `core.update.install.wrongSigner` | The downloaded app is signed by another developer (team %1$@ instead of %2$@), so it wasn't installed. |

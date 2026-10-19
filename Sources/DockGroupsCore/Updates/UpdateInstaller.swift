@@ -17,6 +17,10 @@ public enum UpdateInstallError: LocalizedError, Equatable, Sendable {
     case wrongApp(String)
     /// The app in the disk image has another version than the release it came from.
     case versionMismatch(expected: String, found: String)
+    /// The staged app's code signature is broken or missing (`codesign --verify --strict` failed).
+    case invalidSignature(String)
+    /// The staged app is signed with a Developer ID of another team than the running app.
+    case wrongSigner(found: String, expected: String)
     /// The running app can't be replaced where it is.
     case locationNotWritable(String)
     /// Putting the new app in place failed; the previous app was put back.
@@ -43,6 +47,10 @@ public enum UpdateInstallError: LocalizedError, Equatable, Sendable {
             return Localization.format("core.update.install.wrongApp", "The update's disk image contains another app (%@).", identifier)
         case .versionMismatch(let expected, let found):
             return Localization.format("core.update.install.versionMismatch", "The downloaded app is version %1$@, but the release is %2$@.", found, expected)
+        case .invalidSignature(let reason):
+            return Localization.format("core.update.install.invalidSignature", "The downloaded app's code signature isn't valid, so it wasn't installed: %@", reason)
+        case .wrongSigner(let found, let expected):
+            return Localization.format("core.update.install.wrongSigner", "The downloaded app is signed by another developer (team %1$@ instead of %2$@), so it wasn't installed.", found, expected)
         case .locationNotWritable(let reason):
             return reason
         case .replaceFailed(let reason):
@@ -82,12 +90,17 @@ public struct UpdateDirectories: Sendable {
 /// 2. `stageApp` mounts it read-only and hidden (`hdiutil attach -readonly -nobrowse`), copies the app
 ///    to `staging/` with `ditto`, and detaches it again.
 /// 3. `validateStagedApp` checks that the copy is this app, in the release's version.
-/// 4. `replace` moves the running app to `backups/` and the new one into its place; if that fails,
+/// 4. `verifySignature` checks that the copy's code signature is intact and — once releases are
+///    signed with a Developer ID — made by the running app's team.
+/// 5. `replace` moves the running app to `backups/` and the new one into its place; if that fails,
 ///    the previous app is moved back.
-/// 5. `relaunchArguments` starts the new version once this process has quit, and rolls back to the
+/// 6. `relaunchArguments` starts the new version once this process has quit, and rolls back to the
 ///    backup if it can't be opened.
 ///
-/// The app is ad hoc signed, so there's no signature to compare; Gatekeeper checks it at launch.
+/// Gatekeeper doesn't check the new version: nothing marks the downloaded disk image or the copied
+/// app as quarantined, so macOS opens it without assessing it. The SHA-256 checksum GitHub
+/// publishes for the disk image and the checks above are what keep a damaged or swapped download
+/// out.
 public struct UpdateInstaller: Sendable {
     public static let hdiutil = URL(fileURLWithPath: "/usr/bin/hdiutil")
     public static let ditto = URL(fileURLWithPath: "/usr/bin/ditto")
@@ -320,6 +333,39 @@ public struct UpdateInstaller: Sendable {
         }
     }
 
+    // MARK: - Code signature
+
+    /// Checks the staged app's code signature with `codesign --verify --strict`: it must be signed,
+    /// and nothing in the bundle may have changed since. An ad hoc signature — every release so far
+    /// has one — names no signer, so that's all. A Developer ID signature (its designated
+    /// requirement is anchored at Apple) must come from `expectedTeamIdentifier`, the running app's
+    /// team, when that's known; a running copy signed ad hoc has none to compare, so the first
+    /// Developer ID release is accepted and the ones after it must match it.
+    public func verifySignature(ofStagedApp appURL: URL, expectedTeamIdentifier: String?) async throws {
+        let verification = try await tools.run(SystemTools.codesign, arguments: ["--verify", "--strict", appURL.path])
+        guard verification.succeeded else {
+            throw UpdateInstallError.invalidSignature(verification.output.isEmpty ? "codesign exited with \(verification.status)" : verification.output)
+        }
+        guard let expectedTeamIdentifier else { return }
+        guard let signature = await signature(ofAppAt: appURL) else {
+            throw UpdateInstallError.invalidSignature("codesign couldn't describe the signature")
+        }
+        // Ad hoc: no signer to compare.
+        guard signature.isAppleAnchored else { return }
+        guard signature.teamIdentifier == expectedTeamIdentifier else {
+            throw UpdateInstallError.wrongSigner(found: signature.teamIdentifier ?? "none", expected: expectedTeamIdentifier)
+        }
+    }
+
+    /// What `codesign` reports about the app at `appURL`'s signature; `nil` when it can't tell
+    /// (no signature, or codesign failed).
+    public func signature(ofAppAt appURL: URL) async -> CodeSignature? {
+        guard let requirement = try? await tools.run(SystemTools.codesign, arguments: ["-d", "-r-", appURL.path]), requirement.succeeded,
+              let details = try? await tools.run(SystemTools.codesign, arguments: ["-dv", "--verbose=2", appURL.path]), details.succeeded
+        else { return nil }
+        return CodeSignature(requirementOutput: requirement.output, detailsOutput: details.output)
+    }
+
     // MARK: - Replacing
 
     /// Moves `installedApp` to `backups/` and `stagedApp` into its place. When the second step fails,
@@ -449,5 +495,37 @@ private final class DownloadTaskBox: @unchecked Sendable {
             return self.task
         }
         task?.cancel()
+    }
+}
+
+/// An app's code signature as `codesign` describes it.
+public struct CodeSignature: Equatable, Sendable {
+    /// The designated requirement is anchored at Apple's certificates (`anchor apple generic` for a
+    /// Developer ID): the app was signed with a certificate Apple issued. Ad hoc signatures name
+    /// only the code's hashes (`cdhash H"…"`).
+    public let isAppleAnchored: Bool
+    /// The signing team, `nil` when there's none ("not set"), as for ad hoc signatures.
+    public let teamIdentifier: String?
+
+    public init(isAppleAnchored: Bool, teamIdentifier: String?) {
+        self.isAppleAnchored = isAppleAnchored
+        self.teamIdentifier = teamIdentifier
+    }
+
+    /// Reads the output of `codesign -d -r-` (the designated requirement) and of
+    /// `codesign -dv --verbose=2` (the `TeamIdentifier=` line).
+    public init(requirementOutput: String, detailsOutput: String) {
+        let designated = requirementOutput.components(separatedBy: .newlines)
+            .first { $0.hasPrefix("designated =>") }
+        isAppleAnchored = designated?.contains("anchor apple") ?? false
+        let team = detailsOutput.components(separatedBy: .newlines)
+            .first { $0.hasPrefix("TeamIdentifier=") }
+            .map { String($0.dropFirst("TeamIdentifier=".count)).trimmingCharacters(in: .whitespaces) }
+        teamIdentifier = team.flatMap { $0.isEmpty || $0 == "not set" ? nil : $0 }
+    }
+
+    /// The team to hold later versions to: only a signature anchored at Apple vouches for one.
+    public var signingTeam: String? {
+        isAppleAnchored ? teamIdentifier : nil
     }
 }

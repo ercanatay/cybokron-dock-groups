@@ -37,6 +37,8 @@ struct LocalizationTests {
     /// untranslated keys are added, and remove it once every language has its keys.
     static let awaitingTranslation: [String] = [
         "core.quitConfirmation.",
+        "core.update.install.invalidSignature",
+        "core.update.install.wrongSigner",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
