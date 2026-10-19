@@ -21,7 +21,8 @@ scripts/build-app.sh debug      # build/debug/Cybokron Dock Groups.app
 
 Run `scripts/test.sh` before committing. After adding or removing source files or changing
 `project.yml`, run `xcodegen generate` and commit the regenerated `CybokronDockGroups.xcodeproj`.
-Keep version numbers in `scripts/build-app.sh` and `project.yml` in sync.
+Keep version numbers in `scripts/build-app.sh` and `project.yml` in sync; `scripts/check-version.sh`
+(run by CI) checks them against `project.pbxproj` and, for tags, the tag.
 
 ## Commit conventions
 

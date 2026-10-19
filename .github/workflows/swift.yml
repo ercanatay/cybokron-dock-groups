@@ -30,6 +30,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check version numbers
+        # scripts/build-app.sh, project.yml and project.pbxproj must name the same version.
+        run: scripts/check-version.sh
+
       - name: Select newest Xcode
         # The app needs the Xcode 26+ toolchain (App Intents const-values flags); pick the newest
         # Xcode installed on the runner instead of pinning a version folder.
@@ -100,6 +104,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check version numbers
+        # The tag (GITHUB_REF_NAME) must be v<MARKETING_VERSION>, and the files must agree.
+        run: scripts/check-version.sh
 
       - name: Select newest Xcode
         run: sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
