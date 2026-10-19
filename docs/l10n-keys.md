@@ -3,9 +3,10 @@
 Every user-facing string of the app, by key, with its English text — the content of
 [`Resources/en.lproj/Localizable.strings`](../Resources/en.lproj/Localizable.strings). Translations
 live in `Resources/<language>.lproj/Localizable.strings` and must have exactly these keys, with the
-same placeholders (`LocalizationTests` check both). The one exception are sections marked *English
-only for now*: translations may still lack their keys (the app shows the English text instead) until
-they're translated; `LocalizationTests.awaitingTranslation` lists them.
+same placeholders (`LocalizationTests` check both). Sections still marked *English
+only for now* would be exempt until translated (the app shows the English text instead), and
+`LocalizationTests.awaitingTranslation` would list them; it is currently empty, so all 489 keys are
+translated in every language.
 
 - `%@` is text and `%ld` a number; `%1$@`, `%2$ld` … are numbered so a translation can reorder them.
 - Keys ending in `.one` / `.other` are the singular (count 1) and plural text of a count.
@@ -628,7 +629,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.update.install.copyFailed` | Copying the app failed: %@ |
 | `core.mostUsed.name` | Most Used |
 
-## Question a `cybokrondockgroups://quit/…` link asks (English only for now: translations show this English text until they add these keys)
+## Question a `cybokrondockgroups://quit/…` link asks (fully translated; `awaitingTranslation` is empty)
 
 | Key | English |
 | --- | --- |
@@ -639,14 +640,14 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.quitConfirmation.forceQuit` | Force Quit Apps |
 | `core.quitConfirmation.cancel` | Cancel |
 
-## Update installation: the downloaded app's code signature (English only for now: translations show this English text until they add these keys)
+## Update installation: the downloaded app's code signature (fully translated; `awaitingTranslation` is empty)
 
 | Key | English |
 | --- | --- |
 | `core.update.install.invalidSignature` | The downloaded app's code signature isn't valid, so it wasn't installed: %@ |
 | `core.update.install.wrongSigner` | The downloaded app is signed by another developer (team %1$@ instead of %2$@), so it wasn't installed. |
 
-## Settings → Updates → Other Versions…, while an update is under way (English only for now: translations show this English text until they add these keys)
+## Settings → Updates → Other Versions…, while an update is under way (fully translated; `awaitingTranslation` is empty)
 
 | Key | English |
 | --- | --- |
