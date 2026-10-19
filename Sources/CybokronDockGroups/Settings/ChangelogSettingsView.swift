@@ -34,6 +34,8 @@ struct ChangelogSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 480)
+        // Release notes are written by whoever publishes a release: only web and mail links open.
+        .environment(\.openURL, .clickableLinksOnly)
         .onAppear { changelog.refreshIfStale() }
     }
 

@@ -35,7 +35,7 @@ public struct ReleaseInfo: Hashable, Sendable {
     public let name: String?
     /// The release notes (Markdown); empty when there are none.
     public let notes: String
-    /// The release's page on GitHub.
+    /// The release's page on GitHub; only an `https` address is read (`LinkPolicy.webPageURL`).
     public let pageURL: URL?
     public let publishedAt: Date?
     public let isDraft: Bool
@@ -116,7 +116,7 @@ public struct ReleaseInfo: Hashable, Sendable {
             version: version,
             name: raw.name.flatMap { $0.isEmpty ? nil : $0 },
             notes: raw.body ?? "",
-            pageURL: raw.htmlURL.flatMap(URL.init(string:)),
+            pageURL: LinkPolicy.webPageURL(raw.htmlURL),
             publishedAt: raw.publishedAt,
             isDraft: raw.draft ?? false,
             isPrerelease: raw.prerelease ?? false,

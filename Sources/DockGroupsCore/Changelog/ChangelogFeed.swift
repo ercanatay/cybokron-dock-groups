@@ -23,7 +23,8 @@ public struct GitHubChangelogFeed: ChangelogFetching {
     /// server: `CYBOKRON_CHANGELOG_FEED_URL=http://127.0.0.1:8765/releases.json`.
     public static let urlOverrideVariable = "CYBOKRON_CHANGELOG_FEED_URL"
 
-    /// `UpdateLinks.changelogReleasesAPI`, unless `urlOverrideVariable` holds an http(s) URL.
+    /// `UpdateLinks.changelogReleasesAPI`, unless `urlOverrideVariable` holds an https URL (or an
+    /// http one to this Mac).
     public static func resolvedURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
         GitHubAPI.overrideURL(urlOverrideVariable, in: environment) ?? UpdateLinks.changelogReleasesAPI
     }

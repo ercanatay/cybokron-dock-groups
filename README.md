@@ -138,7 +138,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   first (the newest open, the others a click away), with *Latest*, *Installed* and *Pre-release*
   badges, your current version and a **Refresh** button. A copy is kept on your Mac, so the list
   shows at once and offline; opening the pane refreshes it in the background when it's more than 10
-  minutes old, and a failed refresh keeps the copy with a short note.
+  minutes old, and a failed refresh keeps the copy with a short note. Links in release notes (here
+  and in the update window) open only when they're `https` or `mailto` links; others show as plain
+  text.
 - **About** window with a "Find Me Online" row of social profile icons (LinkedIn, X, GitHub, YouTube
   and more).
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
@@ -278,7 +280,9 @@ open --env CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json \
 ```
 
 `CYBOKRON_RELEASES_FEED_URL` does the same for **Other Versions…**: point it at a JSON list shaped
-like GitHub's `/releases` answer (e.g. `http://127.0.0.1:8765/releases.json`).
+like GitHub's `/releases` answer (e.g. `http://127.0.0.1:8765/releases.json`). These overrides
+must be `https` addresses, or plain `http` to this Mac (`127.0.0.1`, `localhost`); anything else is
+ignored.
 
 The scripts work around two Command Line Tools limitations automatically: they pick a macOS SDK
 whose SwiftUI doesn't need Xcode's macro plugins, and they point the compiler at swift-testing's

@@ -130,16 +130,10 @@ public struct UpdateInstaller: Sendable {
 
     // MARK: - Download
 
-    /// HTTPS anywhere; plain HTTP only to this Mac (a local test server).
+    /// HTTPS anywhere; plain HTTP only to this Mac (a local test server). See
+    /// `LinkPolicy.isSecureOrLocal`.
     public static func isAllowedDownloadURL(_ url: URL) -> Bool {
-        switch url.scheme?.lowercased() {
-        case "https":
-            return url.host != nil
-        case "http":
-            return ["127.0.0.1", "localhost", "::1"].contains(url.host?.lowercased() ?? "")
-        default:
-            return false
-        }
+        LinkPolicy.isSecureOrLocal(url)
     }
 
     /// Downloads `asset` to `downloads/` and checks it with `verify`. Returns the file's location.

@@ -71,7 +71,8 @@ extension ChangelogEntry: Codable {
         case tagName, name, notes, publishedAt, isPrerelease, pageURL
     }
 
-    /// Only the tag is required (and must name a version); the rest falls back.
+    /// Only the tag is required (and must name a version); the rest falls back. A page address
+    /// that isn't `https` is dropped (`LinkPolicy.webPageURL`).
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let tagName = try container.decode(String.self, forKey: .tagName)
@@ -85,7 +86,7 @@ extension ChangelogEntry: Codable {
             notes: container.decodeLeniently(String.self, forKey: .notes) ?? "",
             publishedAt: container.decodeLeniently(Double.self, forKey: .publishedAt).map(Date.init(timeIntervalSince1970:)),
             isPrerelease: container.decodeLeniently(Bool.self, forKey: .isPrerelease) ?? version.isPrerelease,
-            pageURL: container.decodeLeniently(String.self, forKey: .pageURL).flatMap(URL.init(string:))
+            pageURL: LinkPolicy.webPageURL(container.decodeLeniently(String.self, forKey: .pageURL))
         )
     }
 

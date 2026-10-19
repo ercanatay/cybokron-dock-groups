@@ -23,7 +23,8 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
     /// server: `CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json`.
     public static let urlOverrideVariable = "CYBOKRON_UPDATE_FEED_URL"
 
-    /// `UpdateLinks.latestReleaseAPI`, unless `urlOverrideVariable` holds an http(s) URL.
+    /// `UpdateLinks.latestReleaseAPI`, unless `urlOverrideVariable` holds an https URL (or an http
+    /// one to this Mac).
     public static func resolvedURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
         GitHubAPI.overrideURL(urlOverrideVariable, in: environment) ?? UpdateLinks.latestReleaseAPI
     }
@@ -32,7 +33,8 @@ public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
     /// `CYBOKRON_RELEASES_FEED_URL=http://127.0.0.1:8765/releases.json`.
     public static let listURLOverrideVariable = "CYBOKRON_RELEASES_FEED_URL"
 
-    /// `UpdateLinks.releasesAPI`, unless `listURLOverrideVariable` holds an http(s) URL.
+    /// `UpdateLinks.releasesAPI`, unless `listURLOverrideVariable` holds an https URL (or an http
+    /// one to this Mac).
     public static func resolvedListURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
         GitHubAPI.overrideURL(listURLOverrideVariable, in: environment) ?? UpdateLinks.releasesAPI
     }
@@ -124,11 +126,13 @@ enum GitHubAPI {
         }
     }
 
-    /// The http(s) URL in the environment variable `variable` (to point a request at a local test
-    /// server), `nil` when it holds none.
+    /// The URL in the environment variable `variable` (to point a request at a local test server),
+    /// `nil` when it holds none: it must be `https`, or plain `http` to this Mac only
+    /// (`LinkPolicy.isSecureOrLocal`), so release information is never read unencrypted from
+    /// another machine.
     static func overrideURL(_ variable: String, in environment: [String: String]) -> URL? {
         guard let value = environment[variable]?.trimmingCharacters(in: .whitespaces),
-              let url = URL(string: value), ["http", "https"].contains(url.scheme?.lowercased() ?? ""), url.host != nil
+              let url = URL(string: value), LinkPolicy.isSecureOrLocal(url)
         else { return nil }
         return url
     }

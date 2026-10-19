@@ -106,24 +106,48 @@ public enum ReleaseNotesMarkdown {
     }
 
     /// Inline Markdown as styled text: bold, italics, strikethrough, `code` and links (bare
-    /// `https://` addresses become links too). Only web and mail links stay clickable; text that
-    /// can't be parsed is shown as it is.
+    /// `https://` addresses become links too). Only `https` and `mailto` links stay clickable
+    /// (`LinkPolicy.isClickable`); text that can't be parsed is shown as it is.
     public static func inline(_ text: String) -> AttributedString {
         let options = AttributedString.MarkdownParsingOptions(
             interpretedSyntax: .inlineOnlyPreservingWhitespace,
             failurePolicy: .returnPartiallyParsedIfPossible
         )
-        guard var result = try? AttributedString(markdown: text, options: options) else {
+        guard let result = try? AttributedString(markdown: text, options: options) else {
             return AttributedString(text)
         }
-        let unsafeLinks = result.runs.compactMap { run -> Range<AttributedString.Index>? in
-            guard let link = run.link else { return nil }
-            return ["http", "https", "mailto"].contains(link.scheme?.lowercased() ?? "") ? nil : run.range
+        return LinkPolicy.removingUnclickableLinks(from: result)
+    }
+
+    /// The notes as one block of text, for the update window's small scrolling box: `## Title`
+    /// becomes bold and `- item` / `* item` a bullet, so the inline Markdown renders. Links follow
+    /// `inline(_:)`'s rule. `nil` when there are no notes.
+    public static func compact(_ notes: String) -> AttributedString? {
+        let text = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return nil }
+        let simplified = text
+            .components(separatedBy: .newlines)
+            .map(compactLine)
+            .joined(separator: "\n")
+        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        guard let parsed = try? AttributedString(markdown: simplified, options: options) else {
+            return AttributedString(text)
         }
-        for range in unsafeLinks {
-            result[range].link = nil
+        return LinkPolicy.removingUnclickableLinks(from: parsed)
+    }
+
+    /// `## Title` becomes bold, `- item` / `* item` a bullet.
+    private static func compactLine(_ line: String) -> String {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        if trimmed.hasPrefix("#") {
+            let title = trimmed.drop { $0 == "#" }.trimmingCharacters(in: .whitespaces)
+            return title.isEmpty ? "" : "**\(title)**"
         }
-        return result
+        if trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") {
+            let indent = String(line.prefix { $0 == " " })
+            return indent + "• " + trimmed.dropFirst(2)
+        }
+        return line
     }
 
     // MARK: - Lines

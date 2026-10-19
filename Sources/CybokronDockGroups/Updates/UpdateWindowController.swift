@@ -56,6 +56,7 @@ private struct UpdateView: View {
         .padding(20)
         .frame(width: Self.width)
         .fixedSize(horizontal: false, vertical: true)
+        .environment(\.openURL, .clickableLinksOnly)
     }
 
     @ViewBuilder
@@ -206,8 +207,10 @@ private struct UpdateView: View {
         .padding(.top, 4)
     }
 
+    /// A release's page comes from the release information; anything but a web page opens the
+    /// releases page instead.
     private func open(_ url: URL) {
-        NSWorkspace.shared.open(url)
+        NSWorkspace.shared.open(LinkPolicy.isClickable(url) ? url : UpdateLinks.releasesPage)
     }
 }
 
@@ -232,28 +235,16 @@ private struct ReleaseNotesView: View {
         }
     }
 
+    /// Only `https` and `mailto` links stay clickable (`LinkPolicy`).
     private var notes: AttributedString {
-        let text = release.notes.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return AttributedString(L10n.UpdateWindow.noReleaseNotes) }
-        let simplified = text
-            .components(separatedBy: .newlines)
-            .map(Self.simplify)
-            .joined(separator: "\n")
-        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-        return (try? AttributedString(markdown: simplified, options: options)) ?? AttributedString(text)
+        ReleaseNotesMarkdown.compact(release.notes) ?? AttributedString(L10n.UpdateWindow.noReleaseNotes)
     }
+}
 
-    /// `## Title` becomes bold, `- item` / `* item` a bullet.
-    private static func simplify(_ line: String) -> String {
-        let trimmed = line.trimmingCharacters(in: .whitespaces)
-        if trimmed.hasPrefix("#") {
-            let title = trimmed.drop { $0 == "#" }.trimmingCharacters(in: .whitespaces)
-            return title.isEmpty ? "" : "**\(title)**"
-        }
-        if trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") {
-            let indent = String(line.prefix { $0 == " " })
-            return indent + "• " + trimmed.dropFirst(2)
-        }
-        return line
+extension OpenURLAction {
+    /// Opens only the links `LinkPolicy.isClickable` allows (`https`, `mailto`) and drops the rest,
+    /// for the windows that show release notes.
+    static let clickableLinksOnly = OpenURLAction { url in
+        LinkPolicy.isClickable(url) ? .systemAction : .discarded
     }
 }
