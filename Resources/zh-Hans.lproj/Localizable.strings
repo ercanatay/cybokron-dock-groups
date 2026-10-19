@@ -538,3 +538,15 @@
 "changelog.error.cached" = "无法加载发行说明，正在显示缓存副本。";
 "changelog.retry" = "点击“刷新”重试。";
 "changelog.openRelease" = "在 GitHub 上查看";
+
+/* Quit confirmation & update install/busy */
+"core.quitConfirmation.title" = "“%@” 中的所有应用将被退出。是否继续？";
+"core.quitConfirmation.message" = "另一个应用、脚本或网页打开的链接请求退出本组中正在运行的应用。";
+"core.quitConfirmation.force" = "强制退出：应用将立即结束，未保存的更改将丢失。";
+"core.quitConfirmation.quit" = "退出应用";
+"core.quitConfirmation.forceQuit" = "强制退出应用";
+"core.quitConfirmation.cancel" = "取消";
+"core.update.install.invalidSignature" = "下载的应用代码签名无效，因此未安装：%@";
+"core.update.install.wrongSigner" = "下载的应用由其他开发者签名（团队 %1$@，而非 %2$@），因此未安装。";
+"settings.otherVersions.busy.title" = "正在进行更新";
+"settings.otherVersions.busy.message" = "%@ 目前正在检查或安装更新。请在完成后重试。";

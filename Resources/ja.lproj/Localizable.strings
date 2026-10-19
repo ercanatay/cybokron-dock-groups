@@ -538,3 +538,15 @@
 "changelog.error.cached" = "リリースノートを読み込めませんでした。キャッシュされたコピーを表示しています。";
 "changelog.retry" = "「更新」をクリックして再試行してください。";
 "changelog.openRelease" = "GitHub で表示";
+
+/* Quit confirmation & update install/busy */
+"core.quitConfirmation.title" = "“%@” 内のすべてのアプリを終了します。続行しますか？";
+"core.quitConfirmation.message" = "他のアプリ、スクリプト、または Web ページから開かれたリンクが、このグループで実行中のアプリの終了を要求しました。";
+"core.quitConfirmation.force" = "強制終了：アプリはすぐに終了し、保存されていない変更は失われます。";
+"core.quitConfirmation.quit" = "アプリを終了";
+"core.quitConfirmation.forceQuit" = "アプリを強制終了";
+"core.quitConfirmation.cancel" = "キャンセル";
+"core.update.install.invalidSignature" = "ダウンロードしたアプリのコード署名が無効なため、インストールされませんでした：%@";
+"core.update.install.wrongSigner" = "ダウンロードしたアプリは別の開発者が署名しています（チーム %1$@。%2$@ ではありません）。そのためインストールされませんでした。";
+"settings.otherVersions.busy.title" = "アップデートを実行中です";
+"settings.otherVersions.busy.message" = "%@ は現在アップデートを確認またはインストールしています。完了後にもう一度お試しください。";

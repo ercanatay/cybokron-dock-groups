@@ -538,3 +538,15 @@
 "changelog.error.cached" = "릴리스 노트를 불러오지 못했습니다. 캐시된 사본을 표시합니다.";
 "changelog.retry" = "다시 시도하려면 새로 고침을 클릭하세요.";
 "changelog.openRelease" = "GitHub에서 보기";
+
+/* Quit confirmation & update install/busy */
+"core.quitConfirmation.title" = "“%@”의 모든 앱이 종료됩니다. 계속하시겠습니까?";
+"core.quitConfirmation.message" = "다른 앱, 스크립트 또는 웹 페이지에서 연 링크가 이 그룹에서 실행 중인 앱의 종료를 요청했습니다.";
+"core.quitConfirmation.force" = "강제 종료: 앱이 즉시 종료되며 저장되지 않은 변경 사항은 손실됩니다.";
+"core.quitConfirmation.quit" = "앱 종료";
+"core.quitConfirmation.forceQuit" = "앱 강제 종료";
+"core.quitConfirmation.cancel" = "취소";
+"core.update.install.invalidSignature" = "다운로드한 앱의 코드 서명이 유효하지 않아 설치되지 않았습니다: %@";
+"core.update.install.wrongSigner" = "다운로드한 앱은 다른 개발자가 서명했습니다(팀 %1$@, %2$@ 아님). 그래서 설치되지 않았습니다.";
+"settings.otherVersions.busy.title" = "업데이트가 진행 중입니다";
+"settings.otherVersions.busy.message" = "%@에서 지금 업데이트를 확인하거나 설치하고 있습니다. 완료된 후 다시 시도해 주십시오.";

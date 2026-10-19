@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Không thể tải ghi chú phát hành — đang hiển thị bản sao đã lưu.";
 "changelog.retry" = "Nhấn Làm mới để thử lại.";
 "changelog.openRelease" = "Xem trên GitHub";
+
+/* Quit confirmation & update install/busy */
+"core.quitConfirmation.title" = "Tất cả ứng dụng trong “%@” sẽ bị thoát. Tiếp tục?";
+"core.quitConfirmation.message" = "Một liên kết được mở từ ứng dụng khác, tập lệnh hoặc trang web đã yêu cầu thoát các ứng dụng đang chạy trong nhóm này.";
+"core.quitConfirmation.force" = "Buộc thoát: ứng dụng dừng ngay lập tức và các thay đổi chưa lưu sẽ bị mất.";
+"core.quitConfirmation.quit" = "Thoát ứng dụng";
+"core.quitConfirmation.forceQuit" = "Buộc thoát ứng dụng";
+"core.quitConfirmation.cancel" = "Hủy";
+"core.update.install.invalidSignature" = "Chữ ký mã của ứng dụng đã tải xuống không hợp lệ nên chưa được cài đặt: %@";
+"core.update.install.wrongSigner" = "Ứng dụng đã tải xuống được ký bởi nhà phát triển khác (nhóm %1$@ thay vì %2$@), nên chưa được cài đặt.";
+"settings.otherVersions.busy.title" = "Đang có bản cập nhật";
+"settings.otherVersions.busy.message" = "%@ đang kiểm tra hoặc cài đặt bản cập nhật. Vui lòng thử lại sau khi hoàn tất.";

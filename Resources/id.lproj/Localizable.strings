@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Tidak dapat memuat catatan rilis — menampilkan salinan cache.";
 "changelog.retry" = "Klik Segarkan untuk mencoba lagi.";
 "changelog.openRelease" = "Lihat di GitHub";
+
+/* Quit confirmation & update install/busy */
+"core.quitConfirmation.title" = "Semua app di “%@” akan dihentikan. Lanjutkan?";
+"core.quitConfirmation.message" = "Tautan yang dibuka oleh app lain, skrip, atau halaman web meminta penghentian app yang sedang berjalan di grup ini.";
+"core.quitConfirmation.force" = "Paksa berhenti: app langsung berhenti dan perubahan yang belum disimpan akan hilang.";
+"core.quitConfirmation.quit" = "Hentikan App";
+"core.quitConfirmation.forceQuit" = "Paksa Hentikan App";
+"core.quitConfirmation.cancel" = "Batal";
+"core.update.install.invalidSignature" = "Tanda tangan kode app yang diunduh tidak valid, sehingga tidak dipasang: %@";
+"core.update.install.wrongSigner" = "App yang diunduh ditandatangani oleh pengembang lain (tim %1$@, bukan %2$@), sehingga tidak dipasang.";
+"settings.otherVersions.busy.title" = "Pembaruan sedang berlangsung";
+"settings.otherVersions.busy.message" = "%@ sedang memeriksa atau memasang pembaruan. Coba lagi setelah selesai.";
