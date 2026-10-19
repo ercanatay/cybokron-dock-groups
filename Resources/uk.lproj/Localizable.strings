@@ -537,3 +537,15 @@
 "changelog.error.cached" = "Не вдалося завантажити примітки до випуску — показано збережену копію.";
 "changelog.retry" = "Натисніть «Оновити», щоб спробувати знову.";
 "changelog.openRelease" = "Переглянути на GitHub";
+
+/* Quit confirmation & update keys */
+"core.quitConfirmation.title" = "Усі застосунки в «%@» буде закрито. Продовжити?";
+"core.quitConfirmation.message" = "Посилання, відкрите іншим застосунком, скриптом або веб-сторінкою, попросило закрити запущені застосунки цієї групи.";
+"core.quitConfirmation.force" = "Примусове закриття: застосунки завершуються одразу, і незбережені зміни буде втрачено.";
+"core.quitConfirmation.quit" = "Закрити застосунки";
+"core.quitConfirmation.forceQuit" = "Примусово закрити застосунки";
+"core.quitConfirmation.cancel" = "Скасувати";
+"core.update.install.invalidSignature" = "Підпис коду завантаженого застосунку недійсний, тому його не встановлено: %@";
+"core.update.install.wrongSigner" = "Завантажений застосунок підписано іншим розробником (команда %1$@ замість %2$@), тому його не встановлено.";
+"settings.otherVersions.busy.title" = "Триває оновлення";
+"settings.otherVersions.busy.message" = "%@ зараз перевіряє наявність оновлення або встановлює його. Спробуйте знову, коли це завершиться.";

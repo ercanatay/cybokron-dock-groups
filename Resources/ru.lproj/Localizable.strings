@@ -537,3 +537,15 @@
 "changelog.error.cached" = "Не удалось загрузить примечания к выпуску — показана сохранённая копия.";
 "changelog.retry" = "Нажмите «Обновить», чтобы повторить попытку.";
 "changelog.openRelease" = "Открыть на GitHub";
+
+/* Quit confirmation & update keys */
+"core.quitConfirmation.title" = "Все приложения в «%@» будут закрыты. Продолжить?";
+"core.quitConfirmation.message" = "Ссылка, открытая другим приложением, скриптом или веб-страницей, запросила закрытие запущенных приложений этой группы.";
+"core.quitConfirmation.force" = "Принудительное закрытие: приложения завершатся сразу, и несохранённые изменения будут потеряны.";
+"core.quitConfirmation.quit" = "Закрыть приложения";
+"core.quitConfirmation.forceQuit" = "Принудительно закрыть приложения";
+"core.quitConfirmation.cancel" = "Отмена";
+"core.update.install.invalidSignature" = "Подпись кода загруженного приложения недействительна, поэтому оно не установлено: %@";
+"core.update.install.wrongSigner" = "Загруженное приложение подписано другим разработчиком (команда %1$@ вместо %2$@), поэтому оно не установлено.";
+"settings.otherVersions.busy.title" = "Выполняется обновление";
+"settings.otherVersions.busy.message" = "%@ сейчас проверяет наличие обновления или устанавливает его. Повторите попытку после завершения.";

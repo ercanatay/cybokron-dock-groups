@@ -538,3 +538,15 @@
 "changelog.error.cached" = "रिलीज़ नोट्स लोड नहीं हो सके — कैश्ड प्रति दिखाई जा रही है।";
 "changelog.retry" = "फिर से कोशिश करने के लिए ताज़ा करें पर क्लिक करें।";
 "changelog.openRelease" = "GitHub पर देखें";
+
+/* Quit confirmation & update keys */
+"core.quitConfirmation.title" = "“%@” के सभी ऐप बंद कर दिए जाएँगे। जारी रखें?";
+"core.quitConfirmation.message" = "किसी दूसरे ऐप, स्क्रिप्ट या वेब पेज द्वारा खोले गए एक लिंक ने इस समूह के चल रहे ऐप बंद करने का अनुरोध किया है।";
+"core.quitConfirmation.force" = "ज़बरदस्ती बंद करें: ऐप तुरंत समाप्त हो जाएँगे, और बिना सहेजे गए बदलाव खो जाएँगे।";
+"core.quitConfirmation.quit" = "ऐप बंद करें";
+"core.quitConfirmation.forceQuit" = "ऐप ज़बरदस्ती बंद करें";
+"core.quitConfirmation.cancel" = "रद्द करें";
+"core.update.install.invalidSignature" = "डाउनलोड किए गए ऐप का कोड हस्ताक्षर मान्य नहीं है, इसलिए इसे इंस्टॉल नहीं किया गया: %@";
+"core.update.install.wrongSigner" = "डाउनलोड किया गया ऐप किसी दूसरे डेवलपर ने हस्ताक्षरित किया है (%2$@ की जगह टीम %1$@), इसलिए इसे इंस्टॉल नहीं किया गया।";
+"settings.otherVersions.busy.title" = "एक अपडेट चल रहा है";
+"settings.otherVersions.busy.message" = "%@ अभी अपडेट की जाँच कर रहा है या उसे इंस्टॉल कर रहा है। पूरा होने के बाद दोबारा कोशिश करें।";

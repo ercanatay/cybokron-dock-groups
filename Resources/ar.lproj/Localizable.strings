@@ -538,3 +538,15 @@
 "changelog.error.cached" = "تعذّر تحميل ملاحظات الإصدار — يتم عرض النسخة المخزّنة.";
 "changelog.retry" = "انقر على «تحديث» للمحاولة مرة أخرى.";
 "changelog.openRelease" = "عرض على GitHub";
+
+/* Quit confirmation & update keys */
+"core.quitConfirmation.title" = "سيتم إغلاق جميع التطبيقات في «%@». هل تريد المتابعة؟";
+"core.quitConfirmation.message" = "طلب رابط فتحه تطبيق آخر أو سكربت أو صفحة ويب إغلاق التطبيقات قيد التشغيل في هذه المجموعة.";
+"core.quitConfirmation.force" = "إغلاق قسري: تنتهي التطبيقات فورًا، وتضيع التغييرات غير المحفوظة.";
+"core.quitConfirmation.quit" = "إغلاق التطبيقات";
+"core.quitConfirmation.forceQuit" = "إغلاق قسري للتطبيقات";
+"core.quitConfirmation.cancel" = "إلغاء";
+"core.update.install.invalidSignature" = "توقيع الشيفرة للتطبيق الذي تم تنزيله غير صالح، لذلك لم يتم تثبيته: %@";
+"core.update.install.wrongSigner" = "التطبيق الذي تم تنزيله موقّع من مطوّر آخر (الفريق %1$@ بدلًا من %2$@)، لذلك لم يتم تثبيته.";
+"settings.otherVersions.busy.title" = "التحديث قيد التنفيذ";
+"settings.otherVersions.busy.message" = "يتحقق %@ الآن من وجود تحديث أو يقوم بتثبيته. حاول مرة أخرى بعد الانتهاء.";

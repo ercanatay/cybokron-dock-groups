@@ -538,3 +538,15 @@
 "changelog.error.cached" = "بارگیری یادداشت‌های انتشار ناموفق بود — نسخهٔ ذخیره‌شده نمایش داده می‌شود.";
 "changelog.retry" = "برای تلاش دوباره روی «تازه‌سازی» کلیک کنید.";
 "changelog.openRelease" = "مشاهده در GitHub";
+
+/* Quit confirmation & update keys */
+"core.quitConfirmation.title" = "همه برنامه‌های «%@» بسته خواهند شد. ادامه می‌دهید؟";
+"core.quitConfirmation.message" = "پیوندی که برنامه‌ی دیگر، یک اسکریپت یا یک صفحه‌ی وب باز کرده، از بستن برنامه‌های در حال اجرای این گروه خواسته است.";
+"core.quitConfirmation.force" = "بستن اجباری: برنامه‌ها فوراً پایان می‌یابند و تغییرات ذخیره‌نشده از دست می‌روند.";
+"core.quitConfirmation.quit" = "بستن برنامه‌ها";
+"core.quitConfirmation.forceQuit" = "بستن اجباری برنامه‌ها";
+"core.quitConfirmation.cancel" = "لغو";
+"core.update.install.invalidSignature" = "امضای کد برنامه‌ی دانلودشده معتبر نیست، بنابراین نصب نشد: %@";
+"core.update.install.wrongSigner" = "برنامه‌ی دانلودشده توسط توسعه‌دهنده‌ی دیگری امضا شده است (تیم %1$@ به‌جای %2$@)، بنابراین نصب نشد.";
+"settings.otherVersions.busy.title" = "یک به‌روزرسانی در حال انجام است";
+"settings.otherVersions.busy.message" = "%@ در حال حاضر در حال بررسی یا نصب یک به‌روزرسانی است. پس از پایان آن دوباره تلاش کنید.";
