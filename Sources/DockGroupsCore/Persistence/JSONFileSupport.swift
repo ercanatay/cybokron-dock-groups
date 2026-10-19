@@ -28,29 +28,36 @@ enum JSONFileSupport {
     }
 
     /// Copies a file to `<name>.<label>-<timestamp>.json` next to it, leaving the original in
-    /// place. Only the latest copy is kept: earlier copies with the same label are removed.
+    /// place. Only the latest copy is kept: earlier copies with the same label are removed — once
+    /// the new copy is in place, so a failed copy never costs the previous one.
     /// Returns the copy's location, or `nil` when there was no file.
-    static func copyAside(_ fileURL: URL, label: String) throws -> URL? {
+    static func copyAside(_ fileURL: URL, label: String, now: Date = Date()) throws -> URL? {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+        let copyURL = sidecarURL(for: fileURL, label: label, now: now)
+        try FileManager.default.copyItem(at: fileURL, to: copyURL)
         let folder = fileURL.deletingLastPathComponent()
         let prefix = "\(fileURL.deletingPathExtension().lastPathComponent).\(label)-"
         let earlier = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
-        for name in earlier where name.hasPrefix(prefix) && name.hasSuffix(".json") {
+        for name in earlier where name.hasPrefix(prefix) && name.hasSuffix(".json") && name != copyURL.lastPathComponent {
             try? FileManager.default.removeItem(at: folder.appending(path: name, directoryHint: .notDirectory))
         }
-        let copyURL = sidecarURL(for: fileURL, label: label)
-        try FileManager.default.copyItem(at: fileURL, to: copyURL)
         return copyURL
     }
 
-    private static func sidecarURL(for fileURL: URL, label: String) -> URL {
+    /// `<name>.<label>-<timestamp>.json` next to `fileURL`; when that's taken (twice in the same
+    /// second), `-2`, `-3` … follow the timestamp.
+    static func sidecarURL(for fileURL: URL, label: String, now: Date = Date()) -> URL {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyyMMdd-HHmmss"
-        let baseName = fileURL.deletingPathExtension().lastPathComponent
-        return fileURL.deletingLastPathComponent().appending(
-            path: "\(baseName).\(label)-\(formatter.string(from: Date())).json",
-            directoryHint: .notDirectory
-        )
+        let folder = fileURL.deletingLastPathComponent()
+        let base = "\(fileURL.deletingPathExtension().lastPathComponent).\(label)-\(formatter.string(from: now))"
+        var candidate = folder.appending(path: "\(base).json", directoryHint: .notDirectory)
+        var counter = 2
+        while FileManager.default.fileExists(atPath: candidate.path) {
+            candidate = folder.appending(path: "\(base)-\(counter).json", directoryHint: .notDirectory)
+            counter += 1
+        }
+        return candidate
     }
 }

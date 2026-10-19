@@ -3,12 +3,14 @@ import SwiftUI
 
 /// Settings → Updates → "Other Versions…": the published releases (no drafts or prereleases), newest
 /// first, each with Install — older or newer than the running version. Installing asks first, then
-/// closes the sheet and follows in the update window like any update.
+/// closes the sheet and follows in the update window like any update. When a check or another
+/// installation started meanwhile, it says so instead of doing nothing.
 struct OtherVersionsView: View {
     @ObservedObject var updater: AutoUpdater
     let dismiss: () -> Void
 
     @State private var pending: PendingInstall?
+    @State private var isBusyNoticeShown = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -38,11 +40,21 @@ struct OtherVersionsView: View {
         ) { pending in
             Button(L10n.Common.cancel, role: .cancel) {}
             Button(L10n.Common.install) {
+                guard !updater.isBusy else {
+                    // After this alert has gone.
+                    DispatchQueue.main.async { isBusyNoticeShown = true }
+                    return
+                }
                 dismiss()
                 updater.installPicked(pending.release, from: pending.releases)
             }
         } message: { pending in
             Text(pending.message)
+        }
+        .alert(L10n.Settings.OtherVersions.busyTitle, isPresented: $isBusyNoticeShown) {
+            Button(L10n.Common.ok) {}
+        } message: {
+            Text(L10n.Settings.OtherVersions.busyMessage(AppInfo.name))
         }
     }
 

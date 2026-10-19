@@ -76,6 +76,14 @@ public enum UpdateSchedule {
         let elapsed = now.timeIntervalSince(lastCheck)
         return elapsed < 0 || elapsed >= interval
     }
+
+    /// Whether a due automatic check (the timer, waking up) may start: not while the update window
+    /// shows an offered update or a failed installation — the check would replace what the user
+    /// is reading, and its Download or Try Again button. Once the window is closed (Remind Me
+    /// Later), checks run as before. Checks the user asks for always run.
+    public static func mayCheckAutomatically(showsOfferOrFailure: Bool, windowIsShown: @autoclosure () -> Bool) -> Bool {
+        !(showsOfferOrFailure && windowIsShown())
+    }
 }
 
 /// Fixed addresses the updater and its windows link to.

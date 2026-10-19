@@ -74,6 +74,29 @@ struct ReleaseInfoTests {
         #expect(ReleaseAssetSelector.installerAsset(in: [asset("notes.txt"), asset("app-x86_64.dmg")]) == nil)
     }
 
+    @Test func theVersionMustBeAWholeVersionNumberInTheName() throws {
+        let decoys = [asset("Cybokron-Dock-Groups-0.5.10-universal.dmg"), asset("Cybokron-Dock-Groups-10.5.1-universal.dmg"), asset("Cybokron-Dock-Groups-0.5.1.2-universal.dmg")]
+        let wanted = asset("Cybokron-Dock-Groups-0.5.1-universal.dmg")
+
+        #expect(ReleaseAssetSelector.installerAsset(in: decoys + [wanted], version: try version("0.5.1")) == wanted)
+        // None names it: the first universal DMG, as before.
+        #expect(ReleaseAssetSelector.installerAsset(in: decoys, version: try version("0.5.1")) == decoys.first)
+
+        for (name, matches) in [
+            ("Cybokron-Dock-Groups-0.5.1-universal.dmg", true),
+            ("Cybokron-Dock-Groups-v0.5.1-universal.dmg", true),
+            ("Cybokron-Dock-Groups-0.5.10-universal.dmg", false),
+            ("Cybokron-Dock-Groups-10.5.1-universal.dmg", false),
+            ("Cybokron-Dock-Groups-0.5.1.2-universal.dmg", false),
+            ("Cybokron-Dock-Groups-20.5.11-universal.dmg", false),
+        ] {
+            #expect(ReleaseAssetSelector.names(name, version: try version("0.5.1")) == matches, "\(name)")
+        }
+        #expect(ReleaseAssetSelector.names("Cybokron-Dock-Groups-0.7.0-beta.1-universal.dmg", version: try version("0.7.0-beta.1")))
+        #expect(!ReleaseAssetSelector.names("Cybokron-Dock-Groups-0.7.0-beta.10-universal.dmg", version: try version("0.7.0-beta.1")))
+        #expect(!ReleaseAssetSelector.names("Cybokron-Dock-Groups-0.7.0-universal.dmg", version: try version("0.7.0-beta.1")))
+    }
+
     @Test func readsOnlySHA256Digests() {
         let url = URL(string: "https://example.com/a.dmg")!
         let hex = String(repeating: "ab", count: 32)

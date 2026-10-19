@@ -141,13 +141,26 @@ public enum ReleaseAssetSelector {
     public static let requiredSuffix = "universal.dmg"
 
     /// The first asset whose name ends in `universal.dmg` (any case), preferring one that also
-    /// names `version`. `nil` when the release has none.
+    /// names `version` (`names(_:version:)`). `nil` when the release has none.
     public static func installerAsset(in assets: [ReleaseAsset], version: SemanticVersion? = nil) -> ReleaseAsset? {
         let candidates = assets.filter { $0.name.lowercased().hasSuffix(requiredSuffix) }
-        if let version, let named = candidates.first(where: { $0.name.contains("\(version.major).\(version.minor).\(version.patch)") }) {
+        if let version, let named = candidates.first(where: { names($0.name, version: version) }) {
             return named
         }
         return candidates.first
+    }
+
+    /// Whether the file name holds `version` as a whole version number: `0.5.1` is in
+    /// `…-0.5.1-universal.dmg` but not in `…-0.5.10-…` or `…-10.5.1-…`, and a prerelease such as
+    /// `0.7.0-beta.1` needs its identifiers too (`…-0.7.0-beta.1-…`, not `…-0.7.0-beta.10-…`).
+    static func names(_ fileName: String, version: SemanticVersion) -> Bool {
+        var text = "\(version.major).\(version.minor).\(version.patch)"
+        if version.isPrerelease {
+            text += "-" + version.prerelease.joined(separator: ".")
+        }
+        // Not glued to more digits or version parts on either side.
+        let pattern = #"(?<![0-9A-Za-z.])v?"# + NSRegularExpression.escapedPattern(for: text) + #"(?![0-9A-Za-z]|\.[0-9])"#
+        return fileName.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil
     }
 }
 

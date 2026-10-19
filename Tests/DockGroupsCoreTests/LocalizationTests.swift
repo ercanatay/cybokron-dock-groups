@@ -39,6 +39,7 @@ struct LocalizationTests {
         "core.quitConfirmation.",
         "core.update.install.invalidSignature",
         "core.update.install.wrongSigner",
+        "settings.otherVersions.busy.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
@@ -118,6 +119,18 @@ struct LocalizationTests {
             result.insert(Placeholder(position: position, conversion: conversion))
         }
         return result.sorted { ($0.position, $0.conversion) < ($1.position, $1.conversion) }
+    }
+
+    /// Whether `format` numbers some placeholders (`%1$@`) and not others (`%@`): which value a
+    /// plain one then takes isn't defined, and `placeholders` would count it as matching anyway.
+    static func mixesNumberedAndPlainPlaceholders(_ format: String) -> Bool {
+        let expression = try! NSRegularExpression(pattern: #"%(?:(\d+)\$)?[-+ #0']*\d*(?:\.\d+)?((?:hh|h|ll|l|q|z|t|j|L)?[@dDiuUxXoOfFeEgGcCsSpaA%])"#)
+        var kinds: Set<Bool> = []
+        for match in expression.matches(in: format, range: NSRange(format.startIndex..., in: format)) {
+            guard String(format[Range(match.range(at: 2), in: format)!]) != "%" else { continue }
+            kinds.insert(match.range(at: 1).location != NSNotFound)
+        }
+        return kinds.count > 1
     }
 
     struct Placeholder: Hashable, CustomStringConvertible {
@@ -223,6 +236,27 @@ struct LocalizationTests {
                         "\(language) \(key): placeholders \(Self.placeholders(value)) instead of \(Self.placeholders(source))")
             }
         }
+    }
+
+    /// Every text numbers all of its placeholders or none, in every language: a translation of
+    /// "%1$@ and %2$@" as "%2$@ and %@" would otherwise pass the placeholder comparison above.
+    @Test func placeholdersAreAllNumberedOrAllPlain() throws {
+        for language in Self.languages {
+            for (key, value) in try Self.table(language) {
+                #expect(!Self.mixesNumberedAndPlainPlaceholders(value), "\(language) \(key) mixes numbered and plain placeholders: \(value)")
+            }
+        }
+    }
+
+    @Test func mixedPlaceholdersAreCaught() {
+        #expect(Self.mixesNumberedAndPlainPlaceholders("%2$@ and %@"))
+        #expect(Self.mixesNumberedAndPlainPlaceholders("%@ has %2$ld apps"))
+        #expect(!Self.mixesNumberedAndPlainPlaceholders("%1$@ has %2$ld apps"))
+        #expect(!Self.mixesNumberedAndPlainPlaceholders("%@ has %ld apps"))
+        #expect(!Self.mixesNumberedAndPlainPlaceholders("100%% of %1$@"))
+        #expect(!Self.mixesNumberedAndPlainPlaceholders("No placeholders"))
+        // The comparison alone can't tell these apart.
+        #expect(Self.placeholders("%2$@ and %@") == Self.placeholders("%1$@ and %2$@"))
     }
 
     /// Every key awaiting translation is in the English table, so the prefixes don't hide a typo.

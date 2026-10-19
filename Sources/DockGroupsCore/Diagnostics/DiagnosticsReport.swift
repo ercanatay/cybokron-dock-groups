@@ -134,8 +134,8 @@ public enum DiagnosticsReport {
         case recentErrors = "Recent Errors"
     }
 
-    /// The report. `homeDirectory` is replaced by "~" in logged error messages, which may mention
-    /// the user's files; the app's own path is kept as it is.
+    /// The report. `homeDirectory` — which holds the user's account name — is replaced by "~" in the
+    /// app's location and in logged error messages, which may mention the user's files.
     public static func text(for info: DiagnosticsInfo, homeDirectory: String = NSHomeDirectory()) -> String {
         var lines: [String] = []
         lines.append("Cybokron Dock Groups Diagnostics")
@@ -143,7 +143,7 @@ public enum DiagnosticsReport {
 
         section(.app, into: &lines)
         lines.append("Version: \(info.app.version) (build \(info.app.build))")
-        lines.append("Location: \(info.app.path)")
+        lines.append("Location: \(redactingHome(in: info.app.path, homeDirectory: homeDirectory))")
 
         section(.system, into: &lines)
         lines.append("macOS: \(info.system.macOSVersion)")

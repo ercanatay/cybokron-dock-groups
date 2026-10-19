@@ -85,13 +85,14 @@ struct DiagnosticsReportTests {
         }
     }
 
-    @Test func appLocationIsKeptButHomeIsRedactedInErrors() {
+    @Test func homeIsRedactedInTheLocationAndInErrors() {
         let errors = (1...12).map { "Error \($0): couldn't read /Users/jane/Library/x.json" }
 
         let text = DiagnosticsReport.text(for: info(errors: errors), homeDirectory: "/Users/jane/")
 
-        // The app's own location is the user's own business and helps support.
-        #expect(text.contains("Location: /Users/jane/Applications/Cybokron Dock Groups.app"))
+        // Where the app runs helps support; the account name in it doesn't.
+        #expect(text.contains("Location: ~/Applications/Cybokron Dock Groups.app"))
+        #expect(!text.contains("/Users/jane"), "the account name leaked into the report")
         #expect(text.contains("Error 12: couldn't read ~/Library/x.json"))
         // Only the latest ten errors.
         #expect(!text.contains("Error 2:"))

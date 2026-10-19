@@ -61,6 +61,8 @@ final class AutoUpdater: ObservableObject {
     var showWindow: () -> Void = {}
     /// Closes the update window; set by the app delegate.
     var closeWindow: () -> Void = {}
+    /// Whether the update window is on screen; set by the app delegate.
+    var isWindowShown: () -> Bool = { false }
 
     private let preferences: PreferencesStore
     private let feed: ReleaseFetching & ReleaseListFetching
@@ -105,6 +107,14 @@ final class AutoUpdater: ObservableObject {
     var isBusy: Bool {
         switch status {
         case .checking, .downloading, .installing, .restarting: return true
+        default: return false
+        }
+    }
+
+    /// An offered update or a failed installation, which an automatic check would replace.
+    private var showsOfferOrFailure: Bool {
+        switch status {
+        case .available, .installFailed: return true
         default: return false
         }
     }
@@ -175,6 +185,10 @@ final class AutoUpdater: ObservableObject {
 
     private func check(userInitiated: Bool) {
         guard !isBusy else { return }
+        if !userInitiated, !UpdateSchedule.mayCheckAutomatically(showsOfferOrFailure: showsOfferOrFailure, windowIsShown: isWindowShown()) {
+            logger.notice("Skipping the automatic update check: the update window shows an update or a failed installation")
+            return
+        }
         guard let currentVersion else {
             status = .checkFailed(UpdateCheckError.unknownCurrentVersion.localizedDescription)
             return
@@ -276,8 +290,13 @@ final class AutoUpdater: ObservableObject {
 
     /// Installs `release`, picked from `releases` in "Other Versions…", in the update window. Once
     /// it's in place, the skipped versions follow `ReleaseHistory.state(_:afterInstalling:…)`.
+    /// Does nothing while a check or an installation is under way (the sheet says so first).
     func installPicked(_ release: ReleaseInfo, from releases: [ReleaseInfo]) {
-        guard !isBusy, let asset = release.installerAsset else { return }
+        guard let asset = release.installerAsset else { return }
+        guard !isBusy else {
+            logger.notice("Not installing \(release.version, privacy: .public) from Other Versions: an update check or installation is under way")
+            return
+        }
         logger.notice("Installing version \(release.version, privacy: .public) from Other Versions")
         pickedFromReleases = releases
         showWindow()

@@ -13,8 +13,11 @@ import OSLog
 /// the app, launched while one runs, hands its URLs to the running copy and quits (`SecondCopyHandoff`).
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private let store = GroupStore(persistence: JSONFileGroupPersistence())
-    private let preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence())
+    // Lazy, like everything that reads the files: a second copy that hands its URLs over and quits
+    // (`SecondCopyHandoff`, decided before launching finishes) never loads them — and so never
+    // moves an unreadable file aside under the running copy.
+    private lazy var store = GroupStore(persistence: JSONFileGroupPersistence())
+    private lazy var preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence())
     private let launcher = GroupLauncher()
     private let terminator = GroupTerminator()
     private let icons = WorkspaceAppIconProvider()
@@ -164,6 +167,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.updateWindowController.show()
         }
         updater.closeWindow = { [weak self] in self?.updateWindowController.close() }
+        updater.isWindowShown = { [weak self] in self?.updateWindowController.window?.isVisible == true }
         updater.start()
         // The window stays closed at launch unless there's a problem the user needs to see.
         if store.issue != nil {

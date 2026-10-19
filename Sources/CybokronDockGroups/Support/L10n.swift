@@ -738,6 +738,14 @@ enum L10n {
                     "An older version may not know about features added since; consider exporting a backup first (Settings → Backup)."
                 )
             }
+            static var busyTitle: String { tr("settings.otherVersions.busy.title", "An update is under way") }
+            static func busyMessage(_ appName: String) -> String {
+                tr(
+                    "settings.otherVersions.busy.message",
+                    "%@ is checking for or installing an update right now. Try again once it's finished.",
+                    appName
+                )
+            }
             static var confirmUpgrade: String {
                 tr(
                     "settings.otherVersions.confirm.upgrade",

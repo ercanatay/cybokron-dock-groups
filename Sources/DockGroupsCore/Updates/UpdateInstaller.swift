@@ -376,11 +376,8 @@ public struct UpdateInstaller: Sendable {
             throw UpdateInstallError.locationNotWritable(problem)
         }
         let fileManager = FileManager.default
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyyMMdd-HHmmss"
         let name = installedApp.deletingPathExtension().lastPathComponent
-        let backup = directories.backups.appending(path: "\(name) \(formatter.string(from: now)).app", directoryHint: .isDirectory)
+        let backup = directories.backups.appending(path: "\(name) \(Self.backupTimestampFormatter.string(from: now)).app", directoryHint: .isDirectory)
         do {
             try fileManager.createDirectory(at: directories.backups, withIntermediateDirectories: true)
             if fileManager.fileExists(atPath: backup.path) {
@@ -442,18 +439,39 @@ public struct UpdateInstaller: Sendable {
         mounts.forEach(Self.removeEmptyDirectory)
         Self.removeEmptyDirectory(directories.mounts)
 
-        let backups = ((try? fileManager.contentsOfDirectory(
+        let found = (try? fileManager.contentsOfDirectory(
             at: directories.backups,
             includingPropertiesForKeys: [.contentModificationDateKey],
             options: [.skipsHiddenFiles]
-        )) ?? []).sorted { lhs, rhs in
-            let left = (try? lhs.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-            let right = (try? rhs.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
-            return left == right ? lhs.lastPathComponent > rhs.lastPathComponent : left > right
-        }
+        )) ?? []
+        let dated: [(url: URL, date: Date)] = found.map { ($0, Self.backupDate(of: $0)) }
+        // Newest first.
+        let backups = dated.sorted { lhs, rhs in
+            lhs.date == rhs.date ? lhs.url.lastPathComponent > rhs.url.lastPathComponent : lhs.date > rhs.date
+        }.map(\.url)
         for backup in backups.dropFirst(max(keepingBackups, 0)) {
             try? fileManager.removeItem(at: backup)
         }
+    }
+
+    /// `"<name> 20261019-114500.app"`: when `replace` moved the app aside.
+    static let backupTimestampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return formatter
+    }()
+
+    /// When a backup was made: the time `replace` put in its name. Moving an app keeps its folder's
+    /// modification date — the date the old version was built or installed, not backed up — so
+    /// that date only counts for a backup without a time in its name.
+    static func backupDate(of backup: URL) -> Date {
+        let name = backup.deletingPathExtension().lastPathComponent
+        if let range = name.range(of: #" \d{8}-\d{6}$"#, options: .regularExpression),
+           let date = backupTimestampFormatter.date(from: String(name[range].dropFirst())) {
+            return date
+        }
+        return (try? backup.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
     }
 
     /// Removes `directory` only when it's empty, so a still-mounted disk image is never touched.

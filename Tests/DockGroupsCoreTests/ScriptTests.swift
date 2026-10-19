@@ -118,3 +118,105 @@ struct CheckVersionScriptTests {
         #expect(result.errors.contains("tag v0.7.1 doesn't match version 0.7.0"))
     }
 }
+
+/// `scripts/release-notes.sh`: a version's CHANGELOG.md section and compare link, with fenced code
+/// blocks kept as they are.
+@Suite("Release notes script")
+struct ReleaseNotesScriptTests {
+    private let script = RepositoryScript(name: "release-notes.sh")
+
+    /// A changelog whose 0.7.0 section has code blocks holding a heading and a link reference.
+    static let changelog = """
+        # Changelog
+
+        ## [Unreleased]
+
+        ## [0.7.0] - 2026-10-20
+
+        ### Fixed
+
+        - Something.
+
+        ```sh
+        ## [0.6.9] inside a code block
+        [0.7.0]: https://example.com/inside-code
+        ```
+
+        - After the code.
+
+        ~~~
+        ## [0.6.9] in a tilde block
+        ~~~~
+
+        ## [0.6.9] - 2026-10-01
+
+        - Old.
+
+        [0.7.0]: https://github.com/x/y/compare/v0.6.9...v0.7.0
+        [0.6.9]: https://github.com/x/y/compare/v0.6.8...v0.6.9
+
+        """
+
+    private func notes(_ version: String) throws -> RepositoryScript.Result {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let file = temporary.url.appending(path: "CHANGELOG.md")
+        try Data(Self.changelog.utf8).write(to: file)
+        return try script.run([version], environment: ["CHANGELOG_PATH": file.path])
+    }
+
+    @Test func codeBlocksDontEndTheSection() throws {
+        let result = try notes("v0.7.0")
+
+        #expect(result.status == 0, "\(result.errors)")
+        #expect(result.output == """
+            ## [0.7.0] - 2026-10-20
+
+            ### Fixed
+
+            - Something.
+
+            ```sh
+            ## [0.6.9] inside a code block
+            [0.7.0]: https://example.com/inside-code
+            ```
+
+            - After the code.
+
+            ~~~
+            ## [0.6.9] in a tilde block
+            ~~~~
+
+            **Full Changelog**: https://github.com/x/y/compare/v0.6.9...v0.7.0
+
+            """)
+    }
+
+    @Test func aHeadingInACodeBlockIsntTheSection() throws {
+        let result = try notes("0.6.9")
+
+        #expect(result.status == 0, "\(result.errors)")
+        #expect(result.output == """
+            ## [0.6.9] - 2026-10-01
+
+            - Old.
+
+            **Full Changelog**: https://github.com/x/y/compare/v0.6.8...v0.6.9
+
+            """)
+    }
+
+    @Test func aMissingSectionFails() throws {
+        let result = try notes("0.5.0")
+
+        #expect(result.status != 0)
+        #expect(result.errors.contains("no '## [0.5.0]' section"))
+    }
+
+    @Test func theRepositoryChangelogHasTheCurrentVersion() throws {
+        let result = try script.run(["v0.6.1"])
+        #expect(result.status == 0, "\(result.errors)")
+        #expect(result.output.hasPrefix("## [0.6.1]"))
+        #expect(result.output.contains("**Full Changelog**: https://github.com/ercanatay/cybokron-dock-groups/compare/"))
+    }
+}
