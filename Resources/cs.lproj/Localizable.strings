@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Poznámky k vydání nelze načíst — zobrazuje se uložená kopie.";
 "changelog.retry" = "Pro opakování klikněte na Obnovit.";
 "changelog.openRelease" = "Zobrazit na GitHubu";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Všechny aplikace v „%@“ budou ukončeny. Pokračovat?";
+"core.quitConfirmation.message" = "Odkaz otevřený jinou aplikací, skriptem nebo webovou stránkou požádal o ukončení běžících aplikací této skupiny.";
+"core.quitConfirmation.force" = "Vynucené ukončení: aplikace se ukončí okamžitě a neuložené změny se ztratí.";
+"core.quitConfirmation.quit" = "Ukončit aplikace";
+"core.quitConfirmation.forceQuit" = "Vynuceně ukončit aplikace";
+"core.quitConfirmation.cancel" = "Zrušit";
+"core.update.install.invalidSignature" = "Podpis kódu stažené aplikace není platný, proto nebyla nainstalována: %@";
+"core.update.install.wrongSigner" = "Stažená aplikace je podepsána jiným vývojářem (tým %1$@ místo %2$@), proto nebyla nainstalována.";
+"settings.otherVersions.busy.title" = "Probíhá aktualizace";
+"settings.otherVersions.busy.message" = "%@ právě kontroluje nebo instaluje aktualizaci. Zkuste to znovu, až bude dokončena.";

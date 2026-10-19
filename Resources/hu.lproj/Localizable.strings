@@ -538,3 +538,15 @@
 "changelog.error.cached" = "A kiadási jegyzetek nem tölthetők be — a gyorsítótárazott másolat látható.";
 "changelog.retry" = "Kattintson a Frissítés gombra az újrapróbálkozáshoz.";
 "changelog.openRelease" = "Megtekintés a GitHubon";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Az „%@” összes alkalmazása be lesz zárva. Folytatja?";
+"core.quitConfirmation.message" = "Egy másik alkalmazás, szkript vagy webes oldal által megnyitott hivatkozás a csoport futó alkalmazásainak leállítását kérte.";
+"core.quitConfirmation.force" = "Kényszerített leállítás: az alkalmazások azonnal leállnak, a nem mentett módosítások elvesznek.";
+"core.quitConfirmation.quit" = "Alkalmazások leállítása";
+"core.quitConfirmation.forceQuit" = "Alkalmazások kényszerített leállítása";
+"core.quitConfirmation.cancel" = "Mégse";
+"core.update.install.invalidSignature" = "A letöltött alkalmazás kódaláírása nem érvényes, ezért nem lett telepítve: %@";
+"core.update.install.wrongSigner" = "A letöltött alkalmazást egy másik fejlesztő írta alá (%2$@ helyett %1$@ csapat), ezért nem lett telepítve.";
+"settings.otherVersions.busy.title" = "Frissítés folyamatban";
+"settings.otherVersions.busy.message" = "%@ épp frissítést keres vagy telepít. Próbálja újra, ha befejeződött.";

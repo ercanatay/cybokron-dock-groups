@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Бележките към версията не можаха да се заредят — показва се запазеното копие.";
 "changelog.retry" = "Щракнете върху Обнови, за да опитате отново.";
 "changelog.openRelease" = "Преглед в GitHub";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Всички приложения в „%@“ ще бъдат затворени. Продължаване?";
+"core.quitConfirmation.message" = "Връзка, отворена от друго приложение, скрипт или уебстраница, поиска затваряне на работещите приложения от тази група.";
+"core.quitConfirmation.force" = "Принудително затваряне: приложенията спират веднага и незаписаните промени се губят.";
+"core.quitConfirmation.quit" = "Затвори приложенията";
+"core.quitConfirmation.forceQuit" = "Принудително затваряне на приложенията";
+"core.quitConfirmation.cancel" = "Отказ";
+"core.update.install.invalidSignature" = "Подписът на кода на изтегленото приложение не е валиден, затова не беше инсталирано: %@";
+"core.update.install.wrongSigner" = "Изтегленото приложение е подписано от друг разработчик (екип %1$@ вместо %2$@), затова не беше инсталирано.";
+"settings.otherVersions.busy.title" = "Извършва се актуализация";
+"settings.otherVersions.busy.message" = "%@ в момента проверява за актуализация или я инсталира. Опитайте отново, когато приключи.";

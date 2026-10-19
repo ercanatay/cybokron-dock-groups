@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Notele de lansare nu au putut fi încărcate — se afișează copia din cache.";
 "changelog.retry" = "Apasă Reîmprospătează pentru a încerca din nou.";
 "changelog.openRelease" = "Vezi pe GitHub";
+
+/* Quit confirmation */
+"core.quitConfirmation.title" = "Toate aplicațiile din „%@” vor fi închise. Continui?";
+"core.quitConfirmation.message" = "O legătură deschisă de altă aplicație, de un script sau de o pagină web a cerut închiderea aplicațiilor care rulează din acest grup.";
+"core.quitConfirmation.force" = "Închidere forțată: aplicațiile se opresc imediat și modificările nesalvate se pierd.";
+"core.quitConfirmation.quit" = "Închide aplicațiile";
+"core.quitConfirmation.forceQuit" = "Forțează închiderea aplicațiilor";
+"core.quitConfirmation.cancel" = "Anulează";
+"core.update.install.invalidSignature" = "Semnătura de cod a aplicației descărcate nu este validă, așa că nu a fost instalată: %@";
+"core.update.install.wrongSigner" = "Aplicația descărcată este semnată de alt dezvoltator (echipa %1$@ în loc de %2$@), așa că nu a fost instalată.";
+"settings.otherVersions.busy.title" = "O actualizare este în curs";
+"settings.otherVersions.busy.message" = "%@ verifică sau instalează chiar acum o actualizare. Încearcă din nou după ce se termină.";
