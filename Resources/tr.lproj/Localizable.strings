@@ -536,3 +536,15 @@
 "changelog.error.cached" = "Sürüm notları yüklenemedi — önbellekteki kopya gösteriliyor.";
 "changelog.retry" = "Tekrar denemek için Yenile'ye tıklayın.";
 "changelog.openRelease" = "GitHub'da görüntüle";
+
+/* Çıkış onayı ve güncelleme mesajları */
+"core.quitConfirmation.title" = "Şu uygulamalar çıkarılacak: “%@”. Devam edilsin mi?";
+"core.quitConfirmation.message" = "Başka bir uygulama, bir betik veya web sayfası bu grubun çalışan uygulamalarını kapatmayı istedi.";
+"core.quitConfirmation.force" = "Zorla kapat: uygulamalar hemen kapanır ve kaydedilmemiş değişiklikler kaybolur.";
+"core.quitConfirmation.quit" = "Uygulamaları Kapat";
+"core.quitConfirmation.forceQuit" = "Uygulamaları Zorla Kapat";
+"core.quitConfirmation.cancel" = "İptal";
+"core.update.install.invalidSignature" = "İndirilen uygulamanın kod imzası geçerli değil, bu yüzden yüklenmedi: %@";
+"core.update.install.wrongSigner" = "İndirilen uygulama başka bir geliştirici tarafından imzalanmış (%2$@ yerine ekip %1$@), bu yüzden yüklenmedi.";
+"settings.otherVersions.busy.title" = "Bir güncelleme devam ediyor";
+"settings.otherVersions.busy.message" = "%@ şu anda bir güncelleme arıyor veya yüklüyor. Tamamlandıktan sonra tekrar deneyin.";

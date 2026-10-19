@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Buraxılış qeydləri yüklənmədi — önbelleğe alınmış nüsxə göstərilir.";
 "changelog.retry" = "Yenidən cəhd etmək üçün Yenilə düyməsinə klikləyin.";
 "changelog.openRelease" = "GitHub-da bax";
+
+/* Çıxış təsdiqi və yenilənmə mesajları */
+"core.quitConfirmation.title" = "“%@” qrupundakı bütün tətbiqlər bağlanacaq. Davam edilsin?";
+"core.quitConfirmation.message" = "Başqa tətbiq, skript və ya veb səhifə bu qrupun işləyən tətbiqlərini bağlamağı xahiş etdi.";
+"core.quitConfirmation.force" = "Məcburi bağlama: tətbiqlər dərhal bağlanır və saxlanmamış dəyişikliklər itir.";
+"core.quitConfirmation.quit" = "Tətbiqləri Bağla";
+"core.quitConfirmation.forceQuit" = "Tətbiqləri Məcburi Bağla";
+"core.quitConfirmation.cancel" = "Ləğv et";
+"core.update.install.invalidSignature" = "Yüklənmiş tətbiqin kod imzası etibarlı deyil, ona görə quraşdırılmadı: %@";
+"core.update.install.wrongSigner" = "Yüklənmiş tətbiq başqa tərtibatçı tərəfindən imzalanıb (%2$@ əvəzinə komanda %1$@), ona görə quraşdırılmadı.";
+"settings.otherVersions.busy.title" = "Yenilənmə davam edir";
+"settings.otherVersions.busy.message" = "%@ hal-hazırda yeniləmə yoxlayır və ya quraşdırır. Bitdikdən sonra yenidən cəhd edin.";

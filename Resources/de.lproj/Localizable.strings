@@ -538,3 +538,15 @@
 "changelog.error.cached" = "Versionshinweise konnten nicht geladen werden — zwischengespeicherte Kopie wird angezeigt.";
 "changelog.retry" = "Klicken Sie auf „Aktualisieren“, um es erneut zu versuchen.";
 "changelog.openRelease" = "Auf GitHub ansehen";
+
+/* Beenden-Bestätigung und Update-Meldungen */
+"core.quitConfirmation.title" = "Alle Apps in „%@“ werden beendet. Fortfahren?";
+"core.quitConfirmation.message" = "Ein von einer anderen App, einem Skript oder einer Webseite geöffneter Link hat darum gebeten, die laufenden Apps dieser Gruppe zu beenden.";
+"core.quitConfirmation.force" = "Erzwungen beenden: Die Apps werden sofort beendet, und nicht gespeicherte Änderungen gehen verloren.";
+"core.quitConfirmation.quit" = "Apps beenden";
+"core.quitConfirmation.forceQuit" = "Apps erzwungen beenden";
+"core.quitConfirmation.cancel" = "Abbrechen";
+"core.update.install.invalidSignature" = "Die Code-Signatur der heruntergeladenen App ist ungültig, daher wurde sie nicht installiert: %@";
+"core.update.install.wrongSigner" = "Die heruntergeladene App wurde von einem anderen Entwickler signiert (Team %1$@ statt %2$@), daher wurde sie nicht installiert.";
+"settings.otherVersions.busy.title" = "Ein Update läuft";
+"settings.otherVersions.busy.message" = "%@ sucht gerade nach einem Update oder installiert eines. Versuchen Sie es erneut, sobald dies abgeschlossen ist.";
