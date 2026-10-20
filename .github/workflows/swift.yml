@@ -29,7 +29,10 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # No job pushes; don't leave the token in .git/config for later steps.
+          persist-credentials: false
 
       - name: Check version numbers
         # scripts/build-app.sh, project.yml and project.pbxproj must name the same version.
@@ -59,7 +62,7 @@ jobs:
           ditto -c -k --keepParent "Cybokron Dock Groups.app" "Cybokron-Dock-Groups.zip"
 
       - name: Upload app artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Cybokron-Dock-Groups
           path: build/release/Cybokron-Dock-Groups.zip
@@ -71,7 +74,10 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # No job pushes; don't leave the token in .git/config for later steps.
+          persist-credentials: false
 
       - name: Select newest Xcode
         # The app needs the Xcode 26+ toolchain (App Intents const-values flags); pick the newest
@@ -102,6 +108,10 @@ jobs:
     name: Release DMG
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     runs-on: macos-26
+    # The "release" environment only deploys v* tags and waits for a maintainer's approval
+    # (Settings → Environments → release → Required reviewers) before the job gets the signing and
+    # notarization secrets.
+    environment: release
     permissions:
       contents: write
     env:
@@ -110,7 +120,10 @@ jobs:
       CODESIGN_IDENTITY: ${{ vars.NOTARIZE_ENABLED == 'true' && '5113D3C4DEA9F1F9C082E516112B89E58BAA5111' || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # No job pushes; don't leave the token in .git/config for later steps.
+          persist-credentials: false
 
       - name: Check version numbers
         # The tag (GITHUB_REF_NAME) must be v<MARKETING_VERSION>, and the files must agree.
@@ -135,8 +148,9 @@ jobs:
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$SIGNING_KEYCHAIN"
           security set-keychain-settings -lut 21600 "$SIGNING_KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$SIGNING_KEYCHAIN"
+          # Only codesign may use the private key without asking.
           security import "$CERT" -k "$SIGNING_KEYCHAIN" -f pkcs12 -P "$CERT_PASSWORD" \
-            -T /usr/bin/codesign -T /usr/bin/security
+            -T /usr/bin/codesign
           rm -f "$CERT"
           # Developer ID intermediates, in case the runner or the .p12 lacks the chain.
           for ca in DeveloperIDCA DeveloperIDG2CA; do
@@ -157,8 +171,9 @@ jobs:
             || { echo "::error::Signing identity $CODESIGN_IDENTITY not found in the imported certificate"; exit 1; }
           COUNT="$(awk '/valid identities found/ { print $1 }' <<< "$IDENTITIES")"
           echo "Code signing identities in the imported certificate: ${COUNT:-?}"
+          # The secret must hold the Developer ID Application identity and nothing else.
           [[ "$COUNT" == 1 ]] \
-            || echo "::warning::The .p12 holds ${COUNT:-?} code signing identities; only the Developer ID Application one is needed"
+            || { echo "::error::The .p12 holds ${COUNT:-?} code signing identities; it must hold only the Developer ID Application one"; exit 1; }
 
       - name: Build universal app
         # With NOTARIZE_ENABLED=true, CODESIGN_IDENTITY makes build-app.sh sign the app with the
@@ -268,7 +283,7 @@ jobs:
           echo "NOTES=$NOTES" >> "$GITHUB_ENV"
 
       - name: Create draft release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           files: build/release/*.dmg
           draft: true

@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   signed (`codesign --verify --strict -R` with a Developer ID requirement for the running team and
   bundle identifier); the staged DMG signature is verified before mounting. Copies signed ad hoc
   (v0.6.2 and earlier) keep accepting any intact signature, so they can still update
+- CI supply chain: every GitHub Action is pinned to a commit SHA (version in a comment), checkouts
+  don't persist the token, the release job runs in a `release` environment (`v*` tags only, maintainer
+  approval), only `codesign` may use the imported signing key, and a `.p12` holding more than the
+  Developer ID Application identity stops the release job
 
 ## [0.6.4] - 2026-10-20
 

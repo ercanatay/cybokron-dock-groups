@@ -220,3 +220,55 @@ struct ReleaseNotesScriptTests {
         #expect(result.output.contains("**Full Changelog**: https://github.com/ercanatay/cybokron-dock-groups/compare/"))
     }
 }
+
+/// `.github/workflows/*.yml`: third-party code runs only at a reviewed commit, checkouts don't keep
+/// the token, and the release job's signing steps stay locked down.
+@Suite("CI workflows")
+struct WorkflowTests {
+    static let workflows = RepositoryScript.root.appending(components: ".github", "workflows", directoryHint: .isDirectory)
+
+    static func files() throws -> [(name: String, text: String)] {
+        let names = try FileManager.default.contentsOfDirectory(atPath: workflows.path)
+            .filter { $0.hasSuffix(".yml") || $0.hasSuffix(".yaml") }
+            .sorted()
+        return try names.map { ($0, try String(contentsOf: workflows.appending(path: $0), encoding: .utf8)) }
+    }
+
+    static func lines(_ text: String, containing needle: String) -> [String] {
+        text.components(separatedBy: .newlines).filter { $0.contains(needle) && !$0.trimmingCharacters(in: .whitespaces).hasPrefix("#") }
+    }
+
+    @Test func everyActionIsPinnedToACommitWithItsVersionInAComment() throws {
+        let pinned = try NSRegularExpression(pattern: #"uses:\s*[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+@[0-9a-f]{40}\s+#\s*v\d+(\.\d+)*\s*$"#)
+        let files = try Self.files()
+        #expect(!files.isEmpty)
+        var count = 0
+        for (name, text) in files {
+            for line in Self.lines(text, containing: "uses:") {
+                count += 1
+                #expect(pinned.numberOfMatches(in: line, range: NSRange(line.startIndex..., in: line)) == 1, "\(name): not pinned to a commit SHA: \(line)")
+            }
+        }
+        #expect(count >= 5)
+    }
+
+    @Test func checkoutsDontPersistTheToken() throws {
+        for (name, text) in try Self.files() {
+            let checkouts = Self.lines(text, containing: "actions/checkout@").count
+            let persisted = Self.lines(text, containing: "persist-credentials: false").count
+            #expect(checkouts == persisted, "\(name): \(checkouts) checkouts, \(persisted) with persist-credentials: false")
+        }
+    }
+
+    @Test func theReleaseJobIsLockedDown() throws {
+        let text = try String(contentsOf: Self.workflows.appending(path: "swift.yml"), encoding: .utf8)
+
+        #expect(Self.lines(text, containing: "environment: release").count == 1)
+        // Only codesign may use the imported private key.
+        #expect(Self.lines(text, containing: "-T /usr/bin/security").isEmpty)
+        #expect(Self.lines(text, containing: "-T /usr/bin/codesign").count == 1)
+        // A .p12 with more than the Developer ID identity stops the job.
+        #expect(text.contains(#"[[ "$COUNT" == 1 ]] \"#))
+        #expect(text.contains(#"it must hold only the Developer ID Application one"; exit 1; }"#))
+    }
+}

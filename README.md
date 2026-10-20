@@ -254,7 +254,9 @@ with `scripts/notarize.sh` (`notarytool` and an App Store Connect API key: `APPL
 (`SKIP_APP_BUILD=1 scripts/make-dmg.sh`), notarizes, staples and verifies the DMG and the app in it
 (team `APPLE_TEAM_ID`, `spctl`, `stapler validate`, `syspolicy_check distribution`), and attaches
 it to a draft release (`NOTARIZE_ENABLED` is `true` since v0.6.3). When it is `false`, CI skips
-signing and notarization and attaches an ad hoc signed DMG to the draft release instead. The draft release's
+signing and notarization and attaches an ad hoc signed DMG to the draft release instead. The release
+job runs in the `release` environment, which deploys `v*` tags only and waits for a maintainer's
+approval. Every action in the workflows is pinned to a commit SHA. The draft release's
 notes are the tag's section of [CHANGELOG.md](CHANGELOG.md) plus its compare link, made by
 `scripts/release-notes.sh <tag>` (e.g. `scripts/release-notes.sh v0.6.1`).
 
