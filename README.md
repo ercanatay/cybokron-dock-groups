@@ -248,11 +248,13 @@ CODESIGN_IDENTITY=<SHA-1 from `security find-identity -v -p codesigning`> script
 
 For `v*` tags, when the `NOTARIZE_ENABLED` repository variable is `true`, CI does this with the
 Developer ID certificate from the repository secrets
-(`APPLE_DEVID_CERT_P12`, `APPLE_DEVID_CERT_PASSWORD`) in a temporary keychain, notarizes the DMG with
-`notarytool` and an App Store Connect API key (`APPLE_ASC_KEY_P8`, `APPLE_ASC_KEY_ID`,
-`APPLE_ASC_ISSUER_ID`), staples and verifies it (team `APPLE_TEAM_ID`), and attaches it to a draft
-release (`NOTARIZE_ENABLED` is `true` since v0.6.3). When it is `false`, CI skips signing and
-notarization and attaches an ad hoc signed DMG to the draft release instead. The draft release's
+(`APPLE_DEVID_CERT_P12`, `APPLE_DEVID_CERT_PASSWORD`) in a temporary keychain. It notarizes the app
+with `scripts/notarize.sh` (`notarytool` and an App Store Connect API key: `APPLE_ASC_KEY_P8`,
+`APPLE_ASC_KEY_ID`, `APPLE_ASC_ISSUER_ID`) and staples it, packs the stapled app into the DMG
+(`SKIP_APP_BUILD=1 scripts/make-dmg.sh`), notarizes, staples and verifies the DMG and the app in it
+(team `APPLE_TEAM_ID`, `spctl`, `stapler validate`, `syspolicy_check distribution`), and attaches
+it to a draft release (`NOTARIZE_ENABLED` is `true` since v0.6.3). When it is `false`, CI skips
+signing and notarization and attaches an ad hoc signed DMG to the draft release instead. The draft release's
 notes are the tag's section of [CHANGELOG.md](CHANGELOG.md) plus its compare link, made by
 `scripts/release-notes.sh <tag>` (e.g. `scripts/release-notes.sh v0.6.1`).
 

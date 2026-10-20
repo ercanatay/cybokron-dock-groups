@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CI staples the app itself before stapling the DMG (fixes 'Notary Ticket Missing' for the bundled app)
+
 ## [0.6.3] - 2026-10-19
 
 ### Added

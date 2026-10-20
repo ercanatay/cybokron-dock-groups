@@ -1,7 +1,8 @@
 # CI for Cybokron Dock Groups (macOS 14+ menu bar app, Swift 6 tools / Swift 5 language mode).
 # Runs on macos-26 runners (Xcode 26+ toolchain). Runs the DockGroupsCore unit tests with SwiftPM and Xcode, and builds the ad hoc signed .app.
 # For v* tags, the release job builds a DMG for a draft release. With the repository variable
-# NOTARIZE_ENABLED=true it is Developer ID signed, notarized and stapled; otherwise it is ad hoc signed.
+# NOTARIZE_ENABLED=true the app and then the DMG are Developer ID signed, notarized and stapled;
+# otherwise the app is signed ad hoc and the DMG isn't signed.
 # Docs: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
 name: CI
@@ -93,14 +94,20 @@ jobs:
             test
 
   release:
-    # Runs for v* tags only: builds the universal DMG, signs the app and the DMG with the Developer ID
-    # Application certificate, notarizes and staples the DMG, and attaches it to a
-    # draft GitHub release. Needs a macos-26 runner (Xcode 26+ toolchain).
+    # Runs for v* tags only: builds the universal app and DMG and attaches the DMG to a draft GitHub
+    # release. With NOTARIZE_ENABLED=true the app is signed with the Developer ID Application
+    # certificate, notarized and stapled first; the DMG is then made from the stapled app, signed,
+    # notarized and stapled too, so the app and the DMG each carry their own notarization ticket.
+    # Needs a macos-26 runner (Xcode 26+ toolchain).
     name: Release DMG
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     runs-on: macos-26
     permissions:
       contents: write
+    env:
+      # The Developer ID Application identity (SHA-1) build-app.sh and make-dmg.sh sign with; empty
+      # (ad hoc signing, unsigned DMG) unless NOTARIZE_ENABLED=true.
+      CODESIGN_IDENTITY: ${{ vars.NOTARIZE_ENABLED == 'true' && '5113D3C4DEA9F1F9C082E516112B89E58BAA5111' || '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -118,7 +125,6 @@ jobs:
       - name: Import Developer ID certificate
         if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
         env:
-          CODESIGN_IDENTITY: 5113D3C4DEA9F1F9C082E516112B89E58BAA5111
           CERT_P12_BASE64: ${{ secrets.APPLE_DEVID_CERT_P12 }}
           CERT_PASSWORD: ${{ secrets.APPLE_DEVID_CERT_PASSWORD }}
         run: |
@@ -149,27 +155,24 @@ jobs:
           IDENTITIES="$(security find-identity -v -p codesigning "$SIGNING_KEYCHAIN")"
           grep -q "$CODESIGN_IDENTITY" <<< "$IDENTITIES" \
             || { echo "::error::Signing identity $CODESIGN_IDENTITY not found in the imported certificate"; exit 1; }
+          COUNT="$(awk '/valid identities found/ { print $1 }' <<< "$IDENTITIES")"
+          echo "Code signing identities in the imported certificate: ${COUNT:-?}"
+          [[ "$COUNT" == 1 ]] \
+            || echo "::warning::The .p12 holds ${COUNT:-?} code signing identities; only the Developer ID Application one is needed"
 
-      - name: Build universal DMG
-        # With NOTARIZE_ENABLED=true, CODESIGN_IDENTITY makes build-app.sh sign the app with the hardened
-        # runtime and a secure timestamp, and make-dmg.sh sign the DMG. Otherwise it is empty and both
-        # scripts sign ad hoc.
+      - name: Build universal app
+        # With NOTARIZE_ENABLED=true, CODESIGN_IDENTITY makes build-app.sh sign the app with the
+        # hardened runtime and a secure timestamp; otherwise it is empty and the app is signed ad hoc.
         env:
-          CODESIGN_IDENTITY: ${{ vars.NOTARIZE_ENABLED == 'true' && '5113D3C4DEA9F1F9C082E516112B89E58BAA5111' || '' }}
+          UNIVERSAL: "1"
         run: |
-          scripts/make-dmg.sh
-          VERSION="$(plutil -extract CFBundleShortVersionString raw "build/release/Cybokron Dock Groups.app/Contents/Info.plist")"
-          DMG="build/release/Cybokron-Dock-Groups-$VERSION-universal.dmg"
-          test -f "$DMG"
-          echo "DMG=$DMG" >> "$GITHUB_ENV"
+          scripts/build-app.sh release
+          echo "APP=build/release/Cybokron Dock Groups.app" >> "$GITHUB_ENV"
 
-      - name: Notarize DMG
+      - name: Write App Store Connect API key
         if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
-        timeout-minutes: 95
         env:
           ASC_KEY_P8_BASE64: ${{ secrets.APPLE_ASC_KEY_P8 }}
-          ASC_KEY_ID: ${{ secrets.APPLE_ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.APPLE_ASC_ISSUER_ID }}
         run: |
           ASC_KEY_PATH="$RUNNER_TEMP/AuthKey.p8"
           (
@@ -181,22 +184,46 @@ jobs:
             fi
           )
           chmod 600 "$ASC_KEY_PATH"
-          RESULT="$RUNNER_TEMP/notarization.json"
-          # Notarization usually takes 5–30 minutes; wait up to 90.
-          xcrun notarytool submit "$DMG" \
-            --key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" \
-            --wait --timeout 90m --output-format json > "$RESULT" || true
-          cat "$RESULT"
-          STATUS="$(plutil -extract status raw "$RESULT" 2>/dev/null || echo unknown)"
-          SUBMISSION_ID="$(plutil -extract id raw "$RESULT" 2>/dev/null || true)"
-          if [[ "$STATUS" != "Accepted" ]]; then
-            if [[ -n "$SUBMISSION_ID" ]]; then
-              xcrun notarytool log "$SUBMISSION_ID" \
-                --key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" || true
-            fi
-            echo "::error::Notarization status: $STATUS"
-            exit 1
-          fi
+          echo "ASC_KEY_PATH=$ASC_KEY_PATH" >> "$GITHUB_ENV"
+
+      - name: Notarize and staple app
+        # The app gets a ticket of its own before it goes into the DMG, so it passes Gatekeeper
+        # offline wherever it is copied to (without one, syspolicy_check reports "Notary Ticket
+        # Missing" for it).
+        if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
+        timeout-minutes: 95
+        env:
+          ASC_KEY_ID: ${{ secrets.APPLE_ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APPLE_ASC_ISSUER_ID }}
+        run: |
+          ZIP="$RUNNER_TEMP/Cybokron-Dock-Groups-app.zip"
+          ditto -c -k --keepParent "$APP" "$ZIP"
+          scripts/notarize.sh "$ZIP"
+          rm -f "$ZIP"
+          xcrun stapler staple "$APP"
+          xcrun stapler validate "$APP"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          spctl --assess --type execute --verbose=2 "$APP"
+
+      - name: Build universal DMG
+        # Packs the app built above as it is (stapled when notarizing); with CODESIGN_IDENTITY set,
+        # make-dmg.sh signs the DMG too.
+        env:
+          SKIP_APP_BUILD: "1"
+        run: |
+          scripts/make-dmg.sh
+          VERSION="$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")"
+          DMG="build/release/Cybokron-Dock-Groups-$VERSION-universal.dmg"
+          test -f "$DMG"
+          echo "DMG=$DMG" >> "$GITHUB_ENV"
+
+      - name: Notarize DMG
+        if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
+        timeout-minutes: 95
+        env:
+          ASC_KEY_ID: ${{ secrets.APPLE_ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.APPLE_ASC_ISSUER_ID }}
+        run: scripts/notarize.sh "$DMG"
 
       - name: Staple and verify DMG
         if: ${{ vars.NOTARIZE_ENABLED == 'true' }}
@@ -211,23 +238,25 @@ jobs:
           grep -q "^TeamIdentifier=$EXPECTED_TEAM_ID$" <<< "$SIGNATURE" \
             || { echo "::error::DMG is not signed by team $EXPECTED_TEAM_ID"; exit 1; }
           spctl --assess --type open --context context:primary-signature --verbose=2 "$DMG"
-          # The app inside must pass Gatekeeper too.
+          # The app inside must pass Gatekeeper too, with its own stapled ticket.
           MOUNT="$(mktemp -d)"
           hdiutil attach "$DMG" -readonly -nobrowse -mountpoint "$MOUNT" > /dev/null
           trap 'hdiutil detach "$MOUNT" -quiet || true' EXIT
-          APP="$MOUNT/Cybokron Dock Groups.app"
-          codesign --verify --deep --strict --verbose=2 "$APP"
-          SIGNATURE="$(codesign -dv --verbose=2 "$APP" 2>&1)"
+          MOUNTED_APP="$MOUNT/Cybokron Dock Groups.app"
+          codesign --verify --deep --strict --verbose=2 "$MOUNTED_APP"
+          SIGNATURE="$(codesign -dv --verbose=2 "$MOUNTED_APP" 2>&1)"
           echo "$SIGNATURE"
           grep -q "^TeamIdentifier=$EXPECTED_TEAM_ID$" <<< "$SIGNATURE" \
             || { echo "::error::App is not signed by team $EXPECTED_TEAM_ID"; exit 1; }
-          spctl --assess --type execute --verbose=2 "$APP"
+          xcrun stapler validate "$MOUNTED_APP"
+          spctl --assess --type execute --verbose=2 "$MOUNTED_APP"
+          syspolicy_check distribution "$MOUNTED_APP"
 
       - name: Clean up signing material
         if: ${{ always() && vars.NOTARIZE_ENABLED == 'true' }}
         run: |
           security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true
-          rm -f "$RUNNER_TEMP/AuthKey.p8" "$RUNNER_TEMP/devid.p12"
+          rm -f "$RUNNER_TEMP/AuthKey.p8" "$RUNNER_TEMP/devid.p12" "$RUNNER_TEMP/Cybokron-Dock-Groups-app.zip"
 
       - name: Prepare release notes
         # The tag's CHANGELOG.md section (plus its compare link) becomes the release body, which the
