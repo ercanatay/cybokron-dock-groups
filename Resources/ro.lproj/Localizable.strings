@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "Aplicația descărcată este semnată de alt dezvoltator (echipa %1$@ în loc de %2$@), așa că nu a fost instalată.";
 "settings.otherVersions.busy.title" = "O actualizare este în curs";
 "settings.otherVersions.busy.message" = "%@ verifică sau instalează chiar acum o actualizare. Încearcă din nou după ce se termină.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Aplicațiile sunt ordonate după frecvența deschiderii lor, din Dock, Finder, Spotlight sau un grup. Lansările sunt numărate doar cât timp este afișat Cele mai utilizate; dezactivarea acestei opțiuni păstrează istoricul.";
+"core.releaseNotes.truncated" = "Notele de lansare sunt mai lungi decât cele afișate aici; pagina versiunii conține toate notele.";
+"updates.otherVersions.preSafety.title" = "Această versiune nu include remedieri de securitate";
+"updates.otherVersions.preSafety.message" = "Versiunea %@ a fost lansată înainte de remedieri importante de securitate, cum ar fi verificări mai stricte ale actualizărilor pe care le instalează. Instalați-o doar dacă aveți nevoie de ea, apoi actualizați din nou la ultima versiune.";
+"core.backup.error.tooLarge" = "Acest fișier este prea mare pentru a fi o copie de rezervă Cybokron Dock Groups.";

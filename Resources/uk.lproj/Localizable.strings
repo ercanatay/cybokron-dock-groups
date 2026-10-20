@@ -548,3 +548,11 @@
 "core.update.install.wrongSigner" = "Завантажений застосунок підписано іншим розробником (команда %1$@ замість %2$@), тому його не встановлено.";
 "settings.otherVersions.busy.title" = "Триває оновлення";
 "settings.otherVersions.busy.message" = "%@ зараз перевіряє наявність оновлення або встановлює його. Спробуйте знову, коли це завершиться.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Програми ранжуються за частотою відкриття з Dock, Finder, Spotlight або групи. Запуски враховуються лише тоді, коли показано «Найчастіше використовувані»; вимкнення цього параметра зберігає історію.";
+"core.releaseNotes.truncated" = "Примітки до випуску довші, ніж показано тут; на сторінці випуску є повний текст.";
+"updates.otherVersions.preSafety.title" = "Ця версія не містить виправлень безпеки";
+"updates.otherVersions.preSafety.message" = "Версію %@ випущено раніше за важливі виправлення безпеки, зокрема суворіші перевірки оновлень, які вона встановлює. Встановлюйте її, лише якщо вона вам потрібна, а потім знову оновіться до останньої версії.";
+"core.backup.error.tooLarge" = "Цей файл занадто великий, щоб бути резервною копією Cybokron Dock Groups.";

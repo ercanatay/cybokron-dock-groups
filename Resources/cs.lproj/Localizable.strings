@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "Stažená aplikace je podepsána jiným vývojářem (tým %1$@ místo %2$@), proto nebyla nainstalována.";
 "settings.otherVersions.busy.title" = "Probíhá aktualizace";
 "settings.otherVersions.busy.message" = "%@ právě kontroluje nebo instaluje aktualizaci. Zkuste to znovu, až bude dokončena.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Aplikace jsou řazeny podle toho, jak často je otevíráte z Docku, Findera, Spotlightu nebo ze skupiny. Spuštění se počítají pouze při zobrazeném seznamu Nejpoužívanější; po jeho vypnutí se historie zachová.";
+"core.releaseNotes.truncated" = "Poznámky k verzi jsou delší, než je zde zobrazeno; úplné znění najdete na stránce s verzí.";
+"updates.otherVersions.preSafety.title" = "Tato verze postrádá bezpečnostní opravy";
+"updates.otherVersions.preSafety.message" = "Verze %@ byla vydána dříve než důležité bezpečnostní opravy, například přísnější kontroly aktualizací, které instaluje. Instalujte ji pouze v případě potřeby a poté znovu aktualizujte na nejnovější verzi.";
+"core.backup.error.tooLarge" = "Tento soubor je příliš velký na to, aby byl zálohou Cybokron Dock Groups.";

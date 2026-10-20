@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "डाउनलोड किया गया ऐप किसी दूसरे डेवलपर ने हस्ताक्षरित किया है (%2$@ की जगह टीम %1$@), इसलिए इसे इंस्टॉल नहीं किया गया।";
 "settings.otherVersions.busy.title" = "एक अपडेट चल रहा है";
 "settings.otherVersions.busy.message" = "%@ अभी अपडेट की जाँच कर रहा है या उसे इंस्टॉल कर रहा है। पूरा होने के बाद दोबारा कोशिश करें।";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "ऐप्स को इस आधार पर क्रमबद्ध किया जाता है कि आप उन्हें Dock, Finder, Spotlight या किसी समूह से कितनी बार खोलते हैं। लॉन्च केवल तब गिने जाते हैं जब सबसे ज़्यादा उपयोग वाली सूची दिख रही हो; इसे बंद करने पर इतिहास बना रहता है।";
+"core.releaseNotes.truncated" = "रिलीज़ नोट्स यहाँ दिखाए गए हिस्से से लंबे हैं; पूरे नोट्स रिलीज़ पेज पर उपलब्ध हैं।";
+"updates.otherVersions.preSafety.title" = "इस संस्करण में सुरक्षा सुधार नहीं हैं";
+"updates.otherVersions.preSafety.message" = "संस्करण %@ महत्वपूर्ण सुरक्षा सुधारों से पहले जारी किया गया था, जैसे इंस्टॉल किए जाने वाले अपडेट की सख्त जाँच। इसे केवल तभी इंस्टॉल करें जब आपको इसकी ज़रूरत हो, और बाद में नवीनतम संस्करण पर फिर से अपडेट करें।";
+"core.backup.error.tooLarge" = "यह फ़ाइल Cybokron Dock Groups बैकअप के लिए बहुत बड़ी है।";

@@ -35,16 +35,7 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = [
-        // Release notes cut at ReleaseNotesMarkdown.maximumLength.
-        "core.releaseNotes.",
-        // Other Versions… before installing a version without the security fixes.
-        "updates.otherVersions.preSafety.",
-        // Import Settings… refusing a file larger than SettingsBackup.maximumFileSize.
-        "core.backup.error.tooLarge",
-        // Settings → Most Used footer: launches are counted only while Most Used is on.
-        "settings.mostUsed.footer.recording",
-    ]
+    static let awaitingTranslation: [String] = []
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }

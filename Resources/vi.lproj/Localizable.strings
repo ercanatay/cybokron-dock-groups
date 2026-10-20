@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "Ứng dụng đã tải xuống được ký bởi nhà phát triển khác (nhóm %1$@ thay vì %2$@), nên chưa được cài đặt.";
 "settings.otherVersions.busy.title" = "Đang có bản cập nhật";
 "settings.otherVersions.busy.message" = "%@ đang kiểm tra hoặc cài đặt bản cập nhật. Vui lòng thử lại sau khi hoàn tất.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Ứng dụng được xếp hạng theo số lần bạn mở chúng, từ Dock, Finder, Spotlight hoặc một nhóm. Lần mở chỉ được đếm khi Most Used đang hiển thị; tắt tính năng này vẫn giữ lại lịch sử.";
+"core.releaseNotes.truncated" = "Ghi chú phát hành dài hơn phần hiển thị ở đây; trang phát hành có đầy đủ nội dung.";
+"updates.otherVersions.preSafety.title" = "Phiên bản này thiếu các bản vá bảo mật";
+"updates.otherVersions.preSafety.message" = "Phiên bản %@ được phát hành trước các bản vá bảo mật quan trọng, chẳng hạn như kiểm tra chặt chẽ hơn đối với các bản cập nhật mà nó cài đặt. Chỉ cài đặt nếu bạn thực sự cần, và sau đó hãy cập nhật lên phiên bản mới nhất.";
+"core.backup.error.tooLarge" = "Tệp này quá lớn để là bản sao lưu của Cybokron Dock Groups.";

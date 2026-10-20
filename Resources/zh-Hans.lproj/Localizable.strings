@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "下载的应用由其他开发者签名（团队 %1$@，而非 %2$@），因此未安装。";
 "settings.otherVersions.busy.title" = "正在进行更新";
 "settings.otherVersions.busy.message" = "%@ 目前正在检查或安装更新。请在完成后重试。";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "应用会按你从程序坞、访达、聚焦搜索或分组中打开它们的次数排序。仅在显示“最常用”时统计启动次数；关闭该功能不会清除历史记录。";
+"core.releaseNotes.truncated" = "发行说明比此处显示的内容更长，完整内容请查看发布页面。";
+"updates.otherVersions.preSafety.title" = "此版本缺少安全修复";
+"updates.otherVersions.preSafety.message" = "版本 %@ 发布于重要安全修复之前，例如对其所安装更新的更严格检查。仅在确有需要时安装此版本，之后请再次更新到最新版本。";
+"core.backup.error.tooLarge" = "此文件过大，不是有效的 Cybokron Dock Groups 备份。";

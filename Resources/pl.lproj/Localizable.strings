@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "Pobrana aplikacja jest podpisana przez innego dewelopera (zespół %1$@ zamiast %2$@), dlatego nie została zainstalowana.";
 "settings.otherVersions.busy.title" = "Trwa aktualizacja";
 "settings.otherVersions.busy.message" = "%@ właśnie sprawdza lub instaluje aktualizację. Spróbuj ponownie, gdy się zakończy.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Aplikacje są uszeregowane według liczby uruchomień z Docka, Findera, Spotlight lub grupy. Uruchomienia są liczone tylko wtedy, gdy wyświetlana jest sekcja Najczęściej używane; wyłączenie jej zachowuje historię.";
+"core.releaseNotes.truncated" = "Informacje o wydaniu są dłuższe, niż pokazano tutaj; pełna lista znajduje się na stronie wydania.";
+"updates.otherVersions.preSafety.title" = "Ta wersja nie zawiera poprawek zabezpieczeń";
+"updates.otherVersions.preSafety.message" = "Wersja %@ została wydana przed ważnymi poprawkami zabezpieczeń, na przykład ścisłiejszym sprawdzaniem instalowanych aktualizacji. Instaluj ją tylko wtedy, gdy jest ci potrzebna, a następnie ponownie zaktualizuj do najnowszej wersji.";
+"core.backup.error.tooLarge" = "Ten plik jest za duży, aby być kopią zapasową Cybokron Dock Groups.";

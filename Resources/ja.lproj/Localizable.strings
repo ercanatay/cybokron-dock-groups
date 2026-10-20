@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "ダウンロードしたアプリは別の開発者が署名しています（チーム %1$@。%2$@ ではありません）。そのためインストールされませんでした。";
 "settings.otherVersions.busy.title" = "アップデートを実行中です";
 "settings.otherVersions.busy.message" = "%@ は現在アップデートを確認またはインストールしています。完了後にもう一度お試しください。";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "アプリは、Dock、Finder、Spotlight、またはグループから開いた回数に基づいてランク付けされます。起動回数は「よく使う項目」を表示している間のみ記録されます。オフにしても履歴は保持されます。";
+"core.releaseNotes.truncated" = "リリースノートはここに表示されている以上に長くなっています。すべての内容はリリースページで確認できます。";
+"updates.otherVersions.preSafety.title" = "このバージョンにはセキュリティ修正が含まれていません";
+"updates.otherVersions.preSafety.message" = "バージョン %@ は、インストールするアップデートに対する、より厳格なチェックなど、重要なセキュリティ修正が行われる前にリリースされました。必要な場合のみインストールし、その後は最新バージョンに再度アップデートしてください。";
+"core.backup.error.tooLarge" = "このファイルは大きすぎるため、Cybokron Dock Groups のバックアップとして使用できません。";

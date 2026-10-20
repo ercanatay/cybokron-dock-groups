@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "Den nedladdade appen är signerad av en annan utvecklare (team %1$@ i stället för %2$@), så den installerades inte.";
 "settings.otherVersions.busy.title" = "En uppdatering pågår";
 "settings.otherVersions.busy.message" = "%@ söker efter eller installerar en uppdatering just nu. Försök igen när den är klar.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Appar rangordnas efter hur ofta du öppnar dem, från Dock, Finder, Spotlight eller en grupp. Starter räknas bara medan Mest använda visas; om du stänger av det sparas historiken.";
+"core.releaseNotes.truncated" = "Versionsnoteringarna är längre än vad som visas här; sidan för versionen innehåller alla.";
+"updates.otherVersions.preSafety.title" = "Den här versionen saknar säkerhetsrättningar";
+"updates.otherVersions.preSafety.message" = "Version %@ släpptes före viktiga säkerhetsrättningar, till exempel strängare kontroller av de uppdateringar den installerar. Installera den bara om du behöver den, och uppdatera sedan till den senaste versionen igen.";
+"core.backup.error.tooLarge" = "Den här filen är för stor för att vara en säkerhetskopia av Cybokron Dock Groups.";

@@ -547,3 +547,11 @@
 "core.update.install.wrongSigner" = "İndirilen uygulama başka bir geliştirici tarafından imzalanmış (%2$@ yerine ekip %1$@), bu yüzden yüklenmedi.";
 "settings.otherVersions.busy.title" = "Bir güncelleme devam ediyor";
 "settings.otherVersions.busy.message" = "%@ şu anda bir güncelleme arıyor veya yüklüyor. Tamamlandıktan sonra tekrar deneyin.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Uygulamalar, Dock, Finder, Spotlight veya bir gruptan kaç kez açıldıklarına göre sıralanır. Açılışlar yalnızca En Çok Kullanılanlar gösterilirken sayılır; bu özelliği kapatmak geçmişi korur.";
+"core.releaseNotes.truncated" = "Sürüm notları burada gösterilenden daha uzun; tüm notlar sürüm sayfasında bulunur.";
+"updates.otherVersions.preSafety.title" = "Bu sürümde güvenlik düzeltmeleri yok";
+"updates.otherVersions.preSafety.message" = "%@ sürümü, yüklediği güncellemelerin daha sıkı denetlenmesi gibi önemli güvenlik düzeltmelerinden önce yayımlandı. Yalnızca ihtiyacınız varsa yükleyin ve ardından en son sürüme tekrar güncelleyin.";
+"core.backup.error.tooLarge" = "Bu dosya, bir Cybokron Dock Groups yedeği olamayacak kadar büyük.";

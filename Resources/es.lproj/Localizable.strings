@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "La app descargada está firmada por otro desarrollador (equipo %1$@ en lugar de %2$@), así que no se instaló.";
 "settings.otherVersions.busy.title" = "Hay una actualización en curso";
 "settings.otherVersions.busy.message" = "%@ está buscando o instalando una actualización en este momento. Inténtalo de nuevo cuando termine.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Las apps se ordenan según la frecuencia con la que las abres desde el Dock, el Finder, Spotlight o un grupo. Los inicios solo se cuentan mientras se muestra Más usadas; desactivarla conserva el historial.";
+"core.releaseNotes.truncated" = "Las notas de la versión son más largas de lo que se muestra aquí; la página de la versión contiene todas ellas.";
+"updates.otherVersions.preSafety.title" = "Esta versión no incluye correcciones de seguridad";
+"updates.otherVersions.preSafety.message" = "La versión %@ se publicó antes de importantes correcciones de seguridad, como comprobaciones más estrictas de las actualizaciones que instala. Instálala solo si la necesitas y, después, vuelve a actualizar a la última versión.";
+"core.backup.error.tooLarge" = "Este archivo es demasiado grande para ser una copia de seguridad de Cybokron Dock Groups.";

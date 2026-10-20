@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "App yang diunduh ditandatangani oleh pengembang lain (tim %1$@, bukan %2$@), sehingga tidak dipasang.";
 "settings.otherVersions.busy.title" = "Pembaruan sedang berlangsung";
 "settings.otherVersions.busy.message" = "%@ sedang memeriksa atau memasang pembaruan. Coba lagi setelah selesai.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Aplikasi diurutkan berdasarkan seberapa sering Anda membukanya, dari Dock, Finder, Spotlight, atau grup. Peluncuran hanya dihitung saat Paling Sering Digunakan ditampilkan; menonaktifkannya tetap menyimpan riwayat.";
+"core.releaseNotes.truncated" = "Catatan rilis lebih panjang daripada yang ditampilkan di sini; halaman rilis memuat semuanya.";
+"updates.otherVersions.preSafety.title" = "Versi ini tidak memiliki perbaikan keamanan";
+"updates.otherVersions.preSafety.message" = "Versi %@ dirilis sebelum perbaikan keamanan penting, seperti pemeriksaan yang lebih ketat terhadap pembaruan yang dipasangnya. Pasang versi ini hanya jika Anda memerlukannya, lalu perbarui kembali ke versi terbaru setelahnya.";
+"core.backup.error.tooLarge" = "Berkas ini terlalu besar untuk menjadi cadangan Cybokron Dock Groups.";

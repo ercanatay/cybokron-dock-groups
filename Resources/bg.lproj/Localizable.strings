@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "Изтегленото приложение е подписано от друг разработчик (екип %1$@ вместо %2$@), затова не беше инсталирано.";
 "settings.otherVersions.busy.title" = "Извършва се актуализация";
 "settings.otherVersions.busy.message" = "%@ в момента проверява за актуализация или я инсталира. Опитайте отново, когато приключи.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Приложенията се подреждат според това колко често ги отваряте от Dock, Finder, Spotlight или група. Стартиранията се броят само докато е показан списъкът „Най-използвани“; ако го изключите, историята се запазва.";
+"core.releaseNotes.truncated" = "Бележките към версията са по-дълги от показаното тук; на страницата с версията са всички.";
+"updates.otherVersions.preSafety.title" = "Тази версия няма корекции за сигурност";
+"updates.otherVersions.preSafety.message" = "Версия %@ е публикувана преди важни корекции за сигурност, например по-строги проверки на инсталираните обновления. Инсталирайте я само ако ви е необходима, а после отново обновете до най-новата версия.";
+"core.backup.error.tooLarge" = "Този файл е твърде голям, за да бъде резервно копие на Cybokron Dock Groups.";

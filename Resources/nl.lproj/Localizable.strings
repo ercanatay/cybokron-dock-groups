@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "De gedownloade app is ondertekend door een andere ontwikkelaar (team %1$@ in plaats van %2$@), dus die is niet geïnstalleerd.";
 "settings.otherVersions.busy.title" = "Er is een update bezig";
 "settings.otherVersions.busy.message" = "%@ controleert of installeert nu een update. Probeer het opnieuw zodra dat klaar is.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Apps worden gerangschikt op hoe vaak je ze opent, vanuit het Dock, de Finder, Spotlight of een groep. Starts worden alleen geteld terwijl 'Meest gebruikt' wordt getoond; als je dit uitschakelt, blijft de geschiedenis bewaard.";
+"core.releaseNotes.truncated" = "De releasenotities zijn langer dan hier wordt getoond; op de releasepagina staan ze allemaal.";
+"updates.otherVersions.preSafety.title" = "Deze versie bevat geen beveiligingsfixes";
+"updates.otherVersions.preSafety.message" = "Versie %@ is uitgebracht vóór belangrijke beveiligingsfixes, zoals strengere controles op de updates die het installeert. Installeer deze alleen als je hem nodig hebt, en werk daarna opnieuw bij naar de nieuwste versie.";
+"core.backup.error.tooLarge" = "Dit bestand is te groot om een back-up van Cybokron Dock Groups te zijn.";

@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "برنامه‌ی دانلودشده توسط توسعه‌دهنده‌ی دیگری امضا شده است (تیم %1$@ به‌جای %2$@)، بنابراین نصب نشد.";
 "settings.otherVersions.busy.title" = "یک به‌روزرسانی در حال انجام است";
 "settings.otherVersions.busy.message" = "%@ در حال حاضر در حال بررسی یا نصب یک به‌روزرسانی است. پس از پایان آن دوباره تلاش کنید.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "برنامه‌ها بر اساس تعداد دفعاتی که از Dock، Finder، Spotlight یا یک گروه باز می‌کنید رتبه‌بندی می‌شوند. اجراها فقط زمانی شمرده می‌شوند که «پراستفاده‌ترین» نمایش داده شود؛ خاموش کردن آن، تاریخچه را نگه می‌دارد.";
+"core.releaseNotes.truncated" = "یادداشت‌های انتشار بلندتر از آن است که اینجا نمایش داده شود؛ صفحه انتشار همه آن‌ها را دارد.";
+"updates.otherVersions.preSafety.title" = "این نسخه فاقد اصلاحات امنیتی است";
+"updates.otherVersions.preSafety.message" = "نسخه %@ پیش از اصلاحات مهم امنیتی منتشر شده است، از جمله بررسی‌های سخت‌گیرانه‌تر به‌روزرسانی‌هایی که نصب می‌کند. فقط در صورت نیاز آن را نصب کنید و پس از آن دوباره به آخرین نسخه به‌روزرسانی کنید.";
+"core.backup.error.tooLarge" = "این فایل برای یک نسخه پشتیبان Cybokron Dock Groups بیش از حد بزرگ است.";

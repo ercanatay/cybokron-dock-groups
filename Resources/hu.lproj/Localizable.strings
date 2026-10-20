@@ -549,3 +549,11 @@
 "core.update.install.wrongSigner" = "A letöltött alkalmazást egy másik fejlesztő írta alá (%2$@ helyett %1$@ csapat), ezért nem lett telepítve.";
 "settings.otherVersions.busy.title" = "Frissítés folyamatban";
 "settings.otherVersions.busy.message" = "%@ épp frissítést keres vagy telepít. Próbálja újra, ha befejeződött.";
+
+
+/* Safety: Most Used recording, release notes truncation, Other Versions hint, backup size */
+"settings.mostUsed.footer.recording" = "Az alkalmazások a megnyitások száma alapján vannak sorrendben, a Dockból, a Finderből, a Spotlightból vagy egy csoportból. A indítások csak akkor kerülnek számolásra, ha a Leggyakrabban használt látható; kikapcsolásakor az előzmények megmaradnak.";
+"core.releaseNotes.truncated" = "A kiadási jegyzetek hosszabbak, mint amennyi itt látható; a kiadási oldalon mind megtalálhatók.";
+"updates.otherVersions.preSafety.title" = "Ez a verzió nem tartalmazza a biztonsági javításokat";
+"updates.otherVersions.preSafety.message" = "A(z) %@ verzió a fontos biztonsági javítások, például a telepített frissítések szigorúbb ellenőrzése előtt jelent meg. Csak akkor telepítsd, ha szükséged van rá, utána pedig frissíts újra a legújabb verzióra.";
+"core.backup.error.tooLarge" = "Ez a fájl túl nagy ahhoz, hogy Cybokron Dock Groups biztonsági mentés legyen.";
