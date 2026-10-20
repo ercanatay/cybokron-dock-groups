@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Sessiya müddəti";
 "settings.mostUsed.together" = "Bu müddət ərzində birlikdə açılıb";
 "settings.mostUsed.together.detail" = "Bu müddət ərzində bir-birinin ardınca açılan tətbiqlər birlikdə istifadə sayılır və bir az yuxarı qalxır.";
-"settings.mostUsed.footer" = "Tətbiqlər Dock, Finder, Spotlight və ya qrupdan neçə dəfə açıldığına görə sıralanır. Siyahı gizli olsa belə işə salınmalar sayılır.";
 "settings.mostUsed.recorded" = "Qeydə alınıb";
 "settings.mostUsed.clear" = "Tarixçəni təmizlə…";
 "settings.mostUsed.history" = "Tarixçə";

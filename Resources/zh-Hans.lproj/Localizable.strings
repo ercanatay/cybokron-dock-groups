@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "会话时长";
 "settings.mostUsed.together" = "在此时间内一起打开";
 "settings.mostUsed.together.detail" = "在此时间间隔内先后打开的App会被视为一起使用，从而略微提升其排名。";
-"settings.mostUsed.footer" = "App 按你从程序坞、访达、聚焦搜索或分组打开它们的次数排序。即使列表被隐藏，启动次数也会被统计。";
 "settings.mostUsed.recorded" = "已记录";
 "settings.mostUsed.clear" = "清除历史记录…";
 "settings.mostUsed.history" = "历史记录";

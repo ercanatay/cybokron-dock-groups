@@ -421,3 +421,96 @@ struct UsageFileTests {
         }
     }
 }
+
+/// `UsageStore(isRecordingEnabled:)`: the Most Used setting gates recording at every event; what
+/// was recorded stays when it's turned off.
+@Suite("Usage recording switch")
+@MainActor
+struct UsageRecordingSwitchTests {
+    /// Stands in for the Most Used setting.
+    final class Switch {
+        var isOn: Bool
+        init(_ isOn: Bool) { self.isOn = isOn }
+    }
+
+    private func makeStore(in directory: TemporaryDirectory, setting: Switch, now: @escaping () -> Date = { start }) -> UsageStore {
+        UsageStore(
+            persistence: JSONFileUsagePersistence(directory: directory.url),
+            saveDelay: .zero,
+            now: now,
+            isRecordingEnabled: { setting.isOn }
+        )
+    }
+
+    @Test func nothingIsRecordedWhileMostUsedIsOff() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let store = makeStore(in: directory, setting: Switch(false))
+
+        #expect(!store.isRecording)
+        #expect(!store.recordLaunch(of: app("com.example.mail", "Mail")))
+        store.recordActivation(bundleIdentifier: "com.example.mail")
+
+        #expect(store.stats.isEmpty)
+        #expect(store.sessionMembers.isEmpty)
+        // Not even an empty file is written.
+        #expect(try FileManager.default.contentsOfDirectory(atPath: directory.url.path).isEmpty)
+    }
+
+    @Test func turningItOffStopsRecordingAndKeepsTheHistory() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let setting = Switch(true)
+        let store = makeStore(in: directory, setting: setting)
+        #expect(store.recordLaunch(of: app("com.example.mail", "Mail")))
+        let recorded = store.stats
+
+        setting.isOn = false
+        #expect(!store.recordLaunch(of: app("com.example.notes", "Notes")))
+        #expect(!store.recordLaunch(of: app("com.example.mail", "Mail")))
+
+        #expect(store.stats == recorded, "events while off are dropped; earlier ones stay")
+        #expect(makeStore(in: directory, setting: setting).stats == recorded, "the saved history is kept")
+    }
+
+    @Test func turningItBackOnRecordsNewEventsOnly() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let setting = Switch(false)
+        let store = makeStore(in: directory, setting: setting)
+        store.recordLaunch(of: app("com.example.mail", "Mail"))
+
+        setting.isOn = true
+        #expect(store.recordLaunch(of: app("com.example.notes", "Notes")))
+
+        #expect(store.mostUsed(limit: 10).map(\.app.name) == ["Notes"])
+    }
+
+    @Test func theSettingIsAskedAtEveryEvent() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        var asked = 0
+        let store = UsageStore(
+            persistence: JSONFileUsagePersistence(directory: directory.url),
+            saveDelay: .zero,
+            isRecordingEnabled: { asked += 1; return asked.isMultiple(of: 2) }
+        )
+
+        let first = store.recordLaunch(of: app("a"))
+        let second = store.recordLaunch(of: app("b"))
+        store.recordActivation(bundleIdentifier: "b")
+
+        #expect([first, second] == [false, true])
+        #expect(asked == 3)
+        #expect(store.stats.apps.keys.sorted() == ["b"])
+    }
+
+    @Test func storesWithoutASwitchRecordAsBefore() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let store = UsageStore(persistence: JSONFileUsagePersistence(directory: directory.url), saveDelay: .zero)
+
+        #expect(store.isRecording)
+        #expect(store.recordLaunch(of: app("com.example.mail", "Mail")))
+    }
+}

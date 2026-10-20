@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Długość sesji";
 "settings.mostUsed.together" = "Otwarte razem w ciągu";
 "settings.mostUsed.together.detail" = "Aplikacje otwarte w tym czasie od siebie liczą się jako używane razem, co nieco podnosi je na liście.";
-"settings.mostUsed.footer" = "Aplikacje są uporządkowane według częstotliwości otwierania z Docka, Findera, Spotlight lub grupy. Uruchomienia są liczone także wtedy, gdy lista jest ukryta.";
 "settings.mostUsed.recorded" = "Zapisano";
 "settings.mostUsed.clear" = "Wyczyść historię…";
 "settings.mostUsed.history" = "Historia";

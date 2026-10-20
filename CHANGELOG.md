@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   can post the notification)
 - Backup import refuses files over 5 MB before reading them, and drops app locations that aren't an
   absolute path to a `.app` bundle (an item known only by such a location is left out)
+- The usage monitor records events only while Most Used is enabled (the setting is checked at every
+  launch and activation); turning it off keeps the history recorded so far, and turning it back on
+  records new events. The Settings → Most Used footer says so (new string, English only for now)
 
 ### Added
 

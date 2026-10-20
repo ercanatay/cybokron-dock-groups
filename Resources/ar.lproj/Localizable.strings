@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "مدة الجلسة";
 "settings.mostUsed.together" = "فُتحت معًا خلال";
 "settings.mostUsed.together.detail" = "التطبيقات المفتوحة في غضون هذه المدة من بعضها تُحسب مستخدمة معًا، فترتفع قليلًا في الترتيب.";
-"settings.mostUsed.footer" = "تُرتَّب التطبيقات حسب عدد مرات فتحها من الدوك أو Finder أو Spotlight أو مجموعة. تُحتسب عمليات التشغيل حتى عندما تكون القائمة مخفية.";
 "settings.mostUsed.recorded" = "المسجَّل";
 "settings.mostUsed.clear" = "مسح السجل…";
 "settings.mostUsed.history" = "السجل";

@@ -626,8 +626,8 @@ enum L10n {
             }
             static var footer: String {
                 tr(
-                    "settings.mostUsed.footer",
-                    "Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted even while the list is hidden."
+                    "settings.mostUsed.footer.recording",
+                    "Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted only while Most Used is shown; turning it off keeps the history."
                 )
             }
             static var recorded: String { tr("settings.mostUsed.recorded", "Recorded") }

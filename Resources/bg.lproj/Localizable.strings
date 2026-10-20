@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Продължителност на сесията";
 "settings.mostUsed.together" = "Отворени заедно в рамките на";
 "settings.mostUsed.together.detail" = "Приложения, отворени в рамките на този интервал едно от друго, се броят като използвани заедно, което ги издига малко в класацията.";
-"settings.mostUsed.footer" = "Приложенията се класират по това колко често ги отваряте — от Dock, Finder, Spotlight или група. Стартиранията се броят, дори когато списъкът е скрит.";
 "settings.mostUsed.recorded" = "Записани";
 "settings.mostUsed.clear" = "Изчисти историята…";
 "settings.mostUsed.history" = "История";

@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Διάρκεια συνεδρίας";
 "settings.mostUsed.together" = "Ανοιγμένες μαζί εντός";
 "settings.mostUsed.together.detail" = "Οι εφαρμογές που ανοίγονται μέσα σε αυτό το χρονικό διάστημα μεταξύ τους θεωρούνται χρησιμοποιημένες μαζί, κάτι που τις ανεβάζει λίγο στην κατάταξη.";
-"settings.mostUsed.footer" = "Οι εφαρμογές κατατάσσονται ανά συχνότητα ανοίγματος, από το Dock, το Finder, το Spotlight ή μια ομάδα. Οι εκκινήσεις μετρούνται ακόμα και όταν η λίστα είναι κρυφή.";
 "settings.mostUsed.recorded" = "Καταγεγραμμένες";
 "settings.mostUsed.clear" = "Εκκαθάριση ιστορικού…";
 "settings.mostUsed.history" = "Ιστορικό";

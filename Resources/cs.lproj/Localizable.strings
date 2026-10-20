@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Délka relace";
 "settings.mostUsed.together" = "Otevřeno společně během";
 "settings.mostUsed.together.detail" = "Aplikace otevřené v tomto časovém rozmezí od sebe se počítají jako používané společně, což je mírně posune výš.";
-"settings.mostUsed.footer" = "Aplikace jsou seřazeny podle počtu otevření z Docku, Findru, Spotlightu nebo skupiny. Spuštění se počítají i tehdy, když je seznam skrytý.";
 "settings.mostUsed.recorded" = "Zaznamenáno";
 "settings.mostUsed.clear" = "Vymazat historii…";
 "settings.mostUsed.history" = "Historie";

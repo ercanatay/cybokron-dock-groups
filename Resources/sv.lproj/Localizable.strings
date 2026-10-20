@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Sessionslängd";
 "settings.mostUsed.together" = "Öppnade tillsammans inom";
 "settings.mostUsed.together.detail" = "Appar som öppnas inom denna tid från varandra räknas som använda tillsammans, vilket flyttar upp dem lite.";
-"settings.mostUsed.footer" = "Appar rangordnas efter hur ofta du öppnar dem, från Dock, Finder, Spotlight eller en grupp. Starter räknas även när listan är dold.";
 "settings.mostUsed.recorded" = "Registrerad";
 "settings.mostUsed.clear" = "Rensa historik…";
 "settings.mostUsed.history" = "Historik";

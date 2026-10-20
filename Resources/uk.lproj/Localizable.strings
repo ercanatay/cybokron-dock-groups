@@ -297,7 +297,6 @@
 "settings.mostUsed.sessionLength" = "Тривалість сесії";
 "settings.mostUsed.together" = "Відкриті разом протягом";
 "settings.mostUsed.together.detail" = "Застосунки, відкриті протягом цього часу один від одного, рахуються як використані разом, що трохи піднімає їх вище.";
-"settings.mostUsed.footer" = "Застосунки ранжуються за частотою відкриття з Dock, Finder, Spotlight або групи. Запуски враховуються навіть тоді, коли список приховано.";
 "settings.mostUsed.recorded" = "Зафіксовано";
 "settings.mostUsed.clear" = "Очистити історію…";
 "settings.mostUsed.history" = "Історія";

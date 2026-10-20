@@ -90,9 +90,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   group — with no setup. Choose one to open it, or **Show Most Used** for a popup of them (read-only:
   apps open, but can't be reordered or removed). Apps are ranked by launch count; apps you open
   within the same session (10 minutes by default) get a small bonus of at most 30 %. Settings →
-  Most Used turns the list off (launches are still counted), sets how many apps it shows (5, 10 or
-  15) and the session length, and clears the history. Background agents and a few system
-  processes (Finder, Spotlight, …) aren't counted.
+  Most Used turns the list off — and with it the counting: launches are recorded only while Most
+  Used is on, and the history recorded so far is kept — sets how many apps it shows (5, 10 or 15)
+  and the session length, and clears the history. Background agents and a few system processes
+  (Finder, Spotlight, …) aren't counted.
 - **Standalone Dock icons**: turn on *Standalone Dock icon* in a group's settings and the group gets
   its own small app, with the group's tile (emoji or app icon grid) as its icon, at the end of the
   Dock. Clicking it shows the group's popup over the Dock, clicking it again hides it, and ⌥-clicking

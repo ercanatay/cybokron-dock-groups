@@ -5,7 +5,8 @@ import OSLog
 
 /// Feeds app launches and activations from NSWorkspace into the usage statistics, however the app
 /// was opened (Dock, Finder, Spotlight, a group). Only regular apps — the ones with a Dock icon —
-/// count; background agents and this app itself don't. Lives as long as the app.
+/// count; background agents and this app itself don't. `UsageStore` drops every event while Most
+/// Used is off, so nothing is recorded then. Lives as long as the app.
 @MainActor
 final class UsageMonitor {
     private let usage: UsageStore
@@ -45,8 +46,9 @@ final class UsageMonitor {
             name: app.localizedName ?? app.bundleURL?.deletingPathExtension().lastPathComponent ?? bundleIdentifier,
             path: app.bundleURL?.standardizedFileURL.path
         )
-        logger.debug("Launch recorded: \(bundleIdentifier, privacy: .public)")
-        usage.recordLaunch(of: reference)
+        if usage.recordLaunch(of: reference) {
+            logger.debug("Launch recorded: \(bundleIdentifier, privacy: .public)")
+        }
     }
 }
 

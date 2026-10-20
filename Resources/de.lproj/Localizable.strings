@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Sitzungsdauer";
 "settings.mostUsed.together" = "Gemeinsam geöffnet innerhalb von";
 "settings.mostUsed.together.detail" = "Apps, die innerhalb dieser Zeitspanne zueinander geöffnet werden, zählen als gemeinsam genutzt und rücken dadurch etwas nach oben.";
-"settings.mostUsed.footer" = "Apps werden nach Häufigkeit ihres Öffnens sortiert, ob aus dem Dock, dem Finder, Spotlight oder einer Gruppe. Starts werden auch gezählt, wenn die Liste ausgeblendet ist.";
 "settings.mostUsed.recorded" = "Erfasst";
 "settings.mostUsed.clear" = "Verlauf löschen…";
 "settings.mostUsed.history" = "Verlauf";

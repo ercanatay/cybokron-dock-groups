@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Panjang sesi";
 "settings.mostUsed.together" = "Dibuka bersamaan dalam";
 "settings.mostUsed.together.detail" = "App yang dibuka dalam rentang waktu ini satu sama lain dihitung sebagai dipakai bersamaan, sehingga naik sedikit.";
-"settings.mostUsed.footer" = "App diurutkan berdasarkan seberapa sering Anda membukanya, dari Dock, Finder, Spotlight atau grup. Peluncuran tetap dihitung meski daftar disembunyikan.";
 "settings.mostUsed.recorded" = "Tercatat";
 "settings.mostUsed.clear" = "Hapus Riwayat…";
 "settings.mostUsed.history" = "Riwayat";

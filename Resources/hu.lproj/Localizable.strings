@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Munkamenet hossza";
 "settings.mostUsed.together" = "Együtt megnyitva ezen belül:";
 "settings.mostUsed.together.detail" = "Az ezen az időn belül egymás után megnyitott alkalmazások együtt használtnak számítanak, ami kissé feljebb sorolja őket.";
-"settings.mostUsed.footer" = "Az alkalmazások megnyitásuk gyakorisága szerint vannak rangsorolva, a Dockból, a Finderből, a Spotlightból vagy egy csoportból. Az indításokat akkor is számolják, ha a lista rejtve van.";
 "settings.mostUsed.recorded" = "Rögzítve";
 "settings.mostUsed.clear" = "Előzmények törlése…";
 "settings.mostUsed.history" = "Előzmények";

@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Durata sesiunii";
 "settings.mostUsed.together" = "Deschise împreună în interval de";
 "settings.mostUsed.together.detail" = "Aplicațiile deschise la un interval unele de altele sunt considerate folosite împreună, ceea ce le ridică puțin în clasament.";
-"settings.mostUsed.footer" = "Aplicațiile sunt ordonate după cât de des le deschizi, din Dock, Finder, Spotlight sau un grup. Lansările sunt numărate chiar și când lista este ascunsă.";
 "settings.mostUsed.recorded" = "Înregistrat";
 "settings.mostUsed.clear" = "Șterge istoricul…";
 "settings.mostUsed.history" = "Istoric";

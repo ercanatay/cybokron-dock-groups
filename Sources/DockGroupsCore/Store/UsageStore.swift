@@ -4,6 +4,11 @@ import OSLog
 
 /// Keeps the usage statistics behind the Most Used list and saves them.
 ///
+/// Launches and activations are recorded only while `isRecordingEnabled` says so — the app ties it
+/// to the Most Used setting, asked at every event — so turning Most Used off stops recording at
+/// once; what was recorded before is kept (Clear History deletes it), and turning it back on
+/// records new events from then on.
+///
 /// Launches are recorded in memory right away and written in the background a few seconds later;
 /// launches in quick succession (opening a whole group) are coalesced into one write. Statistics
 /// that can't be read are moved aside and counting starts over: they're cheap to rebuild, so the
@@ -18,6 +23,7 @@ public final class UsageStore: ObservableObject {
     private let persistence: UsagePersisting
     private let saveDelay: Duration
     private let now: () -> Date
+    private let isRecordingEnabled: @MainActor () -> Bool
     private var pendingSave: Task<Void, Never>?
     private let writeQueue = DispatchQueue(label: "com.cybokron.dockgroups.usage-writes", qos: .utility)
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "UsageStore")
@@ -26,15 +32,19 @@ public final class UsageStore: ObservableObject {
     ///   - saveDelay: How long to wait for further launches before writing. `.zero` writes
     ///     synchronously after every change.
     ///   - now: The clock; tests pass their own.
+    ///   - isRecordingEnabled: Asked at every launch and activation; while it's `false` nothing is
+    ///     recorded.
     public init(
         persistence: UsagePersisting,
         sessionLength: TimeInterval = UsageTracker.defaultSessionLength,
         saveDelay: Duration = UsageStore.defaultSaveDelay,
-        now: @escaping () -> Date = Date.init
+        now: @escaping () -> Date = Date.init,
+        isRecordingEnabled: @escaping @MainActor () -> Bool = { true }
     ) {
         self.persistence = persistence
         self.saveDelay = saveDelay
         self.now = now
+        self.isRecordingEnabled = isRecordingEnabled
         tracker = UsageTracker(sessionLength: sessionLength)
         stats = UsageStats()
         loadFromDisk()
@@ -49,15 +59,22 @@ public final class UsageStore: ObservableObject {
     /// The apps of the current session (lowercased bundle identifiers).
     public var sessionMembers: Set<String> { tracker.sessionMembers(at: now()) }
 
-    /// Records a launch of `app`; untracked system processes are ignored.
-    public func recordLaunch(of app: AppReference) {
-        guard tracker.recordLaunch(of: app, at: now()) else { return }
+    /// Whether launches and activations are recorded right now.
+    public var isRecording: Bool { isRecordingEnabled() }
+
+    /// Records a launch of `app`; untracked system processes are ignored, and so is everything
+    /// while recording is off.
+    @discardableResult
+    public func recordLaunch(of app: AppReference) -> Bool {
+        guard isRecordingEnabled(), tracker.recordLaunch(of: app, at: now()) else { return false }
         stats = tracker.stats
         scheduleSave()
+        return true
     }
 
-    /// Records that a running app came to the front.
+    /// Records that a running app came to the front (nothing while recording is off).
     public func recordActivation(bundleIdentifier: String) {
+        guard isRecordingEnabled() else { return }
         tracker.recordActivation(bundleIdentifier: bundleIdentifier, at: now())
     }
 

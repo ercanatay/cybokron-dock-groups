@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Duración de la sesión";
 "settings.mostUsed.together" = "Abiertas juntas dentro de";
 "settings.mostUsed.together.detail" = "Las apps abiertas dentro de este intervalo entre sí cuentan como usadas juntas, lo que las sube un poco en la lista.";
-"settings.mostUsed.footer" = "Las apps se ordenan por la frecuencia con que las abres, desde el Dock, el Finder, Spotlight o un grupo. Las aperturas se cuentan incluso cuando la lista está oculta.";
 "settings.mostUsed.recorded" = "Registradas";
 "settings.mostUsed.clear" = "Borrar historial…";
 "settings.mostUsed.history" = "Historial";

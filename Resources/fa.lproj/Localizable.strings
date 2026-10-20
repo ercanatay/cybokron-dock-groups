@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "طول یک نشست";
 "settings.mostUsed.together" = "باز شده با هم در بازهٔ";
 "settings.mostUsed.together.detail" = "برنامه‌هایی که در این بازه از هم باز شوند، «با هم استفاده‌شده» حساب می‌شوند و کمی بالاتر قرار می‌گیرند.";
-"settings.mostUsed.footer" = "برنامه‌ها بر اساس دفعات بازشدن‌شان رتبه‌بندی می‌شوند، از Dock، Finder، Spotlight یا یک گروه. بازشدن‌ها حتی وقتی فهرست پنهان است شمرده می‌شوند.";
 "settings.mostUsed.recorded" = "ثبت‌شده";
 "settings.mostUsed.clear" = "پاک کردن تاریخچه…";
 "settings.mostUsed.history" = "تاریخچه";

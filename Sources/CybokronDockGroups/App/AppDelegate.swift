@@ -7,7 +7,7 @@ import OSLog
 /// Owns the app's long-lived objects. The app is a menu bar utility (`LSUIElement`): it has no Dock
 /// icon, and its windows open from the menu bar or when the app is opened again while running.
 /// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
-/// URLs. App launches are counted all along for the Most Used list. Standalone groups get their own
+/// URLs. App launches are counted for the Most Used list while it's turned on. Standalone groups get their own
 /// apps with their own Dock icons (`StandaloneController`); those run with `AgentAppDelegate`.
 /// `AutoUpdater` looks for new releases on GitHub (only here, never in an agent). A second copy of
 /// the app, launched while one runs, hands its URLs to the running copy and quits (`SecondCopyHandoff`).
@@ -22,9 +22,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let terminator = GroupTerminator()
     private let icons = WorkspaceAppIconProvider()
     private let runningApps = RunningAppsMonitor()
+    /// Records launches only while Most Used is on (asked at every launch and activation).
     private lazy var usage: UsageStore = UsageStore(
         persistence: JSONFileUsagePersistence(),
-        sessionLength: TimeInterval(preferences.preferences.mostUsedSessionSeconds)
+        sessionLength: TimeInterval(preferences.preferences.mostUsedSessionSeconds),
+        isRecordingEnabled: { [weak self] in self?.preferences.preferences.showsMostUsed ?? false }
     )
     private lazy var usageMonitor = UsageMonitor(usage: usage)
     private lazy var mostUsed = MostUsedProvider(usage: usage, preferences: preferences, icons: icons)

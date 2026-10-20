@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "セッションの長さ";
 "settings.mostUsed.together" = "この時間内に一緒に開いた";
 "settings.mostUsed.together.detail" = "この時間内に開かれたアプリは「一緒に使われた」と見なされ、順位が少し上がります。";
-"settings.mostUsed.footer" = "アプリは、Dock、Finder、Spotlight、またはグループから開いた回数の順に並びます。リストを隠していても、起動回数は記録されます。";
 "settings.mostUsed.recorded" = "記録";
 "settings.mostUsed.clear" = "履歴を消去…";
 "settings.mostUsed.history" = "履歴";

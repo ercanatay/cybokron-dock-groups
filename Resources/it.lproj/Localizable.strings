@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Durata della sessione";
 "settings.mostUsed.together" = "Aperte insieme entro";
 "settings.mostUsed.together.detail" = "Le app aperte entro questo intervallo l'una dall'altra contano come usate insieme, il che le fa salire un po'.";
-"settings.mostUsed.footer" = "Le app sono ordinate per numero di aperture, dal Dock, dal Finder, da Spotlight o da un gruppo. Gli avvii vengono conteggiati anche quando l'elenco è nascosto.";
 "settings.mostUsed.recorded" = "Registrati";
 "settings.mostUsed.clear" = "Cancella cronologia…";
 "settings.mostUsed.history" = "Cronologia";

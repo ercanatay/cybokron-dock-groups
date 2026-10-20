@@ -42,6 +42,8 @@ struct LocalizationTests {
         "updates.otherVersions.preSafety.",
         // Import Settings… refusing a file larger than SettingsBackup.maximumFileSize.
         "core.backup.error.tooLarge",
+        // Settings → Most Used footer: launches are counted only while Most Used is on.
+        "settings.mostUsed.footer.recording",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

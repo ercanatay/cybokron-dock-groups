@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Sessieduur";
 "settings.mostUsed.together" = "Samen geopend binnen";
 "settings.mostUsed.together.detail" = "Apps die binnen deze tijd van elkaar zijn geopend, tellen als samen gebruikt, wat ze iets omhoog brengt.";
-"settings.mostUsed.footer" = "Apps worden gerangschikt op hoe vaak je ze opent, vanuit het Dock, Finder, Spotlight of een groep. Starts worden geteld, ook als de lijst verborgen is.";
 "settings.mostUsed.recorded" = "Geregistreerd";
 "settings.mostUsed.clear" = "Wis geschiedenis…";
 "settings.mostUsed.history" = "Geschiedenis";

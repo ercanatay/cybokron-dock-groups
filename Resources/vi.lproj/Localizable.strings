@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "Độ dài phiên";
 "settings.mostUsed.together" = "Mở cùng nhau trong vòng";
 "settings.mostUsed.together.detail" = "Các ứng dụng được mở trong khoảng thời gian này của nhau được tính là dùng cùng nhau, nên sẽ được xếp lên một chút.";
-"settings.mostUsed.footer" = "Ứng dụng được xếp hạng theo số lần bạn mở, từ Dock, Finder, Spotlight hoặc một nhóm. Lượt mở vẫn được đếm ngay cả khi danh sách bị ẩn.";
 "settings.mostUsed.recorded" = "Đã ghi";
 "settings.mostUsed.clear" = "Xóa lịch sử…";
 "settings.mostUsed.history" = "Lịch sử";

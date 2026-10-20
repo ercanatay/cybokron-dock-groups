@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "세션 길이";
 "settings.mostUsed.together" = "다음 시간 안에 함께 열림";
 "settings.mostUsed.together.detail" = "이 시간 안에 서로 가까이 열린 앱은 함께 사용된 것으로 간주되어 순위가 조금 올라갑니다.";
-"settings.mostUsed.footer" = "앱은 Dock, Finder, Spotlight 또는 그룹에서 열린 횟수에 따라 순위가 매겨집니다. 목록을 숨긴 상태에서도 실행 횟수는 집계됩니다.";
 "settings.mostUsed.recorded" = "기록됨";
 "settings.mostUsed.clear" = "기록 지우기…";
 "settings.mostUsed.history" = "기록";

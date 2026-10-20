@@ -361,7 +361,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.mostUsed.sessionLength` | Session length |
 | `settings.mostUsed.together` | Opened together within |
 | `settings.mostUsed.together.detail` | Apps opened within this time of each other count as used together, which moves them up a little. |
-| `settings.mostUsed.footer` | Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted even while the list is hidden. |
+| `settings.mostUsed.footer.recording` | Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted only while Most Used is shown; turning it off keeps the history. *(English only for now; `awaitingTranslation`)* |
 | `settings.mostUsed.recorded` | Recorded |
 | `settings.mostUsed.clear` | Clear History… |
 | `settings.mostUsed.history` | History |

@@ -298,7 +298,6 @@
 "settings.mostUsed.sessionLength" = "सत्र की अवधि";
 "settings.mostUsed.together" = "इतने समय के भीतर साथ खोले गए";
 "settings.mostUsed.together.detail" = "इस समय के भीतर एक-दूसरे के करीब खोले गए ऐप्स साथ उपयोग माने जाते हैं, जिससे वे थोड़ा ऊपर आते हैं।";
-"settings.mostUsed.footer" = "ऐप्स कितनी बार खोले गए, इसके अनुसार क्रम में रहते हैं — Dock, Finder, Spotlight या समूह से। सूची छिपी होने पर भी लॉन्च गिने जाते हैं।";
 "settings.mostUsed.recorded" = "दर्ज";
 "settings.mostUsed.clear" = "इतिहास मिटाएँ…";
 "settings.mostUsed.history" = "इतिहास";
