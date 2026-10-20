@@ -56,6 +56,14 @@ jobs:
           UNIVERSAL: "1"
         run: scripts/build-app.sh release
 
+      - name: Check the app's version and build number
+        # CFBundleVersion must be major * 10000 + minor * 100 + patch (0.6.4 → 604).
+        env:
+          APP_PATH: build/release/Cybokron Dock Groups.app
+        run: |
+          plutil -p "$APP_PATH/Contents/Info.plist" | grep -E 'CFBundle(ShortVersionString|Version)'
+          scripts/check-version.sh
+
       - name: Zip app bundle
         run: |
           cd build/release
@@ -183,6 +191,12 @@ jobs:
         run: |
           scripts/build-app.sh release
           echo "APP=build/release/Cybokron Dock Groups.app" >> "$GITHUB_ENV"
+
+      - name: Check the app's version and build number
+        # CFBundleVersion must be major * 10000 + minor * 100 + patch (0.6.4 → 604).
+        run: |
+          plutil -p "$APP/Contents/Info.plist" | grep -E 'CFBundle(ShortVersionString|Version)'
+          APP_PATH="$APP" scripts/check-version.sh
 
       - name: Write App Store Connect API key
         if: ${{ vars.NOTARIZE_ENABLED == 'true' }}

@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Release notes rendering takes linear time: HTML comments are removed in one pass instead of with a
   lazy regular expression (quadratic on text full of `<!--`), long list items and code blocks no
   longer copy themselves line by line, and notes longer than 250,000 characters are cut with a note
+- The bundle build number matches the marketing version (major × 10000 + minor × 100 + patch, e.g.
+  0.6.4 → 604 instead of 1) so LaunchServices resolves the newest installed copy;
+  `scripts/check-version.sh` checks it everywhere it's written and in the built app (CI)
 
 ## [0.6.4] - 2026-10-20
 

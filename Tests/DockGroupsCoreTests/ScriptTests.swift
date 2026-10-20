@@ -47,13 +47,24 @@ struct RepositoryScript {
 struct CheckVersionScriptTests {
     private let script = RepositoryScript(name: "check-version.sh")
 
-    /// A checkout with only the three files the script reads.
-    private func checkout(buildScript: String = "0.7.0", projectYML: String = "0.7.0", pbxproj: [String] = ["0.7.0", "0.7.0"]) throws -> TemporaryDirectory {
+    /// A checkout with only the three files the script reads. The build numbers default to the
+    /// one 0.7.0 needs (700).
+    private func checkout(
+        buildScript: String = "0.7.0",
+        projectYML: String = "0.7.0",
+        pbxproj: [String] = ["0.7.0", "0.7.0"],
+        buildNumber: String = "700",
+        projectYMLBuild: String = "700",
+        pbxprojBuilds: [String] = ["700", "700"]
+    ) throws -> TemporaryDirectory {
         let temporary = try TemporaryDirectory()
+        let configurations = zip(pbxproj, pbxprojBuilds).map { version, build in
+            "\t\t\t\tCURRENT_PROJECT_VERSION = \(build);\n\t\t\t\tMARKETING_VERSION = \(version);\n\t\t\t\tPRODUCT_NAME = x;\n"
+        }
         let files: [(String, String)] = [
-            ("scripts/build-app.sh", "#!/usr/bin/env bash\nAPP_NAME=\"Cybokron Dock Groups\"\nMARKETING_VERSION=\"\(buildScript)\"\nBUILD_NUMBER=\"1\"\n"),
-            ("project.yml", "settings:\n  base:\n    MARKETING_VERSION: \"\(projectYML)\"\n    CURRENT_PROJECT_VERSION: \"1\"\n"),
-            ("CybokronDockGroups.xcodeproj/project.pbxproj", pbxproj.map { "\t\t\t\tMARKETING_VERSION = \($0);\n\t\t\t\tPRODUCT_NAME = x;\n" }.joined()),
+            ("scripts/build-app.sh", "#!/usr/bin/env bash\nAPP_NAME=\"Cybokron Dock Groups\"\nMARKETING_VERSION=\"\(buildScript)\"\nBUILD_NUMBER=\"\(buildNumber)\"\n"),
+            ("project.yml", "settings:\n  base:\n    MARKETING_VERSION: \"\(projectYML)\"\n    CURRENT_PROJECT_VERSION: \"\(projectYMLBuild)\"\n"),
+            ("CybokronDockGroups.xcodeproj/project.pbxproj", configurations.joined()),
         ]
         for (path, text) in files {
             let url = temporary.url.appending(path: path)
@@ -106,6 +117,61 @@ struct CheckVersionScriptTests {
         #expect(staleResult.errors.contains("project.pbxproj: MARKETING_VERSION is 0.6.9"))
         #expect(missingResult.status == 1)
         #expect(missingResult.errors.contains("expected MARKETING_VERSION in 2 build configurations, found 1"))
+    }
+
+    @Test func theBuildNumberIsDerivedFromTheVersion() throws {
+        let stale = try checkout(buildNumber: "1", projectYMLBuild: "1", pbxprojBuilds: ["1", "1"])
+        defer { stale.remove() }
+        let oneConfiguration = try checkout(pbxprojBuilds: ["700", "699"])
+        defer { oneConfiguration.remove() }
+        let later = try checkout(buildScript: "1.2.3", projectYML: "1.2.3", pbxproj: ["1.2.3", "1.2.3"], buildNumber: "10203", projectYMLBuild: "10203", pbxprojBuilds: ["10203", "10203"])
+        defer { later.remove() }
+        let tooBig = try checkout(buildScript: "0.100.0", projectYML: "0.100.0", pbxproj: ["0.100.0", "0.100.0"])
+        defer { tooBig.remove() }
+
+        let staleResult = try script.run([stale.url.path])
+        let oneResult = try script.run([oneConfiguration.url.path])
+        let laterResult = try script.run([later.url.path])
+        let tooBigResult = try script.run([tooBig.url.path])
+
+        #expect(staleResult.status == 1)
+        #expect(staleResult.errors.contains("scripts/build-app.sh: BUILD_NUMBER is 1, version 0.7.0 needs 700"))
+        #expect(staleResult.errors.contains("project.yml: CURRENT_PROJECT_VERSION is 1, version 0.7.0 needs 700"))
+        #expect(staleResult.errors.contains("project.pbxproj: CURRENT_PROJECT_VERSION is 1"))
+        #expect(oneResult.status == 1)
+        #expect(oneResult.errors.contains("project.pbxproj: CURRENT_PROJECT_VERSION is 699, version 0.7.0 needs 700"))
+        #expect(laterResult.status == 0, "\(laterResult.errors)")
+        #expect(laterResult.output.contains("Version 1.2.3 (build 10203)"))
+        #expect(tooBigResult.status == 1)
+        #expect(tooBigResult.errors.contains("minor and patch must be below 100"))
+    }
+
+    @Test func theRepositorysBuildNumberFollowsItsVersion() throws {
+        let result = try script.run()
+        #expect(result.status == 0, "\(result.errors)")
+        #expect(result.output.contains("(build "))
+        #expect(!result.output.contains("(build 1)"))
+    }
+
+    @Test func aBuiltAppMustCarryTheVersionAndBuildNumber() throws {
+        let temporary = try checkout()
+        defer { temporary.remove() }
+        func app(version: String, build: String) throws -> URL {
+            let bundle = temporary.url.appending(path: "App-\(version)-\(build).app", directoryHint: .isDirectory)
+            let contents = bundle.appending(path: "Contents", directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
+            try PropertyListSerialization.data(fromPropertyList: ["CFBundleShortVersionString": version, "CFBundleVersion": build], format: .xml, options: 0)
+                .write(to: contents.appending(path: "Info.plist"))
+            return bundle
+        }
+
+        let good = try script.run([temporary.url.path], environment: ["APP_PATH": try app(version: "0.7.0", build: "700").path])
+        let oldBuild = try script.run([temporary.url.path], environment: ["APP_PATH": try app(version: "0.7.0", build: "1").path])
+
+        #expect(good.status == 0, "\(good.errors)")
+        #expect(good.output.contains("CFBundleVersion: 700"))
+        #expect(oldBuild.status == 1)
+        #expect(oldBuild.errors.contains("CFBundleVersion is 1, expected 700"))
     }
 
     @Test func aTagForAnotherVersionFails() throws {
