@@ -70,8 +70,11 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 
   `<group>` is the group's name — case, accents, spaces and punctuation don't matter
   (`Çalışma Alanı` → `calisma-alani`) — or its ID. The same link is ignored when it comes again
-  within 5 seconds. A quit link always asks first, in a dialog only a click on its quit button
-  confirms; its 5 seconds start again once you've answered.
+  within 5 seconds, and `launch` / `hide` links share one more 5-second limit: one group's apps are
+  opened or hidden per 5 seconds, whichever group the links name (menus, shortcuts, Siri and
+  Shortcuts aren't limited). A quit link always asks first, in a dialog only a click on its quit
+  button confirms — the button can be clicked 0.7 seconds after the dialog appears, Escape cancels
+  at once; its 5 seconds start again once you've answered.
 - **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
   reorder or remove them; **Open All** and **Hide All** there too (and in a group's context menu).

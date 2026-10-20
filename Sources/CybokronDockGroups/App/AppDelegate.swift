@@ -35,7 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Set while this is a second copy of the app, launched next to the copy that runs: it then
     /// only hands its URLs over to that copy and quits.
     private var secondCopyHandoff: SecondCopyHandoff?
-    private var urlThrottle = CommandThrottle()
+    private var urlGate = URLCommandGate()
     /// Close All from every source; a link asks first.
     private lazy var quitRequests = GroupQuitRequests(prompt: QuitConfirmationAlert()) { [terminator] group, mode in
         terminator.closeAll(group, mode: mode)
@@ -312,8 +312,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             urlLogger.error("Ignored unsupported URL \(url.absoluteString, privacy: .public)")
             return
         }
-        guard urlThrottle.accept(command.throttleKey) else {
+        switch urlGate.accept(command) {
+        case .accepted:
+            break
+        case .repeated:
             urlLogger.notice("Ignored \(url.absoluteString, privacy: .public): repeated within the \(Int(CommandThrottle.urlCooldown))-second cooldown")
+            return
+        case .groupActionLimited:
+            urlLogger.notice("Ignored \(url.absoluteString, privacy: .public): a link opened or hid a group's apps less than \(Int(CommandThrottle.urlCooldown)) seconds ago")
             return
         }
         urlLogger.notice("Handling \(url.absoluteString, privacy: .public)")
@@ -342,7 +348,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             // The cooldown starts once the question is answered, so links that came while it showed
             // (or right after) don't ask again.
-            urlThrottle.restartCooldown(for: command.throttleKey)
+            urlGate.restartCooldown(for: command)
         case .hideGroup(let name):
             if let group = group(named: name) { hideAll(group) }
         case .showShortcut(let digit):

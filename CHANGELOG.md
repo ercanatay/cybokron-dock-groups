@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The bundle build number matches the marketing version (major × 10000 + minor × 100 + patch, e.g.
   0.6.4 → 604 instead of 1) so LaunchServices resolves the newest installed copy;
   `scripts/check-version.sh` checks it everywhere it's written and in the built app (CI)
+- Link safety: `cybokrondockgroups://launch/…` and `hide/…` links share one 5-second limit, so only
+  one group's apps are opened or hidden per 5 seconds whichever group the links name (menus,
+  shortcuts, Siri and Shortcuts aren't limited); the quit dialog's Quit / Force Quit Apps button is
+  enabled 0.7 seconds after it appears (Cancel and Escape work at once)
 
 ## [0.6.4] - 2026-10-20
 

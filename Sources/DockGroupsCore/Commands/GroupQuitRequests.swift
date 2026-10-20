@@ -17,6 +17,16 @@ public enum QuitRequestSource: String, Sendable, CaseIterable {
 /// The question a link's quit request asks: the group's name, what happens, and — when the link
 /// forces — that unsaved changes are lost.
 public struct QuitConfirmation: Equatable, Sendable {
+    /// How long the quit button stays disabled after the question appears, so a click meant for
+    /// whatever was under the pointer (or a double click that opened the link) can't answer it.
+    /// Cancel and Escape work right away.
+    public static let confirmButtonDelay: TimeInterval = 0.7
+
+    /// Whether the quit button is enabled `elapsed` seconds after the question appeared.
+    public static func isConfirmButtonEnabled(after elapsed: TimeInterval) -> Bool {
+        elapsed >= confirmButtonDelay
+    }
+
     public let groupName: String
     public let mode: QuitMode
 

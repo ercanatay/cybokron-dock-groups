@@ -70,6 +70,16 @@ public enum URLCommand: Hashable, Sendable {
         }
     }
 
+    /// The key that links opening or hiding a group's apps share: whichever group they name, only
+    /// one of them is carried out per cooldown (`URLCommandGate`), so a page or script can't open
+    /// or hide every group in turn. `nil` for the other commands.
+    public var groupActionKey: String? {
+        switch self {
+        case .launchGroup, .hideGroup: return "group-apps"
+        default: return nil
+        }
+    }
+
     /// Identifies the request for the activation cooldown: URLs naming the same group in different
     /// spellings ("open/Work", "open/work") are the same request.
     public var throttleKey: String {
@@ -109,6 +119,12 @@ public struct CommandThrottle: Sendable {
         return true
     }
 
+    /// Whether `accept(key, at: now)` would return `true`, without starting a cooldown.
+    public func wouldAccept(_ key: String, at now: Date = Date()) -> Bool {
+        guard let last = lastAccepted[key] else { return true }
+        return !isCoolingDown(since: last, now: now)
+    }
+
     /// Starts `key`'s cooldown again at `now`, e.g. once a question the request asked is answered:
     /// repeats that arrived meanwhile, or right after, are swallowed instead of asking again.
     public mutating func restartCooldown(for key: String, at now: Date = Date()) {
@@ -119,5 +135,45 @@ public struct CommandThrottle: Sendable {
     private func isCoolingDown(since accepted: Date, now: Date) -> Bool {
         let elapsed = now.timeIntervalSince(accepted)
         return elapsed >= 0 && elapsed < interval
+    }
+}
+
+/// Decides which URL scheme requests are carried out. A repeat of the same request within the
+/// cooldown is swallowed (`CommandThrottle`); and links that open or hide a group's apps
+/// (`URLCommand.groupActionKey`) share one more cooldown, so only one of them runs per
+/// `CommandThrottle.urlCooldown`, whichever group it names. Menus, popups, global shortcuts, Siri
+/// and Shortcuts don't come through here and aren't limited.
+public struct URLCommandGate: Sendable {
+    public enum Decision: Equatable, Sendable {
+        case accepted
+        /// The same request came less than a cooldown ago.
+        case repeated
+        /// Another link opened or hid a group's apps less than a cooldown ago.
+        case groupActionLimited
+    }
+
+    private var requests: CommandThrottle
+    private var groupActions: CommandThrottle
+
+    public init(interval: TimeInterval = CommandThrottle.urlCooldown) {
+        requests = CommandThrottle(interval: interval)
+        groupActions = CommandThrottle(interval: interval)
+    }
+
+    /// Accepts `command` and starts its cooldowns, or says why it's dropped. A dropped request
+    /// starts no cooldown, so it can be sent again as soon as the earlier one's has run out.
+    public mutating func accept(_ command: URLCommand, at now: Date = Date()) -> Decision {
+        guard requests.wouldAccept(command.throttleKey, at: now) else { return .repeated }
+        if let key = command.groupActionKey {
+            guard groupActions.wouldAccept(key, at: now) else { return .groupActionLimited }
+            _ = groupActions.accept(key, at: now)
+        }
+        _ = requests.accept(command.throttleKey, at: now)
+        return .accepted
+    }
+
+    /// Starts `command`'s own cooldown again (see `CommandThrottle.restartCooldown`).
+    public mutating func restartCooldown(for command: URLCommand, at now: Date = Date()) {
+        requests.restartCooldown(for: command.throttleKey, at: now)
     }
 }

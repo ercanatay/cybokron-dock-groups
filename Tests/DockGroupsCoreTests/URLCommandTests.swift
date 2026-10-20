@@ -153,6 +153,109 @@ struct CommandThrottleTests {
     @Test func clockGoingBackwardsEndsTheCooldown() {
         #expect(accepted([("show/work", 0), ("show/work", -60)]) == [true, true])
     }
+
+    @Test func wouldAcceptStartsNoCooldown() {
+        var throttle = CommandThrottle(interval: 5)
+        let now = start
+        #expect(throttle.wouldAccept("show/work", at: now))
+        #expect(throttle.wouldAccept("show/work", at: now), "asking twice changes nothing")
+        let accepted = throttle.accept("show/work", at: now)
+        #expect(accepted)
+        #expect(!throttle.wouldAccept("show/work", at: now.addingTimeInterval(4.9)))
+        #expect(throttle.wouldAccept("show/work", at: now.addingTimeInterval(5)))
+    }
+}
+
+/// `URLCommandGate`: links that open or hide a group's apps share one cooldown, whichever group
+/// they name; other links keep only their own.
+@Suite("URL command gate")
+struct URLCommandGateTests {
+    private let start = Date(timeIntervalSinceReferenceDate: 1_000_000)
+
+    private func decisions(_ requests: [(String, TimeInterval)], gate: URLCommandGate = URLCommandGate()) -> [URLCommandGate.Decision] {
+        var gate = gate
+        return requests.map { address, offset in
+            gate.accept(URLCommand(url: URL(string: address)!)!, at: start.addingTimeInterval(offset))
+        }
+    }
+
+    @Test func onlyOneGroupIsOpenedOrHiddenPerCooldown() {
+        let results = decisions([
+            ("cybokrondockgroups://launch/work", 0),
+            ("cybokrondockgroups://launch/play", 0.1),
+            ("cybokrondockgroups://hide/mail", 0.2),
+            ("cybokrondockgroups://launch/news", 4.9),
+            ("cybokrondockgroups://launch/play", 5),
+            ("cybokrondockgroups://hide/mail", 9.9),
+            ("cybokrondockgroups://hide/mail", 10),
+        ])
+        #expect(results == [.accepted, .groupActionLimited, .groupActionLimited, .groupActionLimited, .accepted, .groupActionLimited, .accepted])
+    }
+
+    @Test func aDroppedLinkStartsNoCooldownOfItsOwn() {
+        // play was turned away at 1 s; it isn't held back past the end of work's cooldown at 5 s.
+        let results = decisions([
+            ("cybokrondockgroups://launch/work", 0),
+            ("cybokrondockgroups://launch/play", 1),
+            ("cybokrondockgroups://launch/play", 5.5),
+        ])
+        #expect(results == [.accepted, .groupActionLimited, .accepted])
+    }
+
+    @Test func repeatsAreStillRepeats() {
+        let results = decisions([
+            ("cybokrondockgroups://launch/work", 0),
+            ("cybokrondockgroups://launch/Work", 1),
+            ("cybokrondockgroups://open/work", 1),
+            ("cybokrondockgroups://open/work", 2),
+        ])
+        #expect(results == [.accepted, .repeated, .accepted, .repeated])
+    }
+
+    @Test func otherLinksDontCountTowardsTheGroupLimit() {
+        let results = decisions([
+            ("cybokrondockgroups://open/work", 0),
+            ("cybokrondockgroups://settings", 0),
+            ("cybokrondockgroups://quit/play", 0),
+            ("cybokrondockgroups://launch/work", 0.5),
+            ("cybokrondockgroups://quit/mail", 1),
+            ("cybokrondockgroups://shortcut/1", 1),
+        ])
+        #expect(results == [.accepted, .accepted, .accepted, .accepted, .accepted, .accepted])
+    }
+
+    @Test func onlyLaunchAndHideShareTheGroupKey() {
+        #expect(URLCommand.launchGroup("a").groupActionKey == URLCommand.hideGroup("b").groupActionKey)
+        #expect(URLCommand.launchGroup("a").groupActionKey != nil)
+        for command in [URLCommand.showGroup("a"), .quitGroup("a", .graceful), .quitGroup("a", .force), .showShortcut(1), .closePopup, .openSettings, .manageGroups] {
+            #expect(command.groupActionKey == nil, "\(command)")
+        }
+    }
+
+    @Test func restartingACooldownSwallowsRepeatsAgain() {
+        var gate = URLCommandGate(interval: 5)
+        let quit = URLCommand.quitGroup("work", .graceful)
+        let first = gate.accept(quit, at: start)
+        // The question was answered at 20 s.
+        gate.restartCooldown(for: quit, at: start.addingTimeInterval(20))
+        let soonAfter = gate.accept(quit, at: start.addingTimeInterval(21))
+        let later = gate.accept(quit, at: start.addingTimeInterval(25))
+        #expect([first, soonAfter, later] == [.accepted, .repeated, .accepted])
+    }
+
+    @Test func theQuitButtonWaitsBeforeItCanBeClicked() {
+        #expect(QuitConfirmation.confirmButtonDelay == 0.7)
+        #expect(!QuitConfirmation.isConfirmButtonEnabled(after: 0))
+        #expect(!QuitConfirmation.isConfirmButtonEnabled(after: 0.69))
+        #expect(QuitConfirmation.isConfirmButtonEnabled(after: 0.7))
+        // The alert wires the delay in: the button starts disabled and a timer enables it.
+        let source = try? String(
+            contentsOf: LocalizationTests.root.appending(components: "Sources", "CybokronDockGroups", "Support", "QuitConfirmationAlert.swift"),
+            encoding: .utf8
+        )
+        #expect(source?.contains("quit.isEnabled = false") == true)
+        #expect(source?.contains("QuitConfirmation.confirmButtonDelay") == true)
+    }
 }
 
 @Suite("Report summaries")
