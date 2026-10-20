@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update and changelog feed overrides are enabled only in development builds: release builds ignore
   `CYBOKRON_UPDATE_FEED_URL`, `CYBOKRON_RELEASES_FEED_URL`, `CYBOKRON_CHANGELOG_FEED_URL`,
   `CYBOKRON_UPDATE_DRY_RUN` and `CYBOKRON_SIMULATE_SIGN_FAILURE` (`#if DEBUG`)
+- Release notes rendering takes linear time: HTML comments are removed in one pass instead of with a
+  lazy regular expression (quadratic on text full of `<!--`), long list items and code blocks no
+  longer copy themselves line by line, and notes longer than 250,000 characters are cut with a note
 
 ## [0.6.4] - 2026-10-20
 

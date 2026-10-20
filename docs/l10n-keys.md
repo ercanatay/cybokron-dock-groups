@@ -4,9 +4,9 @@ Every user-facing string of the app, by key, with its English text — the conte
 [`Resources/en.lproj/Localizable.strings`](../Resources/en.lproj/Localizable.strings). Translations
 live in `Resources/<language>.lproj/Localizable.strings` and must have exactly these keys, with the
 same placeholders (`LocalizationTests` check both). Sections still marked *English
-only for now* would be exempt until translated (the app shows the English text instead), and
-`LocalizationTests.awaitingTranslation` would list them; it is currently empty, so all 489 keys are
-translated in every language.
+only for now* are exempt until translated (the app shows the English text instead), and
+`LocalizationTests.awaitingTranslation` lists their key prefixes; every other key is translated in
+every language.
 
 - `%@` is text and `%ld` a number; `%1$@`, `%2$ld` … are numbered so a translation can reorder them.
 - Keys ending in `.one` / `.other` are the singular (count 1) and plural text of a count.
@@ -15,7 +15,7 @@ translated in every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-489 keys.
+490 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -653,3 +653,9 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | --- | --- |
 | `settings.otherVersions.busy.title` | An update is under way |
 | `settings.otherVersions.busy.message` | %@ is checking for or installing an update right now. Try again once it's finished. |
+
+## Release notes cut short (English only for now; `awaitingTranslation`: `core.releaseNotes.`)
+
+| Key | English |
+| --- | --- |
+| `core.releaseNotes.truncated` | The release notes are longer than shown here; the release page has all of them. |

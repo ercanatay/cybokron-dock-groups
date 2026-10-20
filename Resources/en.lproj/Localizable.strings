@@ -551,3 +551,4 @@
 "core.update.install.wrongSigner" = "The downloaded app is signed by another developer (team %1$@ instead of %2$@), so it wasn't installed.";
 "settings.otherVersions.busy.title" = "An update is under way";
 "settings.otherVersions.busy.message" = "%@ is checking for or installing an update right now. Try again once it's finished.";
+"core.releaseNotes.truncated" = "The release notes are longer than shown here; the release page has all of them.";

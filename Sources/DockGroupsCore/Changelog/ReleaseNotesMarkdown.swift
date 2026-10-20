@@ -25,15 +25,38 @@ public enum ReleaseNotesMarkdown {
     /// The deepest list nesting shown; deeper items are drawn at this depth.
     public static let maximumListDepth = 4
 
+    /// The most characters of release notes shown; longer notes are cut there and end with
+    /// `truncationNote`. Every step below takes time in proportion to the length, and this keeps
+    /// even that bounded.
+    public static let maximumLength = 250_000
+
+    /// What ends notes cut at `maximumLength`.
+    public static var truncationNote: String {
+        Localization.string("core.releaseNotes.truncated", "The release notes are longer than shown here; the release page has all of them.")
+    }
+
+    /// `notes`, cut to `maximumLength` characters, and whether anything was cut.
+    static func bounded(_ notes: String) -> (text: String, isTruncated: Bool) {
+        // Never more characters than UTF-8 bytes: most notes need no counting at all.
+        guard notes.utf8.count > maximumLength,
+              let end = notes.index(notes.startIndex, offsetBy: maximumLength, limitedBy: notes.endIndex),
+              end < notes.endIndex
+        else { return (notes, false) }
+        return (String(notes[..<end]), true)
+    }
+
     /// `markdown` cut into blocks; empty when there's nothing to show (no text, or only whitespace and
-    /// HTML comments).
+    /// HTML comments). Notes longer than `maximumLength` end with a `truncationNote` paragraph.
     public static func blocks(_ markdown: String) -> [ReleaseNotesBlock] {
+        let (text, isTruncated) = bounded(markdown)
         var blocks: [ReleaseNotesBlock] = []
         var paragraph: [String] = []
         var codeLines: [String]?
         var fence = ""
-        // A line right under a list item (no blank line between) continues the item.
+        // A line right under a list item (no blank line between) continues the item; its lines
+        // are collected here and joined once, when the item ends.
         var continuesListItem = false
+        var listItemLines: [String] = []
 
         func endParagraph() {
             guard !paragraph.isEmpty else { return }
@@ -41,54 +64,63 @@ public enum ReleaseNotesMarkdown {
             paragraph = []
         }
 
-        for line in lines(of: markdown) {
+        func endListItem() {
+            continuesListItem = false
+            guard !listItemLines.isEmpty, case .listItem(let marker, let depth, let text)? = blocks.last else { return }
+            blocks[blocks.count - 1] = .listItem(marker: marker, depth: depth, text: ([text] + listItemLines).joined(separator: " "))
+            listItemLines = []
+        }
+
+        for line in lines(of: text) {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if var code = codeLines {
+            if codeLines != nil {
                 if isFence(trimmed, closing: fence) {
-                    blocks.append(.code(code.joined(separator: "\n")))
+                    blocks.append(.code(codeLines!.joined(separator: "\n")))
                     codeLines = nil
                 } else {
-                    code.append(line)
-                    codeLines = code
+                    // In place: copying the array for every line would take quadratic time.
+                    codeLines!.append(line)
                 }
                 continue
             }
             if trimmed.hasPrefix("```") || trimmed.hasPrefix("~~~") {
+                endListItem()
                 endParagraph()
                 fence = String(trimmed.prefix(3))
                 codeLines = []
-                continuesListItem = false
                 continue
             }
             if trimmed.isEmpty {
+                endListItem()
                 endParagraph()
-                continuesListItem = false
                 continue
             }
             if let heading = heading(trimmed) {
+                endListItem()
                 endParagraph()
                 blocks.append(heading)
-                continuesListItem = false
                 continue
             }
             if isRule(trimmed) {
+                endListItem()
                 endParagraph()
                 blocks.append(.rule)
-                continuesListItem = false
                 continue
             }
             if let item = listItem(line) {
+                endListItem()
                 endParagraph()
                 blocks.append(item)
                 continuesListItem = true
                 continue
             }
-            if continuesListItem, case .listItem(let marker, let depth, let text)? = blocks.last {
-                blocks[blocks.count - 1] = .listItem(marker: marker, depth: depth, text: text + " " + trimmed)
+            if continuesListItem {
+                listItemLines.append(trimmed)
                 continue
             }
             paragraph.append(trimmed.hasPrefix(">") ? unquoted(trimmed) : trimmed)
         }
+        endListItem()
         endParagraph()
         // A code block that's never closed runs to the end (without the blank lines there).
         if var codeLines {
@@ -98,6 +130,9 @@ public enum ReleaseNotesMarkdown {
             if !codeLines.isEmpty {
                 blocks.append(.code(codeLines.joined(separator: "\n")))
             }
+        }
+        if isTruncated {
+            blocks.append(.paragraph(truncationNote))
         }
         return blocks.filter { block in
             if case .paragraph(let text) = block { return !text.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -121,14 +156,19 @@ public enum ReleaseNotesMarkdown {
 
     /// The notes as one block of text, for the update window's small scrolling box: `## Title`
     /// becomes bold and `- item` / `* item` a bullet, so the inline Markdown renders. Links follow
-    /// `inline(_:)`'s rule. `nil` when there are no notes.
+    /// `inline(_:)`'s rule. `nil` when there are no notes. Notes longer than `maximumLength` end
+    /// with `truncationNote`.
     public static func compact(_ notes: String) -> AttributedString? {
-        let text = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        let (bounded, isTruncated) = bounded(notes)
+        let text = bounded.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return nil }
-        let simplified = text
+        var simplified = text
             .components(separatedBy: .newlines)
             .map(compactLine)
             .joined(separator: "\n")
+        if isTruncated {
+            simplified += "\n\n" + truncationNote
+        }
         let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         guard let parsed = try? AttributedString(markdown: simplified, options: options) else {
             return AttributedString(text)
@@ -154,11 +194,26 @@ public enum ReleaseNotesMarkdown {
 
     /// The lines of `markdown`, any line ending, without HTML comments.
     private static func lines(of markdown: String) -> [String] {
-        let normalized = markdown
+        let normalized = removingHTMLComments(from: markdown
             .replacingOccurrences(of: "\r\n", with: "\n")
-            .replacingOccurrences(of: "\r", with: "\n")
-            .replacingOccurrences(of: #"<!--[\s\S]*?-->"#, with: "", options: .regularExpression)
+            .replacingOccurrences(of: "\r", with: "\n"))
         return normalized.components(separatedBy: "\n")
+    }
+
+    /// `text` without `<!-- … -->` comments, in one pass. A comment that's never closed stays as it
+    /// is, and so does everything after it: once no `-->` follows a `<!--`, none follows a later
+    /// one either, so the scan stops there. (A lazy regular expression would look for the end
+    /// again from every `<!--`, which takes quadratic time on text full of them.)
+    static func removingHTMLComments(from text: String) -> String {
+        var result = ""
+        var rest = text[...]
+        while let open = rest.firstRange(of: "<!--") {
+            guard let close = rest[open.upperBound...].firstRange(of: "-->") else { break }
+            result += rest[..<open.lowerBound]
+            rest = rest[close.upperBound...]
+        }
+        result += rest
+        return result
     }
 
     /// A line of only the fence's character, at least three of them: what closes a code block.

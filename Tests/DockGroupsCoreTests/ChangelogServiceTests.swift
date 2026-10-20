@@ -486,3 +486,97 @@ struct ChangelogServiceTests {
         #expect(changelog.entries.count == 4)
     }
 }
+
+/// `ReleaseNotesMarkdown` on large or hostile notes: HTML comments are removed in one pass (the
+/// same result the old lazy regular expression gave), list items and code blocks grow without
+/// copying, and notes past `maximumLength` are cut with a note.
+@Suite("Release notes size and speed")
+struct ReleaseNotesBoundsTests {
+    /// 100,000 characters each, built to be slow for a quadratic step: comments that never close,
+    /// many short comments, one list item of 20,000 lines, one code block of 20,000 lines.
+    static let slowNotes: [(name: String, text: String)] = [
+        ("unclosed comments", String(repeating: "<!--x", count: 20_000)),
+        ("closed comments", String(repeating: "ab<!--x-->", count: 10_000)),
+        ("long list item", "- start\n" + String(repeating: "more\n", count: 20_000)),
+        ("long code block", "```\n" + String(repeating: "code\n", count: 20_000)),
+    ]
+
+    /// What the previous implementation did.
+    static func regexRemovingComments(_ text: String) -> String {
+        text.replacingOccurrences(of: #"<!--[\s\S]*?-->"#, with: "", options: .regularExpression)
+    }
+
+    @Test func commentsAreRemovedAsBefore() {
+        let cases = [
+            "a<!-- x -->b<!--\n-->c",
+            "a<!-- open",
+            "a<!--x-->b<!--c",
+            "a<!--x-->b<!-- open <!-- y -->c",
+            "<!---->",
+            "<!-->",
+            "-->a<!--",
+            "",
+        ]
+        for text in cases {
+            #expect(ReleaseNotesMarkdown.removingHTMLComments(from: text) == Self.regexRemovingComments(text), "\(text)")
+        }
+        // Random mixes of the pieces that matter, against the regular expression.
+        var generator = SystemRandomNumberGenerator()
+        let pieces = ["<!--", "-->", "<!-", "--", ">", "a", "\n", " "]
+        for _ in 0..<500 {
+            let text = (0..<Int.random(in: 0...24, using: &generator)).map { _ in pieces.randomElement(using: &generator)! }.joined()
+            #expect(ReleaseNotesMarkdown.removingHTMLComments(from: text) == Self.regexRemovingComments(text), "\(text.debugDescription)")
+        }
+    }
+
+    @Test func aHundredThousandCharactersOfHostileNotesAreQuick() {
+        let clock = ContinuousClock()
+        for notes in Self.slowNotes {
+            #expect(notes.text.count >= 100_000)
+            var blocks: [ReleaseNotesBlock] = []
+            let elapsed = clock.measure {
+                blocks = ReleaseNotesMarkdown.blocks(notes.text)
+            }
+            #expect(elapsed < .milliseconds(200), "\(notes.name): \(elapsed)")
+            #expect(!blocks.isEmpty, "\(notes.name)")
+        }
+    }
+
+    @Test func longListItemsAndCodeBlocksKeepEveryLine() throws {
+        let item = try #require(ReleaseNotesMarkdown.blocks("- start\n" + String(repeating: "more\n", count: 1_000)).first)
+        #expect(item == .listItem(marker: "•", depth: 0, text: (["start"] + Array(repeating: "more", count: 1_000)).joined(separator: " ")))
+        let code = try #require(ReleaseNotesMarkdown.blocks("```\n" + String(repeating: "code\n", count: 1_000) + "```").first)
+        #expect(code == .code(Array(repeating: "code", count: 1_000).joined(separator: "\n")))
+    }
+
+    @Test func notesPastTheLimitAreCutWithANote() throws {
+        let limit = ReleaseNotesMarkdown.maximumLength
+        #expect(limit == 250_000)
+        let long = String(repeating: "word ", count: 60_000)
+
+        let blocks = ReleaseNotesMarkdown.blocks(long)
+        #expect(blocks.last == .paragraph(ReleaseNotesMarkdown.truncationNote))
+        if case .paragraph(let text)? = blocks.first {
+            #expect(text.count <= limit)
+        } else {
+            Issue.record("no paragraph: \(blocks.prefix(1))")
+        }
+        let compact = String(try #require(ReleaseNotesMarkdown.compact(long)).characters)
+        #expect(compact.hasSuffix(ReleaseNotesMarkdown.truncationNote))
+        #expect(compact.count <= limit + ReleaseNotesMarkdown.truncationNote.count + 2)
+        #expect(ReleaseNotesMarkdown.truncationNote == "The release notes are longer than shown here; the release page has all of them.")
+    }
+
+    @Test func theLimitCountsCharactersNotBytes() {
+        let limit = ReleaseNotesMarkdown.maximumLength
+        #expect(!ReleaseNotesMarkdown.bounded(String(repeating: "a", count: limit)).isTruncated)
+        // Two UTF-8 bytes each: more bytes than the limit, but not more characters.
+        let accented = String(repeating: "é", count: limit)
+        #expect(!ReleaseNotesMarkdown.bounded(accented).isTruncated)
+        let cut = ReleaseNotesMarkdown.bounded(accented + "é")
+        #expect(cut.isTruncated)
+        #expect(cut.text.count == limit)
+        // Short notes are untouched.
+        #expect(ReleaseNotesMarkdown.blocks("- a") == [.listItem(marker: "•", depth: 0, text: "a")])
+    }
+}
