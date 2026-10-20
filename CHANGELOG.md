@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   don't persist the token, the release job runs in a `release` environment (`v*` tags only, maintainer
   approval), only `codesign` may use the imported signing key, and a `.p12` holding more than the
   Developer ID Application identity stops the release job
+- Update and changelog feed overrides are enabled only in development builds: release builds ignore
+  `CYBOKRON_UPDATE_FEED_URL`, `CYBOKRON_RELEASES_FEED_URL`, `CYBOKRON_CHANGELOG_FEED_URL`,
+  `CYBOKRON_UPDATE_DRY_RUN` and `CYBOKRON_SIMULATE_SIGN_FAILURE` (`#if DEBUG`)
 
 ## [0.6.4] - 2026-10-20
 

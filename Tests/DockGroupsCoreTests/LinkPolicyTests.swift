@@ -104,6 +104,42 @@ struct LinkPolicyTests {
         }
     }
 
+    /// Release builds (overrides not enabled) ignore every override, even a valid https one, and the
+    /// dry run and simulated signing failure switches.
+    @Test func releaseBuildsIgnoreEveryOverride() {
+        let feeds: [(variable: String, resolve: ([String: String]) -> URL, fallback: URL)] = [
+            (GitHubReleaseFeed.urlOverrideVariable, { GitHubReleaseFeed.resolvedURL(environment: $0, overridesEnabled: false) }, UpdateLinks.latestReleaseAPI),
+            (GitHubReleaseFeed.listURLOverrideVariable, { GitHubReleaseFeed.resolvedListURL(environment: $0, overridesEnabled: false) }, UpdateLinks.releasesAPI),
+            (GitHubChangelogFeed.urlOverrideVariable, { GitHubChangelogFeed.resolvedURL(environment: $0, overridesEnabled: false) }, UpdateLinks.changelogReleasesAPI),
+        ]
+        for feed in feeds {
+            #expect(feed.resolve([feed.variable: "https://example.com/latest.json"]) == feed.fallback, "\(feed.variable)")
+            #expect(feed.resolve([feed.variable: "http://127.0.0.1:8765/latest.json"]) == feed.fallback, "\(feed.variable)")
+        }
+        let environment = [UpdateInstaller.dryRunVariable: "1", AgentInstaller.simulateSigningFailureVariable: "1"]
+        #expect(DevelopmentOverrides.value(UpdateInstaller.dryRunVariable, in: environment, enabled: false) == nil)
+        #expect(DevelopmentOverrides.value(AgentInstaller.simulateSigningFailureVariable, in: environment, enabled: false) == nil)
+        #expect(DevelopmentOverrides.value(UpdateInstaller.dryRunVariable, in: environment, enabled: true) == "1")
+    }
+
+    /// `scripts/test.sh` builds with the DEBUG condition, as Debug builds do; Release builds (and
+    /// `swift test -c release`) don't have it.
+    @Test func overridesAreEnabledOnlyInDevelopmentBuilds() throws {
+        #if DEBUG
+        #expect(DevelopmentOverrides.areEnabled)
+        #expect(GitHubReleaseFeed.resolvedURL(environment: [GitHubReleaseFeed.urlOverrideVariable: "https://example.com/x.json"]).host() == "example.com")
+        #else
+        #expect(!DevelopmentOverrides.areEnabled)
+        #expect(GitHubReleaseFeed.resolvedURL(environment: [GitHubReleaseFeed.urlOverrideVariable: "https://example.com/x.json"]) == UpdateLinks.latestReleaseAPI)
+        #endif
+        // The switch is the DEBUG compilation condition, nothing a shipped copy can change.
+        let source = try String(
+            contentsOf: LocalizationTests.root.appending(components: "Sources", "DockGroupsCore", "Updates", "DevelopmentOverrides.swift"),
+            encoding: .utf8
+        )
+        #expect(source.contains("#if DEBUG\n        return true\n        #else\n        return false\n        #endif"))
+    }
+
     @Test func downloadsFollowTheSameRule() throws {
         #expect(UpdateInstaller.isAllowedDownloadURL(try #require(URL(string: "https://github.com/x.dmg"))))
         #expect(UpdateInstaller.isAllowedDownloadURL(try #require(URL(string: "http://127.0.0.1:8765/x.dmg"))))

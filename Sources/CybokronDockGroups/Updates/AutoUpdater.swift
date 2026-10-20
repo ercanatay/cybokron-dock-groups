@@ -27,7 +27,8 @@ final class AutoUpdater: ObservableObject {
         case installing(ReleaseInfo)
         /// The new version is in place; the app is about to quit and reopen.
         case restarting(ReleaseInfo)
-        /// `CYBOKRON_UPDATE_DRY_RUN` stopped the installation once the new app was staged.
+        /// `CYBOKRON_UPDATE_DRY_RUN` (development builds only) stopped the installation once the
+        /// new app was staged.
         case stagedForDryRun(ReleaseInfo, path: String)
         case checkFailed(String)
         case installFailed(ReleaseInfo, asset: ReleaseAsset?, message: String)
@@ -95,7 +96,8 @@ final class AutoUpdater: ObservableObject {
         state = statePersistence.load()
         lastCheckDate = state.lastCheckDate
         skippedVersions = state.skippedVersions
-        isDryRun = ProcessInfo.processInfo.environment[UpdateInstaller.dryRunVariable] != nil
+        // Development builds only; release builds ignore the variable.
+        isDryRun = DevelopmentOverrides.value(UpdateInstaller.dryRunVariable) != nil
         if feed.url != UpdateLinks.latestReleaseAPI {
             logger.notice("Update feed overridden: \(feed.url.absoluteString, privacy: .public)")
         }

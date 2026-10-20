@@ -20,13 +20,17 @@ public protocol ChangelogFetching: Sendable {
 /// when no release changed.
 public struct GitHubChangelogFeed: ChangelogFetching {
     /// Environment variable that points the changelog at another release list JSON, e.g. a local test
-    /// server: `CYBOKRON_CHANGELOG_FEED_URL=http://127.0.0.1:8765/releases.json`.
+    /// server: `CYBOKRON_CHANGELOG_FEED_URL=http://127.0.0.1:8765/releases.json`. Development builds
+    /// only (`DevelopmentOverrides`).
     public static let urlOverrideVariable = "CYBOKRON_CHANGELOG_FEED_URL"
 
-    /// `UpdateLinks.changelogReleasesAPI`, unless `urlOverrideVariable` holds an https URL (or an
-    /// http one to this Mac).
-    public static func resolvedURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
-        GitHubAPI.overrideURL(urlOverrideVariable, in: environment) ?? UpdateLinks.changelogReleasesAPI
+    /// `UpdateLinks.changelogReleasesAPI`, unless overrides are `enabled` (development builds) and
+    /// `urlOverrideVariable` holds an https URL (or an http one to this Mac).
+    public static func resolvedURL(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        overridesEnabled enabled: Bool = DevelopmentOverrides.areEnabled
+    ) -> URL {
+        GitHubAPI.overrideURL(urlOverrideVariable, in: environment, enabled: enabled) ?? UpdateLinks.changelogReleasesAPI
     }
 
     public let url: URL

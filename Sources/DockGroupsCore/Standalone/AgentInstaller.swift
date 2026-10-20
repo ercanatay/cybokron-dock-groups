@@ -95,7 +95,7 @@ public struct AgentInstaller: Sendable {
     public init(
         directory: URL = AgentDirectory.defaultURL,
         tools: ToolRunning = SystemToolRunner(),
-        simulatesSigningFailure: Bool = ProcessInfo.processInfo.environment[AgentInstaller.simulateSigningFailureVariable] != nil
+        simulatesSigningFailure: Bool = DevelopmentOverrides.value(AgentInstaller.simulateSigningFailureVariable) != nil
     ) {
         self.directory = directory
         self.tools = tools

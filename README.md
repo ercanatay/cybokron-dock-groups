@@ -271,11 +271,12 @@ allow it again for the global shortcuts to work in other apps.
 Every new build of the app has a different executable, so at its next start the standalone groups'
 apps are rebuilt from it. Debug builds made with Xcode keep their code in the one executable too
 (`ENABLE_DEBUG_DYLIB = NO`), because that executable is what the group apps copy. To try the
-signing failure path, start the app with `CYBOKRON_SIMULATE_SIGN_FAILURE=1` set.
+signing failure path, start a debug build with `CYBOKRON_SIMULATE_SIGN_FAILURE=1` set.
 
 To try the updater without GitHub, serve a release JSON (shaped like GitHub's
-`/releases/latest` answer) locally and point the app at it; `CYBOKRON_UPDATE_DRY_RUN=1` stops an
-installation once the new app is downloaded, checked and staged, without replacing anything:
+`/releases/latest` answer) locally and point a **debug build** at it; `CYBOKRON_UPDATE_DRY_RUN=1`
+stops an installation once the new app is downloaded, checked and staged, without replacing
+anything:
 
 ```sh
 python3 -m http.server 8765 --bind 127.0.0.1 &   # serves ./latest.json and the DMG
@@ -284,9 +285,11 @@ open --env CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json \
 ```
 
 `CYBOKRON_RELEASES_FEED_URL` does the same for **Other Versions…**: point it at a JSON list shaped
-like GitHub's `/releases` answer (e.g. `http://127.0.0.1:8765/releases.json`). These overrides
-must be `https` addresses, or plain `http` to this Mac (`127.0.0.1`, `localhost`); anything else is
-ignored.
+like GitHub's `/releases` answer (e.g. `http://127.0.0.1:8765/releases.json`), and
+`CYBOKRON_CHANGELOG_FEED_URL` for Settings → Changelog. These overrides must be `https` addresses,
+or plain `http` to this Mac (`127.0.0.1`, `localhost`); anything else is ignored. Only debug builds
+(the `DEBUG` compilation condition: `scripts/build-app.sh debug`, Xcode's Debug configuration, the
+tests) read these environment variables; release builds ignore all of them.
 
 The scripts work around two Command Line Tools limitations automatically: they pick a macOS SDK
 whose SwiftUI doesn't need Xcode's macro plugins, and they point the compiler at swift-testing's

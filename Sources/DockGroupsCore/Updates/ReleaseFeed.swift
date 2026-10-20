@@ -20,23 +20,30 @@ public protocol ReleaseListFetching: Sendable {
 /// makes besides downloading a release's disk image.
 public struct GitHubReleaseFeed: ReleaseFetching, ReleaseListFetching {
     /// Environment variable that points the updater at another release JSON, e.g. a local test
-    /// server: `CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json`.
+    /// server: `CYBOKRON_UPDATE_FEED_URL=http://127.0.0.1:8765/latest.json`. Development builds
+    /// only (`DevelopmentOverrides`).
     public static let urlOverrideVariable = "CYBOKRON_UPDATE_FEED_URL"
 
-    /// `UpdateLinks.latestReleaseAPI`, unless `urlOverrideVariable` holds an https URL (or an http
-    /// one to this Mac).
-    public static func resolvedURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
-        GitHubAPI.overrideURL(urlOverrideVariable, in: environment) ?? UpdateLinks.latestReleaseAPI
+    /// `UpdateLinks.latestReleaseAPI`, unless overrides are `enabled` (development builds) and
+    /// `urlOverrideVariable` holds an https URL (or an http one to this Mac).
+    public static func resolvedURL(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        overridesEnabled enabled: Bool = DevelopmentOverrides.areEnabled
+    ) -> URL {
+        GitHubAPI.overrideURL(urlOverrideVariable, in: environment, enabled: enabled) ?? UpdateLinks.latestReleaseAPI
     }
 
     /// Environment variable that points "Other Versions…" at another release list JSON:
-    /// `CYBOKRON_RELEASES_FEED_URL=http://127.0.0.1:8765/releases.json`.
+    /// `CYBOKRON_RELEASES_FEED_URL=http://127.0.0.1:8765/releases.json`. Development builds only.
     public static let listURLOverrideVariable = "CYBOKRON_RELEASES_FEED_URL"
 
-    /// `UpdateLinks.releasesAPI`, unless `listURLOverrideVariable` holds an https URL (or an http
-    /// one to this Mac).
-    public static func resolvedListURL(environment: [String: String] = ProcessInfo.processInfo.environment) -> URL {
-        GitHubAPI.overrideURL(listURLOverrideVariable, in: environment) ?? UpdateLinks.releasesAPI
+    /// `UpdateLinks.releasesAPI`, unless overrides are `enabled` (development builds) and
+    /// `listURLOverrideVariable` holds an https URL (or an http one to this Mac).
+    public static func resolvedListURL(
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        overridesEnabled enabled: Bool = DevelopmentOverrides.areEnabled
+    ) -> URL {
+        GitHubAPI.overrideURL(listURLOverrideVariable, in: environment, enabled: enabled) ?? UpdateLinks.releasesAPI
     }
 
     public let url: URL
@@ -127,11 +134,12 @@ enum GitHubAPI {
     }
 
     /// The URL in the environment variable `variable` (to point a request at a local test server),
-    /// `nil` when it holds none: it must be `https`, or plain `http` to this Mac only
+    /// `nil` when it holds none or overrides aren't `enabled` (release builds,
+    /// `DevelopmentOverrides`): it must be `https`, or plain `http` to this Mac only
     /// (`LinkPolicy.isSecureOrLocal`), so release information is never read unencrypted from
     /// another machine.
-    static func overrideURL(_ variable: String, in environment: [String: String]) -> URL? {
-        guard let value = environment[variable]?.trimmingCharacters(in: .whitespaces),
+    static func overrideURL(_ variable: String, in environment: [String: String], enabled: Bool = DevelopmentOverrides.areEnabled) -> URL? {
+        guard let value = DevelopmentOverrides.value(variable, in: environment, enabled: enabled)?.trimmingCharacters(in: .whitespaces),
               let url = URL(string: value), LinkPolicy.isSecureOrLocal(url)
         else { return nil }
         return url

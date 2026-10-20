@@ -109,7 +109,8 @@ public struct UpdateInstaller: Sendable {
     public static let shell = URL(fileURLWithPath: "/bin/sh")
 
     /// Set to stop an installation after the new app is staged and checked, without replacing or
-    /// relaunching anything (to try the download path).
+    /// relaunching anything (to try the download path). Development builds only
+    /// (`DevelopmentOverrides`).
     public static let dryRunVariable = "CYBOKRON_UPDATE_DRY_RUN"
 
     public let directories: UpdateDirectories
