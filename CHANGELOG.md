@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-10-19
+
+### Added
+
+- **First notarized release**: the app is signed with a Developer ID Application certificate
+  (hardened runtime, secure timestamp), and the universal DMG is Developer ID signed, notarized by
+  Apple and stapled, so macOS opens it without the “Apple could not verify …” warning. Notarization
+  was tested locally first: the notarized build passes `spctl` and `stapler validate`.
+
+### Changed
+
+- Because the signature changes from ad hoc to Developer ID, macOS asks for Accessibility access
+  once more after updating to this version (System Settings → Privacy & Security → Accessibility);
+  later Developer ID releases keep it.
+
 ## [0.6.2] - 2026-10-19
 
 ### Fixed
@@ -298,7 +313,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.3...HEAD
+[0.6.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.5.9...v0.6.0
