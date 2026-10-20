@@ -161,8 +161,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   `.dockgroups` file (JSON); **Import Settings…** asks first, then either **Replace All** (the
   backup's groups and settings instead of yours) or **Merge** (adds the backup's groups whose name you
   don't have yet after yours; your groups and settings stay as they are). It keeps the files it
-  replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json` (only the latest
-  import's).
+  replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json` (the last three
+  imports').
   Most Used launch counts aren't part of a backup. Files over 5 MB aren't read, and an app location
   in a backup that isn't an absolute path to a `.app` bundle is dropped (an app known only by such a
   location is left out).
@@ -176,9 +176,9 @@ popup is already showing, or there are no groups yet, it shows the group window 
 
 ## Download
 
-Get the v0.6.3 universal disk image (`Cybokron-Dock-Groups-0.6.3-universal.dmg`, 26 languages) from the
-[releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and drag the app
-to Applications.
+Get the latest universal disk image (`Cybokron-Dock-Groups-<version>-universal.dmg`, 26 languages)
+from the [releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and
+drag the app to Applications.
 [cybokron.com/dock-groups/](https://cybokron.com/dock-groups/) describes the app in 26 languages, and
 [cybokron.com/dock-groups/download/](https://cybokron.com/dock-groups/download/) always downloads the
 latest release's disk image.
@@ -192,8 +192,9 @@ ad hoc to Developer ID; after that it carries over from one signed release to th
 
 ### Opening an older release the first time
 
-The releases before v0.6.3 (v0.5.0 to v0.6.2) are **signed ad hoc** only and aren't notarized, so
-macOS blocks the first open of a downloaded copy (“Apple could not verify …”). Either:
+Releases from v0.6.3 on open directly; none of this is needed for them. The releases before v0.6.3
+(v0.5.0 to v0.6.2) are **signed ad hoc** only and aren't notarized, so macOS blocks the first open
+of a downloaded copy (“Apple could not verify …”). For those only, either:
 
 - try to open the app once, then go to **System Settings → Privacy & Security**, choose
   **Open Anyway** next to the message about Cybokron Dock Groups and confirm; or
@@ -206,6 +207,15 @@ macOS blocks the first open of a downloaded copy (“Apple could not verify …�
   ```
 
 Apps you build yourself aren't quarantined and open directly.
+
+### Backward compatibility of updates
+
+A copy signed ad hoc (v0.6.2 and earlier) has no developer identity to hold updates to, so it
+installs any update whose signature is intact — that can't be changed after the fact. Update such a
+copy once to a Developer ID release (v0.6.3 or later): from then on the updater only installs disk
+images and apps signed with the same team's Developer ID, checking the disk image before mounting
+it. Versions before v0.6.5 lack this and the other security fixes listed in the
+[changelog](CHANGELOG.md); **Other Versions…** warns before installing one.
 
 ## Requirements
 

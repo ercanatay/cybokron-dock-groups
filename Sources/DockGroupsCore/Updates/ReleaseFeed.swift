@@ -119,6 +119,11 @@ enum GitHubAPI {
         guard let http = response as? HTTPURLResponse else {
             throw UpdateCheckError.network(Localization.string("core.update.check.notHTTP", "The answer wasn't HTTP."))
         }
+        // Redirects are followed; the answer must still come from GitHub over HTTPS (or from the
+        // host a development override asked).
+        if let finalURL = http.url, !LinkPolicy.isAllowedAPIAnswer(from: finalURL, for: url) {
+            throw UpdateCheckError.network("redirected to \(finalURL.host ?? finalURL.absoluteString)")
+        }
         switch http.statusCode {
         case 200:
             return .ok(data, etag: http.value(forHTTPHeaderField: "ETag"))

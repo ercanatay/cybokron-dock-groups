@@ -140,6 +140,62 @@ struct LinkPolicyTests {
         #expect(source.contains("#if DEBUG\n        return true\n        #else\n        return false\n        #endif"))
     }
 
+    /// A user name in a link dresses one host up as another; such links show as text.
+    @Test func linksWithAUserNameOrPasswordArentClickable() throws {
+        for address in [
+            "https://github.com%2F@evil.example/x",
+            "https://user@evil.example",
+            "https://user:pass@evil.example/",
+            "https://@evil.example",
+            "https://github.com:@evil.example",
+        ] {
+            let url = try #require(URL(string: address), "\(address)")
+            #expect(LinkPolicy.hasUserInfo(url), "\(address)")
+            #expect(!LinkPolicy.isClickable(url), "\(address)")
+            #expect(LinkPolicy.webPageURL(address) == nil, "\(address)")
+        }
+        #expect(LinkPolicy.isClickable(try #require(URL(string: "https://github.com/ercanatay/cybokron-dock-groups/releases"))))
+        #expect(LinkPolicy.isClickable(try #require(URL(string: "mailto:someone@example.com"))), "a mail address isn't a user name")
+
+        let text = ReleaseNotesMarkdown.inline("[GitHub](https://github.com%2F@evil.example/x) and https://user@evil.example")
+        #expect(!text.runs.contains { $0.link != nil })
+        #expect(String(text.characters).hasPrefix("GitHub and "))
+    }
+
+    /// GitHub API answers, after any redirects, come from GitHub over HTTPS — or from the host a
+    /// development override asked.
+    @Test func apiAnswersMustComeFromGitHub() throws {
+        let api = UpdateLinks.latestReleaseAPI
+        func allowed(_ final: String, for request: URL) throws -> Bool {
+            LinkPolicy.isAllowedAPIAnswer(from: try #require(URL(string: final)), for: request)
+        }
+        #expect(try allowed(api.absoluteString, for: api))
+        #expect(try allowed("https://api.github.com/repositories/1/releases/latest", for: api))
+        #expect(try allowed("https://github.com/x", for: api))
+        #expect(try !allowed("http://api.github.com/x", for: api))
+        #expect(try !allowed("https://evil.example/latest", for: api))
+        #expect(try !allowed("https://api.github.com.evil.example/x", for: api))
+        #expect(try !allowed("https://user@api.github.com/x", for: api))
+
+        let local = try #require(URL(string: "http://127.0.0.1:8765/latest.json"))
+        #expect(try allowed("http://127.0.0.1:8765/other.json", for: local))
+        #expect(try !allowed("http://127.0.0.1:9999/latest.json", for: local))
+        #expect(try !allowed("http://localhost:8765/latest.json", for: local))
+    }
+
+    @Test func aFeedRedirectedAwayFromGitHubFails() async throws {
+        let url = StubURLProtocol.register(.init(body: ReleaseFixtures.data(ReleaseFixtures.v060WithDecoys), finalURL: URL(string: "https://evil.example/latest")!))
+        let feed = GitHubReleaseFeed(url: url, appVersion: "0.6.4", session: StubURLProtocol.makeSession())
+
+        await #expect(throws: UpdateCheckError.network("redirected to evil.example")) {
+            try await feed.latestRelease()
+        }
+        let changelog = StubURLProtocol.register(.init(body: Data("[]".utf8), finalURL: URL(string: "http://api.github.com/x")!))
+        await #expect(throws: UpdateCheckError.network("redirected to api.github.com")) {
+            try await GitHubChangelogFeed(url: changelog, appVersion: "0.6.4", session: StubURLProtocol.makeSession()).releases(ifNoneMatch: nil)
+        }
+    }
+
     @Test func downloadsFollowTheSameRule() throws {
         #expect(UpdateInstaller.isAllowedDownloadURL(try #require(URL(string: "https://github.com/x.dmg"))))
         #expect(UpdateInstaller.isAllowedDownloadURL(try #require(URL(string: "http://127.0.0.1:8765/x.dmg"))))

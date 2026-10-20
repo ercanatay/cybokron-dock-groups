@@ -273,7 +273,7 @@ struct SettingsBackupTests {
         #expect(previous.first?.apps == [Self.notes])
     }
 
-    @Test func onlyTheLatestImportCopyIsKept() throws {
+    @Test func theLatestThreeImportCopiesAreKept() throws {
         let stores = try Stores()
         defer { stores.directory.remove() }
         let groups = stores.groups()
@@ -281,15 +281,20 @@ struct SettingsBackupTests {
         groups.addGroup(named: "First")
         preferences.update { $0.theme = .system }
         let folder = stores.groupsURL.deletingLastPathComponent()
-        // An older import's copy, and an unreadable file kept aside, which must stay.
-        try Data("[]".utf8).write(to: folder.appending(path: "groups.pre-import-20200101-000000.json"))
+        // Three older imports' copies, and an unreadable file kept aside, which must stay.
+        for day in ["20200101", "20200102", "20200103"] {
+            try Data("[]".utf8).write(to: folder.appending(path: "groups.pre-import-\(day)-000000.json"))
+        }
         try Data("{".utf8).write(to: folder.appending(path: "groups.unreadable-20200101-000000.json"))
 
         try Self.sampleBackup().restore(to: groups, preferences: preferences)
 
         let names = try stores.files()
-        #expect(names.filter { $0.hasPrefix("groups.pre-import-") }.count == 1)
-        #expect(!names.contains("groups.pre-import-20200101-000000.json"))
+        let groupCopies = names.filter { $0.hasPrefix("groups.pre-import-") }
+        #expect(groupCopies.count == 3)
+        #expect(!names.contains("groups.pre-import-20200101-000000.json"), "the oldest copy goes")
+        #expect(names.contains("groups.pre-import-20200102-000000.json"))
+        #expect(names.contains("groups.pre-import-20200103-000000.json"))
         #expect(names.contains("groups.unreadable-20200101-000000.json"))
         #expect(names.filter { $0.hasPrefix("preferences.pre-import-") }.count == 1)
     }

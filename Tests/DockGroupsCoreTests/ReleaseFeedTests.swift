@@ -9,6 +9,8 @@ final class StubURLProtocol: URLProtocol {
         var body = Data()
         /// Extra response headers, e.g. an `ETag`.
         var headers: [String: String] = [:]
+        /// The address the answer says it came from, as after a redirect; the request's own when `nil`.
+        var finalURL: URL? = nil
     }
 
     private static let lock = NSLock()
@@ -45,7 +47,7 @@ final class StubURLProtocol: URLProtocol {
             return
         }
         let headers = response.headers.merging(["Content-Length": "\(response.body.count)"]) { own, _ in own }
-        let http = HTTPURLResponse(url: url, statusCode: response.status, httpVersion: "HTTP/1.1", headerFields: headers)!
+        let http = HTTPURLResponse(url: response.finalURL ?? url, statusCode: response.status, httpVersion: "HTTP/1.1", headerFields: headers)!
         client?.urlProtocol(self, didReceive: http, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: response.body)
         client?.urlProtocolDidFinishLoading(self)

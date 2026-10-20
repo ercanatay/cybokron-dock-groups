@@ -5,23 +5,69 @@ import Testing
 /// Small fixes: sidecar copies of the JSON files, the updater's backups, automatic checks.
 @Suite("Sidecar copies of the JSON files")
 struct JSONFileSupportTests {
-    @Test func copyAsideKeepsOnlyTheLatestCopyEvenWithinOneSecond() throws {
+    @Test func copyAsideKeepsTheLatestThreeCopiesEvenWithinOneSecond() throws {
         let temporary = try TemporaryDirectory()
         defer { temporary.remove() }
         let file = temporary.url.appending(path: "groups.json")
         let now = Date(timeIntervalSince1970: 1_792_400_000)
+        #expect(JSONFileSupport.keptCopies == 3)
 
-        try Data("first".utf8).write(to: file)
-        let first = try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: now))
-        try Data("second".utf8).write(to: file)
-        let second = try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: now))
+        var made: [URL] = []
+        for text in ["first", "second", "third", "fourth"] {
+            try Data(text.utf8).write(to: file)
+            made.append(try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: now)))
+        }
 
-        #expect(first != second)
-        #expect(second.lastPathComponent.hasSuffix("-2.json"))
+        #expect(Set(made).count == 4, "collision-safe names")
+        #expect(made[1].lastPathComponent.hasSuffix("-2.json"))
         let copies = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).filter { $0.hasPrefix("groups.pre-import-") }
-        #expect(copies == [second.lastPathComponent])
-        #expect(try String(contentsOf: second, encoding: .utf8) == "second")
-        #expect(try String(contentsOf: file, encoding: .utf8) == "second", "the original stays")
+        #expect(Set(copies) == Set(made.suffix(3).map(\.lastPathComponent)), "the oldest of four is removed")
+        #expect(try String(contentsOf: made[3], encoding: .utf8) == "fourth")
+        #expect(try String(contentsOf: file, encoding: .utf8) == "fourth", "the original stays")
+    }
+
+    @Test func copiesAreOrderedByTimeThenCounterNumerically() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let file = temporary.url.appending(path: "preferences.json")
+        try Data("x".utf8).write(to: file)
+        // Eleven copies in one second (counters up to -11), and an older second.
+        let older = Date(timeIntervalSince1970: 1_792_399_000)
+        let now = Date(timeIntervalSince1970: 1_792_400_000)
+        let old = try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: older, keeping: 100))
+        var made: [URL] = []
+        for _ in 0..<11 {
+            made.append(try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: now, keeping: 100)))
+        }
+        // Another label and an unreadable file kept aside aren't touched.
+        let unreadable = temporary.url.appending(path: "preferences.unreadable-20200101-000000.json")
+        try Data("{".utf8).write(to: unreadable)
+
+        let latest = try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: now))
+
+        let copies = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).filter { $0.hasPrefix("preferences.pre-import-") }
+        #expect(latest.lastPathComponent.hasSuffix("-12.json"))
+        #expect(Set(copies) == [made[9].lastPathComponent, made[10].lastPathComponent, latest.lastPathComponent], "-10 and -11 sort after -9")
+        #expect(!FileManager.default.fileExists(atPath: old.path))
+        #expect(FileManager.default.fileExists(atPath: unreadable.path))
+    }
+
+    @Test func theNewCopyIsKeptEvenWhenOthersLookNewer() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let file = temporary.url.appending(path: "groups.json")
+        try Data("x".utf8).write(to: file)
+        // Copies from a clock that ran ahead.
+        for name in ["groups.pre-import-20991231-235959.json", "groups.pre-import-20991231-235958.json", "groups.pre-import-20991231-235957.json"] {
+            try Data("future".utf8).write(to: temporary.url.appending(path: name))
+        }
+
+        let copy = try #require(try JSONFileSupport.copyAside(file, label: "pre-import", now: Date(timeIntervalSince1970: 1_792_400_000)))
+
+        let copies = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).filter { $0.hasPrefix("groups.pre-import-") }
+        #expect(copies.count == 3)
+        #expect(copies.contains(copy.lastPathComponent))
+        #expect(!copies.contains("groups.pre-import-20991231-235957.json"))
     }
 
     @Test func aFailedCopyKeepsThePreviousOne() throws {

@@ -38,6 +38,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The usage monitor records events only while Most Used is enabled (the setting is checked at every
   launch and activation); turning it off keeps the history recorded so far, and turning it back on
   records new events. The Settings → Most Used footer says so (new string, English only for now)
+- GitHub API answers (update checks, Other Versions…, Changelog) must come, after any redirect, from
+  `api.github.com` / `github.com` over HTTPS (or from the host a development override asked)
+- Links with a user name or password (`https://github.com%2F@evil.example`) in release notes show
+  as plain text, and such a release page address is ignored
+- Import Settings… keeps the last three `*.pre-import-<time>.json` copies instead of only the
+  latest (ordered by time and counter, collision-safe)
+- SECURITY.md describes the app's actual network use; README notes that the quarantine workaround
+  is only for releases before v0.6.3 and how ad hoc signed copies (v0.6.2 and earlier) accept updates
 
 ### Added
 

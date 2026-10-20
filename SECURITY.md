@@ -3,7 +3,10 @@
 ## Supported versions
 
 Cybokron Dock Groups is in early development. Security fixes are made on the `main` branch and
-included in the next release; only the latest release is supported.
+included in the next release; only the latest release is supported. Releases from v0.6.3 on are
+Developer ID signed and notarized. Copies signed ad hoc (v0.6.2 and earlier) can't tell who signed
+an update, so they accept any update with an intact signature; once a Developer ID release is
+installed, updates must be signed with the same team's Developer ID.
 
 ## Reporting a vulnerability
 
@@ -18,6 +21,14 @@ the advisory will be published and you'll be credited unless you prefer otherwis
 
 ## Scope
 
-The app runs locally, has no network features and stores its data in
-`~/Library/Application Support/Cybokron/DockGroups/groups.json`. Of particular interest are issues
-that let another process or a crafted `groups.json` launch unintended apps or run code.
+The app runs locally and stores its data in `~/Library/Application Support/Cybokron/DockGroups/`.
+Its only network traffic is over HTTPS to GitHub: unauthenticated GET requests to
+`api.github.com` (update checks, Other Versions…, Settings → Changelog; answers redirected
+elsewhere are refused) and the download of a release's disk image, which is checked against its
+published size and SHA-256 and, on a Developer ID signed copy, against the team's Developer ID
+signature before it's mounted and again on the app inside. Nothing about you or your groups is
+sent. Other apps and web pages can send it commands through its URL scheme
+(`cybokrondockgroups://`): quitting asks first, and opening or hiding groups is rate limited.
+
+Of particular interest are issues that let another process, a web page or link, a crafted
+`groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.
