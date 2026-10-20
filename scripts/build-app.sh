@@ -112,25 +112,39 @@ done
 extract_app_intents_metadata() {
     local sources="$WORK_DIR/appintents-sources.txt" const_values="$WORK_DIR/appintents-constvalues.txt"
     local scratch="${SWIFTPM_SCRATCH_PATH:-$ROOT/.build}" marker="" file
-    # SwiftPM's build systems name these files differently ("X.swiftconstvalues" next to the
-    # objects, or "X.swift.swiftconstvalues"); the newest one for AppDelegate.swift marks the app
-    # target's directory of the latest build.
+    scratch="${scratch%/}"
+    # SwiftPM's build systems name these files differently: one per source file ("X.swiftconstvalues"
+    # next to the objects, or "X.swift.swiftconstvalues"), or, when the whole module is compiled at
+    # once (release builds), a single "<Module>-primary.swiftconstvalues". The newest one of the app
+    # target (AppDelegate.swift's, or the module's) marks its directory of the latest build. Only
+    # this configuration's directories count, so a release build never takes a debug build's values.
+    local wmo_name="$PRODUCT-primary.swiftconstvalues"
     while IFS= read -r -d '' file; do
         if [[ -z "$marker" || "$file" -nt "$marker" ]]; then
             marker="$file"
         fi
-    done < <(find "$scratch" \( -name 'AppDelegate.swiftconstvalues' -o -name 'AppDelegate.swift.swiftconstvalues' \) -print0)
+    done < <(find "$scratch" -ipath "$scratch/*/$CONFIGURATION/*" \( -name 'AppDelegate.swiftconstvalues' \
+        -o -name 'AppDelegate.swift.swiftconstvalues' -o -name "$wmo_name" \) -print0)
     if [[ -z "$marker" ]]; then
-        echo "error: the compiler wrote no .swiftconstvalues files under $scratch" >&2
+        echo "error: the compiler wrote no $CONFIGURATION .swiftconstvalues files for $PRODUCT under $scratch" \
+            "(looked for AppDelegate.swiftconstvalues, AppDelegate.swift.swiftconstvalues, $wmo_name)" >&2
         exit 1
     fi
     local directory
     directory="$(dirname "$marker")"
     : > "$sources"
     : > "$const_values"
+    local whole_module=0
+    if [[ "$(basename "$marker")" == "$wmo_name" ]]; then
+        whole_module=1
+        printf '%s\n' "$marker" >> "$const_values"
+    fi
     # Only files of current sources, so leftovers of deleted files don't count.
     while IFS= read -r -d '' file; do
         printf '%s\n' "$file" >> "$sources"
+        if [[ "$whole_module" == 1 ]]; then
+            continue
+        fi
         local name
         name="$(basename "$file" .swift)"
         for candidate in "$directory/$name.swiftconstvalues" "$directory/$name.swift.swiftconstvalues"; do
