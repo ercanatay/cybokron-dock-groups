@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-490 keys.
+493 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -659,3 +659,16 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | Key | English |
 | --- | --- |
 | `core.releaseNotes.truncated` | The release notes are longer than shown here; the release page has all of them. |
+
+## Settings → Updates → Other Versions…, a version without the security fixes (English only for now; `awaitingTranslation`: `updates.otherVersions.preSafety.`)
+
+| Key | English |
+| --- | --- |
+| `updates.otherVersions.preSafety.title` | This version lacks security fixes |
+| `updates.otherVersions.preSafety.message` | Version %@ was released before important security fixes, such as stricter checks of the updates it installs. Install it only if you need it, and update to the latest version again afterwards. |
+
+## Import Settings…, a file too large to be a backup (English only for now; `awaitingTranslation`: `core.backup.error.tooLarge`)
+
+| Key | English |
+| --- | --- |
+| `core.backup.error.tooLarge` | This file is too large to be a Cybokron Dock Groups backup. |

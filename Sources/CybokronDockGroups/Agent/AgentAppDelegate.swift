@@ -173,10 +173,20 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         self.popupController = popupController
     }
 
-    /// Delivered on the main thread, where the observer was added.
+    /// Delivered on the main thread, where the observer was added. Any process can post the
+    /// notification, so a new bundle path is followed only when it's an agent bundle in the agents
+    /// folder with this agent's own bundle identifier (`AgentNotification.acceptedBundleURL`);
+    /// otherwise the notification is ignored.
     @objc private func configurationChanged(_ notification: Notification) {
-        if let path = notification.userInfo?[AgentNotification.bundlePathKey] as? String {
-            bundleURL = URL(fileURLWithPath: path, isDirectory: true)
+        if let value = notification.userInfo?[AgentNotification.bundlePathKey] {
+            guard let path = value as? String,
+                  let ownIdentifier = Bundle.main.bundleIdentifier,
+                  let accepted = AgentNotification.acceptedBundleURL(fromPath: path, bundleIdentifier: ownIdentifier)
+            else {
+                logger.error("Agent \(self.groupID, privacy: .public) ignored a configuration change naming another bundle: \(String(describing: value), privacy: .public)")
+                return
+            }
+            bundleURL = accepted
         }
         do {
             let configuration = try loadConfiguration()

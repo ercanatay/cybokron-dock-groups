@@ -752,6 +752,18 @@ enum L10n {
                     "Skipped versions are cleared, so automatic checks offer every newer release again."
                 )
             }
+            /// Title of the question before installing a version older than
+            /// `ReleaseHistory.minimumSecurityVersion`.
+            static var preSafetyTitle: String {
+                tr("updates.otherVersions.preSafety.title", "This version lacks security fixes")
+            }
+            static func preSafetyMessage(_ version: String) -> String {
+                tr(
+                    "updates.otherVersions.preSafety.message",
+                    "Version %@ was released before important security fixes, such as stricter checks of the updates it installs. Install it only if you need it, and update to the latest version again afterwards.",
+                    version
+                )
+            }
         }
 
         enum Backup {

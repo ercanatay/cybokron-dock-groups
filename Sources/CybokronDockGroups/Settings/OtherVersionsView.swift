@@ -2,9 +2,10 @@ import DockGroupsCore
 import SwiftUI
 
 /// Settings → Updates → "Other Versions…": the published releases (no drafts or prereleases), newest
-/// first, each with Install — older or newer than the running version. Installing asks first, then
-/// closes the sheet and follows in the update window like any update. When a check or another
-/// installation started meanwhile, it says so instead of doing nothing.
+/// first, each with Install — older or newer than the running version. Installing asks first — for
+/// a version older than `ReleaseHistory.minimumSecurityVersion`, with a warning that it lacks the
+/// security fixes — then closes the sheet and follows in the update window like any update. When a
+/// check or another installation started meanwhile, it says so instead of doing nothing.
 struct OtherVersionsView: View {
     @ObservedObject var updater: AutoUpdater
     let dismiss: () -> Void
@@ -147,12 +148,24 @@ private struct PendingInstall {
         current.map { ReleaseHistory.change(from: $0, to: target) }
     }
 
+    /// The version predates the security fixes (`ReleaseHistory.minimumSecurityVersion`): the
+    /// question says so first.
+    private var lacksSecurityFixes: Bool {
+        ReleaseHistory.lacksSecurityFixes(target)
+    }
+
     var title: String {
-        L10n.Settings.OtherVersions.confirmTitle(target.description)
+        lacksSecurityFixes
+            ? L10n.Settings.OtherVersions.preSafetyTitle
+            : L10n.Settings.OtherVersions.confirmTitle(target.description)
     }
 
     var message: String {
-        var parts = [L10n.Settings.OtherVersions.confirmQuits(AppInfo.name, version: target.description)]
+        var parts: [String] = []
+        if lacksSecurityFixes {
+            parts.append(L10n.Settings.OtherVersions.preSafetyMessage(target.description))
+        }
+        parts.append(L10n.Settings.OtherVersions.confirmQuits(AppInfo.name, version: target.description))
         switch change {
         case .downgrade:
             let newer = current.map { ReleaseHistory.versionsSkipped(goingBackTo: target, from: $0, in: releases) }?.map(\.description) ?? []

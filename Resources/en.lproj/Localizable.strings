@@ -552,3 +552,6 @@
 "settings.otherVersions.busy.title" = "An update is under way";
 "settings.otherVersions.busy.message" = "%@ is checking for or installing an update right now. Try again once it's finished.";
 "core.releaseNotes.truncated" = "The release notes are longer than shown here; the release page has all of them.";
+"updates.otherVersions.preSafety.title" = "This version lacks security fixes";
+"updates.otherVersions.preSafety.message" = "Version %@ was released before important security fixes, such as stricter checks of the updates it installs. Install it only if you need it, and update to the latest version again afterwards.";
+"core.backup.error.tooLarge" = "This file is too large to be a Cybokron Dock Groups backup.";

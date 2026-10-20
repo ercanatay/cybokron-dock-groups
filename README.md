@@ -162,7 +162,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   don't have yet after yours; your groups and settings stay as they are). It keeps the files it
   replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json` (only the latest
   import's).
-  Most Used launch counts aren't part of a backup.
+  Most Used launch counts aren't part of a backup. Files over 5 MB aren't read, and an app location
+  in a backup that isn't an absolute path to a `.app` bundle is dropped (an app known only by such a
+  location is left out).
 - **Export Diagnostics** (Settings → Backup → Diagnostics): **Copy** or **Save to File…** a plain-text
   report to attach to a GitHub issue — app and macOS versions, Mac model, settings, update checks,
   group names with app counts (never the apps themselves) and recent errors; nothing is sent anywhere.

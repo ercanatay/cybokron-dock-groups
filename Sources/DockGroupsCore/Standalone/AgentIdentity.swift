@@ -72,4 +72,24 @@ public enum AgentNotification {
     /// bundle is now (it moves when the group is renamed).
     public static let configurationChanged = Notification.Name("com.cybokron.dockgroups.agent.configurationChanged")
     public static let bundlePathKey = "bundlePath"
+
+    /// The agent bundle a `configurationChanged` notification's `bundlePathKey` names, when the
+    /// agent may move there; `nil` otherwise. Any process can post a distributed notification, so
+    /// the path must be an `.app` folder directly in `agentDirectory` (after resolving symbolic
+    /// links and `..`), and its Info.plist must name `bundleIdentifier` — the agent's own.
+    public static func acceptedBundleURL(
+        fromPath path: String,
+        agentDirectory: URL = AgentDirectory.defaultURL,
+        bundleIdentifier: String
+    ) -> URL? {
+        guard !path.isEmpty, path.hasPrefix("/") else { return nil }
+        let bundle = URL(fileURLWithPath: path, isDirectory: true).standardizedFileURL.resolvingSymlinksInPath()
+        let directory = agentDirectory.standardizedFileURL.resolvingSymlinksInPath()
+        guard bundle.pathExtension.lowercased() == "app",
+              bundle.deletingLastPathComponent().path == directory.path
+        else { return nil }
+        let found = InstalledAgent(bundleURL: bundle).bundleIdentifier
+        guard let found, found.lowercased() == bundleIdentifier.lowercased() else { return nil }
+        return bundle
+    }
 }

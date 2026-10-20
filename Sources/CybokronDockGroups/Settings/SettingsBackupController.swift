@@ -89,10 +89,8 @@ final class SettingsBackupController: ObservableObject {
         isBusy = true
         Task {
             let result = await Task.detached {
-                Result { () throws -> SettingsBackup in
-                    let data = try Data(contentsOf: url)
-                    return try SettingsBackup.decode(from: data)
-                }
+                // At most SettingsBackup.maximumFileSize is read; app locations are checked.
+                Result { try SettingsBackup.read(from: url) }
             }.value
             isBusy = false
             switch result {
@@ -162,7 +160,7 @@ final class SettingsBackupController: ObservableObject {
         switch error {
         case .notABackup:
             return L10n.Settings.Backup.notABackupDetail
-        case .newerSchemaVersion:
+        case .newerSchemaVersion, .tooLarge:
             return L10n.Settings.Backup.nothingChanged
         }
     }

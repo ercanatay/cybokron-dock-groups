@@ -7,6 +7,16 @@ public enum ReleaseHistory {
     /// themselves; going back up from one means downloading from the releases page.
     public static let firstSelfUpdatingVersion = SemanticVersion(major: 0, minor: 5, patch: 1)
 
+    /// The first version with the 2026-10 security fixes (Developer ID update signatures required,
+    /// the disk image checked before it's mounted, link limits, …). "Other Versions…" warns before
+    /// installing an older one.
+    public static let minimumSecurityVersion = SemanticVersion(major: 0, minor: 6, patch: 5)
+
+    /// Whether `version` predates `minimumSecurityVersion`.
+    public static func lacksSecurityFixes(_ version: SemanticVersion) -> Bool {
+        version < minimumSecurityVersion
+    }
+
     /// The releases to list: neither drafts nor prereleases, one per version (the first listed
     /// wins), newest first.
     public static func installable(_ releases: [ReleaseInfo]) -> [ReleaseInfo] {

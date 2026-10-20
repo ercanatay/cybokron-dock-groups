@@ -6,6 +6,8 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
     case notABackup
     /// The backup was written by a newer version of the app, in a format this one doesn't know.
     case newerSchemaVersion(Int)
+    /// The file is larger than any backup (`SettingsBackup.maximumFileSize`); it isn't read.
+    case tooLarge
 
     public var errorDescription: String? {
         switch self {
@@ -13,6 +15,8 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
             return Localization.string("core.backup.error.notABackup", "This file isn't a Cybokron Dock Groups backup.")
         case .newerSchemaVersion(let version):
             return Localization.format("core.backup.error.newer", "This backup was made with a newer version of Cybokron Dock Groups (backup format %ld). Update the app to restore it.", version)
+        case .tooLarge:
+            return Localization.string("core.backup.error.tooLarge", "This file is too large to be a Cybokron Dock Groups backup.")
         }
     }
 }
@@ -28,6 +32,8 @@ public struct SettingsBackup: Equatable, Sendable {
     /// Marks the file as this app's backup.
     public static let appIdentifier = "cybokron-dock-groups"
     public static let fileExtension = "dockgroups"
+    /// The largest file Import Settings… reads: 5 MB, far more than any real backup (a few KB).
+    public static let maximumFileSize = 5 * 1024 * 1024
 
     public var schemaVersion: Int
     public var appVersion: String
@@ -73,8 +79,22 @@ public struct SettingsBackup: Equatable, Sendable {
         return try encoder.encode(BackupDocument(self))
     }
 
-    /// Reads a backup, accepting only this app's backups in a format this version understands.
+    /// Reads the backup file at `url`. A file larger than `maximumFileSize` is refused before it's
+    /// read, and no more than that is ever read (in case it grows meanwhile).
+    public static func read(from url: URL) throws -> SettingsBackup {
+        let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+        guard size <= maximumFileSize else { throw SettingsBackupError.tooLarge }
+        let handle = try FileHandle(forReadingFrom: url)
+        defer { try? handle.close() }
+        let data = try handle.read(upToCount: maximumFileSize + 1) ?? Data()
+        return try decode(from: data)
+    }
+
+    /// Reads a backup, accepting only this app's backups in a format this version understands and
+    /// no larger than `maximumFileSize`. App locations that can't be an app bundle are dropped
+    /// (`withAppBundlePathsOnly`).
     public static func decode(from data: Data) throws -> SettingsBackup {
+        guard data.count <= maximumFileSize else { throw SettingsBackupError.tooLarge }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         // Check the header first, so a newer backup is reported as such even when the rest of it
@@ -98,8 +118,40 @@ public struct SettingsBackup: Equatable, Sendable {
         schemaVersion = document.schemaVersion
         appVersion = document.appVersion
         exportedAt = document.exportedAt
-        groups = document.groups
+        groups = document.groups.map(Self.withAppBundlePathsOnly)
         preferences = document.preferences.preferences
+    }
+
+    // MARK: - App locations
+
+    /// Whether `path` can be where an app bundle is: an absolute path to a `.app` folder, without
+    /// `.` or `..` components, NUL characters or more than `PATH_MAX` bytes. A backup is a file
+    /// anyone can hand over, and a group opens what its items point to, so nothing else (a script,
+    /// a `.command` file, a folder) gets in through one.
+    public static func isAppBundlePath(_ path: String) -> Bool {
+        guard path.hasPrefix("/"), !path.contains("\0"), path.utf8.count < Int(PATH_MAX) else { return false }
+        let components = path.split(separator: "/", omittingEmptySubsequences: true)
+        guard let last = components.last, !components.contains(where: { $0 == "." || $0 == ".." }) else { return false }
+        return last.count > 4 && last.lowercased().hasSuffix(".app")
+    }
+
+    /// `group` with its apps' locations checked (`isAppBundlePath`): an app identified by its
+    /// location must be at an app bundle path or it's left out, and any other app's fallback
+    /// location that isn't one is dropped (the app is still found by its bundle identifier).
+    /// Websites have no location.
+    static func withAppBundlePathsOnly(_ group: DockGroup) -> DockGroup {
+        var group = group
+        group.apps = group.apps.compactMap { app in
+            guard !app.isWebsite else { return app }
+            if app.isIdentifiedByPath, !isAppBundlePath(app.bundleIdentifier) { return nil }
+            var app = app
+            if let path = app.path, !isAppBundlePath(path) {
+                app.path = nil
+            }
+            return app
+        }
+        group.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: group.apps)
+        return group
     }
 }
 

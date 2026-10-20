@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   one group's apps are opened or hidden per 5 seconds whichever group the links name (menus,
   shortcuts, Siri and Shortcuts aren't limited); the quit dialog's Quit / Force Quit Apps button is
   enabled 0.7 seconds after it appears (Cancel and Escape work at once)
+- Standalone group agents follow a configuration-change notification's new bundle path only when
+  it's an `.app` directly in the agents folder with the agent's own bundle identifier (any process
+  can post the notification)
+- Backup import refuses files over 5 MB before reading them, and drops app locations that aren't an
+  absolute path to a `.app` bundle (an item known only by such a location is left out)
+
+### Added
+
+- Settings → Updates → Other Versions… warns before installing a version older than 0.6.5, which
+  lacks these security fixes (new strings, English only until the next translation pass)
 
 ## [0.6.4] - 2026-10-20
 

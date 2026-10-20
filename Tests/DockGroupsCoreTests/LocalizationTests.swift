@@ -38,6 +38,10 @@ struct LocalizationTests {
     static let awaitingTranslation: [String] = [
         // Release notes cut at ReleaseNotesMarkdown.maximumLength.
         "core.releaseNotes.",
+        // Other Versions… before installing a version without the security fixes.
+        "updates.otherVersions.preSafety.",
+        // Import Settings… refusing a file larger than SettingsBackup.maximumFileSize.
+        "core.backup.error.tooLarge",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
