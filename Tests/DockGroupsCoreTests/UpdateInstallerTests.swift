@@ -146,7 +146,7 @@ struct DiskImageAttachRetryTests {
         let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")), tools: runner)
 
         await #expect(throws: UpdateInstallError.mountFailed("hdiutil: attach failed - Resource temporarily unavailable")) {
-            try await installer.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: "Any")
+            try await installer.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: "Any", expectedTeamIdentifier: nil)
         }
         #expect(sleeps.delays.count == 3)
     }
@@ -322,7 +322,7 @@ struct UpdateInstallerTests {
         let tools = FakeDiskImageTools(diskImageApp: imageApp)
         let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")), tools: tools)
 
-        let staged = try await installer.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: Self.appName)
+        let staged = try await installer.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: Self.appName, expectedTeamIdentifier: nil)
 
         #expect(staged.lastPathComponent == "\(Self.appName).app")
         #expect(version(ofAppAt: staged) == "0.6.0")
@@ -335,7 +335,7 @@ struct UpdateInstallerTests {
 
         let empty = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates2")), tools: FakeDiskImageTools(diskImageApp: nil))
         await #expect(throws: UpdateInstallError.appNotFound) {
-            try await empty.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: Self.appName)
+            try await empty.stageApp(fromDiskImage: temporary.url.appending(path: "update.dmg"), appName: Self.appName, expectedTeamIdentifier: nil)
         }
     }
 
@@ -356,7 +356,7 @@ struct UpdateInstallerTests {
             tools: DiskImageAttachRetryingRunner()
         )
 
-        let staged = try await installer.stageApp(fromDiskImage: image, appName: Self.appName)
+        let staged = try await installer.stageApp(fromDiskImage: image, appName: Self.appName, expectedTeamIdentifier: nil)
 
         #expect(version(ofAppAt: staged) == "0.6.0")
         #expect(throws: Never.self) {

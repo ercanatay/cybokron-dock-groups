@@ -87,11 +87,13 @@ public struct UpdateDirectories: Sendable {
 /// Downloads a release's disk image and swaps the running app for the one inside:
 ///
 /// 1. `download` saves the disk image in `downloads/` and checks its size and SHA-256 checksum.
-/// 2. `stageApp` mounts it read-only and hidden (`hdiutil attach -readonly -nobrowse`), copies the app
-///    to `staging/` with `ditto`, and detaches it again.
+/// 2. `stageApp` checks the disk image's own signature when the running app is Developer ID signed
+///    (`verifyDiskImageSignature`, before anything is mounted), then mounts it read-only and hidden
+///    (`hdiutil attach -readonly -nobrowse`), copies the app to `staging/` with `ditto`, and
+///    detaches it again.
 /// 3. `validateStagedApp` checks that the copy is this app, in the release's version.
-/// 4. `verifySignature` checks that the copy's code signature is intact and — once releases are
-///    signed with a Developer ID — made by the running app's team.
+/// 4. `verifySignature` checks that the copy's code signature is intact and — when the running app
+///    is Developer ID signed — that it's a Developer ID signature of the running app's team.
 /// 5. `replace` moves the running app to `backups/` and the new one into its place; if that fails,
 ///    the previous app is moved back.
 /// 6. `relaunchArguments` starts the new version once this process has quit, and rolls back to the
@@ -245,7 +247,15 @@ public struct UpdateInstaller: Sendable {
 
     /// Mounts the disk image read-only without showing it in the Finder, copies the app named
     /// `appName` (or its only app) to `staging/`, and detaches the image. Returns the staged copy.
-    public func stageApp(fromDiskImage diskImage: URL, appName: String) async throws -> URL {
+    ///
+    /// When `expectedTeamIdentifier` is known (the running app is Developer ID signed), the disk
+    /// image's signature is checked first (`verifyDiskImageSignature`); one that isn't a Developer
+    /// ID signature of that team is never mounted. `nil` (a running copy signed ad hoc, as up to
+    /// 0.6.2) mounts it unchecked, as before.
+    public func stageApp(fromDiskImage diskImage: URL, appName: String, expectedTeamIdentifier: String?) async throws -> URL {
+        if let expectedTeamIdentifier {
+            try await verifyDiskImageSignature(diskImage, expectedTeamIdentifier: expectedTeamIdentifier)
+        }
         let fileManager = FileManager.default
         let mountPoint = directories.mounts.appending(path: UUID().uuidString, directoryHint: .isDirectory)
         do {
@@ -335,30 +345,110 @@ public struct UpdateInstaller: Sendable {
 
     // MARK: - Code signature
 
+    /// `codesign`'s exit status when the code is validly signed but doesn't satisfy the requirement
+    /// given with `-R`.
+    static let requirementUnsatisfiedStatus: Int32 = 3
+
+    /// The code requirement a Developer ID signature of `teamIdentifier` satisfies: a certificate
+    /// chain anchored at Apple, issued by the Developer ID certification authority, with a Developer
+    /// ID Application leaf whose organizational unit is the team. With `identifier`, the code's
+    /// signing identifier must be that too (the app's bundle identifier); disk images are signed
+    /// under their file name, so theirs isn't pinned.
+    public static func developerIDRequirement(teamIdentifier: String, identifier: String? = nil) -> String {
+        var clauses = ["anchor apple generic"]
+        if let identifier {
+            clauses.append("identifier \"\(identifier)\"")
+        }
+        clauses += [
+            "certificate 1[field.1.2.840.113635.100.6.2.6] exists",
+            "certificate leaf[field.1.2.840.113635.100.6.1.13] exists",
+            "certificate leaf[subject.OU] = \"\(teamIdentifier)\"",
+        ]
+        return clauses.joined(separator: " and ")
+    }
+
+    /// Apple team identifiers: ten uppercase letters and digits. Anything else is refused before
+    /// it's put into a code requirement.
+    static func isWellFormedTeamIdentifier(_ value: String) -> Bool {
+        value.count == 10 && value.unicodeScalars.allSatisfy { ("A"..."Z").contains($0) || ("0"..."9").contains($0) }
+    }
+
+    /// Bundle identifiers: letters, digits, hyphens and dots, as Apple allows them.
+    static func isWellFormedBundleIdentifier(_ value: String) -> Bool {
+        !value.isEmpty && value.unicodeScalars.allSatisfy {
+            ("A"..."Z").contains($0) || ("a"..."z").contains($0) || ("0"..."9").contains($0) || $0 == "-" || $0 == "."
+        }
+    }
+
     /// Checks the staged app's code signature with `codesign --verify --strict`: it must be signed,
-    /// and nothing in the bundle may have changed since. An ad hoc signature — every release so far
-    /// has one — names no signer, so that's all. A Developer ID signature (its designated
-    /// requirement is anchored at Apple) must come from `expectedTeamIdentifier`, the running app's
-    /// team, when that's known; a running copy signed ad hoc has none to compare, so the first
-    /// Developer ID release is accepted and the ones after it must match it.
-    public func verifySignature(ofStagedApp appURL: URL, expectedTeamIdentifier: String?) async throws {
-        let verification = try await tools.run(SystemTools.codesign, arguments: ["--verify", "--strict", appURL.path])
-        guard verification.succeeded else {
-            throw UpdateInstallError.invalidSignature(verification.output.isEmpty ? "codesign exited with \(verification.status)" : verification.output)
-        }
+    /// and nothing in the bundle may have changed since.
+    ///
+    /// When `expectedTeamIdentifier` — the running app's team — is known, the app must also satisfy
+    /// `developerIDRequirement` for that team and `bundleIdentifier` (`codesign --verify --strict
+    /// -R`): an ad hoc signature, or a Developer ID one of another team, is refused, so a Developer
+    /// ID signed copy never updates to code anyone else signed. A running copy signed ad hoc (up to
+    /// 0.6.2) has no team to hold the update to, so it accepts any intact signature, as before.
+    public func verifySignature(ofStagedApp appURL: URL, bundleIdentifier: String, expectedTeamIdentifier: String?) async throws {
+        try await verifyIntactSignature(of: appURL)
         guard let expectedTeamIdentifier else { return }
-        guard let signature = await signature(ofAppAt: appURL) else {
-            throw UpdateInstallError.invalidSignature("codesign couldn't describe the signature")
+        guard Self.isWellFormedBundleIdentifier(bundleIdentifier) else {
+            throw UpdateInstallError.invalidSignature("unexpected bundle identifier “\(bundleIdentifier)”")
         }
-        // Ad hoc: no signer to compare.
-        guard signature.isAppleAnchored else { return }
-        guard signature.teamIdentifier == expectedTeamIdentifier else {
+        try await verifyDeveloperIDSignature(of: appURL, identifier: bundleIdentifier, expectedTeamIdentifier: expectedTeamIdentifier)
+    }
+
+    /// Checks a downloaded disk image's signature before it's mounted: it must be intact and a
+    /// Developer ID signature of `expectedTeamIdentifier` (`developerIDRequirement`). Releases from
+    /// 0.6.3 on are signed and notarized this way.
+    public func verifyDiskImageSignature(_ diskImage: URL, expectedTeamIdentifier: String) async throws {
+        try await verifyIntactSignature(of: diskImage)
+        try await verifyDeveloperIDSignature(of: diskImage, identifier: nil, expectedTeamIdentifier: expectedTeamIdentifier)
+    }
+
+    /// `codesign --verify --strict`: signed, and unchanged since.
+    private func verifyIntactSignature(of url: URL) async throws {
+        let verification = try await tools.run(SystemTools.codesign, arguments: ["--verify", "--strict", url.path])
+        guard verification.succeeded else {
+            throw UpdateInstallError.invalidSignature(Self.describe(verification))
+        }
+    }
+
+    /// `codesign --verify --strict -R=<developerIDRequirement>`. When the requirement isn't met
+    /// (exit status 3), the signature's description says which error fits: an ad hoc signature
+    /// or another team is `wrongSigner`. When codesign can't evaluate the requirement at all (any
+    /// other failure), the described signature decides instead: it must be anchored at Apple and
+    /// name the expected team.
+    private func verifyDeveloperIDSignature(of url: URL, identifier: String?, expectedTeamIdentifier: String) async throws {
+        guard Self.isWellFormedTeamIdentifier(expectedTeamIdentifier) else {
+            throw UpdateInstallError.invalidSignature("unexpected team identifier “\(expectedTeamIdentifier)”")
+        }
+        let requirement = Self.developerIDRequirement(teamIdentifier: expectedTeamIdentifier, identifier: identifier)
+        let check = try await tools.run(SystemTools.codesign, arguments: ["--verify", "--strict", "-R", "=\(requirement)", url.path])
+        if check.succeeded { return }
+        let signature = await signature(ofAppAt: url)
+        if check.status == Self.requirementUnsatisfiedStatus {
+            if let team = signature?.signingTeam, team == expectedTeamIdentifier {
+                // Right team, but not a Developer ID Application certificate or another identifier.
+                throw UpdateInstallError.invalidSignature(Self.describe(check))
+            }
+            throw UpdateInstallError.wrongSigner(found: signature?.teamIdentifier ?? "none", expected: expectedTeamIdentifier)
+        }
+        // Fallback: the requirement couldn't be evaluated; the designated requirement must be
+        // anchored at Apple and the signature name the expected team.
+        guard let signature else {
+            throw UpdateInstallError.invalidSignature(Self.describe(check))
+        }
+        guard signature.isAppleAnchored, signature.teamIdentifier == expectedTeamIdentifier else {
             throw UpdateInstallError.wrongSigner(found: signature.teamIdentifier ?? "none", expected: expectedTeamIdentifier)
         }
     }
 
-    /// What `codesign` reports about the app at `appURL`'s signature; `nil` when it can't tell
-    /// (no signature, or codesign failed).
+    private static func describe(_ result: ToolResult) -> String {
+        result.output.isEmpty ? "codesign exited with \(result.status)" : result.output
+    }
+
+    /// What `codesign` reports about the signature of the app (or disk image) at `appURL`; `nil`
+    /// when it can't tell (no signature, or codesign failed).
     public func signature(ofAppAt appURL: URL) async -> CodeSignature? {
         guard let requirement = try? await tools.run(SystemTools.codesign, arguments: ["-d", "-r-", appURL.path]), requirement.succeeded,
               let details = try? await tools.run(SystemTools.codesign, arguments: ["-dv", "--verbose=2", appURL.path]), details.succeeded

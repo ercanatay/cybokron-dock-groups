@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Updates signed by a third party or left ad hoc are rejected when the running copy is Developer ID
+  signed (`codesign --verify --strict -R` with a Developer ID requirement for the running team and
+  bundle identifier); the staged DMG signature is verified before mounting. Copies signed ad hoc
+  (v0.6.2 and earlier) keep accepting any intact signature, so they can still update
+
 ## [0.6.4] - 2026-10-20
 
 ### Added

@@ -327,15 +327,25 @@ final class AutoUpdater: ObservableObject {
             do {
                 let diskImage = try await installer.download(asset, progress: progress)
                 self?.status = .installing(release)
-                let staged = try await installer.stageApp(fromDiskImage: diskImage, appName: AppInfo.name)
+                // A Developer ID signed copy only takes a disk image and an app signed with a
+                // Developer ID of its own team; the disk image is checked before it's mounted.
+                let runningTeam = await installer.signature(ofAppAt: appURL)?.signingTeam
+                let bundleIdentifier = Bundle.main.bundleIdentifier ?? ""
+                let staged = try await installer.stageApp(
+                    fromDiskImage: diskImage,
+                    appName: AppInfo.name,
+                    expectedTeamIdentifier: runningTeam
+                )
                 try UpdateInstaller.validateStagedApp(
                     staged,
-                    bundleIdentifier: Bundle.main.bundleIdentifier ?? "",
+                    bundleIdentifier: bundleIdentifier,
                     version: release.version
                 )
-                // A Developer ID signed version must come from the running copy's team.
-                let runningTeam = await installer.signature(ofAppAt: appURL)?.signingTeam
-                try await installer.verifySignature(ofStagedApp: staged, expectedTeamIdentifier: runningTeam)
+                try await installer.verifySignature(
+                    ofStagedApp: staged,
+                    bundleIdentifier: bundleIdentifier,
+                    expectedTeamIdentifier: runningTeam
+                )
                 if isDryRun {
                     self?.logger.notice("Dry run: staged \(staged.path, privacy: .public); nothing replaced")
                     self?.status = .stagedForDryRun(release, path: staged.path)
