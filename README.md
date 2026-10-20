@@ -3,7 +3,7 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: in active development — current release v0.6.0, with 26 languages.
+> Status: in active development — current release v0.6.3 (Developer ID signed and notarized), with 26 languages.
 
 ## Screenshots
 
@@ -170,28 +170,24 @@ popup is already showing, or there are no groups yet, it shows the group window 
 
 ## Download
 
-Get the v0.6.0 universal disk image (`Cybokron-Dock-Groups-0.6.0-universal.dmg`, 26 languages) from the
+Get the v0.6.3 universal disk image (`Cybokron-Dock-Groups-0.6.3-universal.dmg`, 26 languages) from the
 [releases page](https://github.com/ercanatay/cybokron-dock-groups/releases), open it and drag the app
 to Applications.
 [cybokron.com/dock-groups/](https://cybokron.com/dock-groups/) describes the app in 26 languages, and
 [cybokron.com/dock-groups/download/](https://cybokron.com/dock-groups/download/) always downloads the
 latest release's disk image.
 
-All published releases (v0.5.0 to v0.6.0) are **signed ad hoc**, not with a Developer ID, and aren't
-notarized, so macOS shows an “Apple could not verify …” warning the first time you open a downloaded
-copy. See the next section for how to open it.
+Releases from v0.6.3 on are **Developer ID signed and notarized**: the app is signed with a
+Developer ID Application certificate (hardened runtime), and the disk image is signed, notarized by
+Apple and stapled, so macOS opens a downloaded copy without the “Apple could not verify …” warning.
+When you move from an ad hoc signed release to v0.6.3 or later, Accessibility access has to be
+allowed once more in Privacy & Security → Accessibility, because the signature identity changes from
+ad hoc to Developer ID; after that it carries over from one signed release to the next.
 
-The release workflow can already sign with a Developer ID Application certificate (hardened runtime),
-notarize the disk image with `notarytool` and staple the ticket. It does so only when the repository
-variable `NOTARIZE_ENABLED` is `true`; the first notarized release will come out once it is turned on.
-Accessibility access then has to be allowed once more in Privacy & Security → Accessibility, because
-the signature identity changes from ad hoc to Developer ID; after that it carries over from one
-signed release to the next.
+### Opening an older release the first time
 
-### Opening a downloaded release the first time
-
-Every published release so far (v0.5.0 to v0.6.0) is signed ad hoc only, so macOS blocks the first
-open of a downloaded copy (“Apple could not verify …”). Either:
+The releases before v0.6.3 (v0.5.0 to v0.6.2) are **signed ad hoc** only and aren't notarized, so
+macOS blocks the first open of a downloaded copy (“Apple could not verify …”). Either:
 
 - try to open the app once, then go to **System Settings → Privacy & Security**, choose
   **Open Anyway** next to the message about Cybokron Dock Groups and confirm; or
@@ -255,7 +251,7 @@ Developer ID certificate from the repository secrets
 (`APPLE_DEVID_CERT_P12`, `APPLE_DEVID_CERT_PASSWORD`) in a temporary keychain, notarizes the DMG with
 `notarytool` and an App Store Connect API key (`APPLE_ASC_KEY_P8`, `APPLE_ASC_KEY_ID`,
 `APPLE_ASC_ISSUER_ID`), staples and verifies it (team `APPLE_TEAM_ID`), and attaches it to a draft
-release. While `NOTARIZE_ENABLED` is `false` (the current state), CI skips signing and
+release (`NOTARIZE_ENABLED` is `true` since v0.6.3). When it is `false`, CI skips signing and
 notarization and attaches an ad hoc signed DMG to the draft release instead. The draft release's
 notes are the tag's section of [CHANGELOG.md](CHANGELOG.md) plus its compare link, made by
 `scripts/release-notes.sh <tag>` (e.g. `scripts/release-notes.sh v0.6.1`).
