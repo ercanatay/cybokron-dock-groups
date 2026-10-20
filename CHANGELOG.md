@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-10-20
+
 ### Added
 
 - CI staples the app itself before stapling the DMG (fixes 'Notary Ticket Missing' for the bundled app)
+
+### Fixed
+
+- Local `UNIVERSAL=1` builds no longer fail (or silently use stale debug data) in the App Intents metadata step; the script now looks up the whole-module `*-primary.swiftconstvalues` file and restricts the search to the current configuration
 
 ## [0.6.3] - 2026-10-19
 
@@ -317,7 +323,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.3...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.4...HEAD
+[0.6.4]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.0...v0.6.1
