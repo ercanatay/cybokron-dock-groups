@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-496 keys.
+497 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -687,3 +687,9 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | --- | --- |
 | `common.itemCount.one` | 1 item |
 | `common.itemCount.other` | %ld items |
+
+## Settings → Support: the About window's content in Settings (English only for now; `awaitingTranslation`: `settings.support.`)
+
+| Key | English |
+| --- | --- |
+| `settings.support.tab` | Support |

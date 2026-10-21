@@ -156,7 +156,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   and in the update window) open only when they're `https` or `mailto` links; others show as plain
   text.
 - **About** window with a "Find Me Online" row of social profile icons (LinkedIn, X, GitHub, YouTube
-  and more).
+  and more). **Settings → Support** shows the same content — the ways to support the project, the
+  app's links, books and other projects — as the last pane of Settings.
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
   `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the

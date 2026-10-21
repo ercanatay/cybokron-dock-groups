@@ -38,6 +38,7 @@ struct LocalizationTests {
     static let awaitingTranslation: [String] = [
         "group.settings.",
         "common.itemCount.",
+        "settings.support.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

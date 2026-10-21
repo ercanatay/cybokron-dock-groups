@@ -3,7 +3,8 @@ import DockGroupsCore
 import SwiftUI
 
 /// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, the Most Used list, updates,
-/// backups with the diagnostics report, and the changelog, each in its own pane, picked from a sidebar.
+/// backups with the diagnostics report, the changelog, and ways to support the project (the About
+/// window's content), each in its own pane, picked from a sidebar.
 @MainActor
 final class SettingsWindowController: NSWindowController {
     private static let frameAutosaveName = "SettingsWindow"
@@ -110,6 +111,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
     case updates
     case backup
     case changelog
+    case support
 
     var id: Self { self }
 
@@ -121,6 +123,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .updates: L10n.Settings.updatesTab
         case .backup: L10n.Settings.backupTab
         case .changelog: L10n.Changelog.tab
+        case .support: L10n.Settings.supportTab
         }
     }
 
@@ -132,6 +135,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         case .updates: "arrow.triangle.2.circlepath"
         case .backup: "externaldrive"
         case .changelog: "newspaper"
+        case .support: "heart"
         }
     }
 }
@@ -188,6 +192,8 @@ private struct SettingsView: View {
             BackupSettingsView(backup: backup, diagnostics: diagnostics)
         case .changelog:
             ChangelogSettingsView(changelog: changelog)
+        case .support:
+            SupportSettingsView()
         }
     }
 }

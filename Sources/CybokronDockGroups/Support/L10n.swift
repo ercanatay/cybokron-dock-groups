@@ -485,6 +485,7 @@ enum L10n {
         static var shortcutsTab: String { tr("settings.tab.shortcuts", "Shortcuts & Siri") }
         static var updatesTab: String { tr("settings.tab.updates", "Updates") }
         static var backupTab: String { tr("settings.tab.backup", "Backup") }
+        static var supportTab: String { tr("settings.support.tab", "Support") }
 
         enum Popup {
             static var theme: String { tr("settings.popup.theme", "Theme") }
