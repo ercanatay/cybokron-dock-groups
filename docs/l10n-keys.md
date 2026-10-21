@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-493 keys.
+496 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -480,7 +480,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.diagnostics.panel.message` | Save the diagnostics report as a text file, e.g. to attach to a GitHub issue. |
 | `settings.diagnostics.panel.prompt` | Save |
 
-## Settings → Changelog (fully translated; `awaitingTranslation` is empty)
+## Settings → Changelog (fully translated)
 
 | Key | English |
 | --- | --- |
@@ -629,7 +629,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.update.install.copyFailed` | Copying the app failed: %@ |
 | `core.mostUsed.name` | Most Used |
 
-## Question a `cybokrondockgroups://quit/…` link asks (fully translated; `awaitingTranslation` is empty)
+## Question a `cybokrondockgroups://quit/…` link asks (fully translated)
 
 | Key | English |
 | --- | --- |
@@ -640,35 +640,43 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.quitConfirmation.forceQuit` | Force Quit Apps |
 | `core.quitConfirmation.cancel` | Cancel |
 
-## Update installation: the downloaded app's code signature (fully translated; `awaitingTranslation` is empty)
+## Update installation: the downloaded app's code signature (fully translated)
 
 | Key | English |
 | --- | --- |
 | `core.update.install.invalidSignature` | The downloaded app's code signature isn't valid, so it wasn't installed: %@ |
 | `core.update.install.wrongSigner` | The downloaded app is signed by another developer (team %1$@ instead of %2$@), so it wasn't installed. |
 
-## Settings → Updates → Other Versions…, while an update is under way (fully translated; `awaitingTranslation` is empty)
+## Settings → Updates → Other Versions…, while an update is under way (fully translated)
 
 | Key | English |
 | --- | --- |
 | `settings.otherVersions.busy.title` | An update is under way |
 | `settings.otherVersions.busy.message` | %@ is checking for or installing an update right now. Try again once it's finished. |
 
-## Release notes cut short (English only for now; `awaitingTranslation`: `core.releaseNotes.`)
+## Release notes cut short (fully translated)
 
 | Key | English |
 | --- | --- |
 | `core.releaseNotes.truncated` | The release notes are longer than shown here; the release page has all of them. |
 
-## Settings → Updates → Other Versions…, a version without the security fixes (English only for now; `awaitingTranslation`: `updates.otherVersions.preSafety.`)
+## Settings → Updates → Other Versions…, a version without the security fixes (fully translated)
 
 | Key | English |
 | --- | --- |
 | `updates.otherVersions.preSafety.title` | This version lacks security fixes |
 | `updates.otherVersions.preSafety.message` | Version %@ was released before important security fixes, such as stricter checks of the updates it installs. Install it only if you need it, and update to the latest version again afterwards. |
 
-## Import Settings…, a file too large to be a backup (English only for now; `awaitingTranslation`: `core.backup.error.tooLarge`)
+## Import Settings…, a file too large to be a backup (fully translated)
 
 | Key | English |
 | --- | --- |
 | `core.backup.error.tooLarge` | This file is too large to be a Cybokron Dock Groups backup. |
+
+## Group Settings: the popup's gear and the “Group Settings…” item of a group's menus (English only for now; `awaitingTranslation`: `group.settings.`)
+
+| Key | English |
+| --- | --- |
+| `group.settings.title` | Group Settings |
+| `group.settings.menu` | Group Settings… |
+| `group.settings.accessibilityHint` | Shows the name, apps, Dock tile and popup settings of “%@”. |

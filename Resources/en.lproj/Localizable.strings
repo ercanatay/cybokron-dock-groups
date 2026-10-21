@@ -555,3 +555,8 @@
 "updates.otherVersions.preSafety.title" = "This version lacks security fixes";
 "updates.otherVersions.preSafety.message" = "Version %@ was released before important security fixes, such as stricter checks of the updates it installs. Install it only if you need it, and update to the latest version again afterwards.";
 "core.backup.error.tooLarge" = "This file is too large to be a Cybokron Dock Groups backup.";
+
+/* Group Settings: the popup's gear and the "Group Settings…" item of a group's menus (English only for now: translations show this English text until they add these keys) */
+"group.settings.title" = "Group Settings";
+"group.settings.menu" = "Group Settings…";
+"group.settings.accessibilityHint" = "Shows the name, apps, Dock tile and popup settings of “%@”.";

@@ -234,6 +234,19 @@ enum L10n {
         static var moveLater: String { tr("popup.accessibility.moveLater", "Move Later") }
     }
 
+    // MARK: - Group Settings
+
+    /// The popup's gear and the "Group Settings…" items of a group's menus, which open the group
+    /// window on the group.
+    enum GroupSettings {
+        /// The gear's tooltip and VoiceOver label.
+        static var title: String { tr("group.settings.title", "Group Settings") }
+        static var menuItem: String { tr("group.settings.menu", "Group Settings…") }
+        static func accessibilityHint(_ groupName: String) -> String {
+            tr("group.settings.accessibilityHint", "Shows the name, apps, Dock tile and popup settings of “%@”.", groupName)
+        }
+    }
+
     // MARK: - Group window
 
     enum GroupWindow {

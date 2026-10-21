@@ -13,7 +13,8 @@ import OSLog
 /// needs Accessibility access for the agent itself; it never asks for it.
 ///
 /// Right-clicking (or Control-clicking) the tile shows the group's apps — checked while running —
-/// with Open All, Hide All and Close All (`applicationDockMenu(_:)`). The Dock asks only apps it
+/// with Open All, Hide All, Close All and Group Settings… (`applicationDockMenu(_:)`; the popup's
+/// gear does the same: the main app's group window opens on the group). The Dock asks only apps it
 /// shows as running for such a menu, so while `PopupPreferences.showsStandaloneDockMenus` is on the
 /// agent runs as a regular app: a running indicator under its tile, an entry in the app switcher
 /// and, while the popup is open, a menu bar with Hide and Quit. With it off, the agent stays out of
@@ -22,7 +23,8 @@ import OSLog
 /// The group comes from the bundle's `group-config.json` only, so the agent works while the main
 /// app isn't running; the main app rewrites the file when the group changes and tells the agent
 /// with `AgentNotification.configurationChanged`. Agents have no menu bar item, global shortcuts,
-/// App Intents, launch statistics or links: those belong to the main app.
+/// App Intents, launch statistics or links of their own: those belong to the main app, which
+/// Group Settings reaches through its `cybokrondockgroups://settings/group/<id>` link.
 @MainActor
 final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     /// A click on the Dock tile closes an open popup as an outside click before the reopen request
@@ -158,7 +160,8 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
                 openAll: { [weak self] group in self?.openAll(group) },
                 closeAll: { [weak self] group, mode in self?.closeAll(group, mode: mode) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
-                manageGroups: { [weak self] in self?.openMainApp() }
+                manageGroups: { [weak self] in self?.openMainApp() },
+                showGroupSettings: { [weak self] _ in self?.openGroupSettings() }
             )
         )
         popupController.onClose = { reason in
@@ -243,6 +246,8 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(dockMenuItem(L10n.Common.openAll, action: #selector(openAllFromDockMenu(_:)), isEnabled: !group.apps.isEmpty))
         menu.addItem(dockMenuItem(L10n.Common.hideAll, action: #selector(hideAllFromDockMenu(_:)), isEnabled: hasRunningApps))
         menu.addItem(dockMenuItem(L10n.Common.closeAll, action: #selector(closeAllFromDockMenu(_:)), isEnabled: hasRunningApps))
+        menu.addItem(.separator())
+        menu.addItem(dockMenuItem(L10n.GroupSettings.menuItem, action: #selector(groupSettingsFromDockMenu(_:)), isEnabled: true))
         return menu
     }
 
@@ -281,6 +286,11 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         closeAll(group, mode: .graceful)
     }
 
+    @objc private func groupSettingsFromDockMenu(_ sender: NSMenuItem) {
+        popupController?.close(reason: .appAction)
+        openGroupSettings()
+    }
+
     // MARK: - Actions
 
     private func open(_ app: AppReference, in group: DockGroup) {
@@ -308,6 +318,12 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     private func openMainApp() {
         guard let url = URL(string: "cybokrondockgroups://groups") else { return }
         NSWorkspace.shared.open(url)
+    }
+
+    /// Group Settings (the popup's gear, the Dock menu): the main app's group window on this group,
+    /// through its link — which also launches the main app when it isn't running.
+    private func openGroupSettings() {
+        NSWorkspace.shared.open(URLCommand.groupSettingsURL(for: groupID))
     }
 
     private func presentDamagedBundleAlert(_ error: Error) {

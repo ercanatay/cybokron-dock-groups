@@ -95,6 +95,49 @@ struct URLCommandTests {
         #expect(command("cybokrondockgroups://groups") == .manageGroups)
     }
 
+    @Test func parsesGroupSettingsCommands() {
+        #expect(command("cybokrondockgroups://settings/group/work") == .showGroupSettings("work"))
+        #expect(command("cybokrondockgroups://settings/group/Deep%20Work") == .showGroupSettings("Deep Work"))
+        #expect(command("CybokronDockGroups://SETTINGS/Group/Work/") == .showGroupSettings("Work"))
+        #expect(command("cybokrondockgroups:settings/group/work") == .showGroupSettings("work"))
+        #expect(command("cybokrondockgroups://settings/group/Dev%2FOps") == .showGroupSettings("Dev/Ops"))
+        #expect(command("cybokrondockgroups://settings/group/Dev/Ops") == .showGroupSettings("Dev/Ops"))
+        // Not a quit: no question, and not limited like opening or hiding a group's apps.
+        #expect(URLCommand.showGroupSettings("work").groupActionKey == nil)
+    }
+
+    /// The link a standalone group's own app opens for Group Settings (its popup's gear and its
+    /// Dock menu) names the group by identifier, which finds it whatever its name.
+    @Test func theGroupSettingsLinkFindsItsGroup() throws {
+        let work = DockGroup(name: "Work")
+        let play = DockGroup(name: "🎮")
+        let url = URLCommand.groupSettingsURL(for: play.id)
+        #expect(url.absoluteString == "cybokrondockgroups://settings/group/\(play.id.uuidString)")
+        let parsed = try #require(URLCommand(url: url))
+        #expect(parsed == .showGroupSettings(play.id.uuidString))
+        guard case .showGroupSettings(let token) = parsed else { return }
+        #expect(GroupSettingsDestination(request: token, current: work.id, in: [work, play]) == .group(play.id))
+    }
+
+    /// The gear and every "Group Settings…" menu item run the same action: in the popup the
+    /// popup's `showGroupSettings`, in a standalone group's app (popup and Dock menu) the link above.
+    @Test func groupSettingsMenuItemsRunTheGearsAction() throws {
+        func source(_ components: String...) throws -> String {
+            try String(contentsOf: components.reduce(LocalizationTests.root.appending(path: "Sources")) { $0.appending(path: $1) }, encoding: .utf8)
+        }
+        let popup = try source("CybokronDockGroups", "Popup", "PopupContentView.swift")
+        #expect(popup.components(separatedBy: "Button(L10n.GroupSettings.menuItem, action: showGroupSettings)").count - 1 == 2,
+                "the header's and the grid's context menus")
+        #expect(popup.contains("GroupSettingsButton(palette: palette, groupName: content.group.name, action: showGroupSettings)"))
+        let agent = try source("CybokronDockGroups", "Agent", "AgentAppDelegate.swift")
+        #expect(agent.contains("showGroupSettings: { [weak self] _ in self?.openGroupSettings() }"))
+        #expect(agent.contains("#selector(groupSettingsFromDockMenu(_:))"))
+        #expect(agent.contains("NSWorkspace.shared.open(URLCommand.groupSettingsURL(for: groupID))"))
+        let app = try source("CybokronDockGroups", "App", "AppDelegate.swift")
+        #expect(app.contains("case .showGroupSettings(let name):"))
+        #expect(app.contains("mainWindowController.showSettings(ofGroup: group.id.uuidString)"))
+    }
+
     @Test(arguments: [
         "https://open/work",
         "dockgroups://showPanel",
@@ -109,6 +152,10 @@ struct URLCommandTests {
         "cybokrondockgroups://shortcut/two",
         "cybokrondockgroups://close/work",
         "cybokrondockgroups://delete/work",
+        "cybokrondockgroups://settings/work",
+        "cybokrondockgroups://settings/group",
+        "cybokrondockgroups://settings/group/",
+        "cybokrondockgroups://settings/groups/work",
     ])
     func rejectsOtherSchemesAndMalformedCommands(url: String) {
         #expect(command(url) == nil)
@@ -121,6 +168,43 @@ struct URLCommandTests {
         #expect(URLCommand.quitGroup("work", .graceful).throttleKey != URLCommand.quitGroup("work", .force).throttleKey)
         #expect(URLCommand.hideGroup("Deep Work").throttleKey == URLCommand.hideGroup("deep-work").throttleKey)
         #expect(URLCommand.hideGroup("work").throttleKey != URLCommand.quitGroup("work", .graceful).throttleKey)
+        #expect(URLCommand.showGroupSettings("Deep Work").throttleKey == URLCommand.showGroupSettings("deep-work").throttleKey)
+        #expect(URLCommand.showGroupSettings("work").throttleKey != URLCommand.showGroup("work").throttleKey)
+        #expect(URLCommand.showGroupSettings("work").throttleKey != URLCommand.openSettings.throttleKey)
+    }
+}
+
+/// `GroupSettingsDestination`: the group window opens on the requested group's settings, or as it
+/// was when no group matches.
+@Suite("Group settings destination")
+struct GroupSettingsDestinationTests {
+    private let work = DockGroup(name: "Work")
+    private let deep = DockGroup(name: "Çalışma Alanı")
+    private let games = DockGroup(name: "🎮")
+    private var groups: [DockGroup] { [work, deep, games] }
+
+    @Test func findsTheGroupByIdentifierOrName() {
+        #expect(GroupSettingsDestination(request: deep.id.uuidString, current: work.id, in: groups) == .group(deep.id))
+        #expect(GroupSettingsDestination(request: deep.id.uuidString.lowercased(), current: nil, in: groups) == .group(deep.id))
+        #expect(GroupSettingsDestination(request: "calisma-alani", current: work.id, in: groups) == .group(deep.id))
+        #expect(GroupSettingsDestination(request: "🎮", current: work.id, in: groups) == .group(games.id))
+        #expect(GroupSettingsDestination(request: "work", current: games.id, in: groups).selection == work.id)
+    }
+
+    @Test func anUnknownGroupKeepsTheGroupShown() {
+        let destination = GroupSettingsDestination(request: UUID().uuidString, current: deep.id, in: groups)
+        #expect(destination == .unmatched(keeping: deep.id))
+        #expect(destination.selection == deep.id)
+        #expect(GroupSettingsDestination(request: "music", current: games.id, in: groups) == .unmatched(keeping: games.id))
+        #expect(GroupSettingsDestination(request: "  ", current: games.id, in: groups) == .unmatched(keeping: games.id))
+    }
+
+    @Test func anUnknownGroupWithoutAShownGroupFallsBackToTheFirst() {
+        // Nothing shown yet, or the shown group was deleted meanwhile.
+        #expect(GroupSettingsDestination(request: "music", current: nil, in: groups) == .unmatched(keeping: work.id))
+        #expect(GroupSettingsDestination(request: "music", current: UUID(), in: groups) == .unmatched(keeping: work.id))
+        #expect(GroupSettingsDestination(request: "music", current: nil, in: []) == .unmatched(keeping: nil))
+        #expect(GroupSettingsDestination(request: "music", current: nil, in: []).selection == nil)
     }
 }
 
@@ -220,14 +304,16 @@ struct URLCommandGateTests {
             ("cybokrondockgroups://launch/work", 0.5),
             ("cybokrondockgroups://quit/mail", 1),
             ("cybokrondockgroups://shortcut/1", 1),
+            ("cybokrondockgroups://settings/group/work", 1),
+            ("cybokrondockgroups://settings/group/play", 1.5),
         ])
-        #expect(results == [.accepted, .accepted, .accepted, .accepted, .accepted, .accepted])
+        #expect(results == [.accepted, .accepted, .accepted, .accepted, .accepted, .accepted, .accepted, .accepted])
     }
 
     @Test func onlyLaunchAndHideShareTheGroupKey() {
         #expect(URLCommand.launchGroup("a").groupActionKey == URLCommand.hideGroup("b").groupActionKey)
         #expect(URLCommand.launchGroup("a").groupActionKey != nil)
-        for command in [URLCommand.showGroup("a"), .quitGroup("a", .graceful), .quitGroup("a", .force), .showShortcut(1), .closePopup, .openSettings, .manageGroups] {
+        for command in [URLCommand.showGroup("a"), .quitGroup("a", .graceful), .quitGroup("a", .force), .showShortcut(1), .closePopup, .openSettings, .showGroupSettings("a"), .manageGroups] {
             #expect(command.groupActionKey == nil, "\(command)")
         }
     }

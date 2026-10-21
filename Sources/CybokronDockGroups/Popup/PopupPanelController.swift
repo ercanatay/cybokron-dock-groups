@@ -27,6 +27,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let closeAll: (DockGroup, QuitMode) -> Void
         let hideAll: (DockGroup) -> Void
         let manageGroups: () -> Void
+        /// Opens the group window on the group's settings (the popup's gear and the group's
+        /// "Group Settings…" menu item); never asked for the Most Used list.
+        let showGroupSettings: (DockGroup) -> Void
         /// Asks for a website to add to the group; `nil` where groups can't be edited.
         var addWebsite: ((DockGroup) -> Void)?
     }
@@ -324,6 +327,14 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 self?.close(reason: .appAction)
                 self?.actions.manageGroups()
             },
+            // The Most Used list has no group settings: it's set up in Settings → Most Used.
+            showGroupSettings: id == MostUsedGroup.id
+                ? nil
+                : { [weak self] in
+                    guard let self, let group = self.group(withID: id) else { return }
+                    self.close(reason: .appAction)
+                    self.actions.showGroupSettings(group)
+                },
             addWebsite: allowsEditing && id != MostUsedGroup.id && actions.addWebsite != nil
                 ? { [weak self] in
                     guard let self, let group = self.group(withID: id) else { return }

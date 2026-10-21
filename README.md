@@ -38,6 +38,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
   name.
+- **Group Settings**: the gear in the popup's bottom-right corner — or **Group Settings…** when you
+  right-click the group's tile and name at the top of the popup, or an empty part of its grid —
+  opens the group window on that group's settings (name, apps, Dock tile, standalone Dock icon,
+  popup), bringing the window to the front if it's already open.
 - **Keyboard in the popup**: the arrow keys select an app and Return opens it; typing filters the
   apps by name (case and accents don't matter, `cal` finds “Çalışma”), Delete or Escape clears the
   filter; Tab / ⇧Tab switch to the next / previous group (and Most Used), and Escape closes the popup.
@@ -66,6 +70,7 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   | `cybokrondockgroups://quit/<group>` | Close All once you confirm it; add `?mode=force` to force quit |
   | `cybokrondockgroups://hide/<group>` | Hide All |
   | `cybokrondockgroups://shortcut/<1…9>` | Shows the popup of the group with that shortcut |
+  | `cybokrondockgroups://settings/group/<group>` | Opens the group window on the group's settings (as it was when no group matches) |
   | `cybokrondockgroups://close` · `settings` · `groups` | Closes the popup · opens Settings · the group window |
 
   `<group>` is the group's name — case, accents, spaces and punctuation don't matter
@@ -100,7 +105,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   it opens all of the group's apps right away — even while Cybokron Dock Groups isn't running. The
   popup opens apps, Open All, Hide All and Close All as usual; apps are reordered and removed in the main app.
   Right-clicking (or Control-clicking) the icon lists the group's apps — checked while running — with
-  Open All, Hide All and Close All. macOS asks only running apps for such a menu, so it appears once
+  Open All, Hide All, Close All and Group Settings… (the main app's group window, opened on the
+  group, as the popup's gear does). macOS asks only running apps for such a menu, so it appears once
   the icon was clicked, and while *Menu on group Dock icons* (Settings → Popup, on by default) is on
   the group's app shows as running in the Dock and in ⌘-Tab.
   - The group's app lives in `~/Library/Application Support/Cybokron/DockGroups/Agents/<name>.app`

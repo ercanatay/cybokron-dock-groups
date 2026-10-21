@@ -90,6 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             closeAll: { [weak self] group, mode in _ = self?.closeAll(group, mode: mode, from: .userAction) },
             hideAll: { [weak self] group in self?.hideAll(group) },
             manageGroups: { [weak self] in self?.mainWindowController.show() },
+            showGroupSettings: { [weak self] group in self?.mainWindowController.showSettings(ofGroup: group.id.uuidString) },
             addWebsite: { [weak self] group in self?.addWebsiteWindowController.show(for: group) }
         )
     )
@@ -364,6 +365,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             popupController.close()
         case .openSettings:
             showSettingsWindow(nil)
+        case .showGroupSettings(let name):
+            popupController.close()
+            if case .unmatched = mainWindowController.showSettings(ofGroup: name) {
+                // The window still opens, on the group it showed before.
+                urlLogger.error("No group matches “\(name, privacy: .public)”: showing the group window as it was")
+                NSSound.beep()
+            }
         case .manageGroups:
             popupController.close()
             mainWindowController.show()

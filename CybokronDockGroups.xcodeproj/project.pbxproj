@@ -170,6 +170,7 @@
 		F073AD59C9BC468609E1ED43 /* AddWebsite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7828FC21B4581B2E3AB18D /* AddWebsite.swift */; };
 		F1DC6FFAC0FE5516320AEBF4 /* GroupQuitRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B979CA937B03478C5B973 /* GroupQuitRequests.swift */; };
 		F4C636BEB31A6A5F9EC52842 /* SocialProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BA70D1DF5196334CD13480 /* SocialProfileTests.swift */; };
+		F62303ED4572458F30CEF8BE /* GroupSettingsDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00841BD537DA29382FE4C19A /* GroupSettingsDestination.swift */; };
 		F7435C36FF7B525F3315610C /* ApplicationWorkspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2503E00EE4DC8ED74902660C /* ApplicationWorkspace.swift */; };
 		F793C114112D9DBB1FB4C2B1 /* PopupKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5143EAF3CF5653915706F18 /* PopupKeyboard.swift */; };
 		F81BF4C25E606DF2CEDE5486 /* DockTileList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBD76B37DC84AB1971C113A /* DockTileList.swift */; };
@@ -199,6 +200,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00841BD537DA29382FE4C19A /* GroupSettingsDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSettingsDestination.swift; sourceTree = "<group>"; };
 		00AC80C0B6544FBB31C04F9F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0180A680ACCD7CE4DEF3795A /* SupportedLanguagesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedLanguagesTests.swift; sourceTree = "<group>"; };
 		03457C14F1518234C0C10C1F /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
@@ -495,6 +497,7 @@
 				3DFE5C11001817DDE901A930 /* GroupInvocations.swift */,
 				58073CD1F0B940C9E3330224 /* GroupLookup.swift */,
 				E68B979CA937B03478C5B973 /* GroupQuitRequests.swift */,
+				00841BD537DA29382FE4C19A /* GroupSettingsDestination.swift */,
 				889366A1C43E902E8112A021 /* InstanceHandoff.swift */,
 				CBC3759E0527D0F36B02E970 /* URLCommand.swift */,
 			);
@@ -1101,6 +1104,7 @@
 				66C5E61B679C972EF395E102 /* GroupLookup.swift in Sources */,
 				AFE84CF796B46E1F209C9BAE /* GroupPersistence.swift in Sources */,
 				F1DC6FFAC0FE5516320AEBF4 /* GroupQuitRequests.swift in Sources */,
+				F62303ED4572458F30CEF8BE /* GroupSettingsDestination.swift in Sources */,
 				6F7BC3D5439C12E975C0AEED /* GroupShortcuts.swift in Sources */,
 				0DD8F382AE659A2118A64AA8 /* GroupStore.swift in Sources */,
 				AA94C2E6C16D3FB645AC0367 /* GroupTerminator.swift in Sources */,

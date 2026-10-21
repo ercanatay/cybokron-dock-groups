@@ -11,9 +11,13 @@ final class MainWindowController: NSWindowController {
     /// Called each time the window is about to show.
     var willShow: (() -> Void)?
 
+    private let store: GroupStore
+    private let selection = GroupWindowSelection()
+
     init(store: GroupStore, tiles: TileImageCache, standalone: StandaloneController, actions: MainWindowView.Actions) {
+        self.store = store
         let hostingController = NSHostingController(
-            rootView: MainWindowView(store: store, tiles: tiles, standalone: standalone, actions: actions)
+            rootView: MainWindowView(store: store, tiles: tiles, standalone: standalone, actions: actions, selection: selection)
         )
         hostingController.sizingOptions = [.minSize]
 
@@ -43,5 +47,16 @@ final class MainWindowController: NSWindowController {
         }
         showWindow(nil)
         window?.makeKeyAndOrderFront(nil)
+    }
+
+    /// Group Settings: shows the window on the settings of the group `token` names (an identifier
+    /// or a name), brought to the front if it's open already. When no group matches it opens on
+    /// the group it showed before (`GroupSettingsDestination`).
+    @discardableResult
+    func showSettings(ofGroup token: String) -> GroupSettingsDestination {
+        let destination = GroupSettingsDestination(request: token, current: selection.groupID, in: store.groups)
+        selection.groupID = destination.selection
+        show()
+        return destination
     }
 }

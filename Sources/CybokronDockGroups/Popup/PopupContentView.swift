@@ -59,6 +59,8 @@ struct PopupActions {
     /// Hides the running apps; apps that aren't running are left alone.
     let hideAll: () -> Void
     let manageGroups: () -> Void
+    /// Opens the group window on this group's settings; `nil` for the Most Used list.
+    let showGroupSettings: (() -> Void)?
     /// Asks for a website to add to the group; `nil` where the group can't be edited.
     let addWebsite: (() -> Void)?
     /// Shows the app in Finder.
@@ -92,7 +94,9 @@ private struct CellDrag: Equatable {
 }
 
 /// The popup: the group's tile and name with Open All / Hide All / Close All, the app grid, and a
-/// hint line.
+/// hint line with a gear in its corner. The gear — and "Group Settings…" in the context menu of the
+/// group's tile and name, and of the grid's empty part — opens the group window on the group's
+/// settings (not for the Most Used list).
 ///
 /// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
 /// the group, as with the Dock; their context menu moves them to another group. In Free Layout a
@@ -148,23 +152,28 @@ struct PopupContentView: View {
         let runningCount = runningApps.runningCount(in: group)
         let quitMode = modifierKeys.quitMode
         return HStack(spacing: 10) {
-            Image(nsImage: content.tileImage)
-                .resizable()
-                .interpolation(.high)
-                .frame(width: PopupMetrics.headerTileSize, height: PopupMetrics.headerTileSize)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(group.name)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(palette.primaryText)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                Text(summary(runningCount: runningCount))
-                    .accessibilityIdentifier("popup-summary")
-                    .font(.system(size: 11))
-                    .foregroundStyle(palette.secondaryText)
-                    .lineLimit(1)
+            // The group's tile and name; right-clicking them offers "Group Settings…".
+            HStack(spacing: 10) {
+                Image(nsImage: content.tileImage)
+                    .resizable()
+                    .interpolation(.high)
+                    .frame(width: PopupMetrics.headerTileSize, height: PopupMetrics.headerTileSize)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(group.name)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(palette.primaryText)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Text(summary(runningCount: runningCount))
+                        .accessibilityIdentifier("popup-summary")
+                        .font(.system(size: 11))
+                        .foregroundStyle(palette.secondaryText)
+                        .lineLimit(1)
+                }
             }
+            .contentShape(Rectangle())
+            .modifier(GroupSettingsContextMenu(showGroupSettings: actions.showGroupSettings))
             Spacer(minLength: 8)
             Button(L10n.Common.openAll, action: actions.openAll)
                 .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: true))
@@ -240,7 +249,7 @@ struct PopupContentView: View {
                     )
                     .coordinateSpace(name: Self.gridSpace)
                     .frame(maxWidth: .infinity)
-                    .background(addWebsiteContextMenuArea)
+                    .background(gridContextMenuArea)
                 }
                 .scrollDisabled(!content.scrolls)
                 .scrollIndicators(content.scrolls ? .automatic : .hidden)
@@ -335,14 +344,24 @@ struct PopupContentView: View {
         )
     }
 
-    /// The empty part of the grid: right-clicking it offers "Add Website…".
+    /// The empty part of the grid: right-clicking it offers "Add Website…" in editable groups and
+    /// "Group Settings…".
     @ViewBuilder
-    private var addWebsiteContextMenuArea: some View {
-        if content.isEditable, let addWebsite = actions.addWebsite {
+    private var gridContextMenuArea: some View {
+        let addWebsite = content.isEditable ? actions.addWebsite : nil
+        if addWebsite != nil || actions.showGroupSettings != nil {
             Color.clear
                 .contentShape(Rectangle())
                 .contextMenu {
-                    Button(L10n.Common.addWebsite, action: addWebsite)
+                    if let addWebsite {
+                        Button(L10n.Common.addWebsite, action: addWebsite)
+                    }
+                    if let showGroupSettings = actions.showGroupSettings {
+                        if addWebsite != nil {
+                            Divider()
+                        }
+                        Button(L10n.GroupSettings.menuItem, action: showGroupSettings)
+                    }
                 }
         }
     }
@@ -633,6 +652,10 @@ struct PopupContentView: View {
                 .help(L10n.Popup.footerSortAZHelp)
                 .accessibilityLabel(L10n.Popup.footerSortAZAccessibility)
             }
+            // Bottom-right corner: the group's settings in the group window.
+            if let showGroupSettings = actions.showGroupSettings {
+                GroupSettingsButton(palette: palette, groupName: content.group.name, action: showGroupSettings)
+            }
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.footerHeight)
@@ -831,6 +854,61 @@ private struct FooterButtonStyle: ButtonStyle {
                     .fill(tint.opacity(configuration.isPressed ? 0.22 : 0.1))
             )
             .contentShape(Capsule(style: .continuous))
+    }
+}
+
+/// The gear in the popup footer's corner: faint until the pointer is over it; opens the group
+/// window on the group's settings.
+private struct GroupSettingsButton: View {
+    let palette: PanelPalette
+    let groupName: String
+    let action: () -> Void
+
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "gearshape")
+                .font(.system(size: 12, weight: .medium))
+                .frame(width: 20, height: 20)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(GearButtonStyle(tint: isHovered ? PanelPalette.teal : palette.secondaryText))
+        .opacity(isHovered ? 1 : 0.6)
+        .animation(.easeOut(duration: 0.12), value: isHovered)
+        .onHover { isHovered = $0 }
+        .help(L10n.GroupSettings.title)
+        .accessibilityLabel(L10n.GroupSettings.title)
+        .accessibilityHint(L10n.GroupSettings.accessibilityHint(groupName))
+    }
+}
+
+/// The gear's look: its tint, with a faint circle while pressed.
+private struct GearButtonStyle: ButtonStyle {
+    let tint: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(tint)
+            .background(
+                Circle().fill(tint.opacity(configuration.isPressed ? 0.22 : 0))
+            )
+    }
+}
+
+/// "Group Settings…" as the context menu of the popup header's group tile and name; nothing for
+/// the Most Used list.
+private struct GroupSettingsContextMenu: ViewModifier {
+    let showGroupSettings: (() -> Void)?
+
+    func body(content: Content) -> some View {
+        if let showGroupSettings {
+            content.contextMenu {
+                Button(L10n.GroupSettings.menuItem, action: showGroupSettings)
+            }
+        } else {
+            content
+        }
     }
 }
 

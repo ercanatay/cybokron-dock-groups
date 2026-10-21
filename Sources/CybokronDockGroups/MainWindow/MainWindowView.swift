@@ -1,6 +1,13 @@
 import DockGroupsCore
 import SwiftUI
 
+/// The group the group window shows, shared with `MainWindowController` so Group Settings
+/// requests (the popup's gear, menus, links) can open the window on a given group.
+@MainActor
+final class GroupWindowSelection: ObservableObject {
+    @Published var groupID: DockGroup.ID?
+}
+
 /// Group list on the left, the selected group's settings on the right.
 struct MainWindowView: View {
     struct Actions {
@@ -14,8 +21,7 @@ struct MainWindowView: View {
     let tiles: TileImageCache
     let standalone: StandaloneController
     let actions: Actions
-
-    @State private var selection: DockGroup.ID?
+    @ObservedObject var selection: GroupWindowSelection
 
     @State private var isRenaming = false
     @State private var renameTargetID: DockGroup.ID?
@@ -28,7 +34,7 @@ struct MainWindowView: View {
         NavigationSplitView {
             GroupSidebarView(
                 store: store,
-                selection: $selection,
+                selection: $selection.groupID,
                 onAdd: addGroup,
                 onRename: beginRename,
                 onDelete: confirmDeletion,
@@ -37,7 +43,7 @@ struct MainWindowView: View {
             )
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
         } detail: {
-            if let id = selection, let group = store.group(withID: id) {
+            if let id = selection.groupID, let group = store.group(withID: id) {
                 GroupDetailView(store: store, standalone: standalone, group: group, tiles: tiles, actions: actions)
                     .id(group.id)
             } else {
@@ -87,14 +93,14 @@ struct MainWindowView: View {
             Text(issue.message)
         }
         .onAppear {
-            if selection == nil {
-                selection = store.groups.first?.id
+            if selection.groupID == nil {
+                selection.groupID = store.groups.first?.id
             }
         }
     }
 
     private func addGroup() {
-        selection = store.addGroup().id
+        selection.groupID = store.addGroup().id
     }
 
     private func beginRename(_ group: DockGroup) {
@@ -115,8 +121,8 @@ struct MainWindowView: View {
     }
 
     private func delete(_ group: DockGroup) {
-        if selection == group.id {
-            selection = nil
+        if selection.groupID == group.id {
+            selection.groupID = nil
         }
         store.deleteGroup(group.id)
         deletionCandidate = nil

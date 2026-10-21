@@ -12,6 +12,7 @@ import Foundation
 /// | `cybokrondockgroups://shortcut/<1…9>` | Show the popup of the group with that shortcut |
 /// | `cybokrondockgroups://close` | Close the popup |
 /// | `cybokrondockgroups://settings` | Open Settings |
+/// | `cybokrondockgroups://settings/group/<group>` | Open the group window on the group's settings |
 /// | `cybokrondockgroups://groups` | Open the group window |
 public enum URLCommand: Hashable, Sendable {
     case showGroup(String)
@@ -21,9 +22,18 @@ public enum URLCommand: Hashable, Sendable {
     case showShortcut(Int)
     case closePopup
     case openSettings
+    /// The group's settings — name, apps, Dock tile, popup — in the group window
+    /// (`GroupSettingsDestination` picks the group to show).
+    case showGroupSettings(String)
     case manageGroups
 
     public static let scheme = "cybokrondockgroups"
+
+    /// The link to `id`'s group settings, as a standalone group's own app opens it: the main app
+    /// edits the groups (and is launched by the link when it isn't running).
+    public static func groupSettingsURL(for id: UUID) -> URL {
+        URL(string: "\(scheme)://settings/group/\(id.uuidString)")!
+    }
 
     /// Parses `url`; `nil` for other schemes, unknown commands and missing or extra arguments.
     public init?(url: URL) {
@@ -60,8 +70,14 @@ public enum URLCommand: Hashable, Sendable {
             guard argument.isEmpty else { return nil }
             self = .closePopup
         case "settings":
-            guard argument.isEmpty else { return nil }
-            self = .openSettings
+            if argument.isEmpty {
+                self = .openSettings
+                return
+            }
+            // "settings/group/<group>"; the group's name may itself contain a slash ("Dev%2FOps").
+            let group = segments.dropFirst(2).joined(separator: "/")
+            guard segments.count > 2, segments[1].lowercased() == "group", !group.isEmpty else { return nil }
+            self = .showGroupSettings(group)
         case "groups":
             guard argument.isEmpty else { return nil }
             self = .manageGroups
@@ -91,6 +107,7 @@ public enum URLCommand: Hashable, Sendable {
         case .showShortcut(let digit): return "shortcut/\(digit)"
         case .closePopup: return "close"
         case .openSettings: return "settings"
+        case .showGroupSettings(let group): return "settings/group/\(GroupLookup.normalizedToken(group))"
         case .manageGroups: return "groups"
         }
     }
