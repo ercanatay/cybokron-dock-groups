@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "پنهان کردن برنامه‌های در حال اجرای این فهرست؛ برنامه‌های بسته بسته می‌مانند.";
 "popup.closeAll.help.group" = "خروج از برنامه‌های در حال اجرای این گروه. ⌘-کلیک برای خروج اجباری بدون ذخیره.";
 "popup.closeAll.help.mostUsed" = "خروج از برنامه‌های در حال اجرای این فهرست. ⌘-کلیک برای خروج اجباری بدون ذخیره.";
-"popup.summary.websites.one" = "۱ وب‌سایت";
-"popup.summary.websites.other" = "%ld وب‌سایت";
 "popup.summary.running" = "%ld در حال اجرا";
 "popup.summary.byLaunches" = "بر اساس دفعات اجرا";
 "popup.filter.noMatch" = "هیچ برنامه‌ای با «%@» مطابقت ندارد";

@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Скрий работещите приложения в този списък; приложенията, които не работят, остават затворени.";
 "popup.closeAll.help.group" = "Затвори работещите приложения на тази група. ⌘-клик за принудително затваряне без запазване.";
 "popup.closeAll.help.mostUsed" = "Затвори работещите приложения в този списък. ⌘-клик за принудително затваряне без запазване.";
-"popup.summary.websites.one" = "1 уебсайт";
-"popup.summary.websites.other" = "%ld уебсайта";
 "popup.summary.running" = "%ld работещи";
 "popup.summary.byLaunches" = "по стартирания";
 "popup.filter.noMatch" = "Няма приложения, отговарящи на „%@“";

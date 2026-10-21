@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Verberg de actieve apps van deze lijst; apps die niet actief zijn, blijven gesloten.";
 "popup.closeAll.help.group" = "Stop de actieve apps van deze groep. ⌘-klik om te forceren zonder op te slaan.";
 "popup.closeAll.help.mostUsed" = "Stop de actieve apps van deze lijst. ⌘-klik om te forceren zonder op te slaan.";
-"popup.summary.websites.one" = "1 website";
-"popup.summary.websites.other" = "%ld websites";
 "popup.summary.running" = "%ld actief";
 "popup.summary.byLaunches" = "op starts";
 "popup.filter.noMatch" = "Geen apps komen overeen met „%@“";

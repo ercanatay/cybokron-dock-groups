@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Skrýt spuštěné aplikace z tohoto seznamu; aplikace, které neběží, zůstanou zavřené.";
 "popup.closeAll.help.group" = "Ukončit spuštěné aplikace této skupiny. ⌘-klik vynutí ukončení bez uložení.";
 "popup.closeAll.help.mostUsed" = "Ukončit spuštěné aplikace z tohoto seznamu. ⌘-klik vynutí ukončení bez uložení.";
-"popup.summary.websites.one" = "1 web";
-"popup.summary.websites.other" = "%ld webů";
 "popup.summary.running" = "spuštěno: %ld";
 "popup.summary.byLaunches" = "podle spuštění";
 "popup.filter.noMatch" = "Žádná aplikace neodpovídá „%@“";

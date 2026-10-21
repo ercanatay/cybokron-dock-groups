@@ -10,19 +10,20 @@ struct GroupEntity: AppEntity {
     let id: UUID
     let name: String
     let emoji: String
-    let appCount: Int
+    /// Apps and websites alike.
+    let itemCount: Int
 
     init(group: DockGroup) {
         id = group.id
         name = group.name
         emoji = group.emoji
-        appCount = group.apps.count
+        itemCount = group.apps.count
     }
 
     var displayRepresentation: DisplayRepresentation {
         DisplayRepresentation(
             title: "\(name)",
-            subtitle: "\(emoji)  \(appCount == 1 ? "1 app" : "\(appCount) apps")"
+            subtitle: "\(emoji)  \(itemCount == 1 ? "1 item" : "\(itemCount) items")"
         )
     }
 }

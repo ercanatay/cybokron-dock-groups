@@ -105,8 +105,6 @@ every language.
 | `popup.hideAll.help.mostUsed` | Hide this list's running apps; apps that aren't running stay closed. |
 | `popup.closeAll.help.group` | Quit this group's running apps. ⌘-click to force quit without saving. |
 | `popup.closeAll.help.mostUsed` | Quit this list's running apps. ⌘-click to force quit without saving. |
-| `popup.summary.websites.one` | 1 website |
-| `popup.summary.websites.other` | %ld websites |
 | `popup.summary.running` | %ld running |
 | `popup.summary.byLaunches` | by launches |
 | `popup.filter.noMatch` | No apps match “%@” |
@@ -680,3 +678,12 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `group.settings.title` | Group Settings |
 | `group.settings.menu` | Group Settings… |
 | `group.settings.accessibilityHint` | Shows the name, apps, Dock tile and popup settings of “%@”. |
+
+## What a group holds, apps and websites alike: the popup's summary line (“8 items · 3 running”) and the group window's group list (English only for now; `awaitingTranslation`: `common.itemCount.`)
+
+`common.appCount` stays for lists of apps only, such as Most Used.
+
+| Key | English |
+| --- | --- |
+| `common.itemCount.one` | 1 item |
+| `common.itemCount.other` | %ld items |

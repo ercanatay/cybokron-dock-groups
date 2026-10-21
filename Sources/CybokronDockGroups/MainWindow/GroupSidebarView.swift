@@ -117,7 +117,7 @@ private struct GroupSidebarRow: View {
                 .font(.caption)
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
-                .help(L10n.Common.appCount(group.apps.count))
+                .help(L10n.Common.itemCount(group.apps.count))
         }
         .padding(.vertical, 2)
         .overlay {

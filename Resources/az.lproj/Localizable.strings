@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Bu siyahıdakı işləyən tətbiqləri gizlədir; işləməyən tətbiqlər bağlı qalır.";
 "popup.closeAll.help.group" = "Bu qrupdakı işləyən tətbiqlərdən çıxır. Saxlamadan məcburi çıxmaq üçün ⌘-klik edin.";
 "popup.closeAll.help.mostUsed" = "Bu siyahıdakı işləyən tətbiqlərdən çıxır. Saxlamadan məcburi çıxmaq üçün ⌘-klik edin.";
-"popup.summary.websites.one" = "1 veb sayt";
-"popup.summary.websites.other" = "%ld veb sayt";
 "popup.summary.running" = "%ld işləyir";
 "popup.summary.byLaunches" = "işə salınmaya görə";
 "popup.filter.noMatch" = "“%@” ilə uyğun tətbiq yoxdur";

@@ -83,8 +83,6 @@
 "popup.hideAll.help.mostUsed" = "Скрыть запущенные приложения из этого списка; незапущенные остаются закрытыми.";
 "popup.closeAll.help.group" = "Завершить запущенные приложения этой группы. ⌘-щелчок — принудительно завершить без сохранения.";
 "popup.closeAll.help.mostUsed" = "Завершить запущенные приложения из этого списка. ⌘-щелчок — принудительно завершить без сохранения.";
-"popup.summary.websites.one" = "1 сайт";
-"popup.summary.websites.other" = "Сайтов: %ld";
 "popup.summary.running" = "запущено: %ld";
 "popup.summary.byLaunches" = "по запускам";
 "popup.filter.noMatch" = "Нет приложений, подходящих под «%@»";

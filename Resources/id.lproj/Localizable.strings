@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Sembunyikan app daftar ini yang sedang berjalan; app yang tidak berjalan tetap tertutup.";
 "popup.closeAll.help.group" = "Keluar dari app grup ini yang sedang berjalan. ⌘-klik untuk paksa berhenti tanpa menyimpan.";
 "popup.closeAll.help.mostUsed" = "Keluar dari app daftar ini yang sedang berjalan. ⌘-klik untuk paksa berhenti tanpa menyimpan.";
-"popup.summary.websites.one" = "1 situs web";
-"popup.summary.websites.other" = "%ld situs web";
 "popup.summary.running" = "%ld berjalan";
 "popup.summary.byLaunches" = "berdasarkan peluncuran";
 "popup.filter.noMatch" = "Tidak ada app yang cocok dengan “%@”";

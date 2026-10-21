@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Ukryj uruchomione aplikacje z tej listy; aplikacje, które nie działają, pozostają zamknięte.";
 "popup.closeAll.help.group" = "Zakończ uruchomione aplikacje tej grupy. ⌘-kliknięcie wymusza zakończenie bez zapisywania.";
 "popup.closeAll.help.mostUsed" = "Zakończ uruchomione aplikacje z tej listy. ⌘-kliknięcie wymusza zakończenie bez zapisywania.";
-"popup.summary.websites.one" = "1 witryna";
-"popup.summary.websites.other" = "%ld witryn";
 "popup.summary.running" = "uruchomione: %ld";
 "popup.summary.byLaunches" = "według uruchomień";
 "popup.filter.noMatch" = "Żadna aplikacja nie pasuje do „%@”";

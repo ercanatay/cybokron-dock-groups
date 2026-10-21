@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "このリストで実行中のアプリを隠します。起動していないアプリは閉じたままです。";
 "popup.closeAll.help.group" = "このグループで実行中のアプリを終了します。⌘ を押しながらクリックすると、保存せずに強制終了します。";
 "popup.closeAll.help.mostUsed" = "このリストで実行中のアプリを終了します。⌘ を押しながらクリックすると、保存せずに強制終了します。";
-"popup.summary.websites.one" = "ウェブサイト 1 件";
-"popup.summary.websites.other" = "ウェブサイト %ld 件";
 "popup.summary.running" = "実行中 %ld 件";
 "popup.summary.byLaunches" = "起動回数順";
 "popup.filter.noMatch" = "“%@” に一致するアプリはありません";

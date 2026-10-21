@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "इस सूची के चल रहे ऐप्स छिपाएँ; जो ऐप्स नहीं चल रहे, वे बंद ही रहेंगे।";
 "popup.closeAll.help.group" = "इस समूह के चल रहे ऐप्स बंद करें। बिना सहेजे ज़बरन बंद करने के लिए ⌘-क्लिक करें।";
 "popup.closeAll.help.mostUsed" = "इस सूची के चल रहे ऐप्स बंद करें। बिना सहेजे ज़बरन बंद करने के लिए ⌘-क्लिक करें।";
-"popup.summary.websites.one" = "1 वेबसाइट";
-"popup.summary.websites.other" = "%ld वेबसाइटें";
 "popup.summary.running" = "%ld चल रहे";
 "popup.summary.byLaunches" = "लॉन्च के अनुसार";
 "popup.filter.noMatch" = "कोई ऐप “%@” से मेल नहीं खाता";

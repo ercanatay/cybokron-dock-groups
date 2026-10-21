@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Ascunde aplicațiile care rulează din această listă; cele care nu rulează rămân închise.";
 "popup.closeAll.help.group" = "Închide aplicațiile care rulează din acest grup. ⌘-clic pentru a forța închiderea fără salvare.";
 "popup.closeAll.help.mostUsed" = "Închide aplicațiile care rulează din această listă. ⌘-clic pentru a forța închiderea fără salvare.";
-"popup.summary.websites.one" = "1 site web";
-"popup.summary.websites.other" = "%ld site-uri web";
 "popup.summary.running" = "%ld în execuție";
 "popup.summary.byLaunches" = "după lansări";
 "popup.filter.noMatch" = "Nicio aplicație nu se potrivește cu „%@”";

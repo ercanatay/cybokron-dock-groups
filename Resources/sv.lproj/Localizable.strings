@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Dölj listans appar som kör; appar som inte kör förblir stängda.";
 "popup.closeAll.help.group" = "Avsluta gruppens appar som kör. ⌘-klicka för att tvinga avslut utan att spara.";
 "popup.closeAll.help.mostUsed" = "Avsluta listans appar som kör. ⌘-klicka för att tvinga avslut utan att spara.";
-"popup.summary.websites.one" = "1 webbplats";
-"popup.summary.websites.other" = "%ld webbplatser";
 "popup.summary.running" = "%ld körs";
 "popup.summary.byLaunches" = "efter starter";
 "popup.filter.noMatch" = "Inga appar matchar „%@“";

@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "이 목록에서 실행 중인 앱을 숨깁니다. 실행 중이 아닌 앱은 닫힌 상태로 남습니다.";
 "popup.closeAll.help.group" = "이 그룹에서 실행 중인 앱을 종료합니다. ⌘-클릭하면 저장하지 않고 강제 종료합니다.";
 "popup.closeAll.help.mostUsed" = "이 목록에서 실행 중인 앱을 종료합니다. ⌘-클릭하면 저장하지 않고 강제 종료합니다.";
-"popup.summary.websites.one" = "웹사이트 1개";
-"popup.summary.websites.other" = "웹사이트 %ld개";
 "popup.summary.running" = "실행 중 %ld개";
 "popup.summary.byLaunches" = "실행 횟수순";
 "popup.filter.noMatch" = "“%@”와(과) 일치하는 앱이 없습니다";

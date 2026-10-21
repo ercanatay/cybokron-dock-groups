@@ -54,8 +54,14 @@ enum L10n {
             tr("common.update.restarting", "Installed version %@ — restarting…", version)
         }
 
+        /// Apps only, such as the Most Used list's.
         static func appCount(_ count: Int) -> String {
             count == 1 ? tr("common.appCount.one", "1 app") : tr("common.appCount.other", "%ld apps", count)
+        }
+
+        /// What a group holds, apps and websites alike.
+        static func itemCount(_ count: Int) -> String {
+            count == 1 ? tr("common.itemCount.one", "1 item") : tr("common.itemCount.other", "%ld items", count)
         }
 
         static func groupCount(_ count: Int) -> String {
@@ -149,10 +155,6 @@ enum L10n {
         }
         static var closeAllHelpMostUsed: String {
             tr("popup.closeAll.help.mostUsed", "Quit this list's running apps. ⌘-click to force quit without saving.")
-        }
-
-        static func websiteCount(_ count: Int) -> String {
-            count == 1 ? tr("popup.summary.websites.one", "1 website") : tr("popup.summary.websites.other", "%ld websites", count)
         }
 
         static func runningCount(_ count: Int) -> String { tr("popup.summary.running", "%ld running", count) }

@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "A lista futó alkalmazásainak elrejtése; a nem futók zárva maradnak.";
 "popup.closeAll.help.group" = "A csoport futó alkalmazásainak bezárása. ⌘-kattintás: kényszerített kilépés mentés nélkül.";
 "popup.closeAll.help.mostUsed" = "A lista futó alkalmazásainak bezárása. ⌘-kattintás: kényszerített kilépés mentés nélkül.";
-"popup.summary.websites.one" = "1 webhely";
-"popup.summary.websites.other" = "%ld webhely";
 "popup.summary.running" = "%ld fut";
 "popup.summary.byLaunches" = "indítások szerint";
 "popup.filter.noMatch" = "Nincs a(z) „%@” kifejezésnek megfelelő alkalmazás";

@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Blendet die laufenden Apps dieser Liste aus; nicht laufende Apps bleiben geschlossen.";
 "popup.closeAll.help.group" = "Beendet die laufenden Apps dieser Gruppe. ⌘-Klick erzwingt das Beenden ohne Speichern.";
 "popup.closeAll.help.mostUsed" = "Beendet die laufenden Apps dieser Liste. ⌘-Klick erzwingt das Beenden ohne Speichern.";
-"popup.summary.websites.one" = "1 Website";
-"popup.summary.websites.other" = "%ld Websites";
 "popup.summary.running" = "%ld laufend";
 "popup.summary.byLaunches" = "nach Starts";
 "popup.filter.noMatch" = "Keine Apps passen zu „%@“";

@@ -37,6 +37,7 @@ struct LocalizationTests {
     /// untranslated keys are added, and remove it once every language has its keys.
     static let awaitingTranslation: [String] = [
         "group.settings.",
+        "common.itemCount.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
@@ -194,10 +195,35 @@ struct LocalizationTests {
         ("core.mostUsed.name", "Most Used"),
         ("group.settings.title", "Group Settings"),
         ("group.settings.menu", "Group Settings…"),
+        // A group's apps and websites count alike; Most Used lists apps only.
+        ("common.itemCount.one", "1 item"),
+        ("common.itemCount.other", "%ld items"),
+        ("common.appCount.one", "1 app"),
+        ("common.appCount.other", "%ld apps"),
         ("agent.damaged.message", "%1$@\n\nIn %2$@, turn Standalone off and on again for the group to rebuild its app."),
     ])
     func englishText(key: String, text: String) throws {
         #expect(try Self.table("en")[key] == text)
+    }
+
+    /// A count's texts come in pairs: `.one` for 1 and `.other`, which shows the number, for the
+    /// rest — in every language that has them.
+    @Test func countsHaveASingularAndAPluralText() throws {
+        let english = try Self.table("en")
+        let ones = Set(english.keys.filter { $0.hasSuffix(".one") }.map { String($0.dropLast(".one".count)) })
+        let others = Set(english.keys.filter { $0.hasSuffix(".other") }.map { String($0.dropLast(".other".count)) })
+        #expect(ones == others, "unpaired counts: \(ones.symmetricDifference(others).sorted())")
+        #expect(ones.contains("common.itemCount"))
+        for language in Self.languages {
+            let table = try Self.table(language)
+            for count in others {
+                guard let plural = table["\(count).other"] else { continue }
+                #expect(Self.placeholders(plural).contains { $0.conversion == "ld" }, "\(language) \(count).other doesn't show the number: \(plural)")
+                #expect(table["\(count).one"] != nil, "\(language) has \(count).other without \(count).one")
+            }
+        }
+        // Formatted, the plural shows the number.
+        #expect(String(format: try #require(english["common.itemCount.other"]), locale: Locale(identifier: "en_US_POSIX"), 8) == "8 items")
     }
 
     @Test func everyFormatStringFormats() throws {

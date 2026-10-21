@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "隐藏此列表中正在运行的App；未运行的App保持关闭。";
 "popup.closeAll.help.group" = "退出此分组中正在运行的App。按住 ⌘ 点击可不保存而强制退出。";
 "popup.closeAll.help.mostUsed" = "退出此列表中正在运行的App。按住 ⌘ 点击可不保存而强制退出。";
-"popup.summary.websites.one" = "1 个网站";
-"popup.summary.websites.other" = "%ld 个网站";
 "popup.summary.running" = "%ld 个正在运行";
 "popup.summary.byLaunches" = "按启动次数";
 "popup.filter.noMatch" = "没有与“%@”匹配的App";

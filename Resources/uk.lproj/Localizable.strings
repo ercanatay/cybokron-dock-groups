@@ -83,8 +83,6 @@
 "popup.hideAll.help.mostUsed" = "Сховати запущені застосунки з цього списку; застосунки, які не запущено, лишаються закритими.";
 "popup.closeAll.help.group" = "Завершити запущені застосунки цієї групи. ⌘-клік — примусово завершити без збереження.";
 "popup.closeAll.help.mostUsed" = "Завершити запущені застосунки з цього списку. ⌘-клік — примусово завершити без збереження.";
-"popup.summary.websites.one" = "1 вебсайт";
-"popup.summary.websites.other" = "%ld вебсайтів";
 "popup.summary.running" = "запущено: %ld";
 "popup.summary.byLaunches" = "за запусками";
 "popup.filter.noMatch" = "Немає застосунків, що відповідають «%@»";

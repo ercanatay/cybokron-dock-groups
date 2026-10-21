@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Bu listedeki çalışan uygulamaları gizler; çalışmayan uygulamalar kapalı kalır.";
 "popup.closeAll.help.group" = "Bu grubun çalışan uygulamalarını kapatır. Kaydetmeden zorla kapatmak için ⌘-tıklayın.";
 "popup.closeAll.help.mostUsed" = "Bu listedeki çalışan uygulamaları kapatır. Zorla kapatmak için ⌘-tıklayın.";
-"popup.summary.websites.one" = "1 web sitesi";
-"popup.summary.websites.other" = "%ld web sitesi";
 "popup.summary.running" = "%ld çalışıyor";
 "popup.summary.byLaunches" = "açılış sayısına göre";
 "popup.filter.noMatch" = "“%@” ile eşleşen uygulama yok";

@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Ẩn các ứng dụng đang chạy của danh sách này; ứng dụng không chạy vẫn đóng.";
 "popup.closeAll.help.group" = "Thoát các ứng dụng đang chạy của nhóm này. ⌘-nhấp để buộc thoát mà không lưu.";
 "popup.closeAll.help.mostUsed" = "Thoát các ứng dụng đang chạy của danh sách này. ⌘-nhấp để buộc thoát mà không lưu.";
-"popup.summary.websites.one" = "1 trang web";
-"popup.summary.websites.other" = "%ld trang web";
 "popup.summary.running" = "%ld đang chạy";
 "popup.summary.byLaunches" = "theo lượt mở";
 "popup.filter.noMatch" = "Không có ứng dụng nào khớp với “%@”";

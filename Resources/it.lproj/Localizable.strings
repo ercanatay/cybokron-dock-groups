@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Nascondi le app in esecuzione di questo elenco; le app non in esecuzione restano chiuse.";
 "popup.closeAll.help.group" = "Esci dalle app in esecuzione di questo gruppo. ⌘-clic per forzare l'uscita senza salvare.";
 "popup.closeAll.help.mostUsed" = "Esci dalle app in esecuzione di questo elenco. ⌘-clic per forzare l'uscita senza salvare.";
-"popup.summary.websites.one" = "1 sito web";
-"popup.summary.websites.other" = "%ld siti web";
 "popup.summary.running" = "%ld in esecuzione";
 "popup.summary.byLaunches" = "per avvii";
 "popup.filter.noMatch" = "Nessuna app corrisponde a “%@”";

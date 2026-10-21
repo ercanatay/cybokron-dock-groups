@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "أخفِ التطبيقات الجارية في هذه القائمة؛ وتبقى غير الجارية مغلقة.";
 "popup.closeAll.help.group" = "أنهِ التطبيقات الجارية في هذه المجموعة. ⌘-نقر لفرض الإنهاء دون حفظ.";
 "popup.closeAll.help.mostUsed" = "أنهِ التطبيقات الجارية في هذه القائمة. ⌘-نقر لفرض الإنهاء دون حفظ.";
-"popup.summary.websites.one" = "موقع واحد";
-"popup.summary.websites.other" = "%ld موقعًا";
 "popup.summary.running" = "%ld قيد التشغيل";
 "popup.summary.byLaunches" = "حسب عمليات التشغيل";
 "popup.filter.noMatch" = "لا توجد تطبيقات تطابق “%@”";

@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Oculta las apps abiertas de esta lista; las que no están abiertas siguen cerradas.";
 "popup.closeAll.help.group" = "Sale de las apps abiertas de este grupo. ⌘-clic para forzar la salida sin guardar.";
 "popup.closeAll.help.mostUsed" = "Sale de las apps abiertas de esta lista. ⌘-clic para forzar la salida sin guardar.";
-"popup.summary.websites.one" = "1 sitio web";
-"popup.summary.websites.other" = "%ld sitios web";
 "popup.summary.running" = "%ld abiertas";
 "popup.summary.byLaunches" = "por aperturas";
 "popup.filter.noMatch" = "Ninguna app coincide con «%@»";

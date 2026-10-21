@@ -84,8 +84,6 @@
 "popup.hideAll.help.mostUsed" = "Απόκρυψη των εφαρμογών αυτής της λίστας που τρέχουν· οι εφαρμογές που δεν τρέχουν παραμένουν κλειστές.";
 "popup.closeAll.help.group" = "Έξοδος από τις εφαρμογές αυτής της ομάδας που τρέχουν. ⌘-κλικ για αναγκαστική έξοδο χωρίς αποθήκευση.";
 "popup.closeAll.help.mostUsed" = "Έξοδος από τις εφαρμογές αυτής της λίστας που τρέχουν. ⌘-κλικ για αναγκαστική έξοδο χωρίς αποθήκευση.";
-"popup.summary.websites.one" = "1 ιστότοπος";
-"popup.summary.websites.other" = "%ld ιστότοποι";
 "popup.summary.running" = "%ld σε λειτουργία";
 "popup.summary.byLaunches" = "ανά εκκινήσεις";
 "popup.filter.noMatch" = "Δεν βρέθηκαν εφαρμογές για το «%@»";

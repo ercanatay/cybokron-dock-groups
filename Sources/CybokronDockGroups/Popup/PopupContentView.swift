@@ -199,13 +199,11 @@ struct PopupContentView: View {
         .frame(height: PopupMetrics.headerHeight)
     }
 
+    /// "8 items · 3 running": a group's apps and websites count alike; the Most Used list has apps
+    /// only.
     private func summary(runningCount: Int) -> String {
-        let websiteCount = content.group.apps.filter(\.isWebsite).count
-        let appCount = content.group.apps.count - websiteCount
-        var parts = [L10n.Common.appCount(appCount)]
-        if websiteCount > 0 {
-            parts.append(L10n.Popup.websiteCount(websiteCount))
-        }
+        let count = content.group.apps.count
+        var parts = [content.isMostUsed ? L10n.Common.appCount(count) : L10n.Common.itemCount(count)]
         if runningCount > 0 {
             parts.append(L10n.Popup.runningCount(runningCount))
         }
