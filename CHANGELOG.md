@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.6] - 2026-10-21
+
+### Added
+
+- Group Settings is one click away: a gear in a group's popup, a "Group Settings…" item in its menus, and a settings link (`cybokrondockgroups://settings/group/<name>`)
+- The Settings' Support tab shows the About window's content, donation links included
+- Siri's Quit Group intent now asks before quitting the group's apps, with a force-quit warning
+
+### Changed
+
+- A group's apps and websites are counted as items ("8 items"); the old per-app phrasing is gone
+- Global group shortcuts now use reserved hot keys: no Accessibility permission, the frontmost app no longer receives the key press
+- Translations: all languages now carry every key, with a note when macOS can't reserve the shortcut keys (fallback needs Accessibility)
+
 ## [0.6.5] - 2026-10-20
 
 ### Fixed
@@ -370,7 +384,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.5...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...HEAD
+[0.6.6]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.2...v0.6.3
