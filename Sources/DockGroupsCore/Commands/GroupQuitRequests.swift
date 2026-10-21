@@ -7,15 +7,17 @@ public enum QuitRequestSource: String, Sendable, CaseIterable {
     case link
     /// Close All in a popup or a menu: the user's own click.
     case userAction
-    /// Siri or the Shortcuts app, which the user asked.
+    /// Siri or the Shortcuts app, which the user asked. Quit Group asks there, in Siri or
+    /// Shortcuts (`GroupQuitRequests.requestFromIntent`), not with the app's alert.
     case intent
 
-    /// Only links ask before quitting anything.
+    /// Only links get the app's alert before quitting anything.
     public var asksFirst: Bool { self == .link }
 }
 
 /// The question a link's quit request asks: the group's name, what happens, and — when the link
-/// forces — that unsaved changes are lost.
+/// forces — that unsaved changes are lost. Quit Group in Siri and Shortcuts asks it too
+/// (`intentDialog`).
 public struct QuitConfirmation: Equatable, Sendable {
     /// How long the quit button stays disabled after the question appears, so a click meant for
     /// whatever was under the pointer (or a double click that opened the link) can't answer it.
@@ -46,12 +48,19 @@ public struct QuitConfirmation: Equatable, Sendable {
             "A link opened by another app, a script or a web page asked to quit the running apps of this group."
         )]
         if mode == .force {
-            lines.append(Localization.string(
-                "core.quitConfirmation.force",
-                "Force quit: the apps end right away, and unsaved changes are lost."
-            ))
+            lines.append(Self.forceWarning)
         }
         return lines.joined(separator: "\n\n")
+    }
+
+    /// What Quit Group asks in Siri or the Shortcuts app: the title, then a separate line for force
+    /// quitting. Not where the request came from, as `message` says: the user asked.
+    public var intentDialog: String {
+        mode == .force ? "\(title)\n\n\(Self.forceWarning)" : title
+    }
+
+    private static var forceWarning: String {
+        Localization.string("core.quitConfirmation.force", "Force quit: the apps end right away, and unsaved changes are lost.")
     }
 
     public var confirmButton: String {
@@ -74,6 +83,7 @@ public protocol QuitConfirmationPrompting: AnyObject {
 
 /// Quits a group's apps on request — asking first when the request came from a link
 /// (`QuitRequestSource.asksFirst`), and dropping links that arrive while a question is showing.
+/// Quit Group from Siri and Shortcuts asks first as well, there (`requestFromIntent`).
 @MainActor
 public final class GroupQuitRequests {
     public enum Outcome: Equatable, Sendable {
@@ -110,5 +120,19 @@ public final class GroupQuitRequests {
             guard prompt.confirm(QuitConfirmation(groupName: group.name, mode: mode)) else { return .declined }
         }
         return .quit(quitApps(group, mode))
+    }
+
+    /// Quit Group from Siri or the Shortcuts app (`QuitRequestSource.intent`): asks first through
+    /// `confirm` — the intent's own question, which Siri or Shortcuts shows instead of the app's
+    /// alert, force quitting included — and quits the apps once it returns. When the user declines,
+    /// `confirm` throws and the error ends the request: nothing is quit. A link's alert showing
+    /// meanwhile doesn't matter; the two ask in different places.
+    public func requestFromIntent(
+        _ group: DockGroup,
+        mode: QuitMode,
+        confirm: (QuitConfirmation) async throws -> Void
+    ) async throws -> QuitReport {
+        try await confirm(QuitConfirmation(groupName: group.name, mode: mode))
+        return quitApps(group, mode)
     }
 }

@@ -401,8 +401,8 @@ extension AppDelegate: GroupIntentHandling {
         await launcher.openAll(group)
     }
 
-    /// Siri and Shortcuts are the user's own requests: they never ask (`QuitRequestSource.intent`).
-    func quitAll(_ group: DockGroup, mode: QuitMode) -> QuitReport {
-        quitRequests.request(group, mode: mode, from: .intent).report ?? terminator.closeAll(group, mode: mode)
+    /// Siri and Shortcuts ask in their own way (`QuitGroupIntent`), not with the app's alert.
+    func quitAll(_ group: DockGroup, mode: QuitMode, confirm: (QuitConfirmation) async throws -> Void) async throws -> QuitReport {
+        try await quitRequests.requestFromIntent(group, mode: mode, confirm: confirm)
     }
 }

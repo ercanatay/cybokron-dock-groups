@@ -96,6 +96,53 @@ struct GroupQuitRequestsTests {
         #expect(QuitRequestSource.allCases.filter(\.asksFirst) == [.link])
     }
 
+    // MARK: - Quit Group in Siri and Shortcuts
+
+    /// The user declining the intent's confirmation.
+    struct Declined: Error {}
+
+    @Test(arguments: [QuitMode.graceful, .force])
+    func quitGroupAsksInSiriOrShortcutsBeforeQuitting(mode: QuitMode) async throws {
+        let prompt = FakePrompt(answer: false)
+        let terminator = FakeTerminator()
+        var asked: [QuitConfirmation] = []
+
+        let report = try await requests(prompt, terminator).requestFromIntent(work, mode: mode) { confirmation in
+            #expect(terminator.calls.isEmpty, "nothing is quit before the user agrees")
+            asked.append(confirmation)
+        }
+
+        #expect(asked == [QuitConfirmation(groupName: "Work", mode: mode)])
+        #expect(terminator.calls.map(\.mode) == [mode])
+        #expect(report.quit.map(\.name) == ["TextEdit"])
+        #expect(prompt.asked.isEmpty, "not the app's alert as well")
+    }
+
+    @Test(arguments: [QuitMode.graceful, .force])
+    func declinedQuitGroupQuitsNothing(mode: QuitMode) async {
+        let prompt = FakePrompt(answer: true)
+        let terminator = FakeTerminator()
+
+        await #expect(throws: Declined.self) {
+            try await requests(prompt, terminator).requestFromIntent(work, mode: mode) { _ in throw Declined() }
+        }
+
+        #expect(terminator.calls.isEmpty)
+        #expect(prompt.asked.isEmpty)
+    }
+
+    @Test func quitGroupsQuestionWarnsOfForceQuitting() {
+        let graceful = QuitConfirmation(groupName: "Work", mode: .graceful)
+        let force = QuitConfirmation(groupName: "Work", mode: .force)
+
+        #expect(graceful.intentDialog == "All apps in “Work” will be quit. Continue?")
+        #expect(force.intentDialog == "All apps in “Work” will be quit. Continue?\n\nForce quit: the apps end right away, and unsaved changes are lost.")
+        // The user asked: unlike a link's alert, it doesn't blame a link.
+        #expect(!force.intentDialog.contains("link"))
+        #expect(force.confirmButton == "Force Quit Apps")
+        #expect(graceful.confirmButton == "Quit Apps")
+    }
+
     @Test func linksArrivingWhileTheQuestionShowsAreDropped() {
         let prompt = FakePrompt(answer: true)
         let terminator = FakeTerminator()

@@ -60,8 +60,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   needs Accessibility access (Privacy & Security → Accessibility) and lets the app in front receive
   them too; Settings → Shortcuts & Siri then says so, without the system's prompt.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
-  optionally force quit) and **Show Group** (the popup) actions, and phrases such as “Launch Work in
-  Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames. Settings →
+  optionally force quit; it asks there first, every time) and **Show Group** (the popup) actions,
+  and phrases such as “Launch Work in Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames. Settings →
   Shortcuts & Siri spells out a group's phrases and links, each with a Copy button.
 - Links, e.g. from scripts or other apps (`open "cybokrondockgroups://open/work"`):
 

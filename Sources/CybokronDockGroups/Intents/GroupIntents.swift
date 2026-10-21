@@ -30,11 +30,12 @@ struct LaunchGroupIntent: AppIntent {
     }
 }
 
-/// Close All for a group: asks its running apps to quit, or force quits them.
+/// Close All for a group: asks its running apps to quit, or force quits them — after asking the
+/// user, in Siri or Shortcuts, whether to.
 struct QuitGroupIntent: AppIntent {
     static let title: LocalizedStringResource = "Quit Group"
     static let description = IntentDescription(
-        "Quits every running app in the group. Apps can still ask to save changes, unless you force quit.",
+        "Quits every running app in the group once you confirm. Apps can still ask to save changes, unless you force quit.",
         categoryName: "Groups"
     )
 
@@ -63,9 +64,47 @@ struct QuitGroupIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
+        // Resolved first: nothing is asked about a group that doesn't exist (any more).
         let (handler, group) = try GroupIntentSupport.resolve(group, for: "Quit Group")
-        let report = handler.quitAll(group, mode: forceQuit ? .force : .graceful)
+        let report = try await handler.quitAll(group, mode: forceQuit ? .force : .graceful, confirm: confirmQuitting)
         return .result(dialog: "\(report.summary)")
+    }
+
+    /// Asks in Siri or Shortcuts whether to quit the group's apps, every time — force quitting
+    /// included, which the question then warns of. Its buttons are the app's alert's: Quit Apps
+    /// (Force Quit Apps, shown as destructive) and Cancel. Declining throws; the error isn't
+    /// caught, so it ends the intent the way the system ends a declined confirmation, and nothing
+    /// is quit.
+    @MainActor
+    private func confirmQuitting(_ confirmation: QuitConfirmation) async throws {
+        let action = ConfirmationActionName.custom(
+            acceptLabel: "\(confirmation.confirmButton)",
+            acceptAlternatives: [],
+            denyLabel: "\(confirmation.cancelButton)",
+            denyAlternatives: [],
+            destructive: confirmation.mode == .force
+        )
+        let dialog: IntentDialog = "\(confirmation.intentDialog)"
+        if #available(macOS 15, *) {
+            try await requestConfirmation(actionName: action, dialog: dialog)
+        } else {
+            try await (self as MacOS14Confirming).requestConfirmationOnMacOS14(actionName: action, dialog: dialog)
+        }
+    }
+}
+
+/// macOS 14 has only the confirmation that later SDKs deprecate,
+/// `requestConfirmation(result:confirmationActionName:showPrompt:)`. Called through this protocol,
+/// from a method marked deprecated itself, it doesn't warn in the build; macOS 15 and later use
+/// `requestConfirmation(actionName:dialog:)`.
+private protocol MacOS14Confirming {
+    func requestConfirmationOnMacOS14(actionName: ConfirmationActionName, dialog: IntentDialog) async throws
+}
+
+extension QuitGroupIntent: MacOS14Confirming {
+    @available(*, deprecated, message: "macOS 14 only: use requestConfirmation(actionName:dialog:)")
+    fileprivate func requestConfirmationOnMacOS14(actionName: ConfirmationActionName, dialog: IntentDialog) async throws {
+        try await requestConfirmation(result: .result(dialog: dialog), confirmationActionName: actionName, showPrompt: true)
     }
 }
 

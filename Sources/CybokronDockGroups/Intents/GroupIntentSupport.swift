@@ -10,8 +10,9 @@ protocol GroupIntentHandling: AnyObject {
     func showPopup(forGroup id: DockGroup.ID)
     /// Open All, without alerts: the result goes back to the caller.
     func launchAll(_ group: DockGroup) async -> LaunchReport
-    /// Close All, without alerts.
-    func quitAll(_ group: DockGroup, mode: QuitMode) -> QuitReport
+    /// Close All, without the app's alerts: `confirm` asks in Siri or Shortcuts first, and throws
+    /// when the user declines; the apps quit only once it returns.
+    func quitAll(_ group: DockGroup, mode: QuitMode, confirm: (QuitConfirmation) async throws -> Void) async throws -> QuitReport
 }
 
 /// Connects the intents, which the system creates on its own, to the app's objects.
