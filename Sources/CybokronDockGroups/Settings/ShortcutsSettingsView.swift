@@ -54,28 +54,48 @@ struct ShortcutsSettingsView: View {
             }
             .disabled(!settings.shortcutsEnabled)
             if settings.shortcutsEnabled {
-                accessibilityStatus
+                shortcutStatus
             }
         } header: {
             Text(L10n.Settings.Shortcuts.keyboardHeader)
         }
     }
 
+    /// Registered as hot keys, the shortcuts work everywhere without Accessibility access. Only
+    /// when they couldn't be, and are watched for instead, does the access matter: then it says so.
     @ViewBuilder
-    private var accessibilityStatus: some View {
-        if shortcuts.isAccessibilityTrusted {
-            Label(L10n.Settings.Shortcuts.worksEverywhere, systemImage: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-        } else {
-            LabeledContent {
-                Button(L10n.Common.openPrivacySettings, action: shortcuts.openAccessibilitySettings)
-            } label: {
-                Label(L10n.Settings.Shortcuts.needsAccess, systemImage: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
-                Text(L10n.Settings.Shortcuts.accessDetail(AppInfo.name))
-                Text(AccessibilityAccess.staleEntryHint)
+    private var shortcutStatus: some View {
+        switch shortcuts.mode {
+        case .off:
+            // Until the monitor has caught up with the toggle.
+            EmptyView()
+        case .hotKeys:
+            worksEverywhereLabel
+        case .eventMonitors:
+            if shortcuts.isAccessibilityTrusted {
+                LabeledContent {
+                    EmptyView()
+                } label: {
+                    worksEverywhereLabel
+                    Text(L10n.Settings.Shortcuts.hotKeyUnavailable)
+                }
+            } else {
+                LabeledContent {
+                    Button(L10n.Common.openPrivacySettings, action: shortcuts.openAccessibilitySettings)
+                } label: {
+                    Label(L10n.Settings.Shortcuts.needsAccess, systemImage: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                    Text(L10n.Settings.Shortcuts.hotKeyUnavailable)
+                    Text(L10n.Settings.Shortcuts.accessDetail(AppInfo.name))
+                    Text(AccessibilityAccess.staleEntryHint)
+                }
             }
         }
+    }
+
+    private var worksEverywhereLabel: some View {
+        Label(L10n.Settings.Shortcuts.worksEverywhere, systemImage: "checkmark.circle.fill")
+            .foregroundStyle(.green)
     }
 
     private var assignedGroupsSection: some View {

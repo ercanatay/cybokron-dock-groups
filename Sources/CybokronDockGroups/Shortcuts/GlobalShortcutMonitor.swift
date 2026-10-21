@@ -1,28 +1,34 @@
 import AppKit
-import ApplicationServices
 import Combine
 import DockGroupsCore
 import OSLog
 
-/// Watches for the global group shortcuts (the chosen modifiers plus 1…9) with two event monitors:
-/// a local one for key presses while this app or its popup has the keyboard, and a global one for
-/// key presses in other apps. macOS delivers other apps' key presses only to apps allowed under
-/// Privacy & Security → Accessibility, so the monitor asks for that access — once, the first time
-/// shortcuts are on — and keeps checking until it's granted (through `AccessibilityTrustMonitor`).
+/// Notices the global group shortcuts (the chosen modifiers plus 1…9).
 ///
-/// A global monitor observes key presses without consuming them: the app in front receives the
-/// key press as well.
+/// They are registered as system-wide hot keys (`CarbonHotKeys`): those work in every app, this
+/// one included, without Accessibility access, and take the key press, so the app in front doesn't
+/// receive it. Nothing asks for Accessibility access then. (Versions that only watched key presses
+/// asked for it once; the `didPromptAccessibility` default remembering that is left as it is.)
+///
+/// When a hot key doesn't register (`GlobalShortcutMode.eventMonitors`), the shortcuts fall back
+/// to watching key presses with event monitors, as those versions did: a local one while this app
+/// or its popup has the keyboard, and a global one for other apps, which macOS feeds only to apps
+/// allowed under Privacy & Security → Accessibility. The fallback doesn't show the system's
+/// Accessibility prompt: it would come out of the blue, without a word of why. Settings → Shortcuts
+/// & Siri says why the access is needed and opens the list; meanwhile `AccessibilityTrustMonitor`
+/// checks for it, and the global monitor is installed again once it's granted. Monitors observe key
+/// presses without taking them: the app in front receives them as well. The hot keys are tried
+/// again whenever the shortcut settings change.
 @MainActor
 final class GlobalShortcutMonitor: ObservableObject {
-    /// Whether the app may observe key presses in other apps.
+    /// How the shortcuts are noticed now.
+    @Published private(set) var mode: GlobalShortcutMode = .off
+    /// Whether the app may observe key presses in other apps; matters only for `.eventMonitors`.
     @Published private(set) var isAccessibilityTrusted: Bool
-
-    /// Remembers that the system's Accessibility prompt was shown, so it appears only once.
-    static let didPromptAccessibilityKey = "didPromptAccessibility"
 
     private let preferences: PreferencesStore
     private let trust: AccessibilityTrustMonitor
-    private let defaults: UserDefaults
+    private let hotKeys: GroupHotKeyRegistrar
     private let onShortcut: (Int) -> Void
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Shortcuts")
 
@@ -31,18 +37,21 @@ final class GlobalShortcutMonitor: ObservableObject {
     /// Whether this monitor asked `trust` to keep checking access.
     private var isWatchingTrust = false
     private var subscriptions: Set<AnyCancellable> = []
-    /// The settings the monitors were installed for.
+    /// The settings the shortcuts were set up for.
     private var installed: (enabled: Bool, modifiers: ShortcutModifiers)?
 
-    /// - Parameter trust: the access monitor; `AccessibilityTrustMonitor.shared` when `nil`.
-    init(preferences: PreferencesStore, trust: AccessibilityTrustMonitor? = nil, defaults: UserDefaults = .standard,
+    /// - Parameters:
+    ///   - trust: the access monitor; `AccessibilityTrustMonitor.shared` when `nil`.
+    ///   - hotKeySystem: registers the hot keys; `CarbonHotKeys.shared` when `nil`.
+    init(preferences: PreferencesStore, trust: AccessibilityTrustMonitor? = nil, hotKeySystem: HotKeyRegistering? = nil,
          onShortcut: @escaping (Int) -> Void) {
         self.preferences = preferences
         let trust = trust ?? .shared
         self.trust = trust
-        self.defaults = defaults
+        hotKeys = GroupHotKeyRegistrar(system: hotKeySystem ?? CarbonHotKeys.shared)
         self.onShortcut = onShortcut
         isAccessibilityTrusted = trust.isTrusted
+        hotKeys.onShortcut = { [weak self] digit in self?.trigger(digit) }
     }
 
     /// Starts following the shortcut preferences. Call once the app has finished launching.
@@ -64,26 +73,32 @@ final class GlobalShortcutMonitor: ObservableObject {
         AccessibilityAccess.openSettings()
     }
 
-    // MARK: - Monitors
+    // MARK: - Hot keys and monitors
 
     private func applyPreferences() {
         let settings = (enabled: preferences.preferences.shortcutsEnabled, modifiers: preferences.preferences.shortcutModifiers)
         if let installed, installed == settings { return }
         installed = settings
         removeMonitors()
-        guard settings.enabled else {
+        let mode = hotKeys.apply(enabled: settings.enabled, modifiers: settings.modifiers)
+        self.mode = mode
+        switch mode {
+        case .off:
             stopWatchingTrust()
             logger.notice("Global shortcuts are off")
-            return
-        }
-        promptForAccessibilityOnce()
-        installMonitors(modifiers: settings.modifiers)
-        if isAccessibilityTrusted {
+        case .hotKeys:
             stopWatchingTrust()
-        } else {
-            startWatchingTrust()
+            logger.notice("Global shortcuts on as hot keys: \(settings.modifiers.symbols, privacy: .public)1…9")
+        case .eventMonitors(let status):
+            refreshTrust()
+            installMonitors(modifiers: settings.modifiers)
+            if isAccessibilityTrusted {
+                stopWatchingTrust()
+            } else {
+                startWatchingTrust()
+            }
+            logger.error("Couldn't register the global shortcuts as hot keys (OSStatus \(status, privacy: .public)): watching key presses instead, Accessibility access \(self.isAccessibilityTrusted ? "granted" : "not granted", privacy: .public)")
         }
-        logger.notice("Global shortcuts on: \(settings.modifiers.symbols, privacy: .public)1…9, accessibility \(self.isAccessibilityTrusted ? "granted" : "not granted", privacy: .public)")
     }
 
     private func installMonitors(modifiers: ShortcutModifiers) {
@@ -127,16 +142,7 @@ final class GlobalShortcutMonitor: ObservableObject {
         onShortcut(digit)
     }
 
-    // MARK: - Accessibility access
-
-    /// Shows the system's Accessibility prompt the first time shortcuts are on without access.
-    private func promptForAccessibilityOnce() {
-        refreshTrust()
-        guard !isAccessibilityTrusted, !defaults.bool(forKey: Self.didPromptAccessibilityKey) else { return }
-        AccessibilityAccess.promptOnce(rememberedBy: Self.didPromptAccessibilityKey, defaults: defaults)
-        logger.notice("Asked for Accessibility access for the global shortcuts")
-        refreshTrust()
-    }
+    // MARK: - Accessibility access (event monitors only)
 
     /// Reads access again now.
     func refreshTrust() {
@@ -147,10 +153,12 @@ final class GlobalShortcutMonitor: ObservableObject {
     private func trustChanged(to trusted: Bool) {
         guard trusted != isAccessibilityTrusted else { return }
         isAccessibilityTrusted = trusted
-        logger.notice("Accessibility access for the global shortcuts \(trusted ? "granted" : "revoked", privacy: .public)")
-        guard let installed, installed.enabled else { return }
+        guard let installed, case .eventMonitors = mode else { return }
+        logger.notice("Accessibility access for watching the global shortcuts \(trusted ? "granted" : "revoked", privacy: .public)")
         if trusted {
-            installGlobalMonitor(modifiers: installed.modifiers)
+            if localMonitor != nil {
+                installGlobalMonitor(modifiers: installed.modifiers)
+            }
             stopWatchingTrust()
         } else {
             startWatchingTrust()

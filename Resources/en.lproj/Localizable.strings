@@ -565,3 +565,6 @@
 
 /* Settings → Support: the About window's content in Settings (English only for now: translations show this English text until they add these keys) */
 "settings.support.tab" = "Support";
+
+/* Settings → Shortcuts & Siri, only when the shortcut keys couldn't be registered as hot keys and are watched for instead (English only for now: translations show this English text until they add these keys) */
+"shortcuts.hotkey.unavailable" = "macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too.";

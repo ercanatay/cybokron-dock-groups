@@ -3,9 +3,9 @@ import ApplicationServices
 import DockGroupsCore
 import OSLog
 
-/// Accessibility access (Privacy & Security → Accessibility): the global shortcuts need it to notice
-/// key presses in other apps, and restoring a running app's minimized windows needs it to reach
-/// them.
+/// Accessibility access (Privacy & Security → Accessibility): restoring a running app's minimized
+/// windows needs it to reach them, and the global shortcuts, when they can't be hot keys and are
+/// watched for instead, to notice key presses in other apps.
 @MainActor
 enum AccessibilityAccess {
     /// Remembers that the prompt was shown for restoring windows, so it appears only once.

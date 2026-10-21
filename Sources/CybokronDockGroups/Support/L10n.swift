@@ -585,6 +585,13 @@ enum L10n {
                     appName
                 )
             }
+            /// Only when the shortcuts couldn't be registered as hot keys and are watched for instead.
+            static var hotKeyUnavailable: String {
+                tr(
+                    "shortcuts.hotkey.unavailable",
+                    "macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too."
+                )
+            }
             static var noGroups: String { tr("settings.shortcuts.noGroups", "No groups yet.") }
             static var assignedHeader: String { tr("settings.shortcuts.assigned.header", "Assigned Groups") }
             static var assignedFooterLimit: String {

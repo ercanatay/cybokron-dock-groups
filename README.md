@@ -54,9 +54,11 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   saved with the group, and the group's app list follows them row by row.
 - Global keyboard shortcuts: ⌃⌥1 shows the first group's popup, ⌃⌥2 the second, and so on up to
   9; pressing it again closes the popup. The modifier keys can be changed, or the shortcuts turned
-  off, in Settings → Shortcuts & Siri. To notice them while you work in other apps, the app needs
-  Accessibility access (Privacy & Security → Accessibility); it asks once. The shortcuts are
-  observed, not taken over, so the app in front also receives the key press.
+  off, in Settings → Shortcuts & Siri. They are system-wide hot keys: they work in every app
+  without Accessibility access, and the app in front doesn't receive the key press. Should macOS
+  not let the app register them, it watches for the key presses instead, which in other apps
+  needs Accessibility access (Privacy & Security → Accessibility) and lets the app in front receive
+  them too; Settings → Shortcuts & Siri then says so, without the system's prompt.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
   optionally force quit) and **Show Group** (the popup) actions, and phrases such as “Launch Work in
   Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames. Settings →
@@ -289,7 +291,7 @@ builds made with the Command Line Tools alone work but don't offer the Shortcuts
 
 Ad hoc signed builds get a new signature every time they're built, so macOS treats each build as a
 new app for Accessibility access: after rebuilding, remove the app from the Accessibility list and
-allow it again for the global shortcuts to work in other apps.
+allow it again. The global shortcuts don't need it: they are hot keys.
 
 Every new build of the app has a different executable, so at its next start the standalone groups'
 apps are rebuilt from it. Debug builds made with Xcode keep their code in the one executable too
@@ -354,7 +356,7 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
 
 | Path | Contents |
 | --- | --- |
-| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, restoring running apps' windows, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions), updates (release parsing, version comparison, asset choice, download, install and rollback) (no UI) |
+| `Sources/DockGroupsCore` | Group model and preferences, JSON persistence, stores, Open All / Close All, restoring running apps' windows, popup layout, placement and drag geometry, tile renderer and cache, shortcut digits and hot keys, URL commands and group lookup, standalone group apps (bundle layout and config, icon, installer, Dock tile list, sync and cleanup decisions), updates (release parsing, version comparison, asset choice, download, install and rollback) (no UI) |
 | `Sources/CybokronDockGroups` | App: AppKit lifecycle, menu bar item, popup panel, global shortcut monitor, App Intents, SwiftUI group, settings and About windows, standalone group apps (`Standalone/` keeps them in sync, `Agent/` runs a group's own app), updater and its window (`Updates/`) |
 | `Tests/DockGroupsCoreTests` | swift-testing unit tests for the core |
 | `Resources` | `Info.plist`, asset catalog with the placeholder app icon, string tables (`<language>.lproj/Localizable.strings`; English in `en.lproj`, every key listed in [`docs/l10n-keys.md`](docs/l10n-keys.md)) |

@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-497 keys.
+498 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -693,3 +693,9 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | Key | English |
 | --- | --- |
 | `settings.support.tab` | Support |
+
+## Settings → Shortcuts & Siri: when the shortcut keys couldn't be registered as hot keys and are watched for instead (English only for now; `awaitingTranslation`: `shortcuts.hotkey.`)
+
+| Key | English |
+| --- | --- |
+| `shortcuts.hotkey.unavailable` | macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too. |
