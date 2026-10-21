@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "هذا الإصدار لا يتضمن إصلاحات أمنية";
 "updates.otherVersions.preSafety.message" = "صدر الإصدار %@ قبل إصلاحات أمنية مهمة، مثل عمليات التحقق الأكثر صرامةً من التحديثات التي يثبّتها. ثبّته فقط إذا احتجت إليه، ثم حدّثه إلى أحدث إصدار لاحقاً.";
 "core.backup.error.tooLarge" = "هذا الملف كبير جداً ليكون نسخة احتياطية من Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "إعدادات المجموعة";
+"group.settings.menu" = "إعدادات المجموعة…";
+"group.settings.accessibilityHint" = "يعرض اسم «%@» وتطبيقاته وأيقونته في Dock وإعدادات النافذة المنبثقة.";
+"common.itemCount.one" = "عنصر واحد";
+"common.itemCount.other" = "%ld عنصرًا";
+"settings.support.tab" = "الدعم";
+

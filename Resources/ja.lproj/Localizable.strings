@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "このバージョンにはセキュリティ修正が含まれていません";
 "updates.otherVersions.preSafety.message" = "バージョン %@ は、インストールするアップデートに対する、より厳格なチェックなど、重要なセキュリティ修正が行われる前にリリースされました。必要な場合のみインストールし、その後は最新バージョンに再度アップデートしてください。";
 "core.backup.error.tooLarge" = "このファイルは大きすぎるため、Cybokron Dock Groups のバックアップとして使用できません。";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "グループ設定";
+"group.settings.menu" = "グループ設定…";
+"group.settings.accessibilityHint" = "“%@”の名前、アプリ、Dockアイコン、ポップアップの設定を表示します。";
+"common.itemCount.one" = "1件";
+"common.itemCount.other" = "%ld件";
+"settings.support.tab" = "サポート";
+

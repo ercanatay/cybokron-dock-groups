@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Αυτή η έκδοση δεν διαθέτει διορθώσεις ασφαλείας";
 "updates.otherVersions.preSafety.message" = "Η έκδοση %@ κυκλοφόρησε πριν από σημαντικές διορθώσεις ασφαλείας, όπως αυστηρότερους ελέγχους των ενημερώσεων που εγκαθιστά. Εγκαταστήστε την μόνο αν τη χρειάζεστε και ενημερώστε ξανά στην τελευταία έκδοση στη συνέχεια.";
 "core.backup.error.tooLarge" = "Αυτό το αρχείο είναι πολύ μεγάλο για να είναι αντίγραφο ασφαλείας του Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Ρυθμίσεις ομάδας";
+"group.settings.menu" = "Ρυθμίσεις ομάδας…";
+"group.settings.accessibilityHint" = "Εμφανίζει τις ρυθμίσεις ονόματος, εφαρμογών, πλακιδίου Dock και αναδυόμενου παραθύρου της «%@».";
+"common.itemCount.one" = "1 στοιχείο";
+"common.itemCount.other" = "%ld στοιχεία";
+"settings.support.tab" = "Υποστήριξη";
+

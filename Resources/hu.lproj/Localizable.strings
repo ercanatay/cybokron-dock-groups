@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Ez a verzió nem tartalmazza a biztonsági javításokat";
 "updates.otherVersions.preSafety.message" = "A(z) %@ verzió a fontos biztonsági javítások, például a telepített frissítések szigorúbb ellenőrzése előtt jelent meg. Csak akkor telepítsd, ha szükséged van rá, utána pedig frissíts újra a legújabb verzióra.";
 "core.backup.error.tooLarge" = "Ez a fájl túl nagy ahhoz, hogy Cybokron Dock Groups biztonsági mentés legyen.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Csoportbeállítások";
+"group.settings.menu" = "Csoportbeállítások…";
+"group.settings.accessibilityHint" = "Megjeleníti a(z) „%@” nevét, alkalmazásait, Dock-csempéjét és felugró ablak beállításait.";
+"common.itemCount.one" = "1 elem";
+"common.itemCount.other" = "%ld elem";
+"settings.support.tab" = "Súgó és támogatás";
+

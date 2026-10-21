@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Deze versie bevat geen beveiligingsfixes";
 "updates.otherVersions.preSafety.message" = "Versie %@ is uitgebracht vóór belangrijke beveiligingsfixes, zoals strengere controles op de updates die het installeert. Installeer deze alleen als je hem nodig hebt, en werk daarna opnieuw bij naar de nieuwste versie.";
 "core.backup.error.tooLarge" = "Dit bestand is te groot om een back-up van Cybokron Dock Groups te zijn.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Groepsinstellingen";
+"group.settings.menu" = "Groepsinstellingen…";
+"group.settings.accessibilityHint" = "Toont de naam, apps, Dock-pictogram en pop-upinstellingen van „%@”.";
+"common.itemCount.one" = "1 item";
+"common.itemCount.other" = "%ld items";
+"settings.support.tab" = "Ondersteuning";
+

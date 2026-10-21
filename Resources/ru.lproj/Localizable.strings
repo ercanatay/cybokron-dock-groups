@@ -554,3 +554,12 @@
 "updates.otherVersions.preSafety.title" = "В этой версии нет исправлений безопасности";
 "updates.otherVersions.preSafety.message" = "Версия %@ вышла до важных исправлений безопасности, например более строгих проверок устанавливаемых обновлений. Устанавливайте её, только если она вам действительно нужна, и затем снова обновитесь до последней версии.";
 "core.backup.error.tooLarge" = "Этот файл слишком велик, чтобы быть резервной копией Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Настройки группы";
+"group.settings.menu" = "Настройки группы…";
+"group.settings.accessibilityHint" = "Показывает название, приложения, значок в Dock и настройки всплывающего окна «%@».";
+"common.itemCount.one" = "1 элемент";
+"common.itemCount.other" = "%ld элементов";
+"settings.support.tab" = "Поддержка";
+

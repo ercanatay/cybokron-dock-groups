@@ -553,3 +553,12 @@
 "updates.otherVersions.preSafety.title" = "이 버전에는 보안 수정 사항이 없습니다";
 "updates.otherVersions.preSafety.message" = "버전 %@은(는) 설치되는 업데이트에 대한 더 엄격한 검사 등 중요한 보안 수정 사항이 적용되기 전에 출시되었습니다. 꼭 필요한 경우에만 설치하고, 이후에는 최신 버전으로 다시 업데이트하세요.";
 "core.backup.error.tooLarge" = "이 파일은 Cybokron Dock Groups 백업 파일이기에는 너무 큽니다.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "그룹 설정";
+"group.settings.menu" = "그룹 설정…";
+"group.settings.accessibilityHint" = "“%@”의 이름, 앱, Dock 타일 및 팝업 설정을 보여줍니다.";
+"common.itemCount.one" = "항목 1개";
+"common.itemCount.other" = "항목 %ld개";
+"settings.support.tab" = "지원";
+

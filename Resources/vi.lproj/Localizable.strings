@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Phiên bản này thiếu các bản vá bảo mật";
 "updates.otherVersions.preSafety.message" = "Phiên bản %@ được phát hành trước các bản vá bảo mật quan trọng, chẳng hạn như kiểm tra chặt chẽ hơn đối với các bản cập nhật mà nó cài đặt. Chỉ cài đặt nếu bạn thực sự cần, và sau đó hãy cập nhật lên phiên bản mới nhất.";
 "core.backup.error.tooLarge" = "Tệp này quá lớn để là bản sao lưu của Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Cài đặt nhóm";
+"group.settings.menu" = "Cài đặt nhóm…";
+"group.settings.accessibilityHint" = "Hiển thị tên, ứng dụng, biểu tượng Dock và cài đặt cửa sổ bật lên của «%@».";
+"common.itemCount.one" = "1 mục";
+"common.itemCount.other" = "%ld mục";
+"settings.support.tab" = "Hỗ trợ";
+

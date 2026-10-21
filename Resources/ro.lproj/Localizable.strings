@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Această versiune nu include remedieri de securitate";
 "updates.otherVersions.preSafety.message" = "Versiunea %@ a fost lansată înainte de remedieri importante de securitate, cum ar fi verificări mai stricte ale actualizărilor pe care le instalează. Instalați-o doar dacă aveți nevoie de ea, apoi actualizați din nou la ultima versiune.";
 "core.backup.error.tooLarge" = "Acest fișier este prea mare pentru a fi o copie de rezervă Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Setări grup";
+"group.settings.menu" = "Setări grup…";
+"group.settings.accessibilityHint" = "Afișează setările pentru nume, aplicații, pictograma din Dock și fereastra pop-up ale lui „%@”.";
+"common.itemCount.one" = "1 element";
+"common.itemCount.other" = "%ld elemente";
+"settings.support.tab" = "Asistență";
+

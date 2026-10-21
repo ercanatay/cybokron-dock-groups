@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Den här versionen saknar säkerhetsrättningar";
 "updates.otherVersions.preSafety.message" = "Version %@ släpptes före viktiga säkerhetsrättningar, till exempel strängare kontroller av de uppdateringar den installerar. Installera den bara om du behöver den, och uppdatera sedan till den senaste versionen igen.";
 "core.backup.error.tooLarge" = "Den här filen är för stor för att vara en säkerhetskopia av Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Gruppinställningar";
+"group.settings.menu" = "Gruppinställningar…";
+"group.settings.accessibilityHint" = "Visar namnet, apparna, Dock-ikonen och popup-inställningarna för ”%@”.";
+"common.itemCount.one" = "1 objekt";
+"common.itemCount.other" = "%ld objekt";
+"settings.support.tab" = "Support";
+

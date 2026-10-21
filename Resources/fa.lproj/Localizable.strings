@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "این نسخه فاقد اصلاحات امنیتی است";
 "updates.otherVersions.preSafety.message" = "نسخه %@ پیش از اصلاحات مهم امنیتی منتشر شده است، از جمله بررسی‌های سخت‌گیرانه‌تر به‌روزرسانی‌هایی که نصب می‌کند. فقط در صورت نیاز آن را نصب کنید و پس از آن دوباره به آخرین نسخه به‌روزرسانی کنید.";
 "core.backup.error.tooLarge" = "این فایل برای یک نسخه پشتیبان Cybokron Dock Groups بیش از حد بزرگ است.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "تنظیمات گروه";
+"group.settings.menu" = "تنظیمات گروه…";
+"group.settings.accessibilityHint" = "نام، برنامه‌ها، آیکون Dock و تنظیمات پاپ‌آپ «%@» را نشان می‌دهد.";
+"common.itemCount.one" = "۱ مورد";
+"common.itemCount.other" = "%ld مورد";
+"settings.support.tab" = "پشتیبانی";
+

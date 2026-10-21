@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "此版本缺少安全修复";
 "updates.otherVersions.preSafety.message" = "版本 %@ 发布于重要安全修复之前，例如对其所安装更新的更严格检查。仅在确有需要时安装此版本，之后请再次更新到最新版本。";
 "core.backup.error.tooLarge" = "此文件过大，不是有效的 Cybokron Dock Groups 备份。";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "群组设置";
+"group.settings.menu" = "群组设置…";
+"group.settings.accessibilityHint" = "显示「%@」的名称、应用、程序坞图标和弹出窗口设置。";
+"common.itemCount.one" = "1 个项目";
+"common.itemCount.other" = "%ld 个项目";
+"settings.support.tab" = "支持";
+

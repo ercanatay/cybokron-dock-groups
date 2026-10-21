@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Тази версия няма корекции за сигурност";
 "updates.otherVersions.preSafety.message" = "Версия %@ е публикувана преди важни корекции за сигурност, например по-строги проверки на инсталираните обновления. Инсталирайте я само ако ви е необходима, а после отново обновете до най-новата версия.";
 "core.backup.error.tooLarge" = "Този файл е твърде голям, за да бъде резервно копие на Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Настройки на групата";
+"group.settings.menu" = "Настройки на групата…";
+"group.settings.accessibilityHint" = "Показва настройките за името, приложенията, иконата в Dock и изскачащия прозорец на „%@“.";
+"common.itemCount.one" = "1 елемент";
+"common.itemCount.other" = "%ld елемента";
+"settings.support.tab" = "Поддръжка";
+

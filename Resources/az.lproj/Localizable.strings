@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Bu versiyada təhlükəsizlik düzəlişləri yoxdur";
 "updates.otherVersions.preSafety.message" = "%@ versiyası quraşdırdığı yeniləmələrin yoxlanışının sərtləşdirilməsi kimi vacib təhlükəsizlik düzəlişlərindən əvvəl buraxılıb. Yalnız ehtiyacınız varsa quraşdırın və sonradan yenidən ən son versiyaya yeniləyin.";
 "core.backup.error.tooLarge" = "Bu fayl Cybokron Dock Groups ehtiyat nüsxəsi üçün çox böyükdür.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Qrup parametrləri";
+"group.settings.menu" = "Qrup parametrləri…";
+"group.settings.accessibilityHint" = "«%@» qrupunun adını, tətbiqlərini, Dock elementini və açılan pəncərə parametrlərini göstərir.";
+"common.itemCount.one" = "1 element";
+"common.itemCount.other" = "%ld element";
+"settings.support.tab" = "Dəstək";
+

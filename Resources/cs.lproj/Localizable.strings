@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Tato verze postrádá bezpečnostní opravy";
 "updates.otherVersions.preSafety.message" = "Verze %@ byla vydána dříve než důležité bezpečnostní opravy, například přísnější kontroly aktualizací, které instaluje. Instalujte ji pouze v případě potřeby a poté znovu aktualizujte na nejnovější verzi.";
 "core.backup.error.tooLarge" = "Tento soubor je příliš velký na to, aby byl zálohou Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Nastavení skupiny";
+"group.settings.menu" = "Nastavení skupiny…";
+"group.settings.accessibilityHint" = "Zobrazí nastavení názvu, aplikací, dlaždice v Docku a vyskakovacího okna skupiny „%@“.";
+"common.itemCount.one" = "1 položka";
+"common.itemCount.other" = "%ld položek";
+"settings.support.tab" = "Podpora";
+

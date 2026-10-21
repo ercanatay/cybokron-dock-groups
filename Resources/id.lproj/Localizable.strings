@@ -555,3 +555,12 @@
 "updates.otherVersions.preSafety.title" = "Versi ini tidak memiliki perbaikan keamanan";
 "updates.otherVersions.preSafety.message" = "Versi %@ dirilis sebelum perbaikan keamanan penting, seperti pemeriksaan yang lebih ketat terhadap pembaruan yang dipasangnya. Pasang versi ini hanya jika Anda memerlukannya, lalu perbarui kembali ke versi terbaru setelahnya.";
 "core.backup.error.tooLarge" = "Berkas ini terlalu besar untuk menjadi cadangan Cybokron Dock Groups.";
+
+/* Group Settings gear, item count, Settings → Support tab */
+"group.settings.title" = "Pengaturan Grup";
+"group.settings.menu" = "Pengaturan Grup…";
+"group.settings.accessibilityHint" = "Menampilkan nama, aplikasi, ikon Dock, dan pengaturan pop-up dari ‘%@’.";
+"common.itemCount.one" = "1 item";
+"common.itemCount.other" = "%ld item";
+"settings.support.tab" = "Dukungan";
+
