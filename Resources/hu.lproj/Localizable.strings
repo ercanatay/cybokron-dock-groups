@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld elem";
 "settings.support.tab" = "Súgó és támogatás";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "A macOS nem tudta lefoglalni ezeket a billentyűket a parancsikonokhoz, ezért figyelésükkel old meg: ehhez az Akadálymentesítés engedély szükséges, és az előtérben lévő alkalmazás is megkapja a billentyűlenyomást.";

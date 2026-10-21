@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld आइटम";
 "settings.support.tab" = "सहायता";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS शॉर्टकट के लिए इन कुंजियों को आरक्षित नहीं कर सका, इसलिए इन्हें सुनने का तरीका अपनाया गया है: इसके लिए Accessibility की अनुमति चाहिए, और कुंजी दबाने का संकेत सामने वाले ऐप को भी मिलता है।";

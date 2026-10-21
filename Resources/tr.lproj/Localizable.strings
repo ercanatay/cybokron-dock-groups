@@ -562,3 +562,5 @@
 "common.itemCount.other" = "%ld öğe";
 "settings.support.tab" = "Destek";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS bu tuşları kısayollar için ayıramadı, bu yüzden bunun yerine izleniyorlar: bunun için Accessibility erişimi gerekir ve tuşa basma olayı ön plandaki uygulamaya da ulaşır.";

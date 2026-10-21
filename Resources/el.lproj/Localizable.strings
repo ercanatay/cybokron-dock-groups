@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld στοιχεία";
 "settings.support.tab" = "Υποστήριξη";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "Το macOS δεν μπόρεσε να δεσμεύσει αυτά τα πλήκτρα για τις συντομεύσεις, γι' αυτό παρακολουθούνται αντ' αυτού: αυτό απαιτεί πρόσβαση στο Accessibility, και η εφαρμογή που βρίσκεται στο προσκήνιο λαμβάνει επίσης το πάτημα του πλήκτρου.";

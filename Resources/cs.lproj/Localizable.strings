@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld položek";
 "settings.support.tab" = "Podpora";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS nemohlo tyto klávesy vyhradit pro zkratky, proto se sledují jinak: to vyžaduje přístup k nástroji Accessibility a stisk klávesy se dostane i do aplikace v popředí.";

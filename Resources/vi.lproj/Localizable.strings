@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld mục";
 "settings.support.tab" = "Hỗ trợ";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS không thể dành riêng các phím này cho phím tắt, nên thay vào đó ứng dụng theo dõi việc nhấn phím: điều này cần quyền truy cập Accessibility, và ứng dụng đang ở phía trước cũng sẽ nhận được thao tác nhấn phím.";

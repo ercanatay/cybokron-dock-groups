@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld елемента";
 "settings.support.tab" = "Поддръжка";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS не успя да резервира тези клавиши за пряките комбинации, затова вместо това те се следят: за целта е нужен достъп до Accessibility, а натискането на клавишите се получава и от приложението на преден план.";

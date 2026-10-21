@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld objekt";
 "settings.support.tab" = "Support";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS kunde inte reservera dessa tangenter för genvägarna, så de övervakas i stället: det kräver Accessibility-åtkomst, och appen längst fram tar också emot tangenttryckningen.";

@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld elemente";
 "settings.support.tab" = "Asistență";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS nu a putut rezerva aceste taste pentru scurtături, așa că acestea sunt monitorizate în schimb: asta necesită acces la Accessibility, iar aplicația din față primește și apăsarea tastei.";

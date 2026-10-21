@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld element";
 "settings.support.tab" = "Dəstək";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS bu düymələri qısayollar üçün rezerv edə bilmədi, ona görə onları izləməklə tanıyır: bunun üçün Accessibility icazəsi lazımdır və ön plandakı tətbiq də düymə basışını alır.";

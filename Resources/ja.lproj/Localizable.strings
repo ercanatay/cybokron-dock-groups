@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld件";
 "settings.support.tab" = "サポート";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOSはこれらのキーをショートカット用に確保できなかったため代わりに監視しており、これにはAccessibilityへのアクセス許可が必要で、前面のアプリにもキー入力が届きます。";

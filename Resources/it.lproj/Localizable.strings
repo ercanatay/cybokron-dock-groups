@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld elementi";
 "settings.support.tab" = "Supporto";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS non è riuscito a riservare questi tasti per le scorciatoie, quindi vengono monitorati in modo passivo: questo richiede l'autorizzazione di Accessibility e la pressione del tasto arriva anche all'app in primo piano.";

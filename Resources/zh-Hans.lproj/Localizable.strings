@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld 个项目";
 "settings.support.tab" = "支持";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS 无法为快捷键保留这些按键，因此改为监听：这需要 Accessibility 权限，并且前台应用也会收到该按键。";

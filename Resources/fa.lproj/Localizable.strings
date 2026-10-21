@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld مورد";
 "settings.support.tab" = "پشتیبانی";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS نتوانست این کلیدها را برای میان‌بُرها رزرو کند، بنابراین به‌جای آن پایشان می‌کند: این کار به دسترسی Accessibility نیاز دارد و برنامهٔ جلویی نیز فشردن کلید را دریافت می‌کند.";

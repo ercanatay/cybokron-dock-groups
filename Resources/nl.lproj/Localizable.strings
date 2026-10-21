@@ -564,3 +564,5 @@
 "common.itemCount.other" = "%ld items";
 "settings.support.tab" = "Ondersteuning";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS kon deze toetsen niet reserveren voor de sneltoetsen, daarom worden ze in de plaats daarvan bewaakt: daarvoor is toegang tot Accessibility nodig, en de app op de voorgrond ontvangt de toetsaanslag ook.";

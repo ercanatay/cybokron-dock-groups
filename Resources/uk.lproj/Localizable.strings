@@ -563,3 +563,5 @@
 "common.itemCount.other" = "%ld елементів";
 "settings.support.tab" = "Підтримка";
 
+/* Only when hot key reservation fails: the fallback needs Accessibility access */
+"shortcuts.hotkey.unavailable" = "macOS не змогла зарезервувати ці клавіші для комбінацій, тому натискання відстежуються інакше: для цього потрібен доступ у розділі «Accessibility», і клавіша натискання також передається програмі, що знаходиться на передньому плані.";
