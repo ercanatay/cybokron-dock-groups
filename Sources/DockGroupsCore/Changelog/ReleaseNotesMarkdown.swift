@@ -200,20 +200,35 @@ public enum ReleaseNotesMarkdown {
         return normalized.components(separatedBy: "\n")
     }
 
-    /// `text` without `<!-- … -->` comments, in one pass. A comment that's never closed stays as it
-    /// is, and so does everything after it: once no `-->` follows a `<!--`, none follows a later
+    /// `text` without `<!-- … -->` comments, in one pass. As in HTML, a comment ends at the first
+    /// `-->` or `--!>` after it, whichever comes first. A comment that's never closed stays as it
+    /// is, and so does everything after it: once no end follows a `<!--`, none follows a later
     /// one either, so the scan stops there. (A lazy regular expression would look for the end
     /// again from every `<!--`, which takes quadratic time on text full of them.)
     static func removingHTMLComments(from text: String) -> String {
         var result = ""
         var rest = text[...]
         while let open = rest.firstRange(of: "<!--") {
-            guard let close = rest[open.upperBound...].firstRange(of: "-->") else { break }
+            guard let close = commentEnd(in: rest[open.upperBound...]) else { break }
             result += rest[..<open.lowerBound]
             rest = rest[close.upperBound...]
         }
         result += rest
         return result
+    }
+
+    /// The first `-->` or `--!>` in `text`. One scan finds whichever comes first; searching for
+    /// each separately would read past the earlier one to the end of the text every time.
+    private static func commentEnd(in text: Substring) -> Range<Substring.Index>? {
+        var from = text.startIndex
+        while let dashes = text[from...].firstRange(of: "--") {
+            var end = dashes.upperBound
+            if end < text.endIndex, text[end] == "!" { end = text.index(after: end) }
+            if end < text.endIndex, text[end] == ">" { return dashes.lowerBound..<text.index(after: end) }
+            // Not an end here; a match may still start at the second dash ("--->").
+            from = text.index(after: dashes.lowerBound)
+        }
+        return nil
     }
 
     /// A line of only the fence's character, at least three of them: what closes a code block.

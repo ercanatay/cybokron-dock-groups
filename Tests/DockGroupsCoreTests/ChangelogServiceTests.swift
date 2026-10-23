@@ -501,9 +501,18 @@ struct ReleaseNotesBoundsTests {
         ("long code block", "```\n" + String(repeating: "code\n", count: 20_000)),
     ]
 
-    /// What the previous implementation did.
+    /// What the previous implementation did, with `--!>` also ending a comment as it does in HTML.
     static func regexRemovingComments(_ text: String) -> String {
-        text.replacingOccurrences(of: #"<!--[\s\S]*?-->"#, with: "", options: .regularExpression)
+        text.replacingOccurrences(of: #"<!--[\s\S]*?(?:-->|--!>)"#, with: "", options: .regularExpression)
+    }
+
+    @Test func commentsAlsoEndAtBangClose() {
+        #expect(ReleaseNotesMarkdown.removingHTMLComments(from: "<!-- hello --!> world") == " world")
+        // Whichever end comes first closes the comment.
+        #expect(ReleaseNotesMarkdown.removingHTMLComments(from: "<!-- a --> b --!> c") == " b --!> c")
+        #expect(ReleaseNotesMarkdown.removingHTMLComments(from: "<!-- a --!> b --> c") == " b --> c")
+        #expect(ReleaseNotesMarkdown.removingHTMLComments(from: "<!-- x") == "<!-- x")
+        #expect(ReleaseNotesMarkdown.removingHTMLComments(from: "a --!> b") == "a --!> b")
     }
 
     @Test func commentsAreRemovedAsBefore() {
@@ -515,6 +524,9 @@ struct ReleaseNotesBoundsTests {
             "<!---->",
             "<!-->",
             "-->a<!--",
+            "a<!--x--!-->b",
+            "<!---!>",
+            "<!--!>",
             "",
         ]
         for text in cases {
@@ -522,7 +534,7 @@ struct ReleaseNotesBoundsTests {
         }
         // Random mixes of the pieces that matter, against the regular expression.
         var generator = SystemRandomNumberGenerator()
-        let pieces = ["<!--", "-->", "<!-", "--", ">", "a", "\n", " "]
+        let pieces = ["<!--", "-->", "--!>", "<!-", "--", "!", ">", "a", "\n", " "]
         for _ in 0..<500 {
             let text = (0..<Int.random(in: 0...24, using: &generator)).map { _ in pieces.randomElement(using: &generator)! }.joined()
             #expect(ReleaseNotesMarkdown.removingHTMLComments(from: text) == Self.regexRemovingComments(text), "\(text.debugDescription)")
