@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.7] - 2026-10-23
+
+### Changed
+
+- CI: the checkout, artifact upload and release actions in the workflows are updated (SHA-pinned, matching Dependabot's bumps)
+- The release notes performance test tolerates slower CI runners (1 s); the local bound stays at 200 ms
+
 ## [0.6.6] - 2026-10-21
 
 ### Added
@@ -377,7 +384,8 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-- Standalone Dock icons: a group can get its own small app with the group's tile as its Dock icon,
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...HEAD
+[0.6.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...v0.6.7
   rebuilt when the group or the app changes and removed (with its Dock tile) when it's turned off or
   deleted.
 - Settings window with Popup, Shortcuts and Most Used tabs, and an About window.
