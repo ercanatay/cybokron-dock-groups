@@ -45,9 +45,26 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - **Keyboard in the popup**: the arrow keys select an app and Return opens it; typing filters the
   apps by name (case and accents don't matter, `cal` finds “Çalışma”), Delete or Escape clears the
   filter; Tab / ⇧Tab switch to the next / previous group (and Most Used), and Escape closes the popup.
-  With an app selected and nothing typed, Space shows it in Quick Look (Space or Escape closes it).
-- **Websites in groups**: **Add Website…** (group window or the popup's context menu) adds a web
-  link, shown as a globe; it opens in your default browser and Open All opens it with the apps.
+  With an app, file or folder selected and nothing typed, Space shows it in Quick Look (Space or
+  Escape closes it); **Quick Look** in its context menu does the same.
+- **Websites in groups**: **Add Website…** (the group window's **Add** menu, or the popup's context
+  menu) adds a web link, shown as a globe; it opens in your default browser and Open All opens it
+  with the apps.
+- **Files and folders in groups**: **Add Files or Folders…** in the group window's **Add** menu
+  adds documents (document packages such as `.rtfd` or `.pages` included) and folders, shown with
+  their Finder icons; an app you choose there is added as an app. A click opens a file in its
+  default app and a folder in Finder, and Open All opens them too, after the apps (one request per
+  default app). Their context menu has **Quick Look** and **Show in Finder**. A file or folder that
+  was moved, renamed or deleted stays in the group, dimmed: its row in the group window says *Can't
+  be found* and **Locate…** points it at where it is now, keeping its place in the group; one on a
+  volume that isn't connected says so. Programs, scripts, installers, app bundles and location or
+  alias files can't be added — the alert lists them — and every file is checked again before it's
+  opened, whatever the groups file or a backup says. The app never reads, indexes or previews a
+  file's contents itself (Quick Look does, when you ask it to). The group window's list is called
+  **Items**, and checks where its items are when it shows a group, comes to the front or a volume is
+  connected or ejected — not while it draws. A standalone group's own app doesn't look at items in
+  Desktop, Documents, Downloads, iCloud Drive or on other volumes until they're opened, so it doesn't
+  ask for access to them just to show its popup or Dock menu.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are
@@ -177,7 +194,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   location is left out). Backups can also carry file and folder items and each item's alias, tags
   and task notes (still format version 1, so 0.6.7 and earlier read them too, showing such items as
   missing apps). A file or folder item is left out when its location isn't a plain absolute path, or
-  when it names a program, script, installer, app or location file.
+  when it names a program, script, installer, app or location file; the import's confirmation counts
+  a backup's apps, websites, files and folders as items and says how many were left out.
 - **Export Diagnostics** (Settings → Backup → Diagnostics): **Copy** or **Save to File…** a plain-text
   report to attach to a GitHub issue — app and macOS versions, Mac model, settings, update checks,
   group names with item counts by kind (never the items themselves) and recent errors; nothing is
@@ -355,6 +373,31 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - Choose the app from the Most Used menu, or from a standalone group's Dock menu: same results.
    - Turn the setting off: a click only brings the app to the front, hidden and minimized windows
      stay where they are.
+3. **Files, folders and privacy prompts** — macOS guards Desktop, Documents, Downloads, iCloud Drive
+   and other volumes (Privacy & Security → Files and Folders), and each standalone group's own app
+   (`com.cybokron.dockgroups.agent.<id>`) separately from the main app. Use a copy in
+   `/Applications`, so its identity stays the same between launches.
+   - Reset the answers: `tccutil reset SystemPolicyDocumentsFolder com.cybokron.dockgroups`, then the
+     same for `SystemPolicyDownloadsFolder` and `SystemPolicyDesktopFolder`.
+   - With Add → **Add Files or Folders…**, add `~/Documents/x.pdf`, a folder in `~/Downloads` and a
+     file outside the guarded folders (such as `~/Projects/notes.txt`). Quit and reopen the app and
+     open the group's popup: note whether macOS asks for access to Documents or Downloads, and
+     whether the items show dimmed (they mustn't when access was denied: they show as usual and are
+     checked when opened).
+   - Click each: the file opens in its default app, the folder in Finder. **Show in Finder** selects
+     it; Space and **Quick Look** in the context menu preview it (a folder shows its Finder card).
+   - Turn on *Standalone Dock icon* for the group and click its Dock tile: the popup and the Dock
+     menu show the guarded items without macOS asking. Open one: note whether macOS asks the group's
+     app (`tccutil reset SystemPolicyDocumentsFolder com.cybokron.dockgroups.agent.<id>` resets it).
+   - Rename the file in Finder and bring the group window to the front: its row says *Can't be
+     found*, and **Locate…** with the new name keeps the item's place. Eject a volume with an item on
+     it: the row says the volume isn't connected; connect it again: the row is back to normal.
+   - Try to add a `.command` file, a shell script and a `.webloc`: none is added, and one alert lists
+     them.
+   - If macOS asks for access, record it: the purpose strings (`NSDocumentsFolderUsageDescription`,
+     `NSDesktopFolderUsageDescription`, `NSDownloadsFolderUsageDescription`,
+     `NSRemovableVolumesUsageDescription`, `NSNetworkVolumesUsageDescription`) then go into
+     `Resources/Info.plist` and the agents' generated Info.plist (`AgentInfoPlist`).
 
 ## Project layout
 

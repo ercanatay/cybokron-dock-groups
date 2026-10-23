@@ -138,15 +138,12 @@
 "groupWindow.name" = "Naam";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Kies…";
-"groupWindow.section.apps" = "Apps";
-"groupWindow.apps.empty" = "Nog geen apps. Gebruik „%1$@“ om apps voor deze groep te kiezen, of „%2$@“ voor een weblink.";
 "groupWindow.addWebsite.help" = "Voeg een weblink toe aan deze groep. Deze opent in je standaardbrowser.";
 "groupWindow.sortAZ" = "Sorteer A→Z";
 "groupWindow.sortAZ.help" = "Sorteer de apps in deze groep op naam, van A naar Z. Sleep ze om de volgorde handmatig aan te passen.";
 "groupWindow.showPopup" = "Toon pop-up";
 "groupWindow.showPopup.help" = "Toon de pop-up van deze groep boven het Dock.";
 "groupWindow.hideAll.help" = "Verberg de actieve apps van deze groep. Apps die niet actief zijn, blijven gesloten.";
-"groupWindow.apps.moveHint" = "Om een app naar een andere groep te verplaatsen, sleep je hem naar die groep in de zijbalk, of gebruik je %@ in het contextmenu.";
 "groupWindow.app.notFound" = "Niet gevonden op deze Mac · %@";
 "groupWindow.app.remove.website" = "Verwijder %@ uit deze groep.";
 "groupWindow.app.remove" = "Verwijder %@ uit deze groep. De app zelf wordt niet beïnvloed.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Kies de apps die je aan „%@“ wilt toevoegen.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "De apps in „%@“ konden niet worden geopend.";
-"problems.launch.someFailed" = "Sommige apps in „%@“ konden niet worden geopend.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "niet gevonden op deze Mac.";
 "problems.launch.opened" = "geopend.";

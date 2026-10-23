@@ -3,7 +3,7 @@ import DockGroupsCore
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// A group an app can be moved to, as the "Move to" menus list it.
+/// A group an item can be moved to, as the "Move to" menus list it (see `GroupStore.moveApp`).
 struct GroupMoveTarget: Identifiable, Hashable {
     let id: DockGroup.ID
     let title: String
@@ -11,27 +11,6 @@ struct GroupMoveTarget: Identifiable, Hashable {
     /// The groups other than `sourceID`, in list order.
     static func targets(in groups: [DockGroup], excluding sourceID: DockGroup.ID) -> [GroupMoveTarget] {
         groups.filter { $0.id != sourceID }.map { GroupMoveTarget(id: $0.id, title: "\($0.emoji)  \($0.name)") }
-    }
-}
-
-/// A context menu with a "Move to" submenu of the other groups (see `GroupStore.moveApp`), for an
-/// app in the popup or the group window. Without other groups the view gets no context menu.
-struct MoveToGroupContextMenu: ViewModifier {
-    let targets: [GroupMoveTarget]
-    let move: (DockGroup.ID) -> Void
-
-    func body(content: Content) -> some View {
-        if targets.isEmpty {
-            content
-        } else {
-            content.contextMenu {
-                Menu(L10n.Common.moveTo) {
-                    ForEach(targets) { target in
-                        Button(target.title) { move(target.id) }
-                    }
-                }
-            }
-        }
     }
 }
 

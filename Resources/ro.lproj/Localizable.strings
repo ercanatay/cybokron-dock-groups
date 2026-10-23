@@ -138,15 +138,12 @@
 "groupWindow.name" = "Nume";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Alege…";
-"groupWindow.section.apps" = "Aplicații";
-"groupWindow.apps.empty" = "Încă nicio aplicație. Folosește „%1$@” pentru a alege aplicații pentru acest grup, sau „%2$@” pentru un link web.";
 "groupWindow.addWebsite.help" = "Adaugă un link web la acest grup. Se deschide în browserul implicit.";
 "groupWindow.sortAZ" = "Sortează A→Z";
 "groupWindow.sortAZ.help" = "Sortează aplicațiile din acest grup după nume, de la A la Z. Trage-le pentru a le reordona manual.";
 "groupWindow.showPopup" = "Arată fereastra pop-up";
 "groupWindow.showPopup.help" = "Arată fereastra pop-up a acestui grup peste Dock.";
 "groupWindow.hideAll.help" = "Ascunde aplicațiile care rulează din acest grup. Aplicațiile care nu rulează rămân închise.";
-"groupWindow.apps.moveHint" = "Pentru a muta o aplicație în alt grup, trage-o pe acel grup din bara laterală sau folosește %@ din meniul ei contextual.";
 "groupWindow.app.notFound" = "Nu a fost găsită pe acest Mac · %@";
 "groupWindow.app.remove.website" = "Elimină %@ din acest grup.";
 "groupWindow.app.remove" = "Elimină %@ din acest grup. Aplicația în sine nu este afectată.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Alege aplicațiile de adăugat la „%@”.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Aplicațiile din „%@” nu au putut fi deschise.";
-"problems.launch.someFailed" = "Unele aplicații din „%@” nu au putut fi deschise.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "nu a fost găsită pe acest Mac.";
 "problems.launch.opened" = "deschisă.";

@@ -137,15 +137,12 @@
 "groupWindow.name" = "Назва";
 "groupWindow.emoji" = "Емодзі";
 "groupWindow.emoji.choose" = "Вибрати…";
-"groupWindow.section.apps" = "Застосунки";
-"groupWindow.apps.empty" = "Застосунків ще немає. Скористайтеся «%1$@», щоб вибрати застосунки для цієї групи, або «%2$@», щоб додати посилання на вебсайт.";
 "groupWindow.addWebsite.help" = "Додати посилання на вебсайт до цієї групи. Він відкривається у вашому браузері за замовчуванням.";
 "groupWindow.sortAZ" = "Упорядкувати А→Я";
 "groupWindow.sortAZ.help" = "Упорядкувати застосунки цієї групи за назвою, від А до Я. Перетягуйте їх, щоб змінити порядок вручну.";
 "groupWindow.showPopup" = "Показати вікно";
 "groupWindow.showPopup.help" = "Показати спливаюче вікно цієї групи над Dock.";
 "groupWindow.hideAll.help" = "Сховати запущені застосунки цієї групи. Застосунки, які не запущено, лишаються закритими.";
-"groupWindow.apps.moveHint" = "Щоб перемістити застосунок до іншої групи, перетягніть його на цю групу в бічній панелі або скористайтеся пунктом %@ в його контекстному меню.";
 "groupWindow.app.notFound" = "Не знайдено на цьому Mac · %@";
 "groupWindow.app.remove.website" = "Вилучити %@ з цієї групи.";
 "groupWindow.app.remove" = "Вилучити %@ з цієї групи. Сам застосунок не зачіпається.";
@@ -202,8 +199,6 @@
 "appPicker.message" = "Виберіть застосунки, які додати до «%@».";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Не вдалося відкрити застосунки з «%@».";
-"problems.launch.someFailed" = "Деякі застосунки з «%@» не вдалося відкрити.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "не знайдено на цьому Mac.";
 "problems.launch.opened" = "відкрито.";

@@ -19,13 +19,17 @@ enum PopupMetrics {
     }
 }
 
-/// One app in the popup grid, with what the cell needs precomputed.
+/// One item in the popup grid, with what the cell needs precomputed: where the item is is checked
+/// once, when the popup's content is built, never while it draws.
 struct PopupCell: Identifiable {
     let app: AppReference
     let icon: NSImage
-    let isInstalled: Bool
+    let presence: ItemPresence
 
     var id: String { app.id }
+
+    /// Whether opening the item is worth trying; the others are dimmed.
+    var isInstalled: Bool { presence.isOpenable }
 }
 
 /// Everything the popup shows for one group.
@@ -63,8 +67,13 @@ struct PopupActions {
     let showGroupSettings: (() -> Void)?
     /// Asks for a website to add to the group; `nil` where the group can't be edited.
     let addWebsite: (() -> Void)?
-    /// Shows the app in Finder.
+    /// Shows the app, file or folder in Finder.
     let showInFinder: (AppReference) -> Void
+    /// Shows the item in Quick Look, selecting it first.
+    let quickLook: (AppReference) -> Void
+    /// Offers to say where a missing file or folder is now (in the group window); `nil` where the
+    /// group can't be edited.
+    let locate: ((AppReference) -> Void)?
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
     /// Free Layout: puts the apps in these cells (`FreeLayout.slots`).
@@ -106,9 +115,11 @@ private struct CellDrag: Equatable {
 /// The keyboard (handled by `PopupPanelController`) selects apps and filters them by name: while
 /// filtering, the matches are shown packed from the first cell, best first, and can't be dragged.
 ///
-/// A group can hold websites too: they show a globe, open in the default browser and have no
-/// running indicator. Each item's context menu opens it, copies a website's address or shows an
-/// app in Finder, moves it to another group or removes it, and adds a website.
+/// A group can hold websites, files and folders too: a website shows a globe and opens in the
+/// default browser, a file or folder shows its Finder icon and opens with its default app (a
+/// folder in Finder); none has a running indicator. A file or folder that can't be found is
+/// dimmed. Each item's context menu (`ItemAction`) opens it, shows it in Quick Look or in Finder,
+/// copies a website's address, moves it to another group or removes it, and adds a website.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -732,32 +743,67 @@ private struct PopupAppCell: View {
         .opacity(isInRemovalArea ? 0.4 : 1)
         .shadow(color: .black.opacity(isDragged ? 0.3 : 0), radius: 10, y: 4)
         .onHover { isHovered = $0 }
-        .help(helpText)
-        .accessibilityLabel(cell.app.isWebsite ? L10n.Popup.websiteAccessibility(cell.app.name) : cell.app.name)
+        .help(text.helpText)
+        .accessibilityLabel(text.accessibilityLabel)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityHint(cell.app.isWebsite ? L10n.Popup.websiteHint : (isRunning ? L10n.Popup.runningAppHint : L10n.Popup.appHint))
+        .accessibilityHint(text.accessibilityHint)
     }
 
-    /// What clicking the item does and, in editable groups, how it can be dragged.
-    private var helpText: String {
-        let action: String
-        let drag: String
-        if cell.app.isWebsite {
-            action = L10n.Popup.helpOpenWebsite(cell.app.websiteURL?.absoluteString ?? cell.app.name)
-            drag = isFreeLayout ? L10n.Popup.helpDragFreeItem : L10n.Popup.helpDragOrdered
-        } else if !cell.isInstalled {
-            action = L10n.Popup.helpMissing(cell.app.name)
-            drag = L10n.Popup.helpDragOutMissing
-        } else {
-            action = isRunning ? L10n.Popup.helpBringToFront(cell.app.name) : L10n.Popup.helpOpenApp(cell.app.name)
-            drag = isFreeLayout ? L10n.Popup.helpDragFreeApp : L10n.Popup.helpDragOrdered
-        }
-        return isEditable ? "\(action) \(drag)" : action
+    /// What clicking the item does and, in editable groups, how it can be dragged; VoiceOver's
+    /// label and hint.
+    private var text: PopupCellText {
+        PopupCellText(item: cell.app, presence: cell.presence, isRunning: isRunning, isEditable: isEditable, isFreeLayout: isFreeLayout)
     }
 }
 
-/// The context menu of an item in the popup grid: Open; Copy URL for a website or Show in Finder
-/// for an app; and in editable groups Move to (the other groups), Remove from Group and Add
+extension PopupCellText {
+    /// The tooltip: what a click does, then (in editable groups) how the item can be dragged.
+    var helpText: String {
+        let action: String
+        switch help {
+        case .openApp(let name): action = L10n.Popup.helpOpenApp(name)
+        case .bringToFront(let name): action = L10n.Popup.helpBringToFront(name)
+        case .openWebsite(let address): action = L10n.Popup.helpOpenWebsite(address)
+        case .openFile(let name): action = L10n.Popup.helpOpenFile(name)
+        case .openFolder(let name): action = L10n.Popup.helpOpenFolder(name)
+        case .appMissing(let name): action = L10n.Popup.helpMissing(name)
+        case .itemMissing(let name): action = L10n.Item.missingHelp(name)
+        case .volumeUnavailable(let name, let volume): action = L10n.Item.volumeHelp(name, volume: volume)
+        }
+        let dragText: String
+        switch drag {
+        case nil: return action
+        case .freeItem?: dragText = L10n.Popup.helpDragFreeItem
+        case .freeApp?: dragText = L10n.Popup.helpDragFreeApp
+        case .ordered?: dragText = L10n.Popup.helpDragOrdered
+        case .missing?: dragText = L10n.Popup.helpDragOutMissing
+        }
+        return "\(action) \(dragText)"
+    }
+
+    var accessibilityLabel: String {
+        switch label {
+        case .app(let name): return name
+        case .website(let name): return L10n.Popup.websiteAccessibility(name)
+        case .file(let name): return L10n.Item.fileAccessibility(name)
+        case .folder(let name): return L10n.Item.folderAccessibility(name)
+        }
+    }
+
+    var accessibilityHint: String {
+        switch hint {
+        case .openApp: return L10n.Popup.appHint
+        case .bringToFront: return L10n.Popup.runningAppHint
+        case .website: return L10n.Popup.websiteHint
+        case .file: return L10n.Popup.fileHint
+        case .folder: return L10n.Popup.folderHint
+        }
+    }
+}
+
+/// The context menu of an item in the popup grid, from `ItemAction.available`: Open, then Quick
+/// Look and Show in Finder for what's on disk, Copy URL for a website, and Locate… for a missing
+/// file or folder; in editable groups Move to (the other groups) and Remove from Group, then Add
 /// Website….
 private struct PopupCellContextMenu: ViewModifier {
     let cell: PopupCell
@@ -766,8 +812,37 @@ private struct PopupCellContextMenu: ViewModifier {
     let actions: PopupActions
 
     func body(content: Content) -> some View {
+        let available = ItemAction.available(for: cell.app, presence: cell.presence, in: .popup(isEditable: isEditable))
         content.contextMenu {
+            ForEach(available.filter { !Self.editingActions.contains($0) }, id: \.self) { action in
+                button(for: action)
+            }
+            if isEditable {
+                Divider()
+                ForEach(available.filter(Self.editingActions.contains), id: \.self) { action in
+                    button(for: action)
+                }
+                if let addWebsite = actions.addWebsite {
+                    Divider()
+                    Button(L10n.Common.addWebsite, action: addWebsite)
+                }
+            }
+        }
+    }
+
+    /// The actions that change the group, after a divider.
+    private static let editingActions: Set<ItemAction> = [.moveTo, .remove]
+
+    @ViewBuilder
+    private func button(for action: ItemAction) -> some View {
+        switch action {
+        case .open:
             Button(L10n.Popup.menuOpen) { actions.open(cell.app) }
+        case .quickLook:
+            Button(L10n.Item.quickLook) { actions.quickLook(cell.app) }
+        case .showInFinder:
+            Button(L10n.Common.showInFinder) { actions.showInFinder(cell.app) }
+        case .copyURL:
             if let url = cell.app.websiteURL {
                 Button(L10n.Popup.menuCopyURL) {
                     let pasteboard = NSPasteboard.general
@@ -775,24 +850,24 @@ private struct PopupCellContextMenu: ViewModifier {
                     pasteboard.setString(url.absoluteString, forType: .string)
                     pasteboard.setString(url.absoluteString, forType: .URL)
                 }
-            } else if cell.isInstalled {
-                Button(L10n.Common.showInFinder) { actions.showInFinder(cell.app) }
             }
-            if isEditable {
-                Divider()
-                if !moveTargets.isEmpty {
-                    Menu(L10n.Common.moveTo) {
-                        ForEach(moveTargets) { target in
-                            Button(target.title) { actions.moveAppToGroup(cell.app, target.id) }
-                        }
+        case .locate:
+            if let locate = actions.locate {
+                Button(L10n.Item.locate) { locate(cell.app) }
+            }
+        case .moveTo:
+            if !moveTargets.isEmpty {
+                Menu(L10n.Common.moveTo) {
+                    ForEach(moveTargets) { target in
+                        Button(target.title) { actions.moveAppToGroup(cell.app, target.id) }
                     }
                 }
-                Button(L10n.Common.removeFromGroup) { actions.removeApp(cell.app) }
-                if let addWebsite = actions.addWebsite {
-                    Divider()
-                    Button(L10n.Common.addWebsite, action: addWebsite)
-                }
             }
+        case .remove:
+            Button(L10n.Common.removeFromGroup) { actions.removeApp(cell.app) }
+        case .editDetails:
+            // Not offered in the popup: details are edited in the group window.
+            EmptyView()
         }
     }
 }

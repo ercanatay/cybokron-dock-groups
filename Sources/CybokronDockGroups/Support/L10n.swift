@@ -199,6 +199,8 @@ enum L10n {
         static var websiteHint: String { tr("popup.cell.hint.website", "Opens the website in your browser") }
         static var runningAppHint: String { tr("popup.cell.hint.running", "Brings the app to the front") }
         static var appHint: String { tr("popup.cell.hint.open", "Opens the app") }
+        static var fileHint: String { tr("popup.item.hint.file", "Opens the file in its default app") }
+        static var folderHint: String { tr("popup.item.hint.folder", "Opens the folder in Finder") }
 
         /// The first sentence of an item's tooltip: what clicking it does.
         static func helpOpenWebsite(_ address: String) -> String {
@@ -209,6 +211,8 @@ enum L10n {
         }
         static func helpOpenApp(_ appName: String) -> String { tr("popup.cell.help.openApp", "Open %@.", appName) }
         static func helpMissing(_ appName: String) -> String { tr("popup.cell.help.missing", "%@ isn't on this Mac.", appName) }
+        static func helpOpenFile(_ name: String) -> String { tr("popup.item.help.openFile", "Open %@ in its default app.", name) }
+        static func helpOpenFolder(_ name: String) -> String { tr("popup.item.help.openFolder", "Open the folder %@.", name) }
 
         /// The second sentence of an item's tooltip: how it can be dragged.
         static var helpDragFreeItem: String {
@@ -287,15 +291,14 @@ enum L10n {
         static var emoji: String { tr("groupWindow.emoji", "Emoji") }
         static var chooseEmoji: String { tr("groupWindow.emoji.choose", "Choose…") }
 
-        // Apps
-        static var appsSection: String { tr("groupWindow.section.apps", "Apps") }
-        /// Names the Add Apps… and Add Website… buttons.
-        static func noApps(addApps: String, addWebsite: String) -> String {
-            tr(
-                "groupWindow.apps.empty",
-                "No apps yet. Use “%1$@” to choose apps for this group, or “%2$@” for a web link.",
-                addApps, addWebsite
-            )
+        // Items
+        static var itemsSection: String { tr("groupWindow.items.section", "Items") }
+        /// The menu of Add Apps…, Add Files or Folders… and Add Website….
+        static var addMenu: String { tr("groupWindow.items.add", "Add") }
+        static var addMenuHelp: String { tr("groupWindow.items.add.help", "Add apps, files, folders or a website to this group.") }
+        /// Names the Add menu.
+        static func noItems(add: String) -> String {
+            tr("groupWindow.items.empty", "Nothing here yet. Use “%@” to add apps, files, folders or a web link.", add)
         }
         static var addWebsiteHelp: String {
             tr("groupWindow.addWebsite.help", "Add a web link to this group. It opens in your default browser.")
@@ -312,8 +315,8 @@ enum L10n {
         /// Names the Move to menu.
         static func moveHint(moveTo: String) -> String {
             tr(
-                "groupWindow.apps.moveHint",
-                "To move an app to another group, drag it onto that group in the sidebar, or use %@ in its context menu.",
+                "groupWindow.items.moveHint",
+                "To move an item to another group, drag it onto that group in the sidebar, or use %@ in its context menu.",
                 moveTo
             )
         }
@@ -323,6 +326,12 @@ enum L10n {
         }
         static func removeAppHelp(_ name: String) -> String {
             tr("groupWindow.app.remove", "Remove %@ from this group. The app itself isn't affected.", name)
+        }
+        static func removeFileHelp(_ name: String) -> String {
+            tr("groupWindow.items.remove.file", "Remove %@ from this group. The file itself isn't affected.", name)
+        }
+        static func removeFolderHelp(_ name: String) -> String {
+            tr("groupWindow.items.remove.folder", "Remove %@ from this group. The folder itself isn't affected.", name)
         }
 
         // Dock tile
@@ -411,15 +420,54 @@ enum L10n {
         static func message(_ groupName: String) -> String { tr("appPicker.message", "Choose the apps to add to “%@”.", groupName) }
     }
 
+    /// Add Files or Folders…: the open panel, and the alert about what couldn't be added.
+    enum AddItems {
+        static var menu: String { tr("addItems.menu", "Add Files or Folders…") }
+        static var title: String { tr("addItems.title", "Add Files and Folders to Group") }
+        static func message(_ groupName: String) -> String {
+            tr("addItems.message", "Choose files and folders to add to “%@”. Apps you choose are added as apps.", groupName)
+        }
+        static var problemTitle: String { tr("addItems.problem.title", "Some items couldn't be added") }
+    }
+
+    /// What every kind of item shares: files and folders, Quick Look, missing items and Locate….
+    enum Item {
+        static func fileAccessibility(_ name: String) -> String { tr("item.kind.file.accessibility", "File %@", name) }
+        static func folderAccessibility(_ name: String) -> String { tr("item.kind.folder.accessibility", "Folder %@", name) }
+        static var quickLook: String { tr("item.action.quickLook", "Quick Look") }
+        static var locate: String { tr("item.action.locate", "Locate…") }
+        static func missingHelp(_ name: String) -> String {
+            tr("item.missing.help", "“%@” can't be found. It may have been moved, renamed or deleted.", name)
+        }
+        static func volumeHelp(_ name: String, volume: String) -> String {
+            tr("item.volume.help", "“%1$@” is on “%2$@”, which isn't connected.", name, volume)
+        }
+        /// The second line of a missing item's row, with where it was.
+        static func missingRow(_ location: String) -> String { tr("item.missing.row", "Can't be found · %@", location) }
+        static func volumeRow(_ volume: String, location: String) -> String {
+            tr("item.volume.row", "On “%1$@”, which isn't connected · %2$@", volume, location)
+        }
+        static func unverifiedRow(_ location: String) -> String { tr("item.unverified.row", "Can't check this location · %@", location) }
+        static func locateMessage(_ name: String) -> String {
+            tr("item.locate.message", "Choose where “%@” is now. Its details and place in the group are kept.", name)
+        }
+        static var locatePrompt: String { tr("item.locate.prompt", "Choose") }
+        static func locateDuplicate(_ name: String) -> String { tr("item.locate.duplicate", "“%@” is already in this group.", name) }
+        static func locateProblemTitle(_ name: String) -> String {
+            tr("item.locate.problem.title", "“%@” couldn't be located there", name)
+        }
+        /// Titles of the alert about the items a group couldn't open (apps, websites, files, folders).
+        static func noneOpened(_ groupName: String) -> String {
+            tr("item.problems.allFailed", "The items in “%@” couldn't be opened.", groupName)
+        }
+        static func someNotOpened(_ groupName: String) -> String {
+            tr("item.problems.someFailed", "Some items in “%@” couldn't be opened.", groupName)
+        }
+    }
+
     // MARK: - Problems
 
     enum Problems {
-        static func noneOpened(_ groupName: String) -> String {
-            tr("problems.launch.allFailed", "The apps in “%@” couldn't be opened.", groupName)
-        }
-        static func someNotOpened(_ groupName: String) -> String {
-            tr("problems.launch.someFailed", "Some apps in “%@” couldn't be opened.", groupName)
-        }
         /// One app that couldn't be opened, with why.
         static func launchItem(_ appName: String, reason: String) -> String {
             tr("problems.launch.item", "• %1$@: %2$@", appName, reason)
@@ -808,9 +856,9 @@ enum L10n {
                 )
             }
             static func exported(_ fileName: String) -> String { tr("settings.backup.status.exported", "Exported to “%@”", fileName) }
-            /// "Restored 2 groups with 7 apps".
-            static func restored(groups: String, apps: String) -> String {
-                tr("settings.backup.status.restored", "Restored %1$@ with %2$@", groups, apps)
+            /// "Restored 2 groups with 7 items".
+            static func restored(groups: String, items: String) -> String {
+                tr("settings.backup.status.restored", "Restored %1$@ with %2$@", groups, items)
             }
             static func merged(groups: String) -> String {
                 tr("settings.backup.status.merged", "Merged %@ from the backup", groups)
@@ -853,11 +901,17 @@ enum L10n {
             static func confirmNoGroups(exported date: String) -> String {
                 tr("settings.backup.confirm.noGroups.exported", "The backup has no groups, exported %@.", date)
             }
-            static func confirmContents(groups: String, apps: String) -> String {
-                tr("settings.backup.confirm.contents", "The backup has %1$@ with %2$@.", groups, apps)
+            static func confirmContents(groups: String, items: String) -> String {
+                tr("settings.backup.confirm.contents", "The backup has %1$@ with %2$@.", groups, items)
             }
-            static func confirmContents(groups: String, apps: String, exported date: String) -> String {
-                tr("settings.backup.confirm.contents.exported", "The backup has %1$@ with %2$@, exported %3$@.", groups, apps, date)
+            static func confirmContents(groups: String, items: String, exported date: String) -> String {
+                tr("settings.backup.confirm.contents.exported", "The backup has %1$@ with %2$@, exported %3$@.", groups, items, date)
+            }
+            /// Items of the backup that import leaves out (`SettingsBackup.leftOutItemCount`).
+            static func leftOut(_ count: Int) -> String {
+                count == 1
+                    ? tr("settings.backup.leftOut.one", "1 item in the backup was left out: it can't be opened safely.")
+                    : tr("settings.backup.leftOut.other", "%ld items in the backup were left out: they can't be opened safely.", count)
             }
             static var confirmReplace: String {
                 tr("settings.backup.confirm.replace", "Replace All uses the backup's groups and settings instead of yours.")
@@ -894,11 +948,11 @@ enum L10n {
                     "Merge keeps your groups and settings; every group in the backup is already here, so it adds nothing."
                 )
             }
-            static func confirmMergeAdds(groups: String, apps: String) -> String {
+            static func confirmMergeAdds(groups: String, items: String) -> String {
                 tr(
                     "settings.backup.confirm.merge.adds",
                     "Merge keeps your groups and settings and adds %1$@ with %2$@ from the backup.",
-                    groups, apps
+                    groups, items
                 )
             }
             static func confirmSkipped(_ count: Int) -> String {

@@ -10,11 +10,16 @@ import SwiftUI
 /// the group and the popup preferences while it's open, and closes it on Escape, an outside click
 /// or focus loss.
 ///
-/// While it's open the keyboard works the popup: the arrow keys select an app, Return opens it,
-/// typing filters the apps by name (Return then opens the selected, by default the best, match),
+/// While it's open the keyboard works the popup: the arrow keys select an item, Return opens it,
+/// typing filters the items by name (Return then opens the selected, by default the best, match),
 /// Delete and Escape clear the filter, Tab and ⇧Tab go to the next and previous group, and Escape
-/// without a filter closes the popup. Space without a filter shows the selected app in Quick Look
-/// (`PopupQuickLook`); Escape then closes Quick Look first, and closing the popup closes it too.
+/// without a filter closes the popup. Space without a filter shows the selected app, file or
+/// folder in Quick Look (`PopupQuickLook`), as Quick Look in its context menu does; Escape then
+/// closes Quick Look first, and closing the popup closes it too.
+///
+/// Where each item is (`ItemPresence`) is checked once per build of the popup's content — when it
+/// opens and when its group, the preferences or the Most Used list change — and again for the one
+/// item Show in Finder or Quick Look is asked for.
 ///
 /// The Most Used list (`MostUsedGroup.id`) opens like a group, read-only: its apps can be opened
 /// but not reordered or removed. A standalone agent shows its group read-only too
@@ -258,7 +263,10 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let content = PopupContent(
             group: group,
             tileImage: tiles.image(for: group, pointSize: PopupMetrics.headerTileSize),
-            cells: group.apps.map { PopupCell(app: $0, icon: icons.icon(for: $0), isInstalled: icons.isInstalled($0)) },
+            cells: group.apps.map { item in
+                let presence = icons.presence(of: item)
+                return PopupCell(app: item, icon: icons.icon(for: item, presence: presence), presence: presence)
+            },
             layout: layout,
             freeLayout: freeLayout,
             metrics: metrics,
@@ -343,10 +351,21 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 }
                 : nil,
             showInFinder: { [weak self] app in
-                guard let location = app.resolvedURL() else { return }
-                self?.close(reason: .appAction)
+                guard let self, let location = PopupQuickLook.target(for: app, presence: self.icons.presence(of: app)) else { return }
+                self.close(reason: .appAction)
                 NSWorkspace.shared.activateFileViewerSelecting([location])
             },
+            quickLook: { [weak self] app in
+                self?.showPreview(of: app)
+            },
+            // Locate… needs an open panel, which the popup can't host: the group window has it.
+            locate: allowsEditing && id != MostUsedGroup.id
+                ? { [weak self] _ in
+                    guard let self, let group = self.group(withID: id) else { return }
+                    self.close(reason: .appAction)
+                    self.actions.showGroupSettings(group)
+                }
+                : nil,
             moveApp: { [weak self] app, index in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Moving \(app.logIdentity, privacy: .public) to \(index) in group \(id, privacy: .public)")
@@ -471,10 +490,11 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         return true
     }
 
-    /// Space: a space in the filter while typing, else Quick Look for the selected app.
+    /// Space: a space in the filter while typing, else Quick Look for the selected item.
     private func handleSpace() -> Bool {
-        let location = selectedCell().flatMap { $0.app.isWebsite ? nil : $0.app.resolvedURL() }
-        let selection: PopupQuickLook.Selection = selectedCell() == nil ? .none : (location == nil ? .notPreviewable : .previewable)
+        let cell = selectedCell()
+        let location = cell.flatMap { PopupQuickLook.target(for: $0.app, presence: icons.presence(of: $0.app)) }
+        let selection: PopupQuickLook.Selection = cell == nil ? .none : (location == nil ? .notPreviewable : .previewable)
         switch PopupQuickLook.spaceAction(query: keyboard.query, isPreviewShown: preview.isShown, selection: selection) {
         case .typeSpace:
             setQuery(keyboard.query + " ")
@@ -496,15 +516,26 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         return content.navigationItems(query: keyboard.query).cells.first { $0.id == id }
     }
 
-    /// Keeps an open preview on the selected app; closes it once the selection is gone or has
+    /// Keeps an open preview on the selected item; closes it once the selection is gone or has
     /// nothing to preview.
     private func syncPreview() {
         guard preview.isShown else { return }
-        if let cell = selectedCell(), !cell.app.isWebsite, let location = cell.app.resolvedURL() {
+        if let cell = selectedCell(), let location = PopupQuickLook.target(for: cell.app, presence: icons.presence(of: cell.app)) {
             preview.show(location)
         } else {
             preview.close()
         }
+    }
+
+    /// Quick Look from an item's context menu: selects the item first — the preview follows the
+    /// selection and would close without one — then shows it.
+    private func showPreview(of app: AppReference) {
+        guard let content, groupID != nil,
+              let cell = content.navigationItems(query: keyboard.query).cells.first(where: { $0.id == app.id }),
+              let location = PopupQuickLook.target(for: cell.app, presence: icons.presence(of: cell.app))
+        else { return }
+        keyboard.selectedID = cell.id
+        preview.show(location)
     }
 
     /// Changes the filter and selects its best match (nothing once the filter is cleared).

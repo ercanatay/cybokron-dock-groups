@@ -138,15 +138,12 @@
 "groupWindow.name" = "الاسم";
 "groupWindow.emoji" = "الرمز التعبيري";
 "groupWindow.emoji.choose" = "اختر…";
-"groupWindow.section.apps" = "التطبيقات";
-"groupWindow.apps.empty" = "لا توجد تطبيقات بعد. استخدم “%1$@” لاختيار تطبيقات لهذه المجموعة، أو “%2$@” لإضافة رابط ويب.";
 "groupWindow.addWebsite.help" = "أضف رابط ويب إلى هذه المجموعة. يُفتح في متصفحك الافتراضي.";
 "groupWindow.sortAZ" = "ترتيب A–Z";
 "groupWindow.sortAZ.help" = "رتّب تطبيقات هذه المجموعة حسب الاسم من A إلى Z. اسحبها لإعادة الترتيب يدويًا.";
 "groupWindow.showPopup" = "عرض النافذة المنبثقة";
 "groupWindow.showPopup.help" = "عرض النافذة المنبثقة لهذه المجموعة فوق الدوك.";
 "groupWindow.hideAll.help" = "أخفِ التطبيقات الجارية في هذه المجموعة. تبقى التطبيقات غير الجارية مغلقة.";
-"groupWindow.apps.moveHint" = "لنقل تطبيق إلى مجموعة أخرى، اسحبه فوقها في الشريط الجانبي، أو استخدم %@ في قائمته السياقية.";
 "groupWindow.app.notFound" = "غير موجود على هذا الماك · %@";
 "groupWindow.app.remove.website" = "إزالة %@ من هذه المجموعة.";
 "groupWindow.app.remove" = "إزالة %@ من هذه المجموعة. التطبيق نفسه لن يتأثر.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "اختر التطبيقات لإضافتها إلى “%@”.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "تعذّر فتح التطبيقات في “%@”.";
-"problems.launch.someFailed" = "تعذّر فتح بعض التطبيقات في “%@”.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "غير موجود على هذا الماك.";
 "problems.launch.opened" = "تم فتحه.";

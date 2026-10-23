@@ -49,6 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let controller = MainWindowController(
             store: store,
             tiles: tiles,
+            icons: icons,
             standalone: standalone,
             actions: MainWindowView.Actions(
                 openAll: { [weak self] group in self?.openAll(group) },
@@ -250,11 +251,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Group actions
 
-    /// Opens an app from a popup or the Most Used menu; a running one comes back with its windows
-    /// when Settings → Popup → Running Apps says so. A website opens in the default browser.
+    /// Opens an item from a popup or the Most Used menu; a running app comes back with its windows
+    /// when Settings → Popup → Running Apps says so. A website opens in the default browser, a file
+    /// or folder with its default app.
     private func open(_ app: AppReference, in group: DockGroup) {
         let restoresWindows = preferences.preferences.restoresWindowsOfRunningApps
-        if restoresWindows, !app.isWebsite {
+        if restoresWindows, app.kind.hasProcess {
             AccessibilityAccess.promptOnceForRestoringWindows(of: app)
         }
         Task { @MainActor in

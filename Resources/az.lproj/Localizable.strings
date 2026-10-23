@@ -138,15 +138,12 @@
 "groupWindow.name" = "Ad";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Seç…";
-"groupWindow.section.apps" = "Tətbiqlər";
-"groupWindow.apps.empty" = "Hələ tətbiq yoxdur. Bu qrup üçün tətbiq seçmək üçün “%1$@”, veb keçid üçün “%2$@” istifadə edin.";
 "groupWindow.addWebsite.help" = "Bu qrupa veb keçid əlavə edir. Standart brauzerinizdə açılır.";
 "groupWindow.sortAZ" = "A→Z sırala";
 "groupWindow.sortAZ.help" = "Bu qrupdakı tətbiqləri ada görə A-dan Z-yə sıralayır. Əllə yenidən sıralamaq üçün sürüşdürün.";
 "groupWindow.showPopup" = "Açılan pəncərəni göstər";
 "groupWindow.showPopup.help" = "Bu qrupun açılan pəncərəsini Dock-un üzərində göstərir.";
 "groupWindow.hideAll.help" = "Bu qrupdakı işləyən tətbiqləri gizlədir. İşləməyən tətbiqlər bağlı qalır.";
-"groupWindow.apps.moveHint" = "Tətbiqi başqa qrupa köçürmək üçün onu yan paneldə həmin qrupun üzərinə sürüşdürün və ya onun kontekst menyusunda %@ istifadə edin.";
 "groupWindow.app.notFound" = "Bu Mac-da tapılmadı · %@";
 "groupWindow.app.remove.website" = "%@ saytını bu qrupdan çıxar.";
 "groupWindow.app.remove" = "%@ tətbiqini bu qrupdan çıxar. Tətbiqin özünə təsir etmir.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "“%@” qrupuna əlavə ediləcək tətbiqləri seçin.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "“%@” qrupundakı tətbiqlər açıla bilmədi.";
-"problems.launch.someFailed" = "“%@” qrupundakı bəzi tətbiqlər açıla bilmədi.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "bu Mac-da tapılmadı.";
 "problems.launch.opened" = "açıldı.";

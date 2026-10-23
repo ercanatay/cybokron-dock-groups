@@ -30,9 +30,9 @@ final class RunningAppsMonitor: ObservableObject {
         }
     }
 
-    /// Websites never count as running.
+    /// Only apps run: websites, files and folders never count as running.
     func isRunning(_ app: AppReference) -> Bool {
-        guard !app.isWebsite else { return false }
+        guard app.kind.hasProcess else { return false }
         return app.isIdentifiedByPath
             ? runningPathIdentities.contains(app.normalizedBundleIdentifier)
             : runningBundleIdentifiers.contains(app.normalizedBundleIdentifier)

@@ -138,15 +138,12 @@
 "groupWindow.name" = "نام";
 "groupWindow.emoji" = "ایموجی";
 "groupWindow.emoji.choose" = "انتخاب…";
-"groupWindow.section.apps" = "برنامه‌ها";
-"groupWindow.apps.empty" = "هنوز برنامه‌ای نیست. از «%1$@» برای انتخاب برنامه‌های این گروه، یا از «%2$@» برای افزودن پیوند وب استفاده کنید.";
 "groupWindow.addWebsite.help" = "یک پیوند وب به این گروه بیفزایید. در مرورگر پیش‌فرض باز می‌شود.";
 "groupWindow.sortAZ" = "مرتب‌سازی A–Z";
 "groupWindow.sortAZ.help" = "مرتب‌سازی برنامه‌های این گروه بر اساس نام، از A تا Z. برای چیدن دستی، آن‌ها را بکشید.";
 "groupWindow.showPopup" = "نمایش پنجره بازشو";
 "groupWindow.showPopup.help" = "نمایش پنجره بازشوی این گروه روی Dock.";
 "groupWindow.hideAll.help" = "پنهان کردن برنامه‌های در حال اجرای این گروه. برنامه‌های بسته بسته می‌مانند.";
-"groupWindow.apps.moveHint" = "برای انتقال برنامه به گروه دیگر، آن را روی آن گروه در نوار کناری بکشید، یا از %@ در منوی زمینه‌اش استفاده کنید.";
 "groupWindow.app.notFound" = "روی این Mac پیدا نشد · %@";
 "groupWindow.app.remove.website" = "حذف %@ از این گروه.";
 "groupWindow.app.remove" = "حذف %@ از این گروه. خود برنامه تغییری نمی‌کند.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "برنامه‌هایی را که می‌خواهید به «%@» اضافه شوند انتخاب کنید.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "برنامه‌های «%@» باز نشدند.";
-"problems.launch.someFailed" = "برخی برنامه‌های «%@» باز نشدند.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "روی این Mac پیدا نشد.";
 "problems.launch.opened" = "باز شد.";

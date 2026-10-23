@@ -138,15 +138,12 @@
 "groupWindow.name" = "Namn";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Välj…";
-"groupWindow.section.apps" = "Appar";
-"groupWindow.apps.empty" = "Inga appar ännu. Använd „%1$@“ för att välja appar till den här gruppen, eller „%2$@“ för en webblänk.";
 "groupWindow.addWebsite.help" = "Lägg till en webblänk i den här gruppen. Den öppnas i din standardwebbläsare.";
 "groupWindow.sortAZ" = "Sortera A→Ö";
 "groupWindow.sortAZ.help" = "Sortera apparna i den här gruppen efter namn, A till Ö. Dra dem för att ändra ordning manuellt.";
 "groupWindow.showPopup" = "Visa popup";
 "groupWindow.showPopup.help" = "Visa gruppens popup över Dock.";
 "groupWindow.hideAll.help" = "Dölj gruppens appar som kör. Appar som inte kör förblir stängda.";
-"groupWindow.apps.moveHint" = "För att flytta en app till en annan grupp, dra den till den gruppen i sidofältet, eller använd %@ i dess snabbmeny.";
 "groupWindow.app.notFound" = "Hittades inte på den här Mac:en · %@";
 "groupWindow.app.remove.website" = "Ta bort %@ från den här gruppen.";
 "groupWindow.app.remove" = "Ta bort %@ från den här gruppen. Appen påverkas inte.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Välj de appar som ska läggas till i „%@“.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Apparna i „%@“ kunde inte öppnas.";
-"problems.launch.someFailed" = "Vissa appar i „%@“ kunde inte öppnas.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "hittades inte på den här Mac:en.";
 "problems.launch.opened" = "öppnad.";

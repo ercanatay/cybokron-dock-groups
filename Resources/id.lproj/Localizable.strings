@@ -138,15 +138,12 @@
 "groupWindow.name" = "Nama";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Pilih…";
-"groupWindow.section.apps" = "App";
-"groupWindow.apps.empty" = "Belum ada app. Gunakan “%1$@” untuk memilih app bagi grup ini, atau “%2$@” untuk tautan web.";
 "groupWindow.addWebsite.help" = "Tambahkan tautan web ke grup ini. Tautan dibuka di peramban bawaan Anda.";
 "groupWindow.sortAZ" = "Urutkan A→Z";
 "groupWindow.sortAZ.help" = "Urutkan app di grup ini menurut nama, A ke Z. Seret untuk mengatur ulang secara manual.";
 "groupWindow.showPopup" = "Tampilkan Pop-up";
 "groupWindow.showPopup.help" = "Tampilkan pop-up grup ini di atas Dock.";
 "groupWindow.hideAll.help" = "Sembunyikan app grup ini yang sedang berjalan. App yang tidak berjalan tetap tertutup.";
-"groupWindow.apps.moveHint" = "Untuk memindahkan app ke grup lain, seret ke grup itu di sidebar, atau gunakan %@ pada menu kontekstunya.";
 "groupWindow.app.notFound" = "Tidak ditemukan di Mac ini · %@";
 "groupWindow.app.remove.website" = "Hapus %@ dari grup ini.";
 "groupWindow.app.remove" = "Hapus %@ dari grup ini. App itu sendiri tidak terpengaruh.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Pilih app yang akan ditambahkan ke “%@”.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "App di “%@” tidak dapat dibuka.";
-"problems.launch.someFailed" = "Beberapa app di “%@” tidak dapat dibuka.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "tidak ditemukan di Mac ini.";
 "problems.launch.opened" = "dibuka.";

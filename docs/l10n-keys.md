@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-503 keys.
+532 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -162,15 +162,12 @@ every language.
 | `groupWindow.name` | Name |
 | `groupWindow.emoji` | Emoji |
 | `groupWindow.emoji.choose` | Choose… |
-| `groupWindow.section.apps` | Apps |
-| `groupWindow.apps.empty` | No apps yet. Use “%1$@” to choose apps for this group, or “%2$@” for a web link. |
 | `groupWindow.addWebsite.help` | Add a web link to this group. It opens in your default browser. |
 | `groupWindow.sortAZ` | Sort A→Z |
 | `groupWindow.sortAZ.help` | Sort the apps in this group by name, A to Z. Drag them to reorder by hand. |
 | `groupWindow.showPopup` | Show Popup |
 | `groupWindow.showPopup.help` | Show this group's popup over the Dock. |
 | `groupWindow.hideAll.help` | Hide this group's running apps. Apps that aren't running stay closed. |
-| `groupWindow.apps.moveHint` | To move an app to another group, drag it onto that group in the sidebar, or use %@ in its context menu. |
 | `groupWindow.app.notFound` | Not found on this Mac · %@ |
 | `groupWindow.app.remove.website` | Remove %@ from this group. |
 | `groupWindow.app.remove` | Remove %@ from this group. The app itself isn't affected. |
@@ -239,8 +236,6 @@ every language.
 
 | Key | English |
 | --- | --- |
-| `problems.launch.allFailed` | The apps in “%@” couldn't be opened. |
-| `problems.launch.someFailed` | Some apps in “%@” couldn't be opened. |
 | `problems.launch.item` | • %1$@: %2$@ |
 | `problems.launch.notFound` | not found on this Mac. |
 | `problems.launch.opened` | opened. |
@@ -700,7 +695,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | --- | --- |
 | `shortcuts.hotkey.unavailable` | macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too. |
 
-## Group items: files and folders, and why one can't be added or opened (English only for now; `awaitingTranslation`: `core.item.`)
+## Group items: files and folders, and why one can't be added, located or opened (English only for now; `awaitingTranslation`: `core.item.`)
 
 | Key | English |
 | --- | --- |
@@ -709,3 +704,47 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.item.error.noHandler` | No app on this Mac opens “%@”. |
 | `core.item.error.volume` | It's on “%@”, which isn't connected. |
 | `core.item.error.unchecked` | wasn't opened, because macOS didn't allow checking what it is. |
+| `core.item.unchecked` | macOS didn't let the app check “%@”. |
+| `core.item.locate.wrongKind` | “%@” isn't the same kind of item. |
+
+## Group items in the app: the Items section and its Add menu, Add Files or Folders…, files and folders in the popup and the rows, missing items and Locate…, Quick Look, items that couldn't be opened, backup items left out (English only for now; `awaitingTranslation`: `groupWindow.items.`, `addItems.`, `item.`, `popup.item.`, `settings.backup.leftOut.`)
+
+The group window's section was called “Apps”: `groupWindow.items.section`, `.empty` and `.moveHint`
+replace `groupWindow.section.apps`, `groupWindow.apps.empty` and `groupWindow.apps.moveHint`, and
+`item.problems.allFailed` / `.someFailed` replace `problems.launch.allFailed` / `.someFailed`
+(the old keys are gone from every table).
+
+| Key | English |
+| --- | --- |
+| `groupWindow.items.section` | Items |
+| `groupWindow.items.add` | Add |
+| `groupWindow.items.add.help` | Add apps, files, folders or a website to this group. |
+| `groupWindow.items.empty` | Nothing here yet. Use “%@” to add apps, files, folders or a web link. |
+| `groupWindow.items.moveHint` | To move an item to another group, drag it onto that group in the sidebar, or use %@ in its context menu. |
+| `groupWindow.items.remove.file` | Remove %@ from this group. The file itself isn't affected. |
+| `groupWindow.items.remove.folder` | Remove %@ from this group. The folder itself isn't affected. |
+| `addItems.menu` | Add Files or Folders… |
+| `addItems.title` | Add Files and Folders to Group |
+| `addItems.message` | Choose files and folders to add to “%@”. Apps you choose are added as apps. |
+| `addItems.problem.title` | Some items couldn't be added |
+| `item.kind.file.accessibility` | File %@ |
+| `item.kind.folder.accessibility` | Folder %@ |
+| `item.action.quickLook` | Quick Look |
+| `item.action.locate` | Locate… |
+| `item.missing.help` | “%@” can't be found. It may have been moved, renamed or deleted. |
+| `item.volume.help` | “%1$@” is on “%2$@”, which isn't connected. |
+| `item.missing.row` | Can't be found · %@ |
+| `item.volume.row` | On “%1$@”, which isn't connected · %2$@ |
+| `item.unverified.row` | Can't check this location · %@ |
+| `item.locate.message` | Choose where “%@” is now. Its details and place in the group are kept. |
+| `item.locate.prompt` | Choose |
+| `item.locate.duplicate` | “%@” is already in this group. |
+| `item.locate.problem.title` | “%@” couldn't be located there |
+| `item.problems.allFailed` | The items in “%@” couldn't be opened. |
+| `item.problems.someFailed` | Some items in “%@” couldn't be opened. |
+| `popup.item.hint.file` | Opens the file in its default app |
+| `popup.item.hint.folder` | Opens the folder in Finder |
+| `popup.item.help.openFile` | Open %@ in its default app. |
+| `popup.item.help.openFolder` | Open the folder %@. |
+| `settings.backup.leftOut.one` | 1 item in the backup was left out: it can't be opened safely. |
+| `settings.backup.leftOut.other` | %ld items in the backup were left out: they can't be opened safely. |

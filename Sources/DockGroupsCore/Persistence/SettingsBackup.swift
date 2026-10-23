@@ -63,7 +63,7 @@ public struct SettingsBackup: Equatable, Sendable {
         groups.reduce(0) { $0 + $1.apps.count }
     }
 
-    /// The same as `itemCount`: the backup texts still call every item an app.
+    /// The earlier name of `itemCount`, from when every item was called an app.
     public var appCount: Int { itemCount }
 
     /// `cybokron-dock-groups-backup-YYYY-MM-DD.dockgroups`, dated in the current time zone.
@@ -205,7 +205,7 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     /// …and the backup's groups skipped because a current group has the same name or identifier.
     public var skippedGroupCount: Int
 
-    /// The same as `itemCount` and `mergedItemCount`: the backup texts still call every item an app.
+    /// The earlier names of `itemCount` and `mergedItemCount`, from when every item was called an app.
     public var appCount: Int { itemCount }
     public var mergedAppCount: Int { mergedItemCount }
 

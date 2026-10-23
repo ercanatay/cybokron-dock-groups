@@ -138,15 +138,12 @@
 "groupWindow.name" = "名称";
 "groupWindow.emoji" = "表情符号";
 "groupWindow.emoji.choose" = "选择…";
-"groupWindow.section.apps" = "App";
-"groupWindow.apps.empty" = "尚无App。使用“%1$@”为此分组选择App，或使用“%2$@”添加网页链接。";
 "groupWindow.addWebsite.help" = "为此分组添加网页链接。它将在你的默认浏览器中打开。";
 "groupWindow.sortAZ" = "按 A→Z 排序";
 "groupWindow.sortAZ.help" = "按名称从 A 到 Z 排序此分组中的App。拖动它们可手动调整顺序。";
 "groupWindow.showPopup" = "显示弹出窗口";
 "groupWindow.showPopup.help" = "在程序坞上方显示此分组的弹出窗口。";
 "groupWindow.hideAll.help" = "隐藏此分组中正在运行的App。未运行的App保持关闭。";
-"groupWindow.apps.moveHint" = "要将App移到另一个分组，请将其拖到侧边栏中的该分组上，或使用其上下文菜单中的 %@。";
 "groupWindow.app.notFound" = "在这台 Mac 上未找到 · %@";
 "groupWindow.app.remove.website" = "从此分组中移除 %@。";
 "groupWindow.app.remove" = "从此分组中移除 %@。App 本身不受影响。";
@@ -203,8 +200,6 @@
 "appPicker.message" = "选择要添加到“%@”的App。";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "无法打开“%@”中的App。";
-"problems.launch.someFailed" = "无法打开“%@”中的部分App。";
 "problems.launch.item" = "• %1$@：%2$@";
 "problems.launch.notFound" = "在这台 Mac 上未找到。";
 "problems.launch.opened" = "已打开。";

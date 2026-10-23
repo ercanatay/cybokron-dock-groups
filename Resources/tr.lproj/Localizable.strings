@@ -138,15 +138,12 @@
 "groupWindow.name" = "Ad";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Seç…";
-"groupWindow.section.apps" = "Uygulamalar";
-"groupWindow.apps.empty" = "Henüz uygulama yok. Bu gruba uygulama seçmek için “%1$@”, web bağlantısı için “%2$@” kullanın.";
 "groupWindow.addWebsite.help" = "Bu gruba bir web bağlantısı ekler. Varsayılan tarayıcınızda açılır.";
 "groupWindow.sortAZ" = "A→Z Sırala";
 "groupWindow.sortAZ.help" = "Bu gruptaki uygulamaları ada göre A'dan Z'ye sıralar. El ile sıralamak için sürükleyin.";
 "groupWindow.showPopup" = "Açılır Pencereyi Göster";
 "groupWindow.showPopup.help" = "Bu grubun açılır penceresini Dock üzerinde gösterir.";
 "groupWindow.hideAll.help" = "Bu grubun çalışan uygulamalarını gizler. Çalışmayan uygulamalar kapalı kalır.";
-"groupWindow.apps.moveHint" = "Bir uygulamayı başka bir gruba taşımak için onu kenar çubuğundaki o grubun üstüne sürükleyin ya da sağ tık menüsündeki %@ seçeneğini kullanın.";
 "groupWindow.app.notFound" = "Bu Mac'te bulunamadı · %@";
 "groupWindow.app.remove.website" = "%@ bu gruptan kaldırılır.";
 "groupWindow.app.remove" = "%@ bu gruptan kaldırılır. Uygulamanın kendisi etkilenmez.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "“%@” grubuna eklenecek uygulamaları seçin.";
 
 /* Problem alerts */
-"problems.launch.allFailed" = "“%@” içindeki uygulamalar açılamadı.";
-"problems.launch.someFailed" = "“%@” içindeki bazı uygulamalar açılamadı.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "bu Mac'te bulunamadı.";
 "problems.launch.opened" = "açıldı.";

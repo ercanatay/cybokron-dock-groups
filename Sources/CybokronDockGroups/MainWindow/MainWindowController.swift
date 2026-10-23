@@ -1,9 +1,26 @@
 import AppKit
 import DockGroupsCore
+import Quartz
 import SwiftUI
 
+/// What the group window's item rows need besides the store: where the items are (checked when
+/// something happened, `ItemPresenceCache`), their icons, and Quick Look.
+@MainActor
+final class GroupWindowItems {
+    let presence: ItemPresenceCache
+    let icons: AppIconProviding
+    /// Shows a location in Quick Look over the group window; set once the window exists.
+    var showPreview: (URL) -> Void = { _ in }
+
+    init(presence: ItemPresenceCache, icons: AppIconProviding) {
+        self.presence = presence
+        self.icons = icons
+    }
+}
+
 /// The group management window: an AppKit window hosting the SwiftUI `MainWindowView`, so it can
-/// be opened from the menu bar item and on reopen.
+/// be opened from the menu bar item and on reopen. Each time it comes to the front, the items of
+/// the group it shows are checked again (they may have been moved or deleted meanwhile).
 @MainActor
 final class MainWindowController: NSWindowController {
     private static let frameAutosaveName = "MainWindow"
@@ -13,15 +30,26 @@ final class MainWindowController: NSWindowController {
 
     private let store: GroupStore
     private let selection = GroupWindowSelection()
+    private let items: GroupWindowItems
+    private var preview: PopupPreviewController?
+    private var keyObserver: NSObjectProtocol?
 
-    init(store: GroupStore, tiles: TileImageCache, standalone: StandaloneController, actions: MainWindowView.Actions) {
+    init(
+        store: GroupStore,
+        tiles: TileImageCache,
+        icons: AppIconProviding,
+        standalone: StandaloneController,
+        actions: MainWindowView.Actions
+    ) {
         self.store = store
+        let items = GroupWindowItems(presence: ItemPresenceCache(locator: WorkspaceItemLocator()), icons: icons)
+        self.items = items
         let hostingController = NSHostingController(
-            rootView: MainWindowView(store: store, tiles: tiles, standalone: standalone, actions: actions, selection: selection)
+            rootView: MainWindowView(store: store, tiles: tiles, standalone: standalone, actions: actions, selection: selection, items: items)
         )
         hostingController.sizingOptions = [.minSize]
 
-        let window = NSWindow(contentViewController: hostingController)
+        let window = GroupWindow(contentViewController: hostingController)
         window.title = AppInfo.name
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         window.isReleasedWhenClosed = false
@@ -31,6 +59,18 @@ final class MainWindowController: NSWindowController {
         }
         window.setFrameAutosaveName(Self.frameAutosaveName)
         super.init(window: window)
+
+        let preview = PopupPreviewController(host: window)
+        window.preview = preview
+        self.preview = preview
+        items.showPreview = { [weak preview] url in preview?.show(url) }
+        keyObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didBecomeKeyNotification,
+            object: window,
+            queue: .main
+        ) { [weak items] _ in
+            MainActor.assumeIsolated { items?.presence.refresh() }
+        }
     }
 
     @available(*, unavailable)
@@ -58,5 +98,24 @@ final class MainWindowController: NSWindowController {
         selection.groupID = destination.selection
         show()
         return destination
+    }
+}
+
+/// The group window. It controls the Quick Look panel while Quick Look shows one of its items:
+/// Quick Look looks for its controller in the key window's responder chain.
+final class GroupWindow: NSWindow {
+    /// Supplies what Quick Look shows.
+    weak var preview: PopupPreviewController?
+
+    override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool {
+        preview != nil
+    }
+
+    override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) {
+        preview?.begin(panel)
+    }
+
+    override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {
+        preview?.end(panel)
     }
 }

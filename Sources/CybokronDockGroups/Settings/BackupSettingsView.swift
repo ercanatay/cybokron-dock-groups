@@ -68,8 +68,8 @@ struct BackupSettingsView: View {
         switch backup.status {
         case .exported(let fileName):
             return L10n.Settings.Backup.exported(fileName)
-        case .imported(let groupCount, let appCount):
-            return L10n.Settings.Backup.restored(groups: L10n.Common.groupCount(groupCount), apps: L10n.Common.appCount(appCount))
+        case .imported(let groupCount, let itemCount):
+            return L10n.Settings.Backup.restored(groups: L10n.Common.groupCount(groupCount), items: L10n.Common.itemCount(itemCount))
         case .merged(let addedGroupCount, let skippedGroupCount):
             let added = L10n.Common.groupCount(addedGroupCount)
             return skippedGroupCount > 0

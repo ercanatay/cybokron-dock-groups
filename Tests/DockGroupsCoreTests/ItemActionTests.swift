@@ -45,6 +45,34 @@ struct ItemActionTests {
         #expect(actions(Self.website, .online, .groupWindow) == [.editDetails, .moveTo])
     }
 
+    /// Rows of items that couldn't be checked, or that are on a volume that isn't connected, in
+    /// the group window: what Quick Look and Finder can show, but Locate… only for a missing item.
+    @Test func groupWindowRowMenusOfUncheckedAndEjectedItems() {
+        #expect(actions(Self.folder, .unverified, .groupWindow) == [.showInFinder, .quickLook, .editDetails, .moveTo])
+        #expect(actions(Self.file, .volumeUnavailable(name: "Backup"), .groupWindow) == [.editDetails, .moveTo])
+        #expect(actions(Self.app, Self.foundApp, .groupWindow) == [.showInFinder, .quickLook, .editDetails, .moveTo])
+    }
+
+    /// The popup's menu reads top to bottom as the spec's mock: opening and showing first, then
+    /// the actions that change the group.
+    @Test func popupMenusListOpeningBeforeEditing() {
+        let editing: Set<ItemAction> = [.moveTo, .remove]
+        let kinds: [(GroupItem, [ItemPresence])] = [
+            (Self.app, [Self.foundApp, .missing]),
+            (Self.website, [.online]),
+            (Self.file, [Self.found, .missing, .unverified, .volumeUnavailable(name: "V")]),
+            (Self.folder, [Self.found, .missing, .unverified]),
+        ]
+        for (item, presences) in kinds {
+            for presence in presences {
+                let menu = actions(item, presence, Self.mainPopup)
+                #expect(menu.first == .open)
+                #expect(Array(menu.suffix(2)) == [.moveTo, .remove], "\(item.kind) \(presence)")
+                #expect(!menu.dropLast(2).contains(where: editing.contains))
+            }
+        }
+    }
+
     @Test func dockMenusOnlyOpenWhatsWorthTrying() {
         #expect(actions(Self.website, .online, .dockMenu) == [.open])
         #expect(actions(Self.app, Self.foundApp, .dockMenu) == [.open])

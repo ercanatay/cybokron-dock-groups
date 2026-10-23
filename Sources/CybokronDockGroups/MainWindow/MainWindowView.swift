@@ -22,6 +22,8 @@ struct MainWindowView: View {
     let standalone: StandaloneController
     let actions: Actions
     @ObservedObject var selection: GroupWindowSelection
+    /// Where the selected group's items are, their icons and Quick Look.
+    let items: GroupWindowItems
 
     @State private var isRenaming = false
     @State private var renameTargetID: DockGroup.ID?
@@ -44,7 +46,7 @@ struct MainWindowView: View {
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
         } detail: {
             if let id = selection.groupID, let group = store.group(withID: id) {
-                GroupDetailView(store: store, standalone: standalone, group: group, tiles: tiles, actions: actions)
+                GroupDetailView(store: store, standalone: standalone, group: group, tiles: tiles, actions: actions, items: items)
                     .id(group.id)
             } else {
                 ContentUnavailableView {

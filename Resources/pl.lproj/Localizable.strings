@@ -138,15 +138,12 @@
 "groupWindow.name" = "Nazwa";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Wybierz…";
-"groupWindow.section.apps" = "Aplikacje";
-"groupWindow.apps.empty" = "Brak aplikacji. Użyj „%1$@”, aby wybrać aplikacje dla tej grupy, albo „%2$@”, aby dodać link do witryny.";
 "groupWindow.addWebsite.help" = "Dodaj link do witryny w tej grupie. Otworzy się w domyślnej przeglądarce.";
 "groupWindow.sortAZ" = "Sortuj A→Z";
 "groupWindow.sortAZ.help" = "Posortuj aplikacje w tej grupie według nazwy, od A do Z. Przeciągnij je, aby zmienić kolejność ręcznie.";
 "groupWindow.showPopup" = "Pokaż okno";
 "groupWindow.showPopup.help" = "Pokaż okno tej grupy nad Dockiem.";
 "groupWindow.hideAll.help" = "Ukryj uruchomione aplikacje tej grupy. Aplikacje, które nie działają, pozostają zamknięte.";
-"groupWindow.apps.moveHint" = "Aby przenieść aplikację do innej grupy, przeciągnij ją na tę grupę na pasku bocznym albo użyj opcji %@ w jej menu kontekstowym.";
 "groupWindow.app.notFound" = "Nie znaleziono na tym Macu · %@";
 "groupWindow.app.remove.website" = "Usuń %@ z tej grupy.";
 "groupWindow.app.remove" = "Usuń %@ z tej grupy. Sama aplikacja nie jest zmieniana.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Wybierz aplikacje do dodania do „%@”.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Nie udało się otworzyć aplikacji w „%@”.";
-"problems.launch.someFailed" = "Nie udało się otworzyć niektórych aplikacji w „%@”.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "nie znaleziono na tym Macu.";
 "problems.launch.opened" = "otwarto.";

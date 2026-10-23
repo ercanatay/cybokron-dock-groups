@@ -12,13 +12,19 @@ import OSLog
 /// reordering and removing apps happen in the main app. Restoring a running app's minimized windows
 /// needs Accessibility access for the agent itself; it never asks for it.
 ///
-/// Right-clicking (or Control-clicking) the tile shows the group's apps — checked while running —
-/// with Open All, Hide All, Close All and Group Settings… (`applicationDockMenu(_:)`; the popup's
+/// Right-clicking (or Control-clicking) the tile shows the group's items — apps checked while
+/// running, items that can't be opened disabled — with Open All, Hide All, Close All and Group
+/// Settings… (`applicationDockMenu(_:)`; the popup's
 /// gear does the same: the main app's group window opens on the group). The Dock asks only apps it
 /// shows as running for such a menu, so while `PopupPreferences.showsStandaloneDockMenus` is on the
 /// agent runs as a regular app: a running indicator under its tile, an entry in the app switcher
 /// and, while the popup is open, a menu bar with Hide and Quit. With it off, the agent stays out of
 /// both, like the `LSUIElement` app its bundle declares, and the Dock shows only its own items.
+///
+/// Files and folders in the places macOS guards with its privacy settings (Desktop, Documents,
+/// Downloads, iCloud Drive, other volumes) aren't looked at until they're opened
+/// (`DeferringItemLocator`): each group's app is asked for access on its own, so it doesn't ask
+/// just to draw its popup or menu. They show the icon of their type meanwhile.
 ///
 /// The group comes from the bundle's `group-config.json` only, so the agent works while the main
 /// app isn't running; the main app rewrites the file when the group changes and tells the agent
@@ -35,7 +41,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     private var bundleURL = Bundle.main.bundleURL
     private let launcher = GroupLauncher()
     private let terminator = GroupTerminator()
-    private let icons = WorkspaceAppIconProvider()
+    private let icons = WorkspaceAppIconProvider(locator: DeferringItemLocator(base: WorkspaceItemLocator()))
     private let runningApps = RunningAppsMonitor()
     /// Read before the app finishes launching, so the activation policy is in place first.
     private var launchConfiguration: Result<AgentConfiguration, Error>?
@@ -219,7 +225,8 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// The tile's menu, asked for on every right-click or Control-click. The Dock draws it itself,
-    /// without item images, so the apps are listed by name, checked while they run; it adds its
+    /// without item images, so the items are listed by name, apps checked while they run, and
+    /// items that can't be opened (`ItemAction.available` in `.dockMenu`) disabled; it adds its
     /// own items (Options, Show All Windows, Hide, Quit) below.
     func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
         guard preferences?.preferences.showsStandaloneDockMenus == true,
@@ -238,7 +245,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
             item.representedObject = app.bundleIdentifier
             let isRunning = runningApps.isRunning(app)
             item.state = isRunning ? .on : .off
-            item.isEnabled = isRunning || icons.isInstalled(app)
+            item.isEnabled = isRunning || ItemAction.available(for: app, presence: icons.presence(of: app), in: .dockMenu).contains(.open)
             menu.addItem(item)
         }
         menu.addItem(.separator())
@@ -258,7 +265,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         return item
     }
 
-    /// Opens the app, or brings it to the front when it's running.
+    /// Opens the item — an app is brought to the front when it's running.
     @objc private func openAppFromDockMenu(_ sender: NSMenuItem) {
         guard let group = store?.group(withID: groupID),
               let identifier = (sender.representedObject as? String)?.lowercased(),

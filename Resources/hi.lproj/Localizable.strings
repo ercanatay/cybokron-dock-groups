@@ -138,15 +138,12 @@
 "groupWindow.name" = "नाम";
 "groupWindow.emoji" = "इमोजी";
 "groupWindow.emoji.choose" = "चुनें…";
-"groupWindow.section.apps" = "ऐप्स";
-"groupWindow.apps.empty" = "अभी कोई ऐप नहीं है। इस समूह के लिए ऐप चुनने हेतु “%1$@” का, या वेब लिंक के लिए “%2$@” का उपयोग करें।";
 "groupWindow.addWebsite.help" = "इस समूह में एक वेब लिंक जोड़ें। यह आपके डिफ़ॉल्ट ब्राउज़र में खुलेगा।";
 "groupWindow.sortAZ" = "A→Z क्रम में लगाएँ";
 "groupWindow.sortAZ.help" = "इस समूह के ऐप्स नाम के अनुसार A से Z क्रम में लगाएँ। हाथ से क्रम बदलने के लिए उन्हें खींचें।";
 "groupWindow.showPopup" = "पॉपअप दिखाएँ";
 "groupWindow.showPopup.help" = "इस समूह का पॉपअप Dock के ऊपर दिखाएँ।";
 "groupWindow.hideAll.help" = "इस समूह के चल रहे ऐप्स छिपाएँ। जो ऐप्स नहीं चल रहे, वे बंद ही रहेंगे।";
-"groupWindow.apps.moveHint" = "किसी ऐप को दूसरे समूह में ले जाने के लिए उसे साइडबार में उस समूह पर खींचें, या उसके संदर्भ मेनू में %@ का उपयोग करें।";
 "groupWindow.app.notFound" = "इस Mac पर नहीं मिला · %@";
 "groupWindow.app.remove.website" = "इस समूह से %@ हटाएँ।";
 "groupWindow.app.remove" = "इस समूह से %@ हटाएँ। ऐप स्वयं प्रभावित नहीं होगा।";
@@ -203,8 +200,6 @@
 "appPicker.message" = "“%@” में जोड़ने के लिए ऐप्स चुनें।";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "“%@” के ऐप्स खोले नहीं जा सके।";
-"problems.launch.someFailed" = "“%@” के कुछ ऐप्स खोले नहीं जा सके।";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "इस Mac पर नहीं मिला।";
 "problems.launch.opened" = "खुल गया।";

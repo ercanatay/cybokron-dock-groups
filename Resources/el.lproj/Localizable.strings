@@ -138,15 +138,12 @@
 "groupWindow.name" = "Όνομα";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Επιλογή…";
-"groupWindow.section.apps" = "Εφαρμογές";
-"groupWindow.apps.empty" = "Δεν υπάρχουν εφαρμογές ακόμα. Χρησιμοποιήστε το «%1$@» για να επιλέξετε εφαρμογές για αυτή την ομάδα, ή το «%2$@» για σύνδεσμο ιστότοπου.";
 "groupWindow.addWebsite.help" = "Προσθήκη συνδέσμου ιστότοπου σε αυτή την ομάδα. Ανοίγει στο προεπιλεγμένο πρόγραμμα περιήγησης.";
 "groupWindow.sortAZ" = "Ταξινόμηση A→Z";
 "groupWindow.sortAZ.help" = "Ταξινόμηση των εφαρμογών αυτής της ομάδας κατά όνομα, από το A στο Z. Σύρετέ τις για αναδιάταξη με το χέρι.";
 "groupWindow.showPopup" = "Εμφάνιση αναδυόμενου παραθύρου";
 "groupWindow.showPopup.help" = "Εμφάνιση του αναδυόμενου παραθύρου αυτής της ομάδας πάνω από το Dock.";
 "groupWindow.hideAll.help" = "Απόκρυψη των εφαρμογών αυτής της ομάδας που τρέχουν. Οι εφαρμογές που δεν τρέχουν παραμένουν κλειστές.";
-"groupWindow.apps.moveHint" = "Για να μετακινήσετε μια εφαρμογή σε άλλη ομάδα, σύρετέ την πάνω στην ομάδα στην πλαϊνή στήλη, ή χρησιμοποιήστε το %@ στο μενού περιβάλλοντος της.";
 "groupWindow.app.notFound" = "Δεν βρέθηκε σε αυτό το Mac · %@";
 "groupWindow.app.remove.website" = "Αφαίρεση του %@ από αυτή την ομάδα.";
 "groupWindow.app.remove" = "Αφαίρεση του %@ από αυτή την ομάδα. Η ίδια η εφαρμογή δεν επηρεάζεται.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Επιλέξτε τις εφαρμογές που θα προστεθούν στο «%@».";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Οι εφαρμογές στο «%@» δεν μπόρεσαν να ανοίξουν.";
-"problems.launch.someFailed" = "Ορισμένες εφαρμογές στο «%@» δεν μπόρεσαν να ανοίξουν.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "δεν βρέθηκε σε αυτό το Mac.";
 "problems.launch.opened" = "άνοιξε.";

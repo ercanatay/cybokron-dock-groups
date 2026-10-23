@@ -138,15 +138,12 @@
 "groupWindow.name" = "Název";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Vybrat…";
-"groupWindow.section.apps" = "Aplikace";
-"groupWindow.apps.empty" = "Zatím žádné aplikace. Použijte „%1$@“ pro výběr aplikací pro tuto skupinu, nebo „%2$@“ pro webový odkaz.";
 "groupWindow.addWebsite.help" = "Přidat do této skupiny webový odkaz. Otevře se ve výchozím prohlížeči.";
 "groupWindow.sortAZ" = "Seřadit A→Z";
 "groupWindow.sortAZ.help" = "Seřadit aplikace v této skupině podle názvu, od A do Z. Přetažením je můžete seřadit ručně.";
 "groupWindow.showPopup" = "Zobrazit okno";
 "groupWindow.showPopup.help" = "Zobrazit vyskakovací okno této skupiny nad Dockem.";
 "groupWindow.hideAll.help" = "Skrýt spuštěné aplikace této skupiny. Aplikace, které neběží, zůstanou zavřené.";
-"groupWindow.apps.moveHint" = "Chcete-li přesunout aplikaci do jiné skupiny, přetáhněte ji na tuto skupinu v postranním panelu, nebo použijte %@ v jejím kontextovém menu.";
 "groupWindow.app.notFound" = "Na tomto Macu nenalezeno · %@";
 "groupWindow.app.remove.website" = "Odebrat %@ z této skupiny.";
 "groupWindow.app.remove" = "Odebrat %@ z této skupiny. Samotná aplikace není dotčena.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Vyberte aplikace, které chcete přidat do „%@“.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Aplikace v „%@“ nebylo možné otevřít.";
-"problems.launch.someFailed" = "Některé aplikace v „%@“ nebylo možné otevřít.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "na tomto Macu nenalezeno.";
 "problems.launch.opened" = "otevřeno.";

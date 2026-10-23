@@ -138,15 +138,12 @@
 "groupWindow.name" = "名前";
 "groupWindow.emoji" = "絵文字";
 "groupWindow.emoji.choose" = "選択…";
-"groupWindow.section.apps" = "アプリ";
-"groupWindow.apps.empty" = "まだアプリがありません。このグループのアプリを選ぶには “%1$@”、ウェブリンクを追加するには “%2$@” を使ってください。";
 "groupWindow.addWebsite.help" = "このグループにウェブリンクを追加します。既定のブラウザで開きます。";
 "groupWindow.sortAZ" = "A→Z で並べ替え";
 "groupWindow.sortAZ.help" = "このグループのアプリを名前順（A から Z）に並べ替えます。手でドラッグして並べ替えることもできます。";
 "groupWindow.showPopup" = "ポップアップを表示";
 "groupWindow.showPopup.help" = "このグループのポップアップを Dock の上に表示します。";
 "groupWindow.hideAll.help" = "このグループで実行中のアプリを隠します。起動していないアプリは閉じたままです。";
-"groupWindow.apps.moveHint" = "アプリを別のグループに移すには、サイドバーのそのグループにドラッグするか、アプリのコンテキストメニューの %@ を使ってください。";
 "groupWindow.app.notFound" = "この Mac に見つかりません · %@";
 "groupWindow.app.remove.website" = "このグループから %@ を削除します。";
 "groupWindow.app.remove" = "このグループから %@ を削除します。アプリ自体には影響しません。";
@@ -203,8 +200,6 @@
 "appPicker.message" = "“%@” に追加するアプリを選んでください。";
 
 /* 開けなかった、終了できなかった、隠せなかったアプリに関する通知 */
-"problems.launch.allFailed" = "“%@” のアプリを開けませんでした。";
-"problems.launch.someFailed" = "“%@” の一部のアプリを開けませんでした。";
 "problems.launch.item" = "• %1$@：%2$@";
 "problems.launch.notFound" = "この Mac に見つかりません。";
 "problems.launch.opened" = "開きました。";

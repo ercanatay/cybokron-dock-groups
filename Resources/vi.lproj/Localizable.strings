@@ -138,15 +138,12 @@
 "groupWindow.name" = "Tên";
 "groupWindow.emoji" = "Emoji";
 "groupWindow.emoji.choose" = "Chọn…";
-"groupWindow.section.apps" = "Ứng dụng";
-"groupWindow.apps.empty" = "Chưa có ứng dụng nào. Dùng “%1$@” để chọn ứng dụng cho nhóm này, hoặc “%2$@” để thêm liên kết web.";
 "groupWindow.addWebsite.help" = "Thêm một liên kết web vào nhóm này. Liên kết sẽ mở trong trình duyệt mặc định của bạn.";
 "groupWindow.sortAZ" = "Sắp xếp A→Z";
 "groupWindow.sortAZ.help" = "Sắp xếp các ứng dụng trong nhóm này theo tên, từ A đến Z. Kéo để tự sắp xếp lại.";
 "groupWindow.showPopup" = "Hiện cửa sổ bật lên";
 "groupWindow.showPopup.help" = "Hiện cửa sổ bật lên của nhóm này phía trên Dock.";
 "groupWindow.hideAll.help" = "Ẩn các ứng dụng đang chạy của nhóm này. Ứng dụng không chạy vẫn đóng.";
-"groupWindow.apps.moveHint" = "Để chuyển ứng dụng sang nhóm khác, kéo nó vào nhóm đó ở thanh bên, hoặc dùng %@ trong menu ngữ cảnh của nó.";
 "groupWindow.app.notFound" = "Không tìm thấy trên Mac này · %@";
 "groupWindow.app.remove.website" = "Xóa %@ khỏi nhóm này.";
 "groupWindow.app.remove" = "Xóa %@ khỏi nhóm này. Bản thân ứng dụng không bị ảnh hưởng.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Chọn các ứng dụng để thêm vào “%@”.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "Không thể mở các ứng dụng trong “%@”.";
-"problems.launch.someFailed" = "Không thể mở một số ứng dụng trong “%@”.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "không tìm thấy trên Mac này.";
 "problems.launch.opened" = "đã mở.";

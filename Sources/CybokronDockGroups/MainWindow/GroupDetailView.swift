@@ -2,31 +2,53 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// Settings of one group: name, emoji, member apps, Dock tile, standalone Dock icon and popup
-/// preferences. Every change goes straight to the store, which saves it.
+/// Settings of one group: name, emoji, member items (apps, files, folders and websites), Dock tile,
+/// standalone Dock icon and popup preferences. Every change goes straight to the store, which
+/// saves it.
+///
+/// Where the items are is checked when the group shows, when its items change, when the window
+/// comes to the front (`GroupWindowItems`) and when a volume is connected or ejected — never while
+/// the rows draw.
 struct GroupDetailView: View {
     @ObservedObject var store: GroupStore
     @ObservedObject var standalone: StandaloneController
     let group: DockGroup
     let tiles: TileImageCache
     let actions: MainWindowView.Actions
+    let items: GroupWindowItems
+    @ObservedObject private var presence: ItemPresenceCache
 
     @State private var nameDraft: String
     @State private var emojiDraft: String
     @FocusState private var focusedField: Field?
-    @State private var addAppsProblem: String?
+    @State private var problem: ShownProblem?
     @State private var isAddingWebsite = false
 
     private enum Field: Hashable {
         case name, emoji
     }
 
-    init(store: GroupStore, standalone: StandaloneController, group: DockGroup, tiles: TileImageCache, actions: MainWindowView.Actions) {
+    /// An alert about items that couldn't be added or located.
+    private struct ShownProblem {
+        let title: String
+        let message: String
+    }
+
+    init(
+        store: GroupStore,
+        standalone: StandaloneController,
+        group: DockGroup,
+        tiles: TileImageCache,
+        actions: MainWindowView.Actions,
+        items: GroupWindowItems
+    ) {
         self.store = store
         self.standalone = standalone
         self.group = group
         self.tiles = tiles
         self.actions = actions
+        self.items = items
+        presence = items.presence
         _nameDraft = State(initialValue: group.name)
         _emojiDraft = State(initialValue: group.emoji)
     }
@@ -34,7 +56,7 @@ struct GroupDetailView: View {
     var body: some View {
         Form {
             identitySection
-            appsSection
+            itemsSection
             tileSection
             standaloneSection
             popupSection
@@ -58,16 +80,24 @@ struct GroupDetailView: View {
         .onChange(of: group.emoji) { _, newEmoji in
             if focusedField != .emoji { emojiDraft = newEmoji }
         }
+        .onAppear { presence.track(group.apps) }
+        .onChange(of: group.apps) { _, newItems in presence.track(newItems) }
+        .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didMountNotification)) { _ in
+            presence.refresh()
+        }
+        .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didUnmountNotification)) { _ in
+            presence.refresh()
+        }
         .alert(
-            L10n.GroupWindow.addAppsProblemTitle,
+            problem?.title ?? "",
             isPresented: Binding(
-                get: { addAppsProblem != nil },
-                set: { isPresented in if !isPresented { addAppsProblem = nil } }
+                get: { problem != nil },
+                set: { isPresented in if !isPresented { problem = nil } }
             )
         ) {
-            Button(L10n.Common.ok) { addAppsProblem = nil }
+            Button(L10n.Common.ok) { problem = nil }
         } message: {
-            Text(addAppsProblem ?? "")
+            Text(problem?.message ?? "")
         }
         .sheet(isPresented: $isAddingWebsite) {
             AddWebsiteView(
@@ -98,24 +128,15 @@ struct GroupDetailView: View {
         }
     }
 
-    private var appsSection: some View {
+    private var itemsSection: some View {
         Section {
             if group.apps.isEmpty {
-                Text(L10n.GroupWindow.noApps(addApps: L10n.Common.addApps, addWebsite: L10n.Common.addWebsite))
+                Text(L10n.GroupWindow.noItems(add: L10n.GroupWindow.addMenu))
                     .foregroundStyle(.secondary)
             } else {
                 let moveTargets = GroupMoveTarget.targets(in: store.groups, excluding: group.id)
-                ForEach(group.apps) { app in
-                    AppRowView(app: app) {
-                        store.removeApp(bundleIdentifier: app.bundleIdentifier, fromGroup: group.id)
-                    }
-                    .modifier(MoveToGroupContextMenu(targets: moveTargets) { destination in
-                        store.moveApp(bundleIdentifier: app.bundleIdentifier, fromGroup: group.id, toGroup: destination)
-                    })
-                    // Dropped on another group in the sidebar, the app moves there.
-                    .onDrag {
-                        GroupAppDrag(groupID: group.id, bundleIdentifier: app.bundleIdentifier).itemProvider()
-                    }
+                ForEach(group.apps) { item in
+                    row(for: item, moveTargets: moveTargets)
                 }
                 .onMove { source, destination in
                     store.moveApps(inGroup: group.id, fromOffsets: source, toOffset: destination)
@@ -123,11 +144,16 @@ struct GroupDetailView: View {
             }
         } header: {
             HStack {
-                Text(L10n.GroupWindow.appsSection)
+                Text(L10n.GroupWindow.itemsSection)
                 Spacer()
-                Button(L10n.Common.addApps, action: addApps)
-                Button(L10n.Common.addWebsite) { isAddingWebsite = true }
-                    .help(L10n.GroupWindow.addWebsiteHelp)
+                Menu(L10n.GroupWindow.addMenu) {
+                    Button(L10n.Common.addApps, action: addApps)
+                    Button(L10n.AddItems.menu, action: addFilesAndFolders)
+                    Button(L10n.Common.addWebsite) { isAddingWebsite = true }
+                        .help(L10n.GroupWindow.addWebsiteHelp)
+                }
+                .fixedSize()
+                .help(L10n.GroupWindow.addMenuHelp)
                 Button(L10n.GroupWindow.sortAZ) { store.sortAppsByName(inGroup: group.id) }
                     .disabled(group.apps.count < 2)
                     .help(L10n.GroupWindow.sortAZHelp)
@@ -145,6 +171,36 @@ struct GroupDetailView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+        }
+    }
+
+    /// One item's row: what it is, or what's wrong with it, as last checked.
+    private func row(for item: GroupItem, moveTargets: [GroupMoveTarget]) -> some View {
+        let checked = presence.presence(of: item)
+        let canLocate = item.kind.isFileSystemItem && checked == .missing
+        return AppRowView(
+            app: item,
+            status: ItemRowStatus(item: item, presence: checked),
+            // Not checked yet: the icon of its kind (or the one found before), without a look at the disk.
+            icon: items.icons.icon(for: item, presence: checked ?? (item.isWebsite ? .online : .unverified)),
+            isDimmed: checked.map { !$0.isOpenable } ?? false,
+            onRemove: { store.removeApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id) },
+            onLocate: canLocate ? { locate(item) } : nil
+        )
+        .modifier(ItemRowContextMenu(
+            item: item,
+            presence: checked,
+            moveTargets: moveTargets,
+            showInFinder: { showInFinder(item) },
+            quickLook: { quickLook(item) },
+            locate: { locate(item) },
+            move: { destination in
+                store.moveApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id, toGroup: destination)
+            }
+        ))
+        // Dropped on another group in the sidebar, the item moves there.
+        .onDrag {
+            GroupAppDrag(groupID: group.id, bundleIdentifier: item.bundleIdentifier).itemProvider()
         }
     }
 
@@ -331,7 +387,47 @@ struct GroupDetailView: View {
         }
         store.addApps(apps, toGroup: group.id)
         if !failures.isEmpty {
-            addAppsProblem = failures.joined(separator: "\n")
+            problem = ShownProblem(title: L10n.GroupWindow.addAppsProblemTitle, message: failures.joined(separator: "\n"))
         }
+    }
+
+    /// Add Files or Folders…: what can't be added (programs, scripts, …) is listed in one alert.
+    private func addFilesAndFolders() {
+        let id = group.id
+        ItemPicker.chooseFilesAndFolders(forGroupNamed: group.name, attachedTo: NSApp.keyWindow) { urls in
+            ItemAddition.add(urls, toGroup: id, in: store, locator: presence.itemLocator) { problems in
+                problem = ShownProblem(title: L10n.AddItems.problemTitle, message: problems.joined(separator: "\n"))
+            }
+        }
+    }
+
+    /// Locate…: points a missing file or folder at where it is now, keeping its details and its
+    /// place in the group (and in Free Layout its cell).
+    private func locate(_ item: GroupItem) {
+        let id = group.id
+        ItemPicker.locate(item, attachedTo: NSApp.keyWindow) { url in
+            guard let url else { return }
+            let name = FileLocation.defaultName(for: url)
+            if let reason = ItemAddition.relinkProblem(for: item, to: url, locator: presence.itemLocator) {
+                problem = ShownProblem(title: L10n.Item.locateProblemTitle(name), message: reason)
+            } else if !store.relinkItem(item.bundleIdentifier, inGroup: id, to: url) {
+                problem = ShownProblem(title: L10n.Item.locateProblemTitle(name), message: L10n.Item.locateDuplicate(name))
+            }
+        }
+    }
+
+    /// Where Show in Finder and Quick Look find the item: checked again now.
+    private func shownLocation(of item: GroupItem) -> URL? {
+        PopupQuickLook.target(for: item, presence: presence.check(item))
+    }
+
+    private func showInFinder(_ item: GroupItem) {
+        guard let location = shownLocation(of: item) else { return }
+        NSWorkspace.shared.activateFileViewerSelecting([location])
+    }
+
+    private func quickLook(_ item: GroupItem) {
+        guard let location = shownLocation(of: item) else { return }
+        items.showPreview(location)
     }
 }

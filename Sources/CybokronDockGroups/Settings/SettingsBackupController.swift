@@ -11,7 +11,7 @@ final class SettingsBackupController: ObservableObject {
     /// What the last export or import did, shown under the buttons.
     enum Status: Equatable {
         case exported(fileName: String)
-        case imported(groupCount: Int, appCount: Int)
+        case imported(groupCount: Int, itemCount: Int)
         case merged(addedGroupCount: Int, skippedGroupCount: Int)
     }
 
@@ -127,7 +127,7 @@ final class SettingsBackupController: ObservableObject {
         do {
             try backup.restore(to: store, preferences: preferences)
             groupsRestored(store.groups)
-            status = .imported(groupCount: backup.groups.count, appCount: backup.appCount)
+            status = .imported(groupCount: backup.groups.count, itemCount: backup.itemCount)
         } catch {
             presentAlert(
                 title: L10n.Settings.Backup.restoreFailed,
@@ -171,13 +171,18 @@ final class SettingsBackupController: ObservableObject {
         let exported = exportedAt.timeIntervalSince1970 > 0
             ? exportedAt.formatted(date: .abbreviated, time: .shortened) : nil
         let groups = L10n.Common.groupCount(summary.groupCount)
-        let apps = L10n.Common.appCount(summary.appCount)
+        let items = L10n.Common.itemCount(summary.itemCount)
+        var contents: String
         switch (summary.groupCount, exported) {
-        case (0, nil): lines.append(Texts.confirmNoGroups)
-        case (0, let date?): lines.append(Texts.confirmNoGroups(exported: date))
-        case (_, nil): lines.append(Texts.confirmContents(groups: groups, apps: apps))
-        case (_, let date?): lines.append(Texts.confirmContents(groups: groups, apps: apps, exported: date))
+        case (0, nil): contents = Texts.confirmNoGroups
+        case (0, let date?): contents = Texts.confirmNoGroups(exported: date)
+        case (_, nil): contents = Texts.confirmContents(groups: groups, items: items)
+        case (_, let date?): contents = Texts.confirmContents(groups: groups, items: items, exported: date)
         }
+        if summary.leftOutItemCount > 0 {
+            contents += " " + Texts.leftOut(summary.leftOutItemCount)
+        }
+        lines.append(contents)
 
         var replace = [Texts.confirmReplace]
         if summary.replacedGroupCount > 0 {
@@ -195,7 +200,7 @@ final class SettingsBackupController: ObservableObject {
             ? Texts.confirmMergeAllHere
             : Texts.confirmMergeAdds(
                 groups: L10n.Common.groupCount(summary.mergedGroupCount),
-                apps: L10n.Common.appCount(summary.mergedAppCount)
+                items: L10n.Common.itemCount(summary.mergedItemCount)
             )]
         if summary.mergedGroupCount > 0, summary.skippedGroupCount > 0 {
             merge.append(Texts.confirmSkipped(summary.skippedGroupCount))

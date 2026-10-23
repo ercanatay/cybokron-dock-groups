@@ -138,15 +138,12 @@
 "groupWindow.name" = "이름";
 "groupWindow.emoji" = "이모지";
 "groupWindow.emoji.choose" = "선택…";
-"groupWindow.section.apps" = "앱";
-"groupWindow.apps.empty" = "아직 앱이 없습니다. 이 그룹에 앱을 고르려면 “%1$@”을(를), 웹 링크를 추가하려면 “%2$@”을(를) 사용하세요.";
 "groupWindow.addWebsite.help" = "이 그룹에 웹 링크를 추가합니다. 기본 브라우저에서 열립니다.";
 "groupWindow.sortAZ" = "A→Z 정렬";
 "groupWindow.sortAZ.help" = "이 그룹의 앱을 이름순(A에서 Z)으로 정렬합니다. 끌어서 직접 순서를 바꿀 수도 있습니다.";
 "groupWindow.showPopup" = "팝업 보기";
 "groupWindow.showPopup.help" = "이 그룹의 팝업을 Dock 위에 표시합니다.";
 "groupWindow.hideAll.help" = "이 그룹에서 실행 중인 앱을 숨깁니다. 실행 중이 아닌 앱은 닫힌 상태로 남습니다.";
-"groupWindow.apps.moveHint" = "앱을 다른 그룹으로 옮기려면 사이드바에서 그 그룹으로 끌거나, 앱의 컨텍스트 메뉴에서 %@을(를) 사용하세요.";
 "groupWindow.app.notFound" = "이 Mac에서 찾을 수 없음 · %@";
 "groupWindow.app.remove.website" = "이 그룹에서 %@을(를) 제거합니다.";
 "groupWindow.app.remove" = "이 그룹에서 %@을(를) 제거합니다. 앱 자체는 영향을 받지 않습니다.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "“%@”에 추가할 앱을 선택하세요.";
 
 /* 열거나 종료하거나 숨길 수 없었던 앱에 대한 알림 */
-"problems.launch.allFailed" = "“%@”의 앱을 열 수 없었습니다.";
-"problems.launch.someFailed" = "“%@”의 일부 앱을 열 수 없었습니다.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "이 Mac에서 찾을 수 없습니다.";
 "problems.launch.opened" = "열렸습니다.";

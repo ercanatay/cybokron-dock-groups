@@ -138,15 +138,12 @@
 "groupWindow.name" = "Név";
 "groupWindow.emoji" = "Emodzsi";
 "groupWindow.emoji.choose" = "Választás…";
-"groupWindow.section.apps" = "Alkalmazások";
-"groupWindow.apps.empty" = "Még nincs alkalmazás. A(z) „%1$@” gombbal válasszon alkalmazásokat a csoporthoz, vagy a(z) „%2$@” gombbal webes hivatkozást.";
 "groupWindow.addWebsite.help" = "Webes hivatkozás hozzáadása ehhez a csoporthoz. Az alapértelmezett böngészőben nyílik meg.";
 "groupWindow.sortAZ" = "Rendezés A→Z";
 "groupWindow.sortAZ.help" = "A csoport alkalmazásainak rendezése név szerint, A-tól Z-ig. Kézzel is átrendezhetők húzással.";
 "groupWindow.showPopup" = "Előugró ablak megjelenítése";
 "groupWindow.showPopup.help" = "A csoport előugró ablakának megjelenítése a Dock fölött.";
 "groupWindow.hideAll.help" = "A csoport futó alkalmazásainak elrejtése. A nem futó alkalmazások zárva maradnak.";
-"groupWindow.apps.moveHint" = "Alkalmazás másik csoportba helyezéséhez húzza azt az oldalsávban lévő csoportra, vagy használja a(z) %@ parancsot a helyi menüjében.";
 "groupWindow.app.notFound" = "Nem található ezen a Macen · %@";
 "groupWindow.app.remove.website" = "A(z) %@ eltávolítása ebből a csoportból.";
 "groupWindow.app.remove" = "A(z) %@ eltávolítása ebből a csoportból. Maga az alkalmazás nem változik.";
@@ -203,8 +200,6 @@
 "appPicker.message" = "Válassza ki a(z) „%@” csoporthoz adandó alkalmazásokat.";
 
 /* Alerts about apps that could not be opened, quit or hidden */
-"problems.launch.allFailed" = "A(z) „%@” csoport alkalmazásait nem sikerült megnyitni.";
-"problems.launch.someFailed" = "A(z) „%@” csoport néhány alkalmazását nem sikerült megnyitni.";
 "problems.launch.item" = "• %1$@: %2$@";
 "problems.launch.notFound" = "nem található ezen a Macen.";
 "problems.launch.opened" = "megnyitva.";

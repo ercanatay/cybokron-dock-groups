@@ -228,7 +228,11 @@ private final class FakeIconProvider: AppIconProviding {
         return .filled(color)
     }
 
-    func isInstalled(_ app: AppReference) -> Bool { true }
+    func icon(for item: GroupItem, presence: ItemPresence) -> NSImage {
+        icon(for: item)
+    }
+
+    func presence(of item: GroupItem) -> ItemPresence { .online }
 }
 
 private extension NSImage {

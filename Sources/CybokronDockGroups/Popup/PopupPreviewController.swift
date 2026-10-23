@@ -1,23 +1,26 @@
 import AppKit
 import Quartz
 
-/// Quick Look for the popup: Space shows the selected app's Finder preview (name, version, size)
-/// in the shared Quick Look panel, and the preview follows the keyboard selection.
+/// Quick Look for the popup and the group window: shows an item — a file's preview, or the Finder
+/// card (name, size, …) of an app or folder — in the shared Quick Look panel. In the popup, Space
+/// or Quick Look in an item's context menu shows the selected item, and the preview follows the
+/// keyboard selection; in the group window, Quick Look in a row's context menu shows its item.
 ///
-/// The popup stays the key window while the preview shows, so its keys keep working: Space again
-/// or Escape closes the preview, the arrow keys preview the next app. The popup panel
-/// (`PopupPanel`) is Quick Look's controller; this object is the panel's data source.
+/// The host window stays the key window while the preview shows, so the popup's keys keep
+/// working: Space again or Escape closes the preview, the arrow keys preview the next item. The
+/// host (`PopupPanel`, `GroupWindow`) is Quick Look's controller; this object is the panel's data
+/// source. Quick Look reads the item, never this app.
 @MainActor
 final class PopupPreviewController: NSObject, QLPreviewPanelDataSource {
-    private weak var host: NSPanel?
-    /// The app bundle being previewed.
+    private weak var host: NSWindow?
+    /// The app bundle, file or folder being previewed.
     private var item: URL?
     /// Set from `show` to `close`: the Quick Look panel, while visible, shows this popup's preview.
     private var isPresenting = false
     /// When the Quick Look panel was last ordered in.
     private var orderedInAt: Date?
 
-    init(host: NSPanel) {
+    init(host: NSWindow) {
         self.host = host
         super.init()
     }
@@ -45,7 +48,8 @@ final class PopupPreviewController: NSObject, QLPreviewPanelDataSource {
         isShown ? QLPreviewPanel.shared().windowNumber : nil
     }
 
-    /// Shows `url` (an app bundle) in Quick Look, or switches the open preview to it.
+    /// Shows `url` (an app bundle, a file or a folder) in Quick Look, or switches the open preview
+    /// to it.
     func show(_ url: URL) {
         item = url
         guard let panel = QLPreviewPanel.shared() else { return }

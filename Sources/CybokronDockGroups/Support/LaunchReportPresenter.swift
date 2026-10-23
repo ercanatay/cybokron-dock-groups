@@ -1,7 +1,8 @@
 import AppKit
 import DockGroupsCore
 
-/// Tells the user about apps that Open All couldn't open. Stays silent when everything worked.
+/// Tells the user about items (apps, websites, files and folders) that opening a group or one of
+/// its items couldn't open. Stays silent when everything worked.
 @MainActor
 enum LaunchReportPresenter {
     static func presentProblems(in report: LaunchReport) {
@@ -11,8 +12,8 @@ enum LaunchReportPresenter {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = problems.count == report.entries.count
-            ? L10n.Problems.noneOpened(report.groupName)
-            : L10n.Problems.someNotOpened(report.groupName)
+            ? L10n.Item.noneOpened(report.groupName)
+            : L10n.Item.someNotOpened(report.groupName)
         alert.informativeText = problems
             .map { L10n.Problems.launchItem($0.app.name, reason: description(of: $0.outcome)) }
             .joined(separator: "\n")
