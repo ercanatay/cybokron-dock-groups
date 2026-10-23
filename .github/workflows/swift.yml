@@ -29,7 +29,7 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # No job pushes; don't leave the token in .git/config for later steps.
           persist-credentials: false
@@ -70,7 +70,7 @@ jobs:
           ditto -c -k --keepParent "Cybokron Dock Groups.app" "Cybokron-Dock-Groups.zip"
 
       - name: Upload app artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Cybokron-Dock-Groups
           path: build/release/Cybokron-Dock-Groups.zip
@@ -82,7 +82,7 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # No job pushes; don't leave the token in .git/config for later steps.
           persist-credentials: false
@@ -128,7 +128,7 @@ jobs:
       CODESIGN_IDENTITY: ${{ vars.NOTARIZE_ENABLED == 'true' && '5113D3C4DEA9F1F9C082E516112B89E58BAA5111' || '' }}
 
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # No job pushes; don't leave the token in .git/config for later steps.
           persist-credentials: false
@@ -297,7 +297,7 @@ jobs:
           echo "NOTES=$NOTES" >> "$GITHUB_ENV"
 
       - name: Create draft release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: build/release/*.dmg
           draft: true
