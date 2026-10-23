@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS не успя да резервира тези клавиши за пряките комбинации, затова вместо това те се следят: за целта е нужен достъп до Accessibility, а натискането на клавишите се получава и от приложението на преден план.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@“ е програма или скрипт, затова не може да се добави като файл.";
+"core.item.error.notOpened" = "не беше отворен, защото програмите и скриптовете се отварят само като приложения.";
+"core.item.error.noHandler" = "Никое приложение на този Mac не отваря „%@“.";
+"core.item.error.volume" = "Намира се на „%@“, който не е свързан.";
+"core.item.error.unchecked" = "не беше отворен, защото macOS не позволи да се провери какво е.";
+"core.item.unchecked" = "macOS не позволи на приложението да провери „%@“.";
+"core.item.locate.wrongKind" = "„%@“ не е същият вид елемент.";
+"groupWindow.items.section" = "Елементи";
+"groupWindow.items.add" = "Добави";
+"groupWindow.items.add.help" = "Добавете приложения, файлове, папки или уебсайт към тази група.";
+"groupWindow.items.empty" = "Още нищо няма. Използвайте „%@“, за да добавите приложения, файлове, папки или уеб връзка.";
+"groupWindow.items.moveHint" = "За да преместите елемент в друга група, плъзнете го върху нея в страničната лента или използвайте %@ в контекстното му меню.";
+"groupWindow.items.remove.file" = "Премахни %@ от тази група. Самият файл не се засяга.";
+"groupWindow.items.remove.folder" = "Премахни %@ от тази група. Самата папка не се засяга.";
+"addItems.menu" = "Добави файлове или папки…";
+"addItems.title" = "Добавяне на файлове и папки към групата";
+"addItems.message" = "Изберете файлове и папки за добавяне към „%@“. Избраните приложения се добавят като приложения.";
+"addItems.problem.title" = "Някои елементи не можаха да бъдат добавени";
+"item.kind.file.accessibility" = "Файл %@";
+"item.kind.folder.accessibility" = "Папка %@";
+"item.action.quickLook" = "Бърз преглед";
+"item.action.locate" = "Намери…";
+"item.missing.help" = "„%@“ не може да бъде намерен. Може да е преместен, преименуван или изтрит.";
+"item.volume.help" = "„%1$@“ се намира на „%2$@“, който не е свързан.";
+"item.missing.row" = "Не може да бъде намерен · %@";
+"item.volume.row" = "На „%1$@“, който не е свързан · %2$@";
+"item.unverified.row" = "Не може да се провери това местоположение · %@";
+"item.locate.message" = "Изберете къде се намира „%@“ сега. Данните му и мястото му в групата се запазват.";
+"item.locate.prompt" = "Избери";
+"item.locate.duplicate" = "„%@“ вече е в тази група.";
+"item.locate.problem.title" = "„%@“ не можа да бъде намерен там";
+"item.problems.allFailed" = "Елементите в „%@“ не можаха да бъдат отворени.";
+"item.problems.someFailed" = "Някои елементи в „%@“ не можаха да бъдат отворени.";
+"popup.item.hint.file" = "Отваря файла в приложението по подразбиране";
+"popup.item.hint.folder" = "Отваря папката във Finder";
+"popup.item.help.openFile" = "Отвори %@ в приложението по подразбиране.";
+"popup.item.help.openFolder" = "Отвори папката %@.";
+"settings.backup.leftOut.one" = "1 елемент от резервното копие беше пропуснат: не може да бъде отворен безопасно.";
+"settings.backup.leftOut.other" = "%ld елемента от резервното копие бяха пропуснати: не могат да бъдат отворени безопасно.";
+"updates.otherVersions.items.warning" = "Версия %@ не може да показва файлове, папки, псевдоними, етикети или бележки към задачи. Преди инсталиране се запазва копие на групите ви; редактирането на групи в тази версия премахва данните за тези елементи.";
+"item.details.menu" = "Редактирай подробностите…";
+"item.details.title" = "Подробности за „%@“";
+"item.details.alias" = "Псевдоним";
+"item.details.alias.placeholder" = "Друго име, показвано вместо оригиналното";
+"item.details.tags" = "Етикети";
+"item.details.tags.placeholder" = "финанси, трето тримесечие";
+"item.details.tags.hint" = "Разделяйте етикетите със запетая.";
+"item.details.tags.limit" = "Запазват се само първите %ld етикета.";
+"item.details.notes" = "Бележки към задачи";
+"item.details.notes.placeholder" = "За какво го използвате";
+"item.details.notes.count" = "%1$ld от %2$ld знака";
+"item.details.button.help" = "Псевдоним, етикети и бележки към задачи за %@";
+"item.details.originalName" = "Име: %@";
+"popup.search.help.tags" = "Етикети: %@";
+"popup.search.help.notes" = "Бележки: %@";
+"popup.search.footer.matches" = "Филтър: „%@“  ·  ↩ отваря избрания елемент  ·  esc изчиства";
+"popup.search.footer.tag" = "Филтър: „%1$@“  ·  етикет „%2$@“ на %3$@  ·  ↩ отваря го  ·  esc изчиства";
+"popup.search.footer.notes" = "Филтър: „%1$@“  ·  в бележките към задачи на %2$@  ·  ↩ отваря го  ·  esc изчиства";
+"popup.search.noMatch" = "Няма елементи, които съвпадат с „%@“";
+"item.group.empty" = "В тази група още няма елементи";
+"item.details.hint" = "Писането на което и да е от тях в изскачащия прозорец намира този елемент.";
+

@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS kunde inte reservera dessa tangenter för genvägarna, så de övervakas i stället: det kräver Accessibility-åtkomst, och appen längst fram tar också emot tangenttryckningen.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "”%@” är ett program eller skript, så det kan inte läggas till som en fil.";
+"core.item.error.notOpened" = "öppnades inte, eftersom program och skript bara öppnas som appar.";
+"core.item.error.noHandler" = "Ingen app på den här Mac:en öppnar ”%@”.";
+"core.item.error.volume" = "Den finns på ”%@”, som inte är ansluten.";
+"core.item.error.unchecked" = "öppnades inte, eftersom macOS inte tillät kontroll av vad det är.";
+"core.item.unchecked" = "macOS kunde inte låta appen kontrollera ”%@”.";
+"core.item.locate.wrongKind" = "”%@” är inte samma typ av objekt.";
+"groupWindow.items.section" = "Objekt";
+"groupWindow.items.add" = "Lägg till";
+"groupWindow.items.add.help" = "Lägg till appar, filer, mappar eller en webbplats i den här gruppen.";
+"groupWindow.items.empty" = "Inget här än. Använd ”%@” för att lägga till appar, filer, mappar eller en webblänk.";
+"groupWindow.items.moveHint" = "Om du vill flytta ett objekt till en annan grupp drar du det till gruppen i sidofältet, eller använder %@ i dess snabbmeny.";
+"groupWindow.items.remove.file" = "Ta bort %@ från den här gruppen. Filen i sig påverkas inte.";
+"groupWindow.items.remove.folder" = "Ta bort %@ från den här gruppen. Mappen i sig påverkas inte.";
+"addItems.menu" = "Lägg till filer eller mappar…";
+"addItems.title" = "Lägg till filer och mappar i grupp";
+"addItems.message" = "Välj filer och mappar att lägga till i ”%@”. Appar du väljer läggs till som appar.";
+"addItems.problem.title" = "Vissa objekt kunde inte läggas till";
+"item.kind.file.accessibility" = "Fil %@";
+"item.kind.folder.accessibility" = "Mapp %@";
+"item.action.quickLook" = "Snabbvisning";
+"item.action.locate" = "Hitta…";
+"item.missing.help" = "”%@” kan inte hittas. Den kan ha flyttats, bytt namn eller tagits bort.";
+"item.volume.help" = "”%1$@” finns på ”%2$@”, som inte är ansluten.";
+"item.missing.row" = "Kan inte hittas · %@";
+"item.volume.row" = "På ”%1$@”, som inte är ansluten · %2$@";
+"item.unverified.row" = "Kan inte kontrollera platsen · %@";
+"item.locate.message" = "Välj var ”%@” finns nu. Dess detaljer och plats i gruppen behålls.";
+"item.locate.prompt" = "Välj";
+"item.locate.duplicate" = "”%@” finns redan i den här gruppen.";
+"item.locate.problem.title" = "”%@” kunde inte hittas där";
+"item.problems.allFailed" = "Objekten i ”%@” kunde inte öppnas.";
+"item.problems.someFailed" = "Vissa objekt i ”%@” kunde inte öppnas.";
+"popup.item.hint.file" = "Öppnar filen i dess standardapp";
+"popup.item.hint.folder" = "Öppnar mappen i Finder";
+"popup.item.help.openFile" = "Öppna %@ i dess standardapp.";
+"popup.item.help.openFolder" = "Öppna mappen %@.";
+"settings.backup.leftOut.one" = "1 objekt i säkerhetskopian utelämnades: det kan inte öppnas säkert.";
+"settings.backup.leftOut.other" = "%ld objekt i säkerhetskopian utelämnades: de kan inte öppnas säkert.";
+"updates.otherVersions.items.warning" = "Version %@ kan inte visa filer, mappar, alias, taggar eller uppgiftsanteckningar. En kopia av dina grupper sparas innan den installeras; redigering av grupper i den versionen tar bort dessa objekts detaljer.";
+"item.details.menu" = "Redigera detaljer…";
+"item.details.title" = "Detaljer för ”%@”";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Ett annat namn, visas i stället";
+"item.details.tags" = "Taggar";
+"item.details.tags.placeholder" = "ekonomi, q3";
+"item.details.tags.hint" = "Separera taggar med kommatecken.";
+"item.details.tags.limit" = "Endast de första %ld taggarna behålls.";
+"item.details.notes" = "Uppgiftsanteckningar";
+"item.details.notes.placeholder" = "Vad du använder den till";
+"item.details.notes.count" = "%1$ld av %2$ld tecken";
+"item.details.button.help" = "Alias, taggar och uppgiftsanteckningar för %@";
+"item.details.originalName" = "Namn: %@";
+"popup.search.help.tags" = "Taggar: %@";
+"popup.search.help.notes" = "Anteckningar: %@";
+"popup.search.footer.matches" = "Filter: ”%@”  ·  ↩ öppnar valt objekt  ·  esc rensar";
+"popup.search.footer.tag" = "Filter: ”%1$@”  ·  tagg ”%2$@” av %3$@  ·  ↩ öppnar den  ·  esc rensar";
+"popup.search.footer.notes" = "Filter: ”%1$@”  ·  i uppgiftsanteckningarna för %2$@  ·  ↩ öppnar den  ·  esc rensar";
+"popup.search.noMatch" = "Inga objekt matchar ”%@”";
+"item.group.empty" = "Inga objekt i den här gruppen ännu";
+"item.details.hint" = "Om du skriver någon av dessa i popupen hittas det här objektet.";
+

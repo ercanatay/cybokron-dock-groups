@@ -557,3 +557,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS не змогла зарезервувати ці клавіші для комбінацій, тому натискання відстежуються інакше: для цього потрібен доступ у розділі «Accessibility», і клавіша натискання також передається програмі, що знаходиться на передньому плані.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "“%@” — це програма або скрипт, тому його не можна додати як файл.";
+"core.item.error.notOpened" = "не відкрито, бо програми та скрипти відкриваються лише як застосунки.";
+"core.item.error.noHandler" = "Жоден застосунок на цьому Mac не відкриває “%@”.";
+"core.item.error.volume" = "Він на “%@”, який не під’єднано.";
+"core.item.error.unchecked" = "не відкрито, бо macOS не дозволила перевірити, що це таке.";
+"core.item.unchecked" = "macOS не дозволила застосунку перевірити “%@”.";
+"core.item.locate.wrongKind" = "“%@” не того самого типу.";
+"groupWindow.items.section" = "Елементи";
+"groupWindow.items.add" = "Додати";
+"groupWindow.items.add.help" = "Додати застосунки, файли, папки або вебсайт до цієї групи.";
+"groupWindow.items.empty" = "Поки що порожньо. Натисніть “%@”, щоб додати застосунки, файли, папки або веспосилання.";
+"groupWindow.items.moveHint" = "Щоб перемістити елемент до іншої групи, перетягніть його на цю групу в бічній панелі або скористайтеся %@ в його контекстному меню.";
+"groupWindow.items.remove.file" = "Вилучити %@ з цієї групи. Сам файл не зміниться.";
+"groupWindow.items.remove.folder" = "Вилучити %@ з цієї групи. Сама папка не зміниться.";
+"addItems.menu" = "Додати файли або папки…";
+"addItems.title" = "Додавання файлів і папок до групи";
+"addItems.message" = "Виберіть файли та папки, які додати до “%@”. Обрані застосунки додаються як застосунки.";
+"addItems.problem.title" = "Деякі елементи не вдалося додати";
+"item.kind.file.accessibility" = "Файл %@";
+"item.kind.folder.accessibility" = "Папка %@";
+"item.action.quickLook" = "Швидкий перегляд";
+"item.action.locate" = "Знайти…";
+"item.missing.help" = "“%@” не вдається знайти. Можливо, його перемістили, перейменували або видалили.";
+"item.volume.help" = "“%1$@” розташовано на “%2$@”, який не під’єднано.";
+"item.missing.row" = "Не вдається знайти · %@";
+"item.volume.row" = "На “%1$@”, який не під’єднано · %2$@";
+"item.unverified.row" = "Не вдається перевірити це розташування · %@";
+"item.locate.message" = "Виберіть, де зараз “%@”. Його відомості та місце в групі збережено.";
+"item.locate.prompt" = "Вибрати";
+"item.locate.duplicate" = "“%@” уже є в цій групі.";
+"item.locate.problem.title" = "“%@” не вдалося знайти там";
+"item.problems.allFailed" = "Елементи в “%@” не вдалося відкрити.";
+"item.problems.someFailed" = "Деякі елементи в “%@” не вдалося відкрити.";
+"popup.item.hint.file" = "Відкриває файл у його застосунку за замовчуванням";
+"popup.item.hint.folder" = "Відкриває папку у Finder";
+"popup.item.help.openFile" = "Відкрити %@ у його застосунку за замовчуванням.";
+"popup.item.help.openFolder" = "Відкрити папку %@.";
+"settings.backup.leftOut.one" = "1 елемент у резервній копії пропущено: його не можна безпечно відкрити.";
+"settings.backup.leftOut.other" = "%ld елементів у резервній копії пропущено: їх не можна безпечно відкрити.";
+"updates.otherVersions.items.warning" = "Версія %@ не вміє показувати файли, папки, псевдоніми, теги та нотатки завдань. Копію ваших груп буде збережено перед встановленням; редагування груп у цій версії втратить відомості про ці елементи.";
+"item.details.menu" = "Редагувати відомості…";
+"item.details.title" = "Відомості про “%@”";
+"item.details.alias" = "Псевдонім";
+"item.details.alias.placeholder" = "Інша назва, яка показуватиметься замість";
+"item.details.tags" = "Теги";
+"item.details.tags.placeholder" = "фінанси, 3кв";
+"item.details.tags.hint" = "Розділяйте теги комами.";
+"item.details.tags.limit" = "Зберігаються лише перші %ld тегів.";
+"item.details.notes" = "Нотатки завдань";
+"item.details.notes.placeholder" = "Для чого ви це використовуєте";
+"item.details.notes.count" = "%1$ld із %2$ld символів";
+"item.details.button.help" = "Псевдонім, теги та нотатки завдань для %@";
+"item.details.originalName" = "Назва: %@";
+"popup.search.help.tags" = "Теги: %@";
+"popup.search.help.notes" = "Нотатки: %@";
+"popup.search.footer.matches" = "Фільтр: “%@”  ·  ↩ відкриває вибраний елемент  ·  esc очищає";
+"popup.search.footer.tag" = "Фільтр: “%1$@”  ·  тег “%2$@” з %3$@  ·  ↩ відкриває його  ·  esc очищає";
+"popup.search.footer.notes" = "Фільтр: “%1$@”  ·  у нотатках завдань %2$@  ·  ↩ відкриває його  ·  esc очищає";
+"popup.search.noMatch" = "Немає елементів, що відповідають “%@”";
+"item.group.empty" = "У цій групі поки немає елементів";
+"item.details.hint" = "Введення будь-чого з цього у вікні знайде цей елемент.";
+

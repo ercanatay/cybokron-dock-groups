@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS konnte diese Tasten nicht für die Kurzbefehle reservieren, daher werden sie stattdessen überwacht: Dafür ist die Berechtigung „Accessibility“ erforderlich, und die App im Vordergrund erhält den Tastendruck ebenfalls.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@“ ist ein Programm oder Skript und kann nicht als Datei hinzugefügt werden.";
+"core.item.error.notOpened" = "wurde nicht geöffnet, weil Programme und Skripte nur als Apps geöffnet werden.";
+"core.item.error.noHandler" = "Auf diesem Mac gibt es keine App, die „%@“ öffnet.";
+"core.item.error.volume" = "Es befindet sich auf „%@“, das nicht verbunden ist.";
+"core.item.error.unchecked" = "wurde nicht geöffnet, weil macOS nicht prüfen konnte, worum es sich handelt.";
+"core.item.unchecked" = "macOS konnte „%@“ nicht prüfen.";
+"core.item.locate.wrongKind" = "„%@“ ist nicht derselbe Typ von Objekt.";
+"groupWindow.items.section" = "Objekte";
+"groupWindow.items.add" = "Hinzufügen";
+"groupWindow.items.add.help" = "Apps, Dateien, Ordner oder eine Website zu dieser Gruppe hinzufügen.";
+"groupWindow.items.empty" = "Noch nichts hier. Verwende „%@“, um Apps, Dateien, Ordner oder einen Weblink hinzuzufügen.";
+"groupWindow.items.moveHint" = "Um ein Objekt in eine andere Gruppe zu verschieben, ziehe es in der Seitenleiste auf diese Gruppe oder verwende %@ in seinem Kontextmenü.";
+"groupWindow.items.remove.file" = "%@ aus dieser Gruppe entfernen. Die Datei selbst bleibt unverändert.";
+"groupWindow.items.remove.folder" = "%@ aus dieser Gruppe entfernen. Der Ordner selbst bleibt unverändert.";
+"addItems.menu" = "Dateien oder Ordner hinzufügen…";
+"addItems.title" = "Dateien und Ordner zur Gruppe hinzufügen";
+"addItems.message" = "Wähle Dateien und Ordner, die zu „%@“ hinzugefügt werden sollen. Ausgewählte Apps werden als Apps hinzugefügt.";
+"addItems.problem.title" = "Einige Objekte konnten nicht hinzugefügt werden";
+"item.kind.file.accessibility" = "Datei %@";
+"item.kind.folder.accessibility" = "Ordner %@";
+"item.action.quickLook" = "Schnellansicht";
+"item.action.locate" = "Suchen…";
+"item.missing.help" = "„%@“ kann nicht gefunden werden. Es wurde möglicherweise verschoben, umbenannt oder gelöscht.";
+"item.volume.help" = "„%1$@“ befindet sich auf „%2$@“, das nicht verbunden ist.";
+"item.missing.row" = "Nicht auffindbar · %@";
+"item.volume.row" = "Auf „%1$@“, das nicht verbunden ist · %2$@";
+"item.unverified.row" = "Dieser Speicherort kann nicht geprüft werden · %@";
+"item.locate.message" = "Wähle, wo sich „%@“ jetzt befindet. Seine Details und Position in der Gruppe bleiben erhalten.";
+"item.locate.prompt" = "Auswählen";
+"item.locate.duplicate" = "„%@“ ist bereits in dieser Gruppe.";
+"item.locate.problem.title" = "„%@“ konnte dort nicht gefunden werden";
+"item.problems.allFailed" = "Die Objekte in „%@“ konnten nicht geöffnet werden.";
+"item.problems.someFailed" = "Einige Objekte in „%@“ konnten nicht geöffnet werden.";
+"popup.item.hint.file" = "Öffnet die Datei in ihrer Standard-App";
+"popup.item.hint.folder" = "Öffnet den Ordner im Finder";
+"popup.item.help.openFile" = "%@ in ihrer Standard-App öffnen.";
+"popup.item.help.openFolder" = "Den Ordner %@ öffnen.";
+"settings.backup.leftOut.one" = "1 Objekt im Backup wurde ausgelassen: Es kann nicht sicher geöffnet werden.";
+"settings.backup.leftOut.other" = "%ld Objekte im Backup wurden ausgelassen: Sie können nicht sicher geöffnet werden.";
+"updates.otherVersions.items.warning" = "Version %@ kann keine Dateien, Ordner, Aliase, Tags oder Aufgabennotizen anzeigen. Vor der Installation wird eine Kopie deiner Gruppen gespeichert; wenn du Gruppen in dieser Version bearbeitest, gehen die Details dieser Objekte verloren.";
+"item.details.menu" = "Details bearbeiten…";
+"item.details.title" = "Details von „%@“";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Anderer Name, wird stattdessen angezeigt";
+"item.details.tags" = "Tags";
+"item.details.tags.placeholder" = "Finanzen, Q3";
+"item.details.tags.hint" = "Tags mit Kommas trennen.";
+"item.details.tags.limit" = "Nur die ersten %ld Tags werden behalten.";
+"item.details.notes" = "Aufgabennotizen";
+"item.details.notes.placeholder" = "Wofür du es verwendest";
+"item.details.notes.count" = "%1$ld von %2$ld Zeichen";
+"item.details.button.help" = "Alias, Tags und Aufgabennotizen von %@";
+"item.details.originalName" = "Name: %@";
+"popup.search.help.tags" = "Tags: %@";
+"popup.search.help.notes" = "Notizen: %@";
+"popup.search.footer.matches" = "Filter: „%@“  ·  ↩ öffnet das ausgewählte Objekt  ·  esc leert";
+"popup.search.footer.tag" = "Filter: „%1$@“  ·  Tag „%2$@“ von %3$@  ·  ↩ öffnet es  ·  esc leert";
+"popup.search.footer.notes" = "Filter: „%1$@“  ·  in den Aufgabennotizen von %2$@  ·  ↩ öffnet es  ·  esc leert";
+"popup.search.noMatch" = "Keine Objekte passen zu „%@“";
+"item.group.empty" = "In dieser Gruppe gibt es noch keine Objekte";
+"item.details.hint" = "Wenn du einen dieser Begriffe im Popup eingibst, wird dieses Objekt gefunden.";
+

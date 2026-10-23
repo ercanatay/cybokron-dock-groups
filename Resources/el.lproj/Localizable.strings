@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "Το macOS δεν μπόρεσε να δεσμεύσει αυτά τα πλήκτρα για τις συντομεύσεις, γι' αυτό παρακολουθούνται αντ' αυτού: αυτό απαιτεί πρόσβαση στο Accessibility, και η εφαρμογή που βρίσκεται στο προσκήνιο λαμβάνει επίσης το πάτημα του πλήκτρου.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "Το «%@» είναι πρόγραμμα ή σενάριο, γι' αυτό δεν μπορεί να προστεθεί ως αρχείο.";
+"core.item.error.notOpened" = "δεν άνοιξε, επειδή τα προγράμματα και τα σενάρια ανοίγουν μόνο ως εφαρμογές.";
+"core.item.error.noHandler" = "Δεν υπάρχει εφαρμογή σε αυτό το Mac που να ανοίγει το «%@».";
+"core.item.error.volume" = "Βρίσκεται στο «%@», το οποίο δεν είναι συνδεδεμένο.";
+"core.item.error.unchecked" = "δεν άνοιξε, επειδή το macOS δεν επέτρεψε τον έλεγχο του τι είναι.";
+"core.item.unchecked" = "Το macOS δεν επέτρεψε στην εφαρμογή να ελέγξει το «%@».";
+"core.item.locate.wrongKind" = "Το «%@» δεν είναι το ίδιο είδος στοιχείου.";
+"groupWindow.items.section" = "Στοιχεία";
+"groupWindow.items.add" = "Προσθήκη";
+"groupWindow.items.add.help" = "Προσθήκη εφαρμογών, αρχείων, φακέλων ή ιστότοπου σε αυτή την ομάδα.";
+"groupWindow.items.empty" = "Δεν υπάρχει τίποτα ακόμα. Χρησιμοποιήστε το «%@» για να προσθέσετε εφαρμογές, αρχεία, φακέλους ή σύνδεσμο ιστού.";
+"groupWindow.items.moveHint" = "Για να μετακινήσετε ένα στοιχείο σε άλλη ομάδα, σύρετέ το πάνω στην ομάδα στην πλαϊνή στήλη ή χρησιμοποιήστε το %@ στο μενού περιβάλλοντος του.";
+"groupWindow.items.remove.file" = "Αφαίρεση του %@ από αυτή την ομάδα. Το ίδιο το αρχείο δεν επηρεάζεται.";
+"groupWindow.items.remove.folder" = "Αφαίρεση του %@ από αυτή την ομάδα. Ο ίδιος ο φάκελος δεν επηρεάζεται.";
+"addItems.menu" = "Προσθήκη αρχείων ή φακέλων…";
+"addItems.title" = "Προσθήκη αρχείων και φακέλων στην ομάδα";
+"addItems.message" = "Επιλέξτε αρχεία και φακέλους για προσθήκη στο «%@». Οι εφαρμογές που επιλέγετε προστίθενται ως εφαρμογές.";
+"addItems.problem.title" = "Ορισμένα στοιχεία δεν μπόρεσαν να προστεθούν";
+"item.kind.file.accessibility" = "Αρχείο %@";
+"item.kind.folder.accessibility" = "Φάκελος %@";
+"item.action.quickLook" = "Quick Look";
+"item.action.locate" = "Εντοπισμός…";
+"item.missing.help" = "Το «%@» δεν βρέθηκε. Ενδέχεται να έχει μετακινηθεί, μετονομαστεί ή διαγραφεί.";
+"item.volume.help" = "Το «%1$@» βρίσκεται στο «%2$@», το οποίο δεν είναι συνδεδεμένο.";
+"item.missing.row" = "Δεν βρέθηκε · %@";
+"item.volume.row" = "Στο «%1$@», το οποίο δεν είναι συνδεδεμένο · %2$@";
+"item.unverified.row" = "Δεν είναι δυνατός ο έλεγχος αυτής της θέσης · %@";
+"item.locate.message" = "Επιλέξτε πού βρίσκεται τώρα το «%@». Οι λεπτομέρειες και η θέση του στην ομάδα διατηρούνται.";
+"item.locate.prompt" = "Επιλογή";
+"item.locate.duplicate" = "Το «%@» υπάρχει ήδη σε αυτή την ομάδα.";
+"item.locate.problem.title" = "Το «%@» δεν μπόρεσε να εντοπιστεί εκεί";
+"item.problems.allFailed" = "Τα στοιχεία στο «%@» δεν μπόρεσαν να ανοίξουν.";
+"item.problems.someFailed" = "Ορισμένα στοιχεία στο «%@» δεν μπόρεσαν να ανοίξουν.";
+"popup.item.hint.file" = "Ανοίγει το αρχείο στην προεπιλεγμένη εφαρμογή του";
+"popup.item.hint.folder" = "Ανοίγει τον φάκελο στο Finder";
+"popup.item.help.openFile" = "Άνοιγμα του %@ στην προεπιλεγμένη εφαρμογή του.";
+"popup.item.help.openFolder" = "Άνοιγμα του φακέλου %@.";
+"settings.backup.leftOut.one" = "1 στοιχείο του αντιγράφου παραλείφθηκε: δεν μπορεί να ανοιχτεί με ασφάλεια.";
+"settings.backup.leftOut.other" = "Παραλείφθηκαν %ld στοιχεία του αντιγράφου: δεν μπορούν να ανοιχτούν με ασφάλεια.";
+"updates.otherVersions.items.warning" = "Η έκδοση %@ δεν μπορεί να εμφανίσει αρχεία, φακέλους, ψευδώνυμα, ετικέτες ή σημειώσεις εργασιών. Πριν από την εγκατάστασή της διατηρείται αντίγραφο των ομάδων σας· η επεξεργασία ομάδων σε αυτή την έκδοση αφαιρεί τις λεπτομέρειες αυτών των στοιχείων.";
+"item.details.menu" = "Επεξεργασία λεπτομερειών…";
+"item.details.title" = "Λεπτομέρειες του «%@»";
+"item.details.alias" = "Ψευδώνυμο";
+"item.details.alias.placeholder" = "Άλλο όνομα, που εμφανίζεται αντ' αυτού";
+"item.details.tags" = "Ετικέτες";
+"item.details.tags.placeholder" = "οικονομικά, Q3";
+"item.details.tags.hint" = "Διαχωρίστε τις ετικέτες με κόμματα.";
+"item.details.tags.limit" = "Διατηρούνται μόνο οι πρώτες %ld ετικέτες.";
+"item.details.notes" = "Σημειώσεις εργασιών";
+"item.details.notes.placeholder" = "Σε τι το χρησιμοποιείτε";
+"item.details.notes.count" = "%1$ld από %2$ld χαρακτήρες";
+"item.details.button.help" = "Ψευδώνυμο, ετικέτες και σημειώσεις εργασιών του %@";
+"item.details.originalName" = "Όνομα: %@";
+"popup.search.help.tags" = "Ετικέτες: %@";
+"popup.search.help.notes" = "Σημειώσεις: %@";
+"popup.search.footer.matches" = "Φίλτρο: «%@»  ·  ↩ ανοίγει το επιλεγμένο στοιχείο  ·  esc καθαρίζει";
+"popup.search.footer.tag" = "Φίλτρο: «%1$@»  ·  ετικέτα «%2$@» του %3$@  ·  ↩ ανοίγει το  ·  esc καθαρίζει";
+"popup.search.footer.notes" = "Φίλτρο: «%1$@»  ·  στις σημειώσεις εργασιών του %2$@  ·  ↩ ανοίγει το  ·  esc καθαρίζει";
+"popup.search.noMatch" = "Κανένα στοιχείο δεν ταιριάζει με το «%@»";
+"item.group.empty" = "Δεν υπάρχουν ακόμη στοιχεία σε αυτή την ομάδα";
+"item.details.hint" = "Η πληκτρολόγηση οποιουδήποτε από αυτά στο αναδυόμενο παράθυρο βρίσκει αυτό το στοιχείο.";
+

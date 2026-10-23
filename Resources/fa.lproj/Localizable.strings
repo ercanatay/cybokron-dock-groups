@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS نتوانست این کلیدها را برای میان‌بُرها رزرو کند، بنابراین به‌جای آن پایشان می‌کند: این کار به دسترسی Accessibility نیاز دارد و برنامهٔ جلویی نیز فشردن کلید را دریافت می‌کند.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "«%@» یک برنامه یا اسکریپت است و نمی‌تواند به عنوان فایل اضافه شود.";
+"core.item.error.notOpened" = "باز نشد، زیرا برنامه‌ها و اسکریپت‌ها فقط به عنوان اپ باز می‌شوند.";
+"core.item.error.noHandler" = "هیچ برنامه‌ای روی این مک «%@» را باز نمی‌کند.";
+"core.item.error.volume" = "روی «%@» است که متصل نیست.";
+"core.item.error.unchecked" = "باز نشد، زیرا macOS اجازه بررسی نوع آن را نداد.";
+"core.item.unchecked" = "macOS اجازه نداد «%@» بررسی شود.";
+"core.item.locate.wrongKind" = "«%@» از همان نوع مورد نیست.";
+"groupWindow.items.section" = "موارد";
+"groupWindow.items.add" = "افزودن";
+"groupWindow.items.add.help" = "افزودن برنامه، فایل، پوشه یا وب‌سایت به این گروه.";
+"groupWindow.items.empty" = "هنوز چیزی اینجا نیست. از «%@» برای افزودن برنامه، فایل، پوشه یا پیوند وب استفاده کنید.";
+"groupWindow.items.moveHint" = "برای انتقال مورد به گروه دیگر، آن را در نوار کناری روی آن گروه بکشید، یا از %@ در منوی زمینه‌اش استفاده کنید.";
+"groupWindow.items.remove.file" = "حذف %@ از این گروه. خود فایل تغییری نمی‌کند.";
+"groupWindow.items.remove.folder" = "حذف %@ از این گروه. خود پوشه تغییری نمی‌کند.";
+"addItems.menu" = "افزودن فایل یا پوشه…";
+"addItems.title" = "افزودن فایل و پوشه به گروه";
+"addItems.message" = "فایل‌ها و پوشه‌هایی را برای افزودن به «%@» انتخاب کنید. برنامه‌های انتخابی به عنوان اپ افزوده می‌شوند.";
+"addItems.problem.title" = "برخی موارد افزوده نشدند";
+"item.kind.file.accessibility" = "فایل %@";
+"item.kind.folder.accessibility" = "پوشه %@";
+"item.action.quickLook" = "نگاه سریع";
+"item.action.locate" = "یافتن…";
+"item.missing.help" = "«%@» پیدا نمی‌شود. ممکن است جابه‌جا، تغییر نام یا حذف شده باشد.";
+"item.volume.help" = "«%1$@» روی «%2$@» است که متصل نیست.";
+"item.missing.row" = "پیدا نمی‌شود · %@";
+"item.volume.row" = "روی «%1$@» که متصل نیست · %2$@";
+"item.unverified.row" = "این مکان قابل بررسی نیست · %@";
+"item.locate.message" = "مکان فعلی «%@» را انتخاب کنید. جزئیات و جایگاه آن در گروه حفظ می‌شود.";
+"item.locate.prompt" = "انتخاب";
+"item.locate.duplicate" = "«%@» از قبل در این گروه است.";
+"item.locate.problem.title" = "«%@» در آن مکان پیدا نشد";
+"item.problems.allFailed" = "موارد «%@» باز نشدند.";
+"item.problems.someFailed" = "برخی موارد «%@» باز نشدند.";
+"popup.item.hint.file" = "فایل را در برنامه پیش‌فرضش باز می‌کند";
+"popup.item.hint.folder" = "پوشه را در Finder باز می‌کند";
+"popup.item.help.openFile" = "باز کردن %@ در برنامه پیش‌فرضش.";
+"popup.item.help.openFolder" = "باز کردن پوشه %@.";
+"settings.backup.leftOut.one" = "۱ مورد در پشتیبان حذف شد: نمی‌توان آن را با اطمینان باز کرد.";
+"settings.backup.leftOut.other" = "%ld مورد در پشتیبان حذف شدند: نمی‌توان آن‌ها را با اطمینان باز کرد.";
+"updates.otherVersions.items.warning" = "نسخه %@ نمی‌تواند فایل، پوشه، نام مستعار، برچسب یا یادداشت وظیفه را نشان دهد. پیش از نصب، نسخه‌ای از گروه‌های شما نگه داشته می‌شود؛ ویرایش گروه‌ها در آن نسخه، جزئیات این موارد را حذف می‌کند.";
+"item.details.menu" = "ویرایش جزئیات…";
+"item.details.title" = "جزئیات «%@»";
+"item.details.alias" = "نام مستعار";
+"item.details.alias.placeholder" = "نام دیگری که به جای آن نمایش داده می‌شود";
+"item.details.tags" = "برچسب‌ها";
+"item.details.tags.placeholder" = "finance, q3";
+"item.details.tags.hint" = "برچسب‌ها را با ویرگول از هم جدا کنید.";
+"item.details.tags.limit" = "فقط %ld برچسب اول نگه داشته می‌شود.";
+"item.details.notes" = "یادداشت وظیفه";
+"item.details.notes.placeholder" = "کاربرد آن";
+"item.details.notes.count" = "%1$ld از %2$ld نویسه";
+"item.details.button.help" = "نام مستعار، برچسب‌ها و یادداشت وظیفه %@";
+"item.details.originalName" = "نام: %@";
+"popup.search.help.tags" = "برچسب‌ها: %@";
+"popup.search.help.notes" = "یادداشت‌ها: %@";
+"popup.search.footer.matches" = "فیلتر: «%@»  ·  ↩ مورد انتخاب‌شده را باز می‌کند  ·  esc پاک می‌کند";
+"popup.search.footer.tag" = "فیلتر: «%1$@»  ·  برچسب «%2$@» در %3$@  ·  ↩ بازش می‌کند  ·  esc پاک می‌کند";
+"popup.search.footer.notes" = "فیلتر: «%1$@»  ·  در یادداشت وظیفه %2$@  ·  ↩ بازش می‌کند  ·  esc پاک می‌کند";
+"popup.search.noMatch" = "هیچ موردی با «%@» مطابقت ندارد";
+"item.group.empty" = "هنوز موردی در این گروه نیست";
+"item.details.hint" = "تایپ هر یک از این‌ها در پنجره بازشو، این مورد را پیدا می‌کند.";
+

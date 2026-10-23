@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS tidak dapat mencadangkan tombol-tombol ini untuk pintasan, sehingga tombol tersebut dipantau sebagai gantinya: ini memerlukan akses Accessibility, dan aplikasi di depan juga menerima penekanan tombol tersebut.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "‘%@’ adalah program atau skrip, sehingga tidak dapat ditambahkan sebagai berkas.";
+"core.item.error.notOpened" = "tidak dibuka, karena program dan skrip hanya dapat dibuka sebagai app.";
+"core.item.error.noHandler" = "Tidak ada app di Mac ini yang dapat membuka ‘%@’.";
+"core.item.error.volume" = "Berada di ‘%@’, yang tidak terhubung.";
+"core.item.error.unchecked" = "tidak dibuka, karena macOS tidak mengizinkan pemeriksaan jenisnya.";
+"core.item.unchecked" = "macOS tidak dapat memeriksa ‘%@’.";
+"core.item.locate.wrongKind" = "‘%@’ bukan jenis item yang sama.";
+"groupWindow.items.section" = "Item";
+"groupWindow.items.add" = "Tambah";
+"groupWindow.items.add.help" = "Tambahkan app, berkas, folder, atau situs web ke grup ini.";
+"groupWindow.items.empty" = "Belum ada apa-apa di sini. Gunakan ‘%@’ untuk menambahkan app, berkas, folder, atau tautan web.";
+"groupWindow.items.moveHint" = "Untuk memindahkan item ke grup lain, seret ke grup tersebut di sidebar, atau gunakan %@ pada menu konteksnya.";
+"groupWindow.items.remove.file" = "Hapus %@ dari grup ini. Berkasnya sendiri tidak terpengaruh.";
+"groupWindow.items.remove.folder" = "Hapus %@ dari grup ini. Folder itu sendiri tidak terpengaruh.";
+"addItems.menu" = "Tambahkan Berkas atau Folder…";
+"addItems.title" = "Tambahkan Berkas dan Folder ke Grup";
+"addItems.message" = "Pilih berkas dan folder untuk ditambahkan ke ‘%@’. App yang Anda pilih akan ditambahkan sebagai app.";
+"addItems.problem.title" = "Beberapa item tidak dapat ditambahkan";
+"item.kind.file.accessibility" = "Berkas %@";
+"item.kind.folder.accessibility" = "Folder %@";
+"item.action.quickLook" = "Quick Look";
+"item.action.locate" = "Cari…";
+"item.missing.help" = "‘%@’ tidak dapat ditemukan. Mungkin telah dipindahkan, diganti namanya, atau dihapus.";
+"item.volume.help" = "‘%1$@’ berada di ‘%2$@’, yang tidak terhubung.";
+"item.missing.row" = "Tidak dapat ditemukan · %@";
+"item.volume.row" = "Di ‘%1$@’, yang tidak terhubung · %2$@";
+"item.unverified.row" = "Tidak dapat memeriksa lokasi ini · %@";
+"item.locate.message" = "Pilih lokasi ‘%@’ yang sekarang. Detail dan posisinya dalam grup tetap disimpan.";
+"item.locate.prompt" = "Pilih";
+"item.locate.duplicate" = "‘%@’ sudah ada di grup ini.";
+"item.locate.problem.title" = "‘%@’ tidak dapat ditemukan di sana";
+"item.problems.allFailed" = "Item di ‘%@’ tidak dapat dibuka.";
+"item.problems.someFailed" = "Beberapa item di ‘%@’ tidak dapat dibuka.";
+"popup.item.hint.file" = "Membuka berkas di app bawaannya";
+"popup.item.hint.folder" = "Membuka folder di Finder";
+"popup.item.help.openFile" = "Buka %@ di app bawaannya.";
+"popup.item.help.openFolder" = "Buka folder %@.";
+"settings.backup.leftOut.one" = "1 item dalam cadangan dilewati: item tersebut tidak dapat dibuka dengan aman.";
+"settings.backup.leftOut.other" = "%ld item dalam cadangan dilewati: item tersebut tidak dapat dibuka dengan aman.";
+"updates.otherVersions.items.warning" = "Versi %@ tidak dapat menampilkan berkas, folder, alias, tag, atau catatan tugas. Salinan grup Anda disimpan sebelum diinstal; mengedit grup di versi tersebut akan menghapus detail item ini.";
+"item.details.menu" = "Edit Detail…";
+"item.details.title" = "Detail ‘%@’";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Nama lain, ditampilkan sebagai gantinya";
+"item.details.tags" = "Tag";
+"item.details.tags.placeholder" = "keuangan, q3";
+"item.details.tags.hint" = "Pisahkan tag dengan koma.";
+"item.details.tags.limit" = "Hanya %ld tag pertama yang disimpan.";
+"item.details.notes" = "Catatan tugas";
+"item.details.notes.placeholder" = "Untuk apa Anda menggunakannya";
+"item.details.notes.count" = "%1$ld dari %2$ld karakter";
+"item.details.button.help" = "Alias, tag, dan catatan tugas untuk %@";
+"item.details.originalName" = "Nama: %@";
+"popup.search.help.tags" = "Tag: %@";
+"popup.search.help.notes" = "Catatan: %@";
+"popup.search.footer.matches" = "Filter: ‘%@’  ·  ↩ membuka item yang dipilih  ·  esc menghapus";
+"popup.search.footer.tag" = "Filter: ‘%1$@’  ·  tag ‘%2$@’ dari %3$@  ·  ↩ membuka item  ·  esc menghapus";
+"popup.search.footer.notes" = "Filter: ‘%1$@’  ·  dalam catatan tugas %2$@  ·  ↩ membuka item  ·  esc menghapus";
+"popup.search.noMatch" = "Tidak ada item yang cocok dengan ‘%@’";
+"item.group.empty" = "Belum ada item di grup ini";
+"item.details.hint" = "Mengetik salah satu dari ini di popup akan menemukan item ini.";
+

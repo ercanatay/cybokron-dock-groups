@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS nu a putut rezerva aceste taste pentru scurtături, așa că acestea sunt monitorizate în schimb: asta necesită acces la Accessibility, iar aplicația din față primește și apăsarea tastei.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@” este un program sau un script, deci nu poate fi adăugat ca fișier.";
+"core.item.error.notOpened" = "nu a fost deschis, deoarece programele și scripturile se deschid doar ca aplicații.";
+"core.item.error.noHandler" = "Nicio aplicație de pe acest Mac nu deschide „%@”.";
+"core.item.error.volume" = "Se află pe „%@”, care nu este conectat.";
+"core.item.error.unchecked" = "nu a fost deschis, deoarece macOS nu a permis verificarea tipului lui.";
+"core.item.unchecked" = "macOS nu a permis aplicației să verifice „%@”.";
+"core.item.locate.wrongKind" = "„%@” nu este același tip de element.";
+"groupWindow.items.section" = "Elemente";
+"groupWindow.items.add" = "Adaugă";
+"groupWindow.items.add.help" = "Adaugă aplicații, fișiere, dosare sau un site web în acest grup.";
+"groupWindow.items.empty" = "Nimic aici încă. Folosește „%@” pentru a adăuga aplicații, fișiere, dosare sau un link web.";
+"groupWindow.items.moveHint" = "Pentru a muta un element într-un alt grup, trage-l pe grupul respectiv din bara laterală sau folosește %@ din meniul lui contextual.";
+"groupWindow.items.remove.file" = "Elimină %@ din acest grup. Fișierul în sine nu este afectat.";
+"groupWindow.items.remove.folder" = "Elimină %@ din acest grup. Dosarul în sine nu este afectat.";
+"addItems.menu" = "Adaugă fișiere sau dosare…";
+"addItems.title" = "Adaugă fișiere și dosare în grup";
+"addItems.message" = "Alege fișierele și dosarele de adăugat în „%@”. Aplicațiile alese sunt adăugate ca aplicații.";
+"addItems.problem.title" = "Unele elemente nu au putut fi adăugate";
+"item.kind.file.accessibility" = "Fișier %@";
+"item.kind.folder.accessibility" = "Dosar %@";
+"item.action.quickLook" = "Quick Look";
+"item.action.locate" = "Localizează…";
+"item.missing.help" = "„%@” nu poate fi găsit. Este posibil să fi fost mutat, redenumit sau șters.";
+"item.volume.help" = "„%1$@” se află pe „%2$@”, care nu este conectat.";
+"item.missing.row" = "Nu poate fi găsit · %@";
+"item.volume.row" = "Pe „%1$@”, care nu este conectat · %2$@";
+"item.unverified.row" = "Nu se poate verifica această locație · %@";
+"item.locate.message" = "Alege unde se află acum „%@”. Detaliile și poziția lui în grup sunt păstrate.";
+"item.locate.prompt" = "Alege";
+"item.locate.duplicate" = "„%@” este deja în acest grup.";
+"item.locate.problem.title" = "„%@” nu a putut fi localizat acolo";
+"item.problems.allFailed" = "Elementele din „%@” nu au putut fi deschise.";
+"item.problems.someFailed" = "Unele elemente din „%@” nu au putut fi deschise.";
+"popup.item.hint.file" = "Deschide fișierul în aplicația implicită";
+"popup.item.hint.folder" = "Deschide dosarul în Finder";
+"popup.item.help.openFile" = "Deschide %@ în aplicația implicită.";
+"popup.item.help.openFolder" = "Deschide dosarul %@.";
+"settings.backup.leftOut.one" = "1 element din copia de rezervă a fost omis: nu poate fi deschis în siguranță.";
+"settings.backup.leftOut.other" = "%ld elemente din copia de rezervă au fost omise: nu pot fi deschise în siguranță.";
+"updates.otherVersions.items.warning" = "Versiunea %@ nu poate afișa fișiere, dosare, alias-uri, etichete sau note de sarcini. O copie a grupurilor tale este păstrată înainte de instalare; editarea grupurilor în această versiune elimină detaliile acestor elemente.";
+"item.details.menu" = "Editează detaliile…";
+"item.details.title" = "Detaliile lui „%@”";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Un alt nume, afișat în locul celui original";
+"item.details.tags" = "Etichete";
+"item.details.tags.placeholder" = "finanțe, t3";
+"item.details.tags.hint" = "Separă etichetele prin virgule.";
+"item.details.tags.limit" = "Sunt păstrate doar primele %ld etichete.";
+"item.details.notes" = "Note de sarcini";
+"item.details.notes.placeholder" = "Pentru ce îl folosești";
+"item.details.notes.count" = "%1$ld din %2$ld caractere";
+"item.details.button.help" = "Alias, etichete și note de sarcini pentru %@";
+"item.details.originalName" = "Nume: %@";
+"popup.search.help.tags" = "Etichete: %@";
+"popup.search.help.notes" = "Note: %@";
+"popup.search.footer.matches" = "Filtru: „%@”  ·  ↩ deschide elementul selectat  ·  esc șterge";
+"popup.search.footer.tag" = "Filtru: „%1$@”  ·  eticheta „%2$@” a lui %3$@  ·  ↩ deschide elementul  ·  esc șterge";
+"popup.search.footer.notes" = "Filtru: „%1$@”  ·  în notele de sarcini ale lui %2$@  ·  ↩ deschide elementul  ·  esc șterge";
+"popup.search.noMatch" = "Niciun element nu corespunde lui „%@”";
+"item.group.empty" = "Niciun element în acest grup încă";
+"item.details.hint" = "Scrierea oricăruia dintre acestea în fereastra pop-up găsește acest element.";
+

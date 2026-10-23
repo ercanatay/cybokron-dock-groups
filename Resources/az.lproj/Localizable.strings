@@ -551,10 +551,74 @@
 /* Group Settings gear, item count, Settings → Support tab */
 "group.settings.title" = "Qrup parametrləri";
 "group.settings.menu" = "Qrup parametrləri…";
-"group.settings.accessibilityHint" = "«%@» qrupunun adını, tətbiqlərini, Dock elementini və açılan pəncərə parametrlərini göstərir.";
+"group.settings.accessibilityHint" = "\"%@\" qrupunun adını, tətbiqlərini, Dock elementini və açılan pəncərə parametrlərini göstərir.";
 "common.itemCount.one" = "1 element";
 "common.itemCount.other" = "%ld element";
 "settings.support.tab" = "Dəstək";
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS bu düymələri qısayollar üçün rezerv edə bilmədi, ona görə onları izləməklə tanıyır: bunun üçün Accessibility icazəsi lazımdır və ön plandakı tətbiq də düymə basışını alır.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "\"%@\" proqram və ya skriptdir, ona görə fayl kimi əlavə edilə bilməz.";
+"core.item.error.notOpened" = "açılmadı, çünki proqramlar və skriptlər yalnız tətbiq kimi açılır.";
+"core.item.error.noHandler" = "Bu Mac-də \"%@\" faylını açan tətbiq yoxdur.";
+"core.item.error.volume" = "Bu, qoşulmamış \"%@\" diskindədir.";
+"core.item.error.unchecked" = "açılmadı, çünki macOS onun nə olduğunu yoxlamağa icazə vermədi.";
+"core.item.unchecked" = "macOS tətbiqin \"%@\" elementini yoxlamasına icazə vermədi.";
+"core.item.locate.wrongKind" = "\"%@\" eyni növ element deyil.";
+"groupWindow.items.section" = "Elementlər";
+"groupWindow.items.add" = "Əlavə et";
+"groupWindow.items.add.help" = "Bu qrupa tətbiqlər, fayllar, qovluqlar və ya veb-sayt əlavə edin.";
+"groupWindow.items.empty" = "Hələ heç nə yoxdur. Tətbiq, fayl, qovluq və ya veb-link əlavə etmək üçün \"%@\" düyməsini istifadə edin.";
+"groupWindow.items.moveHint" = "Elementi başqa qrupa köçürmək üçün onu yan paneldə həmin qrupa sürükləyin və ya kontekst menyusunda %@ seçin.";
+"groupWindow.items.remove.file" = "%@ faylını bu qrupdan çıxarın. Faylın özünə toxunulmur.";
+"groupWindow.items.remove.folder" = "%@ qovluğunu bu qrupdan çıxarın. Qovluğun özünə toxunulmur.";
+"addItems.menu" = "Fayl və ya qovluq əlavə et…";
+"addItems.title" = "Qrupa fayl və qovluq əlavə et";
+"addItems.message" = "\"%@\" qrupuna əlavə ediləcək faylları və qovluqları seçin. Seçdiyiniz tətbiqlər tətbiq kimi əlavə olunur.";
+"addItems.problem.title" = "Bəzi elementlər əlavə edilə bilmədi";
+"item.kind.file.accessibility" = "Fayl %@";
+"item.kind.folder.accessibility" = "Qovluq %@";
+"item.action.quickLook" = "Quick Look";
+"item.action.locate" = "Tap…";
+"item.missing.help" = "\"%@\" tapılmır. Yeri dəyişdirilmiş, adı dəyişdirilmiş və ya silinmiş ola bilər.";
+"item.volume.help" = "\"%1$@\" \"%2$@\" diskindədir, bu disk qoşulmayıb.";
+"item.missing.row" = "Tapılmır · %@";
+"item.volume.row" = "Qoşulmamış \"%1$@\" diskində · %2$@";
+"item.unverified.row" = "Bu yer yoxlanıla bilmir · %@";
+"item.locate.message" = "\"%@\" indi haradadır, onu seçin. Onun təfərrüatları və qrupdakı yeri saxlanılır.";
+"item.locate.prompt" = "Seç";
+"item.locate.duplicate" = "\"%@\" artıq bu qrupdadır.";
+"item.locate.problem.title" = "\"%@\" orada tapıla bilmədi";
+"item.problems.allFailed" = "\"%@\" qrupundakı elementlər açıla bilmədi.";
+"item.problems.someFailed" = "\"%@\" qrupundakı bəzi elementlər açıla bilmədi.";
+"popup.item.hint.file" = "Faylı standart tətbiqində açır";
+"popup.item.hint.folder" = "Qovluğu Finder-də açır";
+"popup.item.help.openFile" = "%@ faylını standart tətbiqində açın.";
+"popup.item.help.openFolder" = "%@ qovluğunu açın.";
+"settings.backup.leftOut.one" = "Ehtiyat nüsxədə 1 element buraxıldı: onu təhlükəsiz açmaq mümkün deyil.";
+"settings.backup.leftOut.other" = "Ehtiyat nüsxədə %ld element buraxıldı: onları təhlükəsiz açmaq mümkün deyil.";
+"updates.otherVersions.items.warning" = "%@ versiyası faylları, qovluqları, ləqəbləri, teqləri və tapşırıq qeydlərini göstərə bilməz. Quraşdırılmazdan əvvəl qruplarınızın surəti saxlanılır; həmin versiyada qrupları redaktə etmək bu elementlərin təfərrüatlarını silir.";
+"item.details.menu" = "Təfərrüatları redaktə et…";
+"item.details.title" = "\"%@\" təfərrüatları";
+"item.details.alias" = "Ləqəb";
+"item.details.alias.placeholder" = "Əvəzinə göstəriləcək başqa ad";
+"item.details.tags" = "Teqlər";
+"item.details.tags.placeholder" = "maliyyə, 3-cü rüb";
+"item.details.tags.hint" = "Teqləri vergüllə ayırın.";
+"item.details.tags.limit" = "Yalnız ilk %ld teq saxlanılır.";
+"item.details.notes" = "Tapşırıq qeydləri";
+"item.details.notes.placeholder" = "Onu nə üçün istifadə edirsiniz";
+"item.details.notes.count" = "%2$ld simvoldan %1$ld";
+"item.details.button.help" = "%@ üçün ləqəb, teqlər və tapşırıq qeydləri";
+"item.details.originalName" = "Ad: %@";
+"popup.search.help.tags" = "Teqlər: %@";
+"popup.search.help.notes" = "Qeydlər: %@";
+"popup.search.footer.matches" = "Filtr: \"%@\"  ·  ↩ seçilmiş elementi açır  ·  esc təmizləyir";
+"popup.search.footer.tag" = "Filtr: \"%1$@\"  ·  %3$@ elementinin \"%2$@\" teqi  ·  ↩ açır  ·  esc təmizləyir";
+"popup.search.footer.notes" = "Filtr: \"%1$@\"  ·  %2$@ elementinin tapşırıq qeydlərində  ·  ↩ açır  ·  esc təmizləyir";
+"popup.search.noMatch" = "\"%@\" ilə uyğun element yoxdur";
+"item.group.empty" = "Bu qrupda hələ element yoxdur";
+"item.details.hint" = "Açılan pəncərədə bunlardan hər hansı birini yazmaq bu elementi tapır.";
+

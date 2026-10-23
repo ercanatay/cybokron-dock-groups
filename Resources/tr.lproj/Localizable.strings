@@ -556,3 +556,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS bu tuşları kısayollar için ayıramadı, bu yüzden bunun yerine izleniyorlar: bunun için Accessibility erişimi gerekir ve tuşa basma olayı ön plandaki uygulamaya da ulaşır.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "\"%@\" bir program veya betik olduğu için dosya olarak eklenemez.";
+"core.item.error.notOpened" = "açılmadı, çünkü programlar ve betikler yalnızca uygulama olarak açılır.";
+"core.item.error.noHandler" = "Bu Mac’te \"%@\" öğesini açan uygulama yok.";
+"core.item.error.volume" = "Öğe, bağlı olmayan \"%@\" üzerinde.";
+"core.item.error.unchecked" = "açılmadı, çünkü macOS öğenin ne olduğunu denetlemeye izin vermedi.";
+"core.item.unchecked" = "macOS, uygulamanın \"%@\" öğesini denetlemesine izin vermedi.";
+"core.item.locate.wrongKind" = "\"%@\" aynı türde bir öğe değil.";
+"groupWindow.items.section" = "Öğeler";
+"groupWindow.items.add" = "Ekle";
+"groupWindow.items.add.help" = "Bu gruba uygulama, dosya, klasör veya web sitesi ekleyin.";
+"groupWindow.items.empty" = "Henüz burada bir şey yok. Uygulama, dosya, klasör veya web bağlantısı eklemek için \"%@\" düğmesini kullanın.";
+"groupWindow.items.moveHint" = "Bir öğeyi başka bir gruba taşımak için kenar çubuğundaki o gruba sürükleyin ya da bağlam menüsündeki %@ komutunu kullanın.";
+"groupWindow.items.remove.file" = "%@ bu gruptan kaldırılır. Dosyanın kendisi etkilenmez.";
+"groupWindow.items.remove.folder" = "%@ bu gruptan kaldırılır. Klasörün kendisi etkilenmez.";
+"addItems.menu" = "Dosya veya Klasör Ekle…";
+"addItems.title" = "Gruba Dosya ve Klasör Ekle";
+"addItems.message" = "\"%@\" grubuna eklenecek dosya ve klasörleri seçin. Seçtiğiniz uygulamalar uygulama olarak eklenir.";
+"addItems.problem.title" = "Bazı öğeler eklenemedi";
+"item.kind.file.accessibility" = "Dosya %@";
+"item.kind.folder.accessibility" = "Klasör %@";
+"item.action.quickLook" = "Hızlı Bakış";
+"item.action.locate" = "Konumunu Bul…";
+"item.missing.help" = "\"%@\" bulunamıyor. Taşınmış, yeniden adlandırılmış veya silinmiş olabilir.";
+"item.volume.help" = "\"%1$@\" öğesi, bağlı olmayan \"%2$@\" üzerinde.";
+"item.missing.row" = "Bulunamıyor · %@";
+"item.volume.row" = "Bağlı olmayan \"%1$@\" üzerinde · %2$@";
+"item.unverified.row" = "Bu konum denetlenemiyor · %@";
+"item.locate.message" = "\"%@\" öğesinin şu anda nerede olduğunu seçin. Ayrıntıları ve gruptaki yeri korunur.";
+"item.locate.prompt" = "Seç";
+"item.locate.duplicate" = "\"%@\" bu grupta zaten var.";
+"item.locate.problem.title" = "\"%@\" orada bulunamadı";
+"item.problems.allFailed" = "\"%@\" içindeki öğeler açılamadı.";
+"item.problems.someFailed" = "\"%@\" içindeki bazı öğeler açılamadı.";
+"popup.item.hint.file" = "Dosyayı varsayılan uygulamasında açar";
+"popup.item.hint.folder" = "Klasörü Finder’da açar";
+"popup.item.help.openFile" = "%@ öğesini varsayılan uygulamasında açın.";
+"popup.item.help.openFolder" = "%@ klasörünü açın.";
+"settings.backup.leftOut.one" = "Yedeklemedeki 1 öğe dışarıda bırakıldı: güvenli bir şekilde açılamaz.";
+"settings.backup.leftOut.other" = "Yedeklemedeki %ld öğe dışarıda bırakıldı: güvenli bir şekilde açılamaz.";
+"updates.otherVersions.items.warning" = "%@ sürümü dosya, klasör, takma ad, etiket veya görev notlarını gösteremez. Yüklenmeden önce gruplarınızın bir kopyası saklanır; bu sürümde grupları düzenlemek bu öğelerin ayrıntılarını siler.";
+"item.details.menu" = "Ayrıntıları Düzenle…";
+"item.details.title" = "\"%@\" ayrıntıları";
+"item.details.alias" = "Takma ad";
+"item.details.alias.placeholder" = "Bunun yerine gösterilecek başka bir ad";
+"item.details.tags" = "Etiketler";
+"item.details.tags.placeholder" = "finans, 3. çeyrek";
+"item.details.tags.hint" = "Etiketleri virgülle ayırın.";
+"item.details.tags.limit" = "Yalnızca ilk %ld etiket saklanır.";
+"item.details.notes" = "Görev notları";
+"item.details.notes.placeholder" = "Bunu neden kullandığınız";
+"item.details.notes.count" = "%1$ld / %2$ld karakter";
+"item.details.button.help" = "%@ öğesinin takma adı, etiketleri ve görev notları";
+"item.details.originalName" = "Ad: %@";
+"popup.search.help.tags" = "Etiketler: %@";
+"popup.search.help.notes" = "Notlar: %@";
+"popup.search.footer.matches" = "Filtre: \"%@\"  ·  ↩ seçili öğeyi açar  ·  esc temizler";
+"popup.search.footer.tag" = "Filtre: \"%1$@\"  ·  %3$@ öğesinin \"%2$@\" etiketi  ·  ↩ açar  ·  esc temizler";
+"popup.search.footer.notes" = "Filtre: \"%1$@\"  ·  %2$@ öğesinin görev notlarında  ·  ↩ açar  ·  esc temizler";
+"popup.search.noMatch" = "\"%@\" ile eşleşen öğe yok";
+"item.group.empty" = "Bu grupta henüz öğe yok";
+"item.details.hint" = "Açılır pencereye bunlardan herhangi birini yazmak bu öğeyi bulur.";
+

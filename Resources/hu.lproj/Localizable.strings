@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "A macOS nem tudta lefoglalni ezeket a billentyűket a parancsikonokhoz, ezért figyelésükkel old meg: ehhez az Akadálymentesítés engedély szükséges, és az előtérben lévő alkalmazás is megkapja a billentyűlenyomást.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@” program vagy szkript, ezért fájlként nem adható hozzá.";
+"core.item.error.notOpened" = "nem nyílt meg, mert a programok és szkriptek csak alkalmazásként nyithatók meg.";
+"core.item.error.noHandler" = "Nincs a Macen olyan app, amely megnyitja: „%@”.";
+"core.item.error.volume" = "A(z) „%@” kötetén van, amely nincs csatlakoztatva.";
+"core.item.error.unchecked" = "nem nyílt meg, mert a macOS nem engedte ellenőrizni, mi ez.";
+"core.item.unchecked" = "A macOS nem engedte, hogy az app ellenőrizze: „%@”.";
+"core.item.locate.wrongKind" = "„%@” nem azonos típusú elem.";
+"groupWindow.items.section" = "Elemek";
+"groupWindow.items.add" = "Hozzáadás";
+"groupWindow.items.add.help" = "Appok, fájlok, mappák vagy webhely hozzáadása ehhez a csoporthoz.";
+"groupWindow.items.empty" = "Még nincs semmi. Appok, fájlok, mappák vagy webes hivatkozás hozzáadásához használd: „%@”.";
+"groupWindow.items.moveHint" = "Elem másik csoportba helyezéséhez húzd arra a csoportra az oldalsávban, vagy használd a(z) %@ parancsot a helyi menüjében.";
+"groupWindow.items.remove.file" = "%@ eltávolítása ebből a csoportból. A fájl maga nem változik.";
+"groupWindow.items.remove.folder" = "%@ eltávolítása ebből a csoportból. A mappa maga nem változik.";
+"addItems.menu" = "Fájlok vagy mappák hozzáadása…";
+"addItems.title" = "Fájlok és mappák hozzáadása a csoporthoz";
+"addItems.message" = "Válaszd ki a(z) „%@” csoporthoz adandó fájlokat és mappákat. A kiválasztott appok appként kerülnek hozzáadásra.";
+"addItems.problem.title" = "Néhány elemet nem sikerült hozzáadni";
+"item.kind.file.accessibility" = "Fájl: %@";
+"item.kind.folder.accessibility" = "Mappa: %@";
+"item.action.quickLook" = "Gyorsnézet";
+"item.action.locate" = "Keresés…";
+"item.missing.help" = "A(z) „%@” nem található. Lehet, hogy áthelyezték, átnevezték vagy törölték.";
+"item.volume.help" = "A(z) „%1$@” a(z) „%2$@” kötetén van, amely nincs csatlakoztatva.";
+"item.missing.row" = "Nem található · %@";
+"item.volume.row" = "„%1$@” kötetén, amely nincs csatlakoztatva · %2$@";
+"item.unverified.row" = "A hely nem ellenőrizhető · %@";
+"item.locate.message" = "Válaszd ki, hol van most a(z) „%@”. Adatai és helye a csoportban megmaradnak.";
+"item.locate.prompt" = "Kiválasztás";
+"item.locate.duplicate" = "A(z) „%@” már szerepel ebben a csoportban.";
+"item.locate.problem.title" = "A(z) „%@” nem található ezen a helyen";
+"item.problems.allFailed" = "A(z) „%@” elemei nem nyithatók meg.";
+"item.problems.someFailed" = "A(z) „%@” néhány eleme nem nyitható meg.";
+"popup.item.hint.file" = "Megnyitja a fájlt az alapértelmezett appban";
+"popup.item.hint.folder" = "Megnyitja a mappát a Finderben";
+"popup.item.help.openFile" = "%@ megnyitása az alapértelmezett appban.";
+"popup.item.help.openFolder" = "A(z) %@ mappa megnyitása.";
+"settings.backup.leftOut.one" = "A biztonsági mentésből 1 elem kimaradt: biztonságosan nem nyitható meg.";
+"settings.backup.leftOut.other" = "A biztonsági mentésből %ld elem kimaradt: biztonságosan nem nyithatók meg.";
+"updates.otherVersions.items.warning" = "A(z) %@ verzió nem jeleníti meg a fájlokat, mappákat, álneveket, címkéket vagy a feladatjegyzeteket. A csoportok másolata telepítés előtt megmarad; a csoportok szerkesztése ebben a verzióban elveszíti ezeknek az elemeknek a részleteit.";
+"item.details.menu" = "Részletek szerkesztése…";
+"item.details.title" = "A(z) „%@” részletei";
+"item.details.alias" = "Álnév";
+"item.details.alias.placeholder" = "Másik név, amely helyette jelenik meg";
+"item.details.tags" = "Címkék";
+"item.details.tags.placeholder" = "pénzügy, q3";
+"item.details.tags.hint" = "A címkéket vesszővel válaszd el.";
+"item.details.tags.limit" = "Csak az első %ld címke marad meg.";
+"item.details.notes" = "Feladatjegyzetek";
+"item.details.notes.placeholder" = "Mire használod";
+"item.details.notes.count" = "%1$ld/%2$ld karakter";
+"item.details.button.help" = "%@ álneve, címkéi és feladatjegyzetei";
+"item.details.originalName" = "Név: %@";
+"popup.search.help.tags" = "Címkék: %@";
+"popup.search.help.notes" = "Jegyzetek: %@";
+"popup.search.footer.matches" = "Szűrő: „%@”  ·  ↩ megnyitja a kijelölt elemet  ·  esc törli";
+"popup.search.footer.tag" = "Szűrő: „%1$@”  ·  „%2$@” címke: %3$@  ·  ↩ megnyitja  ·  esc törli";
+"popup.search.footer.notes" = "Szűrő: „%1$@”  ·  %2$@ feladatjegyzeteiben  ·  ↩ megnyitja  ·  esc törli";
+"popup.search.noMatch" = "Nincs találat erre: „%@”";
+"item.group.empty" = "A csoportban még nincs elem";
+"item.details.hint" = "Ezek bármelyikének beírása a felugró ablakban megtalálja ezt az elemet.";
+

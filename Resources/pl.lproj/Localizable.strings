@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS nie mogło zarezerwować tych klawiszy dla skrótów, dlatego są nasłuchiwane zamiast tego: wymaga to dostępu w sekcji Accessibility, a naciśnięcie klawisza trafia też do aplikacji na pierwszym planie.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@” to program lub skrypt, więc nie można go dodać jako pliku.";
+"core.item.error.notOpened" = "nie został otwarty, ponieważ programy i skrypty otwierają się tylko jako aplikacje.";
+"core.item.error.noHandler" = "Żadna aplikacja na tym Macu nie otwiera „%@”.";
+"core.item.error.volume" = "Znajduje się na woluminie „%@”, który nie jest podłączony.";
+"core.item.error.unchecked" = "nie został otwarty, ponieważ macOS nie pozwolił sprawdzić, czym jest.";
+"core.item.unchecked" = "macOS nie pozwolił aplikacji sprawdzić „%@”.";
+"core.item.locate.wrongKind" = "„%@” nie jest tego samego rodzaju elementem.";
+"groupWindow.items.section" = "Elementy";
+"groupWindow.items.add" = "Dodaj";
+"groupWindow.items.add.help" = "Dodaj do tej grupy aplikacje, pliki, foldery lub witrynę.";
+"groupWindow.items.empty" = "Brak elementów. Użyj przycisku „%@”, aby dodać aplikacje, pliki, foldery lub łącze do strony.";
+"groupWindow.items.moveHint" = "Aby przenieść element do innej grupy, przeciągnij go na tę grupę na pasku bocznym lub użyj %@ w jego menu kontekstowym.";
+"groupWindow.items.remove.file" = "Usuń %@ z tej grupy. Sam plik nie zostanie zmieniony.";
+"groupWindow.items.remove.folder" = "Usuń %@ z tej grupy. Sam folder nie zostanie zmieniony.";
+"addItems.menu" = "Dodaj pliki lub foldery…";
+"addItems.title" = "Dodaj pliki i foldery do grupy";
+"addItems.message" = "Wybierz pliki i foldery do dodania do „%@”. Wybrane aplikacje są dodawane jako aplikacje.";
+"addItems.problem.title" = "Nie udało się dodać niektórych elementów";
+"item.kind.file.accessibility" = "Plik %@";
+"item.kind.folder.accessibility" = "Folder %@";
+"item.action.quickLook" = "Szybki podgląd";
+"item.action.locate" = "Wskaż…";
+"item.missing.help" = "Nie można znaleźć „%@”. Mógł zostać przeniesiony, zmieniony lub usunięty.";
+"item.volume.help" = "„%1$@” znajduje się na woluminie „%2$@”, który nie jest podłączony.";
+"item.missing.row" = "Nie można znaleźć · %@";
+"item.volume.row" = "Na woluminie „%1$@”, który nie jest podłączony · %2$@";
+"item.unverified.row" = "Nie można sprawdzić tej lokalizacji · %@";
+"item.locate.message" = "Wybierz, gdzie teraz znajduje się „%@”. Jego szczegóły i miejsce w grupie zostaną zachowane.";
+"item.locate.prompt" = "Wybierz";
+"item.locate.duplicate" = "„%@” jest już w tej grupie.";
+"item.locate.problem.title" = "Nie udało się wskazać „%@” w tej lokalizacji";
+"item.problems.allFailed" = "Nie udało się otworzyć elementów w „%@”.";
+"item.problems.someFailed" = "Nie udało się otworzyć niektórych elementów w „%@”.";
+"popup.item.hint.file" = "Otwiera plik w domyślnej aplikacji";
+"popup.item.hint.folder" = "Otwiera folder w Finderze";
+"popup.item.help.openFile" = "Otwórz %@ w domyślnej aplikacji.";
+"popup.item.help.openFolder" = "Otwórz folder %@.";
+"settings.backup.leftOut.one" = "1 element kopii zapasowej został pominięty: nie można go bezpiecznie otworzyć.";
+"settings.backup.leftOut.other" = "%ld elementów kopii zapasowej zostało pominiętych: nie można ich bezpiecznie otworzyć.";
+"updates.otherVersions.items.warning" = "Wersja %@ nie może wyświetlać plików, folderów, aliasów, tagów ani notatek zadań. Przed instalacją zachowywana jest kopia grup; edycja grup w tej wersji usuwa szczegóły tych elementów.";
+"item.details.menu" = "Edytuj szczegóły…";
+"item.details.title" = "Szczegóły „%@”";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Inna nazwa, wyświetlana zamiast";
+"item.details.tags" = "Tagi";
+"item.details.tags.placeholder" = "finanse, q3";
+"item.details.tags.hint" = "Oddzielaj tagi przecinkami.";
+"item.details.tags.limit" = "Zachowane zostaną tylko pierwsze %ld tagów.";
+"item.details.notes" = "Notatki zadania";
+"item.details.notes.placeholder" = "Do czego to używasz";
+"item.details.notes.count" = "%1$ld z %2$ld znaków";
+"item.details.button.help" = "Alias, tagi i notatki zadania dla %@";
+"item.details.originalName" = "Nazwa: %@";
+"popup.search.help.tags" = "Tagi: %@";
+"popup.search.help.notes" = "Notatki: %@";
+"popup.search.footer.matches" = "Filtr: „%@”  ·  ↩ otwiera wybrany element  ·  esc czyści";
+"popup.search.footer.tag" = "Filtr: „%1$@”  ·  tag „%2$@” z %3$@  ·  ↩ otwiera go  ·  esc czyści";
+"popup.search.footer.notes" = "Filtr: „%1$@”  ·  w notatkach zadania %2$@  ·  ↩ otwiera go  ·  esc czyści";
+"popup.search.noMatch" = "Brak elementów pasujących do „%@”";
+"item.group.empty" = "Brak elementów w tej grupie";
+"item.details.hint" = "Wpisanie któregokolwiek z nich w oknie podręcznym znajduje ten element.";
+

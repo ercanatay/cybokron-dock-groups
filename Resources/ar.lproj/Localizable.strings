@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "تعذّر على macOS حجز هذه المفاتيح للاختصارات، لذا تتم مراقبتها بدلاً من ذلك: يتطلب ذلك إذن Accessibility، ويتلقى التطبيق الأمامي ضغطة المفتاح أيضاً.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "«%@» برنامج أو نص برمجي، لذا لا يمكن إضافته كملف.";
+"core.item.error.notOpened" = "لم يُفتح، لأن البرامج والنصوص البرمجية تُفتح فقط كتطبيقات.";
+"core.item.error.noHandler" = "لا يوجد تطبيق على هذا الماك يفتح «%@».";
+"core.item.error.volume" = "موجود على «%@»، وهو غير متصل.";
+"core.item.error.unchecked" = "لم يُفتح، لأن macOS لم يسمح بالتحقق من نوعه.";
+"core.item.unchecked" = "لم يتمكن macOS من فحص «%@».";
+"core.item.locate.wrongKind" = "«%@» ليس من النوع نفسه.";
+"groupWindow.items.section" = "العناصر";
+"groupWindow.items.add" = "إضافة";
+"groupWindow.items.add.help" = "أضف تطبيقات أو ملفات أو مجلدات أو موقعاً إلكترونياً إلى هذه المجموعة.";
+"groupWindow.items.empty" = "لا شيء هنا بعد. استخدم «%@» لإضافة تطبيقات أو ملفات أو مجلدات أو روابط ويب.";
+"groupWindow.items.moveHint" = "لنقل عنصر إلى مجموعة أخرى، اسحبه إلى تلك المجموعة في الشريط الجانبي، أو استخدم %@ في قائمته السياقية.";
+"groupWindow.items.remove.file" = "أزِل %@ من هذه المجموعة. لا يتأثر الملف نفسه.";
+"groupWindow.items.remove.folder" = "أزِل %@ من هذه المجموعة. لا يتأثر المجلد نفسه.";
+"addItems.menu" = "إضافة ملفات أو مجلدات…";
+"addItems.title" = "إضافة ملفات ومجلدات إلى المجموعة";
+"addItems.message" = "اختر الملفات والمجلدات لإضافتها إلى «%@». تُضاف التطبيقات التي تختارها كتطبيقات.";
+"addItems.problem.title" = "تعذّرت إضافة بعض العناصر";
+"item.kind.file.accessibility" = "ملف %@";
+"item.kind.folder.accessibility" = "مجلد %@";
+"item.action.quickLook" = "نظرة سريعة";
+"item.action.locate" = "تحديد الموقع…";
+"item.missing.help" = "لا يمكن العثور على «%@». ربما نُقل أو أُعيدت تسميته أو حُذف.";
+"item.volume.help" = "«%1$@» موجود على «%2$@»، وهو غير متصل.";
+"item.missing.row" = "تعذّر العثور عليه · %@";
+"item.volume.row" = "على «%1$@»، وهو غير متصل · %2$@";
+"item.unverified.row" = "تعذّر التحقق من هذا الموقع · %@";
+"item.locate.message" = "اختر مكان «%@» الآن. تُحفظ تفاصيله ومكانه في المجموعة.";
+"item.locate.prompt" = "اختر";
+"item.locate.duplicate" = "«%@» موجود بالفعل في هذه المجموعة.";
+"item.locate.problem.title" = "تعذّر تحديد موقع «%@» هناك";
+"item.problems.allFailed" = "تعذّر فتح العناصر في «%@».";
+"item.problems.someFailed" = "تعذّر فتح بعض العناصر في «%@».";
+"popup.item.hint.file" = "يفتح الملف في تطبيقه الافتراضي";
+"popup.item.hint.folder" = "يفتح المجلد في Finder";
+"popup.item.help.openFile" = "افتح %@ في تطبيقه الافتراضي.";
+"popup.item.help.openFolder" = "افتح المجلد %@.";
+"settings.backup.leftOut.one" = "تم استبعاد عنصر واحد من النسخة الاحتياطية: لا يمكن فتحه بأمان.";
+"settings.backup.leftOut.other" = "استُبعد من النسخة الاحتياطية %ld من العناصر: لا يمكن فتحها بأمان.";
+"updates.otherVersions.items.warning" = "الإصدار %@ لا يعرض الملفات أو المجلدات أو الأسماء المستعارة أو الوسوم أو ملاحظات المهام. تُحفظ نسخة من مجموعاتك قبل تثبيته؛ وتحرير المجموعات في ذلك الإصدار يُسقط تفاصيل هذه العناصر.";
+"item.details.menu" = "تحرير التفاصيل…";
+"item.details.title" = "تفاصيل «%@»";
+"item.details.alias" = "الاسم المستعار";
+"item.details.alias.placeholder" = "اسم آخر يُعرض بدلاً منه";
+"item.details.tags" = "الوسوم";
+"item.details.tags.placeholder" = "مالية، ربع-3";
+"item.details.tags.hint" = "افصل بين الوسوم بفواصل.";
+"item.details.tags.limit" = "تُحفظ أول %ld وسوم فقط.";
+"item.details.notes" = "ملاحظات المهام";
+"item.details.notes.placeholder" = "ما تستخدمه من أجله";
+"item.details.notes.count" = "%1$ld من %2$ld حرفاً";
+"item.details.button.help" = "الاسم المستعار والوسوم وملاحظات المهام لـ %@";
+"item.details.originalName" = "الاسم: %@";
+"popup.search.help.tags" = "الوسوم: %@";
+"popup.search.help.notes" = "الملاحظات: %@";
+"popup.search.footer.matches" = "تصفية: «%@»  ·  ↩ يفتح العنصر المحدد  ·  esc يمسح";
+"popup.search.footer.tag" = "تصفية: «%1$@»  ·  الوسم «%2$@» في %3$@  ·  ↩ يفتحه  ·  esc يمسح";
+"popup.search.footer.notes" = "تصفية: «%1$@»  ·  في ملاحظات مهام %2$@  ·  ↩ يفتحه  ·  esc يمسح";
+"popup.search.noMatch" = "لا توجد عناصر تطابق «%@»";
+"item.group.empty" = "لا توجد عناصر في هذه المجموعة بعد";
+"item.details.hint" = "كتابة أي من هذه في النافذة المنبثقة تعثر على هذا العنصر.";
+

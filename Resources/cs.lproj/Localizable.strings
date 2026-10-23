@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS nemohlo tyto klávesy vyhradit pro zkratky, proto se sledují jinak: to vyžaduje přístup k nástroji Accessibility a stisk klávesy se dostane i do aplikace v popředí.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@“ je program nebo skript, proto ho nelze přidat jako soubor.";
+"core.item.error.notOpened" = "nebyl otevřen, protože programy a skripty se otevírají pouze jako aplikace.";
+"core.item.error.noHandler" = "Žádná aplikace v tomto Macu neotevře „%@“.";
+"core.item.error.volume" = "Je na svazku „%@“, který není připojen.";
+"core.item.error.unchecked" = "nebyl otevřen, protože macOS neumožnil ověřit, co je zač.";
+"core.item.unchecked" = "macOS nedovolil aplikaci ověřit „%@“.";
+"core.item.locate.wrongKind" = "„%@“ není položka stejného druhu.";
+"groupWindow.items.section" = "Položky";
+"groupWindow.items.add" = "Přidat";
+"groupWindow.items.add.help" = "Přidá do této skupiny aplikace, soubory, složky nebo webovou stránku.";
+"groupWindow.items.empty" = "Zatím zde nic není. Pomocí „%@“ přidejte aplikace, soubory, složky nebo webový odkaz.";
+"groupWindow.items.moveHint" = "Chcete-li přesunout položku do jiné skupiny, přetáhněte ji na tuto skupinu v postranním panelu, nebo použijte %@ v její kontextové nabídce.";
+"groupWindow.items.remove.file" = "Odebrat %@ z této skupiny. Samotný soubor se nezmění.";
+"groupWindow.items.remove.folder" = "Odebrat %@ z této skupiny. Samotná složka se nezmění.";
+"addItems.menu" = "Přidat soubory nebo složky…";
+"addItems.title" = "Přidat soubory a složky do skupiny";
+"addItems.message" = "Vyberte soubory a složky, které chcete přidat do „%@“. Vybrané aplikace se přidají jako aplikace.";
+"addItems.problem.title" = "Některé položky nebylo možné přidat";
+"item.kind.file.accessibility" = "Soubor %@";
+"item.kind.folder.accessibility" = "Složka %@";
+"item.action.quickLook" = "Rychlý náhled";
+"item.action.locate" = "Najít…";
+"item.missing.help" = "„%@“ nelze najít. Mohl být přesunut, přejmenován nebo smazán.";
+"item.volume.help" = "„%1$@“ je na svazku „%2$@“, který není připojen.";
+"item.missing.row" = "Nelze najít · %@";
+"item.volume.row" = "Na svazku „%1$@“, který není připojen · %2$@";
+"item.unverified.row" = "Nelze ověřit toto umístění · %@";
+"item.locate.message" = "Vyberte, kde se nyní nachází „%@“. Jeho podrobnosti a místo ve skupině se zachovají.";
+"item.locate.prompt" = "Vybrat";
+"item.locate.duplicate" = "„%@“ už je v této skupině.";
+"item.locate.problem.title" = "„%@“ se tam nepodařilo najít";
+"item.problems.allFailed" = "Položky v „%@“ nebylo možné otevřít.";
+"item.problems.someFailed" = "Některé položky v „%@“ nebylo možné otevřít.";
+"popup.item.hint.file" = "Otevře soubor ve výchozí aplikaci";
+"popup.item.hint.folder" = "Otevře složku ve Finderu";
+"popup.item.help.openFile" = "Otevřít %@ ve výchozí aplikaci.";
+"popup.item.help.openFolder" = "Otevřít složku %@.";
+"settings.backup.leftOut.one" = "1 položka ze zálohy byla vynechána: nelze ji bezpečně otevřít.";
+"settings.backup.leftOut.other" = "%ld položek ze zálohy bylo vynecháno: nelze je bezpečně otevřít.";
+"updates.otherVersions.items.warning" = "Verze %@ nedokáže zobrazit soubory, složky, aliasy, štítky ani poznámky k úkolům. Před instalací se uchová kopie vašich skupin; úpravy skupin v této verzi odstraní podrobnosti těchto položek.";
+"item.details.menu" = "Upravit podrobnosti…";
+"item.details.title" = "Podrobnosti: „%@“";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Jiný název, který se zobrazí místo původního";
+"item.details.tags" = "Štítky";
+"item.details.tags.placeholder" = "finance, q3";
+"item.details.tags.hint" = "Štítky oddělte čárkami.";
+"item.details.tags.limit" = "Zachovají se pouze prvních %ld štítků.";
+"item.details.notes" = "Poznámky k úkolu";
+"item.details.notes.placeholder" = "K čemu to používáte";
+"item.details.notes.count" = "%1$ld z %2$ld znaků";
+"item.details.button.help" = "Alias, štítky a poznámky k úkolu u %@";
+"item.details.originalName" = "Název: %@";
+"popup.search.help.tags" = "Štítky: %@";
+"popup.search.help.notes" = "Poznámky: %@";
+"popup.search.footer.matches" = "Filtr: „%@“  ·  ↩ otevře vybranou položku  ·  esc vymaže";
+"popup.search.footer.tag" = "Filtr: „%1$@“  ·  štítek „%2$@“ u %3$@  ·  ↩ otevře ji  ·  esc vymaže";
+"popup.search.footer.notes" = "Filtr: „%1$@“  ·  v poznámkách k úkolu u %2$@  ·  ↩ otevře ji  ·  esc vymaže";
+"popup.search.noMatch" = "Žádné položky neodpovídají „%@“";
+"item.group.empty" = "Tato skupina zatím neobsahuje žádné položky";
+"item.details.hint" = "Zadání kteréhokoli z těchto údajů do vyskakovacího okna najde tuto položku.";
+

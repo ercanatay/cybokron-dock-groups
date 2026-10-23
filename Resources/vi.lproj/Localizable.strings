@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS không thể dành riêng các phím này cho phím tắt, nên thay vào đó ứng dụng theo dõi việc nhấn phím: điều này cần quyền truy cập Accessibility, và ứng dụng đang ở phía trước cũng sẽ nhận được thao tác nhấn phím.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "“%@” là chương trình hoặc tập lệnh, nên không thể thêm như một tệp.";
+"core.item.error.notOpened" = "không được mở, vì chương trình và tập lệnh chỉ mở dưới dạng ứng dụng.";
+"core.item.error.noHandler" = "Không có ứng dụng nào trên Mac này mở được “%@”.";
+"core.item.error.volume" = "Nằm trên “%@”, ổ này chưa được kết nối.";
+"core.item.error.unchecked" = "không được mở, vì macOS không cho phép kiểm tra loại của nó.";
+"core.item.unchecked" = "macOS không cho ứng dụng kiểm tra “%@”.";
+"core.item.locate.wrongKind" = "“%@” không cùng loại mục.";
+"groupWindow.items.section" = "Mục";
+"groupWindow.items.add" = "Thêm";
+"groupWindow.items.add.help" = "Thêm ứng dụng, tệp, thư mục hoặc trang web vào nhóm này.";
+"groupWindow.items.empty" = "Chưa có gì ở đây. Dùng “%@” để thêm ứng dụng, tệp, thư mục hoặc liên kết web.";
+"groupWindow.items.moveHint" = "Để chuyển mục sang nhóm khác, kéo mục đó vào nhóm trên thanh bên, hoặc dùng %@ trong menu ngữ cảnh của mục.";
+"groupWindow.items.remove.file" = "Xóa %@ khỏi nhóm này. Chính tệp không bị ảnh hưởng.";
+"groupWindow.items.remove.folder" = "Xóa %@ khỏi nhóm này. Chính thư mục không bị ảnh hưởng.";
+"addItems.menu" = "Thêm tệp hoặc thư mục…";
+"addItems.title" = "Thêm tệp và thư mục vào nhóm";
+"addItems.message" = "Chọn tệp và thư mục để thêm vào “%@”. Ứng dụng bạn chọn sẽ được thêm dưới dạng ứng dụng.";
+"addItems.problem.title" = "Một số mục không thể thêm";
+"item.kind.file.accessibility" = "Tệp %@";
+"item.kind.folder.accessibility" = "Thư mục %@";
+"item.action.quickLook" = "Xem nhanh";
+"item.action.locate" = "Tìm…";
+"item.missing.help" = "Không tìm thấy “%@”. Có thể nó đã bị di chuyển, đổi tên hoặc xóa.";
+"item.volume.help" = "“%1$@” nằm trên “%2$@”, ổ này chưa được kết nối.";
+"item.missing.row" = "Không tìm thấy · %@";
+"item.volume.row" = "Trên “%1$@”, ổ này chưa được kết nối · %2$@";
+"item.unverified.row" = "Không kiểm tra được vị trí này · %@";
+"item.locate.message" = "Chọn vị trí hiện tại của “%@”. Chi tiết và vị trí của mục trong nhóm được giữ nguyên.";
+"item.locate.prompt" = "Chọn";
+"item.locate.duplicate" = "“%@” đã có trong nhóm này.";
+"item.locate.problem.title" = "Không thể định vị “%@” tại đó";
+"item.problems.allFailed" = "Không thể mở các mục trong “%@”.";
+"item.problems.someFailed" = "Một số mục trong “%@” không thể mở.";
+"popup.item.hint.file" = "Mở tệp bằng ứng dụng mặc định";
+"popup.item.hint.folder" = "Mở thư mục trong Finder";
+"popup.item.help.openFile" = "Mở %@ bằng ứng dụng mặc định.";
+"popup.item.help.openFolder" = "Mở thư mục %@.";
+"settings.backup.leftOut.one" = "1 mục trong bản sao lưu đã bị bỏ qua: không thể mở an toàn.";
+"settings.backup.leftOut.other" = "%ld mục trong bản sao lưu đã bị bỏ qua: không thể mở an toàn.";
+"updates.otherVersions.items.warning" = "Phiên bản %@ không thể hiển thị tệp, thư mục, bí danh, thẻ hoặc ghi chú tác vụ. Bản sao các nhóm của bạn được giữ lại trước khi cài đặt; chỉnh sửa nhóm trong phiên bản đó sẽ làm mất chi tiết của các mục này.";
+"item.details.menu" = "Chỉnh sửa chi tiết…";
+"item.details.title" = "Chi tiết của “%@”";
+"item.details.alias" = "Bí danh";
+"item.details.alias.placeholder" = "Tên khác, sẽ hiển thị thay thế";
+"item.details.tags" = "Thẻ";
+"item.details.tags.placeholder" = "tài chính, q3";
+"item.details.tags.hint" = "Phân tách các thẻ bằng dấu phẩy.";
+"item.details.tags.limit" = "Chỉ giữ lại %ld thẻ đầu tiên.";
+"item.details.notes" = "Ghi chú tác vụ";
+"item.details.notes.placeholder" = "Bạn dùng nó để làm gì";
+"item.details.notes.count" = "%1$ld trên %2$ld ký tự";
+"item.details.button.help" = "Bí danh, thẻ và ghi chú tác vụ của %@";
+"item.details.originalName" = "Tên: %@";
+"popup.search.help.tags" = "Thẻ: %@";
+"popup.search.help.notes" = "Ghi chú: %@";
+"popup.search.footer.matches" = "Lọc: “%@”  ·  ↩ mở mục đã chọn  ·  esc để xóa";
+"popup.search.footer.tag" = "Lọc: “%1$@”  ·  thẻ “%2$@” của %3$@  ·  ↩ mở mục  ·  esc để xóa";
+"popup.search.footer.notes" = "Lọc: “%1$@”  ·  trong ghi chú tác vụ của %2$@  ·  ↩ mở mục  ·  esc để xóa";
+"popup.search.noMatch" = "Không có mục nào khớp với “%@”";
+"item.group.empty" = "Chưa có mục nào trong nhóm này";
+"item.details.hint" = "Nhập bất kỳ mục nào trong số này vào cửa sổ bật lên sẽ tìm thấy mục này.";
+

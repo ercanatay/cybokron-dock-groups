@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS 无法为快捷键保留这些按键，因此改为监听：这需要 Accessibility 权限，并且前台应用也会收到该按键。";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "“%@”是程序或脚本，无法添加为文件。";
+"core.item.error.notOpened" = "未打开，因为程序和脚本只能作为应用打开。";
+"core.item.error.noHandler" = "这台 Mac 上没有应用可以打开“%@”。";
+"core.item.error.volume" = "它位于“%@”上，该磁盘未连接。";
+"core.item.error.unchecked" = "未打开，因为 macOS 不允许检查它的类型。";
+"core.item.unchecked" = "macOS 不允许检查“%@”。";
+"core.item.locate.wrongKind" = "“%@”不是同一类项目。";
+"groupWindow.items.section" = "项目";
+"groupWindow.items.add" = "添加";
+"groupWindow.items.add.help" = "将应用、文件、文件夹或网站添加到此分组。";
+"groupWindow.items.empty" = "这里还没有内容。使用“%@”添加应用、文件、文件夹或网页链接。";
+"groupWindow.items.moveHint" = "要将项目移到其他分组，请将其拖到边栏中的该分组上，或使用其上下文菜单中的%@。";
+"groupWindow.items.remove.file" = "从此分组中移除%@。文件本身不受影响。";
+"groupWindow.items.remove.folder" = "从此分组中移除%@。文件夹本身不受影响。";
+"addItems.menu" = "添加文件或文件夹…";
+"addItems.title" = "将文件和文件夹添加到分组";
+"addItems.message" = "选择要添加到“%@”的文件和文件夹。所选的应用将作为应用添加。";
+"addItems.problem.title" = "部分项目无法添加";
+"item.kind.file.accessibility" = "文件 %@";
+"item.kind.folder.accessibility" = "文件夹 %@";
+"item.action.quickLook" = "快速查看";
+"item.action.locate" = "定位…";
+"item.missing.help" = "找不到“%@”。它可能已被移动、重命名或删除。";
+"item.volume.help" = "“%1$@”位于“%2$@”上，该磁盘未连接。";
+"item.missing.row" = "找不到 · %@";
+"item.volume.row" = "位于“%1$@”上，该磁盘未连接 · %2$@";
+"item.unverified.row" = "无法检查此位置 · %@";
+"item.locate.message" = "选择“%@”现在的位置。其详细信息和在分组中的位置将保留。";
+"item.locate.prompt" = "选择";
+"item.locate.duplicate" = "“%@”已在此分组中。";
+"item.locate.problem.title" = "无法在该位置定位“%@”";
+"item.problems.allFailed" = "无法打开“%@”中的项目。";
+"item.problems.someFailed" = "无法打开“%@”中的部分项目。";
+"popup.item.hint.file" = "用默认应用打开文件";
+"popup.item.hint.folder" = "在访达中打开文件夹";
+"popup.item.help.openFile" = "用默认应用打开%@。";
+"popup.item.help.openFolder" = "打开文件夹%@。";
+"settings.backup.leftOut.one" = "备份中有 1 个项目被省略：它无法安全打开。";
+"settings.backup.leftOut.other" = "备份中有 %ld 个项目被省略：它们无法安全打开。";
+"updates.otherVersions.items.warning" = "版本 %@ 无法显示文件、文件夹、替身、标记或任务备注。安装前会保留一份分组副本；在该版本中编辑分组会丢失这些项目的详细信息。";
+"item.details.menu" = "编辑详细信息…";
+"item.details.title" = "“%@”的详细信息";
+"item.details.alias" = "别名";
+"item.details.alias.placeholder" = "显示的其他名称";
+"item.details.tags" = "标记";
+"item.details.tags.placeholder" = "finance, q3";
+"item.details.tags.hint" = "用逗号分隔标记。";
+"item.details.tags.limit" = "仅保留前 %ld 个标记。";
+"item.details.notes" = "任务备注";
+"item.details.notes.placeholder" = "用途说明";
+"item.details.notes.count" = "%1$ld / %2$ld 个字符";
+"item.details.button.help" = "%@的别名、标记和任务备注";
+"item.details.originalName" = "名称：%@";
+"popup.search.help.tags" = "标记：%@";
+"popup.search.help.notes" = "备注：%@";
+"popup.search.footer.matches" = "筛选：“%@”  ·  ↩ 打开所选项目  ·  esc 清除";
+"popup.search.footer.tag" = "筛选：“%1$@”  ·  %3$@ 的标记“%2$@”  ·  ↩ 打开  ·  esc 清除";
+"popup.search.footer.notes" = "筛选：“%1$@”  ·  在 %2$@ 的任务备注中  ·  ↩ 打开  ·  esc 清除";
+"popup.search.noMatch" = "没有项目与“%@”匹配";
+"item.group.empty" = "此分组中还没有项目";
+"item.details.hint" = "在弹出窗口中输入以上任一内容即可找到此项目。";
+

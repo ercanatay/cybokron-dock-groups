@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS kon deze toetsen niet reserveren voor de sneltoetsen, daarom worden ze in de plaats daarvan bewaakt: daarvoor is toegang tot Accessibility nodig, en de app op de voorgrond ontvangt de toetsaanslag ook.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "„%@” is een programma of script, dus het kan niet als bestand worden toegevoegd.";
+"core.item.error.notOpened" = "is niet geopend, omdat programma's en scripts alleen als app worden geopend.";
+"core.item.error.noHandler" = "Geen app op deze Mac opent „%@”.";
+"core.item.error.volume" = "Het staat op „%@”, dat niet is aangesloten.";
+"core.item.error.unchecked" = "is niet geopend, omdat macOS niet toestond te controleren wat het is.";
+"core.item.unchecked" = "macOS stond de app niet toe „%@” te controleren.";
+"core.item.locate.wrongKind" = "„%@” is niet hetzelfde soort item.";
+"groupWindow.items.section" = "Items";
+"groupWindow.items.add" = "Toevoegen";
+"groupWindow.items.add.help" = "Voeg apps, bestanden, mappen of een website toe aan deze groep.";
+"groupWindow.items.empty" = "Hier staat nog niets. Gebruik „%@” om apps, bestanden, mappen of een weblink toe te voegen.";
+"groupWindow.items.moveHint" = "Om een item naar een andere groep te verplaatsen, sleep je het naar die groep in de zijbalk, of gebruik %@ in het contextmenu.";
+"groupWindow.items.remove.file" = "Verwijder %@ uit deze groep. Het bestand zelf wordt niet beïnvloed.";
+"groupWindow.items.remove.folder" = "Verwijder %@ uit deze groep. De map zelf wordt niet beïnvloed.";
+"addItems.menu" = "Bestanden of Mappen toevoegen…";
+"addItems.title" = "Bestanden en mappen aan groep toevoegen";
+"addItems.message" = "Kies bestanden en mappen om toe te voegen aan „%@”. Apps die je kiest, worden als apps toegevoegd.";
+"addItems.problem.title" = "Sommige items konden niet worden toegevoegd";
+"item.kind.file.accessibility" = "Bestand %@";
+"item.kind.folder.accessibility" = "Map %@";
+"item.action.quickLook" = "Snel bekijken";
+"item.action.locate" = "Zoeken…";
+"item.missing.help" = "„%@” kan niet worden gevonden. Het is mogelijk verplaatst, hernoemd of verwijderd.";
+"item.volume.help" = "„%1$@” staat op „%2$@”, dat niet is aangesloten.";
+"item.missing.row" = "Kan niet worden gevonden · %@";
+"item.volume.row" = "Op „%1$@”, dat niet is aangesloten · %2$@";
+"item.unverified.row" = "Kan deze locatie niet controleren · %@";
+"item.locate.message" = "Kies waar „%@” nu staat. De details en plek in de groep blijven behouden.";
+"item.locate.prompt" = "Kies";
+"item.locate.duplicate" = "„%@” staat al in deze groep.";
+"item.locate.problem.title" = "„%@” kon daar niet worden gevonden";
+"item.problems.allFailed" = "De items in „%@” konden niet worden geopend.";
+"item.problems.someFailed" = "Sommige items in „%@” konden niet worden geopend.";
+"popup.item.hint.file" = "Opent het bestand in de standaardapp";
+"popup.item.hint.folder" = "Opent de map in Finder";
+"popup.item.help.openFile" = "%@ openen in de standaardapp.";
+"popup.item.help.openFolder" = "De map %@ openen.";
+"settings.backup.leftOut.one" = "1 item in de back-up is overgeslagen: het kan niet veilig worden geopend.";
+"settings.backup.leftOut.other" = "%ld items in de back-up zijn overgeslagen: ze kunnen niet veilig worden geopend.";
+"updates.otherVersions.items.warning" = "Versie %@ kan geen bestanden, mappen, aliassen, tags of taaknotities tonen. Er wordt een kopie van je groepen bewaard voordat deze wordt geïnstalleerd; groepen bewerken in die versie verwijdert de details van deze items.";
+"item.details.menu" = "Details bewerken…";
+"item.details.title" = "Details van „%@”";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Andere naam, die in plaats daarvan wordt getoond";
+"item.details.tags" = "Tags";
+"item.details.tags.placeholder" = "financiën, q3";
+"item.details.tags.hint" = "Scheid tags met komma's.";
+"item.details.tags.limit" = "Alleen de eerste %ld tags worden bewaard.";
+"item.details.notes" = "Taaknotities";
+"item.details.notes.placeholder" = "Waarvoor je het gebruikt";
+"item.details.notes.count" = "%1$ld van %2$ld tekens";
+"item.details.button.help" = "Alias, tags en taaknotities van %@";
+"item.details.originalName" = "Naam: %@";
+"popup.search.help.tags" = "Tags: %@";
+"popup.search.help.notes" = "Notities: %@";
+"popup.search.footer.matches" = "Filter: „%@”  ·  ↩ opent het geselecteerde item  ·  esc wist";
+"popup.search.footer.tag" = "Filter: „%1$@”  ·  tag „%2$@” van %3$@  ·  ↩ opent het  ·  esc wist";
+"popup.search.footer.notes" = "Filter: „%1$@”  ·  in de taaknotities van %2$@  ·  ↩ opent het  ·  esc wist";
+"popup.search.noMatch" = "Geen items gevonden voor „%@”";
+"item.group.empty" = "Nog geen items in deze groep";
+"item.details.hint" = "Als je een van deze typt in het venster, wordt dit item gevonden.";
+

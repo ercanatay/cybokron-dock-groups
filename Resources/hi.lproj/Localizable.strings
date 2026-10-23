@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS शॉर्टकट के लिए इन कुंजियों को आरक्षित नहीं कर सका, इसलिए इन्हें सुनने का तरीका अपनाया गया है: इसके लिए Accessibility की अनुमति चाहिए, और कुंजी दबाने का संकेत सामने वाले ऐप को भी मिलता है।";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "‘%@’ एक प्रोग्राम या स्क्रिप्ट है, इसलिए इसे फ़ाइल के रूप में नहीं जोड़ा जा सकता।";
+"core.item.error.notOpened" = "नहीं खुला, क्योंकि प्रोग्राम और स्क्रिप्ट केवल ऐप के रूप में खुलते हैं।";
+"core.item.error.noHandler" = "इस Mac पर ऐसा कोई ऐप नहीं है जो ‘%@’ खोल सके।";
+"core.item.error.volume" = "यह ‘%@’ पर है, जो जुड़ा हुआ नहीं है।";
+"core.item.error.unchecked" = "नहीं खुला, क्योंकि macOS ने जाँचने की अनुमति नहीं दी कि यह क्या है।";
+"core.item.unchecked" = "macOS ने ऐप को ‘%@’ जाँचने की अनुमति नहीं दी।";
+"core.item.locate.wrongKind" = "‘%@’ उसी प्रकार का आइटम नहीं है।";
+"groupWindow.items.section" = "आइटम";
+"groupWindow.items.add" = "जोड़ें";
+"groupWindow.items.add.help" = "इस समूह में ऐप, फ़ाइलें, फ़ोल्डर या एक वेबसाइट जोड़ें।";
+"groupWindow.items.empty" = "यहाँ अभी कुछ नहीं है। ऐप, फ़ाइलें, फ़ोल्डर या वेब लिंक जोड़ने के लिए ‘%@’ का उपयोग करें।";
+"groupWindow.items.moveHint" = "किसी आइटम को दूसरे समूह में ले जाने के लिए उसे साइडबार में उस समूह पर खींचें, या उसके संदर्भ मेनू में %@ का उपयोग करें।";
+"groupWindow.items.remove.file" = "इस समूह से %@ हटाएँ। फ़ाइल स्वयं प्रभावित नहीं होगी।";
+"groupWindow.items.remove.folder" = "इस समूह से %@ हटाएँ। फ़ोल्डर स्वयं प्रभावित नहीं होगा।";
+"addItems.menu" = "फ़ाइलें या फ़ोल्डर जोड़ें…";
+"addItems.title" = "समूह में फ़ाइलें और फ़ोल्डर जोड़ें";
+"addItems.message" = "‘%@’ में जोड़ने के लिए फ़ाइलें और फ़ोल्डर चुनें। आपके चुने हुए ऐप ऐप के रूप में जोड़े जाते हैं।";
+"addItems.problem.title" = "कुछ आइटम नहीं जोड़े जा सके";
+"item.kind.file.accessibility" = "फ़ाइल %@";
+"item.kind.folder.accessibility" = "फ़ोल्डर %@";
+"item.action.quickLook" = "Quick Look";
+"item.action.locate" = "स्थान चुनें…";
+"item.missing.help" = "‘%@’ नहीं मिल रहा। हो सकता है इसे स्थानांतरित, नाम बदला या हटाया गया हो।";
+"item.volume.help" = "‘%1$@’ ‘%2$@’ पर है, जो जुड़ा हुआ नहीं है।";
+"item.missing.row" = "नहीं मिल रहा · %@";
+"item.volume.row" = "‘%1$@’ पर, जो जुड़ा हुआ नहीं है · %2$@";
+"item.unverified.row" = "इस स्थान की जाँच नहीं हो सकती · %@";
+"item.locate.message" = "चुनें कि ‘%@’ अब कहाँ है। इसका विवरण और समूह में इसकी जगह बनी रहेगी।";
+"item.locate.prompt" = "चुनें";
+"item.locate.duplicate" = "‘%@’ पहले से इस समूह में है।";
+"item.locate.problem.title" = "‘%@’ वहाँ नहीं मिल सका";
+"item.problems.allFailed" = "‘%@’ के आइटम नहीं खोले जा सके।";
+"item.problems.someFailed" = "‘%@’ के कुछ आइटम नहीं खोले जा सके।";
+"popup.item.hint.file" = "फ़ाइल को उसके डिफ़ॉल्ट ऐप में खोलता है";
+"popup.item.hint.folder" = "फ़ोल्डर को Finder में खोलता है";
+"popup.item.help.openFile" = "%@ को उसके डिफ़ॉल्ट ऐप में खोलें।";
+"popup.item.help.openFolder" = "फ़ोल्डर %@ खोलें।";
+"settings.backup.leftOut.one" = "बैकअप का 1 आइटम छोड़ दिया गया: इसे सुरक्षित रूप से नहीं खोला जा सकता।";
+"settings.backup.leftOut.other" = "बैकअप के %ld आइटम छोड़ दिए गए: इन्हें सुरक्षित रूप से नहीं खोला जा सकता।";
+"updates.otherVersions.items.warning" = "संस्करण %@ फ़ाइलें, फ़ोल्डर, एलियास, टैग या कार्य नोट नहीं दिखा सकता। इंस्टॉल होने से पहले आपके समूहों की एक प्रति रखी जाती है; उस संस्करण में समूह संपादित करने पर इन आइटमों का विवरण हट जाता है।";
+"item.details.menu" = "विवरण संपादित करें…";
+"item.details.title" = "‘%@’ का विवरण";
+"item.details.alias" = "एलियास";
+"item.details.alias.placeholder" = "कोई दूसरा नाम, जो उसकी जगह दिखेगा";
+"item.details.tags" = "टैग";
+"item.details.tags.placeholder" = "finance, q3";
+"item.details.tags.hint" = "टैग को कॉमा से अलग करें।";
+"item.details.tags.limit" = "केवल पहले %ld टैग रखे जाएँगे।";
+"item.details.notes" = "कार्य नोट";
+"item.details.notes.placeholder" = "आप इसका उपयोग किसलिए करते हैं";
+"item.details.notes.count" = "%1$ld / %2$ld अक्षर";
+"item.details.button.help" = "%@ का एलियास, टैग और कार्य नोट";
+"item.details.originalName" = "नाम: %@";
+"popup.search.help.tags" = "टैग: %@";
+"popup.search.help.notes" = "नोट: %@";
+"popup.search.footer.matches" = "फ़िल्टर: ‘%@’  ·  ↩ चुने हुए आइटम को खोलता है  ·  esc साफ़ करता है";
+"popup.search.footer.tag" = "फ़िल्टर: ‘%1$@’  ·  %3$@ का टैग ‘%2$@’  ·  ↩ खोलता है  ·  esc साफ़ करता है";
+"popup.search.footer.notes" = "फ़िल्टर: ‘%1$@’  ·  %2$@ के कार्य नोट में  ·  ↩ खोलता है  ·  esc साफ़ करता है";
+"popup.search.noMatch" = "‘%@’ से मेल खाने वाला कोई आइटम नहीं है";
+"item.group.empty" = "इस समूह में अभी कोई आइटम नहीं है";
+"item.details.hint" = "पॉपअप में इनमें से कोई भी टाइप करने पर यह आइटम मिल जाता है।";
+

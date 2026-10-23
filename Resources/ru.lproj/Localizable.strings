@@ -557,3 +557,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOS не смогла зарезервировать эти клавиши для сочетаний, поэтому они отслеживаются пассивно: для этого нужен доступ Accessibility, а нажатие клавиши также передаётся активному приложению.";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "«%@» — программа или скрипт, поэтому его нельзя добавить как файл.";
+"core.item.error.notOpened" = "не открыт, потому что программы и скрипты открываются только как приложения.";
+"core.item.error.noHandler" = "Ни одно приложение на этом Mac не открывает «%@».";
+"core.item.error.volume" = "Он находится на «%@», который не подключён.";
+"core.item.error.unchecked" = "не открыт, потому что macOS не позволила проверить его тип.";
+"core.item.unchecked" = "macOS не позволила приложению проверить «%@».";
+"core.item.locate.wrongKind" = "«%@» — объект другого типа.";
+"groupWindow.items.section" = "Объекты";
+"groupWindow.items.add" = "Добавить";
+"groupWindow.items.add.help" = "Добавить в группу приложения, файлы, папки или веб-сайт.";
+"groupWindow.items.empty" = "Пока пусто. Используйте «%@», чтобы добавить приложения, файлы, папки или веб-ссылку.";
+"groupWindow.items.moveHint" = "Чтобы переместить объект в другую группу, перетащите его на эту группу в боковой панели или используйте %@ в его контекстном меню.";
+"groupWindow.items.remove.file" = "Удалить %@ из этой группы. Сам файл не затрагивается.";
+"groupWindow.items.remove.folder" = "Удалить %@ из этой группы. Сама папка не затрагивается.";
+"addItems.menu" = "Добавить файлы или папки…";
+"addItems.title" = "Добавление файлов и папок в группу";
+"addItems.message" = "Выберите файлы и папки для добавления в «%@». Выбранные приложения добавляются как приложения.";
+"addItems.problem.title" = "Не удалось добавить некоторые объекты";
+"item.kind.file.accessibility" = "Файл %@";
+"item.kind.folder.accessibility" = "Папка %@";
+"item.action.quickLook" = "Quick Look";
+"item.action.locate" = "Указать…";
+"item.missing.help" = "«%@» не найден. Возможно, его переместили, переименовали или удалили.";
+"item.volume.help" = "«%1$@» находится на «%2$@», который не подключён.";
+"item.missing.row" = "Не найден · %@";
+"item.volume.row" = "На «%1$@», который не подключён · %2$@";
+"item.unverified.row" = "Не удаётся проверить это расположение · %@";
+"item.locate.message" = "Укажите, где сейчас находится «%@». Его данные и место в группе сохранятся.";
+"item.locate.prompt" = "Выбрать";
+"item.locate.duplicate" = "«%@» уже есть в этой группе.";
+"item.locate.problem.title" = "Не удалось найти «%@» в указанном месте";
+"item.problems.allFailed" = "Не удалось открыть объекты в «%@».";
+"item.problems.someFailed" = "Не удалось открыть некоторые объекты в «%@».";
+"popup.item.hint.file" = "Открывает файл в приложении по умолчанию";
+"popup.item.hint.folder" = "Открывает папку в Finder";
+"popup.item.help.openFile" = "Открыть %@ в приложении по умолчанию.";
+"popup.item.help.openFolder" = "Открыть папку %@.";
+"settings.backup.leftOut.one" = "1 объект из резервной копии пропущен: его нельзя безопасно открыть.";
+"settings.backup.leftOut.other" = "Пропущено объектов в резервной копии: %ld. Их нельзя безопасно открыть.";
+"updates.otherVersions.items.warning" = "Версия %@ не может показывать файлы, папки, псевдонимы, теги и заметки к задачам. Копия ваших групп сохраняется перед установкой; редактирование групп в этой версии удаляет данные этих объектов.";
+"item.details.menu" = "Изменить данные…";
+"item.details.title" = "Данные «%@»";
+"item.details.alias" = "Псевдоним";
+"item.details.alias.placeholder" = "Другое имя, отображаемое вместо исходного";
+"item.details.tags" = "Теги";
+"item.details.tags.placeholder" = "финансы, q3";
+"item.details.tags.hint" = "Разделяйте теги запятыми.";
+"item.details.tags.limit" = "Сохраняются только первые %ld тегов.";
+"item.details.notes" = "Заметки к задаче";
+"item.details.notes.placeholder" = "Для чего вы это используете";
+"item.details.notes.count" = "%1$ld из %2$ld символов";
+"item.details.button.help" = "Псевдоним, теги и заметки к задаче для %@";
+"item.details.originalName" = "Имя: %@";
+"popup.search.help.tags" = "Теги: %@";
+"popup.search.help.notes" = "Заметки: %@";
+"popup.search.footer.matches" = "Фильтр: «%@»  ·  ↩ открывает выбранный объект  ·  esc очищает";
+"popup.search.footer.tag" = "Фильтр: «%1$@»  ·  тег «%2$@» у %3$@  ·  ↩ открывает  ·  esc очищает";
+"popup.search.footer.notes" = "Фильтр: «%1$@»  ·  в заметках к задаче %2$@  ·  ↩ открывает  ·  esc очищает";
+"popup.search.noMatch" = "Нет объектов, подходящих под «%@»";
+"item.group.empty" = "В этой группе пока нет объектов";
+"item.details.hint" = "Ввод любого из этих значений во всплывающем окне находит этот объект.";
+

@@ -558,3 +558,67 @@
 
 /* Only when hot key reservation fails: the fallback needs Accessibility access */
 "shortcuts.hotkey.unavailable" = "macOSはこれらのキーをショートカット用に確保できなかったため代わりに監視しており、これにはAccessibilityへのアクセス許可が必要で、前面のアプリにもキー入力が届きます。";
+
+/* Workspace items and search: files and folders in groups, item details (alias, tags, task notes) */
+"core.item.error.program" = "「%@」はプログラムまたはスクリプトのため、ファイルとして追加できません。";
+"core.item.error.notOpened" = "開けませんでした。プログラムとスクリプトはAppとしてのみ開けます。";
+"core.item.error.noHandler" = "このMacには「%@」を開けるAppがありません。";
+"core.item.error.volume" = "「%@」上にあり、接続されていません。";
+"core.item.error.unchecked" = "macOSが内容を確認できなかったため、開けませんでした。";
+"core.item.unchecked" = "macOSが「%@」を確認できませんでした。";
+"core.item.locate.wrongKind" = "「%@」は同じ種類の項目ではありません。";
+"groupWindow.items.section" = "項目";
+"groupWindow.items.add" = "追加";
+"groupWindow.items.add.help" = "このグループにApp、ファイル、フォルダ、Webサイトを追加します。";
+"groupWindow.items.empty" = "まだ項目がありません。「%@」を使って、App、ファイル、フォルダ、Webリンクを追加してください。";
+"groupWindow.items.moveHint" = "項目を別のグループに移動するには、サイドバーでそのグループへドラッグするか、項目の コンテキストメニュー で %@ を使用します。";
+"groupWindow.items.remove.file" = "このグループから%@を削除します。ファイル自体には影響しません。";
+"groupWindow.items.remove.folder" = "このグループから%@を削除します。フォルダ自体には影響しません。";
+"addItems.menu" = "ファイルまたはフォルダを追加…";
+"addItems.title" = "グループにファイルとフォルダを追加";
+"addItems.message" = "「%@」に追加するファイルとフォルダを選択してください。選択したAppはAppとして追加されます。";
+"addItems.problem.title" = "一部の項目を追加できませんでした";
+"item.kind.file.accessibility" = "ファイル %@";
+"item.kind.folder.accessibility" = "フォルダ %@";
+"item.action.quickLook" = "クイックルック";
+"item.action.locate" = "場所を指定…";
+"item.missing.help" = "「%@」が見つかりません。移動、名称変更、または削除された可能性があります。";
+"item.volume.help" = "「%1$@」は「%2$@」上にあり、接続されていません。";
+"item.missing.row" = "見つかりません · %@";
+"item.volume.row" = "「%1$@」上にあり、接続されていません · %2$@";
+"item.unverified.row" = "この場所を確認できません · %@";
+"item.locate.message" = "「%@」の現在の場所を選択してください。詳細とグループ内の位置は保持されます。";
+"item.locate.prompt" = "選択";
+"item.locate.duplicate" = "「%@」はすでにこのグループにあります。";
+"item.locate.problem.title" = "「%@」をその場所に指定できませんでした";
+"item.problems.allFailed" = "「%@」内の項目を開けませんでした。";
+"item.problems.someFailed" = "「%@」内の一部の項目を開けませんでした。";
+"popup.item.hint.file" = "ファイルをデフォルトのAppで開く";
+"popup.item.hint.folder" = "フォルダをFinderで開く";
+"popup.item.help.openFile" = "%@をデフォルトのAppで開きます。";
+"popup.item.help.openFolder" = "フォルダ%@を開きます。";
+"settings.backup.leftOut.one" = "バックアップ内の1個の項目は、安全に開けないため除外されました。";
+"settings.backup.leftOut.other" = "バックアップ内の%ld個の項目は、安全に開けないため除外されました。";
+"updates.otherVersions.items.warning" = "バージョン%@では、ファイル、フォルダ、エイリアス、タグ、タスクメモを表示できません。インストール前にグループのコピーが保存されます。そのバージョンでグループを編集すると、これらの項目の詳細は削除されます。";
+"item.details.menu" = "詳細を編集…";
+"item.details.title" = "「%@」の詳細";
+"item.details.alias" = "エイリアス";
+"item.details.alias.placeholder" = "代わりに表示する別名";
+"item.details.tags" = "タグ";
+"item.details.tags.placeholder" = "finance, q3";
+"item.details.tags.hint" = "タグはカンマで区切ってください。";
+"item.details.tags.limit" = "保持されるのは最初の%ld個のタグのみです。";
+"item.details.notes" = "タスクメモ";
+"item.details.notes.placeholder" = "用途";
+"item.details.notes.count" = "%2$ld文字中%1$ld文字";
+"item.details.button.help" = "%@のエイリアス、タグ、タスクメモ";
+"item.details.originalName" = "名前: %@";
+"popup.search.help.tags" = "タグ: %@";
+"popup.search.help.notes" = "メモ: %@";
+"popup.search.footer.matches" = "フィルタ: 「%@」  ·  ↩ 選択した項目を開く  ·  esc でクリア";
+"popup.search.footer.tag" = "フィルタ: 「%1$@」  ·  %3$@ のタグ「%2$@」  ·  ↩ 開く  ·  esc でクリア";
+"popup.search.footer.notes" = "フィルタ: 「%1$@」  ·  %2$@ のタスクメモ内  ·  ↩ 開く  ·  esc でクリア";
+"popup.search.noMatch" = "「%@」に一致する項目はありません";
+"item.group.empty" = "このグループにはまだ項目がありません";
+"item.details.hint" = "ポップアップでこれらのいずれかを入力すると、この項目が見つかります。";
+
