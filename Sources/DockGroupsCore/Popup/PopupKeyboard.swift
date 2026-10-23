@@ -196,4 +196,23 @@ public enum PopupQuickLook {
         if isPreviewShown { return .closePreview }
         return query.isEmpty ? .closePopup : .clearFilter
     }
+
+    /// What Quick Look shows for `item`: an app's bundle (its card), a file, or a folder (its
+    /// card), where `presence` found it. `nil` for websites and for items that aren't there. A
+    /// file or folder the app wasn't allowed to check is previewed anyway, from its location:
+    /// Quick Look, not this app, reads it, and says so if it can't.
+    public static func target(for item: GroupItem, presence: ItemPresence) -> URL? {
+        guard item.kind.isOnDisk else { return nil }
+        switch presence {
+        case .available(let url): return url
+        case .unverified: return item.kind.isFileSystemItem ? item.fileURL : nil
+        case .online, .missing, .volumeUnavailable: return nil
+        }
+    }
+
+    /// The selection for Space: nothing (`item` is `nil`), or whether the item has a preview.
+    public static func selection(of item: GroupItem?, presence: ItemPresence) -> Selection {
+        guard let item else { return .none }
+        return target(for: item, presence: presence) == nil ? .notPreviewable : .previewable
+    }
 }

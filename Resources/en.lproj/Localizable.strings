@@ -571,3 +571,7 @@
 
 /* Group items: files and folders, and why one can't be added or opened (English only for now: translations show this English text until they add these keys) */
 "core.item.error.program" = "“%@” is a program or script, so it can't be added as a file.";
+"core.item.error.notOpened" = "wasn't opened, because programs and scripts open only as apps.";
+"core.item.error.noHandler" = "No app on this Mac opens “%@”.";
+"core.item.error.volume" = "It's on “%@”, which isn't connected.";
+"core.item.error.unchecked" = "wasn't opened, because macOS didn't allow checking what it is.";

@@ -68,6 +68,24 @@ public enum FileItemPolicy {
         "com.apple.alias-file",
     ]
 
+    /// Apps that would run or install what they're given rather than show it (Terminal runs a file
+    /// it's asked to open): a file item whose default app is one of these isn't opened, whatever
+    /// its type. Bundle identifiers, lowercased.
+    public static let refusedHandlerBundleIdentifiers: Set<String> = [
+        "com.apple.terminal",
+        "com.googlecode.iterm2",
+        "com.apple.installer",
+        "com.apple.mcx.profilehelper",
+        "com.apple.systempreferences",
+        "com.apple.automatorinstaller",
+        "com.apple.javalauncher",
+    ]
+
+    /// Whether a file item may not be opened with the app whose bundle identifier this is.
+    public static func refusesHandler(bundleIdentifier: String) -> Bool {
+        refusedHandlerBundleIdentifiers.contains(bundleIdentifier.lowercased())
+    }
+
     /// The refusal for the location `url` judged by its name alone, or `nil` when the name is fine.
     public static func refusal(byName url: URL) -> FileItemRefusal? {
         let fileExtension = url.pathExtension.lowercased()

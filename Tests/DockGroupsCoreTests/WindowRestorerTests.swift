@@ -267,4 +267,6 @@ private final class ReopenRecordingWorkspace: ApplicationWorkspace {
         launched.append(url.deletingPathExtension().lastPathComponent)
     }
     func openWebsites(_ urls: [URL]) async throws {}
+    func openFileItems(_ urls: [URL]) async -> [URL: any Error] { [:] }
+    func revealFileItems(_ urls: [URL]) {}
 }

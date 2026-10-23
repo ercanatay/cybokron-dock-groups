@@ -134,4 +134,7 @@ private final class FakeWorkspace: ApplicationWorkspace {
             throw LaunchError()
         }
     }
+
+    func openFileItems(_ urls: [URL]) async -> [URL: any Error] { [:] }
+    func revealFileItems(_ urls: [URL]) {}
 }

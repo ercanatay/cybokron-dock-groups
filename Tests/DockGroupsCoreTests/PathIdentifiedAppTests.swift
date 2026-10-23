@@ -114,6 +114,8 @@ private final class LocatingWorkspace: ApplicationWorkspace {
         launched.append(url)
     }
     func openWebsites(_ urls: [URL]) async throws {}
+    func openFileItems(_ urls: [URL]) async -> [URL: any Error] { [:] }
+    func revealFileItems(_ urls: [URL]) {}
 }
 
 @MainActor

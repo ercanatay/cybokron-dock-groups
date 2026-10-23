@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-499 keys.
+503 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -705,3 +705,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | Key | English |
 | --- | --- |
 | `core.item.error.program` | “%@” is a program or script, so it can't be added as a file. |
+| `core.item.error.notOpened` | wasn't opened, because programs and scripts open only as apps. |
+| `core.item.error.noHandler` | No app on this Mac opens “%@”. |
+| `core.item.error.volume` | It's on “%@”, which isn't connected. |
+| `core.item.error.unchecked` | wasn't opened, because macOS didn't allow checking what it is. |
