@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Sprawdź aktualizacje…";
 "common.settings" = "Ustawienia…";
 "common.noLaunchesYet" = "Nie zarejestrowano jeszcze uruchomień";
-"common.noAppsInGroup" = "Ta grupa nie ma jeszcze aplikacji";
 "common.about" = "O aplikacji %@";
 "common.hideApp" = "Ukryj %@";
 "common.quitApp" = "Zakończ %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Zakończ uruchomione aplikacje z tej listy. ⌘-kliknięcie wymusza zakończenie bez zapisywania.";
 "popup.summary.running" = "uruchomione: %ld";
 "popup.summary.byLaunches" = "według uruchomień";
-"popup.filter.noMatch" = "Żadna aplikacja nie pasuje do „%@”";
 "popup.filter.noMatch.hint" = "Naciśnij Delete lub Esc, aby wyczyścić filtr.";
 "popup.empty.mostUsed.hint" = "Otwieraj aplikacje jak zwykle, aby zacząć budować historię.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Posortuj aplikacje w tej grupie według nazwy, od A do Z.";
 "popup.footer.sortAZ.accessibility" = "Sortuj od A do Z";
-"popup.footer.filter.matches" = "Filtr: „%@”  ·  ↩ otwiera wybraną aplikację  ·  esc czyści";
 "popup.footer.filter.noMatch" = "Filtr: „%@”  ·  brak dopasowań  ·  ⌫ lub esc czyści";
 "popup.footer.hint.mostUsed" = "Uporządkowane według częstotliwości otwierania  ·  ⌘-kliknięcie Zamknij wszystkie wymusza zakończenie";
 "popup.footer.hint.group" = "Zamknij wszystkie:  ⌥-kliknięcie kończy normalnie  ·  ⌘-kliknięcie wymusza zakończenie";

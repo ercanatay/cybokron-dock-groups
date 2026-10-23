@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "업데이트 확인…";
 "common.settings" = "설정…";
 "common.noLaunchesYet" = "아직 기록된 실행이 없습니다";
-"common.noAppsInGroup" = "이 그룹에 아직 앱이 없습니다";
 "common.about" = "%@ 정보";
 "common.hideApp" = "%@ 숨기기";
 "common.quitApp" = "%@ 종료";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "이 목록에서 실행 중인 앱을 종료합니다. ⌘-클릭하면 저장하지 않고 강제 종료합니다.";
 "popup.summary.running" = "실행 중 %ld개";
 "popup.summary.byLaunches" = "실행 횟수순";
-"popup.filter.noMatch" = "“%@”와(과) 일치하는 앱이 없습니다";
 "popup.filter.noMatch.hint" = "Delete 또는 esc를 누르면 필터가 지워집니다.";
 "popup.empty.mostUsed.hint" = "평소처럼 앱을 열어 기록을 쌓아 보세요.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "이 그룹의 앱을 이름순(A에서 Z)으로 정렬합니다.";
 "popup.footer.sortAZ.accessibility" = "A에서 Z로 정렬";
-"popup.footer.filter.matches" = "필터: “%@”  ·  ↩ 선택한 앱 열기  ·  esc로 지우기";
 "popup.footer.filter.noMatch" = "필터: “%@”  ·  일치하는 항목 없음  ·  ⌫ 또는 esc로 지우기";
 "popup.footer.hint.mostUsed" = "많이 연 순서  ·  모두 닫기를 ⌘-클릭하면 강제 종료";
 "popup.footer.hint.group" = "모두 닫기:  ⌥-클릭은 일반 종료  ·  ⌘-클릭은 강제 종료";

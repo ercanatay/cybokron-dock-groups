@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Verificar atualizações…";
 "common.settings" = "Ajustes…";
 "common.noLaunchesYet" = "Nenhuma abertura registrada ainda";
-"common.noAppsInGroup" = "Nenhum app neste grupo ainda";
 "common.about" = "Sobre %@";
 "common.hideApp" = "Ocultar %@";
 "common.quitApp" = "Sair do %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Sai dos apps em execução desta lista. ⌘-clique para forçar a saída sem salvar.";
 "popup.summary.running" = "%ld em execução";
 "popup.summary.byLaunches" = "por aberturas";
-"popup.filter.noMatch" = "Nenhum app corresponde a “%@”";
 "popup.filter.noMatch.hint" = "Pressione Delete ou Esc para limpar o filtro.";
 "popup.empty.mostUsed.hint" = "Abra os apps normalmente para começar a formar o seu histórico.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Ordena os apps deste grupo pelo nome, de A a Z.";
 "popup.footer.sortAZ.accessibility" = "Ordenar de A a Z";
-"popup.footer.filter.matches" = "Filtro: “%@”  ·  ↩ abre o app selecionado  ·  esc limpa";
 "popup.footer.filter.noMatch" = "Filtro: “%@”  ·  nenhuma correspondência  ·  ⌫ ou esc limpa";
 "popup.footer.hint.mostUsed" = "Ordenado pela frequência de abertura  ·  ⌘-clique em Fechar todos para forçar a saída";
 "popup.footer.hint.group" = "Fechar todos:  ⌥-clique sai normalmente  ·  ⌘-clique força a saída";

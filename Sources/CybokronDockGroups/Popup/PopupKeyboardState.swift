@@ -2,8 +2,8 @@ import Combine
 import DockGroupsCore
 import Foundation
 
-/// The popup's keyboard state: what the user typed to filter the apps, and the app the arrow keys
-/// selected. Owned by `PopupPanelController`, which handles the keys; `PopupContentView` draws it.
+/// The popup's keyboard state: what the user typed to filter the items, and the item the arrow
+/// keys selected. Owned by `PopupPanelController`, which handles the keys; `PopupContentView` draws it.
 @MainActor
 final class PopupKeyboardState: ObservableObject {
     /// The filter as typed; empty shows every app.
@@ -19,25 +19,39 @@ final class PopupKeyboardState: ObservableObject {
     }
 }
 
-/// The apps the keyboard can reach in a popup and the grid cells they're in.
+/// The items the keyboard can reach in a popup and the grid cells they're in.
 struct PopupNavigationItems {
     let cells: [PopupCell]
     /// Grid cell of each of `cells`, same order.
     let slots: [Int]
+    /// With a filter, why each of `cells` matched, same order (indices into the content's cells);
+    /// empty without one.
+    var matches: [ItemSearchMatch] = []
 }
 
+@MainActor
 extension PopupContent {
-    /// The apps shown for `query`: with a filter, the matches, best first, packed from the first
-    /// cell; without one, every app in its cell (in Free Layout, the cell it was put in).
+    /// The items shown for `query`: with a filter, the matches (by name and alias first, then by
+    /// tags and task notes: `PopupSearch`), best first, packed from the first cell; without one,
+    /// every item in its cell (in Free Layout, the cell it was put in).
     func navigationItems(query: String) -> PopupNavigationItems {
         if !PopupFilter.normalize(query).isEmpty {
-            let matches = PopupFilter.filter(cells.map(\.app.name), query: query).map { cells[$0] }
-            return PopupNavigationItems(cells: matches, slots: Array(matches.indices))
+            let matches = search.matches(for: query).filter { cells.indices.contains($0.index) }
+            let found = matches.map { cells[$0.index] }
+            return PopupNavigationItems(cells: found, slots: Array(found.indices), matches: matches)
         }
         if let freeLayout {
             let placed = cells.compactMap { cell in freeLayout.slot(of: cell.app).map { (cell, $0) } }
             return PopupNavigationItems(cells: placed.map(\.0), slots: placed.map(\.1))
         }
         return PopupNavigationItems(cells: cells, slots: Array(cells.indices))
+    }
+
+    /// What the footer says about the filter's matches, for the item the keyboard selected (the
+    /// best match by default).
+    func searchFooter(query: String, selectedID: PopupCell.ID?) -> PopupSearchFooter {
+        let items = navigationItems(query: query)
+        let selectedIndex = selectedID.flatMap { id in cells.firstIndex { $0.id == id } }
+        return PopupSearchFooter(matches: items.matches, items: cells.map(\.app), selectedIndex: selectedIndex)
     }
 }

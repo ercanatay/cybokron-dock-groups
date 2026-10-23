@@ -35,7 +35,6 @@
 "common.checkForUpdates" = "Проверить обновления…";
 "common.settings" = "Настройки…";
 "common.noLaunchesYet" = "Запусков пока не зафиксировано";
-"common.noAppsInGroup" = "В этой группе пока нет приложений";
 "common.about" = "О программе %@";
 "common.hideApp" = "Скрыть %@";
 "common.quitApp" = "Завершить %@";
@@ -85,13 +84,11 @@
 "popup.closeAll.help.mostUsed" = "Завершить запущенные приложения из этого списка. ⌘-щелчок — принудительно завершить без сохранения.";
 "popup.summary.running" = "запущено: %ld";
 "popup.summary.byLaunches" = "по запускам";
-"popup.filter.noMatch" = "Нет приложений, подходящих под «%@»";
 "popup.filter.noMatch.hint" = "Нажмите Delete или Esc, чтобы очистить фильтр.";
 "popup.empty.mostUsed.hint" = "Открывайте приложения как обычно, чтобы начать формировать историю.";
 "popup.footer.sortAZ" = "А→Я";
 "popup.footer.sortAZ.help" = "Упорядочить приложения этой группы по названию, от А до Я.";
 "popup.footer.sortAZ.accessibility" = "Упорядочить от А до Я";
-"popup.footer.filter.matches" = "Фильтр: «%@»  ·  ↩ открывает выбранное приложение  ·  esc очищает";
 "popup.footer.filter.noMatch" = "Фильтр: «%@»  ·  нет совпадений  ·  ⌫ или esc очищает";
 "popup.footer.hint.mostUsed" = "Упорядочено по частоте открытия  ·  ⌘-щелчок по «Закрыть все» — принудительное завершение";
 "popup.footer.hint.group" = "Закрыть все:  ⌥-щелчок завершает обычно  ·  ⌘-щелчок завершает принудительно";

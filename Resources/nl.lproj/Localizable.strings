@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Controleer op updates…";
 "common.settings" = "Instellingen…";
 "common.noLaunchesYet" = "Nog geen starts bijgehouden";
-"common.noAppsInGroup" = "Nog geen apps in deze groep";
 "common.about" = "Over %@";
 "common.hideApp" = "Verberg %@";
 "common.quitApp" = "Stop %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Stop de actieve apps van deze lijst. ⌘-klik om te forceren zonder op te slaan.";
 "popup.summary.running" = "%ld actief";
 "popup.summary.byLaunches" = "op starts";
-"popup.filter.noMatch" = "Geen apps komen overeen met „%@“";
 "popup.filter.noMatch.hint" = "Druk op Delete of Esc om het filter te wissen.";
 "popup.empty.mostUsed.hint" = "Open apps zoals gewoonlijk om je geschiedenis op te bouwen.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Sorteer de apps in deze groep op naam, van A naar Z.";
 "popup.footer.sortAZ.accessibility" = "Sorteer van A naar Z";
-"popup.footer.filter.matches" = "Filter: „%@“  ·  ↩ opent de geselecteerde app  ·  esc wist";
 "popup.footer.filter.noMatch" = "Filter: „%@“  ·  geen overeenkomst  ·  ⌫ of esc wist";
 "popup.footer.hint.mostUsed" = "Gerangschikt op hoe vaak je ze opent  ·  ⌘-klik op Sluit alles om te forceren";
 "popup.footer.hint.group" = "Sluit alles:  ⌥-klik stopt normaal  ·  ⌘-klik forceert";

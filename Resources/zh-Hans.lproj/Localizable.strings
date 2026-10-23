@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "检查更新…";
 "common.settings" = "设置…";
 "common.noLaunchesYet" = "尚未记录任何启动";
-"common.noAppsInGroup" = "此分组中尚无App";
 "common.about" = "关于 %@";
 "common.hideApp" = "隐藏 %@";
 "common.quitApp" = "退出 %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "退出此列表中正在运行的App。按住 ⌘ 点击可不保存而强制退出。";
 "popup.summary.running" = "%ld 个正在运行";
 "popup.summary.byLaunches" = "按启动次数";
-"popup.filter.noMatch" = "没有与“%@”匹配的App";
 "popup.filter.noMatch.hint" = "按 Delete 或 Esc 清除筛选。";
 "popup.empty.mostUsed.hint" = "照常打开App，开始积累使用记录。";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "按名称从 A 到 Z 排序此分组中的App。";
 "popup.footer.sortAZ.accessibility" = "从 A 到 Z 排序";
-"popup.footer.filter.matches" = "筛选：“%@”  ·  ↩ 打开所选App  ·  esc 清除";
 "popup.footer.filter.noMatch" = "筛选：“%@”  ·  无匹配  ·  ⌫ 或 esc 清除";
 "popup.footer.hint.mostUsed" = "按打开次数排序  ·  ⌘ 点击“全部关闭”可强制退出";
 "popup.footer.hint.group" = "全部关闭：⌥ 点击正常退出  ·  ⌘ 点击强制退出";

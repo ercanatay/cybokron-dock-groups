@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Έλεγχος για ενημερώσεις…";
 "common.settings" = "Ρυθμίσεις…";
 "common.noLaunchesYet" = "Δεν έχουν καταγραφεί εκκινήσεις ακόμα";
-"common.noAppsInGroup" = "Δεν υπάρχουν εφαρμογές σε αυτή την ομάδα ακόμα";
 "common.about" = "Σχετικά με το %@";
 "common.hideApp" = "Απόκρυψη του %@";
 "common.quitApp" = "Έξοδος από το %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Έξοδος από τις εφαρμογές αυτής της λίστας που τρέχουν. ⌘-κλικ για αναγκαστική έξοδο χωρίς αποθήκευση.";
 "popup.summary.running" = "%ld σε λειτουργία";
 "popup.summary.byLaunches" = "ανά εκκινήσεις";
-"popup.filter.noMatch" = "Δεν βρέθηκαν εφαρμογές για το «%@»";
 "popup.filter.noMatch.hint" = "Πατήστε Delete ή Esc για να καθαρίσετε το φίλτρο.";
 "popup.empty.mostUsed.hint" = "Ανοίξτε εφαρμογές κανονικά για να αρχίσει να δημιουργείται το ιστορικό σας.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Ταξινόμηση των εφαρμογών αυτής της ομάδας κατά όνομα, από το A στο Z.";
 "popup.footer.sortAZ.accessibility" = "Ταξινόμηση από το A στο Z";
-"popup.footer.filter.matches" = "Φίλτρο: «%@»  ·  ↩ ανοίγει την επιλεγμένη εφαρμογή  ·  esc καθαρίζει";
 "popup.footer.filter.noMatch" = "Φίλτρο: «%@»  ·  καμία αντιστοιχία  ·  ⌫ ή esc καθαρίζει";
 "popup.footer.hint.mostUsed" = "Κατάταξη ανά συχνότητα ανοίγματος  ·  ⌘-κλικ στο Κλείσιμο όλων για αναγκαστική έξοδο";
 "popup.footer.hint.group" = "Κλείσιμο όλων:  ⌥-κλικ κάνει κανονική έξοδο  ·  ⌘-κλικ κάνει αναγκαστική έξοδο";

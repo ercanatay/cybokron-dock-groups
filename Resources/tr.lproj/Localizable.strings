@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Güncellemeleri Denetle…";
 "common.settings" = "Ayarlar…";
 "common.noLaunchesYet" = "Henüz açılış kaydı yok";
-"common.noAppsInGroup" = "Bu grupta henüz uygulama yok";
 "common.about" = "%@ Hakkında";
 "common.hideApp" = "%@ Uygulamasını Gizle";
 "common.quitApp" = "%@ Uygulamasından Çık";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Bu listedeki çalışan uygulamaları kapatır. Zorla kapatmak için ⌘-tıklayın.";
 "popup.summary.running" = "%ld çalışıyor";
 "popup.summary.byLaunches" = "açılış sayısına göre";
-"popup.filter.noMatch" = "“%@” ile eşleşen uygulama yok";
 "popup.filter.noMatch.hint" = "Filtreyi temizlemek için Delete veya Esc tuşlarını kullanın.";
 "popup.empty.mostUsed.hint" = "Geçmiş oluşturmaya başlamak için uygulamaları her zamanki gibi açın.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Bu gruptaki uygulamaları ada göre A'dan Z'ye sıralar.";
 "popup.footer.sortAZ.accessibility" = "A'dan Z'ye Sırala";
-"popup.footer.filter.matches" = "Filtre: “%@”  ·  ↩ seçili uygulamayı açar  ·  esc temizler";
 "popup.footer.filter.noMatch" = "Filtre: “%@”  ·  eşleşme yok  ·  ⌫ veya esc temizler";
 "popup.footer.hint.mostUsed" = "Açılma sıklığına göre sıralanır  ·  zorla kapatmak için Tümünü Kapat'a ⌘-tıklayın";
 "popup.footer.hint.group" = "Tümünü Kapat:  normal çıkış için ⌥-tık  ·  zorla kapatmak için ⌘-tık";

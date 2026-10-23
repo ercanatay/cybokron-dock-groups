@@ -37,6 +37,8 @@ struct PopupContent {
     let group: DockGroup
     let tileImage: NSImage
     let cells: [PopupCell]
+    /// The type-to-filter search over the cells' items, built with them.
+    let search: PopupSearch
     let layout: PopupGridLayout
     /// Each app's cell while Free Layout is on; `nil` when the apps fill the grid in list order.
     let freeLayout: FreeLayout?
@@ -76,6 +78,10 @@ struct PopupActions {
     let locate: ((AppReference) -> Void)?
     /// Opens the item's details editor (in the group window); `nil` where the group can't be edited.
     let editDetails: ((AppReference) -> Void)?
+    /// Add Apps… and Add Files or Folders… of an empty group (their open panels are in the group
+    /// window); `nil` where the group can't be edited, which then opens its settings instead.
+    let addApps: (() -> Void)?
+    let addFilesAndFolders: (() -> Void)?
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
     /// Free Layout: puts the apps in these cells (`FreeLayout.slots`).
@@ -114,8 +120,10 @@ private struct CellDrag: Equatable {
 /// dragged app goes to the cell it's dropped on (swapping places with the app there) and the others
 /// stay put. The Most Used list is read-only.
 ///
-/// The keyboard (handled by `PopupPanelController`) selects apps and filters them by name: while
-/// filtering, the matches are shown packed from the first cell, best first, and can't be dragged.
+/// The keyboard (handled by `PopupPanelController`) selects items and filters them by name and
+/// alias, then by tags and task notes: while filtering, the matches are shown packed from the first
+/// cell, best first, and can't be dragged; the footer says when the selected one was found by a tag
+/// or its notes.
 ///
 /// A group can hold websites, files and folders too: a website shows a globe and opens in the
 /// default browser, a file or folder shows its Finder icon and opens with its default app (a
@@ -614,15 +622,21 @@ struct PopupContentView: View {
         actions.moveApp(cell.app, target)
     }
 
+    /// An empty group offers what the group window's Add menu does: Add Apps… and Add Files or
+    /// Folders… open their panels there (a standalone group's own app opens the group's settings
+    /// in the main app instead), Add Website… its own window.
     @ViewBuilder
     private func emptyState(_ palette: PanelPalette) -> some View {
         if !content.isMostUsed {
+            let showSettings = actions.showGroupSettings ?? actions.manageGroups
             VStack(spacing: 6) {
-                Text(L10n.Common.noAppsInGroup)
+                Text(L10n.Item.emptyGroup)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(palette.secondaryText)
                 HStack(spacing: 8) {
-                    Button(L10n.Common.addApps, action: actions.manageGroups)
+                    Button(L10n.Common.addApps, action: actions.addApps ?? showSettings)
+                        .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+                    Button(L10n.AddItems.menu, action: actions.addFilesAndFolders ?? showSettings)
                         .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
                     if content.isEditable, let addWebsite = actions.addWebsite {
                         Button(L10n.Common.addWebsite, action: addWebsite)
@@ -674,10 +688,17 @@ struct PopupContentView: View {
         .frame(height: PopupMetrics.footerHeight)
     }
 
+    /// While filtering, why the selected item (the best match by default) was found, when it
+    /// wasn't by its name or alias: by a tag, or by its task notes.
     private var footerText: String {
         if keyboard.isFiltering, drag == nil {
-            let hasMatches = !content.navigationItems(query: keyboard.query).cells.isEmpty
-            return hasMatches ? L10n.Popup.footerFilter(keyboard.query) : L10n.Popup.footerFilterNoMatch(keyboard.query)
+            let query = keyboard.query
+            switch content.searchFooter(query: query, selectedID: keyboard.selectedID) {
+            case .noMatch: return L10n.Popup.footerFilterNoMatch(query)
+            case .matches: return L10n.Popup.footerFilter(query)
+            case .tag(let tag, let itemName): return L10n.Popup.footerFilterTag(query, tag: tag, itemName: itemName)
+            case .notes(let itemName): return L10n.Popup.footerFilterNotes(query, itemName: itemName)
+            }
         }
         guard let drag, let cell = content.cells.first(where: { $0.id == drag.id }) else {
             return content.isMostUsed ? L10n.Popup.footerHintMostUsed : L10n.Popup.footerHintGroup

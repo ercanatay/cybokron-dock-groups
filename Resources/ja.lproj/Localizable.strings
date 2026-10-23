@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "アップデートを確認…";
 "common.settings" = "設定…";
 "common.noLaunchesYet" = "起動の記録はまだありません";
-"common.noAppsInGroup" = "このグループにはまだアプリがありません";
 "common.about" = "%@ について";
 "common.hideApp" = "%@ を隠す";
 "common.quitApp" = "%@ を終了";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "このリストで実行中のアプリを終了します。⌘ を押しながらクリックすると、保存せずに強制終了します。";
 "popup.summary.running" = "実行中 %ld 件";
 "popup.summary.byLaunches" = "起動回数順";
-"popup.filter.noMatch" = "“%@” に一致するアプリはありません";
 "popup.filter.noMatch.hint" = "Delete または esc キーを押すと、絞り込みを解除します。";
 "popup.empty.mostUsed.hint" = "いつもどおりアプリを開いて、履歴を蓄積してください。";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "このグループのアプリを名前順（A から Z）に並べ替えます。";
 "popup.footer.sortAZ.accessibility" = "A から Z に並べ替え";
-"popup.footer.filter.matches" = "絞り込み：“%@”  ·  ↩ 選択中のアプリを開く  ·  esc で解除";
 "popup.footer.filter.noMatch" = "絞り込み：“%@”  ·  一致なし  ·  ⌫ または esc で解除";
 "popup.footer.hint.mostUsed" = "開いた回数順  ·  すべて終了は ⌘ を押しながらクリックすると強制終了";
 "popup.footer.hint.group" = "すべて終了：⌥ を押しながらクリックで通常終了  ·  ⌘ を押しながらクリックで強制終了";

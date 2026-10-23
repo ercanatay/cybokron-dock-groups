@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Sök efter uppdateringar…";
 "common.settings" = "Inställningar…";
 "common.noLaunchesYet" = "Inga starter registrerade ännu";
-"common.noAppsInGroup" = "Inga appar i den här gruppen ännu";
 "common.about" = "Om %@";
 "common.hideApp" = "Dölj %@";
 "common.quitApp" = "Avsluta %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Avsluta listans appar som kör. ⌘-klicka för att tvinga avslut utan att spara.";
 "popup.summary.running" = "%ld körs";
 "popup.summary.byLaunches" = "efter starter";
-"popup.filter.noMatch" = "Inga appar matchar „%@“";
 "popup.filter.noMatch.hint" = "Tryck på Delete eller Esc för att rensa filtret.";
 "popup.empty.mostUsed.hint" = "Öppna appar som vanligt för att börja bygga din historik.";
 "popup.footer.sortAZ" = "A→Ö";
 "popup.footer.sortAZ.help" = "Sortera apparna i den här gruppen efter namn, A till Ö.";
 "popup.footer.sortAZ.accessibility" = "Sortera A till Ö";
-"popup.footer.filter.matches" = "Filter: „%@“  ·  ↩ öppnar den markerade appen  ·  esc rensar";
 "popup.footer.filter.noMatch" = "Filter: „%@“  ·  ingen träff  ·  ⌫ eller esc rensar";
 "popup.footer.hint.mostUsed" = "Rangordnat efter hur ofta du öppnar dem  ·  ⌘-klicka på Stäng alla för att tvinga avslut";
 "popup.footer.hint.group" = "Stäng alla:  ⌥-klick avslutar normalt  ·  ⌘-klick tvingar avslut";

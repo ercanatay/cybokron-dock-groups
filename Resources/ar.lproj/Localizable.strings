@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "التحقق من التحديثات…";
 "common.settings" = "الإعدادات…";
 "common.noLaunchesYet" = "لم تُسجَّل عمليات تشغيل بعد";
-"common.noAppsInGroup" = "لا توجد تطبيقات في هذه المجموعة بعد";
 "common.about" = "حول %@";
 "common.hideApp" = "إخفاء %@";
 "common.quitApp" = "إنهاء %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "أنهِ التطبيقات الجارية في هذه القائمة. ⌘-نقر لفرض الإنهاء دون حفظ.";
 "popup.summary.running" = "%ld قيد التشغيل";
 "popup.summary.byLaunches" = "حسب عمليات التشغيل";
-"popup.filter.noMatch" = "لا توجد تطبيقات تطابق “%@”";
 "popup.filter.noMatch.hint" = "اضغط Delete أو Esc لمسح عامل التصفية.";
 "popup.empty.mostUsed.hint" = "افتح التطبيقات كالمعتاد لبدء بناء سجلك.";
 "popup.footer.sortAZ" = "A–Z";
 "popup.footer.sortAZ.help" = "رتّب تطبيقات هذه المجموعة حسب الاسم، من A إلى Z.";
 "popup.footer.sortAZ.accessibility" = "ترتيب من A إلى Z";
-"popup.footer.filter.matches" = "تصفية: “%@”  ·  ↩ يفتح التطبيق المحدد  ·  esc يمسح";
 "popup.footer.filter.noMatch" = "تصفية: “%@”  ·  لا تطابق  ·  ⌫ أو esc يمسح";
 "popup.footer.hint.mostUsed" = "مرتبة حسب عدد مرات فتحها  ·  ⌘-نقر على إغلاق الكل لفرض الإنهاء";
 "popup.footer.hint.group" = "إغلاق الكل:  ⌥-نقر للإنهاء العادي  ·  ⌘-نقر لفرض الإنهاء";

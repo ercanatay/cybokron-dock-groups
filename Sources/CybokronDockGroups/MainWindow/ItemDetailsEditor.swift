@@ -62,6 +62,10 @@ struct ItemDetailsEditor: View {
                     }
                 }
             }
+            Text(L10n.Details.searchHint)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
             HStack {
                 Spacer()
                 Button(L10n.Common.cancel) { finish(.cancel) }

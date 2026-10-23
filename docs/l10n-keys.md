@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-548 keys.
+551 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -48,7 +48,6 @@ every language.
 | `common.checkForUpdates` | Check for Updates… |
 | `common.settings` | Settings… |
 | `common.noLaunchesYet` | No launches tracked yet |
-| `common.noAppsInGroup` | No apps in this group yet |
 | `common.about` | About %@ |
 | `common.hideApp` | Hide %@ |
 | `common.quitApp` | Quit %@ |
@@ -107,13 +106,11 @@ every language.
 | `popup.closeAll.help.mostUsed` | Quit this list's running apps. ⌘-click to force quit without saving. |
 | `popup.summary.running` | %ld running |
 | `popup.summary.byLaunches` | by launches |
-| `popup.filter.noMatch` | No apps match “%@” |
 | `popup.filter.noMatch.hint` | Press Delete or Esc to clear the filter. |
 | `popup.empty.mostUsed.hint` | Open apps as usual to start building your history. |
 | `popup.footer.sortAZ` | A→Z |
 | `popup.footer.sortAZ.help` | Sort the apps in this group by name, A to Z. |
 | `popup.footer.sortAZ.accessibility` | Sort A to Z |
-| `popup.footer.filter.matches` | Filter: “%@”  ·  ↩ opens the selected app  ·  esc clears |
 | `popup.footer.filter.noMatch` | Filter: “%@”  ·  no match  ·  ⌫ or esc clears |
 | `popup.footer.hint.mostUsed` | Ranked by how often you open them  ·  ⌘-click Close All to force quit |
 | `popup.footer.hint.group` | Close All:  ⌥-click quits normally  ·  ⌘-click force quits |
@@ -780,5 +777,23 @@ start of the notes (`popup.search.help.*`, joined with “ · ”).
 | `item.details.notes.count` | %1$ld of %2$ld characters |
 | `item.details.button.help` | Alias, tags and task notes of %@ |
 | `item.details.originalName` | Name: %@ |
+| `item.details.hint` | Typing any of these in the popup finds this item. |
 | `popup.search.help.tags` | Tags: %@ |
 | `popup.search.help.notes` | Notes: %@ |
+
+## The popup's filter by name, alias, tags and task notes, and an empty group (English only for now; `awaitingTranslation`: `popup.search.`, `item.`)
+
+The popup finds items by name and alias first, then by tags and task notes; the footer says when
+the selected item (the best match by default) was found by a tag or its notes. An empty group's
+popup offers Add Apps… and Add Files or Folders… (`addItems.menu`), which open their panels in the
+group window. `popup.search.footer.matches`, `popup.search.noMatch` and `item.group.empty` replace
+`popup.footer.filter.matches`, `popup.filter.noMatch` and `common.noAppsInGroup` (the old keys are
+gone from every table).
+
+| Key | English |
+| --- | --- |
+| `popup.search.footer.matches` | Filter: “%@”  ·  ↩ opens the selected item  ·  esc clears |
+| `popup.search.footer.tag` | Filter: “%1$@”  ·  tag “%2$@” of %3$@  ·  ↩ opens it  ·  esc clears |
+| `popup.search.footer.notes` | Filter: “%1$@”  ·  in the task notes of %2$@  ·  ↩ opens it  ·  esc clears |
+| `popup.search.noMatch` | No items match “%@” |
+| `item.group.empty` | No items in this group yet |

@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Verifica aggiornamenti…";
 "common.settings" = "Impostazioni…";
 "common.noLaunchesYet" = "Nessun avvio registrato";
-"common.noAppsInGroup" = "Questo gruppo non contiene ancora app";
 "common.about" = "Informazioni su %@";
 "common.hideApp" = "Nascondi %@";
 "common.quitApp" = "Esci da %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Esci dalle app in esecuzione di questo elenco. ⌘-clic per forzare l'uscita senza salvare.";
 "popup.summary.running" = "%ld in esecuzione";
 "popup.summary.byLaunches" = "per avvii";
-"popup.filter.noMatch" = "Nessuna app corrisponde a “%@”";
 "popup.filter.noMatch.hint" = "Premi Canc o Esc per cancellare il filtro.";
 "popup.empty.mostUsed.hint" = "Apri le app come al solito per iniziare a costruire la cronologia.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Ordina le app di questo gruppo per nome, dalla A alla Z.";
 "popup.footer.sortAZ.accessibility" = "Ordina dalla A alla Z";
-"popup.footer.filter.matches" = "Filtro: “%@”  ·  ↩ apre l'app selezionata  ·  esc cancella";
 "popup.footer.filter.noMatch" = "Filtro: “%@”  ·  nessuna corrispondenza  ·  ⌫ o esc cancella";
 "popup.footer.hint.mostUsed" = "Ordinate per numero di aperture  ·  ⌘-clic su Chiudi tutte per forzare l'uscita";
 "popup.footer.hint.group" = "Chiudi tutte:  ⌥-clic esce normalmente  ·  ⌘-clic forza l'uscita";

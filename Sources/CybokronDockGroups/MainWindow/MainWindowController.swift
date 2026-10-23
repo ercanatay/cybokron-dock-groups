@@ -11,6 +11,8 @@ final class GroupWindowItems {
     let icons: AppIconProviding
     /// Shows a location in Quick Look over the group window; set once the window exists.
     var showPreview: (URL) -> Void = { _ in }
+    /// The group window, which open panels attach to as sheets; set once it exists.
+    weak var window: NSWindow?
 
     init(presence: ItemPresenceCache, icons: AppIconProviding) {
         self.presence = presence
@@ -60,6 +62,7 @@ final class MainWindowController: NSWindowController {
         window.setFrameAutosaveName(Self.frameAutosaveName)
         super.init(window: window)
 
+        items.window = window
         let preview = PopupPreviewController(host: window)
         window.preview = preview
         self.preview = preview
@@ -100,10 +103,11 @@ final class MainWindowController: NSWindowController {
         return destination
     }
 
-    /// Edit Details… in the popup: shows the window on the item's group with the item's details
-    /// editor open.
-    func showDetails(ofItem identity: String, inGroup id: DockGroup.ID) {
-        selection.request = GroupWindowRequest(groupID: id, action: .editDetails(itemID: identity))
+    /// What the popup can't do itself: shows the window on the group and does `action` there —
+    /// opens an item's details editor (Edit Details…), or the open panel of Add Apps… or Add Files
+    /// or Folders….
+    func perform(_ action: GroupWindowRequest.Action, inGroup id: DockGroup.ID) {
+        selection.request = GroupWindowRequest(groupID: id, action: action)
         showSettings(ofGroup: id.uuidString)
     }
 }

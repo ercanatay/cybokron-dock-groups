@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Провери за актуализации…";
 "common.settings" = "Настройки…";
 "common.noLaunchesYet" = "Все още няма записани стартирания";
-"common.noAppsInGroup" = "В тази група все още няма приложения";
 "common.about" = "Относно %@";
 "common.hideApp" = "Скрий %@";
 "common.quitApp" = "Затвори %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Затвори работещите приложения в този списък. ⌘-клик за принудително затваряне без запазване.";
 "popup.summary.running" = "%ld работещи";
 "popup.summary.byLaunches" = "по стартирания";
-"popup.filter.noMatch" = "Няма приложения, отговарящи на „%@“";
 "popup.filter.noMatch.hint" = "Натиснете Delete или Esc, за да изчистите филтъра.";
 "popup.empty.mostUsed.hint" = "Отваряйте приложения както обикновено, за да започне да се натрупва историята ви.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Сортирай приложенията в тази група по име, от A до Z.";
 "popup.footer.sortAZ.accessibility" = "Сортирай от A до Z";
-"popup.footer.filter.matches" = "Филтър: „%@“  ·  ↩ отваря избраното приложение  ·  esc изчиства";
 "popup.footer.filter.noMatch" = "Филтър: „%@“  ·  няма съвпадение  ·  ⌫ или esc изчиства";
 "popup.footer.hint.mostUsed" = "Подредено по честота на отваряне  ·  ⌘-клик върху Затвори всички за принудително затваряне";
 "popup.footer.hint.group" = "Затвори всички:  ⌥-клик затваря нормално  ·  ⌘-клик затваря принудително";

@@ -40,7 +40,6 @@ enum L10n {
         static var checkForUpdates: String { tr("common.checkForUpdates", "Check for Updates…") }
         static var settings: String { tr("common.settings", "Settings…") }
         static var noLaunchesYet: String { tr("common.noLaunchesYet", "No launches tracked yet") }
-        static var noAppsInGroup: String { tr("common.noAppsInGroup", "No apps in this group yet") }
         /// "About Cybokron Dock Groups".
         static func about(_ appName: String) -> String { tr("common.about", "About %@", appName) }
         static func hideApp(_ appName: String) -> String { tr("common.hideApp", "Hide %@", appName) }
@@ -160,7 +159,7 @@ enum L10n {
         static func runningCount(_ count: Int) -> String { tr("popup.summary.running", "%ld running", count) }
         static var byLaunches: String { tr("popup.summary.byLaunches", "by launches") }
 
-        static func noMatch(_ query: String) -> String { tr("popup.filter.noMatch", "No apps match “%@”", query) }
+        static func noMatch(_ query: String) -> String { tr("popup.search.noMatch", "No items match “%@”", query) }
         static var noMatchHint: String { tr("popup.filter.noMatch.hint", "Press Delete or Esc to clear the filter.") }
         static var mostUsedEmptyHint: String { tr("popup.empty.mostUsed.hint", "Open apps as usual to start building your history.") }
 
@@ -169,7 +168,17 @@ enum L10n {
         static var footerSortAZAccessibility: String { tr("popup.footer.sortAZ.accessibility", "Sort A to Z") }
 
         static func footerFilter(_ query: String) -> String {
-            tr("popup.footer.filter.matches", "Filter: “%@”  ·  ↩ opens the selected app  ·  esc clears", query)
+            tr("popup.search.footer.matches", "Filter: “%@”  ·  ↩ opens the selected item  ·  esc clears", query)
+        }
+
+        /// The selected item was found by one of its tags.
+        static func footerFilterTag(_ query: String, tag: String, itemName: String) -> String {
+            tr("popup.search.footer.tag", "Filter: “%1$@”  ·  tag “%2$@” of %3$@  ·  ↩ opens it  ·  esc clears", query, tag, itemName)
+        }
+
+        /// The selected item was found by its task notes.
+        static func footerFilterNotes(_ query: String, itemName: String) -> String {
+            tr("popup.search.footer.notes", "Filter: “%1$@”  ·  in the task notes of %2$@  ·  ↩ opens it  ·  esc clears", query, itemName)
         }
 
         static func footerFilterNoMatch(_ query: String) -> String {
@@ -432,6 +441,8 @@ enum L10n {
 
     /// What every kind of item shares: files and folders, Quick Look, missing items and Locate….
     enum Item {
+        /// A group without items: its popup, and a standalone group's Dock menu.
+        static var emptyGroup: String { tr("item.group.empty", "No items in this group yet") }
         static func fileAccessibility(_ name: String) -> String { tr("item.kind.file.accessibility", "File %@", name) }
         static func folderAccessibility(_ name: String) -> String { tr("item.kind.folder.accessibility", "Folder %@", name) }
         static var quickLook: String { tr("item.action.quickLook", "Quick Look") }
@@ -490,6 +501,7 @@ enum L10n {
         static func buttonHelp(_ name: String) -> String { tr("item.details.button.help", "Alias, tags and task notes of %@", name) }
         /// The item's own name, where its alias is shown instead.
         static func originalName(_ name: String) -> String { tr("item.details.originalName", "Name: %@", name) }
+        static var searchHint: String { tr("item.details.hint", "Typing any of these in the popup finds this item.") }
         /// Parts of the details line of a tooltip, after "Name: …".
         static func tagsList(_ tags: String) -> String { tr("popup.search.help.tags", "Tags: %@", tags) }
         static func notesSummary(_ notes: String) -> String { tr("popup.search.help.notes", "Notes: %@", notes) }

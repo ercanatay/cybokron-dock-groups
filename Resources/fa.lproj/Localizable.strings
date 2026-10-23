@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "بررسی به‌روزرسانی‌ها…";
 "common.settings" = "تنظیمات…";
 "common.noLaunchesYet" = "هنوز اجرایی ثبت نشده";
-"common.noAppsInGroup" = "هنوز برنامه‌ای در این گروه نیست";
 "common.about" = "درباره %@";
 "common.hideApp" = "پنهان کردن %@";
 "common.quitApp" = "خروج از %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "خروج از برنامه‌های در حال اجرای این فهرست. ⌘-کلیک برای خروج اجباری بدون ذخیره.";
 "popup.summary.running" = "%ld در حال اجرا";
 "popup.summary.byLaunches" = "بر اساس دفعات اجرا";
-"popup.filter.noMatch" = "هیچ برنامه‌ای با «%@» مطابقت ندارد";
 "popup.filter.noMatch.hint" = "برای پاک کردن فیلتر، Delete یا Esc را بزنید.";
 "popup.empty.mostUsed.hint" = "برای ساختن سابقه، برنامه‌ها را مثل همیشه باز کنید.";
 "popup.footer.sortAZ" = "A–Z";
 "popup.footer.sortAZ.help" = "مرتب‌سازی برنامه‌های این گروه بر اساس نام، از A تا Z.";
 "popup.footer.sortAZ.accessibility" = "مرتب‌سازی از A تا Z";
-"popup.footer.filter.matches" = "فیلتر: «%@»  ·  ↩ برنامه انتخاب‌شده را باز می‌کند  ·  esc پاک می‌کند";
 "popup.footer.filter.noMatch" = "فیلتر: «%@»  ·  بدون تطابق  ·  ⌫ یا esc پاک می‌کند";
 "popup.footer.hint.mostUsed" = "رتبه‌بندی بر اساس دفعات باز کردن  ·  ⌘-کلیک روی بستن همه برای خروج اجباری";
 "popup.footer.hint.group" = "بستن همه:  ⌥-کلیک خروج عادی  ·  ⌘-کلیک خروج اجباری";

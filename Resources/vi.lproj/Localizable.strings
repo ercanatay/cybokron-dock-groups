@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Kiểm tra cập nhật…";
 "common.settings" = "Cài đặt…";
 "common.noLaunchesYet" = "Chưa ghi nhận lượt mở nào";
-"common.noAppsInGroup" = "Nhóm này chưa có ứng dụng nào";
 "common.about" = "Giới thiệu %@";
 "common.hideApp" = "Ẩn %@";
 "common.quitApp" = "Thoát %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Thoát các ứng dụng đang chạy của danh sách này. ⌘-nhấp để buộc thoát mà không lưu.";
 "popup.summary.running" = "%ld đang chạy";
 "popup.summary.byLaunches" = "theo lượt mở";
-"popup.filter.noMatch" = "Không có ứng dụng nào khớp với “%@”";
 "popup.filter.noMatch.hint" = "Nhấn Delete hoặc Esc để xóa bộ lọc.";
 "popup.empty.mostUsed.hint" = "Hãy mở ứng dụng như bình thường để bắt đầu tạo lịch sử của bạn.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Sắp xếp các ứng dụng trong nhóm này theo tên, từ A đến Z.";
 "popup.footer.sortAZ.accessibility" = "Sắp xếp từ A đến Z";
-"popup.footer.filter.matches" = "Bộ lọc: “%@”  ·  ↩ mở ứng dụng đã chọn  ·  esc xóa";
 "popup.footer.filter.noMatch" = "Bộ lọc: “%@”  ·  không khớp  ·  ⌫ hoặc esc xóa";
 "popup.footer.hint.mostUsed" = "Xếp hạng theo số lần bạn mở  ·  ⌘-nhấp Đóng tất cả để buộc thoát";
 "popup.footer.hint.group" = "Đóng tất cả:  ⌥-nhấp thoát bình thường  ·  ⌘-nhấp buộc thoát";

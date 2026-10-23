@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Frissítések keresése…";
 "common.settings" = "Beállítások…";
 "common.noLaunchesYet" = "Még nincs rögzített indítás";
-"common.noAppsInGroup" = "Ebben a csoportban még nincs alkalmazás";
 "common.about" = "A(z) %@ névjegye";
 "common.hideApp" = "A(z) %@ elrejtése";
 "common.quitApp" = "A(z) %@ kilépése";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "A lista futó alkalmazásainak bezárása. ⌘-kattintás: kényszerített kilépés mentés nélkül.";
 "popup.summary.running" = "%ld fut";
 "popup.summary.byLaunches" = "indítások szerint";
-"popup.filter.noMatch" = "Nincs a(z) „%@” kifejezésnek megfelelő alkalmazás";
 "popup.filter.noMatch.hint" = "Nyomja meg a Delete vagy az Esc billentyűt a szűrő törléséhez.";
 "popup.empty.mostUsed.hint" = "Nyisson meg alkalmazásokat a szokásos módon, hogy elkezdődjön az előzmények gyűjtése.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "A csoport alkalmazásainak rendezése név szerint, A-tól Z-ig.";
 "popup.footer.sortAZ.accessibility" = "Rendezés A-tól Z-ig";
-"popup.footer.filter.matches" = "Szűrő: „%@”  ·  ↩ megnyitja a kijelölt alkalmazást  ·  esc törli";
 "popup.footer.filter.noMatch" = "Szűrő: „%@”  ·  nincs találat  ·  ⌫ vagy esc törli";
 "popup.footer.hint.mostUsed" = "Megnyitásuk gyakorisága szerint rendezve  ·  ⌘-kattintás az Összes bezárása gombon: kényszerített kilépés";
 "popup.footer.hint.group" = "Összes bezárása:  ⌥-kattintás normál kilépés  ·  ⌘-kattintás kényszerített kilépés";

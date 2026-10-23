@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Periksa Pembaruan…";
 "common.settings" = "Pengaturan…";
 "common.noLaunchesYet" = "Belum ada peluncuran yang dicatat";
-"common.noAppsInGroup" = "Belum ada app di grup ini";
 "common.about" = "Tentang %@";
 "common.hideApp" = "Sembunyikan %@";
 "common.quitApp" = "Keluar dari %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Keluar dari app daftar ini yang sedang berjalan. ⌘-klik untuk paksa berhenti tanpa menyimpan.";
 "popup.summary.running" = "%ld berjalan";
 "popup.summary.byLaunches" = "berdasarkan peluncuran";
-"popup.filter.noMatch" = "Tidak ada app yang cocok dengan “%@”";
 "popup.filter.noMatch.hint" = "Tekan Delete atau Esc untuk menghapus filter.";
 "popup.empty.mostUsed.hint" = "Buka app seperti biasa untuk mulai membangun riwayat Anda.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Urutkan app di grup ini menurut nama, A ke Z.";
 "popup.footer.sortAZ.accessibility" = "Urutkan A ke Z";
-"popup.footer.filter.matches" = "Filter: “%@”  ·  ↩ membuka app yang dipilih  ·  esc menghapus";
 "popup.footer.filter.noMatch" = "Filter: “%@”  ·  tidak ada yang cocok  ·  ⌫ atau esc menghapus";
 "popup.footer.hint.mostUsed" = "Diurutkan berdasarkan seberapa sering dibuka  ·  ⌘-klik Tutup Semua untuk paksa berhenti";
 "popup.footer.hint.group" = "Tutup Semua:  ⌥-klik keluar secara normal  ·  ⌘-klik paksa berhenti";

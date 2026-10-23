@@ -35,7 +35,6 @@
 "common.checkForUpdates" = "Перевірити оновлення…";
 "common.settings" = "Параметри…";
 "common.noLaunchesYet" = "Запусків ще не зафіксовано";
-"common.noAppsInGroup" = "У цій групі ще немає застосунків";
 "common.about" = "Про %@";
 "common.hideApp" = "Сховати %@";
 "common.quitApp" = "Завершити %@";
@@ -85,13 +84,11 @@
 "popup.closeAll.help.mostUsed" = "Завершити запущені застосунки з цього списку. ⌘-клік — примусово завершити без збереження.";
 "popup.summary.running" = "запущено: %ld";
 "popup.summary.byLaunches" = "за запусками";
-"popup.filter.noMatch" = "Немає застосунків, що відповідають «%@»";
 "popup.filter.noMatch.hint" = "Натисніть Delete або Esc, щоб очистити фільтр.";
 "popup.empty.mostUsed.hint" = "Відкривайте застосунки як звичайно, щоб почати формувати історію.";
 "popup.footer.sortAZ" = "А→Я";
 "popup.footer.sortAZ.help" = "Упорядкувати застосунки цієї групи за назвою, від А до Я.";
 "popup.footer.sortAZ.accessibility" = "Упорядкувати від А до Я";
-"popup.footer.filter.matches" = "Фільтр: «%@»  ·  ↩ відкриває вибраний застосунок  ·  esc очищає";
 "popup.footer.filter.noMatch" = "Фільтр: «%@»  ·  немає збігів  ·  ⌫ або esc очищає";
 "popup.footer.hint.mostUsed" = "Упорядковано за частотою відкриття  ·  ⌘-клік на «Закрити всі» — примусове завершення";
 "popup.footer.hint.group" = "Закрити всі:  ⌥-клік завершує звичайно  ·  ⌘-клік завершує примусово";

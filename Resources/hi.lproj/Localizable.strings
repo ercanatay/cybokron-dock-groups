@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "अपडेट जाँचें…";
 "common.settings" = "सेटिंग्स…";
 "common.noLaunchesYet" = "अभी तक कोई लॉन्च दर्ज नहीं";
-"common.noAppsInGroup" = "इस समूह में अभी कोई ऐप नहीं है";
 "common.about" = "%@ के बारे में";
 "common.hideApp" = "%@ छिपाएँ";
 "common.quitApp" = "%@ बंद करें";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "इस सूची के चल रहे ऐप्स बंद करें। बिना सहेजे ज़बरन बंद करने के लिए ⌘-क्लिक करें।";
 "popup.summary.running" = "%ld चल रहे";
 "popup.summary.byLaunches" = "लॉन्च के अनुसार";
-"popup.filter.noMatch" = "कोई ऐप “%@” से मेल नहीं खाता";
 "popup.filter.noMatch.hint" = "फ़िल्टर हटाने के लिए Delete या Esc दबाएँ।";
 "popup.empty.mostUsed.hint" = "अपना इतिहास बनाने के लिए ऐप्स सामान्य रूप से खोलें।";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "इस समूह के ऐप्स नाम के अनुसार A से Z क्रम में लगाएँ।";
 "popup.footer.sortAZ.accessibility" = "A से Z क्रम में लगाएँ";
-"popup.footer.filter.matches" = "फ़िल्टर: “%@”  ·  ↩ चुना हुआ ऐप खोलता है  ·  esc साफ़ करता है";
 "popup.footer.filter.noMatch" = "फ़िल्टर: “%@”  ·  कोई मेल नहीं  ·  ⌫ या esc साफ़ करता है";
 "popup.footer.hint.mostUsed" = "कितनी बार खोले गए, उसके अनुसार क्रम  ·  ज़बरन बंद करने के लिए ⌘-क्लिक करें Close All पर";
 "popup.footer.hint.group" = "Close All:  ⌥-क्लिक सामान्य रूप से बंद करता है  ·  ⌘-क्लिक ज़बरन बंद करता है";

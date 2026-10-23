@@ -236,7 +236,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.autoenablesItems = false
         if group.apps.isEmpty {
-            let placeholder = NSMenuItem(title: L10n.Common.noAppsInGroup, action: nil, keyEquivalent: "")
+            let placeholder = NSMenuItem(title: L10n.Item.emptyGroup, action: nil, keyEquivalent: "")
             placeholder.isEnabled = false
             menu.addItem(placeholder)
         }

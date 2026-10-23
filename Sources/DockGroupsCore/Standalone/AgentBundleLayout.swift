@@ -105,8 +105,12 @@ public enum AgentInfoPlist {
     /// Finder and the Dock show an app's file name unless the bundle has a localized display name and
     /// its file name equals the unlocalized one; so `CFBundleDisplayName` is the folder name here and
     /// `InfoPlist.strings` holds the group's real name.
+    ///
+    /// macOS asks each agent on its own for access to the folders and volumes it guards, so the
+    /// agent says why as the main app does (`FileAccessPurposes`).
     public static func dictionary(groupID: UUID, groupName: String, folderName: String, host: AgentHost) -> [String: Any] {
-        [
+        let purposes: [String: Any] = FileAccessPurposes.infoPlistEntries
+        return purposes.merging([
             "CFBundleDevelopmentRegion": "en",
             "CFBundleDisplayName": (folderName as NSString).deletingPathExtension,
             "CFBundleExecutable": AgentIdentity.executableName,
@@ -125,7 +129,7 @@ public enum AgentInfoPlist {
             "NSPrincipalClass": "NSApplication",
             groupIDKey: groupID.uuidString,
             sourceDigestKey: host.executableDigest,
-        ]
+        ] as [String: Any]) { _, own in own }
     }
 
     public static func data(groupID: UUID, groupName: String, folderName: String, host: AgentHost) throws -> Data {

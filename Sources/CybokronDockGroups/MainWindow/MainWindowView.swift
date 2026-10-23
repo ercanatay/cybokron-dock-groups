@@ -17,6 +17,10 @@ struct GroupWindowRequest: Equatable {
     enum Action: Equatable {
         /// Opens the details editor of the item with this identity.
         case editDetails(itemID: String)
+        /// Add Apps… (the popup of an empty group).
+        case addApps
+        /// Add Files or Folders… (the popup of an empty group).
+        case addFilesAndFolders
     }
 
     let groupID: DockGroup.ID

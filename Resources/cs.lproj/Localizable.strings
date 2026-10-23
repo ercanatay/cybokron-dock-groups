@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Zkontrolovat aktualizace…";
 "common.settings" = "Nastavení…";
 "common.noLaunchesYet" = "Zatím nejsou zaznamenána žádná spuštění";
-"common.noAppsInGroup" = "Tato skupina zatím nemá žádné aplikace";
 "common.about" = "O aplikaci %@";
 "common.hideApp" = "Skrýt %@";
 "common.quitApp" = "Ukončit %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Ukončit spuštěné aplikace z tohoto seznamu. ⌘-klik vynutí ukončení bez uložení.";
 "popup.summary.running" = "spuštěno: %ld";
 "popup.summary.byLaunches" = "podle spuštění";
-"popup.filter.noMatch" = "Žádná aplikace neodpovídá „%@“";
 "popup.filter.noMatch.hint" = "Stiskněte Delete nebo Esc pro vymazání filtru.";
 "popup.empty.mostUsed.hint" = "Otevírejte aplikace jako obvykle a začněte budovat historii.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Seřadit aplikace v této skupině podle názvu, od A do Z.";
 "popup.footer.sortAZ.accessibility" = "Seřadit od A do Z";
-"popup.footer.filter.matches" = "Filtr: „%@“  ·  ↩ otevře vybranou aplikaci  ·  esc vymaže";
 "popup.footer.filter.noMatch" = "Filtr: „%@“  ·  žádná shoda  ·  ⌫ nebo esc vymaže";
 "popup.footer.hint.mostUsed" = "Seřazeno podle počtu otevření  ·  ⌘-klik na Zavřít vše vynutí ukončení";
 "popup.footer.hint.group" = "Zavřít vše:  ⌥-klik ukončí normálně  ·  ⌘-klik vynutí ukončení";

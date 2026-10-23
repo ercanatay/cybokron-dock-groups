@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Yeniləmələri yoxla…";
 "common.settings" = "Ayarlar…";
 "common.noLaunchesYet" = "Hələ işə salınma qeydə alınmayıb";
-"common.noAppsInGroup" = "Bu qrupda hələ tətbiq yoxdur";
 "common.about" = "%@ haqqında";
 "common.hideApp" = "%@ tətbiqini gizlət";
 "common.quitApp" = "%@ tətbiqindən çıx";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Bu siyahıdakı işləyən tətbiqlərdən çıxır. Saxlamadan məcburi çıxmaq üçün ⌘-klik edin.";
 "popup.summary.running" = "%ld işləyir";
 "popup.summary.byLaunches" = "işə salınmaya görə";
-"popup.filter.noMatch" = "“%@” ilə uyğun tətbiq yoxdur";
 "popup.filter.noMatch.hint" = "Filtri təmizləmək üçün Delete və ya Esc basın.";
 "popup.empty.mostUsed.hint" = "Tarixçənizi yaratmaq üçün tətbiqləri adi kimi açın.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Bu qrupdakı tətbiqləri ada görə A-dan Z-yə sıralayır.";
 "popup.footer.sortAZ.accessibility" = "A-dan Z-yə sırala";
-"popup.footer.filter.matches" = "Filtr: “%@”  ·  ↩ seçilmiş tətbiqi açır  ·  esc təmizləyir";
 "popup.footer.filter.noMatch" = "Filtr: “%@”  ·  uyğunluq yoxdur  ·  ⌫ və ya esc təmizləyir";
 "popup.footer.hint.mostUsed" = "Açılma tezliyinə görə sıralanıb  ·  Hamısını bağla üzərində ⌘-klik məcburi çıxış edir";
 "popup.footer.hint.group" = "Hamısını bağla:  ⌥-klik adi qaydada çıxır  ·  ⌘-klik məcburi çıxır";

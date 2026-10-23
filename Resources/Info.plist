@@ -43,10 +43,20 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>The app checks that files and folders you put in groups from your Desktop are still there, and opens them when you ask; it never reads their contents.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>The app checks that files and folders you put in groups from your Documents folder are still there, and opens them when you ask; it never reads their contents.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>The app checks that files and folders you put in groups from your Downloads folder are still there, and opens them when you ask; it never reads their contents.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2026 Ercan Atay (Cybokron). Released under the MIT License.</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>The app checks that files and folders you put in groups from network volumes are still there, and opens them when you ask; it never reads their contents.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>The app checks that files and folders you put in groups from external drives are still there, and opens them when you ask; it never reads their contents.</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

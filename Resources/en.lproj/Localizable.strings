@@ -39,7 +39,6 @@
 "common.checkForUpdates" = "Check for Updates…";
 "common.settings" = "Settings…";
 "common.noLaunchesYet" = "No launches tracked yet";
-"common.noAppsInGroup" = "No apps in this group yet";
 "common.about" = "About %@";
 "common.hideApp" = "Hide %@";
 "common.quitApp" = "Quit %@";
@@ -89,13 +88,11 @@
 "popup.closeAll.help.mostUsed" = "Quit this list's running apps. ⌘-click to force quit without saving.";
 "popup.summary.running" = "%ld running";
 "popup.summary.byLaunches" = "by launches";
-"popup.filter.noMatch" = "No apps match “%@”";
 "popup.filter.noMatch.hint" = "Press Delete or Esc to clear the filter.";
 "popup.empty.mostUsed.hint" = "Open apps as usual to start building your history.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Sort the apps in this group by name, A to Z.";
 "popup.footer.sortAZ.accessibility" = "Sort A to Z";
-"popup.footer.filter.matches" = "Filter: “%@”  ·  ↩ opens the selected app  ·  esc clears";
 "popup.footer.filter.noMatch" = "Filter: “%@”  ·  no match  ·  ⌫ or esc clears";
 "popup.footer.hint.mostUsed" = "Ranked by how often you open them  ·  ⌘-click Close All to force quit";
 "popup.footer.hint.group" = "Close All:  ⌥-click quits normally  ·  ⌘-click force quits";
@@ -626,3 +623,11 @@
 "item.details.originalName" = "Name: %@";
 "popup.search.help.tags" = "Tags: %@";
 "popup.search.help.notes" = "Notes: %@";
+
+/* The popup's filter, which finds items by name and alias, then by tags and task notes, with the footer saying when the selected item was found by a tag or its notes, and an empty group's popup and Dock menu; replace popup.footer.filter.matches, popup.filter.noMatch and common.noAppsInGroup (English only for now: translations show this English text until they add these keys) */
+"popup.search.footer.matches" = "Filter: “%@”  ·  ↩ opens the selected item  ·  esc clears";
+"popup.search.footer.tag" = "Filter: “%1$@”  ·  tag “%2$@” of %3$@  ·  ↩ opens it  ·  esc clears";
+"popup.search.footer.notes" = "Filter: “%1$@”  ·  in the task notes of %2$@  ·  ↩ opens it  ·  esc clears";
+"popup.search.noMatch" = "No items match “%@”";
+"item.group.empty" = "No items in this group yet";
+"item.details.hint" = "Typing any of these in the popup finds this item.";

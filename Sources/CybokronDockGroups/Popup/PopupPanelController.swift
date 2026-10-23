@@ -11,7 +11,8 @@ import SwiftUI
 /// or focus loss.
 ///
 /// While it's open the keyboard works the popup: the arrow keys select an item, Return opens it,
-/// typing filters the items by name (Return then opens the selected, by default the best, match),
+/// typing filters the items by name and alias, then by tags and task notes (`PopupSearch`; Return
+/// then opens the selected, by default the best, match),
 /// Delete and Escape clear the filter, Tab and ⇧Tab go to the next and previous group, and Escape
 /// without a filter closes the popup. Space without a filter shows the selected app, file or
 /// folder in Quick Look (`PopupQuickLook`), as Quick Look in its context menu does; Escape then
@@ -37,8 +38,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let showGroupSettings: (DockGroup) -> Void
         /// Asks for a website to add to the group; `nil` where groups can't be edited.
         var addWebsite: ((DockGroup) -> Void)?
-        /// Opens the item's details editor in the group window; `nil` where groups can't be edited.
-        var editDetails: ((AppReference, DockGroup) -> Void)?
+        /// Does in the group window what the popup can't: an item's Edit Details…, the open panels of
+        /// Add Apps… and Add Files or Folders…; `nil` where groups can't be edited.
+        var inGroupWindow: ((GroupWindowRequest.Action, DockGroup) -> Void)?
     }
 
     /// Why the popup closed; logged at debug level to diagnose unexpected closes.
@@ -269,6 +271,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 let presence = icons.presence(of: item)
                 return PopupCell(app: item, icon: icons.icon(for: item, presence: presence), presence: presence)
             },
+            // Built once per build, with the cells: typing only searches it.
+            search: PopupSearch(items: group.apps),
             layout: layout,
             freeLayout: freeLayout,
             metrics: metrics,
@@ -368,14 +372,12 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                     self.actions.showGroupSettings(group)
                 }
                 : nil,
-            // The details editor is in the group window, as the popup can't host it.
-            editDetails: allowsEditing && id != MostUsedGroup.id && actions.editDetails != nil
-                ? { [weak self] app in
-                    guard let self, let group = self.group(withID: id) else { return }
-                    self.close(reason: .appAction)
-                    self.actions.editDetails?(app, group)
-                }
-                : nil,
+            // The details editor and the open panels are in the group window: the popup can't host them.
+            editDetails: inGroupWindow(id).map { perform -> (AppReference) -> Void in
+                { app in perform(.editDetails(itemID: app.bundleIdentifier)) }
+            },
+            addApps: inGroupWindow(id).map { perform -> () -> Void in { perform(.addApps) } },
+            addFilesAndFolders: inGroupWindow(id).map { perform -> () -> Void in { perform(.addFilesAndFolders) } },
             moveApp: { [weak self] app, index in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Moving \(app.logIdentity, privacy: .public) to \(index) in group \(id, privacy: .public)")
@@ -406,6 +408,17 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                 return PopupDrag.isRemovalLocation(NSEvent.mouseLocation, panelFrame: self.panel.frame)
             }
         )
+    }
+
+    /// Closes the popup and does `action` in the group window on the group; `nil` where groups can't
+    /// be edited (the Most Used list, a standalone group's own app).
+    private func inGroupWindow(_ id: DockGroup.ID) -> ((GroupWindowRequest.Action) -> Void)? {
+        guard allowsEditing, id != MostUsedGroup.id, actions.inGroupWindow != nil else { return nil }
+        return { [weak self] action in
+            guard let self, let group = self.group(withID: id) else { return }
+            self.close(reason: .appAction)
+            self.actions.inGroupWindow?(action, group)
+        }
     }
 
     // MARK: - Event monitoring

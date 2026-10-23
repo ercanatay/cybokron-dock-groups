@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Caută actualizări…";
 "common.settings" = "Setări…";
 "common.noLaunchesYet" = "Nicio lansare înregistrată încă";
-"common.noAppsInGroup" = "Niciun aplicație în acest grup încă";
 "common.about" = "Despre %@";
 "common.hideApp" = "Ascunde %@";
 "common.quitApp" = "Închide %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Închide aplicațiile care rulează din această listă. ⌘-clic pentru a forța închiderea fără salvare.";
 "popup.summary.running" = "%ld în execuție";
 "popup.summary.byLaunches" = "după lansări";
-"popup.filter.noMatch" = "Nicio aplicație nu se potrivește cu „%@”";
 "popup.filter.noMatch.hint" = "Apasă Delete sau Esc pentru a șterge filtrul.";
 "popup.empty.mostUsed.hint" = "Deschide aplicațiile ca de obicei pentru a începe să-ți construiești istoricul.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Sortează aplicațiile din acest grup după nume, de la A la Z.";
 "popup.footer.sortAZ.accessibility" = "Sortează de la A la Z";
-"popup.footer.filter.matches" = "Filtru: „%@”  ·  ↩ deschide aplicația selectată  ·  esc șterge";
 "popup.footer.filter.noMatch" = "Filtru: „%@”  ·  nicio potrivire  ·  ⌫ sau esc șterge";
 "popup.footer.hint.mostUsed" = "Ordonate după cât de des le deschizi  ·  ⌘-clic pe Închide tot pentru a forța închiderea";
 "popup.footer.hint.group" = "Închide tot:  ⌥-clic închide normal  ·  ⌘-clic forțează închiderea";

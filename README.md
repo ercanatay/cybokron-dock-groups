@@ -42,9 +42,12 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   right-click the group's tile and name at the top of the popup, or an empty part of its grid —
   opens the group window on that group's settings (name, apps, Dock tile, standalone Dock icon,
   popup), bringing the window to the front if it's already open.
-- **Keyboard in the popup**: the arrow keys select an app and Return opens it; typing filters the
-  apps by name (case and accents don't matter, `cal` finds “Çalışma”), Delete or Escape clears the
-  filter; Tab / ⇧Tab switch to the next / previous group (and Most Used), and Escape closes the popup.
+- **Keyboard in the popup**: the arrow keys select an item and Return opens it; typing filters the
+  items by name and alias, then by tags and task notes (case, accents and width don't matter, `cal`
+  finds “Çalışma”; in tags and notes each word typed must start a word there, so `fatura` finds
+  “Faturayı”), with matches by name first, in the order they had before; the footer says when the
+  selected item was found by a tag or its notes. Delete or Escape clears the filter; Tab / ⇧Tab
+  switch to the next / previous group (and Most Used), and Escape closes the popup.
   With an app, file or folder selected and nothing typed, Space shows it in Quick Look (Space or
   Escape closes it); **Quick Look** in its context menu does the same.
 - **Websites in groups**: **Add Website…** (the group window's **Add** menu, or the popup's context
@@ -74,7 +77,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   was. The alias is shown instead of the name — in the popup, the group window (with the item's own
   name below it), a standalone group's Dock menu, launch problems and Sort A→Z — also while the item
   can't be found; the popup's tooltip ends with the item's name, tags and the start of its notes.
-  They stay on this Mac, in the groups file and backups.
+  Typing in the popup finds an item by any of them (a standalone group's own app too). They stay on
+  this Mac, in the groups file and backups.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are
@@ -411,10 +415,12 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      it: the row says the volume isn't connected; connect it again: the row is back to normal.
    - Try to add a `.command` file, a shell script and a `.webloc`: none is added, and one alert lists
      them.
-   - If macOS asks for access, record it: the purpose strings (`NSDocumentsFolderUsageDescription`,
-     `NSDesktopFolderUsageDescription`, `NSDownloadsFolderUsageDescription`,
-     `NSRemovableVolumesUsageDescription`, `NSNetworkVolumesUsageDescription`) then go into
-     `Resources/Info.plist` and the agents' generated Info.plist (`AgentInfoPlist`).
+   - If macOS asks for access, record it, and check that its question says why — the app checks
+     that the items are still there and opens them, never reading their contents: the purpose
+     strings (`NSDocumentsFolderUsageDescription`, `NSDesktopFolderUsageDescription`,
+     `NSDownloadsFolderUsageDescription`, `NSRemovableVolumesUsageDescription`,
+     `NSNetworkVolumesUsageDescription`, English only) are in `Resources/Info.plist` and in every
+     group app's generated Info.plist (`FileAccessPurposes`, `AgentInfoPlist`).
 4. **Going back to a version without group items** — with a debug build of v0.6.8 or later
    (development builds read `CYBOKRON_UPDATE_DRY_RUN`), add a file to a group and run
    `CYBOKRON_UPDATE_DRY_RUN=1 "build/debug/Cybokron Dock Groups.app/Contents/MacOS/Cybokron Dock Groups"`.
@@ -427,6 +433,17 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - With the v0.6.7 build (`build/release` of that tag): its group window shows the file as *Not
      found on this Mac · file:///…*, opening it reports it as not found, and a backup with files
      imports there without errors.
+5. **Aliases, tags and task notes** — with a standalone group, so a rebuild of its app shows.
+   - Click a row's ⓘ in the group window, type an alias, tags (`finance, q3`) and two lines of notes,
+     and press **Done**: the row shows the alias with *Name: …* and the tags, the popup and the Dock
+     menu show the alias, and the group's app is rebuilt once. **Edit Details…** in the popup's
+     context menu opens the same editor in the group window, as a sheet.
+   - Open it again and close it without a change, or change something and press **Cancel** or
+     Escape: nothing is saved and the group's app isn't rebuilt. Change something and click
+     elsewhere: it's saved.
+   - In the popup, type a tag, then a word of the notes: the item is found after the items whose
+     names match, and the footer says *tag “…” of …* or *in the task notes of …*. The standalone
+     group's own app finds it the same way.
 
 ## Project layout
 

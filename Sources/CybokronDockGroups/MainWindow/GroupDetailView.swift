@@ -11,9 +11,10 @@ import SwiftUI
 /// the rows draw.
 ///
 /// An item's alias, tags and task notes are edited in the details editor, opened from its row's ⓘ
-/// button or Edit Details… (a popover) or from the popup's Edit Details… (a sheet, through
-/// `GroupWindowSelection.request`). The editor saves once, when it closes, so a standalone group's
-/// app is rebuilt once per edit at most.
+/// button or Edit Details… (a popover) or from the popup's Edit Details… (a sheet). The editor
+/// saves once, when it closes, so a standalone group's app is rebuilt once per edit at most. What
+/// the popup asks the window to do — that, or the open panel of Add Apps… or Add Files or
+/// Folders… — arrives as `GroupWindowSelection.request`.
 struct GroupDetailView: View {
     @ObservedObject var store: GroupStore
     @ObservedObject var standalone: StandaloneController
@@ -441,10 +442,20 @@ struct GroupDetailView: View {
         switch request.action {
         case .editDetails(let itemID):
             editDetails(ofItemWithID: itemID, inSheet: true)
+        case .addApps:
+            // Once the window that was just asked to come forward is there for the sheet.
+            DispatchQueue.main.async { addApps() }
+        case .addFilesAndFolders:
+            DispatchQueue.main.async { addFilesAndFolders() }
         }
     }
 
     // MARK: - Actions
+
+    /// The window open panels attach to as sheets: the group window.
+    private var parentWindow: NSWindow? {
+        items.window ?? NSApp.keyWindow
+    }
 
     /// The group as currently stored (the `group` snapshot can lag behind within an update).
     private var storedGroup: DockGroup {
@@ -468,7 +479,7 @@ struct GroupDetailView: View {
     }
 
     private func addApps() {
-        AppPicker.chooseApps(forGroupNamed: group.name, attachedTo: NSApp.keyWindow) { urls in
+        AppPicker.chooseApps(forGroupNamed: group.name, attachedTo: parentWindow) { urls in
             addApps(from: urls)
         }
     }
@@ -494,7 +505,7 @@ struct GroupDetailView: View {
     /// Add Files or Folders…: what can't be added (programs, scripts, …) is listed in one alert.
     private func addFilesAndFolders() {
         let id = group.id
-        ItemPicker.chooseFilesAndFolders(forGroupNamed: group.name, attachedTo: NSApp.keyWindow) { urls in
+        ItemPicker.chooseFilesAndFolders(forGroupNamed: group.name, attachedTo: parentWindow) { urls in
             ItemAddition.add(urls, toGroup: id, in: store, locator: presence.itemLocator) { problems in
                 problem = ShownProblem(title: L10n.AddItems.problemTitle, message: problems.joined(separator: "\n"))
             }
@@ -505,7 +516,7 @@ struct GroupDetailView: View {
     /// place in the group (and in Free Layout its cell).
     private func locate(_ item: GroupItem) {
         let id = group.id
-        ItemPicker.locate(item, attachedTo: NSApp.keyWindow) { url in
+        ItemPicker.locate(item, attachedTo: parentWindow) { url in
             guard let url else { return }
             let name = FileLocation.defaultName(for: url)
             if let reason = ItemAddition.relinkProblem(for: item, to: url, locator: presence.itemLocator) {

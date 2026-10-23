@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Nach Updates suchen…";
 "common.settings" = "Einstellungen…";
 "common.noLaunchesYet" = "Noch keine Starts erfasst";
-"common.noAppsInGroup" = "Diese Gruppe enthält noch keine Apps";
 "common.about" = "Über %@";
 "common.hideApp" = "%@ ausblenden";
 "common.quitApp" = "%@ beenden";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Beendet die laufenden Apps dieser Liste. ⌘-Klick erzwingt das Beenden ohne Speichern.";
 "popup.summary.running" = "%ld laufend";
 "popup.summary.byLaunches" = "nach Starts";
-"popup.filter.noMatch" = "Keine Apps passen zu „%@“";
 "popup.filter.noMatch.hint" = "Drücken Sie Löschen oder Esc, um den Filter zu entfernen.";
 "popup.empty.mostUsed.hint" = "Öffnen Sie Apps wie gewohnt, um Ihren Verlauf aufzubauen.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Sortiert die Apps dieser Gruppe alphabetisch von A bis Z.";
 "popup.footer.sortAZ.accessibility" = "Von A bis Z sortieren";
-"popup.footer.filter.matches" = "Filter: „%@“  ·  ↩ öffnet die ausgewählte App  ·  esc leert";
 "popup.footer.filter.noMatch" = "Filter: „%@“  ·  kein Treffer  ·  ⌫ oder esc leert";
 "popup.footer.hint.mostUsed" = "Sortiert nach Häufigkeit der Öffnungen  ·  ⌘-Klick auf Alle schließen erzwingt das Beenden";
 "popup.footer.hint.group" = "Alle schließen:  ⌥-Klick beendet normal  ·  ⌘-Klick erzwingt das Beenden";

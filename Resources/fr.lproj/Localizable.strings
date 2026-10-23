@@ -36,7 +36,6 @@
 "common.checkForUpdates" = "Rechercher les mises à jour…";
 "common.settings" = "Réglages…";
 "common.noLaunchesYet" = "Aucun lancement enregistré pour l'instant";
-"common.noAppsInGroup" = "Aucune app dans ce groupe pour l'instant";
 "common.about" = "À propos de %@";
 "common.hideApp" = "Masquer %@";
 "common.quitApp" = "Quitter %@";
@@ -86,13 +85,11 @@
 "popup.closeAll.help.mostUsed" = "Quitter les apps ouvertes de cette liste. ⌘-clic pour forcer la fermeture sans enregistrer.";
 "popup.summary.running" = "%ld ouvertes";
 "popup.summary.byLaunches" = "par lancements";
-"popup.filter.noMatch" = "Aucune app ne correspond à « %@ »";
 "popup.filter.noMatch.hint" = "Appuyez sur Supprimer ou Échap pour effacer le filtre.";
 "popup.empty.mostUsed.hint" = "Ouvrez vos apps comme d'habitude pour commencer votre historique.";
 "popup.footer.sortAZ" = "A→Z";
 "popup.footer.sortAZ.help" = "Trier les apps de ce groupe par nom, de A à Z.";
 "popup.footer.sortAZ.accessibility" = "Trier de A à Z";
-"popup.footer.filter.matches" = "Filtre : « %@ »  ·  ↩ ouvre l'app sélectionnée  ·  esc efface";
 "popup.footer.filter.noMatch" = "Filtre : « %@ »  ·  aucun résultat  ·  ⌫ ou esc efface";
 "popup.footer.hint.mostUsed" = "Classées selon la fréquence d'ouverture  ·  ⌘-clic sur Tout fermer pour forcer";
 "popup.footer.hint.group" = "Tout fermer :  ⌥-clic quitte normalement  ·  ⌘-clic force la fermeture";
