@@ -37,7 +37,7 @@ struct LocalizationTests {
     /// untranslated keys are added, and remove it once every language has its keys.
     static let awaitingTranslation: [String] = [
         "core.item.", "groupWindow.items.", "addItems.", "item.", "popup.item.", "settings.backup.leftOut.",
-        "updates.otherVersions.items.",
+        "updates.otherVersions.items.", "item.details.", "popup.search.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

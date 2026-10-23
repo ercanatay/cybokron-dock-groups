@@ -609,3 +609,20 @@
 
 /* Settings → Updates → Other Versions…, going back to a version without files, folders and item details (English only for now: translations show this English text until they add these keys) */
 "updates.otherVersions.items.warning" = "Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details.";
+
+/* An item's alias, tags and task notes: the details editor of the group window, Edit Details…, the row's details and the details line of the popup's tooltips (English only for now: translations show this English text until they add these keys) */
+"item.details.menu" = "Edit Details…";
+"item.details.title" = "Details of “%@”";
+"item.details.alias" = "Alias";
+"item.details.alias.placeholder" = "Another name, shown instead";
+"item.details.tags" = "Tags";
+"item.details.tags.placeholder" = "finance, q3";
+"item.details.tags.hint" = "Separate tags with commas.";
+"item.details.tags.limit" = "Only the first %ld tags are kept.";
+"item.details.notes" = "Task notes";
+"item.details.notes.placeholder" = "What you use it for";
+"item.details.notes.count" = "%1$ld of %2$ld characters";
+"item.details.button.help" = "Alias, tags and task notes of %@";
+"item.details.originalName" = "Name: %@";
+"popup.search.help.tags" = "Tags: %@";
+"popup.search.help.notes" = "Notes: %@";

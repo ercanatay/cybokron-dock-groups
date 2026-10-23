@@ -65,6 +65,16 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   connected or ejected — not while it draws. A standalone group's own app doesn't look at items in
   Desktop, Documents, Downloads, iCloud Drive or on other volumes until they're opened, so it doesn't
   ask for access to them just to show its popup or Dock menu.
+- **Alias, tags and task notes**: every item of a group can have another name to show (an alias),
+  up to 12 tags and a few lines of task notes (500 characters). The ⓘ button of its row in the
+  group window, or **Edit Details…** in its context menu there and in the popup, opens the details
+  editor: tags are typed separated by commas and shown as they'll be kept, the notes count their
+  characters. Nothing is saved while you type: **Done** (or a click elsewhere) saves the details
+  once, so a standalone group's app is rebuilt once, and **Cancel** (or Escape) keeps the item as it
+  was. The alias is shown instead of the name — in the popup, the group window (with the item's own
+  name below it), a standalone group's Dock menu, launch problems and Sort A→Z — also while the item
+  can't be found; the popup's tooltip ends with the item's name, tags and the start of its notes.
+  They stay on this Mac, in the groups file and backups.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are

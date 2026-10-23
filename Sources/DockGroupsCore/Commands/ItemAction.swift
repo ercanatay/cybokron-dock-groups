@@ -37,7 +37,9 @@ extension ItemAction {
     /// - Quick Look and Show in Finder need something on disk to show: a found app, file or
     ///   folder, or a file or folder the app couldn't check (Quick Look and Finder read it).
     /// - Locate… is for a file or folder that's missing, and only where the group can be edited.
-    /// - Copy URL is for websites; Edit Details… is in the group window only.
+    /// - Copy URL is for websites.
+    /// - Edit Details… is offered for every item, found or not, where the group can be edited: in
+    ///   the group window, and in the main app's popup (which opens the editor there).
     /// - The popup always offers Open (the launch report says why an item didn't open); the Dock
     ///   menu offers it only for an item worth trying, and nothing else.
     public static func available(for item: GroupItem, presence: ItemPresence, in context: ItemActionContext) -> [ItemAction] {
@@ -51,7 +53,7 @@ extension ItemAction {
             if item.isWebsite { actions.append(.copyURL) }
             if isEditable {
                 if canLocate { actions.append(.locate) }
-                actions += [.moveTo, .remove]
+                actions += [.editDetails, .moveTo, .remove]
             }
         case .groupWindow:
             if canShow { actions += [.showInFinder, .quickLook] }

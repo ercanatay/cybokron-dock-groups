@@ -2,7 +2,8 @@ import AppKit
 import DockGroupsCore
 
 /// Tells the user about items (apps, websites, files and folders) that opening a group or one of
-/// its items couldn't open. Stays silent when everything worked.
+/// its items couldn't open, by the names they're shown with (an alias, when they have one). Stays
+/// silent when everything worked.
 @MainActor
 enum LaunchReportPresenter {
     static func presentProblems(in report: LaunchReport) {
@@ -15,7 +16,7 @@ enum LaunchReportPresenter {
             ? L10n.Item.noneOpened(report.groupName)
             : L10n.Item.someNotOpened(report.groupName)
         alert.informativeText = problems
-            .map { L10n.Problems.launchItem($0.app.name, reason: description(of: $0.outcome)) }
+            .map { L10n.Problems.launchItem($0.app.displayName, reason: description(of: $0.outcome)) }
             .joined(separator: "\n")
         NSApp.activate()
         alert.runModal()
@@ -30,7 +31,7 @@ enum LaunchReportPresenter {
         alert.messageText = report.mode == .force
             ? L10n.Problems.notForceQuit(report.groupName)
             : L10n.Problems.notAskedToQuit(report.groupName)
-        alert.informativeText = report.refused.map { "• \($0.name)" }.joined(separator: "\n")
+        alert.informativeText = report.refused.map { "• \($0.displayName)" }.joined(separator: "\n")
         NSApp.activate()
         alert.runModal()
     }
@@ -42,7 +43,7 @@ enum LaunchReportPresenter {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = L10n.Problems.notHidden(report.groupName)
-        alert.informativeText = report.refused.map { "• \($0.name)" }.joined(separator: "\n")
+        alert.informativeText = report.refused.map { "• \($0.displayName)" }.joined(separator: "\n")
         NSApp.activate()
         alert.runModal()
     }

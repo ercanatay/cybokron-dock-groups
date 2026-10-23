@@ -138,8 +138,6 @@ public struct ItemSearchIndex: Sendable {
     }
 
     private static func excerpt(of line: String) -> String {
-        let trimmed = line.trimmingCharacters(in: .whitespaces)
-        guard trimmed.count > maximumExcerptLength else { return trimmed }
-        return String(trimmed.prefix(maximumExcerptLength - 1)).trimmingCharacters(in: .whitespaces) + "…"
+        ItemDetails.excerpt(of: line, maximumLength: maximumExcerptLength)
     }
 }

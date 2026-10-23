@@ -1,8 +1,12 @@
 import Foundation
 
-/// What a popup cell says about its item — the two sentences of its tooltip (what a click does,
-/// and in groups that can be edited how it can be dragged) and its VoiceOver label and hint — as
-/// cases the app turns into text. Apps and websites say what they always did.
+/// What a popup cell says about its item — the sentences of its tooltip (what a click does, in
+/// groups that can be edited how it can be dragged, and the item's details) and its VoiceOver label
+/// and hint — as cases the app turns into text. Apps and websites without details say what they
+/// always did.
+///
+/// An item is called by the name it's shown with (`displayName`: its alias, when it has one), also
+/// when it can't be found; its own name then appears in the details line.
 public struct PopupCellText: Equatable, Sendable {
     /// The tooltip's first sentence: what clicking the item does, or why it can't be opened.
     public enum Help: Equatable, Sendable {
@@ -44,14 +48,43 @@ public struct PopupCellText: Equatable, Sendable {
         case openApp, bringToFront, website, file, folder
     }
 
+    /// The tooltip's last line, for an item with details: “Name: Q3 Report.pdf · Tags: finance, q3
+    /// · Notes: Send the totals…”.
+    public struct Details: Equatable, Sendable {
+        /// The item's own name, when an alias is shown instead.
+        public let name: String?
+        public let tags: [String]
+        /// The notes on one line (`ItemDetails.notesSummary`).
+        public let notes: String?
+
+        public init(name: String? = nil, tags: [String] = [], notes: String? = nil) {
+            self.name = name
+            self.tags = tags
+            self.notes = notes
+        }
+
+        /// The details of `item`; `nil` when it has none.
+        public init?(item: GroupItem) {
+            let details = item.details
+            guard !details.isEmpty else { return nil }
+            self.init(
+                name: details.alias.flatMap { $0 == item.name ? nil : item.name },
+                tags: details.tags,
+                notes: details.notesSummary
+            )
+        }
+    }
+
     public let help: Help
     /// `nil` where the group can't be edited (the Most Used list, a standalone group's own app).
     public let drag: Drag?
+    /// `nil` for an item without an alias, tags or task notes.
+    public let details: Details?
     public let label: Label
     public let hint: Hint
 
     public init(item: GroupItem, presence: ItemPresence, isRunning: Bool, isEditable: Bool, isFreeLayout: Bool) {
-        let name = item.name
+        let name = item.displayName
         let drag: Drag
         switch item.kind {
         case .website:
@@ -86,5 +119,6 @@ public struct PopupCellText: Equatable, Sendable {
             hint = isFolder ? .folder : .file
         }
         self.drag = isEditable ? drag : nil
+        details = Details(item: item)
     }
 }

@@ -74,6 +74,8 @@ struct PopupActions {
     /// Offers to say where a missing file or folder is now (in the group window); `nil` where the
     /// group can't be edited.
     let locate: ((AppReference) -> Void)?
+    /// Opens the item's details editor (in the group window); `nil` where the group can't be edited.
+    let editDetails: ((AppReference) -> Void)?
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
     /// Free Layout: puts the apps in these cells (`FreeLayout.slots`).
@@ -119,7 +121,9 @@ private struct CellDrag: Equatable {
 /// default browser, a file or folder shows its Finder icon and opens with its default app (a
 /// folder in Finder); none has a running indicator. A file or folder that can't be found is
 /// dimmed. Each item's context menu (`ItemAction`) opens it, shows it in Quick Look or in Finder,
-/// copies a website's address, moves it to another group or removes it, and adds a website.
+/// copies a website's address, edits its details (alias, tags, task notes) in the group window,
+/// moves it to another group or removes it, and adds a website. An item is shown with its alias
+/// when it has one; its tooltip ends with its own name, tags and notes.
 struct PopupContentView: View {
     let content: PopupContent
     @ObservedObject var runningApps: RunningAppsMonitor
@@ -679,15 +683,16 @@ struct PopupContentView: View {
             return content.isMostUsed ? L10n.Popup.footerHintMostUsed : L10n.Popup.footerHintGroup
         }
         if drag.isInRemovalArea {
-            return L10n.Popup.footerReleaseToRemove(cell.app.name)
+            return L10n.Popup.footerReleaseToRemove(cell.app.displayName)
         }
         return content.freeLayout != nil
-            ? L10n.Popup.footerDropFree(cell.app.name)
-            : L10n.Popup.footerDropOrdered(cell.app.name)
+            ? L10n.Popup.footerDropFree(cell.app.displayName)
+            : L10n.Popup.footerDropOrdered(cell.app.displayName)
     }
 }
 
-/// An app in the grid: its icon with a running indicator and, optionally, its name.
+/// An item in the grid: its icon with a running indicator and, optionally, the name it's shown
+/// with (its alias, when it has one).
 private struct PopupAppCell: View {
     let cell: PopupCell
     let isRunning: Bool
@@ -718,7 +723,7 @@ private struct PopupAppCell: View {
                     .fill(isRunning ? PanelPalette.teal : Color.clear)
                     .frame(width: 4, height: 4)
                 if showsTitle {
-                    Text(cell.app.name)
+                    Text(cell.app.displayName)
                         .font(.system(size: 11))
                         .foregroundStyle(cell.isInstalled ? palette.primaryText : palette.secondaryText)
                         .lineLimit(1)
@@ -757,8 +762,15 @@ private struct PopupAppCell: View {
 }
 
 extension PopupCellText {
-    /// The tooltip: what a click does, then (in editable groups) how the item can be dragged.
+    /// The tooltip: what a click does, then (in editable groups) how the item can be dragged, and
+    /// on a line of its own the item's details: its own name when an alias is shown instead, its
+    /// tags and its notes.
     var helpText: String {
+        guard let details, !details.text.isEmpty else { return actionHelpText }
+        return "\(actionHelpText)\n\(details.text)"
+    }
+
+    private var actionHelpText: String {
         let action: String
         switch help {
         case .openApp(let name): action = L10n.Popup.helpOpenApp(name)
@@ -803,8 +815,8 @@ extension PopupCellText {
 
 /// The context menu of an item in the popup grid, from `ItemAction.available`: Open, then Quick
 /// Look and Show in Finder for what's on disk, Copy URL for a website, and Locate… for a missing
-/// file or folder; in editable groups Move to (the other groups) and Remove from Group, then Add
-/// Website….
+/// file or folder; in editable groups Edit Details…, Move to (the other groups) and Remove from
+/// Group, then Add Website….
 private struct PopupCellContextMenu: ViewModifier {
     let cell: PopupCell
     let moveTargets: [GroupMoveTarget]
@@ -831,7 +843,7 @@ private struct PopupCellContextMenu: ViewModifier {
     }
 
     /// The actions that change the group, after a divider.
-    private static let editingActions: Set<ItemAction> = [.moveTo, .remove]
+    private static let editingActions: Set<ItemAction> = [.editDetails, .moveTo, .remove]
 
     @ViewBuilder
     private func button(for action: ItemAction) -> some View {
@@ -866,8 +878,9 @@ private struct PopupCellContextMenu: ViewModifier {
         case .remove:
             Button(L10n.Common.removeFromGroup) { actions.removeApp(cell.app) }
         case .editDetails:
-            // Not offered in the popup: details are edited in the group window.
-            EmptyView()
+            if let editDetails = actions.editDetails {
+                Button(L10n.Details.menu) { editDetails(cell.app) }
+            }
         }
     }
 }

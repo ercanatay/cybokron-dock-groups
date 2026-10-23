@@ -20,22 +20,37 @@ struct ItemActionTests {
 
     @Test func popupMenus() {
         // A found file or folder: open, preview, reveal; editing only in the main app.
-        #expect(actions(Self.file, Self.found, Self.mainPopup) == [.open, .quickLook, .showInFinder, .moveTo, .remove])
+        #expect(actions(Self.file, Self.found, Self.mainPopup) == [.open, .quickLook, .showInFinder, .editDetails, .moveTo, .remove])
         #expect(actions(Self.folder, Self.found, Self.agentPopup) == [.open, .quickLook, .showInFinder])
         // A missing one: Open (which reports it), and Locate… where the group can be edited.
         #expect(actions(Self.file, .missing, Self.agentPopup) == [.open])
-        #expect(actions(Self.file, .missing, Self.mainPopup) == [.open, .locate, .moveTo, .remove])
-        #expect(actions(Self.folder, .volumeUnavailable(name: "Backup"), Self.mainPopup) == [.open, .moveTo, .remove])
+        #expect(actions(Self.file, .missing, Self.mainPopup) == [.open, .locate, .editDetails, .moveTo, .remove])
+        #expect(actions(Self.folder, .volumeUnavailable(name: "Backup"), Self.mainPopup) == [.open, .editDetails, .moveTo, .remove])
         // Not checked: Quick Look and Finder can still show it.
         #expect(actions(Self.file, .unverified, Self.agentPopup) == [.open, .quickLook, .showInFinder])
     }
 
+    /// As before details existed, plus Edit Details… where the group can be edited.
     @Test func popupMenusOfAppsAndWebsitesAreAsBefore() {
-        #expect(actions(Self.app, Self.foundApp, Self.mainPopup) == [.open, .quickLook, .showInFinder, .moveTo, .remove])
-        #expect(actions(Self.app, .missing, Self.mainPopup) == [.open, .moveTo, .remove])
+        #expect(actions(Self.app, Self.foundApp, Self.mainPopup) == [.open, .quickLook, .showInFinder, .editDetails, .moveTo, .remove])
+        #expect(actions(Self.app, .missing, Self.mainPopup) == [.open, .editDetails, .moveTo, .remove])
         #expect(actions(Self.app, .missing, Self.agentPopup) == [.open])
-        #expect(actions(Self.website, .online, Self.mainPopup) == [.open, .copyURL, .moveTo, .remove])
+        #expect(actions(Self.website, .online, Self.mainPopup) == [.open, .copyURL, .editDetails, .moveTo, .remove])
         #expect(actions(Self.website, .online, Self.agentPopup) == [.open, .copyURL])
+    }
+
+    /// Edit Details… is there for every kind and presence where the group can be edited — a
+    /// missing or unchecked item keeps its alias, tags and notes — and nowhere else.
+    @Test func editDetailsIsOfferedWheneverTheGroupCanBeEdited() {
+        let presences: [ItemPresence] = [Self.found, .online, .missing, .volumeUnavailable(name: "V"), .unverified]
+        for item in [Self.app, Self.website, Self.file, Self.folder] {
+            for presence in presences {
+                #expect(actions(item, presence, Self.mainPopup).contains(.editDetails), "\(item.kind) \(presence)")
+                #expect(actions(item, presence, .groupWindow).contains(.editDetails), "\(item.kind) \(presence)")
+                #expect(!actions(item, presence, Self.agentPopup).contains(.editDetails))
+                #expect(!actions(item, presence, .dockMenu).contains(.editDetails))
+            }
+        }
     }
 
     @Test func groupWindowRowMenus() {
@@ -56,7 +71,7 @@ struct ItemActionTests {
     /// The popup's menu reads top to bottom as the spec's mock: opening and showing first, then
     /// the actions that change the group.
     @Test func popupMenusListOpeningBeforeEditing() {
-        let editing: Set<ItemAction> = [.moveTo, .remove]
+        let editing: Set<ItemAction> = [.editDetails, .moveTo, .remove]
         let kinds: [(GroupItem, [ItemPresence])] = [
             (Self.app, [Self.foundApp, .missing]),
             (Self.website, [.online]),
@@ -67,8 +82,8 @@ struct ItemActionTests {
             for presence in presences {
                 let menu = actions(item, presence, Self.mainPopup)
                 #expect(menu.first == .open)
-                #expect(Array(menu.suffix(2)) == [.moveTo, .remove], "\(item.kind) \(presence)")
-                #expect(!menu.dropLast(2).contains(where: editing.contains))
+                #expect(Array(menu.suffix(3)) == [.editDetails, .moveTo, .remove], "\(item.kind) \(presence)")
+                #expect(!menu.dropLast(3).contains(where: editing.contains))
             }
         }
     }

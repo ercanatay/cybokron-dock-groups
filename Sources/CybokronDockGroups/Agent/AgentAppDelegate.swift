@@ -225,7 +225,8 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// The tile's menu, asked for on every right-click or Control-click. The Dock draws it itself,
-    /// without item images, so the items are listed by name, apps checked while they run, and
+    /// without item images, so the items are listed by the name they're shown with (an alias, when
+    /// they have one), apps checked while they run, and
     /// items that can't be opened (`ItemAction.available` in `.dockMenu`) disabled; it adds its
     /// own items (Options, Show All Windows, Hide, Quit) below.
     func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
@@ -240,7 +241,7 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(placeholder)
         }
         for app in group.apps {
-            let item = NSMenuItem(title: app.name, action: #selector(openAppFromDockMenu(_:)), keyEquivalent: "")
+            let item = NSMenuItem(title: app.displayName, action: #selector(openAppFromDockMenu(_:)), keyEquivalent: "")
             item.target = self
             item.representedObject = app.bundleIdentifier
             let isRunning = runningApps.isRunning(app)

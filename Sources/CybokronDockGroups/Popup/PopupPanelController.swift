@@ -37,6 +37,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let showGroupSettings: (DockGroup) -> Void
         /// Asks for a website to add to the group; `nil` where groups can't be edited.
         var addWebsite: ((DockGroup) -> Void)?
+        /// Opens the item's details editor in the group window; `nil` where groups can't be edited.
+        var editDetails: ((AppReference, DockGroup) -> Void)?
     }
 
     /// Why the popup closed; logged at debug level to diagnose unexpected closes.
@@ -364,6 +366,14 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
                     guard let self, let group = self.group(withID: id) else { return }
                     self.close(reason: .appAction)
                     self.actions.showGroupSettings(group)
+                }
+                : nil,
+            // The details editor is in the group window, as the popup can't host it.
+            editDetails: allowsEditing && id != MostUsedGroup.id && actions.editDetails != nil
+                ? { [weak self] app in
+                    guard let self, let group = self.group(withID: id) else { return }
+                    self.close(reason: .appAction)
+                    self.actions.editDetails?(app, group)
                 }
                 : nil,
             moveApp: { [weak self] app, index in

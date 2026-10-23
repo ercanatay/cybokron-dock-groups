@@ -43,19 +43,52 @@ public struct ItemDetails: Hashable, Sendable {
     /// languages, "،" (Arabic, Persian), "，" and "、" (Chinese, Japanese). Cleaned up as `init`
     /// cleans tags.
     public static func tags(fromCommaSeparated text: String) -> [String] {
+        sanitizedTags(splitAtCommas(text))
+    }
+
+    /// `tags(fromCommaSeparated:)` without the `maximumTagCount` limit: every distinct tag typed,
+    /// so an editor can say how many wouldn't be kept.
+    static func allTags(fromCommaSeparated text: String) -> [String] {
+        sanitizedTags(splitAtCommas(text), maximumCount: .max)
+    }
+
+    private static func splitAtCommas(_ text: String) -> [String] {
         let separators: Set<Character> = [",", "،", "，", "、"]
-        return sanitizedTags(text.split { separators.contains($0) }.map(String.init))
+        return text.split { separators.contains($0) }.map(String.init)
     }
 
     /// The tags for a text field: "finance, q3".
     public var commaSeparatedTags: String { tags.joined(separator: ", ") }
 
+    /// Characters of the task notes `notesSummary` shows at most.
+    public static let maximumSummaryLength = 80
+
+    /// The task notes on one line, for a mention such as the popup's tooltip: their first line, cut
+    /// to `maximumSummaryLength` characters, ending in "…" when it was cut or more lines follow.
+    /// `nil` without notes.
+    public var notesSummary: String? {
+        let lines = (notes ?? "").split(separator: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        guard let first = lines.first else { return nil }
+        let summary = Self.excerpt(of: first, maximumLength: Self.maximumSummaryLength)
+        return lines.count > 1 && !summary.hasSuffix("…") ? summary + "…" : summary
+    }
+
+    /// `line` without surrounding spaces and, when it's longer than `maximumLength` characters, cut
+    /// to fit with "…" at the end.
+    static func excerpt(of line: String, maximumLength: Int) -> String {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard trimmed.count > maximumLength else { return trimmed }
+        return String(trimmed.prefix(maximumLength - 1)).trimmingCharacters(in: .whitespaces) + "…"
+    }
+
     // MARK: - Sanitizing
 
-    private static func sanitizedTags(_ raw: [String]) -> [String] {
+    private static func sanitizedTags(_ raw: [String], maximumCount: Int = maximumTagCount) -> [String] {
         var seen = Set<String>()
         var result: [String] = []
-        for tag in raw where result.count < maximumTagCount {
+        for tag in raw where result.count < maximumCount {
             var text = Substring(tag)
             text = text.drop { $0.isWhitespace || $0 == "#" }
             guard let tag = singleLine(String(text), maximumLength: maximumTagLength),

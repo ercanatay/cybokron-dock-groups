@@ -2,10 +2,27 @@ import DockGroupsCore
 import SwiftUI
 
 /// The group the group window shows, shared with `MainWindowController` so Group Settings
-/// requests (the popup's gear, menus, links) can open the window on a given group.
+/// requests (the popup's gear, menus, links) can open the window on a given group — and something
+/// to do there once it shows the group, such as the popup's Edit Details….
 @MainActor
 final class GroupWindowSelection: ObservableObject {
     @Published var groupID: DockGroup.ID?
+    /// Done (and cleared) by the group's settings once they show; `nil` when there's nothing to do.
+    @Published var request: GroupWindowRequest?
+}
+
+/// Something the popup asks the group window to do in one of its groups: the popup can't host the
+/// details editor or an open panel itself.
+struct GroupWindowRequest: Equatable {
+    enum Action: Equatable {
+        /// Opens the details editor of the item with this identity.
+        case editDetails(itemID: String)
+    }
+
+    let groupID: DockGroup.ID
+    let action: Action
+    /// Tells two requests for the same thing apart, so asking again works.
+    let id = UUID()
 }
 
 /// Group list on the left, the selected group's settings on the right.
@@ -46,8 +63,16 @@ struct MainWindowView: View {
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
         } detail: {
             if let id = selection.groupID, let group = store.group(withID: id) {
-                GroupDetailView(store: store, standalone: standalone, group: group, tiles: tiles, actions: actions, items: items)
-                    .id(group.id)
+                GroupDetailView(
+                    store: store,
+                    standalone: standalone,
+                    group: group,
+                    tiles: tiles,
+                    actions: actions,
+                    items: items,
+                    selection: selection
+                )
+                .id(group.id)
             } else {
                 ContentUnavailableView {
                     Label(

@@ -99,6 +99,13 @@ final class MainWindowController: NSWindowController {
         show()
         return destination
     }
+
+    /// Edit Details… in the popup: shows the window on the item's group with the item's details
+    /// editor open.
+    func showDetails(ofItem identity: String, inGroup id: DockGroup.ID) {
+        selection.request = GroupWindowRequest(groupID: id, action: .editDetails(itemID: identity))
+        showSettings(ofGroup: id.uuidString)
+    }
 }
 
 /// The group window. It controls the Quick Look panel while Quick Look shows one of its items:

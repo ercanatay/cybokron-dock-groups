@@ -465,6 +465,36 @@ enum L10n {
         }
     }
 
+    /// An item's alias, tags and task notes: the details editor, Edit Details…, and where they're
+    /// shown (the group window's rows, the popup's tooltips).
+    enum Details {
+        static var menu: String { tr("item.details.menu", "Edit Details…") }
+        /// The editor's title, with the item's own name.
+        static func title(_ name: String) -> String { tr("item.details.title", "Details of “%@”", name) }
+        static var alias: String { tr("item.details.alias", "Alias") }
+        static var aliasPlaceholder: String { tr("item.details.alias.placeholder", "Another name, shown instead") }
+        static var tags: String { tr("item.details.tags", "Tags") }
+        static var tagsPlaceholder: String { tr("item.details.tags.placeholder", "finance, q3") }
+        static var tagsHint: String { tr("item.details.tags.hint", "Separate tags with commas.") }
+        /// Shown when more tags were typed than an item keeps.
+        static func tagsLimit(_ maximum: Int) -> String {
+            tr("item.details.tags.limit", "Only the first %ld tags are kept.", maximum)
+        }
+        static var notes: String { tr("item.details.notes", "Task notes") }
+        static var notesPlaceholder: String { tr("item.details.notes.placeholder", "What you use it for") }
+        /// The counter under the task notes: "42 of 500 characters".
+        static func notesCount(_ count: Int, maximum: Int) -> String {
+            tr("item.details.notes.count", "%1$ld of %2$ld characters", count, maximum)
+        }
+        /// The ⓘ button of a row: its tooltip and VoiceOver label.
+        static func buttonHelp(_ name: String) -> String { tr("item.details.button.help", "Alias, tags and task notes of %@", name) }
+        /// The item's own name, where its alias is shown instead.
+        static func originalName(_ name: String) -> String { tr("item.details.originalName", "Name: %@", name) }
+        /// Parts of the details line of a tooltip, after "Name: …".
+        static func tagsList(_ tags: String) -> String { tr("popup.search.help.tags", "Tags: %@", tags) }
+        static func notesSummary(_ notes: String) -> String { tr("popup.search.help.notes", "Notes: %@", notes) }
+    }
+
     // MARK: - Problems
 
     enum Problems {

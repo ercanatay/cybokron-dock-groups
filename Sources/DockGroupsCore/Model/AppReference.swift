@@ -29,7 +29,8 @@ public struct AppReference: Identifiable, Hashable, Sendable {
     /// never collide with them or with each other.
     public var bundleIdentifier: String
     /// The name captured when the item was added: an app's display name, a website's name, or a
-    /// file's or folder's name. Shown when the item has no alias, and when it can't be found.
+    /// file's or folder's name. Lists show it when the item has no alias; with one — also when the
+    /// item can't be found — they show the alias, and this name next to it ("Name: …").
     public var name: String
     /// Apps only: where the app was when it was added. Only a fallback: a LaunchServices lookup by
     /// bundle identifier wins, so apps that were moved or updated keep working. Files and folders
@@ -104,7 +105,8 @@ public struct AppReference: Identifiable, Hashable, Sendable {
     /// The location of a file or folder item; `nil` for other items.
     public var fileURL: URL? { kind.isFileSystemItem ? FileLocation.url(fromIdentity: bundleIdentifier) : nil }
 
-    /// What lists show: the alias when there is one, otherwise the name.
+    /// What lists show — the popup, the group window's rows, a standalone group's Dock menu, launch
+    /// problems, sorting A→Z: the alias when there is one, otherwise the name.
     public var displayName: String { details.alias ?? name }
 
     /// How the item appears in logs: an app by its identity, a website by its host only, and a file

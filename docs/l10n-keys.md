@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-533 keys.
+548 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -757,3 +757,28 @@ task notes; the groups file is copied aside as `groups.pre-downgrade-<time>.json
 | Key | English |
 | --- | --- |
 | `updates.otherVersions.items.warning` | Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details. |
+
+## An item's alias, tags and task notes: the details editor, Edit Details…, the rows and the popup's tooltips (English only for now; `awaitingTranslation`: `item.details.`, `popup.search.`)
+
+The group window's details editor opens from a row's ⓘ button and from **Edit Details…** in the
+row's and the popup's context menus. A row shows an item's alias instead of its name, with
+`item.details.originalName` below it; the popup's tooltips end with the same name, the tags and the
+start of the notes (`popup.search.help.*`, joined with “ · ”).
+
+| Key | English |
+| --- | --- |
+| `item.details.menu` | Edit Details… |
+| `item.details.title` | Details of “%@” |
+| `item.details.alias` | Alias |
+| `item.details.alias.placeholder` | Another name, shown instead |
+| `item.details.tags` | Tags |
+| `item.details.tags.placeholder` | finance, q3 |
+| `item.details.tags.hint` | Separate tags with commas. |
+| `item.details.tags.limit` | Only the first %ld tags are kept. |
+| `item.details.notes` | Task notes |
+| `item.details.notes.placeholder` | What you use it for |
+| `item.details.notes.count` | %1$ld of %2$ld characters |
+| `item.details.button.help` | Alias, tags and task notes of %@ |
+| `item.details.originalName` | Name: %@ |
+| `popup.search.help.tags` | Tags: %@ |
+| `popup.search.help.notes` | Notes: %@ |

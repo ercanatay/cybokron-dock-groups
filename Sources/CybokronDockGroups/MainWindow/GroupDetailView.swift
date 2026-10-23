@@ -9,6 +9,11 @@ import SwiftUI
 /// Where the items are is checked when the group shows, when its items change, when the window
 /// comes to the front (`GroupWindowItems`) and when a volume is connected or ejected — never while
 /// the rows draw.
+///
+/// An item's alias, tags and task notes are edited in the details editor, opened from its row's ⓘ
+/// button or Edit Details… (a popover) or from the popup's Edit Details… (a sheet, through
+/// `GroupWindowSelection.request`). The editor saves once, when it closes, so a standalone group's
+/// app is rebuilt once per edit at most.
 struct GroupDetailView: View {
     @ObservedObject var store: GroupStore
     @ObservedObject var standalone: StandaloneController
@@ -16,6 +21,7 @@ struct GroupDetailView: View {
     let tiles: TileImageCache
     let actions: MainWindowView.Actions
     let items: GroupWindowItems
+    @ObservedObject var selection: GroupWindowSelection
     @ObservedObject private var presence: ItemPresenceCache
 
     @State private var nameDraft: String
@@ -23,6 +29,8 @@ struct GroupDetailView: View {
     @FocusState private var focusedField: Field?
     @State private var problem: ShownProblem?
     @State private var isAddingWebsite = false
+    /// The item whose details editor is open, `nil` while none is.
+    @State private var editing: DetailsEditing?
 
     private enum Field: Hashable {
         case name, emoji
@@ -34,13 +42,23 @@ struct GroupDetailView: View {
         let message: String
     }
 
+    /// An open details editor: whose, what's typed so far, and how it's shown.
+    private struct DetailsEditing {
+        let itemID: String
+        let itemName: String
+        var draft: ItemDetailsDraft
+        /// In a sheet (opened from the popup) rather than the row's popover.
+        let isSheet: Bool
+    }
+
     init(
         store: GroupStore,
         standalone: StandaloneController,
         group: DockGroup,
         tiles: TileImageCache,
         actions: MainWindowView.Actions,
-        items: GroupWindowItems
+        items: GroupWindowItems,
+        selection: GroupWindowSelection
     ) {
         self.store = store
         self.standalone = standalone
@@ -48,6 +66,7 @@ struct GroupDetailView: View {
         self.tiles = tiles
         self.actions = actions
         self.items = items
+        self.selection = selection
         presence = items.presence
         _nameDraft = State(initialValue: group.name)
         _emojiDraft = State(initialValue: group.emoji)
@@ -80,8 +99,14 @@ struct GroupDetailView: View {
         .onChange(of: group.emoji) { _, newEmoji in
             if focusedField != .emoji { emojiDraft = newEmoji }
         }
-        .onAppear { presence.track(group.apps) }
+        .onAppear {
+            presence.track(group.apps)
+            handleRequest()
+        }
         .onChange(of: group.apps) { _, newItems in presence.track(newItems) }
+        .onChange(of: selection.request) { handleRequest() }
+        // Another group selected, or the window closed, with an editor open: keep what was typed.
+        .onDisappear { finishEditing(.dismissed) }
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didMountNotification)) { _ in
             presence.refresh()
         }
@@ -105,6 +130,9 @@ struct GroupDetailView: View {
                 add: { website in store.addApps([website], toGroup: group.id) > 0 },
                 dismiss: { isAddingWebsite = false }
             )
+        }
+        .sheet(isPresented: isEditingDetailsInSheet) {
+            detailsEditor()
         }
     }
 
@@ -185,7 +213,9 @@ struct GroupDetailView: View {
             icon: items.icons.icon(for: item, presence: checked ?? (item.isWebsite ? .online : .unverified)),
             isDimmed: checked.map { !$0.isOpenable } ?? false,
             onRemove: { store.removeApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id) },
-            onLocate: canLocate ? { locate(item) } : nil
+            onLocate: canLocate ? { locate(item) } : nil,
+            isEditingDetails: isEditingDetailsInPopover(of: item),
+            detailsEditor: { detailsEditor() }
         )
         .modifier(ItemRowContextMenu(
             item: item,
@@ -193,6 +223,7 @@ struct GroupDetailView: View {
             moveTargets: moveTargets,
             showInFinder: { showInFinder(item) },
             quickLook: { quickLook(item) },
+            editDetails: { editDetails(of: item, inSheet: false) },
             locate: { locate(item) },
             move: { destination in
                 store.moveApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id, toGroup: destination)
@@ -342,6 +373,75 @@ struct GroupDetailView: View {
                 store.updateGroup(id) { $0.tile.backgroundColor = rgb }
             }
         )
+    }
+
+    // MARK: - Details
+
+    /// Opens the details editor of the item: in its row's popover, or in a sheet.
+    private func editDetails(of item: GroupItem, inSheet: Bool) {
+        editDetails(ofItemWithID: item.id, inSheet: inSheet)
+    }
+
+    private func editDetails(ofItemWithID identity: String, inSheet: Bool) {
+        // Another editor still open keeps what was typed in it.
+        finishEditing(.dismissed)
+        // The details as stored now, which that may just have changed.
+        let target = identity.lowercased()
+        guard let item = storedGroup.apps.first(where: { $0.normalizedBundleIdentifier == target }) else { return }
+        editing = DetailsEditing(itemID: item.id, itemName: item.name, draft: ItemDetailsDraft(item.details), isSheet: inSheet)
+    }
+
+    /// Closes the open details editor and saves it once (`GroupStore.saveDetails`): nothing after
+    /// Cancel, or when nothing changed. Closing it again does nothing.
+    private func finishEditing(_ ending: ItemDetailsDraft.Ending) {
+        guard let closed = editing else { return }
+        editing = nil
+        store.saveDetails(of: closed.draft, endingWith: ending, ofItem: closed.itemID, inGroup: group.id)
+    }
+
+    private func detailsEditor() -> some View {
+        ItemDetailsEditor(
+            itemName: editing?.itemName ?? "",
+            draft: Binding(
+                get: { editing?.draft ?? ItemDetailsDraft(ItemDetails()) },
+                set: { draft in editing?.draft = draft }
+            ),
+            finish: finishEditing
+        )
+    }
+
+    /// Whether `item`'s row shows the editor in its popover; closing the popover another way than
+    /// with Done or Cancel (a click elsewhere) keeps what was typed.
+    private func isEditingDetailsInPopover(of item: GroupItem) -> Binding<Bool> {
+        Binding(
+            get: { editing.map { !$0.isSheet && $0.itemID == item.id } ?? false },
+            set: { isShown in
+                if isShown {
+                    editDetails(of: item, inSheet: false)
+                } else if let current = editing, !current.isSheet, current.itemID == item.id {
+                    finishEditing(.dismissed)
+                }
+            }
+        )
+    }
+
+    private var isEditingDetailsInSheet: Binding<Bool> {
+        Binding(
+            get: { editing?.isSheet ?? false },
+            set: { isShown in
+                if !isShown, editing?.isSheet == true { finishEditing(.dismissed) }
+            }
+        )
+    }
+
+    /// Does what the popup asked the window to do in this group, once.
+    private func handleRequest() {
+        guard let request = selection.request, request.groupID == group.id else { return }
+        selection.request = nil
+        switch request.action {
+        case .editDetails(let itemID):
+            editDetails(ofItemWithID: itemID, inSheet: true)
+        }
     }
 
     // MARK: - Actions

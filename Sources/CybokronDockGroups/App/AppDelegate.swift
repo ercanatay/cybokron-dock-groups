@@ -92,7 +92,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             hideAll: { [weak self] group in self?.hideAll(group) },
             manageGroups: { [weak self] in self?.mainWindowController.show() },
             showGroupSettings: { [weak self] group in self?.mainWindowController.showSettings(ofGroup: group.id.uuidString) },
-            addWebsite: { [weak self] group in self?.addWebsiteWindowController.show(for: group) }
+            addWebsite: { [weak self] group in self?.addWebsiteWindowController.show(for: group) },
+            editDetails: { [weak self] item, group in
+                self?.mainWindowController.showDetails(ofItem: item.bundleIdentifier, inGroup: group.id)
+            }
         )
     )
 
