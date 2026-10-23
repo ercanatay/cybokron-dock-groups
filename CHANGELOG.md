@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-23
+
+### Added
+
+- Groups now hold files and folders as items: click opens them; context menu has Show in Finder and Quick Look; missing items stay visible, removable, and can be located again with their details and place kept
+- Every item can have an alias, tags and task notes; the popup finds items by all of them (name matches rank first)
+- Groups keep a copy of the groups file before an older version that can't show these items is installed (last 3 copies)
+
+### Fixed
+
+- A crafted groups.json or backup could make an app item point to a script or program outside its app bundle; app items now start only from .app bundles
+- File items that are programs, scripts, installers, location or alias files can't be added, and files whose default handler would run them (Terminal, Installer and friends) aren't opened
+- Backup import reports items that were left out because they can't be opened safely
+
+### Changed
+
+- The groups window counts "items", not "apps"
+- macOS privacy usage descriptions were added for Documents, Downloads, Desktop and volume access
+
 ## [0.6.7] - 2026-10-23
 
 ### Changed
@@ -384,7 +403,8 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...v0.7.0
 [0.6.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...v0.6.7
   rebuilt when the group or the app changes and removed (with its Dock tile) when it's turned off or
   deleted.
