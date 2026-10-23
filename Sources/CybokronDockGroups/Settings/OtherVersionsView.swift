@@ -4,8 +4,11 @@ import SwiftUI
 /// Settings → Updates → "Other Versions…": the published releases (no drafts or prereleases), newest
 /// first, each with Install — older or newer than the running version. Installing asks first — for
 /// a version older than `ReleaseHistory.minimumSecurityVersion`, with a warning that it lacks the
-/// security fixes — then closes the sheet and follows in the update window like any update. When a
-/// check or another installation started meanwhile, it says so instead of doing nothing.
+/// security fixes; for one older than `ReleaseHistory.firstGroupItemsVersion` while the groups hold
+/// files, folders or item details, with a warning that it can't show them (a copy of the groups is
+/// kept, `DowngradeProtection`) — then closes the sheet and follows in the update window like any
+/// update. When a check or another installation started meanwhile, it says so instead of doing
+/// nothing.
 struct OtherVersionsView: View {
     @ObservedObject var updater: AutoUpdater
     let dismiss: () -> Void
@@ -123,7 +126,12 @@ struct OtherVersionsView: View {
                         .foregroundStyle(.secondary)
                 }
                 Button(L10n.Common.install) {
-                    pending = PendingInstall(release: release, releases: releases, current: updater.currentVersion)
+                    pending = PendingInstall(
+                        release: release,
+                        releases: releases,
+                        current: updater.currentVersion,
+                        dropsGroupItems: updater.warnsAboutGroupItems(installing: release.version)
+                    )
                 }
                 .disabled(!hasInstaller || updater.isBusy)
                 .help(hasInstaller
@@ -141,6 +149,8 @@ private struct PendingInstall {
     let release: ReleaseInfo
     let releases: [ReleaseInfo]
     let current: SemanticVersion?
+    /// The version can't show some of the groups' items (`DowngradeProtection.warns`).
+    let dropsGroupItems: Bool
 
     private var target: SemanticVersion { release.version }
 
@@ -173,6 +183,9 @@ private struct PendingInstall {
                 parts.append(L10n.Settings.OtherVersions.confirmCantUpdate(target.description))
             } else if !newer.isEmpty {
                 parts.append(L10n.Settings.OtherVersions.confirmSkips(newer.joined(separator: ", ")))
+            }
+            if dropsGroupItems {
+                parts.append(L10n.Settings.OtherVersions.groupItemsWarning(target.description))
             }
             parts.append(L10n.Settings.OtherVersions.confirmOlder)
         case .upgrade:

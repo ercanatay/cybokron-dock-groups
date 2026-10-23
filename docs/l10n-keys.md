@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-532 keys.
+533 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -748,3 +748,12 @@ replace `groupWindow.section.apps`, `groupWindow.apps.empty` and `groupWindow.ap
 | `popup.item.help.openFolder` | Open the folder %@. |
 | `settings.backup.leftOut.one` | 1 item in the backup was left out: it can't be opened safely. |
 | `settings.backup.leftOut.other` | %ld items in the backup were left out: they can't be opened safely. |
+
+## Settings → Updates → Other Versions…, going back to a version without files, folders and item details (English only for now; `awaitingTranslation`: `updates.otherVersions.items.`)
+
+Added to the install question when the groups hold files, folders or items with an alias, tags or
+task notes; the groups file is copied aside as `groups.pre-downgrade-<time>.json` either way.
+
+| Key | English |
+| --- | --- |
+| `updates.otherVersions.items.warning` | Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details. |

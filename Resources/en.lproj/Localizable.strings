@@ -606,3 +606,6 @@
 "popup.item.help.openFolder" = "Open the folder %@.";
 "settings.backup.leftOut.one" = "1 item in the backup was left out: it can't be opened safely.";
 "settings.backup.leftOut.other" = "%ld items in the backup were left out: they can't be opened safely.";
+
+/* Settings → Updates → Other Versions…, going back to a version without files, folders and item details (English only for now: translations show this English text until they add these keys) */
+"updates.otherVersions.items.warning" = "Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details.";

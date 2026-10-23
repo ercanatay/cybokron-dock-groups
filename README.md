@@ -248,6 +248,13 @@ images and apps signed with the same team's Developer ID, checking the disk imag
 it. Versions before v0.6.5 lack this and the other security fixes listed in the
 [changelog](CHANGELOG.md); **Other Versions…** warns before installing one.
 
+Versions before v0.6.8 don't know files and folders in groups, or items' aliases, tags and task
+notes: they show files and folders as missing apps that open nothing, and as soon as they save the
+groups they write them without their kind and details (a later version recognizes files and folders
+again by their location; the details are lost). Before **Other Versions…** installs one, the groups
+file is copied next to itself as `groups.pre-downgrade-<time>.json` (the last three copies are
+kept), and when the groups hold such items the install question says so.
+
 ## Requirements
 
 - macOS 14 Sonoma or later (Apple silicon or Intel)
@@ -398,6 +405,18 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      `NSDesktopFolderUsageDescription`, `NSDownloadsFolderUsageDescription`,
      `NSRemovableVolumesUsageDescription`, `NSNetworkVolumesUsageDescription`) then go into
      `Resources/Info.plist` and the agents' generated Info.plist (`AgentInfoPlist`).
+4. **Going back to a version without group items** — with a debug build of v0.6.8 or later
+   (development builds read `CYBOKRON_UPDATE_DRY_RUN`), add a file to a group and run
+   `CYBOKRON_UPDATE_DRY_RUN=1 "build/debug/Cybokron Dock Groups.app/Contents/MacOS/Cybokron Dock Groups"`.
+   - Settings → Updates → **Other Versions…**, Install v0.6.7: the question says v0.6.7 can't show
+     files, folders, aliases, tags or task notes. Install: once the update window says the new version
+     is staged, `~/Library/Application Support/Cybokron/DockGroups/` has a
+     `groups.pre-downgrade-<time>.json` identical to `groups.json`.
+   - Remove the file from the group and try again: no warning, but a copy all the same. Install a
+     version from v0.6.8 on: no warning, no copy. After four tries, three copies are left.
+   - With the v0.6.7 build (`build/release` of that tag): its group window shows the file as *Not
+     found on this Mac · file:///…*, opening it reports it as not found, and a backup with files
+     imports there without errors.
 
 ## Project layout
 

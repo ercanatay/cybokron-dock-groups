@@ -60,6 +60,7 @@
 		3B0DE9AC2AECF808C2E8A4C5 /* libDockGroupsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */; };
 		3C4326E575B2EBF6357517E3 /* PathIdentifiedAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C8EDE18D836E1B44E32A43 /* PathIdentifiedAppTests.swift */; };
 		3D83445E0AB64DC359CC6832 /* ScriptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49875A12D1B55403C9F60526 /* ScriptTests.swift */; };
+		3FD01A541DBC7A7EA082E74A /* DowngradeProtection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0D5823FEB0627D47EF7236 /* DowngradeProtection.swift */; };
 		425CFE12A9D688C18A2F05D8 /* SecondCopyHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D1CAC5A97E5F0FA956055 /* SecondCopyHandoff.swift */; };
 		450D4EDBC7E78B7A66E0BD4E /* PopupPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468B22320653764608FF0CF /* PopupPanel.swift */; };
 		4988700087A3430EF15C03EF /* ChangelogServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C089DC1E44BB070B6D52770 /* ChangelogServiceTests.swift */; };
@@ -420,6 +421,7 @@
 		BD7DDE2E6A92F7A941A6B668 /* DockGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockGroup.swift; sourceTree = "<group>"; };
 		BD83B0C88664AE3B0B2FF7FA /* SocialProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialProfile.swift; sourceTree = "<group>"; };
 		BE2E7DC2EDBA31263D1786F4 /* AgentDockTilesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDockTilesTests.swift; sourceTree = "<group>"; };
+		BF0D5823FEB0627D47EF7236 /* DowngradeProtection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DowngradeProtection.swift; sourceTree = "<group>"; };
 		BFBD68035EA70DD1D6EE5E2B /* ItemDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetails.swift; sourceTree = "<group>"; };
 		BFC7BC59B449CFA72316D99D /* LaunchReportPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchReportPresenter.swift; sourceTree = "<group>"; };
 		C085B0A9127EDD43DD922BA4 /* AboutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutData.swift; sourceTree = "<group>"; };
@@ -584,6 +586,7 @@
 			isa = PBXGroup;
 			children = (
 				7530A0B6D58051418AA33AA5 /* DevelopmentOverrides.swift */,
+				BF0D5823FEB0627D47EF7236 /* DowngradeProtection.swift */,
 				D3B95CEB613F25C30D39E537 /* LinkPolicy.swift */,
 				6BC67151D7E292CF2F060732 /* ReleaseFeed.swift */,
 				C1240A1E0FB104FFC3C73B1E /* ReleaseHistory.swift */,
@@ -1211,6 +1214,7 @@
 				2F9B831D82CFF1E88AC9E808 /* DiagnosticsReport.swift in Sources */,
 				4D779D910731F57A8EB71E41 /* DockGroup.swift in Sources */,
 				F81BF4C25E606DF2CEDE5486 /* DockTileList.swift in Sources */,
+				3FD01A541DBC7A7EA082E74A /* DowngradeProtection.swift in Sources */,
 				8A1A4F7C5384A630819CD00C /* FileItemPolicy.swift in Sources */,
 				C7EE246A827D342C054F7BE2 /* FileLocation.swift in Sources */,
 				B393A1C2E187ECEB82FD29BA /* FreeLayout.swift in Sources */,

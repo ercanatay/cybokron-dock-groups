@@ -835,6 +835,15 @@ enum L10n {
                     version
                 )
             }
+            /// Part of the question before installing a version older than
+            /// `ReleaseHistory.firstGroupItemsVersion` while the groups hold files, folders or details.
+            static func groupItemsWarning(_ version: String) -> String {
+                tr(
+                    "updates.otherVersions.items.warning",
+                    "Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details.",
+                    version
+                )
+            }
         }
 
         enum Backup {

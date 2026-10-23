@@ -73,7 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     )
     private lazy var aboutWindowController = AboutWindowController()
     private lazy var addWebsiteWindowController = AddWebsiteWindowController(store: store)
-    private lazy var updater = AutoUpdater(preferences: preferences)
+    private lazy var updater = AutoUpdater(preferences: preferences, groups: store)
     private lazy var updateWindowController = UpdateWindowController(updater: updater)
     private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(preferences: preferences) { [weak self] digit in
         self?.togglePopup(forShortcut: digit)

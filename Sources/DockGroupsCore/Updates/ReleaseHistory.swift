@@ -17,6 +17,16 @@ public enum ReleaseHistory {
         version < minimumSecurityVersion
     }
 
+    /// The first version whose groups can hold files and folders, and items with an alias, tags
+    /// or task notes. An older one shows files and folders as missing apps, ignores the details,
+    /// and drops them when it saves the groups (`DowngradeProtection`).
+    public static let firstGroupItemsVersion = SemanticVersion(major: 0, minor: 6, patch: 8)
+
+    /// Whether `version` predates `firstGroupItemsVersion`.
+    public static func lacksGroupItems(_ version: SemanticVersion) -> Bool {
+        version < firstGroupItemsVersion
+    }
+
     /// The releases to list: neither drafts nor prereleases, one per version (the first listed
     /// wins), newest first.
     public static func installable(_ releases: [ReleaseInfo]) -> [ReleaseInfo] {

@@ -14,7 +14,9 @@ import OSLog
 ///
 /// Settings → Updates → "Other Versions…" lists every published release and installs the chosen
 /// one the same way, older or newer; `ReleaseHistory.state(_:afterInstalling:over:published:)`
-/// decides which versions automatic checks skip afterwards.
+/// decides which versions automatic checks skip afterwards. Going back to a version without group
+/// items (files, folders, aliases, tags, task notes), the groups file is copied aside first
+/// (`DowngradeProtection`), once the new version is downloaded and checked.
 @MainActor
 final class AutoUpdater: ObservableObject {
     enum Status: Equatable {
@@ -66,6 +68,8 @@ final class AutoUpdater: ObservableObject {
     var isWindowShown: () -> Bool = { false }
 
     private let preferences: PreferencesStore
+    /// The groups, copied aside before going back to a version without group items.
+    private let groups: GroupStore
     private let feed: ReleaseFetching & ReleaseListFetching
     private let installer: UpdateInstaller
     private let statePersistence: JSONFileUpdateStatePersistence
@@ -84,10 +88,12 @@ final class AutoUpdater: ObservableObject {
 
     init(
         preferences: PreferencesStore,
+        groups: GroupStore,
         installer: UpdateInstaller = UpdateInstaller(),
         statePersistence: JSONFileUpdateStatePersistence = JSONFileUpdateStatePersistence()
     ) {
         self.preferences = preferences
+        self.groups = groups
         self.installer = installer
         self.statePersistence = statePersistence
         currentVersion = SemanticVersion(AppInfo.version)
@@ -305,6 +311,12 @@ final class AutoUpdater: ObservableObject {
         install(release, asset: asset)
     }
 
+    /// Whether installing `version` goes back to a version that can't show some of the groups'
+    /// items (files, folders, or an alias, tags or task notes): the install question says so.
+    func warnsAboutGroupItems(installing version: SemanticVersion) -> Bool {
+        DowngradeProtection.warns(installing: version, over: currentVersion, groups: groups.groups)
+    }
+
     /// Clears the skipped versions, so automatic checks offer every newer release again.
     func clearSkippedVersions() {
         state.skippedVersions = []
@@ -348,6 +360,16 @@ final class AutoUpdater: ObservableObject {
                     bundleIdentifier: bundleIdentifier,
                     expectedTeamIdentifier: runningTeam
                 )
+                // Going back to a version without group items: a copy of the groups first, which
+                // that version would rewrite without their files, folders and details. Without
+                // the copy, nothing is installed.
+                if let self, let copy = try DowngradeProtection.preserveGroups(
+                    of: self.groups,
+                    installing: release.version,
+                    over: self.currentVersion
+                ) {
+                    self.logger.notice("Copied the groups to \(copy.lastPathComponent, privacy: .public) before installing \(release.version, privacy: .public)")
+                }
                 if isDryRun {
                     self?.logger.notice("Dry run: staged \(staged.path, privacy: .public); nothing replaced")
                     self?.status = .stagedForDryRun(release, path: staged.path)

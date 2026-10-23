@@ -302,6 +302,18 @@ public final class GroupStore: ObservableObject {
         return copyURL
     }
 
+    /// Copies the saved file next to itself (`groups.<label>-<timestamp>.json`; the last three
+    /// copies with that label are kept), a pending change written first, so the copy holds what's
+    /// on screen — as before installing an older version (`DowngradeProtection`).
+    /// - Returns: The copy's location, or `nil` when nothing has been saved.
+    @discardableResult
+    public func preserveCopy(label: String) throws -> URL? {
+        if !isSavingSuspended {
+            flushPendingSave()
+        }
+        return try persistence.preserveCopy(label: label)
+    }
+
     /// Adds the groups of `incoming` that aren't here yet after the current ones, as merging a
     /// backup does; every current group stays as it is. A group is skipped when a current group has
     /// the same name (ignoring case and surrounding spaces) or the same identifier — and so are

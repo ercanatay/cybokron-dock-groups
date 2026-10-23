@@ -451,3 +451,96 @@ struct UpdateInstallerTests {
             == AgentConfiguration(group: group, preferences: PopupPreferences()))
     }
 }
+
+/// Going back to a version without group items from Other Versions…: the groups file is copied
+/// aside first (`groups.pre-downgrade-<timestamp>.json`, three kept), and the question warns only
+/// when the groups hold files, folders or item details (`DowngradeProtection`).
+@Suite("Update installer: copy of the groups before going back")
+@MainActor
+struct PreDowngradeCopyTests {
+    private static func version(_ text: String) -> SemanticVersion { SemanticVersion(text)! }
+
+    private static let report = GroupItem(fileURL: URL(fileURLWithPath: "/Users/me/Documents/Q3 Report.pdf"), kind: .file)
+    private static let mail = AppReference(bundleIdentifier: "com.apple.mail", name: "Mail")
+    private static let github = AppReference(websiteURL: URL(string: "https://github.com")!)
+
+    @Test func appliesOnlyGoingBackBeforeGroupItems() {
+        #expect(ReleaseHistory.firstGroupItemsVersion == Self.version("0.6.8"))
+        #expect(DowngradeProtection.applies(installing: Self.version("0.6.7"), over: Self.version("0.6.8")))
+        #expect(DowngradeProtection.applies(installing: Self.version("0.6.5"), over: Self.version("0.7.0")))
+        #expect(DowngradeProtection.applies(installing: Self.version("0.6.7"), over: nil))
+        // Versions with group items, upgrades and reinstalls don't need it.
+        #expect(!DowngradeProtection.applies(installing: Self.version("0.6.8"), over: Self.version("0.6.9")))
+        #expect(!DowngradeProtection.applies(installing: Self.version("0.6.9"), over: Self.version("0.6.8")))
+        #expect(!DowngradeProtection.applies(installing: Self.version("0.6.7"), over: Self.version("0.6.7")))
+        #expect(!DowngradeProtection.applies(installing: Self.version("0.6.7"), over: Self.version("0.6.6")))
+    }
+
+    @Test func warnsOnlyAboutWhatThatVersionCantShow() {
+        let appsAndWebsites = [DockGroup(name: "Work", apps: [Self.mail, Self.github])]
+        var tagged = Self.mail
+        tagged.details = ItemDetails(tags: ["mail"])
+        let withFile = [DockGroup(name: "Finance", apps: [Self.mail, Self.report])]
+        let withDetails = [DockGroup(name: "Work", apps: [tagged])]
+        let folder = GroupItem(fileURL: URL(fileURLWithPath: "/Users/me/Projects"), kind: .folder)
+        let back = (target: Self.version("0.6.7"), current: Self.version("0.6.8"))
+
+        #expect(!DowngradeProtection.usesGroupItems(appsAndWebsites))
+        #expect(!DowngradeProtection.usesGroupItems([]))
+        #expect(DowngradeProtection.usesGroupItems(withFile))
+        #expect(DowngradeProtection.usesGroupItems(withDetails))
+        #expect(DowngradeProtection.usesGroupItems([DockGroup(name: "Code", apps: [folder])]))
+
+        #expect(!DowngradeProtection.warns(installing: back.target, over: back.current, groups: appsAndWebsites))
+        #expect(DowngradeProtection.warns(installing: back.target, over: back.current, groups: withFile))
+        #expect(!DowngradeProtection.warns(installing: Self.version("0.6.9"), over: back.current, groups: withFile))
+    }
+
+    /// The copy holds what's on screen (a pending change is written first), byte for byte the
+    /// groups file, file items and all; at most three are kept.
+    @Test func goingBackCopiesTheGroupsFileWithItsFileItems() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let fileURL = temporary.url.appending(path: "groups.json")
+        let store = GroupStore(persistence: JSONFileGroupPersistence(fileURL: fileURL), saveDelay: .seconds(60))
+        let group = store.addGroup(named: "Finance")
+        #expect(store.addItems([Self.mail, Self.report], toGroup: group.id) == 2)
+
+        let copy = try #require(try DowngradeProtection.preserveGroups(
+            of: store,
+            installing: Self.version("0.6.7"),
+            over: Self.version("0.6.8")
+        ))
+
+        #expect(copy.deletingLastPathComponent().standardizedFileURL == temporary.url.standardizedFileURL)
+        #expect(copy.lastPathComponent.hasPrefix("groups.pre-downgrade-"))
+        #expect(copy.pathExtension == "json")
+        #expect(try Data(contentsOf: copy) == Data(contentsOf: fileURL))
+        let copied = try JSONFileGroupPersistence(fileURL: copy).loadGroups()
+        #expect(copied.first?.apps.map(\.kind) == [.application, .file])
+        #expect(copied.first?.apps.last?.bundleIdentifier == "file:///Users/me/Documents/Q3%20Report.pdf")
+
+        for _ in 0..<3 {
+            _ = try DowngradeProtection.preserveGroups(of: store, installing: Self.version("0.6.6"), over: Self.version("0.6.8"))
+        }
+        let copies = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).filter { $0.hasPrefix("groups.pre-downgrade-") }
+        #expect(copies.count == JSONFileSupport.keptCopies)
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    @Test func noCopyWhenNotGoingBackOrNothingIsSaved() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let fileURL = temporary.url.appending(path: "groups.json")
+        let store = GroupStore(persistence: JSONFileGroupPersistence(fileURL: fileURL), saveDelay: .zero)
+
+        // Nothing saved yet.
+        #expect(try DowngradeProtection.preserveGroups(of: store, installing: Self.version("0.6.7"), over: Self.version("0.6.8")) == nil)
+
+        store.addGroup(named: "Work")
+        #expect(try DowngradeProtection.preserveGroups(of: store, installing: Self.version("0.6.9"), over: Self.version("0.6.8")) == nil)
+        #expect(try DowngradeProtection.preserveGroups(of: store, installing: Self.version("0.6.8"), over: Self.version("0.6.9")) == nil)
+        let names = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path)
+        #expect(names == ["groups.json"])
+    }
+}
