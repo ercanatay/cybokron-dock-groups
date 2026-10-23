@@ -40,6 +40,9 @@ public struct SettingsBackup: Equatable, Sendable {
     public var exportedAt: Date
     public var groups: [DockGroup]
     public var preferences: PopupPreferences
+    /// Items of the file that were left out when it was read, because they can't be opened safely
+    /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
+    public private(set) var leftOutItemCount = 0
 
     public init(
         appVersion: String,
@@ -55,10 +58,13 @@ public struct SettingsBackup: Equatable, Sendable {
         self.preferences = preferences
     }
 
-    /// The number of apps across all groups.
-    public var appCount: Int {
+    /// The number of items (apps, websites, files and folders) across all groups.
+    public var itemCount: Int {
         groups.reduce(0) { $0 + $1.apps.count }
     }
+
+    /// The same as `itemCount`: the backup texts still call every item an app.
+    public var appCount: Int { itemCount }
 
     /// `cybokron-dock-groups-backup-YYYY-MM-DD.dockgroups`, dated in the current time zone.
     public static func defaultFileName(for date: Date = Date(), timeZone: TimeZone = .current) -> String {
@@ -91,8 +97,8 @@ public struct SettingsBackup: Equatable, Sendable {
     }
 
     /// Reads a backup, accepting only this app's backups in a format this version understands and
-    /// no larger than `maximumFileSize`. App locations that can't be an app bundle are dropped
-    /// (`withAppBundlePathsOnly`).
+    /// no larger than `maximumFileSize`. Items that can't be opened safely are left out, and app
+    /// locations that can't be an app bundle are dropped (`sanitizedForImport`).
     public static func decode(from data: Data) throws -> SettingsBackup {
         guard data.count <= maximumFileSize else { throw SettingsBackupError.tooLarge }
         let decoder = JSONDecoder()
@@ -118,40 +124,65 @@ public struct SettingsBackup: Equatable, Sendable {
         schemaVersion = document.schemaVersion
         appVersion = document.appVersion
         exportedAt = document.exportedAt
-        groups = document.groups.map(Self.withAppBundlePathsOnly)
+        let sanitized = document.groups.map(Self.sanitizedForImport)
+        groups = sanitized.map(\.group)
+        leftOutItemCount = sanitized.reduce(0) { $0 + $1.leftOutItemCount }
         preferences = document.preferences.preferences
     }
 
-    // MARK: - App locations
+    // MARK: - Item locations
 
     /// Whether `path` can be where an app bundle is: an absolute path to a `.app` folder, without
     /// `.` or `..` components, NUL characters or more than `PATH_MAX` bytes. A backup is a file
     /// anyone can hand over, and a group opens what its items point to, so nothing else (a script,
-    /// a `.command` file, a folder) gets in through one.
+    /// a `.command` file, a folder) gets in through one as an app.
     public static func isAppBundlePath(_ path: String) -> Bool {
-        guard path.hasPrefix("/"), !path.contains("\0"), path.utf8.count < Int(PATH_MAX) else { return false }
-        let components = path.split(separator: "/", omittingEmptySubsequences: true)
-        guard let last = components.last, !components.contains(where: { $0 == "." || $0 == ".." }) else { return false }
-        return last.count > 4 && last.lowercased().hasSuffix(".app")
+        FileLocation.isAppBundlePath(path)
     }
 
-    /// `group` with its apps' locations checked (`isAppBundlePath`): an app identified by its
-    /// location must be at an app bundle path or it's left out, and any other app's fallback
-    /// location that isn't one is dropped (the app is still found by its bundle identifier).
-    /// Websites have no location.
-    static func withAppBundlePathsOnly(_ group: DockGroup) -> DockGroup {
+    /// `group` with only the items it's safe to bring in from a file someone may have handed over,
+    /// and how many were left out:
+    /// - an app identified by its location must be at an app bundle path (`isAppBundlePath`) or
+    ///   it's left out, and any other app's fallback location that isn't one is dropped (the app is
+    ///   still found by its bundle identifier); an app whose identity is neither (it has a "/" or
+    ///   ":", which bundle identifiers can't have: an item that couldn't be read) is left out;
+    /// - a file or folder must have a valid location in its kind's form whose name isn't refused
+    ///   (`FileItemPolicy.acceptsByIdentity`, judged without looking at the disk: the backup may
+    ///   come from another Mac) or it's left out; it never keeps a location of an app;
+    /// - websites have no location.
+    ///
+    /// Alias, tags and task notes are already within their limits (`ItemDetails`), and the Free
+    /// Layout cells of left-out items go with them.
+    static func sanitizedForImport(_ group: DockGroup) -> (group: DockGroup, leftOutItemCount: Int) {
         var group = group
-        group.apps = group.apps.compactMap { app in
-            guard !app.isWebsite else { return app }
-            if app.isIdentifiedByPath, !isAppBundlePath(app.bundleIdentifier) { return nil }
-            var app = app
-            if let path = app.path, !isAppBundlePath(path) {
-                app.path = nil
+        let items = group.apps.compactMap { item -> GroupItem? in
+            switch item.kind {
+            case .website:
+                return item
+            case .file, .folder:
+                guard FileItemPolicy.acceptsByIdentity(item) else { return nil }
+                var item = item
+                item.path = nil
+                return item
+            case .application:
+                if item.isIdentifiedByPath {
+                    guard isAppBundlePath(item.bundleIdentifier) else { return nil }
+                } else if item.bundleIdentifier.contains(where: { $0 == "/" || $0 == ":" }) {
+                    // Neither a bundle identifier nor an app's location: a file, folder or other
+                    // item that couldn't be read, which would show as an app that's never found.
+                    return nil
+                }
+                var item = item
+                if let path = item.path, !isAppBundlePath(path) {
+                    item.path = nil
+                }
+                return item
             }
-            return app
         }
+        let leftOut = group.apps.count - items.count
+        group.apps = items
         group.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: group.apps)
-        return group
+        return (group, leftOut)
     }
 }
 
@@ -159,29 +190,36 @@ public struct SettingsBackup: Equatable, Sendable {
 
 /// What restoring a backup would change, for the confirmation before it happens.
 public struct SettingsRestoreSummary: Equatable, Sendable {
-    /// Groups in the backup, and the apps they hold.
+    /// Groups in the backup, and the items they hold.
     public var groupCount: Int
-    public var appCount: Int
+    public var itemCount: Int
+    /// Items of the backup left out because they can't be opened safely.
+    public var leftOutItemCount: Int
     /// Current groups that a group of the same name in the backup takes the place of.
     public var replacedGroupCount: Int
     /// Current groups with no group of the same name in the backup; they're removed.
     public var removedGroupCount: Int
-    /// Merging instead: the backup's groups that would be added, and the apps they hold…
+    /// Merging instead: the backup's groups that would be added, and the items they hold…
     public var mergedGroupCount: Int
-    public var mergedAppCount: Int
+    public var mergedItemCount: Int
     /// …and the backup's groups skipped because a current group has the same name or identifier.
     public var skippedGroupCount: Int
 
+    /// The same as `itemCount` and `mergedItemCount`: the backup texts still call every item an app.
+    public var appCount: Int { itemCount }
+    public var mergedAppCount: Int { mergedItemCount }
+
     public init(backup: SettingsBackup, currentGroups: [DockGroup]) {
         groupCount = backup.groups.count
-        appCount = backup.appCount
+        itemCount = backup.itemCount
+        leftOutItemCount = backup.leftOutItemCount
         let backupNames = Set(backup.groups.map(GroupStore.mergeName(of:)))
         let matching = currentGroups.filter { backupNames.contains(GroupStore.mergeName(of: $0)) }.count
         replacedGroupCount = matching
         removedGroupCount = currentGroups.count - matching
         let merged = GroupStore.groupsAddedByMerging(backup.groups, into: currentGroups)
         mergedGroupCount = merged.count
-        mergedAppCount = merged.reduce(0) { $0 + $1.apps.count }
+        mergedItemCount = merged.reduce(0) { $0 + $1.apps.count }
         skippedGroupCount = backup.groups.count - merged.count
     }
 }

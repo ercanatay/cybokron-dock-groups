@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-498 keys.
+499 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -359,7 +359,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.mostUsed.sessionLength` | Session length |
 | `settings.mostUsed.together` | Opened together within |
 | `settings.mostUsed.together.detail` | Apps opened within this time of each other count as used together, which moves them up a little. |
-| `settings.mostUsed.footer.recording` | Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted only while Most Used is shown; turning it off keeps the history. *(English only for now; `awaitingTranslation`)* |
+| `settings.mostUsed.footer.recording` | Apps are ranked by how often you open them, from the Dock, Finder, Spotlight or a group. Launches are counted only while Most Used is shown; turning it off keeps the history. |
 | `settings.mostUsed.recorded` | Recorded |
 | `settings.mostUsed.clear` | Clear History… |
 | `settings.mostUsed.history` | History |
@@ -671,7 +671,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | --- | --- |
 | `core.backup.error.tooLarge` | This file is too large to be a Cybokron Dock Groups backup. |
 
-## Group Settings: the popup's gear and the “Group Settings…” item of a group's menus (English only for now; `awaitingTranslation`: `group.settings.`)
+## Group Settings: the popup's gear and the “Group Settings…” item of a group's menus (fully translated)
 
 | Key | English |
 | --- | --- |
@@ -679,7 +679,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `group.settings.menu` | Group Settings… |
 | `group.settings.accessibilityHint` | Shows the name, apps, Dock tile and popup settings of “%@”. |
 
-## What a group holds, apps and websites alike: the popup's summary line (“8 items · 3 running”) and the group window's group list (English only for now; `awaitingTranslation`: `common.itemCount.`)
+## What a group holds, apps and websites alike: the popup's summary line (“8 items · 3 running”) and the group window's group list (fully translated)
 
 `common.appCount` stays for lists of apps only, such as Most Used.
 
@@ -688,14 +688,20 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `common.itemCount.one` | 1 item |
 | `common.itemCount.other` | %ld items |
 
-## Settings → Support: the About window's content in Settings (English only for now; `awaitingTranslation`: `settings.support.`)
+## Settings → Support: the About window's content in Settings (fully translated)
 
 | Key | English |
 | --- | --- |
 | `settings.support.tab` | Support |
 
-## Settings → Shortcuts & Siri: when the shortcut keys couldn't be registered as hot keys and are watched for instead (English only for now; `awaitingTranslation`: `shortcuts.hotkey.`)
+## Settings → Shortcuts & Siri: when the shortcut keys couldn't be registered as hot keys and are watched for instead (fully translated)
 
 | Key | English |
 | --- | --- |
 | `shortcuts.hotkey.unavailable` | macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too. |
+
+## Group items: files and folders, and why one can't be added or opened (English only for now; `awaitingTranslation`: `core.item.`)
+
+| Key | English |
+| --- | --- |
+| `core.item.error.program` | “%@” is a program or script, so it can't be added as a file. |

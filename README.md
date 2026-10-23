@@ -174,10 +174,14 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   imports').
   Most Used launch counts aren't part of a backup. Files over 5 MB aren't read, and an app location
   in a backup that isn't an absolute path to a `.app` bundle is dropped (an app known only by such a
-  location is left out).
+  location is left out). Backups can also carry file and folder items and each item's alias, tags
+  and task notes (still format version 1, so 0.6.7 and earlier read them too, showing such items as
+  missing apps). A file or folder item is left out when its location isn't a plain absolute path, or
+  when it names a program, script, installer, app or location file.
 - **Export Diagnostics** (Settings → Backup → Diagnostics): **Copy** or **Save to File…** a plain-text
   report to attach to a GitHub issue — app and macOS versions, Mac model, settings, update checks,
-  group names with app counts (never the apps themselves) and recent errors; nothing is sent anywhere.
+  group names with item counts by kind (never the items themselves) and recent errors; nothing is
+  sent anywhere.
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a

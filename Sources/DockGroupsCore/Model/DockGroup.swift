@@ -1,6 +1,7 @@
 import Foundation
 
-/// A user-defined, named collection of apps that the Dock presents as a single tile.
+/// A user-defined, named collection of apps — and websites, files and folders — that the Dock
+/// presents as a single tile.
 ///
 /// The order of groups is the order of the list kept by `GroupStore`, and it is persisted as-is;
 /// the order of `apps` is the display order inside the group.
@@ -12,7 +13,8 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
     public let id: UUID
     public var name: String
     public var emoji: String
-    /// Member apps in display order. Bundle identifiers are unique within a group.
+    /// Member items (apps, websites, files and folders, `GroupItem`) in display order. Identities
+    /// (`bundleIdentifier`) are unique within a group.
     public var apps: [AppReference]
     public var tile: TileAppearance
     /// Whether the group's tile stays in the Dock while the group isn't open.
@@ -81,12 +83,12 @@ extension DockGroup {
         return sanitized
     }
 
-    /// `apps` sorted by name, A to Z, the way Finder sorts names; apps with the same name keep
-    /// their order.
+    /// `apps` sorted by the name they're shown with (`displayName`: the alias, if any), A to Z,
+    /// the way Finder sorts names; items with the same name keep their order.
     public static func sortedByName(_ apps: [AppReference]) -> [AppReference] {
         apps.enumerated()
             .sorted { lhs, rhs in
-                switch lhs.element.name.localizedStandardCompare(rhs.element.name) {
+                switch lhs.element.displayName.localizedStandardCompare(rhs.element.displayName) {
                 case .orderedAscending: return true
                 case .orderedDescending: return false
                 case .orderedSame: return lhs.offset < rhs.offset

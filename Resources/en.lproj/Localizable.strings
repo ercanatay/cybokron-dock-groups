@@ -406,7 +406,7 @@
 "settings.diagnostics.panel.message" = "Save the diagnostics report as a text file, e.g. to attach to a GitHub issue.";
 "settings.diagnostics.panel.prompt" = "Save";
 
-/* Settings → Changelog (English only for now: translations show this English text until they add these keys) */
+/* Settings → Changelog (fully translated) */
 "changelog.tab" = "Changelog";
 "changelog.currentVersion" = "Current version: %@";
 "changelog.refresh" = "Refresh";
@@ -554,17 +554,20 @@
 "updates.otherVersions.preSafety.message" = "Version %@ was released before important security fixes, such as stricter checks of the updates it installs. Install it only if you need it, and update to the latest version again afterwards.";
 "core.backup.error.tooLarge" = "This file is too large to be a Cybokron Dock Groups backup.";
 
-/* Group Settings: the popup's gear and the "Group Settings…" item of a group's menus (English only for now: translations show this English text until they add these keys) */
+/* Group Settings: the popup's gear and the "Group Settings…" item of a group's menus (fully translated) */
 "group.settings.title" = "Group Settings";
 "group.settings.menu" = "Group Settings…";
 "group.settings.accessibilityHint" = "Shows the name, apps, Dock tile and popup settings of “%@”.";
 
-/* What a group holds, apps and websites alike: the popup's summary line and the group window's group list (English only for now: translations show this English text until they add these keys) */
+/* What a group holds, apps and websites alike: the popup's summary line and the group window's group list (fully translated) */
 "common.itemCount.one" = "1 item";
 "common.itemCount.other" = "%ld items";
 
-/* Settings → Support: the About window's content in Settings (English only for now: translations show this English text until they add these keys) */
+/* Settings → Support: the About window's content in Settings (fully translated) */
 "settings.support.tab" = "Support";
 
-/* Settings → Shortcuts & Siri, only when the shortcut keys couldn't be registered as hot keys and are watched for instead (English only for now: translations show this English text until they add these keys) */
+/* Settings → Shortcuts & Siri, only when the shortcut keys couldn't be registered as hot keys and are watched for instead (fully translated) */
 "shortcuts.hotkey.unavailable" = "macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too.";
+
+/* Group items: files and folders, and why one can't be added or opened (English only for now: translations show this English text until they add these keys) */
+"core.item.error.program" = "“%@” is a program or script, so it can't be added as a file.";

@@ -3,8 +3,9 @@ import Foundation
 /// What Settings → Diagnostics puts into its report: facts about the app, the Mac and the user's
 /// setup that help with a support request or a GitHub issue.
 ///
-/// Group names and app counts are included, but never the apps themselves (names, bundle
-/// identifiers or paths) — see `DiagnosticsReport.text(for:)`.
+/// Group names and item counts (by kind) are included, but never the items themselves (names,
+/// aliases, tags, task notes, bundle identifiers, addresses or paths) — see
+/// `DiagnosticsReport.text(for:)`.
 public struct DiagnosticsInfo: Sendable {
     public struct AppDetails: Sendable {
         /// `CFBundleShortVersionString`, e.g. "0.5.3".
@@ -89,7 +90,7 @@ public struct DiagnosticsInfo: Sendable {
     public var isStatusItemShown: Bool
     public var preferences: PopupPreferences
     public var updates: UpdateDetails
-    /// The user's groups; only their names, app counts and whether they're standalone are reported.
+    /// The user's groups; only their names, item counts and whether they're standalone are reported.
     public var groups: [DockGroup]
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
@@ -179,10 +180,10 @@ public enum DiagnosticsReport {
         }
 
         section(.groups, into: &lines)
-        let appCount = info.groups.reduce(0) { $0 + $1.apps.count }
-        lines.append("\(info.groups.count) group\(info.groups.count == 1 ? "" : "s"), \(appCount) app\(appCount == 1 ? "" : "s")")
+        let allItems = info.groups.flatMap(\.apps)
+        lines.append("\(info.groups.count) group\(info.groups.count == 1 ? "" : "s"), \(describeCount(of: allItems))")
         for group in info.groups {
-            let count = "\(group.apps.count) app\(group.apps.count == 1 ? "" : "s")"
+            let count = describeCount(of: group.apps)
             lines.append("- \(group.name): \(count)\(group.isStandalone ? ", standalone" : "")")
         }
 
@@ -230,6 +231,26 @@ public enum DiagnosticsReport {
     }
 
     private static func onOff(_ value: Bool) -> String { value ? "on" : "off" }
+
+    /// "3 apps" when every item is an app, otherwise "5 items (3 apps, 1 website, 1 file)".
+    private static func describeCount(of items: [GroupItem]) -> String {
+        func counted(_ count: Int, _ noun: String) -> String { "\(count) \(noun)\(count == 1 ? "" : "s")" }
+        guard items.contains(where: { $0.kind != .application }) else { return counted(items.count, "app") }
+        let parts = AppReference.Kind.allCases.compactMap { kind -> String? in
+            let count = items.filter { $0.kind == kind }.count
+            return count > 0 ? counted(count, noun(for: kind)) : nil
+        }
+        return "\(counted(items.count, "item")) (\(parts.joined(separator: ", ")))"
+    }
+
+    private static func noun(for kind: AppReference.Kind) -> String {
+        switch kind {
+        case .application: return "app"
+        case .website: return "website"
+        case .file: return "file"
+        case .folder: return "folder"
+        }
+    }
 
     private static func describe(_ anchor: PopupAnchor) -> String {
         switch anchor {

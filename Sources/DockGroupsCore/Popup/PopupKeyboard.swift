@@ -44,7 +44,11 @@ public enum PopupFilter {
     public static func rank(of name: String, query: String) -> Rank? {
         let needle = normalize(query)
         guard !needle.isEmpty else { return nil }
-        let haystack = normalize(name)
+        return rank(ofNormalized: normalize(name), normalizedQuery: needle)
+    }
+
+    /// `rank(of:query:)` for a name and a non-empty query that are already normalized (`normalize`).
+    static func rank(ofNormalized haystack: String, normalizedQuery needle: String) -> Rank? {
         guard let range = haystack.range(of: needle) else { return nil }
         if range.lowerBound == haystack.startIndex {
             return .prefix

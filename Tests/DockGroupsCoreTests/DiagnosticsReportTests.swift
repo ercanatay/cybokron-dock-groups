@@ -85,6 +85,26 @@ struct DiagnosticsReportTests {
         }
     }
 
+    @Test func itemsAreCountedByKindWithoutLocationsOrDetails() {
+        var report = GroupItem(fileURL: URL(fileURLWithPath: "/Users/jane/Private/Divorce Papers.pdf"), kind: .file)
+        report.details = ItemDetails(alias: "Lawyer", tags: ["secret-tag"], notes: "Call before Friday")
+        let items = [
+            AppReference(bundleIdentifier: "com.apple.Safari", name: "Safari"),
+            AppReference(websiteURL: URL(string: "https://bank.example.com")!, name: "Bank"),
+            report,
+            GroupItem(fileURL: URL(fileURLWithPath: "/Users/jane/Projects/Hidden"), kind: .folder),
+            GroupItem(fileURL: URL(fileURLWithPath: "/Users/jane/Notes.txt"), kind: .file),
+        ]
+
+        let text = DiagnosticsReport.text(for: info(groups: [DockGroup(name: "Mixed", apps: items)]), homeDirectory: "/Users/jane")
+
+        #expect(text.contains("1 group, 5 items (1 app, 1 website, 2 files, 1 folder)"))
+        #expect(text.contains("- Mixed: 5 items (1 app, 1 website, 2 files, 1 folder)"))
+        for secret in ["Divorce", "Papers", "Private", "Hidden", "Notes.txt", "bank.example.com", "Bank", "Lawyer", "secret-tag", "Call before", "file://"] {
+            #expect(!text.contains(secret), "\(secret) leaked into the report")
+        }
+    }
+
     @Test func homeIsRedactedInTheLocationAndInErrors() {
         let errors = (1...12).map { "Error \($0): couldn't read /Users/jane/Library/x.json" }
 

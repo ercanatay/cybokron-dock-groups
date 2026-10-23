@@ -113,18 +113,72 @@ public final class GroupStore: ObservableObject {
         scheduleSave()
     }
 
-    // MARK: - Apps
+    // MARK: - Items
 
-    /// Appends the apps that aren't in the group yet, in order. Returns how many were added.
+    /// Appends the apps that aren't in the group yet, in order: `addItems(_:toGroup:)`.
     @discardableResult
     public func addApps(_ apps: [AppReference], toGroup id: DockGroup.ID) -> Int {
+        addItems(apps, toGroup: id)
+    }
+
+    /// Appends the items (apps, websites, files, folders) that aren't in the group yet, in order.
+    /// A file or folder whose location is invalid or whose name is refused
+    /// (`FileItemPolicy.acceptsByIdentity`) is left out. Returns how many were added.
+    @discardableResult
+    public func addItems(_ items: [GroupItem], toGroup id: DockGroup.ID) -> Int {
         guard let index = index(of: id) else { return 0 }
-        let combined = Self.removingDuplicates(groups[index].apps + apps)
+        let combined = Self.removingDuplicates(groups[index].apps + items.filter(FileItemPolicy.acceptsByIdentity))
         let addedCount = combined.count - groups[index].apps.count
         guard addedCount > 0 else { return 0 }
         groups[index].apps = combined
         scheduleSave()
         return addedCount
+    }
+
+    /// Gives an item of the group new details (alias, tags, task notes). Nothing is saved when they
+    /// are the same as before, so a standalone group's app isn't rebuilt for nothing.
+    /// - Returns: Whether the details changed; `false` when they didn't or the group doesn't have
+    ///   the item.
+    @discardableResult
+    public func updateDetails(_ details: ItemDetails, ofItem identity: String, inGroup id: DockGroup.ID) -> Bool {
+        guard let groupIndex = index(of: id),
+              let itemIndex = itemIndex(of: identity, inGroupAt: groupIndex),
+              groups[groupIndex].apps[itemIndex].details != details
+        else { return false }
+        groups[groupIndex].apps[itemIndex].details = details
+        scheduleSave()
+        return true
+    }
+
+    /// Points a file or folder item at its new location `url`, as "Locate…" does after it was moved
+    /// or renamed. It keeps its kind, details, place in the list and Free Layout cell; its name
+    /// becomes `name`, or the location's last component.
+    /// - Returns: Whether the item now points at `url`; `false` when the group doesn't have the
+    ///   item, it isn't a file or folder, `url` can't be one of its kind (`FileItemPolicy`), or
+    ///   another item of the group is already there.
+    @discardableResult
+    public func relinkItem(_ identity: String, inGroup id: DockGroup.ID, to url: URL, name: String? = nil) -> Bool {
+        guard let groupIndex = index(of: id), let itemIndex = itemIndex(of: identity, inGroupAt: groupIndex) else { return false }
+        var group = groups[groupIndex]
+        let original = group.apps[itemIndex]
+        guard original.kind.isFileSystemItem else { return false }
+        var relinked = GroupItem(fileURL: url, kind: original.kind, name: name)
+        relinked.details = original.details
+        guard FileItemPolicy.acceptsByIdentity(relinked) else { return false }
+        let oldKey = original.normalizedBundleIdentifier
+        let newKey = relinked.normalizedBundleIdentifier
+        if newKey != oldKey, group.apps.contains(where: { $0.normalizedBundleIdentifier == newKey }) {
+            return false
+        }
+        group.apps[itemIndex] = relinked
+        if let slot = group.freeLayoutSlots.removeValue(forKey: oldKey) {
+            group.freeLayoutSlots[newKey] = slot
+        }
+        if group != groups[groupIndex] {
+            groups[groupIndex] = group
+            scheduleSave()
+        }
+        return true
     }
 
     public func removeApp(bundleIdentifier: String, fromGroup id: DockGroup.ID) {
@@ -372,6 +426,11 @@ public final class GroupStore: ObservableObject {
 
     private func index(of id: DockGroup.ID) -> Int? {
         groups.firstIndex { $0.id == id }
+    }
+
+    private func itemIndex(of identity: String, inGroupAt groupIndex: Int) -> Int? {
+        let target = identity.lowercased()
+        return groups[groupIndex].apps.firstIndex { $0.normalizedBundleIdentifier == target }
     }
 
     private func nextDefaultName() -> String {
