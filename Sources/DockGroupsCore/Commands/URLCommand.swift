@@ -14,7 +14,9 @@ import Foundation
 /// | `cybokrondockgroups://settings` | Open Settings |
 /// | `cybokrondockgroups://settings/group/<group>` | Open the group window on the group's settings |
 /// | `cybokrondockgroups://groups` | Open the group window |
-public enum URLCommand: Hashable, Sendable {
+///
+/// Links that start or finish a group (`start/`, `switch/`, `finish/`) are `SwitchingURLCommand`s.
+public enum URLCommand: Hashable, Sendable, GatedCommand {
     case showGroup(String)
     case launchGroup(String)
     case quitGroup(String, QuitMode)
@@ -35,8 +37,19 @@ public enum URLCommand: Hashable, Sendable {
         URL(string: "\(scheme)://settings/group/\(id.uuidString)")!
     }
 
-    /// Parses `url`; `nil` for other schemes, unknown commands and missing or extra arguments.
-    public init?(url: URL) {
+    /// The key of the links that open, hide, start or finish a group's apps (`groupActionKey`).
+    public static let groupAppsKey = "group-apps"
+
+    /// A link split up: the command ("open"), what follows it, and the `mode` query value.
+    struct Parts {
+        let verb: String
+        let segments: [String]
+        let argument: String
+        let mode: String?
+    }
+
+    /// `url`'s parts, or `nil` for other schemes and links without a command.
+    static func parts(of url: URL) -> Parts? {
         guard url.scheme?.lowercased() == Self.scheme,
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         else { return nil }
@@ -49,6 +62,16 @@ public enum URLCommand: Hashable, Sendable {
         guard let verb = segments.first?.lowercased() else { return nil }
         let argument = segments.dropFirst().joined(separator: "/")
         let mode = components.queryItems?.first { $0.name.lowercased() == "mode" }?.value?.lowercased()
+        return Parts(verb: verb, segments: segments, argument: argument, mode: mode)
+    }
+
+    /// Parses `url`; `nil` for other schemes, unknown commands and missing or extra arguments.
+    public init?(url: URL) {
+        guard let parts = Self.parts(of: url) else { return nil }
+        let verb = parts.verb
+        let segments = parts.segments
+        let argument = parts.argument
+        let mode = parts.mode
 
         switch verb {
         case "open", "show":
@@ -91,7 +114,7 @@ public enum URLCommand: Hashable, Sendable {
     /// or hide every group in turn. `nil` for the other commands.
     public var groupActionKey: String? {
         switch self {
-        case .launchGroup, .hideGroup: return "group-apps"
+        case .launchGroup, .hideGroup: return Self.groupAppsKey
         default: return nil
         }
     }
@@ -111,6 +134,59 @@ public enum URLCommand: Hashable, Sendable {
         case .manageGroups: return "groups"
         }
     }
+}
+
+/// A link that starts or finishes a group (spec §2.6). Groups are named as in `URLCommand`:
+///
+/// | URL | Command |
+/// | --- | --- |
+/// | `cybokrondockgroups://start/<group>` (or `switch/<group>`) | Start the group |
+/// | `cybokrondockgroups://finish/<group>` | Finish the group |
+///
+/// Like `launch/` and `hide/`, they share the group-apps cooldown (`URLCommandGate`), so a page or
+/// script can't switch through every group in turn; a start or finish that would quit apps asks
+/// first, as `quit/` does. They're parsed apart from `URLCommand`, whose commands the app carries
+/// out on their own, because they need the transitions of `ContextSwitcher`.
+public enum SwitchingURLCommand: Hashable, Sendable, GatedCommand {
+    case start(String)
+    case finish(String)
+
+    /// Parses `url`; `nil` for other schemes, other commands and a missing group.
+    public init?(url: URL) {
+        guard let parts = URLCommand.parts(of: url), !parts.argument.isEmpty else { return nil }
+        switch parts.verb {
+        case "start", "switch": self = .start(parts.argument)
+        case "finish": self = .finish(parts.argument)
+        default: return nil
+        }
+    }
+
+    /// The group the link names, as typed.
+    public var group: String {
+        switch self {
+        case .start(let group), .finish(let group): return group
+        }
+    }
+
+    /// Starting or finishing opens or hides a group's apps: one such link per cooldown, whichever
+    /// group it names and whichever of `launch/`, `hide/`, `start/` and `finish/` it is.
+    public var groupActionKey: String? { URLCommand.groupAppsKey }
+
+    /// `start/` and `switch/` are the same request, and so are spellings of the same group.
+    public var throttleKey: String {
+        switch self {
+        case .start(let group): return "start/\(GroupLookup.normalizedToken(group))"
+        case .finish(let group): return "finish/\(GroupLookup.normalizedToken(group))"
+        }
+    }
+}
+
+/// A link that `URLCommandGate` rate-limits: repeats by `throttleKey`, and links acting on a group's
+/// apps together by `groupActionKey`.
+public protocol GatedCommand {
+    var throttleKey: String { get }
+    /// `nil` for links that don't open, hide, start or finish a group's apps.
+    var groupActionKey: String? { get }
 }
 
 /// Swallows repeats of a request within a cooldown, such as the URL scheme's activation cooldown.
@@ -158,8 +234,9 @@ public struct CommandThrottle: Sendable {
 /// Decides which URL scheme requests are carried out. A repeat of the same request within the
 /// cooldown is swallowed (`CommandThrottle`); and links that open or hide a group's apps
 /// (`URLCommand.groupActionKey`) share one more cooldown, so only one of them runs per
-/// `CommandThrottle.urlCooldown`, whichever group it names. Menus, popups, global shortcuts, Siri
-/// and Shortcuts don't come through here and aren't limited.
+/// `CommandThrottle.urlCooldown`, whichever group it names; links that start or finish a group
+/// (`SwitchingURLCommand`) count among them. Menus, popups, global shortcuts, Siri and Shortcuts
+/// don't come through here and aren't limited.
 public struct URLCommandGate: Sendable {
     public enum Decision: Equatable, Sendable {
         case accepted
@@ -179,7 +256,7 @@ public struct URLCommandGate: Sendable {
 
     /// Accepts `command` and starts its cooldowns, or says why it's dropped. A dropped request
     /// starts no cooldown, so it can be sent again as soon as the earlier one's has run out.
-    public mutating func accept(_ command: URLCommand, at now: Date = Date()) -> Decision {
+    public mutating func accept(_ command: some GatedCommand, at now: Date = Date()) -> Decision {
         guard requests.wouldAccept(command.throttleKey, at: now) else { return .repeated }
         if let key = command.groupActionKey {
             guard groupActions.wouldAccept(key, at: now) else { return .groupActionLimited }
@@ -190,7 +267,7 @@ public struct URLCommandGate: Sendable {
     }
 
     /// Starts `command`'s own cooldown again (see `CommandThrottle.restartCooldown`).
-    public mutating func restartCooldown(for command: URLCommand, at now: Date = Date()) {
+    public mutating func restartCooldown(for command: some GatedCommand, at now: Date = Date()) {
         requests.restartCooldown(for: command.throttleKey, at: now)
     }
 }

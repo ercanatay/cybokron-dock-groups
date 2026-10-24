@@ -22,7 +22,7 @@ extension LaunchReport {
 
 extension QuitReport {
     public var summary: String {
-        if quit.isEmpty, refused.isEmpty {
+        if quit.isEmpty, refused.isEmpty, kept.isEmpty {
             return "None of the apps in “\(groupName)” are running."
         }
         var sentences: [String] = []
@@ -34,6 +34,12 @@ extension QuitReport {
         }
         if !refused.isEmpty {
             sentences.append("Couldn't quit \(refused.map(\.displayName).joined(separator: ", ")).")
+        }
+        if !kept.isEmpty {
+            let names = kept.map(\.displayName)
+            sentences.append(names.count == 1
+                ? "\(names[0]) is protected and stays open."
+                : "\(TransitionReport.joined(names)) are protected and stay open.")
         }
         return sentences.joined(separator: " ")
     }

@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-551 keys.
+562 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -797,3 +797,22 @@ gone from every table).
 | `popup.search.footer.notes` | Filter: “%1$@”  ·  in the task notes of %2$@  ·  ↩ opens it  ·  esc clears |
 | `popup.search.noMatch` | No items match “%@” |
 | `item.group.empty` | No items in this group yet |
+
+## Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first (English only for now; `awaitingTranslation`: `core.switching.`)
+
+The buttons reuse `core.quitConfirmation.quit` (Quit Apps) and `core.quitConfirmation.cancel`
+(Cancel). Siri and Shortcuts show the title and the detail.
+
+| Key | English |
+| --- | --- |
+| `core.switching.start.title.one` | Switch to “%@” and quit 1 app? |
+| `core.switching.start.title.other` | Switch to “%1$@” and quit %2$ld apps? |
+| `core.switching.start.detail` | “%1$@” is set to quit the apps of “%2$@” it doesn't use: %3$@. |
+| `core.switching.finish.title.one` | Finish “%@” and quit 1 app? |
+| `core.switching.finish.title.other` | Finish “%1$@” and quit %2$ld apps? |
+| `core.switching.finish.detail` | Finishing “%1$@” quits %2$@. Protected apps stay open. |
+| `core.switching.finish.detailWithNext` | Finishing “%1$@” quits %2$@. Protected apps and apps “%3$@” uses stay open. |
+| `core.switching.confirmation.link` | A link opened by another app, a script or a web page asked for this. |
+| `core.switching.confirmation.save` | Apps can still ask to save changes. |
+| `core.switching.confirmation.quitAndSwitch` | Quit and Switch |
+| `core.switching.confirmation.hideInstead` | Hide Instead |

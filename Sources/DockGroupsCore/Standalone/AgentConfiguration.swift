@@ -14,13 +14,18 @@ public struct AgentConfiguration: Equatable, Sendable {
     public var group: DockGroup
     public var preferences: PopupPreferences
 
+    /// Settings the agent has no use for are left at their defaults, so changing them doesn't
+    /// rebuild every agent: the update setting concerns the main app only, and so do the group's
+    /// Start and Finish settings (agents don't start or finish groups). Of the protected apps, only
+    /// those in the group are kept: the agent's Close All reaches no others.
     public init(group: DockGroup, preferences: PopupPreferences) {
         formatVersion = Self.currentFormatVersion
+        var group = group
+        group.switching = GroupSwitching()
         self.group = group
-        // The update setting concerns the main app only; leaving it at its default keeps turning it
-        // on or off from rebuilding every agent.
         var snapshot = preferences
         snapshot.automaticallyChecksForUpdates = PopupPreferences().automaticallyChecksForUpdates
+        snapshot.protectedApps = preferences.protectedApps.restricted(to: group)
         self.preferences = snapshot
     }
 

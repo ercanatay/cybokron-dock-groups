@@ -84,8 +84,11 @@ public protocol QuitConfirmationPrompting: AnyObject {
 /// Quits a group's apps on request — asking first when the request came from a link
 /// (`QuitRequestSource.asksFirst`), and dropping links that arrive while a question is showing.
 /// Quit Group from Siri and Shortcuts asks first as well, there (`requestFromIntent`).
+///
+/// It also asks the question of a link that starts or finishes a group and would quit apps
+/// (`askBeforeTransition`), one at a time with the quit questions.
 @MainActor
-public final class GroupQuitRequests {
+public final class GroupQuitRequests: TransitionQuestioning {
     public enum Outcome: Equatable, Sendable {
         /// The apps were asked to quit (or forced).
         case quit(QuitReport)
@@ -104,11 +107,20 @@ public final class GroupQuitRequests {
     public private(set) var isAsking = false
 
     private let prompt: QuitConfirmationPrompting
+    private let transitionPrompt: TransitionConfirmationPrompting?
     private let quitApps: (DockGroup, QuitMode) -> QuitReport
 
-    /// - Parameter quitApps: Quits the group's running apps (`GroupTerminator.closeAll`).
-    public init(prompt: QuitConfirmationPrompting, quitApps: @escaping (DockGroup, QuitMode) -> QuitReport) {
+    /// - Parameters:
+    ///   - transitionPrompt: Asks a link's question before a transition quits apps; without one,
+    ///     such a link is answered Cancel, so nothing is quit unasked.
+    ///   - quitApps: Quits the group's running apps (`GroupTerminator.closeAll`).
+    public init(
+        prompt: QuitConfirmationPrompting,
+        transitionPrompt: TransitionConfirmationPrompting? = nil,
+        quitApps: @escaping (DockGroup, QuitMode) -> QuitReport
+    ) {
         self.prompt = prompt
+        self.transitionPrompt = transitionPrompt
         self.quitApps = quitApps
     }
 
@@ -134,5 +146,15 @@ public final class GroupQuitRequests {
     ) async throws -> QuitReport {
         try await confirm(QuitConfirmation(groupName: group.name, mode: mode))
         return quitApps(group, mode)
+    }
+
+    /// A link's question before a transition that quits apps: dropped (`nil`) while another link's
+    /// question — a quit or a transition question — is showing.
+    public func askBeforeTransition(_ confirmation: TransitionConfirmation) -> TransitionConfirmation.Answer? {
+        guard !isAsking else { return nil }
+        guard let transitionPrompt else { return .cancel }
+        isAsking = true
+        defer { isAsking = false }
+        return transitionPrompt.confirm(confirmation)
     }
 }

@@ -11,7 +11,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
 /// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, the
 /// Most Used list, the standalone groups' Dock menus, restoring running apps' windows, whether the
-/// app looks for updates on its own, and the language it's shown in.
+/// app looks for updates on its own, the language it's shown in, and the apps that switching
+/// groups and Close All leave alone.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
     public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
@@ -56,6 +57,8 @@ public struct PopupPreferences: Hashable, Sendable {
     public var restoresWindowsOfRunningApps: Bool
     /// The language the app (and the standalone groups' apps) is shown in from its next launch on.
     public var language: AppLanguage
+    /// Apps that Start, Finish and Close All never quit, and that Start and Finish never hide.
+    public var protectedApps: ProtectedApps
 
     public init(
         theme: PanelTheme = .dark,
@@ -73,7 +76,8 @@ public struct PopupPreferences: Hashable, Sendable {
         automaticallyChecksForUpdates: Bool = true,
         showsStandaloneDockMenus: Bool = true,
         restoresWindowsOfRunningApps: Bool = true,
-        language: AppLanguage = .system
+        language: AppLanguage = .system,
+        protectedApps: ProtectedApps = ProtectedApps()
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -91,6 +95,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.showsStandaloneDockMenus = showsStandaloneDockMenus
         self.restoresWindowsOfRunningApps = restoresWindowsOfRunningApps
         self.language = language
+        self.protectedApps = protectedApps
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -161,6 +166,7 @@ extension PopupPreferences: Codable {
         case showsStandaloneDockMenus = "standaloneDockMenu"
         case restoresWindowsOfRunningApps = "restoreRunningAppWindows"
         case language
+        case protectedApps
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -194,5 +200,31 @@ extension PopupPreferences: Codable {
         restoresWindowsOfRunningApps = container.decodeLeniently(Bool.self, forKey: .restoresWindowsOfRunningApps)
             ?? defaults.restoresWindowsOfRunningApps
         language = container.decodeLeniently(AppLanguage.self, forKey: .language) ?? defaults.language
+        protectedApps = container.decodeLeniently(ProtectedApps.self, forKey: .protectedApps) ?? defaults.protectedApps
+    }
+
+    /// Every setting is written; the protected apps only once there are any, so preferences that
+    /// never had them are saved as before.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(theme, forKey: .theme)
+        try container.encode(usesFrostedGlass, forKey: .usesFrostedGlass)
+        try container.encode(columns, forKey: .columns)
+        try container.encode(maxRows, forKey: .maxRows)
+        try container.encode(showsTitles, forKey: .showsTitles)
+        try container.encode(anchor, forKey: .anchor)
+        try container.encode(usesFreeLayout, forKey: .usesFreeLayout)
+        try container.encode(shortcutsEnabled, forKey: .shortcutsEnabled)
+        try container.encode(shortcutModifiers, forKey: .shortcutModifiers)
+        try container.encode(showsMostUsed, forKey: .showsMostUsed)
+        try container.encode(mostUsedLimit, forKey: .mostUsedLimit)
+        try container.encode(mostUsedSessionSeconds, forKey: .mostUsedSessionSeconds)
+        try container.encode(automaticallyChecksForUpdates, forKey: .automaticallyChecksForUpdates)
+        try container.encode(showsStandaloneDockMenus, forKey: .showsStandaloneDockMenus)
+        try container.encode(restoresWindowsOfRunningApps, forKey: .restoresWindowsOfRunningApps)
+        try container.encode(language, forKey: .language)
+        if !protectedApps.isEmpty {
+            try container.encode(protectedApps, forKey: .protectedApps)
+        }
     }
 }

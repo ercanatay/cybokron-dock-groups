@@ -27,6 +27,8 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
     /// bundle identifier; see `FreeLayout`. Empty until apps are arranged in Free Layout. Each
     /// cell holds at most one app, and only the group's apps have cells.
     public var freeLayoutSlots: [String: Int]
+    /// What starting and finishing the group does besides opening its items (`GroupSwitching`).
+    public var switching: GroupSwitching
 
     public init(
         id: UUID = UUID(),
@@ -37,7 +39,8 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         isPinned: Bool = false,
         isStandalone: Bool = false,
         popup: PopupOverrides = PopupOverrides(),
-        freeLayoutSlots: [String: Int] = [:]
+        freeLayoutSlots: [String: Int] = [:],
+        switching: GroupSwitching = GroupSwitching()
     ) {
         self.id = id
         self.name = name
@@ -48,6 +51,7 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         self.isStandalone = isStandalone
         self.popup = popup
         self.freeLayoutSlots = Self.sanitizedFreeLayoutSlots(freeLayoutSlots, apps: apps)
+        self.switching = switching
     }
 }
 
@@ -102,7 +106,7 @@ extension DockGroup {
 
 extension DockGroup: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, name, emoji, apps, tile, isPinned, isStandalone, popup, freeLayoutSlots
+        case id, name, emoji, apps, tile, isPinned, isStandalone, popup, freeLayoutSlots, switching
     }
 
     /// Identity, name and app list are required; display preferences are decoded leniently so a value
@@ -121,10 +125,11 @@ extension DockGroup: Codable {
             container.decodeLeniently([String: Int].self, forKey: .freeLayoutSlots) ?? [:],
             apps: apps
         )
+        switching = container.decodeLeniently(GroupSwitching.self, forKey: .switching) ?? GroupSwitching()
     }
 
-    /// Free Layout cells are written only once there are any, so groups that never used Free
-    /// Layout are saved as before.
+    /// Free Layout cells are written only once there are any, and Start and Finish settings only
+    /// when they aren't the defaults, so groups that never used them are saved as before.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -137,6 +142,9 @@ extension DockGroup: Codable {
         try container.encode(popup, forKey: .popup)
         if !freeLayoutSlots.isEmpty {
             try container.encode(freeLayoutSlots, forKey: .freeLayoutSlots)
+        }
+        if !switching.isDefault {
+            try container.encode(switching, forKey: .switching)
         }
     }
 }
