@@ -1,7 +1,7 @@
 # Design spec: group shortcuts, and duplicating, archiving and templating groups
 
-- **Status:** draft for review (2026-10-25). Design only: no code. Decisions wait on the OPEN
-  QUESTIONS (§9); each has a recommendation that stands unless the user decides otherwise.
+- **Status:** design decided (2026-10-25), ready for implementation. Design only: no code. The seven decisions in §9 were
+  made by the user on 2026-10-25.
 - **Baseline:** `main` at `8127967` (version 0.8.0, `project.yml` `MARKETING_VERSION: "0.8.0"`),
   906 `@Test` functions, 677 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
 - **Features:** G (a global keyboard shortcut per group) and I (Duplicate, Archive and Templates).
@@ -30,7 +30,7 @@ G, group shortcuts:
 - **G-4** Group shortcuts are hot keys like I6: no Accessibility access, no prompt, ever. If one
   can't be registered, only that one is off; there is no event-monitor fallback for them.
 - **G-5** A shortcut never acts on its own: only a key press does something. A Start or Finish
-  from a shortcut that would quit apps asks first (§1.4, OPEN QUESTION 1).
+  from a shortcut that would quit apps asks first (§1.4, Decision 1).
 
 I, Duplicate, Archive and Templates:
 
@@ -50,7 +50,7 @@ I, Duplicate, Archive and Templates:
   templates, and shows archived groups as ordinary groups at the end of its list.
 
 Non-goals (this wave): more than one shortcut per group; shortcuts for Hide All, Close All or
-items; shortcuts in standalone groups' own apps; built-in starter templates (OPEN QUESTION 7);
+items; shortcuts in standalone groups' own apps; built-in starter templates (Decision 7);
 sharing a single template as a file; editing a template in place; Siri, links or Focus for
 templates or archiving; time-based auto-archiving; iCloud sync (P).
 
@@ -165,7 +165,7 @@ Settings → Shortcuts & Siri gets a read-only **Group Shortcuts** section: each
 shortcut, its keys, action and status, and a **Change…** button that opens the group window on that
 group. Setting shortcuts in the group window follows C+D+E §3.10 ("per-group settings … are in the
 group window"); the overview keeps the Shortcuts pane the one place that lists every key the app
-takes (OPEN QUESTION 3).
+takes (Decision 3).
 
 ### 1.3 Rules for the keys
 
@@ -198,7 +198,7 @@ character.
 - Start and Finish from a shortcut run with a new trigger, **`.shortcut`**: they may quit apps,
   and **ask first** when they would, with the link alert (Cancel, Hide Instead, Quit and Switch;
   confirm button after 0.7 s). Hiding settings, the default, never ask. A key press can be
-  accidental and doesn't show what it does, unlike a labelled button (OPEN QUESTION 1). The
+  accidental and doesn't show what it does, unlike a labelled button (Decision 1). The
   alert's source line: "A keyboard shortcut asked for this."
 - Shortcuts work while Cybokron Dock Groups runs; standalone groups' own apps don't register any.
 - Hot keys take the key press: the app in front doesn't receive it (as I6). Other apps' global
@@ -270,7 +270,7 @@ would break the ⌥, ⇧⌥ and ⌃⌥ alternates (`StatusBarController.swift:17
   presence is checked, no Quick Look or Show in Finder: nothing of it touches the disk.
 - **Restore** puts it at the end of the active list, selected, with all its settings.
   - A standalone group gets its app and Dock icon back (the Standalone toggle's path, with its
-    failure alert) (OPEN QUESTION 4).
+    failure alert) (Decision 4).
   - If another active group took its shortcut meanwhile, the restored group loses it, and says so:
 
     ```
@@ -322,7 +322,7 @@ would break the ⌥, ⇧⌥ and ⌃⌥ alternates (`StatusBarController.swift:17
   group whose shortcut another group already has comes in without it: "1 group came in without its
   keyboard shortcut: another group uses those keys."
 - Imported shortcuts pass K1–K3; templates and archived groups pass `sanitizedForImport` exactly as
-  groups do (left-out items, refused openers) (OPEN QUESTIONS 5 and 6).
+  groups do (left-out items, refused openers) (Decisions 5 and 6).
 
 Other en-US drafts sit with their sketches: Settings footers (§3.2), the archived detail (§3.4),
 Siri's error (§2.11) and the downgrade warning (§2.9).
@@ -393,7 +393,7 @@ extension DockGroup {
 public struct ArchivedGroup: Identifiable, Hashable, Sendable {
     public var group: DockGroup                          // isStandalone is false while archived
     public let archivedAt: Date?                         // nil when the file's date was unreadable
-    /// It was standalone when archived: restoring turns Standalone on again (OPEN QUESTION 4).
+    /// It was standalone when archived: restoring turns Standalone on again (Decision 4).
     public let restoresStandalone: Bool
     public var id: DockGroup.ID { group.id }
 }
@@ -845,7 +845,7 @@ from other apps**, and **data kept out of sight**.
 - **K-3 Bounded.** At most 100 group shortcuts are registered; a crafted file with thousands of
   groups can't make registration costly.
 - **K-4 Least action.** An unknown action reads as Show the Popup. Open All runs the launch checks;
-  Start and Finish from a key press ask before quitting (OPEN QUESTION 1); nothing a shortcut does
+  Start and Finish from a key press ask before quitting (Decision 1); nothing a shortcut does
   is new capability: each action already exists behind a click.
 - **K-5 No permission.** Hot keys need no Accessibility or Input Monitoring; group shortcuts never
   fall back to event monitors, and `PushSymbolicHotKeyMode` isn't used (§2.6).
@@ -853,7 +853,7 @@ from other apps**, and **data kept out of sight**.
   app's global hot key; residual: a two-modifier shortcut can take a key press meant for the front
   app's menu (R2), which the recorder text and README say.
 - **K-7 Backups.** Imported shortcuts pass K1–K3 and lose their keys on a conflict; the import
-  summary counts them (OPEN QUESTION 6: dropping them altogether is the stricter alternative).
+  summary counts them (Decision 6).
 
 ### 4.3 Archive and template invariants
 
@@ -970,7 +970,7 @@ Suites are named as today, `@MainActor` where the code is, with fakes in a share
 | R7 | Secure Event Input and key repeat behavior of Carbon hot keys | presses lost or repeated | manual test; 0.4 s debounce; 3-second Start rule |
 | R8 | Keyboard layouts | shown letter differs from the key cap | physical key stored (as I6), character from the current layout |
 | R9 | Crafted file with many groups and shortcuts | slow launch | 100-registration cap; static rules at decode |
-| R10 | Shortcut-triggered Start asks, which may feel slow | friction | only when the plan quits; hiding (default) never asks; OPEN QUESTION 1 |
+| R10 | Shortcut-triggered Start asks, which may feel slow | friction | only when the plan quits; hiding (default) never asks; Decision 1 |
 | R11 | `CopySymbolicHotKeys` is old Carbon API | may change in a future macOS | behind `SystemShortcutListing`; an empty list keeps K1–K3 and the built-in list |
 | R12 | Templates drift from moved files | missing items in new groups | the existing missing state and Locate… (A+F F1-4) |
 
@@ -1002,26 +1002,30 @@ spike, the §6 manual list, and the downgrade round trip.
 
 ---
 
-## 9. OPEN QUESTIONS
+## 9. DECISIONS
 
-1. **Shortcut presses and quitting.** Recommended: Start or Finish from a group shortcut asks
-   before quitting apps (the link alert, Hide Instead), because a key press can be accidental and
-   doesn't show what it does; hiding never asks. Alternative: treat it as a click (no question).
-2. **What a shortcut can do.** Recommended: one shortcut per group with a chosen action — Show the
-   Popup (default), Open All, or Start (Finish when current). Alternatives: two shortcuts per group
-   (popup and Start/Finish); or Start without the Finish toggle.
-3. **Where shortcuts are set.** Recommended: in the group window (new Keyboard Shortcut section),
-   with a read-only Group Shortcuts overview and Change… buttons in Settings → Shortcuts & Siri.
-   Alternative: an editable list in Settings → Shortcuts & Siri only.
-4. **Archiving a standalone group.** Recommended: its app and Dock icon are removed, and restoring
-   brings them back (`restoresStandalone`). Alternatives: Standalone stays off after a restore; or
-   standalone groups can't be archived until Standalone is turned off.
-5. **Templates in backups.** Recommended: yes, under an optional `templates` key; Replace All
-   replaces templates only when the backup has them, Merge adds new ones. Alternative: templates
-   stay on this Mac and never go into backups.
-6. **Shortcuts from a backup.** Recommended: kept when they pass K1–K3, cleared on a conflict, and
-   counted in the import summary. Alternative: never imported (as folder terminals, C+D+E
-   DECISION 5), to be assigned again after a restore.
-7. **Starter templates.** Recommended: none in 0.9.0; templates come only from the user's groups.
-   Alternatives: a few built-in starters (for example Coding, Design, Writing, matched by bundle
-   identifier); or exporting and importing single templates as files.
+All seven were decided by the user on 2026-10-25 and match the recommendations this spec was
+written around. They are settled, not open.
+
+1. **Shortcut presses and quitting.** **Decision (2026-10-25):** Start or Finish from a group
+   shortcut asks before quitting apps (the link alert, Hide Instead); hiding settings never ask.
+   Reason: a key press can be accidental and doesn't show what it does. (User-decided.)
+2. **What a shortcut can do.** **Decision (2026-10-25):** one shortcut per group with a chosen
+   action: Show the Popup (default), Open All, or Start; Finish when the group is current.
+   Reason: one key per group keeps the recorder and the K rules simple. (User-decided.)
+3. **Where shortcuts are set.** **Decision (2026-10-25):** in the group window (new Keyboard
+   Shortcut section), with a read-only Group Shortcuts overview and Change… buttons in Settings →
+   Shortcuts & Siri. Reason: the shortcut belongs to the group, while the Shortcuts pane stays the
+   one place that lists every key. (User-decided.)
+4. **Archiving a standalone group.** **Decision (2026-10-25):** its app and Dock icon are removed,
+   and restoring brings them back (`restoresStandalone`). Reason: an archived group should leave
+   nothing in the Dock, and a restore should return it as it was. (User-decided.)
+5. **Templates in backups.** **Decision (2026-10-25):** templates go into backups under an
+   optional `templates` key; Replace All replaces templates only when the backup has them, Merge
+   adds new ones. Reason: templates are user work that a restore should not lose. (User-decided.)
+6. **Shortcuts from a backup.** **Decision (2026-10-25):** imported shortcuts are kept when they
+   pass K1–K3; conflicting ones are cleared and counted in the import summary. Reason: a restore
+   should bring back working shortcuts without ever breaking the key rules. (User-decided.)
+7. **Starter templates.** **Decision (2026-10-25):** none in 0.9.0; templates come only from the
+   user's own groups. Reason: built-in starters would need bundle-identifier matching and add
+   scope without being needed. (User-decided.)
