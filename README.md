@@ -265,7 +265,7 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   ID signed version must come from the running app's team), moves the running app to
   `updates/backups/`, puts the new one in its place and relaunches — putting the previous one back if that fails. The update window shows its
   progress and tells you when the app restarts. **Other Versions…** in Settings → Updates lists the
-  published releases and installs any of them the same way, older or newer (going back to a version without group items or without Start and Finish first copies `groups.json` and `preferences.json` next to themselves as `….pre-downgrade-<time>.json`, the last three kept, and the question warns when files, folders, Start/Finish settings, launch options or protected apps would be lost there); after going back,
+  published releases and installs any of them the same way, older or newer (going back to a version without group items, Start and Finish or group shortcuts first copies `groups.json` and `preferences.json` next to themselves as `….pre-downgrade-<time>.json`, the last three kept, and the question warns when files, folders, Start/Finish settings, launch options, protected apps, group shortcuts or archived groups would be lost there); after going back,
   automatic checks skip the newer versions until you go up again. See [CHANGELOG.md](CHANGELOG.md).
 - **Changelog** (Settings → Changelog): the release notes of the newest 30 GitHub releases, newest
   first (the newest open, the others a click away), with *Latest*, *Installed* and *Pre-release*
@@ -358,6 +358,13 @@ groups they write them without their kind and details (a later version recognize
 again by their location; the details are lost). Before **Other Versions…** installs one, the groups
 file is copied next to itself as `groups.pre-downgrade-<time>.json` (the last three copies are
 kept), and when the groups hold such items the install question says so.
+
+Versions before v0.9.0 don't know group keyboard shortcuts, archived groups or templates: they show
+archived groups as ordinary groups at the end of the list, and as soon as they save the groups
+(any edit) the shortcuts and the archive are gone for good (templates stay in `templates.json`, which
+they never open). Before **Other Versions…** installs one, `groups.json` and `preferences.json` are
+copied next to themselves (`….pre-downgrade-<time>.json`), and the question warns when a group has a
+shortcut, a group is archived or a template exists.
 
 ## Requirements
 
@@ -523,6 +530,10 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - With the v0.6.7 build (`build/release` of that tag): its group window shows the file as *Not
      found on this Mac · file:///…*, opening it reports it as not found, and a backup with files
      imports there without errors.
+   Going back past v0.9.0: with a group shortcut, an archived group or a template, Install v0.8.0
+   (dry run): the question says it doesn't know them; afterwards `groups.pre-downgrade-<time>.json`
+   and `preferences.pre-downgrade-<time>.json` match the current files. Without any of them: no
+   warning, but the copies all the same.
 5. **Aliases, tags and task notes** — with a standalone group, so a rebuild of its app shows.
    - Click a row's ⓘ in the group window, type an alias, tags (`finance, q3`) and two lines of notes,
      and press **Done**: the row shows the alias with *Name: …* and the tags, the popup and the Dock

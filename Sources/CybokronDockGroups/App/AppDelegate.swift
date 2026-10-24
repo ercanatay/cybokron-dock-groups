@@ -135,7 +135,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     )
     private lazy var aboutWindowController = AboutWindowController()
     private lazy var addWebsiteWindowController = AddWebsiteWindowController(store: store)
-    private lazy var updater = AutoUpdater(preferences: preferences, groups: store)
+    private lazy var updater = AutoUpdater(preferences: preferences, groups: store, templateCount: { [unowned self] in self.templates.templates.count })
     private lazy var updateWindowController = UpdateWindowController(updater: updater)
     private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(
         preferences: preferences,

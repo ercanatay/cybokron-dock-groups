@@ -765,6 +765,17 @@ copied aside as `groups.pre-downgrade-<time>.json` and `preferences.pre-downgrad
 | --- | --- |
 | `updates.otherVersions.switching.warning` | Version %@ doesn't know Start and Finish, launch options or protected apps. Copies of your groups and settings are kept before it's installed; Close All there quits protected apps, and saving there drops these settings. |
 
+## Settings → Updates → Other Versions…, going back to a version without group shortcuts (English only for now; `awaitingTranslation`: `updates.otherVersions.library.`)
+
+Added to the install question when going back to a version older than 0.9.0 while a group has a
+keyboard shortcut, a group is archived, or a template exists; the groups and preferences files are
+copied aside as `groups.pre-downgrade-<time>.json` and `preferences.pre-downgrade-<time>.json` either
+way (`templates.json` is never opened by that version and needs no copy).
+
+| Key | English |
+| --- | --- |
+| `updates.otherVersions.library.warning` | Version %@ doesn't know archived groups, group shortcuts or templates. Archived groups show there as ordinary groups, and editing groups there drops their shortcuts and which groups are archived. Copies of your groups and settings are kept before it's installed; templates stay for when you come back. |
+
 ## An item's alias, tags and task notes: the details editor, Edit Details…, the rows and the popup's tooltips (English only for now; `awaitingTranslation`: `item.details.`, `popup.search.`)
 
 The group window's details editor opens from a row's ⓘ button and from **Edit Details…** in the

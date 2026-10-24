@@ -935,6 +935,16 @@ enum L10n {
                     version
                 )
             }
+            /// Part of the question before installing a version older than
+            /// `ReleaseHistory.firstGroupShortcutsVersion` while a group has a shortcut, a group is
+            /// archived or a template exists.
+            static func libraryWarning(_ version: String) -> String {
+                tr(
+                    "updates.otherVersions.library.warning",
+                    "Version %@ doesn't know archived groups, group shortcuts or templates. Archived groups show there as ordinary groups, and editing groups there drops their shortcuts and which groups are archived. Copies of your groups and settings are kept before it's installed; templates stay for when you come back.",
+                    version
+                )
+            }
         }
 
         enum Backup {

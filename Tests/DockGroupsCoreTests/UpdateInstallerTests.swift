@@ -659,3 +659,103 @@ struct PreDowngradeSwitchingTests {
         }
     }
 }
+
+/// Going back to a version without group shortcuts, archived groups and templates: both files are
+/// copied aside, and the question warns when any of them is in use.
+@Suite("Update installer: copies of the groups before going back past group shortcuts")
+@MainActor
+struct PreDowngradeShortcutsTests {
+    private static func version(_ text: String) -> SemanticVersion { SemanticVersion(text)! }
+    private static let back = (target: version("0.8.0"), current: version("0.9.0"))
+    private static let shortcut = GroupShortcut(keys: KeyCombination(keyCode: 8, modifiers: [.control, .option]))!
+
+    private struct FailingPreferencesCopy: PreferencesPersisting {
+        struct Failure: Error {}
+        func loadPreferences() throws -> PopupPreferences? { nil }
+        func savePreferences(_ preferences: PopupPreferences) throws {}
+        func preserveUnreadableData() throws -> URL? { nil }
+        func preserveCopy(label: String) throws -> URL? { throw Failure() }
+    }
+
+    @Test func firstVersionIsThisWave() {
+        #expect(ReleaseHistory.firstGroupShortcutsVersion == Self.version("0.9.0"))
+        #expect(ReleaseHistory.lacksGroupShortcuts(Self.version("0.8.0")))
+        #expect(!ReleaseHistory.lacksGroupShortcuts(Self.version("0.9.0")))
+        #expect(DowngradeProtection.appliesToGroupShortcuts(installing: Self.back.target, over: Self.back.current))
+        #expect(DowngradeProtection.appliesToGroupShortcuts(installing: Self.back.target, over: nil))
+        #expect(!DowngradeProtection.appliesToGroupShortcuts(installing: Self.version("0.9.0"), over: Self.version("0.9.1")))
+        #expect(!DowngradeProtection.appliesToGroupShortcuts(installing: Self.version("0.8.0"), over: Self.version("0.7.0")))
+    }
+
+    @Test func warnsForEachKindOfDataOnItsOwnAndOnlyThen() {
+        let plain = [DockGroup(name: "Work")]
+        var shortcutGroup = DockGroup(name: "Work")
+        shortcutGroup.shortcut = Self.shortcut
+
+        func warns(_ groups: [DockGroup], archived: Int = 0, templates: Int = 0, installing: String = "0.8.0", over: String = "0.9.0") -> Bool {
+            DowngradeProtection.warnsAboutGroupLibrary(
+                installing: Self.version(installing), over: Self.version(over),
+                groups: groups, archivedCount: archived, templateCount: templates
+            )
+        }
+        #expect(!warns(plain))
+        #expect(!warns([]))
+        #expect(warns([shortcutGroup]))
+        #expect(warns(plain, archived: 1))
+        #expect(warns(plain, templates: 1))
+        #expect(!warns([shortcutGroup], archived: 2, templates: 2, installing: "0.9.0", over: "0.9.1"))
+        #expect(!warns([shortcutGroup], archived: 2, templates: 2, installing: "0.7.0", over: "0.6.0"))
+    }
+
+    @Test func goingBackFromNineCopiesGroupsAndPreferences() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let groupsURL = temporary.url.appending(path: "groups.json")
+        let preferencesURL = temporary.url.appending(path: "preferences.json")
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: groupsURL), saveDelay: .seconds(60))
+        let preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence(fileURL: preferencesURL), saveDelay: .seconds(60))
+        let group = groups.addGroup(named: "Coding")
+        _ = groups.setShortcut(Self.shortcut, forGroup: group.id)
+        _ = groups.archiveGroup(groups.addGroup(named: "Old").id)
+        preferences.update { $0.protectedApps = ProtectedApps([AppReference(bundleIdentifier: "com.apple.Music", name: "Music")]) }
+        groups.flushPendingSave()
+        preferences.flushPendingSave()
+
+        let copies = try DowngradeProtection.preserveCopies(
+            of: groups, and: preferences, installing: Self.back.target, over: Self.back.current
+        )
+
+        #expect(copies.count == 2)
+        let copiedGroups = try #require(copies.first { $0.lastPathComponent.hasPrefix("groups.pre-downgrade-") })
+        let copiedPreferences = try #require(copies.first { $0.lastPathComponent.hasPrefix("preferences.pre-downgrade-") })
+        #expect(try Data(contentsOf: copiedGroups) == Data(contentsOf: groupsURL))
+        #expect(try Data(contentsOf: copiedPreferences) == Data(contentsOf: preferencesURL))
+        #expect(try String(contentsOf: copiedGroups, encoding: .utf8).contains("\"shortcut\""))
+        #expect(try String(contentsOf: copiedGroups, encoding: .utf8).contains("\"archived\""))
+    }
+
+    @Test func noCopiesWhenNotGoingBackPastShortcuts() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: temporary.url.appending(path: "groups.json")), saveDelay: .zero)
+        let preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence(fileURL: temporary.url.appending(path: "preferences.json")), saveDelay: .zero)
+        groups.addGroup(named: "Work")
+        preferences.update { $0.protectedApps = ProtectedApps([AppReference(bundleIdentifier: "com.apple.Music", name: "Music")]) }
+
+        #expect(try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.version("0.9.0"), over: Self.version("0.9.1")).isEmpty)
+        #expect(try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.version("0.9.1"), over: Self.version("0.9.1")).isEmpty)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).sorted() == ["groups.json", "preferences.json"])
+    }
+
+    @Test func installIsBlockedWhenTheCopyFails() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: temporary.url.appending(path: "groups.json")), saveDelay: .zero)
+        groups.addGroup(named: "Work")
+        let preferences = PreferencesStore(persistence: FailingPreferencesCopy(), saveDelay: .zero)
+
+        #expect(throws: (any Error).self) {
+            try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.back.target, over: Self.back.current)
+        }
+    }
+}

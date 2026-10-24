@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Templates: Save as Template… keeps a group's items and settings under a name (up to 50; one of the same name can be replaced), the sidebar's + menu makes a new group from one, and Manage Templates… renames and deletes them
 - Backups include archived groups and templates, and the import question says what happens to yours; Merge adds the new ones, and merged groups whose shortcut another group has come in without it
 - Siri and the Shortcuts app say a group is archived instead of acting on it; Settings → Switching says when the current Focus names an archived group; the diagnostics report counts archived groups and templates
+- Going back from Other Versions… to a version older than 0.9.0 keeps a copy of the groups and the settings first (as for older ones), and the question warns when a group has a keyboard shortcut, a group is archived or a template exists: there the shortcuts and the archive are dropped on a save, archived groups show as ordinary groups, and templates stay for when you come back
 
 ## [0.8.0] - 2026-10-24
 

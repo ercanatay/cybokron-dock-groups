@@ -899,3 +899,6 @@
 "settings.backup.library.status.archived.other" = "Added %ld archived groups";
 "settings.backup.library.status.templates.one" = "Added 1 template";
 "settings.backup.library.status.templates.other" = "Added %ld templates";
+
+/* Settings → Updates → Other Versions…, going back to a version without group shortcuts, archived groups and templates (English only for now) */
+"updates.otherVersions.library.warning" = "Version %@ doesn't know archived groups, group shortcuts or templates. Archived groups show there as ordinary groups, and editing groups there drops their shortcuts and which groups are archived. Copies of your groups and settings are kept before it's installed; templates stay for when you come back.";

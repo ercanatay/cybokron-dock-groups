@@ -36,6 +36,16 @@ public enum ReleaseHistory {
         version < firstContextSwitchingVersion
     }
 
+    /// The first version with group keyboard shortcuts, archived groups and templates. An older one
+    /// ignores them, and drops shortcuts and the archive when it saves the groups
+    /// (`DowngradeProtection`); `templates.json` it never opens.
+    public static let firstGroupShortcutsVersion = SemanticVersion(major: 0, minor: 9, patch: 0)
+
+    /// Whether `version` predates `firstGroupShortcutsVersion`.
+    public static func lacksGroupShortcuts(_ version: SemanticVersion) -> Bool {
+        version < firstGroupShortcutsVersion
+    }
+
     /// The releases to list: neither drafts nor prereleases, one per version (the first listed
     /// wins), newest first.
     public static func installable(_ releases: [ReleaseInfo]) -> [ReleaseInfo] {

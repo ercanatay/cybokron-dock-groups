@@ -41,6 +41,7 @@ struct LocalizationTests {
         "core.templates.", "core.persistence.templates.",
         "groupWindow.shortcut.", "settings.shortcuts.groups.",
         "groupWindow.archive.", "templates.", "settings.backup.library.",
+        "updates.otherVersions.library.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

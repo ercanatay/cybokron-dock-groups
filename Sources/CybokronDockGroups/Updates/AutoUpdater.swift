@@ -70,6 +70,8 @@ final class AutoUpdater: ObservableObject {
     private let preferences: PreferencesStore
     /// The groups, copied aside before going back to a version without group items.
     private let groups: GroupStore
+    /// How many templates exist (read when the install question is built).
+    private let templateCount: @MainActor () -> Int
     private let feed: ReleaseFetching & ReleaseListFetching
     private let installer: UpdateInstaller
     private let statePersistence: JSONFileUpdateStatePersistence
@@ -89,11 +91,13 @@ final class AutoUpdater: ObservableObject {
     init(
         preferences: PreferencesStore,
         groups: GroupStore,
+        templateCount: @escaping @MainActor () -> Int = { 0 },
         installer: UpdateInstaller = UpdateInstaller(),
         statePersistence: JSONFileUpdateStatePersistence = JSONFileUpdateStatePersistence()
     ) {
         self.preferences = preferences
         self.groups = groups
+        self.templateCount = templateCount
         self.installer = installer
         self.statePersistence = statePersistence
         currentVersion = SemanticVersion(AppInfo.version)
@@ -328,6 +332,18 @@ final class AutoUpdater: ObservableObject {
         )
     }
 
+    /// Whether installing `version` goes back to a version that ignores group shortcuts, archived
+    /// groups and templates in use: the install question says so.
+    func warnsAboutGroupLibrary(installing version: SemanticVersion) -> Bool {
+        DowngradeProtection.warnsAboutGroupLibrary(
+            installing: version,
+            over: currentVersion,
+            groups: groups.groups,
+            archivedCount: groups.archivedGroups.count,
+            templateCount: templateCount()
+        )
+    }
+
     /// Clears the skipped versions, so automatic checks offer every newer release again.
     func clearSkippedVersions() {
         state.skippedVersions = []
@@ -371,7 +387,7 @@ final class AutoUpdater: ObservableObject {
                     bundleIdentifier: bundleIdentifier,
                     expectedTeamIdentifier: runningTeam
                 )
-                // Going back to a version without group items or without Start and Finish: a copy of
+                // Going back to a version without group items, Start and Finish or group shortcuts: a copy of
                 // the groups and of the settings first, which that version would rewrite without
                 // what it can't show. Without the copies, nothing is installed.
                 if let self {

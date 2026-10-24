@@ -14,6 +14,12 @@ import Foundation
 /// launch options, and the protected apps in `preferences.json`. Both files are copied
 /// (`preferences.pre-downgrade-<timestamp>.json` too), and the question warns when any of them is used.
 ///
+/// Going back to a version older than `ReleaseHistory.firstGroupShortcutsVersion` is protected
+/// likewise for what it ignores and then drops: group shortcuts and which groups are archived (it
+/// shows them as ordinary groups). The same two files are copied, and the question warns when a
+/// group has a shortcut, a group is archived or a template exists (templates stay in
+/// `templates.json`, which that version never opens, so that file needs no copy).
+///
 /// `UpdateInstaller` replaces the app only and never reads the settings; this happens around it.
 public enum DowngradeProtection {
     /// The label of the copies: `groups.pre-downgrade-<timestamp>.json`.
@@ -46,6 +52,31 @@ public enum DowngradeProtection {
         return current.map { target < $0 } ?? true
     }
 
+    /// Whether installing `target` while `current` runs goes back to a version without group
+    /// shortcuts, archived groups and templates.
+    public static func appliesToGroupShortcuts(installing target: SemanticVersion, over current: SemanticVersion?) -> Bool {
+        guard ReleaseHistory.lacksGroupShortcuts(target) else { return false }
+        return current.map { target < $0 } ?? true
+    }
+
+    /// Whether an active group has a shortcut, any group is archived, or a template exists.
+    public static func usesGroupLibrary(_ groups: [DockGroup], archivedCount: Int, templateCount: Int) -> Bool {
+        archivedCount > 0 || templateCount > 0 || groups.contains { $0.shortcut != nil }
+    }
+
+    /// Whether the install question warns that `target` ignores (and, on a save, drops) group
+    /// shortcuts and the archive.
+    public static func warnsAboutGroupLibrary(
+        installing target: SemanticVersion,
+        over current: SemanticVersion?,
+        groups: [DockGroup],
+        archivedCount: Int,
+        templateCount: Int
+    ) -> Bool {
+        appliesToGroupShortcuts(installing: target, over: current)
+            && usesGroupLibrary(groups, archivedCount: archivedCount, templateCount: templateCount)
+    }
+
     /// Whether the groups or preferences use what a version without Start and Finish drops: an
     /// item with a delay or opener, a group with Start or Finish settings other than the default,
     /// or protected apps.
@@ -67,8 +98,8 @@ public enum DowngradeProtection {
     }
 
     /// Copies the groups file and the preferences file aside before `target` is installed over
-    /// `current`, when that goes back to a version without Start and Finish (which also covers
-    /// going back to one without group items). Either copy failing throws, and nothing is installed.
+    /// `current`, when that goes back to a version without group shortcuts or without Start and Finish
+    /// (which also covers going back to one without group items). Either copy failing throws, and nothing is installed.
     /// - Returns: The copies' locations; none for a file that hasn't been saved yet.
     @MainActor
     @discardableResult
@@ -78,7 +109,8 @@ public enum DowngradeProtection {
         installing target: SemanticVersion,
         over current: SemanticVersion?
     ) throws -> [URL] {
-        guard appliesToContextSwitching(installing: target, over: current) else { return [] }
+        guard appliesToContextSwitching(installing: target, over: current)
+            || appliesToGroupShortcuts(installing: target, over: current) else { return [] }
         return try [store.preserveCopy(label: copyLabel), preferences.preserveCopy(label: copyLabel)].compactMap { $0 }
     }
 
