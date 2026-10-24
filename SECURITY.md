@@ -33,7 +33,11 @@ is rate limited; a start or finish link that would quit apps asks first too (or 
 instead), and protected apps are never quit by Close All, Start or Finish, whoever asks. An app
 chosen to open an item is kept by bundle identifier only and checked each time it's used: it must
 be an app macOS lists for the item that doesn't run what it opens (Terminal and iTerm2 only for
-folders, and never from a backup); otherwise the item isn't opened.
+folders, and never from a backup); otherwise the item isn't opened. A group's keyboard shortcut is a
+hot key the app takes only while it runs, and only a key press acts on it; keys that typing, editing
+or macOS need (fewer than two of ⌃, ⌥ and ⌘; Escape, Return, Tab, Space, Delete; macOS's own
+shortcuts) are refused wherever they come from, so a groups file or backup can't take ⌘C or ⌘Q,
+and starting or finishing a group from one asks before quitting apps.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
 `groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.

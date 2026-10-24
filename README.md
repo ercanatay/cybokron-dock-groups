@@ -135,6 +135,18 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   not let the app register them, it watches for the key presses instead, which in other apps
   needs Accessibility access (Privacy & Security → Accessibility) and lets the app in front receive
   them too; Settings → Shortcuts & Siri then says so, without the system's prompt.
+- **A keyboard shortcut for each group**, in the group window's Keyboard Shortcut section: click the
+  field and press the keys — at least two of ⌃, ⌥ and ⌘ plus a key (Escape cancels, Delete removes
+  it) — then choose what pressing it does: **Show the Popup**, **Open All**, or **Start** (Finish
+  when the group is current; when that would quit apps it asks first, as a link does). It works in
+  every app while the app is running, as a hot key: no Accessibility access, and the app in front
+  doesn't receive the key press. Keys typing and apps need (⌘C, ⌥E, ⌃A…), macOS's own shortcuts
+  (Lock Screen, screenshots, those turned on in System Settings → Keyboard → Keyboard Shortcuts),
+  the number shortcuts' keys and another group's shortcut aren't taken; the field says why, and a
+  shortcut that stops working (say, macOS took its keys) says why under it. Other apps' menu
+  shortcuts can't be seen: pick keys your apps don't use. Settings → Shortcuts & Siri lists every
+  group's shortcut with Change…. A group's own shortcut follows it when the list is reordered,
+  unlike the number shortcuts.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
   optionally force quit; it asks there first, every time), **Show Group** (the popup), **Start
   Group** and **Finish Group** actions, and phrases such as “Launch Work in Cybokron Dock Groups” or

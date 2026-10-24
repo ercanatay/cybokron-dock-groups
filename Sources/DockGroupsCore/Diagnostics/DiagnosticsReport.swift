@@ -92,6 +92,8 @@ public struct DiagnosticsInfo: Sendable {
     public var updates: UpdateDetails
     /// The user's groups; only their names, item counts and whether they're standalone are reported.
     public var groups: [DockGroup]
+    /// The status of each group shortcut (`GroupShortcutStatus`); only counts are reported.
+    public var groupShortcutStatuses: [DockGroup.ID: GroupShortcutStatus]
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
     public var generatedAt: Date
@@ -104,6 +106,7 @@ public struct DiagnosticsInfo: Sendable {
         preferences: PopupPreferences,
         updates: UpdateDetails,
         groups: [DockGroup],
+        groupShortcutStatuses: [DockGroup.ID: GroupShortcutStatus] = [:],
         recentErrors: [String],
         generatedAt: Date = Date()
     ) {
@@ -114,6 +117,7 @@ public struct DiagnosticsInfo: Sendable {
         self.preferences = preferences
         self.updates = updates
         self.groups = groups
+        self.groupShortcutStatuses = groupShortcutStatuses
         self.recentErrors = recentErrors
         self.generatedAt = generatedAt
     }
@@ -165,6 +169,7 @@ public enum DiagnosticsReport {
         lines.append("Most Used: \(onOff(preferences.showsMostUsed)) (\(preferences.mostUsedLimit) apps)")
         lines.append("Theme: \(preferences.theme.rawValue), frosted glass \(onOff(preferences.usesFrostedGlass))")
         lines.append("Global shortcuts: \(onOff(preferences.shortcutsEnabled))")
+        lines.append("Group shortcuts: \(describeGroupShortcuts(in: info))")
         lines.append("Standalone Dock menus: \(onOff(preferences.showsStandaloneDockMenus))")
         lines.append("Restore windows of running apps: \(onOff(preferences.restoresWindowsOfRunningApps))")
         lines.append("Language: \(preferences.language.rawValue)")
@@ -231,6 +236,14 @@ public enum DiagnosticsReport {
     }
 
     private static func onOff(_ value: Bool) -> String { value ? "on" : "off" }
+
+    /// "none", or "3 (2 on, 1 off)": counts only — no names or keys.
+    private static func describeGroupShortcuts(in info: DiagnosticsInfo) -> String {
+        let ids = info.groups.filter { $0.shortcut != nil }.map(\.id)
+        guard !ids.isEmpty else { return "none" }
+        let on = ids.filter { info.groupShortcutStatuses[$0] == .on }.count
+        return "\(ids.count) (\(on) on, \(ids.count - on) off)"
+    }
 
     /// "3 apps" when every item is an app, otherwise "5 items (3 apps, 1 website, 1 file)".
     private static func describeCount(of items: [GroupItem]) -> String {

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A keyboard shortcut for each group, set in the group window's new Keyboard Shortcut section: click the field and press the keys (at least two of ⌃, ⌥ and ⌘ plus a key; Escape cancels, Delete removes it), then choose what pressing it does: show the popup, Open All, or Start (Finish when the group is current). It works in every app as a hot key, without Accessibility access; the number shortcuts stay as they are
+- Keys a group shortcut can't take are refused with the reason: those typing, editing and menus need, macOS's own shortcuts (built in, and those turned on in System Settings → Keyboard → Keyboard Shortcuts), the number shortcuts' keys, another group's shortcut. A shortcut that stops working says why in the group window
+- Settings → Shortcuts & Siri lists the groups' shortcuts, what they do and whether they work, with Change… to each group's settings
+- Starting or finishing a group from its shortcut asks first when it would quit apps, as a link does (Hide Instead or Cancel); hiding never asks
+- The menu bar menu's tooltip of a group names its own shortcut too, and the diagnostics report counts the group shortcuts (how many, how many work)
+
 ## [0.8.0] - 2026-10-24
 
 ### Added

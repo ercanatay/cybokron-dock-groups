@@ -2,13 +2,17 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// Global keyboard shortcuts, plus where else groups can be controlled from: what to ask Siri for
-/// a group, the Shortcuts app and the URL scheme's links, each phrase and link with a Copy button.
-/// The App Intents themselves are defined in `DockGroupsShortcuts`; this only spells them out.
+/// Global keyboard shortcuts — the number shortcuts, and a read-only list of the groups' own
+/// shortcuts, which are set in each group's settings — plus where else groups can be controlled
+/// from: what to ask Siri for a group, the Shortcuts app and the URL scheme's links, each phrase and
+/// link with a Copy button. The App Intents themselves are defined in `DockGroupsShortcuts`; this
+/// only spells them out.
 struct ShortcutsSettingsView: View {
     @ObservedObject var preferences: PreferencesStore
     @ObservedObject var store: GroupStore
     @ObservedObject var shortcuts: GlobalShortcutMonitor
+    /// Opens the group window on a group's settings, where its shortcut is changed.
+    let showGroupSettings: (DockGroup.ID) -> Void
 
     /// The group whose phrases and links are shown; the first group when unset or deleted.
     @State private var invocationGroupID: DockGroup.ID?
@@ -27,12 +31,16 @@ struct ShortcutsSettingsView: View {
             if settings.shortcutsEnabled {
                 assignedGroupsSection
             }
+            groupShortcutsSection
             siriSection
             linksSection
         }
         .formStyle(.grouped)
         .frame(width: 480)
-        .onAppear { shortcuts.refreshTrust() }
+        .onAppear {
+            shortcuts.refreshTrust()
+            shortcuts.refreshSystemShortcuts()
+        }
     }
 
     // MARK: - Sections
@@ -118,12 +126,70 @@ struct ShortcutsSettingsView: View {
         } header: {
             Text(L10n.Settings.Shortcuts.assignedHeader)
         } footer: {
-            Text(store.groups.count > GroupShortcuts.digits.upperBound
-                ? L10n.Settings.Shortcuts.assignedFooterLimit
-                : L10n.Settings.Shortcuts.assignedFooter)
+            Text(verbatim: [
+                store.groups.count > GroupShortcuts.digits.upperBound
+                    ? L10n.Settings.Shortcuts.assignedFooterLimit
+                    : L10n.Settings.Shortcuts.assignedFooter,
+                L10n.Settings.Shortcuts.Groups.renumber,
+            ].joined(separator: " "))
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    /// The groups' own shortcuts, read-only: each with its keys, what it does and whether it
+    /// works, and Change… to its group's settings (spec §3.2).
+    private var groupShortcutsSection: some View {
+        let assigned = store.groups.filter { $0.shortcut != nil }
+        return Section {
+            if assigned.isEmpty {
+                Text(L10n.Settings.Shortcuts.Groups.none)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(assigned) { group in
+                    groupShortcutRow(group)
+                }
+            }
+        } header: {
+            Text(L10n.Settings.Shortcuts.Groups.header)
+        } footer: {
+            Text(L10n.Settings.Shortcuts.Groups.footer(AppInfo.name))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private func groupShortcutRow(_ group: DockGroup) -> some View {
+        if let shortcut = group.shortcut {
+            let title = KeyNames.title(for: shortcut.keys)
+            let status = shortcuts.groupStatuses[group.id] ?? .paused
+            LabeledContent {
+                HStack(spacing: 8) {
+                    Text(verbatim: title)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                    Image(systemName: status.isOn ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                        .foregroundStyle(status.isOn ? Color.green : Color.orange)
+                        .help(statusMessage(status, title: title))
+                        .accessibilityLabel(statusMessage(status, title: title))
+                    Button(L10n.Settings.Shortcuts.Groups.change) { showGroupSettings(group.id) }
+                        .help(L10n.Settings.Shortcuts.Groups.changeHelp(group.name))
+                }
+            } label: {
+                Text(verbatim: "\(group.emoji)  \(group.name)")
+                    .lineLimit(1)
+                Text(shortcut.action.title)
+            }
+        }
+    }
+
+    private func statusMessage(_ status: GroupShortcutStatus, title: String) -> String {
+        var owner: String?
+        if case .off(.takenByGroup(let id)) = status {
+            owner = store.group(withID: id)?.name
+        }
+        return status.message(keyTitle: title, otherGroupName: owner)
     }
 
     private var siriSection: some View {

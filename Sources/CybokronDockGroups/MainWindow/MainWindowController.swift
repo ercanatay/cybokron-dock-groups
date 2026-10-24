@@ -45,6 +45,7 @@ final class MainWindowController: NSWindowController {
         icons: AppIconProviding,
         standalone: StandaloneController,
         session: ContextSession,
+        shortcuts: GlobalShortcutMonitor,
         actions: MainWindowView.Actions
     ) {
         self.store = store
@@ -61,6 +62,7 @@ final class MainWindowController: NSWindowController {
                 tiles: tiles,
                 standalone: standalone,
                 session: session,
+                shortcuts: shortcuts,
                 actions: actions,
                 selection: selection,
                 items: items

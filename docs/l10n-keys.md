@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-723 keys.
+741 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1061,3 +1061,28 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `core.backup.library.keepsTemplates` | It has no templates; yours are kept. |
 | `core.backup.library.mergesTemplates.one` | It adds 1 template. |
 | `core.backup.library.mergesTemplates.other` | It adds %ld templates. |
+
+## A group's own keyboard shortcut in the app: the group window's Keyboard Shortcut section with its recorder, and Settings → Shortcuts & Siri → Group Shortcuts (English only for now; `awaitingTranslation`: `groupWindow.shortcut.`, `settings.shortcuts.groups.`)
+
+Why keys can't be a shortcut, and whether a shortcut works, are `core.shortcut.*` texts. `settings.shortcuts.groups.renumber` follows the number shortcuts' footer.
+
+| Key | English |
+| --- | --- |
+| `groupWindow.shortcut.section` | Keyboard Shortcut |
+| `groupWindow.shortcut.label` | Shortcut |
+| `groupWindow.shortcut.record` | Record Shortcut |
+| `groupWindow.shortcut.recording` | Type a shortcut… |
+| `groupWindow.shortcut.recordingHelp` | Press the keys: at least two of Control, Option and Command, and a key. Escape cancels; Delete removes the shortcut. |
+| `groupWindow.shortcut.fieldHelp` | Click, then press the keys of a shortcut that works in every app. |
+| `groupWindow.shortcut.remove` | Remove Shortcut |
+| `groupWindow.shortcut.whenPressed` | When pressed |
+| `groupWindow.shortcut.none` | No shortcut yet. Record one to show, open or start this group from any app. |
+| `groupWindow.shortcut.startNote` | Starting or finishing asks first when it would quit apps; hiding, the default, doesn't ask. |
+| `groupWindow.shortcut.accessibility` | Keyboard shortcut: %@ |
+| `groupWindow.shortcut.accessibility.none` | Keyboard shortcut: none |
+| `settings.shortcuts.groups.header` | Group Shortcuts |
+| `settings.shortcuts.groups.none` | No group has its own shortcut yet. |
+| `settings.shortcuts.groups.change` | Change… |
+| `settings.shortcuts.groups.changeHelp` | Change the shortcut of “%@” in its settings. |
+| `settings.shortcuts.groups.footer` | Each group can have its own shortcut, set in its settings. These keys work in every app while %@ is running, and the app in front doesn't receive them. |
+| `settings.shortcuts.groups.renumber` | Deleting or moving a group renumbers the groups after it; a group's own keyboard shortcut stays the same. |

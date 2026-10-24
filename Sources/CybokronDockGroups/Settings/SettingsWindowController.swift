@@ -29,13 +29,15 @@ final class SettingsWindowController: NSWindowController {
         runningApps: RunningAppsMonitor,
         icons: AppIconProviding,
         isStatusItemShown: @escaping () -> Bool,
-        groupsRestored: @escaping ([DockGroup]) -> Void
+        groupsRestored: @escaping ([DockGroup]) -> Void,
+        showGroupSettings: @escaping (DockGroup.ID) -> Void
     ) {
         let backup = SettingsBackupController(store: store, preferences: preferences, groupsRestored: groupsRestored)
         let diagnostics = DiagnosticsController(
             preferences: preferences,
             store: store,
             updater: updater,
+            shortcuts: shortcuts,
             isStatusItemShown: isStatusItemShown
         )
         // Reads the saved release list now, so the Changelog pane shows it at once.
@@ -56,6 +58,7 @@ final class SettingsWindowController: NSWindowController {
                 backup: backup,
                 diagnostics: diagnostics,
                 changelog: changelog,
+                showGroupSettings: showGroupSettings,
                 paneHeight: Self.idealPaneHeight
             )
         )
@@ -174,6 +177,8 @@ private struct SettingsView: View {
     let backup: SettingsBackupController
     let diagnostics: DiagnosticsController
     let changelog: ChangelogService
+    /// Opens the group window on a group's settings (Shortcuts & Siri → Group Shortcuts → Change…).
+    let showGroupSettings: (DockGroup.ID) -> Void
     /// Set by `SettingsWindowController` to fit the screen.
     var paneHeight: CGFloat
 
@@ -206,7 +211,7 @@ private struct SettingsView: View {
         case .popup:
             PopupSettingsView(preferences: preferences)
         case .shortcuts:
-            ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts)
+            ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts, showGroupSettings: showGroupSettings)
         case .switching:
             SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)
         case .mostUsed:

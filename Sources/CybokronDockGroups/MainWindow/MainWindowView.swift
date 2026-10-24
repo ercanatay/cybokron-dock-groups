@@ -48,6 +48,8 @@ struct MainWindowView: View {
     let standalone: StandaloneController
     /// The current group, for the Start and Finish section.
     let session: ContextSession
+    /// The group shortcuts, for the Keyboard Shortcut section.
+    let shortcuts: GlobalShortcutMonitor
     let actions: Actions
     @ObservedObject var selection: GroupWindowSelection
     /// Where the selected group's items are, their icons and Quick Look.
@@ -78,6 +80,7 @@ struct MainWindowView: View {
                     store: store,
                     standalone: standalone,
                     session: session,
+                    shortcuts: shortcuts,
                     group: group,
                     tiles: tiles,
                     actions: actions,

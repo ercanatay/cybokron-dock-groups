@@ -7,7 +7,8 @@ import OSLog
 /// Owns the app's long-lived objects. The app is a menu bar utility (`LSUIElement`): it has no Dock
 /// icon, and its windows open from the menu bar or when the app is opened again while running.
 /// Group popups also open from the global shortcuts, Siri and Shortcuts, and `cybokrondockgroups:`
-/// URLs. App launches are counted for the Most Used list while it's turned on. Standalone groups get their own
+/// URLs; a group's own keyboard shortcut shows its popup, opens it or starts it
+/// (`performGroupShortcut`). App launches are counted for the Most Used list while it's turned on. Standalone groups get their own
 /// apps with their own Dock icons (`StandaloneController`); those run with `AgentAppDelegate`.
 /// `AutoUpdater` looks for new releases on GitHub (only here, never in an agent). A second copy of
 /// the app, launched while one runs, hands its URLs to the running copy and quits (`SecondCopyHandoff`).
@@ -89,6 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             icons: icons,
             standalone: standalone,
             session: session,
+            shortcuts: shortcutMonitor,
             actions: MainWindowView.Actions(
                 openAll: { [weak self] group in self?.openAll(group) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
@@ -113,15 +115,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         icons: icons,
         isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil },
         // Standalone groups from a backup get their Dock tiles instead of being turned off.
-        groupsRestored: { [weak self] groups in self?.standalone.adoptRestoredGroups(groups) }
+        groupsRestored: { [weak self] groups in self?.standalone.adoptRestoredGroups(groups) },
+        showGroupSettings: { [weak self] id in
+            _ = self?.mainWindowController.showSettings(ofGroup: id.uuidString)
+        }
     )
     private lazy var aboutWindowController = AboutWindowController()
     private lazy var addWebsiteWindowController = AddWebsiteWindowController(store: store)
     private lazy var updater = AutoUpdater(preferences: preferences, groups: store)
     private lazy var updateWindowController = UpdateWindowController(updater: updater)
-    private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(preferences: preferences) { [weak self] digit in
-        self?.togglePopup(forShortcut: digit)
-    }
+    private lazy var shortcutMonitor: GlobalShortcutMonitor = GlobalShortcutMonitor(
+        preferences: preferences,
+        store: store,
+        onShortcut: { [weak self] digit in self?.togglePopup(forShortcut: digit) },
+        onGroupShortcut: { [weak self] id, action in self?.performGroupShortcut(id, action: action) }
+    )
     private lazy var popupController: PopupPanelController = PopupPanelController(
         store: store,
         preferences: preferences,
@@ -389,6 +397,52 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popupController.toggle(groupID: group.id)
     }
 
+    /// A group's own shortcut (spec §1.4): shows or hides its popup, opens its items, or starts it —
+    /// finishes it when it's the current group (`ShortcutTransition`). Start and Finish run as
+    /// `TransitionTrigger.shortcut`: when they'd quit apps they ask first with the link's alert
+    /// (Hide Instead, Cancel). Only active groups have their shortcuts registered.
+    private func performGroupShortcut(_ id: DockGroup.ID, action: GroupShortcutAction) {
+        guard let group = store.group(withID: id) else {
+            logger.notice("Group shortcut of \(id, privacy: .public): no such group")
+            return
+        }
+        switch action {
+        case .showPopup:
+            popupController.toggle(groupID: id)
+        case .openAll:
+            openAll(group)
+        case .startOrFinish:
+            switch ShortcutTransition.forGroup(id, in: session, at: Date()) {
+            case .start:
+                transitionFromShortcut(group, starting: true)
+            case .finish:
+                transitionFromShortcut(group, starting: false)
+            case .nothing:
+                logger.notice("Group shortcut of \(id, privacy: .public): started just now, nothing to do")
+            }
+        }
+    }
+
+    private func transitionFromShortcut(_ group: DockGroup, starting: Bool) {
+        Task { @MainActor in
+            do {
+                let report = starting
+                    ? try await switcher.start(group.id, trigger: .shortcut)
+                    : try await switcher.finish(group.id, trigger: .shortcut)
+                switch report.outcome {
+                case .done, .repeated:
+                    LaunchReportPresenter.presentProblems(in: report)
+                case .declined:
+                    logger.notice("\(starting ? "Start" : "Finish", privacy: .public) of group \(group.id, privacy: .public) from its shortcut: cancelled")
+                case .dropped:
+                    logger.notice("\(starting ? "Start" : "Finish", privacy: .public) of group \(group.id, privacy: .public) from its shortcut: another question is showing")
+                }
+            } catch {
+                logger.error("\(starting ? "Starting" : "Finishing", privacy: .public) group \(group.id, privacy: .public) from its shortcut failed: \(String(describing: error), privacy: .public)")
+            }
+        }
+    }
+
     /// A copy of the app's icon sized for a menu item; the shared icon keeps its size.
     private func menuIcon(for app: AppReference) -> NSImage {
         let icon = (icons.icon(for: app).copy() as? NSImage) ?? NSImage()
@@ -396,12 +450,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return icon
     }
 
+    /// The group's shortcuts for its menu bar menu item's tooltip: its number shortcut and its own
+    /// shortcut while that works ("⌃⌥1, ⌃⌥C"; with what the own one does when that isn't showing the
+    /// popup). Not the item's key equivalent, which would break its ⌥, ⇧⌥ and ⌃⌥ alternates.
     private func shortcutTitle(for group: DockGroup) -> String? {
         let settings = preferences.preferences
-        guard settings.shortcutsEnabled, let digit = GroupShortcuts.digit(forGroup: group.id, in: store.groups) else {
-            return nil
+        var titles: [String] = []
+        if settings.shortcutsEnabled, let digit = GroupShortcuts.digit(forGroup: group.id, in: store.groups) {
+            titles.append(GroupShortcuts.title(digit: digit, modifiers: settings.shortcutModifiers))
         }
-        return GroupShortcuts.title(digit: digit, modifiers: settings.shortcutModifiers)
+        if let shortcut = group.shortcut, shortcutMonitor.groupStatuses[group.id] == .on {
+            let keys = KeyNames.title(for: shortcut.keys)
+            titles.append(shortcut.action == .showPopup ? keys : "\(keys) (\(shortcut.action.title))")
+        }
+        return titles.isEmpty ? nil : titles.joined(separator: ", ")
     }
 
     // MARK: - URL scheme

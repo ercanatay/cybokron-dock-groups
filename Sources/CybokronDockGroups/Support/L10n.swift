@@ -1405,6 +1405,64 @@ extension L10n {
     }
 }
 
+// MARK: - Group shortcuts
+
+extension L10n.GroupWindow {
+    /// The group window's Keyboard Shortcut section (spec §3.1). The refusal and status texts come
+    /// from DockGroupsCore (`GroupShortcutRefusal`, `GroupShortcutStatus`).
+    enum Shortcut {
+        static var section: String { tr("groupWindow.shortcut.section", "Keyboard Shortcut") }
+        static var label: String { tr("groupWindow.shortcut.label", "Shortcut") }
+        static var record: String { tr("groupWindow.shortcut.record", "Record Shortcut") }
+        static var recording: String { tr("groupWindow.shortcut.recording", "Type a shortcut…") }
+        static var recordingHelp: String {
+            tr(
+                "groupWindow.shortcut.recordingHelp",
+                "Press the keys: at least two of Control, Option and Command, and a key. Escape cancels; Delete removes the shortcut."
+            )
+        }
+        static var fieldHelp: String {
+            tr("groupWindow.shortcut.fieldHelp", "Click, then press the keys of a shortcut that works in every app.")
+        }
+        static var remove: String { tr("groupWindow.shortcut.remove", "Remove Shortcut") }
+        static var whenPressed: String { tr("groupWindow.shortcut.whenPressed", "When pressed") }
+        static var none: String {
+            tr("groupWindow.shortcut.none", "No shortcut yet. Record one to show, open or start this group from any app.")
+        }
+        static var startNote: String {
+            tr("groupWindow.shortcut.startNote", "Starting or finishing asks first when it would quit apps; hiding, the default, doesn't ask.")
+        }
+        static func accessibility(_ shortcut: String) -> String { tr("groupWindow.shortcut.accessibility", "Keyboard shortcut: %@", shortcut) }
+        static var accessibilityNone: String { tr("groupWindow.shortcut.accessibility.none", "Keyboard shortcut: none") }
+    }
+}
+
+extension L10n.Settings.Shortcuts {
+    /// Settings → Shortcuts & Siri → Group Shortcuts (spec §3.2): read-only, set in each group.
+    enum Groups {
+        static var header: String { tr("settings.shortcuts.groups.header", "Group Shortcuts") }
+        static var none: String { tr("settings.shortcuts.groups.none", "No group has its own shortcut yet.") }
+        static var change: String { tr("settings.shortcuts.groups.change", "Change…") }
+        static func changeHelp(_ groupName: String) -> String {
+            tr("settings.shortcuts.groups.changeHelp", "Change the shortcut of “%@” in its settings.", groupName)
+        }
+        static func footer(_ appName: String) -> String {
+            tr(
+                "settings.shortcuts.groups.footer",
+                "Each group can have its own shortcut, set in its settings. These keys work in every app while %@ is running, and the app in front doesn't receive them.",
+                appName
+            )
+        }
+        /// Added to the number shortcuts' footer.
+        static var renumber: String {
+            tr(
+                "settings.shortcuts.groups.renumber",
+                "Deleting or moving a group renumbers the groups after it; a group's own keyboard shortcut stays the same."
+            )
+        }
+    }
+}
+
 // MARK: - Lookup
 
 /// `L10n`'s lookups; the key and English text must be literals (`LocalizationTests` read them).

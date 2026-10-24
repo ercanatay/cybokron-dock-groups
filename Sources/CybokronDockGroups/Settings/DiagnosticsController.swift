@@ -25,14 +25,16 @@ final class DiagnosticsController: ObservableObject {
     private let preferences: PreferencesStore
     private let store: GroupStore
     private let updater: AutoUpdater
+    private let shortcuts: GlobalShortcutMonitor
     private let isStatusItemShown: () -> Bool
     private var feedbackReset: Task<Void, Never>?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Diagnostics")
 
-    init(preferences: PreferencesStore, store: GroupStore, updater: AutoUpdater, isStatusItemShown: @escaping () -> Bool) {
+    init(preferences: PreferencesStore, store: GroupStore, updater: AutoUpdater, shortcuts: GlobalShortcutMonitor, isStatusItemShown: @escaping () -> Bool) {
         self.preferences = preferences
         self.store = store
         self.updater = updater
+        self.shortcuts = shortcuts
         self.isStatusItemShown = isStatusItemShown
     }
 
@@ -125,6 +127,7 @@ final class DiagnosticsController: ObservableObject {
                 skippedVersions: state.skippedVersions
             ),
             groups: store.groups,
+            groupShortcutStatuses: shortcuts.groupStatuses,
             recentErrors: []
         )
     }

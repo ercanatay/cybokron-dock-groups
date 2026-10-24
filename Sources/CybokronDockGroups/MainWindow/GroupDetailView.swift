@@ -3,8 +3,8 @@ import DockGroupsCore
 import SwiftUI
 
 /// Settings of one group: name, emoji, member items (apps, files, folders and websites), what
-/// Start and Finish do, Dock tile, standalone Dock icon and popup preferences. Every change goes
-/// straight to the store, which saves it.
+/// Start and Finish do, its keyboard shortcut, Dock tile, standalone Dock icon and popup
+/// preferences. Every change goes straight to the store, which saves it.
 ///
 /// Where the items are is checked when the group shows, when its items change, when the window
 /// comes to the front (`GroupWindowItems`) and when a volume is connected or ejected — never while
@@ -22,6 +22,8 @@ struct GroupDetailView: View {
     @ObservedObject var standalone: StandaloneController
     /// The current group, for the Start and Finish section.
     @ObservedObject var session: ContextSession
+    /// The group shortcuts' statuses and recording, for the Keyboard Shortcut section.
+    let shortcuts: GlobalShortcutMonitor
     let group: DockGroup
     let tiles: TileImageCache
     let actions: MainWindowView.Actions
@@ -68,6 +70,7 @@ struct GroupDetailView: View {
         store: GroupStore,
         standalone: StandaloneController,
         session: ContextSession,
+        shortcuts: GlobalShortcutMonitor,
         group: DockGroup,
         tiles: TileImageCache,
         actions: MainWindowView.Actions,
@@ -77,6 +80,7 @@ struct GroupDetailView: View {
         self.store = store
         self.standalone = standalone
         self.session = session
+        self.shortcuts = shortcuts
         self.group = group
         self.tiles = tiles
         self.actions = actions
@@ -92,6 +96,7 @@ struct GroupDetailView: View {
             identitySection
             itemsSection
             switchingSection
+            GroupShortcutSection(store: store, shortcuts: shortcuts, group: group)
             tileSection
             standaloneSection
             popupSection
