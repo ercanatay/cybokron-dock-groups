@@ -94,13 +94,39 @@ struct AppIconProviderTests {
         #expect(harness.provider.isInstalled(Self.github))
     }
 
+    /// The RGBA pixels of an icon drawn at a fixed size: a stable stand-in for "the same picture",
+    /// unlike `tiffRepresentation`, whose size varies with the representations the system hands back.
+    private static func pixels(of image: NSImage, side: Int = 64) -> [UInt8] {
+        guard let bitmap = NSBitmapImageRep(
+            bitmapDataPlanes: nil, pixelsWide: side, pixelsHigh: side, bitsPerSample: 8,
+            samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
+            bytesPerRow: side * 4, bitsPerPixel: 32
+        ), let context = NSGraphicsContext(bitmapImageRep: bitmap) else { return [] }
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = context
+        context.imageInterpolation = .high
+        image.draw(in: NSRect(x: 0, y: 0, width: side, height: side), from: .zero, operation: .copy, fraction: 1)
+        context.flushGraphics()
+        NSGraphicsContext.restoreGraphicsState()
+        guard let data = bitmap.bitmapData else { return [] }
+        return Array(UnsafeBufferPointer(start: data, count: side * side * 4))
+    }
+
     @Test func genericIconsComeFromTheKindAndTheExtension() {
         let harness = Harness()
         let workspace = NSWorkspace.shared
         let provider = harness.provider
-        #expect(provider.genericIcon(for: Self.mail).tiffRepresentation == workspace.icon(for: .applicationBundle).tiffRepresentation)
-        #expect(provider.genericIcon(for: Self.projects).tiffRepresentation == workspace.icon(for: .folder).tiffRepresentation)
-        #expect(provider.genericIcon(for: Self.report).tiffRepresentation == workspace.icon(for: .pdf).tiffRepresentation)
+        let app = Self.pixels(of: provider.genericIcon(for: Self.mail))
+        let folder = Self.pixels(of: provider.genericIcon(for: Self.projects))
+        let pdf = Self.pixels(of: provider.genericIcon(for: Self.report))
+
+        #expect(!app.isEmpty && !folder.isEmpty && !pdf.isEmpty)
+        #expect(app == Self.pixels(of: workspace.icon(for: .applicationBundle)))
+        #expect(folder == Self.pixels(of: workspace.icon(for: .folder)))
+        #expect(pdf == Self.pixels(of: workspace.icon(for: .pdf)))
+        #expect(app != folder)
+        #expect(folder != pdf)
+        #expect(app != pdf)
         #expect(harness.iconReads.isEmpty)
     }
 }
