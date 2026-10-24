@@ -2,8 +2,9 @@ import AppKit
 import DockGroupsCore
 import UniformTypeIdentifiers
 
-/// Exports the groups and preferences to a `.dockgroups` backup file and restores them from one:
-/// either replacing everything, or merging the backup's new groups into the current ones.
+/// Exports the groups — archived ones too — the templates and the preferences to a `.dockgroups`
+/// backup file and restores them from one: either replacing everything (the templates only when the
+/// backup has some), or merging the backup's new groups and templates into the current ones.
 /// Panels and alerts are sheets on the Settings window, and files are read and written off the
 /// main thread, so the rest of the app keeps working meanwhile.
 @MainActor
@@ -12,7 +13,7 @@ final class SettingsBackupController: ObservableObject {
     enum Status: Equatable {
         case exported(fileName: String)
         case imported(groupCount: Int, itemCount: Int)
-        case merged(addedGroupCount: Int, skippedGroupCount: Int)
+        case merged(addedGroupCount: Int, skippedGroupCount: Int, addedArchivedGroupCount: Int = 0, addedTemplateCount: Int = 0)
     }
 
     @Published private(set) var isBusy = false
@@ -23,6 +24,7 @@ final class SettingsBackupController: ObservableObject {
 
     private let store: GroupStore
     private let preferences: PreferencesStore
+    private let templates: TemplateStore
     /// Told about the groups a restore or merge put in the store, so standalone ones get their
     /// Dock tiles (`StandaloneController.adoptRestoredGroups`).
     private let groupsRestored: ([DockGroup]) -> Void
@@ -30,9 +32,15 @@ final class SettingsBackupController: ObservableObject {
     /// `.dockgroups` files are JSON.
     static let backupType = UTType(filenameExtension: SettingsBackup.fileExtension, conformingTo: .json) ?? .json
 
-    init(store: GroupStore, preferences: PreferencesStore, groupsRestored: @escaping ([DockGroup]) -> Void = { _ in }) {
+    init(
+        store: GroupStore,
+        preferences: PreferencesStore,
+        templates: TemplateStore,
+        groupsRestored: @escaping ([DockGroup]) -> Void = { _ in }
+    ) {
         self.store = store
         self.preferences = preferences
+        self.templates = templates
         self.groupsRestored = groupsRestored
     }
 
@@ -52,7 +60,7 @@ final class SettingsBackupController: ObservableObject {
 
     private func export(to url: URL) {
         // Taken now, so the backup holds what's on screen when the user confirms.
-        let backup = SettingsBackup(groups: store, preferences: preferences, appVersion: AppInfo.version)
+        let backup = SettingsBackup(groups: store, preferences: preferences, templates: templates, appVersion: AppInfo.version)
         isBusy = true
         Task {
             let result = await Task.detached {
@@ -105,7 +113,12 @@ final class SettingsBackupController: ObservableObject {
     }
 
     private func confirmRestore(of backup: SettingsBackup) {
-        let summary = SettingsRestoreSummary(backup: backup, currentGroups: store.groups)
+        let summary = SettingsRestoreSummary(
+            backup: backup,
+            currentGroups: store.groups,
+            currentArchivedGroups: store.archivedGroups,
+            currentTemplates: templates.templates
+        )
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = L10n.Settings.Backup.confirmTitle
@@ -125,7 +138,7 @@ final class SettingsBackupController: ObservableObject {
 
     private func restore(_ backup: SettingsBackup) {
         do {
-            try backup.restore(to: store, preferences: preferences)
+            try backup.restore(to: store, preferences: preferences, templates: templates)
             groupsRestored(store.groups)
             status = .imported(groupCount: backup.groups.count, itemCount: backup.itemCount)
         } catch {
@@ -138,14 +151,24 @@ final class SettingsBackupController: ObservableObject {
     }
 
     private func merge(_ backup: SettingsBackup) {
+        let groupsBefore = Set(store.groups.map(\.id))
         do {
-            let result = try backup.merge(into: store)
-            groupsRestored(result.addedGroups)
+            let result = try backup.merge(into: store, templates: templates)
+            // Archived groups aren't standalone: only the active ones may need a Dock tile.
+            groupsRestored(result.groups.addedGroups)
             status = .merged(
-                addedGroupCount: result.addedGroups.count,
-                skippedGroupCount: backup.groups.count - result.addedGroups.count
+                addedGroupCount: result.groups.addedGroups.count,
+                skippedGroupCount: backup.groups.count - result.groups.addedGroups.count,
+                addedArchivedGroupCount: result.groups.addedArchivedGroups.count,
+                addedTemplateCount: result.addedTemplates.count
             )
         } catch {
+            // The groups stay merged when only the templates couldn't be written: standalone ones
+            // still get their Dock tiles.
+            let added = store.groups.filter { !groupsBefore.contains($0.id) }
+            if !added.isEmpty {
+                groupsRestored(added)
+            }
             presentAlert(
                 title: L10n.Settings.Backup.mergeFailed,
                 message: L10n.Settings.Backup.mergeFailedDetail(error.localizedDescription),
@@ -185,6 +208,9 @@ final class SettingsBackupController: ObservableObject {
         if summary.resetLaunchOptionCount > 0 {
             contents += " " + Texts.launchReset(summary.resetLaunchOptionCount)
         }
+        for note in [summary.archivedGroupsNote, summary.templatesNote].compactMap({ $0 }) {
+            contents += " " + note
+        }
         lines.append(contents)
 
         var replace = [Texts.confirmReplace]
@@ -194,24 +220,42 @@ final class SettingsBackupController: ObservableObject {
         if summary.removedGroupCount > 0 {
             replace.append(Texts.confirmRemoved(summary.removedGroupCount))
         }
+        replace.append(contentsOf: [summary.replacedArchivedGroupsNote, summary.replacedTemplatesNote].compactMap { $0 })
         replace.append(Texts.confirmReplaceSettings)
         lines.append(replace.joined(separator: " "))
 
-        var merge = [summary.groupCount == 0
-            ? Texts.confirmMergeNothing
-            : summary.mergedGroupCount == 0
-            ? Texts.confirmMergeAllHere
-            : Texts.confirmMergeAdds(
-                groups: L10n.Common.groupCount(summary.mergedGroupCount),
-                items: L10n.Common.itemCount(summary.mergedItemCount)
-            )]
-        if summary.mergedGroupCount > 0, summary.skippedGroupCount > 0 {
-            merge.append(Texts.confirmSkipped(summary.skippedGroupCount))
-        }
-        lines.append(merge.joined(separator: " "))
+        lines.append(mergeDetail(for: summary))
 
         lines.append(Texts.confirmFinal)
         return lines.joined(separator: "\n\n")
+    }
+
+    /// The question's line about Merge: the groups it adds, then the archived groups and templates
+    /// (spec §1.10).
+    private static func mergeDetail(for summary: SettingsRestoreSummary) -> String {
+        typealias Texts = L10n.Settings.Backup
+        let addsLibrary = summary.mergedArchivedGroupCount > 0 || summary.mergedTemplateCount > 0
+        var merge: [String]
+        if summary.mergedGroupCount > 0 {
+            merge = [Texts.confirmMergeAdds(
+                groups: L10n.Common.groupCount(summary.mergedGroupCount),
+                items: L10n.Common.itemCount(summary.mergedItemCount)
+            )]
+        } else if addsLibrary {
+            merge = [Texts.Library.mergeKeeps]
+        } else if summary.groupCount == 0, summary.archivedGroupCount == 0 {
+            return Texts.confirmMergeNothing
+        } else {
+            return Texts.confirmMergeAllHere
+        }
+        if summary.skippedGroupCount > 0 {
+            merge.append(Texts.confirmSkipped(summary.skippedGroupCount))
+        }
+        if summary.mergedArchivedGroupCount > 0 {
+            merge.append(Texts.Library.mergesArchived(summary.mergedArchivedGroupCount))
+        }
+        merge.append(contentsOf: [summary.mergedTemplatesNote, summary.clearedShortcutsNote].compactMap { $0 })
+        return merge.joined(separator: " ")
     }
 
     // MARK: - Presentation

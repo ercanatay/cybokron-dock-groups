@@ -94,6 +94,9 @@ public struct DiagnosticsInfo: Sendable {
     public var groups: [DockGroup]
     /// The status of each group shortcut (`GroupShortcutStatus`); only counts are reported.
     public var groupShortcutStatuses: [DockGroup.ID: GroupShortcutStatus]
+    /// How many groups are archived, and how many templates are kept: counts only, no names.
+    public var archivedGroupCount: Int
+    public var templateCount: Int
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
     public var generatedAt: Date
@@ -107,6 +110,8 @@ public struct DiagnosticsInfo: Sendable {
         updates: UpdateDetails,
         groups: [DockGroup],
         groupShortcutStatuses: [DockGroup.ID: GroupShortcutStatus] = [:],
+        archivedGroupCount: Int = 0,
+        templateCount: Int = 0,
         recentErrors: [String],
         generatedAt: Date = Date()
     ) {
@@ -118,6 +123,8 @@ public struct DiagnosticsInfo: Sendable {
         self.updates = updates
         self.groups = groups
         self.groupShortcutStatuses = groupShortcutStatuses
+        self.archivedGroupCount = archivedGroupCount
+        self.templateCount = templateCount
         self.recentErrors = recentErrors
         self.generatedAt = generatedAt
     }
@@ -191,6 +198,8 @@ public enum DiagnosticsReport {
             let count = describeCount(of: group.apps)
             lines.append("- \(group.name): \(count)\(group.isStandalone ? ", standalone" : "")")
         }
+        lines.append("Archived groups: \(info.archivedGroupCount)")
+        lines.append("Templates: \(info.templateCount)")
 
         section(.recentErrors, into: &lines)
         let errors = info.recentErrors.suffix(maximumErrorCount)

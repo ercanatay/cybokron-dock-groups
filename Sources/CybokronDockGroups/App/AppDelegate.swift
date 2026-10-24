@@ -26,6 +26,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // moves an unreadable file aside under the running copy.
     private lazy var store = GroupStore(persistence: JSONFileGroupPersistence())
     private lazy var preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence())
+    /// The templates (`templates.json`), read when the group window or Settings first needs them,
+    /// so quitting before that reads nothing.
+    private var loadedTemplates: TemplateStore?
+    private var templates: TemplateStore {
+        if let loadedTemplates { return loadedTemplates }
+        let templates = TemplateStore(persistence: JSONFileTemplatePersistence())
+        loadedTemplates = templates
+        return templates
+    }
     /// Open All's and Start's items that wait for their launch delay; what they couldn't open is
     /// shown once they've all had their turn.
     private lazy var delayedLaunches: DelayedLaunches = {
@@ -86,6 +95,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var mainWindowController: MainWindowController = {
         let controller = MainWindowController(
             store: store,
+            templates: templates,
             tiles: tiles,
             icons: icons,
             standalone: standalone,
@@ -97,7 +107,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) },
                 start: { [weak self] group in self?.start(group) },
                 finish: { [weak self] group in self?.finish(group) },
-                showProtectedApps: { [weak self] in self?.showSwitchingSettings() }
+                showProtectedApps: { [weak self] in self?.showSwitchingSettings() },
+                archive: { [weak self] group in self?.archive(group) },
+                restore: { [weak self] id in self?.restore(id) }
             )
         )
         // A standalone group's Dock tile may have been dragged out of the Dock meanwhile.
@@ -107,6 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var settingsWindowController: SettingsWindowController = SettingsWindowController(
         preferences: preferences,
         store: store,
+        templates: templates,
         usage: usage,
         shortcuts: shortcutMonitor,
         updater: updater,
@@ -288,6 +301,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         store.flushPendingSave()
         preferences.flushPendingSave()
         usage.flushPendingSave()
+        loadedTemplates?.flushPendingSave()
     }
 
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
@@ -379,6 +393,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 logger.error("Finishing group \(group.id, privacy: .public) failed: \(String(describing: error), privacy: .public)")
             }
         }
+    }
+
+    /// Archive, from the group window (spec §1.7): the group leaves every menu, shortcut, link and
+    /// agent with `store.groups`, and its items still waiting for their launch delay don't open.
+    /// Running apps aren't touched.
+    private func archive(_ group: DockGroup) {
+        delayedLaunches.cancel(group: group.id)
+        guard store.archiveGroup(group.id) != nil else { return }
+        logger.notice("Archived group \(group.id, privacy: .public)\(group.isStandalone ? ": its own app and Dock icon are removed" : "", privacy: .public)")
+    }
+
+    /// Restore, from the group window: the group is active again at the end of the list. One that
+    /// was standalone gets its own app and Dock icon back the way the Standalone toggle does, with
+    /// its alert when that fails (spec §2.10).
+    private func restore(_ id: DockGroup.ID) -> GroupRestoreResult? {
+        guard let result = store.restoreGroup(id) else { return nil }
+        logger.notice("Restored group \(id, privacy: .public)\(result.removedShortcut != nil ? " without its shortcut, which another group has" : "", privacy: .public)")
+        if result.restoresStandalone {
+            standalone.setStandalone(true, for: id)
+        }
+        return result
     }
 
     /// What the menu bar menu offers for the group: Finish for the current group, Start otherwise.
@@ -559,7 +594,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             popupController.close()
             if case .unmatched = mainWindowController.showSettings(ofGroup: name) {
                 // The window still opens, on the group it showed before.
-                urlLogger.error("No group matches “\(name, privacy: .public)”: showing the group window as it was")
+                urlLogger.error("No group matches “\(name, privacy: .public)”\(self.archivedMatch(for: name), privacy: .public): showing the group window as it was")
                 NSSound.beep()
             }
         case .manageGroups:
@@ -568,13 +603,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Links act on active groups only: an archived group is never found (spec §2.11).
     private func group(named name: String) -> DockGroup? {
         guard let group = GroupLookup.group(matching: name, in: store.groups) else {
-            urlLogger.error("No group matches “\(name, privacy: .public)”")
+            urlLogger.error("No group matches “\(name, privacy: .public)”\(self.archivedMatch(for: name), privacy: .public)")
             NSSound.beep()
             return nil
         }
         return group
+    }
+
+    /// For the log of a link no active group matches: ", but archived group <id> does" when an
+    /// archived one does (by identifier; archived groups aren't named in the log).
+    private func archivedMatch(for name: String) -> String {
+        guard let archived = GroupLookup.group(matching: name, in: store.archivedGroups.map(\.group)) else { return "" }
+        return ", but archived group \(archived.id.uuidString) does"
     }
 }
 
@@ -582,6 +625,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension AppDelegate: GroupIntentHandling {
     var groups: [DockGroup] { store.groups }
+    var archivedGroups: [ArchivedGroup] { store.archivedGroups }
 
     func showPopup(forGroup id: DockGroup.ID) {
         popupController.show(groupID: id)

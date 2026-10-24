@@ -1457,8 +1457,153 @@ extension L10n.Settings.Shortcuts {
         static var renumber: String {
             tr(
                 "settings.shortcuts.groups.renumber",
-                "Deleting or moving a group renumbers the groups after it; a group's own keyboard shortcut stays the same."
+                "Archiving, deleting or moving a group renumbers the groups after it; a group's own keyboard shortcut stays the same."
             )
+        }
+    }
+}
+
+// MARK: - Archive, duplicate and templates
+
+extension L10n.GroupWindow {
+    /// Duplicate, Archive and the Archived list of the group window (spec §1.6–1.8, §3.3–3.4).
+    enum Archive {
+        static var duplicate: String { tr("groupWindow.archive.duplicate", "Duplicate") }
+        static var archive: String { tr("groupWindow.archive.archive", "Archive") }
+        static var restore: String { tr("groupWindow.archive.restore", "Restore") }
+        /// The sidebar's Archived section: "Archived (2)".
+        static func section(_ count: Int) -> String { tr("groupWindow.archive.section", "Archived (%ld)", count) }
+
+        // Archiving a standalone group
+        static func confirmTitle(_ groupName: String) -> String { tr("groupWindow.archive.confirm.title", "Archive “%@”?", groupName) }
+        static var confirmMessage: String {
+            tr(
+                "groupWindow.archive.confirm.message",
+                "Its own app and Dock icon are removed until you restore it. The group, its items and its settings are kept."
+            )
+        }
+
+        // The archived group's summary
+        static func archivedOn(_ date: String) -> String { tr("groupWindow.archive.detail.archivedOn", "Archived on %@", date) }
+        static var archived: String { tr("groupWindow.archive.detail.archived", "Archived") }
+        static var explanation: String {
+            tr(
+                "groupWindow.archive.detail.explanation",
+                "Archived groups don't appear in the popup, the menu bar menu, Siri, links or Focus filters, and their keyboard shortcut is off. Restore the group to use or edit it."
+            )
+        }
+        static var noItems: String { tr("groupWindow.archive.detail.noItems", "No items") }
+        static func file(_ name: String) -> String { tr("groupWindow.archive.item.file", "%@ (file)", name) }
+        static func folder(_ name: String) -> String { tr("groupWindow.archive.item.folder", "%@ (folder)", name) }
+        static func shortcutOff(_ shortcut: String) -> String {
+            tr("groupWindow.archive.detail.shortcutOff", "%@ (off while archived)", shortcut)
+        }
+        static var noShortcut: String { tr("groupWindow.archive.detail.noShortcut", "None") }
+        static var dockIcon: String { tr("groupWindow.archive.detail.dockIcon", "Dock icon") }
+        static var dockIconReturns: String {
+            tr("groupWindow.archive.detail.dockIconReturns", "Comes back when the group is restored")
+        }
+        static var restoreHelp: String {
+            tr("groupWindow.archive.detail.restoreHelp", "Put the group back at the end of the list, with all its settings.")
+        }
+
+        /// Settings → Switching → Focus, when the current Focus names an archived group.
+        static func focusStatus(_ groupName: String) -> String {
+            tr(
+                "groupWindow.archive.focusStatus",
+                "The current Focus names “%@”, which is archived: it does nothing until you restore the group.",
+                groupName
+            )
+        }
+    }
+}
+
+extension L10n {
+    /// Save as Template…, the + menu's templates and Manage Templates (spec §1.9, §3.5).
+    enum Templates {
+        // Menus
+        static var newGroup: String { tr("templates.menu.newGroup", "New Group") }
+        static var newGroupFromTemplate: String { tr("templates.menu.fromTemplate", "New Group from Template") }
+        static var noTemplates: String { tr("templates.menu.none", "No Templates") }
+        static var manage: String { tr("templates.menu.manage", "Manage Templates…") }
+        static var saveAsTemplate: String { tr("templates.menu.save", "Save as Template…") }
+        static var addMenuHelp: String {
+            tr("templates.menu.help", "Add a group. Its menu also adds a group made from a template.")
+        }
+
+        // Save as Template
+        static func saveTitle(_ groupName: String) -> String { tr("templates.save.title", "Save “%@” as a Template", groupName) }
+        static var name: String { tr("templates.save.name", "Template name") }
+        static var saveMessage: String {
+            tr(
+                "templates.save.message",
+                "A template keeps the group's items, with their details and launch options, and its Dock tile, popup, and Start and Finish settings. Groups made from it don't get its keyboard shortcut or its own Dock icon."
+            )
+        }
+        static var save: String { tr("templates.save.confirm", "Save") }
+        static func limit(_ maximum: Int) -> String {
+            tr("templates.save.limit", "You can keep up to %ld templates. Delete one in Manage Templates… first.", maximum)
+        }
+        static func replaceTitle(_ templateName: String) -> String {
+            tr("templates.replace.title", "A template named “%@” already exists", templateName)
+        }
+        static var replaceMessage: String {
+            tr("templates.replace.message", "Replace it with this group? Groups made from it before aren't affected.")
+        }
+        static var replace: String { tr("templates.replace.confirm", "Replace") }
+
+        // Manage Templates
+        static var manageTitle: String { tr("templates.manage.title", "Manage Templates") }
+        static var empty: String {
+            tr("templates.manage.empty", "No templates yet. To save one, choose Save as Template… in a group's menu in the sidebar.")
+        }
+        /// "7 items · saved October 25, 2026".
+        static func summary(items: String, saved date: String) -> String {
+            tr("templates.manage.summary", "%1$@ · saved %2$@", items, date)
+        }
+        static func newGroupHelp(_ templateName: String) -> String {
+            tr("templates.manage.newGroup.help", "Add a group made from “%@”.", templateName)
+        }
+        static var footer: String {
+            tr(
+                "templates.manage.footer",
+                "To change a template, make a group from it, edit the group, then save it as a template with the same name and replace it."
+            )
+        }
+        static var renameTitle: String { tr("templates.rename.title", "Rename Template") }
+        static var renameMessage: String { tr("templates.rename.message", "Enter a new name for the template.") }
+        static func nameTaken(_ templateName: String) -> String {
+            tr("templates.rename.taken", "A template named “%@” already exists. Choose another name.", templateName)
+        }
+        static func deleteTitle(_ templateName: String) -> String {
+            tr("templates.delete.title", "Delete the template “%@”?", templateName)
+        }
+        static var deleteMessage: String { tr("templates.delete.message", "Groups made from it aren't affected.") }
+        static var deleteTemplate: String { tr("templates.delete.confirm", "Delete Template") }
+    }
+}
+
+extension L10n.Settings.Backup {
+    /// The import question's and status's lines about archived groups and templates; the rest of
+    /// what the backup holds is said by DockGroupsCore (`SettingsRestoreSummary`).
+    enum Library {
+        /// Merging adds archived groups or templates, but no active group.
+        static var mergeKeeps: String { tr("settings.backup.library.merge.keeps", "Merge keeps your groups and settings.") }
+        static func mergesArchived(_ count: Int) -> String {
+            count == 1
+                ? tr("settings.backup.library.mergesArchived.one", "It adds 1 archived group.")
+                : tr("settings.backup.library.mergesArchived.other", "It adds %ld archived groups.", count)
+        }
+        /// After a merge: "Added 2 archived groups".
+        static func addedArchived(_ count: Int) -> String {
+            count == 1
+                ? tr("settings.backup.library.status.archived.one", "Added 1 archived group")
+                : tr("settings.backup.library.status.archived.other", "Added %ld archived groups", count)
+        }
+        static func addedTemplates(_ count: Int) -> String {
+            count == 1
+                ? tr("settings.backup.library.status.templates.one", "Added 1 template")
+                : tr("settings.backup.library.status.templates.other", "Added %ld templates", count)
         }
     }
 }

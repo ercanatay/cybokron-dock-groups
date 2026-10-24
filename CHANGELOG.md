@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings → Shortcuts & Siri lists the groups' shortcuts, what they do and whether they work, with Change… to each group's settings
 - Starting or finishing a group from its shortcut asks first when it would quit apps, as a link does (Hide Instead or Cancel); hiding never asks
 - The menu bar menu's tooltip of a group names its own shortcut too, and the diagnostics report counts the group shortcuts (how many, how many work)
+- Duplicate (the group window's sidebar, right-click a group) adds a copy at the end of the list — "Coding copy", with the same items and settings, but not standalone and without a keyboard shortcut — so no group's number shortcut changes
+- Archive puts a group out of sight without deleting it: it leaves the popup, the menu bar menu, the shortcuts, links, Siri and Focus filters, and its delayed items don't open. A standalone group asks first, since its own app and Dock icon are removed. The sidebar's Archived section lists archived groups, with a read-only summary, Restore and Delete…
+- Restore puts an archived group back at the end of the list, with its own Dock icon when it had one; when another group took its keyboard shortcut meanwhile, it comes back without it and says so
+- Templates: Save as Template… keeps a group's items and settings under a name (up to 50; one of the same name can be replaced), the sidebar's + menu makes a new group from one, and Manage Templates… renames and deletes them
+- Backups include archived groups and templates, and the import question says what happens to yours; Merge adds the new ones, and merged groups whose shortcut another group has come in without it
+- Siri and the Shortcuts app say a group is archived instead of acting on it; Settings → Switching says when the current Focus names an archived group; the diagnostics report counts archived groups and templates
 
 ## [0.8.0] - 2026-10-24
 

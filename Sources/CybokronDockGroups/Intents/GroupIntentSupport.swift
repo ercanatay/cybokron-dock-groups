@@ -6,6 +6,9 @@ import OSLog
 @MainActor
 protocol GroupIntentHandling: AnyObject {
     var groups: [DockGroup] { get }
+    /// The archived groups: only so saved shortcuts and Focus filters naming one show its name, and
+    /// running them says it's archived. Nothing is done with them.
+    var archivedGroups: [ArchivedGroup] { get }
     /// Shows the group's popup, centered over the Dock.
     func showPopup(forGroup id: DockGroup.ID)
     /// Open All, without alerts: the result goes back to the caller.
@@ -35,6 +38,15 @@ enum GroupIntentSupport {
         return (try? JSONFileGroupPersistence().loadGroups()) ?? []
     }
 
+    /// The active and the archived groups, for looking groups up by identifier; read from disk if the
+    /// app delegate isn't set up yet.
+    static var storedGroups: StoredGroups {
+        if let handler {
+            return StoredGroups(active: handler.groups, archived: handler.archivedGroups)
+        }
+        return (try? JSONFileGroupPersistence().loadStoredGroups()) ?? StoredGroups()
+    }
+
     private static let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Intents")
 
     /// The handler and the group behind `entity`, as it is now. `action` names the intent in the log.
@@ -44,6 +56,10 @@ enum GroupIntentSupport {
             throw GroupIntentError.notReady
         }
         guard let group = handler.groups.first(where: { $0.id == entity.id }) else {
+            if let archived = handler.archivedGroups.first(where: { $0.id == entity.id }) {
+                logger.error("\(action, privacy: .public): group \(entity.id, privacy: .public) is archived")
+                throw GroupIntentError.groupArchived(name: archived.group.name)
+            }
             logger.error("\(action, privacy: .public): no group \(entity.id, privacy: .public)")
             throw GroupIntentError.groupNotFound(name: entity.name)
         }
@@ -54,12 +70,16 @@ enum GroupIntentSupport {
 
 enum GroupIntentError: Error, CustomLocalizedStringResourceConvertible {
     case groupNotFound(name: String)
+    /// The group is archived (spec §2.11): nothing is done until it's restored.
+    case groupArchived(name: String)
     case notReady
 
     var localizedStringResource: LocalizedStringResource {
         switch self {
         case .groupNotFound(let name):
             return "There's no group named “\(name)”. It may have been renamed or deleted."
+        case .groupArchived(let name):
+            return "“\(name)” is archived. Restore it in Cybokron Dock Groups to use it."
         case .notReady:
             return "Cybokron Dock Groups is still starting. Try again in a moment."
         }

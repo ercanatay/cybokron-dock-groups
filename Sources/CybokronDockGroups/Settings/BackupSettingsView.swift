@@ -70,11 +70,22 @@ struct BackupSettingsView: View {
             return L10n.Settings.Backup.exported(fileName)
         case .imported(let groupCount, let itemCount):
             return L10n.Settings.Backup.restored(groups: L10n.Common.groupCount(groupCount), items: L10n.Common.itemCount(itemCount))
-        case .merged(let addedGroupCount, let skippedGroupCount):
+        case .merged(let addedGroupCount, let skippedGroupCount, let addedArchivedGroupCount, let addedTemplateCount):
             let added = L10n.Common.groupCount(addedGroupCount)
-            return skippedGroupCount > 0
-                ? L10n.Settings.Backup.merged(groups: added, alreadyHere: skippedGroupCount)
-                : L10n.Settings.Backup.merged(groups: added)
+            var parts: [String] = []
+            // Without active groups, the archived groups and templates added say it all.
+            if addedGroupCount > 0 || (addedArchivedGroupCount == 0 && addedTemplateCount == 0) {
+                parts.append(skippedGroupCount > 0
+                    ? L10n.Settings.Backup.merged(groups: added, alreadyHere: skippedGroupCount)
+                    : L10n.Settings.Backup.merged(groups: added))
+            }
+            if addedArchivedGroupCount > 0 {
+                parts.append(L10n.Settings.Backup.Library.addedArchived(addedArchivedGroupCount))
+            }
+            if addedTemplateCount > 0 {
+                parts.append(L10n.Settings.Backup.Library.addedTemplates(addedTemplateCount))
+            }
+            return parts.joined(separator: " · ")
         case nil:
             return nil
         }

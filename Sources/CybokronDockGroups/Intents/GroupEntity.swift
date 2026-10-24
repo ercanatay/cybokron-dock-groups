@@ -29,11 +29,14 @@ struct GroupEntity: AppEntity {
 }
 
 /// Looks groups up for the system: by ID, by (part of) their name, and all of them as suggestions,
-/// which also teaches Siri the group names.
+/// which also teaches Siri the group names. Searching and suggestions offer active groups only; by
+/// ID, archived groups are found too, so a saved shortcut or Focus filter naming one keeps showing
+/// its name — running it says the group is archived (`GroupIntentSupport.resolve`).
 struct GroupEntityQuery: EntityStringQuery {
     @MainActor
     func entities(for identifiers: [GroupEntity.ID]) async throws -> [GroupEntity] {
-        let groups = GroupIntentSupport.groups
+        let stored = GroupIntentSupport.storedGroups
+        let groups = stored.active + stored.archived.map(\.group)
         return identifiers.compactMap { id in
             groups.first { $0.id == id }.map(GroupEntity.init(group:))
         }

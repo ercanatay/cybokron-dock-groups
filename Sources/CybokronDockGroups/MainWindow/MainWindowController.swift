@@ -41,6 +41,7 @@ final class MainWindowController: NSWindowController {
 
     init(
         store: GroupStore,
+        templates: TemplateStore,
         tiles: TileImageCache,
         icons: AppIconProviding,
         standalone: StandaloneController,
@@ -59,6 +60,7 @@ final class MainWindowController: NSWindowController {
         let hostingController = NSHostingController(
             rootView: MainWindowView(
                 store: store,
+                templates: templates,
                 tiles: tiles,
                 standalone: standalone,
                 session: session,

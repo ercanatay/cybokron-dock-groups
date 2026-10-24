@@ -22,6 +22,7 @@ final class SettingsWindowController: NSWindowController {
     init(
         preferences: PreferencesStore,
         store: GroupStore,
+        templates: TemplateStore,
         usage: UsageStore,
         shortcuts: GlobalShortcutMonitor,
         updater: AutoUpdater,
@@ -32,10 +33,11 @@ final class SettingsWindowController: NSWindowController {
         groupsRestored: @escaping ([DockGroup]) -> Void,
         showGroupSettings: @escaping (DockGroup.ID) -> Void
     ) {
-        let backup = SettingsBackupController(store: store, preferences: preferences, groupsRestored: groupsRestored)
+        let backup = SettingsBackupController(store: store, preferences: preferences, templates: templates, groupsRestored: groupsRestored)
         let diagnostics = DiagnosticsController(
             preferences: preferences,
             store: store,
+            templates: templates,
             updater: updater,
             shortcuts: shortcuts,
             isStatusItemShown: isStatusItemShown

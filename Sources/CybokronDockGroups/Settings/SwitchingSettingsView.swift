@@ -193,6 +193,15 @@ struct SwitchingSettingsView: View {
 
     // MARK: - Focus
 
+    /// What the current Focus asks for; a Focus naming an archived group does nothing, and says why.
+    private func focusStatus(of request: FocusRequest?) -> String {
+        let status = FocusFilterStatus(request, groups: store.groups)
+        if status == .unknownGroup, let id = request?.groupID, let archived = store.archivedGroup(withID: id) {
+            return L10n.GroupWindow.Archive.focusStatus(archived.group.name)
+        }
+        return status.text
+    }
+
     private var focusSection: some View {
         Section {
             Text(L10n.Switching.Focus.howTo(AppInfo.name))
@@ -202,7 +211,7 @@ struct SwitchingSettingsView: View {
             } label: {
                 Text(L10n.Switching.Focus.now)
                 if let focusRequest {
-                    Text(FocusFilterStatus(focusRequest, groups: store.groups).text)
+                    Text(focusStatus(of: focusRequest))
                 }
             }
         } header: {

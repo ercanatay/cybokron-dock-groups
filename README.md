@@ -147,6 +147,25 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   shortcuts can't be seen: pick keys your apps don't use. Settings → Shortcuts & Siri lists every
   group's shortcut with Change…. A group's own shortcut follows it when the list is reordered,
   unlike the number shortcuts.
+- **Duplicate, Archive and Restore** (the group window's sidebar, right-click a group):
+  **Duplicate** adds a copy at the end of the list — "Coding copy", with the same items, details,
+  launch options and settings, but neither standalone nor with a keyboard shortcut — so no group's
+  number shortcut changes. **Archive** puts a group out of sight without deleting it: it leaves the
+  popup, the menu bar menu, Tab, the number and group shortcuts, links, Siri and Focus filters, its
+  items waiting for their launch delay don't open, and running apps aren't touched. A standalone
+  group asks first: its own app and Dock icon are removed. The sidebar's **Archived** section
+  (collapsed, newest first) lists archived groups; selecting one shows what it holds — names only,
+  nothing of it is looked up on disk — with **Restore** (back at the end of the list, with its Dock
+  icon when it had one; without its keyboard shortcut, and saying so, when another group has those
+  keys now) and **Delete…**. Archiving renumbers the groups after it, as deleting does.
+- **Templates**: **Save as Template…** (right-click a group) keeps a copy of its items — with their
+  details and launch options — and its Dock tile, popup, and Start and Finish settings under a name
+  (a template of the same name can be replaced; up to 50). The sidebar's **+** button adds a group
+  as before; its menu has **New Group from Template** (a new group named as the template, or
+  "Coding 2" when taken, at the end of the list; nothing opens, and it's never standalone or with a
+  shortcut) and **Manage Templates…** (each template's item count and save date, New Group,
+  Rename…, Delete…). Templates don't follow later edits of their group, and deleting one doesn't
+  affect groups made from it.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
   optionally force quit; it asks there first, every time), **Show Group** (the popup), **Start
   Group** and **Finish Group** actions, and phrases such as “Launch Work in Cybokron Dock Groups” or
@@ -259,7 +278,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   and more). **Settings → Support** shows the same content — the ways to support the project, the
   app's links, books and other projects — as the last pane of Settings.
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
-  `groups.json` for the groups, `preferences.json` for the settings, `usage-stats.json` /
+  `groups.json` for the groups (archived ones too), `templates.json` for the templates,
+  `preferences.json` for the settings, `usage-stats.json` /
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
   standalone groups' apps, `update-state.json` / `updates/` for the updater (last check,
   skipped versions, downloads and the previous version's backup), and `changelog-cache.json` for
@@ -269,7 +289,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   backup's groups and settings instead of yours) or **Merge** (adds the backup's groups whose name you
   don't have yet after yours; your groups and settings stay as they are). It keeps the files it
   replaced as `groups.pre-import-<time>.json` / `preferences.pre-import-<time>.json` (the last three
-  imports').
+  imports'). Archived groups and templates are in the backup too: Replace All replaces your archived
+  groups, and your templates only when the backup has some; Merge adds the archived groups and
+  templates whose name you don't have yet, and a merged group whose keyboard shortcut another group
+  has comes in without it. The question says how many of each.
   Most Used launch counts aren't part of a backup. Files over 5 MB aren't read, and an app location
   in a backup that isn't an absolute path to a `.app` bundle is dropped (an app known only by such a
   location is left out). Backups can also carry file and folder items and each item's alias, tags
@@ -279,8 +302,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   a backup's apps, websites, files and folders as items and says how many were left out.
 - **Export Diagnostics** (Settings → Backup → Diagnostics): **Copy** or **Save to File…** a plain-text
   report to attach to a GitHub issue — app and macOS versions, Mac model, settings, update checks,
-  group names with item counts by kind (never the items themselves) and recent errors; nothing is
-  sent anywhere.
+  group names with item counts by kind (never the items themselves), how many groups are archived
+  and how many templates there are (counts only) and recent errors; nothing is sent anywhere.
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
