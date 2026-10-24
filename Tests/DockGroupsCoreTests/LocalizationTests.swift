@@ -48,6 +48,7 @@ struct LocalizationTests {
         "item.launch.",
         "settings.backup.launchReset.",
         "updates.otherVersions.switching.",
+        "switching.focus.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

@@ -54,6 +54,20 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   and a standalone group's own app (Hide All still hides them; Siri's answer says when an app was
   spared). Cybokron Dock Groups and its standalone groups' apps are always protected, and Finder is
   never quit.
+- **Focus**: a macOS Focus can start a group when it turns on. In System Settings → Focus, choose a
+  Focus (Work, Personal, or one of your own), then **Focus Filters → Add Filter → Cybokron Dock
+  Groups**, pick the **Group**, what happens **When This Focus Turns On** — **Start** (the default),
+  **Open All** or **Show Popup** — and whether to **Finish the Group When This Focus Turns Off**
+  (off by default). Settings → Switching → Focus has an **Open Focus Settings…** button and says what
+  the current Focus asks for. A second after the Focus changes the app does the last thing asked, once
+  (a group started again within 3 seconds, by a Shortcuts automation for example, isn't started
+  twice). A Focus never quits apps: a group set to quit the previous group's apps, or its own when
+  it finishes, hides them instead, and nothing asks a question. The pairing is kept by macOS with the
+  Focus, not in the groups file or backups. macOS delivers the filter **while Cybokron Dock Groups is
+  running** (it doesn't start the app for it). Instead of a filter, where the Shortcuts app has
+  automations, a Focus automation works too: in Shortcuts → Automation, add one for the Focus
+  “When Turning On”, with the **Start Group** action (or Show Group, Launch Group) and your group;
+  use a group that hides rather than quits, since nobody answers questions in an automation.
 - In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by

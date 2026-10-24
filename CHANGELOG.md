@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Launch options in the details editor's new Opening part: a delay of up to 60 seconds that Open All and Start wait (clicks open right away), and the app that opens a file, folder or website (Terminal or iTerm2 for folders); apps that run what they open are refused, and the editor says why
 - Item rows and popup tooltips show the chosen app and the delay, and when the chosen app isn't on this Mac
 - Importing a backup says how many items' launch settings were reset because they named an app that runs files
+- A Focus filter (System Settings → Focus → Focus Filters → Cybokron Dock Groups) starts, opens or shows a group when its Focus turns on, and can finish it (hiding its apps) when the Focus turns off; a Focus never quits apps, repeated calls act once, and Settings → Switching shows what the current Focus asks for. It works while the app is running
 
 ### Changed
 

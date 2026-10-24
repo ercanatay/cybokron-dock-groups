@@ -1352,6 +1352,28 @@ extension L10n {
             }
         }
 
+        /// Settings → Switching → Focus. What the current Focus asks for comes from DockGroupsCore
+        /// (`FocusFilterStatus`).
+        enum Focus {
+            static var header: String { tr("switching.focus.header", "Focus") }
+            static func howTo(_ appName: String) -> String {
+                tr(
+                    "switching.focus.howTo",
+                    "A Focus can start a group when it turns on. In System Settings → Focus, choose a Focus, then Focus Filters → Add Filter → %@, and pick the group and what happens.",
+                    appName
+                )
+            }
+            static var openSettings: String { tr("switching.focus.openSettings", "Open Focus Settings…") }
+            static var now: String { tr("switching.focus.now", "Now") }
+            static func footer(_ appName: String) -> String {
+                tr(
+                    "switching.focus.footer",
+                    "A Focus only hides apps; it never quits them. It works while %@ is running. A Shortcuts automation that starts the group when the Focus turns on does the same.",
+                    appName
+                )
+            }
+        }
+
         /// Apps a transition couldn't hide, quit or show again.
         enum Problems {
             static func start(_ groupName: String) -> String {

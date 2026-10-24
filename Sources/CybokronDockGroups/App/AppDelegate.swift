@@ -13,7 +13,9 @@ import OSLog
 /// the app, launched while one runs, hands its URLs to the running copy and quits (`SecondCopyHandoff`).
 ///
 /// Groups are started and finished (`ContextSwitcher`) from the popup, the menu bar menu, the group
-/// window, links, Siri and Shortcuts; the current group is kept in memory only (`ContextSession`).
+/// window, links, Siri and Shortcuts, and started, opened or shown when a Focus with the app's
+/// filter turns on (`GroupFocusFilter`, through `FocusRequestCoordinator`, never quitting anything);
+/// the current group is kept in memory only (`ContextSession`).
 /// Items with a launch delay wait in one `DelayedLaunches`, shared by Open All, Start, Finish, Hide
 /// All and Close All, and cancelled when the app quits.
 @MainActor
@@ -225,6 +227,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updater.closeWindow = { [weak self] in self?.updateWindowController.close() }
         updater.isWindowShown = { [weak self] in self?.updateWindowController.window?.isVisible == true }
         updater.start()
+        // Focus filter calls that came while the app started wait until now.
+        FocusFilterBridge.coordinator.handler = self
         // The window stays closed at launch unless there's a problem the user needs to see.
         if store.issue != nil {
             mainWindowController.show()
@@ -538,5 +542,42 @@ extension AppDelegate: GroupIntentHandling {
     /// Finish Group: asks in Siri or Shortcuts (`confirm`) before quitting anything.
     func finish(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport {
         try await switcher.finish(group.id, trigger: .intent, confirm: confirm)
+    }
+}
+
+// MARK: - Focus
+
+/// What a Focus asks for, carried out with `trigger: .focus` (`FocusRequestCoordinator`): a Focus
+/// never quits apps, and nothing it does asks a question.
+extension AppDelegate: FocusRequestHandling {
+    func group(withID id: DockGroup.ID) -> DockGroup? {
+        store.group(withID: id)
+    }
+
+    var currentGroupID: DockGroup.ID? { session.current }
+    var currentGroupStartTrigger: TransitionTrigger? { session.startTrigger }
+
+    func startGroup(_ id: DockGroup.ID, trigger: TransitionTrigger) async {
+        do {
+            LaunchReportPresenter.presentProblems(in: try await switcher.start(id, trigger: trigger))
+        } catch {
+            logger.error("A Focus couldn't start group \(id, privacy: .public): \(String(describing: error), privacy: .public)")
+        }
+    }
+
+    func finishGroup(_ id: DockGroup.ID, trigger: TransitionTrigger, showsPrevious: Bool) async {
+        do {
+            LaunchReportPresenter.presentProblems(in: try await switcher.finish(id, trigger: trigger, showsPrevious: showsPrevious))
+        } catch {
+            logger.error("A Focus couldn't finish group \(id, privacy: .public): \(String(describing: error), privacy: .public)")
+        }
+    }
+
+    func openAllItems(of group: DockGroup) async {
+        LaunchReportPresenter.presentProblems(in: await launchAll(group))
+    }
+
+    func showPopup(of group: DockGroup) {
+        popupController.show(groupID: group.id)
     }
 }

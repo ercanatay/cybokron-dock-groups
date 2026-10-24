@@ -115,16 +115,21 @@ public final class ContextSwitcher {
 
     /// Finishes the group: hides (or quits, or leaves) its apps as its settings say and, when it's
     /// current, shows the group started before it again (nothing is launched).
-    /// - Parameter confirm: as for `start`.
+    /// - Parameters:
+    ///   - confirm: as for `start`.
+    ///   - showsPrevious: `false` when another group is started right after, as when a Focus that
+    ///     finishes its group turns into another Focus: the group started before isn't shown again
+    ///     only to be put away (its "After finishing" setting is ignored).
     /// - Throws: `ContextSwitchingError.groupNotFound`, or what `confirm` throws.
     public func finish(
         _ id: DockGroup.ID,
         trigger: TransitionTrigger,
+        showsPrevious: Bool = true,
         confirm: ((TransitionConfirmation) async throws -> Void)? = nil
     ) async throws -> TransitionReport {
         try await oneAtATime {
             guard let group = store.group(withID: id) else { throw ContextSwitchingError.groupNotFound(id) }
-            let next = session.current == id && group.switching.afterFinish == .showPreviousGroup
+            let next = showsPrevious && session.current == id && group.switching.afterFinish == .showPreviousGroup
                 ? session.previous.flatMap(store.group(withID:))
                 : nil
             let planned = TransitionPlanner.finish(

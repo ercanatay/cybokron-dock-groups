@@ -2,10 +2,11 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// Settings → Switching (spec §2.8, §4.4): the protected apps — which Start, Finish and Close All
-/// never quit, and switching never hides — added with an open panel or from the running apps, and
-/// what Start and Finish do, with the current group. Each group's own Start and Finish settings
-/// are in its group window.
+/// Settings → Switching (spec §2.8, §2.10, §4.4): the protected apps — which Start, Finish and Close
+/// All never quit, and switching never hides — added with an open panel or from the running apps;
+/// what Start and Finish do, with the current group; and how a Focus starts a group: where its
+/// filter is set up (System Settings → Focus), and what the current Focus asks for, read when the
+/// pane appears. Each group's own Start and Finish settings are in its group window.
 struct SwitchingSettingsView: View {
     @ObservedObject var preferences: PreferencesStore
     @ObservedObject var store: GroupStore
@@ -13,9 +14,13 @@ struct SwitchingSettingsView: View {
     /// Redraws the pane when apps launch or quit, so "Add a Running App" lists the running ones.
     @ObservedObject var runningApps: RunningAppsMonitor
     let icons: AppIconProviding
+    /// What the current Focus's filter asks for (`FocusFilterBridge.currentRequest`).
+    var readFocusRequest: () async -> FocusRequest? = FocusFilterBridge.currentRequest
 
     /// Why apps chosen in the open panel couldn't be added.
     @State private var problem: String?
+    /// What the current Focus asked for when the pane appeared; `nil` until it's read.
+    @State private var focusRequest: FocusRequest??
 
     private var protectedApps: ProtectedApps { preferences.preferences.protectedApps }
 
@@ -23,9 +28,11 @@ struct SwitchingSettingsView: View {
         Form {
             protectedSection
             startSection
+            focusSection
         }
         .formStyle(.grouped)
         .frame(width: 480)
+        .task { focusRequest = .some(await readFocusRequest()) }
         .alert(
             L10n.GroupWindow.addAppsProblemTitle,
             isPresented: Binding(get: { problem != nil }, set: { if !$0 { problem = nil } })
@@ -182,6 +189,35 @@ struct SwitchingSettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    // MARK: - Focus
+
+    private var focusSection: some View {
+        Section {
+            Text(L10n.Switching.Focus.howTo(AppInfo.name))
+                .fixedSize(horizontal: false, vertical: true)
+            LabeledContent {
+                Button(L10n.Switching.Focus.openSettings, action: openFocusSettings)
+            } label: {
+                Text(L10n.Switching.Focus.now)
+                if let focusRequest {
+                    Text(FocusFilterStatus(focusRequest, groups: store.groups).text)
+                }
+            }
+        } header: {
+            Text(L10n.Switching.Focus.header)
+        } footer: {
+            Text(L10n.Switching.Focus.footer(AppInfo.name))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// System Settings → Focus.
+    private func openFocusSettings() {
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.Focus-Settings.extension") else { return }
+        NSWorkspace.shared.open(url)
     }
 
     private static func title(of group: DockGroup) -> String {

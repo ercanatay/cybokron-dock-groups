@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-666 keys.
+677 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -976,3 +976,21 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | --- | --- |
 | `settings.backup.launchReset.one` | The launch settings of 1 item were reset: they named an app that runs files. |
 | `settings.backup.launchReset.other` | The launch settings of %ld items were reset: they named apps that run files. |
+
+## Settings → Switching → Focus: where a Focus filter is set up, and what the current Focus asks of the app (English only for now; `awaitingTranslation`: `switching.focus.`)
+
+`switching.focus.status.*` is the “Now” line (`FocusFilterStatus`); `.finishes` follows `.start` when the filter finishes the group. The Focus filter's own texts in System Settings (its title, parameters and choices) are App Intents literals, in English, as the other intents' are.
+
+| Key | English |
+| --- | --- |
+| `switching.focus.header` | Focus |
+| `switching.focus.howTo` | A Focus can start a group when it turns on. In System Settings → Focus, choose a Focus, then Focus Filters → Add Filter → %@, and pick the group and what happens. |
+| `switching.focus.openSettings` | Open Focus Settings… |
+| `switching.focus.now` | Now |
+| `switching.focus.footer` | A Focus only hides apps; it never quits them. It works while %@ is running. A Shortcuts automation that starts the group when the Focus turns on does the same. |
+| `switching.focus.status.none` | No Focus asks Cybokron Dock Groups for anything right now. |
+| `switching.focus.status.unknownGroup` | The current Focus names a group that no longer exists. |
+| `switching.focus.status.start` | The current Focus starts “%@”. |
+| `switching.focus.status.openAll` | The current Focus opens the items of “%@”. |
+| `switching.focus.status.showPopup` | The current Focus shows the popup of “%@”. |
+| `switching.focus.status.finishes` | When it turns off, the group is finished: its apps are hidden. |
