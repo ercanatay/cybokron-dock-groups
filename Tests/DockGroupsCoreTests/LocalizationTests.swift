@@ -38,6 +38,7 @@ struct LocalizationTests {
     static let awaitingTranslation: [String] = [
         "core.shortcut.", "core.switching.confirmation.shortcut",
         "core.group.copyName", "core.archive.", "core.backup.library.", "core.persistence.groups.archivedUnsupported",
+        "core.templates.", "core.persistence.templates.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

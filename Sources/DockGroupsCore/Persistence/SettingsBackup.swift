@@ -24,7 +24,9 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
 /// A backup of the user's groups and app-wide preferences, written by "Export Settings…" and read
 /// back by "Import Settings…". The file is JSON with a `.dockgroups` extension. Archived groups are
 /// in the same `groups` list as in the groups file, after the active ones, marked `"archived": true`
-/// (`GroupEntry`), so a version without archives imports them as ordinary groups.
+/// (`GroupEntry`), so a version without archives imports them as ordinary groups. Templates are
+/// in an optional `templates` list, written only when there are some; versions without templates
+/// ignore it.
 ///
 /// Launch statistics for the Most Used list are deliberately left out: they're personal usage data
 /// rebuilt on their own, not settings.
@@ -44,6 +46,8 @@ public struct SettingsBackup: Equatable, Sendable {
     public var groups: [DockGroup]
     /// The archived groups.
     public var archivedGroups: [ArchivedGroup]
+    /// The templates; none in a backup made without templates (or by a version without them).
+    public var templates: [GroupTemplate]
     public var preferences: PopupPreferences
     /// Items of the file that were left out when it was read, because they can't be opened safely
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
@@ -57,6 +61,7 @@ public struct SettingsBackup: Equatable, Sendable {
         exportedAt: Date = Date(),
         groups: [DockGroup],
         archivedGroups: [ArchivedGroup] = [],
+        templates: [GroupTemplate] = [],
         preferences: PopupPreferences
     ) {
         schemaVersion = Self.currentSchemaVersion
@@ -66,6 +71,7 @@ public struct SettingsBackup: Equatable, Sendable {
         let stored = StoredGroups(active: groups, archived: archivedGroups)
         self.groups = stored.active
         self.archivedGroups = stored.archived
+        self.templates = GroupTemplate.sanitized(templates)
         self.preferences = preferences
     }
 
@@ -135,14 +141,17 @@ public struct SettingsBackup: Equatable, Sendable {
         schemaVersion = document.schemaVersion
         appVersion = document.appVersion
         exportedAt = document.exportedAt
-        // Archived groups are brought in under the same rules as active ones.
+        // Archived groups and templates are brought in under the same rules as active groups.
         let stored = GroupEntry.storedGroups(from: document.groups)
         let sanitized = stored.active.map(Self.sanitizedForImport)
         let sanitizedArchived = stored.archived.map { ($0, Self.sanitizedForImport($0.group)) }
+        let sanitizedTemplates = GroupTemplate.sanitized(document.templates ?? []).map { ($0, Self.sanitizedForImport($0.group)) }
         groups = sanitized.map(\.group)
         archivedGroups = sanitizedArchived.map { $0.0.replacingGroup($0.1.group) }
-        leftOutItemCount = (sanitized.map(\.leftOutItemCount) + sanitizedArchived.map(\.1.leftOutItemCount)).reduce(0, +)
-        resetLaunchOptionCount = (sanitized.map(\.resetLaunchOptionCount) + sanitizedArchived.map(\.1.resetLaunchOptionCount)).reduce(0, +)
+        templates = sanitizedTemplates.map { $0.0.replacingGroup($0.1.group) }
+        let results = sanitized + sanitizedArchived.map(\.1) + sanitizedTemplates.map(\.1)
+        leftOutItemCount = results.reduce(0) { $0 + $1.leftOutItemCount }
+        resetLaunchOptionCount = results.reduce(0) { $0 + $1.resetLaunchOptionCount }
         preferences = document.preferences.preferences
     }
 
@@ -232,6 +241,12 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     /// Merging: added groups that come in without their keyboard shortcut, because a current group
     /// (or one added before them) has those keys.
     public var clearedShortcutCount: Int
+    /// Templates in the backup.
+    public var templateCount: Int
+    /// Current templates. Replace All replaces them only when the backup has templates.
+    public var currentTemplateCount: Int
+    /// Merging: the backup's templates that would be added.
+    public var mergedTemplateCount: Int
     /// Groups in the backup, and the items they hold.
     public var groupCount: Int
     public var itemCount: Int
@@ -253,7 +268,12 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     public var appCount: Int { itemCount }
     public var mergedAppCount: Int { mergedItemCount }
 
-    public init(backup: SettingsBackup, currentGroups: [DockGroup], currentArchivedGroups: [ArchivedGroup] = []) {
+    public init(
+        backup: SettingsBackup,
+        currentGroups: [DockGroup],
+        currentArchivedGroups: [ArchivedGroup] = [],
+        currentTemplates: [GroupTemplate] = []
+    ) {
         groupCount = backup.groups.count
         itemCount = backup.itemCount
         leftOutItemCount = backup.leftOutItemCount
@@ -273,6 +293,42 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         currentArchivedGroupCount = currentArchivedGroups.count
         mergedArchivedGroupCount = merged.archived.count
         clearedShortcutCount = merged.clearedShortcutCount
+        templateCount = backup.templates.count
+        currentTemplateCount = currentTemplates.count
+        mergedTemplateCount = TemplateStore.templatesAddedByMerging(backup.templates, into: currentTemplates).count
+    }
+
+    /// For the line about the backup's contents: its templates; `nil` when it has none.
+    public var templatesNote: String? {
+        let count = templateCount
+        switch count {
+        case 0: return nil
+        case 1: return Localization.string("core.backup.library.templates.one", "It also has 1 template.")
+        default: return Localization.format("core.backup.library.templates.other", "It also has %ld templates.", count)
+        }
+    }
+
+    /// For the line about Replace All: what happens to the current templates — replaced by the
+    /// backup's, or kept when it has none; `nil` when there are none here.
+    public var replacedTemplatesNote: String? {
+        let count = currentTemplateCount
+        guard count > 0 else { return nil }
+        guard templateCount > 0 else {
+            return Localization.string("core.backup.library.keepsTemplates", "It has no templates; yours are kept.")
+        }
+        return count == 1
+            ? Localization.string("core.backup.library.replacesTemplates.one", "Your template is replaced too.")
+            : Localization.format("core.backup.library.replacesTemplates.other", "Your %ld templates are replaced too.", count)
+    }
+
+    /// For the line about merging: the templates it adds; `nil` when it adds none.
+    public var mergedTemplatesNote: String? {
+        let count = mergedTemplateCount
+        switch count {
+        case 0: return nil
+        case 1: return Localization.string("core.backup.library.mergesTemplates.one", "It adds 1 template.")
+        default: return Localization.format("core.backup.library.mergesTemplates.other", "It adds %ld templates.", count)
+        }
     }
 
     /// For the line about the backup's contents: its archived groups; `nil` when it has none.
@@ -332,6 +388,8 @@ private struct BackupDocument: Codable {
     var groups: [GroupEntry]
     /// Same contents as `preferences.json`.
     var preferences: PreferencesDocument
+    /// Written only when there are templates, so a backup without them is as before.
+    var templates: [GroupTemplate]?
 
     init(_ backup: SettingsBackup) {
         schemaVersion = backup.schemaVersion
@@ -340,10 +398,11 @@ private struct BackupDocument: Codable {
         exportedAt = backup.exportedAt
         groups = GroupEntry.entries(of: StoredGroups(active: backup.groups, archived: backup.archivedGroups))
         preferences = PreferencesDocument(preferences: backup.preferences)
+        templates = backup.templates.isEmpty ? nil : backup.templates
     }
 
     private enum CodingKeys: String, CodingKey {
-        case schemaVersion, app, appVersion, exportedAt, groups, preferences
+        case schemaVersion, app, appVersion, exportedAt, groups, preferences, templates
     }
 
     init(from decoder: Decoder) throws {
@@ -355,5 +414,6 @@ private struct BackupDocument: Codable {
         exportedAt = container.decodeLeniently(Date.self, forKey: .exportedAt) ?? Date(timeIntervalSince1970: 0)
         groups = try container.decode([GroupEntry].self, forKey: .groups)
         preferences = try container.decode(PreferencesDocument.self, forKey: .preferences)
+        templates = try container.decodeIfPresent([GroupTemplate].self, forKey: .templates)
     }
 }

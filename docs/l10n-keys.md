@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-710 keys.
+723 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1041,3 +1041,23 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `core.backup.library.clearedShortcuts.one` | 1 group comes in without its keyboard shortcut: another group uses those keys. |
 | `core.backup.library.clearedShortcuts.other` | %ld groups come in without their keyboard shortcut: other groups use those keys. |
 | `core.persistence.groups.archivedUnsupported` | The archived groups can't be saved here. |
+
+## Templates: a templates file that couldn't be loaded or saved, templates in Import Settings…'s confirmation (English only for now; `awaitingTranslation`: `core.templates.`, `core.persistence.templates.`, `core.backup.library.`)
+
+`core.templates.loadFailed.*` follow the title in the same alert; their first `%@` is why the file couldn't be read.
+
+| Key | English |
+| --- | --- |
+| `core.templates.loadFailed.title` | Your templates couldn't be loaded |
+| `core.templates.loadFailed.kept` | %1$@ Starting without templates. A copy was kept at “%2$@”. |
+| `core.templates.loadFailed.empty` | %@ Starting without templates. |
+| `core.templates.loadFailed.suspended` | %@ To protect the existing file, changes to templates won't be saved until the app is restarted. |
+| `core.templates.saveFailed.title` | Your templates couldn't be saved |
+| `core.persistence.templates.newer` | The templates file was saved by a newer version of Cybokron Dock Groups (format %ld). |
+| `core.backup.library.templates.one` | It also has 1 template. |
+| `core.backup.library.templates.other` | It also has %ld templates. |
+| `core.backup.library.replacesTemplates.one` | Your template is replaced too. |
+| `core.backup.library.replacesTemplates.other` | Your %ld templates are replaced too. |
+| `core.backup.library.keepsTemplates` | It has no templates; yours are kept. |
+| `core.backup.library.mergesTemplates.one` | It adds 1 template. |
+| `core.backup.library.mergesTemplates.other` | It adds %ld templates. |

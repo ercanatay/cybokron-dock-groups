@@ -150,6 +150,20 @@ public final class GroupStore: ObservableObject {
         return group
     }
 
+    /// Appends a group made from `template` (`GroupTemplate.makeGroup`): a new identity, its items
+    /// and settings, named as the template — or "name 2", "name 3" … when an active or archived
+    /// group has that name. It isn't standalone and has no keyboard shortcut. Nothing is opened.
+    @discardableResult
+    public func addGroup(from template: GroupTemplate) -> DockGroup {
+        var group = template.makeGroup(named: GroupNaming.uniqueName(template.name, taken: takenNames))
+        group.emoji = DockGroup.sanitizedEmoji(group.emoji) ?? DockGroup.defaultEmoji
+        group.apps = Self.removingDuplicates(group.apps)
+        group.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: group.apps)
+        groups.append(group)
+        scheduleSave()
+        return group
+    }
+
     /// Renames a group. Returns `false` (and changes nothing) for a blank name or an unknown group.
     @discardableResult
     public func renameGroup(_ id: DockGroup.ID, to newName: String) -> Bool {
