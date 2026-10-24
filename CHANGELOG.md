@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-24
+
 ### Added
 
 - Going back from Other Versions… to a version without Start and Finish now also keeps a copy of the settings (`preferences.pre-downgrade-*.json`, next to the groups copy), and the question warns when Start and Finish settings, launch options or protected apps would be dropped there
@@ -26,6 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Close All leaves protected apps alone wherever it's asked: the popup, the menus, quit links, Siri's Quit Group and a standalone group's own app
 - Start and finish links share the 5-second limit of launch and hide links, and their question never shows together with a quit link's
+- The groups window has a Start and Finish section; Settings has a Switching pane with protected apps and the current group
+- Close All no longer quits Finder or this app's own windows
+
+### Fixed / Security
+
+- Open With adds no new way to run code: the item is checked as before, the chosen app is resolved at launch time, must be a real app bundle macOS lists for the item, and must not run what it opens. Any failure refuses the open (fail closed), including from a crafted groups file or backup
+- Copies of `preferences.json` are kept next to `groups.json` before a version without switching is installed; the warning appears only when the new settings are in use
 
 ## [0.7.0] - 2026-10-23
 
@@ -423,7 +432,8 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...v0.7.0
 [0.6.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...v0.6.7
   rebuilt when the group or the app changes and removed (with its Dock tile) when it's turned off or
