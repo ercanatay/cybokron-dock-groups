@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Going back from Other Versions… to a version without Start and Finish now also keeps a copy of the settings (`preferences.pre-downgrade-*.json`, next to the groups copy), and the question warns when Start and Finish settings, launch options or protected apps would be dropped there
 - Start and Finish a group: Start opens its items as Open All does and puts the group started before it away (by default its apps are hidden; apps both groups use stay), Finish hides its apps and shows the previous group again; quitting is never a default and always graceful
 - Each group's Start and Finish settings, in a new section of the group window: hide the previous group's apps, hide all other apps, quit the previous group's apps or leave them; hide, quit or leave its own apps on Finish; show the previous group again or not
 - The current group (the one started last, until it's finished): the popup says "current" and offers Finish instead of Start, and the menu bar menu begins with it and Finish; it's forgotten when the app quits

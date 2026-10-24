@@ -220,7 +220,7 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   ID signed version must come from the running app's team), moves the running app to
   `updates/backups/`, puts the new one in its place and relaunches — putting the previous one back if that fails. The update window shows its
   progress and tells you when the app restarts. **Other Versions…** in Settings → Updates lists the
-  published releases and installs any of them the same way, older or newer; after going back,
+  published releases and installs any of them the same way, older or newer (going back to a version without group items or without Start and Finish first copies `groups.json` and `preferences.json` next to themselves as `….pre-downgrade-<time>.json`, the last three kept, and the question warns when files, folders, Start/Finish settings, launch options or protected apps would be lost there); after going back,
   automatic checks skip the newer versions until you go up again. See [CHANGELOG.md](CHANGELOG.md).
 - **Changelog** (Settings → Changelog): the release notes of the newest 30 GitHub releases, newest
   first (the newest open, the others a click away), with *Latest*, *Installed* and *Pre-release*

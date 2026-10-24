@@ -605,6 +605,7 @@
 "settings.backup.leftOut.other" = "%ld items in the backup were left out: they can't be opened safely.";
 
 /* Settings → Updates → Other Versions…, going back to a version without files, folders and item details (English only for now: translations show this English text until they add these keys) */
+"updates.otherVersions.switching.warning" = "Version %@ doesn't know Start and Finish, launch options or protected apps. Copies of your groups and settings are kept before it's installed; Close All there quits protected apps, and saving there drops these settings.";
 "updates.otherVersions.items.warning" = "Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details.";
 
 /* An item's alias, tags and task notes: the details editor of the group window, Edit Details…, the row's details and the details line of the popup's tooltips (English only for now: translations show this English text until they add these keys) */

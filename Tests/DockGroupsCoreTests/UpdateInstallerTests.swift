@@ -544,3 +544,118 @@ struct PreDowngradeCopyTests {
         #expect(names == ["groups.json"])
     }
 }
+
+/// Going back to a version without Start and Finish from Other Versions…: the settings are copied
+/// aside with the groups (`preferences.pre-downgrade-<timestamp>.json`), and the question warns only
+/// when Start and Finish settings, launch options or protected apps are in use.
+@Suite("Update installer: copies of the groups and settings before going back past switching")
+@MainActor
+struct PreDowngradeSwitchingTests {
+    private static func version(_ text: String) -> SemanticVersion { SemanticVersion(text)! }
+
+    private static let mail = AppReference(bundleIdentifier: "com.apple.mail", name: "Mail")
+    private static let music = AppReference(bundleIdentifier: "com.apple.Music", name: "Music")
+    private static let back = (target: version("0.7.0"), current: version("0.8.0"))
+
+    private struct FailingPreferencesCopy: PreferencesPersisting {
+        struct Failure: Error {}
+        func loadPreferences() throws -> PopupPreferences? { nil }
+        func savePreferences(_ preferences: PopupPreferences) throws {}
+        func preserveUnreadableData() throws -> URL? { nil }
+        func preserveCopy(label: String) throws -> URL? { throw Failure() }
+    }
+
+    @Test func firstVersionIsThisWave() {
+        #expect(ReleaseHistory.firstContextSwitchingVersion == Self.version("0.8.0"))
+        #expect(ReleaseHistory.lacksContextSwitching(Self.version("0.7.0")))
+        #expect(!ReleaseHistory.lacksContextSwitching(Self.version("0.8.0")))
+        #expect(DowngradeProtection.appliesToContextSwitching(installing: Self.back.target, over: Self.back.current))
+        #expect(DowngradeProtection.appliesToContextSwitching(installing: Self.version("0.7.0"), over: nil))
+        #expect(!DowngradeProtection.appliesToContextSwitching(installing: Self.version("0.8.0"), over: Self.version("0.8.1")))
+        #expect(!DowngradeProtection.appliesToContextSwitching(installing: Self.version("0.9.0"), over: Self.version("0.8.0")))
+        #expect(!DowngradeProtection.appliesToContextSwitching(installing: Self.version("0.7.0"), over: Self.version("0.6.9")))
+    }
+
+    @Test func warnsForEachNewSettingOnItsOwnAndOnlyThen() {
+        var withLaunch = Self.mail
+        withLaunch.launch = ItemLaunchOptions(delay: 3)
+        let plain = [DockGroup(name: "Work", apps: [Self.mail])]
+        let delayed = [DockGroup(name: "Work", apps: [withLaunch])]
+        var switching = DockGroup(name: "Work", apps: [Self.mail])
+        switching.switching = GroupSwitching(onStart: .quitPreviousGroup)
+        let protected = PopupPreferences(protectedApps: ProtectedApps([Self.music]))
+        let none = PopupPreferences()
+
+        func warns(_ groups: [DockGroup], _ preferences: PopupPreferences, installing: String = "0.7.0", over: String = "0.8.0") -> Bool {
+            DowngradeProtection.warnsAboutContextSwitching(
+                installing: Self.version(installing), over: Self.version(over), groups: groups, preferences: preferences
+            )
+        }
+        #expect(!warns(plain, none))
+        #expect(!warns([], none))
+        #expect(warns(delayed, none))
+        #expect(warns([switching], none))
+        #expect(warns(plain, protected))
+        // Not going back past 0.8.0: no warning, whatever is used.
+        #expect(!warns(delayed, protected, installing: "0.9.0", over: "0.8.0"))
+        #expect(!warns(delayed, protected, installing: "0.8.0", over: "0.8.1"))
+    }
+
+    @Test func goingBackCopiesGroupsAndSettings() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let groupsURL = temporary.url.appending(path: "groups.json")
+        let preferencesURL = temporary.url.appending(path: "preferences.json")
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: groupsURL), saveDelay: .seconds(60))
+        let preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence(fileURL: preferencesURL), saveDelay: .seconds(60))
+        let group = groups.addGroup(named: "Coding")
+        groups.addItems([Self.mail], toGroup: group.id)
+        preferences.update { $0.protectedApps = ProtectedApps([Self.music]) }
+
+        let copies = try DowngradeProtection.preserveCopies(
+            of: groups, and: preferences, installing: Self.back.target, over: Self.back.current
+        )
+
+        #expect(copies.count == 2)
+        let names = copies.map(\.lastPathComponent)
+        #expect(names.contains { $0.hasPrefix("groups.pre-downgrade-") && $0.hasSuffix(".json") })
+        #expect(names.contains { $0.hasPrefix("preferences.pre-downgrade-") && $0.hasSuffix(".json") })
+        let copiedPreferences = try #require(copies.first { $0.lastPathComponent.hasPrefix("preferences.") })
+        #expect(try Data(contentsOf: copiedPreferences) == Data(contentsOf: preferencesURL))
+        #expect(try JSONFilePreferencesPersistence(fileURL: copiedPreferences).loadPreferences()?.protectedApps.apps.map(\.bundleIdentifier) == ["com.apple.Music"])
+
+        for _ in 0..<4 {
+            try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.back.target, over: Self.back.current)
+        }
+        let files = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path)
+        #expect(files.filter { $0.hasPrefix("groups.pre-downgrade-") }.count == JSONFileSupport.keptCopies)
+        #expect(files.filter { $0.hasPrefix("preferences.pre-downgrade-") }.count == JSONFileSupport.keptCopies)
+        #expect(files.contains("groups.json") && files.contains("preferences.json"))
+    }
+
+    @Test func noCopiesWhenNotGoingBackPastSwitching() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: temporary.url.appending(path: "groups.json")), saveDelay: .zero)
+        let preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence(fileURL: temporary.url.appending(path: "preferences.json")), saveDelay: .zero)
+        groups.addGroup(named: "Work")
+        preferences.update { $0.protectedApps = ProtectedApps([Self.music]) }
+
+        #expect(try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.version("0.9.0"), over: Self.version("0.8.0")).isEmpty)
+        #expect(try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.version("0.8.0"), over: Self.version("0.8.0")).isEmpty)
+        let names = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).sorted()
+        #expect(names == ["groups.json", "preferences.json"])
+    }
+
+    @Test func installIsBlockedWhenTheSettingsCantBeCopied() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: temporary.url.appending(path: "groups.json")), saveDelay: .zero)
+        groups.addGroup(named: "Work")
+        let preferences = PreferencesStore(persistence: FailingPreferencesCopy(), saveDelay: .zero)
+
+        #expect(throws: (any Error).self) {
+            try DowngradeProtection.preserveCopies(of: groups, and: preferences, installing: Self.back.target, over: Self.back.current)
+        }
+    }
+}

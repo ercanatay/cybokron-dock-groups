@@ -317,6 +317,17 @@ final class AutoUpdater: ObservableObject {
         DowngradeProtection.warns(installing: version, over: currentVersion, groups: groups.groups)
     }
 
+    /// Whether installing `version` goes back to a version that ignores Start and Finish settings,
+    /// launch options or protected apps in use: the install question says so.
+    func warnsAboutContextSwitching(installing version: SemanticVersion) -> Bool {
+        DowngradeProtection.warnsAboutContextSwitching(
+            installing: version,
+            over: currentVersion,
+            groups: groups.groups,
+            preferences: preferences.preferences
+        )
+    }
+
     /// Clears the skipped versions, so automatic checks offer every newer release again.
     func clearSkippedVersions() {
         state.skippedVersions = []
@@ -360,15 +371,19 @@ final class AutoUpdater: ObservableObject {
                     bundleIdentifier: bundleIdentifier,
                     expectedTeamIdentifier: runningTeam
                 )
-                // Going back to a version without group items: a copy of the groups first, which
-                // that version would rewrite without their files, folders and details. Without
-                // the copy, nothing is installed.
-                if let self, let copy = try DowngradeProtection.preserveGroups(
-                    of: self.groups,
-                    installing: release.version,
-                    over: self.currentVersion
-                ) {
-                    self.logger.notice("Copied the groups to \(copy.lastPathComponent, privacy: .public) before installing \(release.version, privacy: .public)")
+                // Going back to a version without group items or without Start and Finish: a copy of
+                // the groups and of the settings first, which that version would rewrite without
+                // what it can't show. Without the copies, nothing is installed.
+                if let self {
+                    let copies = try DowngradeProtection.preserveCopies(
+                        of: self.groups,
+                        and: self.preferences,
+                        installing: release.version,
+                        over: self.currentVersion
+                    )
+                    for copy in copies {
+                        self.logger.notice("Copied \(copy.lastPathComponent, privacy: .public) before installing \(release.version, privacy: .public)")
+                    }
                 }
                 if isDryRun {
                     self?.logger.notice("Dry run: staged \(staged.path, privacy: .public); nothing replaced")

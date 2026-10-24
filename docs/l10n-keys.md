@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-665 keys.
+666 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -754,6 +754,16 @@ task notes; the groups file is copied aside as `groups.pre-downgrade-<time>.json
 | Key | English |
 | --- | --- |
 | `updates.otherVersions.items.warning` | Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details. |
+
+## Settings → Updates → Other Versions…, going back to a version without Start and Finish (English only for now; `awaitingTranslation`: `updates.otherVersions.switching.`)
+
+Added to the install question when a group has Start or Finish settings other than the default, an
+item has a launch delay or opener, or protected apps are set; the groups and preferences files are
+copied aside as `groups.pre-downgrade-<time>.json` and `preferences.pre-downgrade-<time>.json` either way.
+
+| Key | English |
+| --- | --- |
+| `updates.otherVersions.switching.warning` | Version %@ doesn't know Start and Finish, launch options or protected apps. Copies of your groups and settings are kept before it's installed; Close All there quits protected apps, and saving there drops these settings. |
 
 ## An item's alias, tags and task notes: the details editor, Edit Details…, the rows and the popup's tooltips (English only for now; `awaitingTranslation`: `item.details.`, `popup.search.`)
 

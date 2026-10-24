@@ -925,6 +925,16 @@ enum L10n {
                     version
                 )
             }
+            /// Part of the question before installing a version older than
+            /// `ReleaseHistory.firstContextSwitchingVersion` while Start and Finish settings,
+            /// launch options or protected apps are in use.
+            static func switchingWarning(_ version: String) -> String {
+                tr(
+                    "updates.otherVersions.switching.warning",
+                    "Version %@ doesn't know Start and Finish, launch options or protected apps. Copies of your groups and settings are kept before it's installed; Close All there quits protected apps, and saving there drops these settings.",
+                    version
+                )
+            }
         }
 
         enum Backup {

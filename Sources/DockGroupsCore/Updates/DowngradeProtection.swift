@@ -9,6 +9,11 @@ import Foundation
 /// `groups.pre-downgrade-<timestamp>.json` (the last three copies are kept), and when the groups
 /// hold anything that version can't show, the install question says so first.
 ///
+/// Going back to a version older than `ReleaseHistory.firstContextSwitchingVersion` is protected
+/// the same way for what it ignores and then drops: the groups' Start and Finish settings and
+/// launch options, and the protected apps in `preferences.json`. Both files are copied
+/// (`preferences.pre-downgrade-<timestamp>.json` too), and the question warns when any of them is used.
+///
 /// `UpdateInstaller` replaces the app only and never reads the settings; this happens around it.
 public enum DowngradeProtection {
     /// The label of the copies: `groups.pre-downgrade-<timestamp>.json`.
@@ -32,6 +37,49 @@ public enum DowngradeProtection {
     /// Whether the install question warns that `target` can't show some of `groups`' items.
     public static func warns(installing target: SemanticVersion, over current: SemanticVersion?, groups: [DockGroup]) -> Bool {
         applies(installing: target, over: current) && usesGroupItems(groups)
+    }
+
+    /// Whether installing `target` while `current` runs goes back to a version without Start and
+    /// Finish, launch options and protected apps.
+    public static func appliesToContextSwitching(installing target: SemanticVersion, over current: SemanticVersion?) -> Bool {
+        guard ReleaseHistory.lacksContextSwitching(target) else { return false }
+        return current.map { target < $0 } ?? true
+    }
+
+    /// Whether the groups or preferences use what a version without Start and Finish drops: an
+    /// item with a delay or opener, a group with Start or Finish settings other than the default,
+    /// or protected apps.
+    public static func usesContextSwitching(_ groups: [DockGroup], preferences: PopupPreferences) -> Bool {
+        !preferences.protectedApps.isEmpty || groups.contains { group in
+            !group.switching.isDefault || group.apps.contains { !$0.launch.isEmpty }
+        }
+    }
+
+    /// Whether the install question warns that `target` ignores (and, on a save, drops) Start and
+    /// Finish settings, launch options or protected apps.
+    public static func warnsAboutContextSwitching(
+        installing target: SemanticVersion,
+        over current: SemanticVersion?,
+        groups: [DockGroup],
+        preferences: PopupPreferences
+    ) -> Bool {
+        appliesToContextSwitching(installing: target, over: current) && usesContextSwitching(groups, preferences: preferences)
+    }
+
+    /// Copies the groups file and the preferences file aside before `target` is installed over
+    /// `current`, when that goes back to a version without Start and Finish (which also covers
+    /// going back to one without group items). Either copy failing throws, and nothing is installed.
+    /// - Returns: The copies' locations; none for a file that hasn't been saved yet.
+    @MainActor
+    @discardableResult
+    public static func preserveCopies(
+        of store: GroupStore,
+        and preferences: PreferencesStore,
+        installing target: SemanticVersion,
+        over current: SemanticVersion?
+    ) throws -> [URL] {
+        guard appliesToContextSwitching(installing: target, over: current) else { return [] }
+        return try [store.preserveCopy(label: copyLabel), preferences.preserveCopy(label: copyLabel)].compactMap { $0 }
     }
 
     /// Copies the groups file aside before `target` is installed over `current`, when that goes back

@@ -27,6 +27,15 @@ public enum ReleaseHistory {
         version < firstGroupItemsVersion
     }
 
+    /// The first version with Start and Finish, launch options and protected apps. An older one
+    /// ignores them, and drops them when it saves the groups or the settings (`DowngradeProtection`).
+    public static let firstContextSwitchingVersion = SemanticVersion(major: 0, minor: 8, patch: 0)
+
+    /// Whether `version` predates `firstContextSwitchingVersion`.
+    public static func lacksContextSwitching(_ version: SemanticVersion) -> Bool {
+        version < firstContextSwitchingVersion
+    }
+
     /// The releases to list: neither drafts nor prereleases, one per version (the first listed
     /// wins), newest first.
     public static func installable(_ releases: [ReleaseInfo]) -> [ReleaseInfo] {

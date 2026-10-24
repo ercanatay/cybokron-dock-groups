@@ -58,6 +58,16 @@ public final class PreferencesStore: ObservableObject {
         return copyURL
     }
 
+    /// Copies the saved file next to itself (`preferences.<label>-<timestamp>.json`; the last three
+    /// copies with that label are kept), a pending change written first — as before installing an
+    /// older version (`DowngradeProtection`).
+    /// - Returns: The copy's location, or `nil` when nothing has been saved.
+    @discardableResult
+    public func preserveCopy(label: String) throws -> URL? {
+        flushPendingSave()
+        return try persistence.preserveCopy(label: label)
+    }
+
     /// Writes a pending change right away. Call before the app quits.
     public func flushPendingSave() {
         guard let pendingSave else { return }

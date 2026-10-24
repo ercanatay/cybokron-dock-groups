@@ -130,7 +130,8 @@ struct OtherVersionsView: View {
                         release: release,
                         releases: releases,
                         current: updater.currentVersion,
-                        dropsGroupItems: updater.warnsAboutGroupItems(installing: release.version)
+                        dropsGroupItems: updater.warnsAboutGroupItems(installing: release.version),
+                        dropsSwitching: updater.warnsAboutContextSwitching(installing: release.version)
                     )
                 }
                 .disabled(!hasInstaller || updater.isBusy)
@@ -151,6 +152,9 @@ private struct PendingInstall {
     let current: SemanticVersion?
     /// The version can't show some of the groups' items (`DowngradeProtection.warns`).
     let dropsGroupItems: Bool
+    /// The version ignores Start and Finish settings, launch options or protected apps in use
+    /// (`DowngradeProtection.warnsAboutContextSwitching`).
+    let dropsSwitching: Bool
 
     private var target: SemanticVersion { release.version }
 
@@ -186,6 +190,9 @@ private struct PendingInstall {
             }
             if dropsGroupItems {
                 parts.append(L10n.Settings.OtherVersions.groupItemsWarning(target.description))
+            }
+            if dropsSwitching {
+                parts.append(L10n.Settings.OtherVersions.switchingWarning(target.description))
             }
             parts.append(L10n.Settings.OtherVersions.confirmOlder)
         case .upgrade:
