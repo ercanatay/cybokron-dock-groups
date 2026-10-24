@@ -15,6 +15,8 @@ public struct PopupCellText: Equatable, Sendable {
         case openWebsite(address: String)
         case openFile(name: String)
         case openFolder(name: String)
+        /// A file, folder or website with the app chosen to open it.
+        case openWith(name: String, appName: String)
         /// An app that isn't on this Mac.
         case appMissing(name: String)
         /// A file or folder that was moved, renamed or deleted.
@@ -46,6 +48,8 @@ public struct PopupCellText: Equatable, Sendable {
     /// VoiceOver's hint: what activating the item does.
     public enum Hint: Equatable, Sendable {
         case openApp, bringToFront, website, file, folder
+        /// A file, folder or website with the app chosen to open it.
+        case openWith(appName: String)
     }
 
     /// The tooltip's last line, for an item with details: “Name: Q3 Report.pdf · Tags: finance, q3
@@ -75,13 +79,16 @@ public struct PopupCellText: Equatable, Sendable {
         }
     }
 
-    public let help: Help
+    public private(set) var help: Help
     /// `nil` where the group can't be edited (the Most Used list, a standalone group's own app).
     public let drag: Drag?
     /// `nil` for an item without an alias, tags or task notes.
     public let details: Details?
     public let label: Label
-    public let hint: Hint
+    public private(set) var hint: Hint
+    /// Seconds Open All and Start wait before opening the item; `nil` for none (a click opens it
+    /// right away either way).
+    public let launchDelay: Int?
 
     public init(item: GroupItem, presence: ItemPresence, isRunning: Bool, isEditable: Bool, isFreeLayout: Bool) {
         let name = item.displayName
@@ -120,5 +127,26 @@ public struct PopupCellText: Equatable, Sendable {
         }
         self.drag = isEditable ? drag : nil
         details = Details(item: item)
+        let launch = item.launch.allowed(for: item.kind)
+        launchDelay = launch.delay > 0 ? launch.delay : nil
+        // An item that opens says with which app it does; one that can't be opened says why.
+        if let opener = launch.opener {
+            switch help {
+            case .openWebsite, .openFile, .openFolder:
+                help = .openWith(name: name, appName: opener.name)
+                hint = .openWith(appName: opener.name)
+            default:
+                break
+            }
+        }
+    }
+
+    /// The tooltip's sentence about the launch delay: "Open All and Start open it after 3 seconds.";
+    /// `nil` without one.
+    public var launchDelayText: String? {
+        guard let launchDelay else { return nil }
+        return launchDelay == 1
+            ? Localization.string("item.launch.help.delay.one", "Open All and Start open it after 1 second.")
+            : Localization.format("item.launch.help.delay.other", "Open All and Start open it after %ld seconds.", launchDelay)
     }
 }

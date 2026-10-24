@@ -132,6 +132,7 @@
 		87E24325C1EEDE8386A6CCF0 /* ItemSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3907666074E21B678A97BE64 /* ItemSearch.swift */; };
 		8A1A4F7C5384A630819CD00C /* FileItemPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B801784416AC1F4C1FC1C691 /* FileItemPolicy.swift */; };
 		8B1037A8E298CEED7DD0FDD7 /* IntentConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F8542EBF1C0052C9D7348A /* IntentConfirmation.swift */; };
+		8DF647EAFCB26765F93AB4AF /* ItemOpenerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3724EA17D40C90ECF27CB4F /* ItemOpenerMenu.swift */; };
 		8F9D2D97160AA2F384DCCB09 /* GroupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AAAF01792CF3ED5DEA7A3E /* GroupStoreTests.swift */; };
 		907407557E833182F238B446 /* ChangelogFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADC8A114A6247DF2709F519 /* ChangelogFeed.swift */; };
 		90BF1289352A073D5EDAC7D4 /* LinkPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B95CEB613F25C30D39E537 /* LinkPolicy.swift */; };
@@ -182,6 +183,7 @@
 		B6858291C3FCB4C0832CF470 /* ItemPresenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856D49552AD49CB588B0A022 /* ItemPresenceTests.swift */; };
 		B6EEBF8BC65508F5518B0931 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0712509968CCE2F10AE2D812 /* MainWindowView.swift */; };
 		B998F03A617DF8C638C9EC11 /* MoveBetweenGroupsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCFBA8CF08D9467419865DB /* MoveBetweenGroupsTests.swift */; };
+		BA1BC4BB81367E0552ECA50B /* LaunchOptionsEditingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA027827A36F4C14CB6D65FB /* LaunchOptionsEditingTests.swift */; };
 		BAF91563BE8CA7ECA783BF91 /* SecurityHardeningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB9CDE0E1789956E21C0C96 /* SecurityHardeningTests.swift */; };
 		BB518DFF6EB4DF6686BA375A /* ReleaseHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0722F40415BF7A6B4778D340 /* ReleaseHistoryTests.swift */; };
 		BC32912FDFA4676FF0D4CDB8 /* WorkspaceItemLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7791DE3468E928F15492983B /* WorkspaceItemLocator.swift */; };
@@ -448,6 +450,7 @@
 		A0161C18924F566039CF99C0 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A01E8CA54FEEB3BE9E35C712 /* AccessibilityAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAccess.swift; sourceTree = "<group>"; };
 		A0BEC8EE1E240225AF4254D7 /* SupportedLanguages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedLanguages.swift; sourceTree = "<group>"; };
+		A3724EA17D40C90ECF27CB4F /* ItemOpenerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOpenerMenu.swift; sourceTree = "<group>"; };
 		A3E7A596264D74C7E326849B /* BackupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSettingsView.swift; sourceTree = "<group>"; };
 		A46576E68C0A5B01DB9B650F /* GroupLauncherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupLauncherTests.swift; sourceTree = "<group>"; };
 		A4B5322E99EA54EBAE2EA4AD /* UpdateCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCheck.swift; sourceTree = "<group>"; };
@@ -456,6 +459,7 @@
 		A7D8946F5EC8EBE658EEE536 /* DiagnosticsReportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsReportTests.swift; sourceTree = "<group>"; };
 		A86C2FCD33619FECB563A0AC /* AgentInstallerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentInstallerTests.swift; sourceTree = "<group>"; };
 		A9C8EDE18D836E1B44E32A43 /* PathIdentifiedAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathIdentifiedAppTests.swift; sourceTree = "<group>"; };
+		AA027827A36F4C14CB6D65FB /* LaunchOptionsEditingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOptionsEditingTests.swift; sourceTree = "<group>"; };
 		AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupLauncher.swift; sourceTree = "<group>"; };
 		ABB59AA672EA1ADFBFBB69A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AC9CCEB44CEA9E79B1C008E8 /* AgentDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDirectory.swift; sourceTree = "<group>"; };
@@ -936,6 +940,7 @@
 				856D49552AD49CB588B0A022 /* ItemPresenceTests.swift */,
 				3A0B6A65074EFBD2F8F8B57B /* ItemRowStatusTests.swift */,
 				C2181A7F8895AC9CEEAF2A3F /* ItemSearchTests.swift */,
+				AA027827A36F4C14CB6D65FB /* LaunchOptionsEditingTests.swift */,
 				656CEF063FCF90242D427DFE /* LaunchOptionsFakes.swift */,
 				74076141C23FF6D64E7F87F0 /* LaunchOptionsFixtures.swift */,
 				B10F9652D9B0190EA302370F /* LaunchOptionsLauncherTests.swift */,
@@ -1012,6 +1017,7 @@
 				C9277309FDFE3A2F3138FBD6 /* DelayedLaunches.swift */,
 				AB41A6B93FC01F6340073B21 /* GroupLauncher.swift */,
 				599B104E5C4A021A7B768970 /* GroupTerminator.swift */,
+				A3724EA17D40C90ECF27CB4F /* ItemOpenerMenu.swift */,
 				89440FDF52AFBBFF1AA40E3E /* ItemOpenerPolicy.swift */,
 				A5152845B656E4B3B3015DE6 /* ReportSummaries.swift */,
 				2A7A027660E679C7B4E0B67C /* RunningApplicationLookup.swift */,
@@ -1360,6 +1366,7 @@
 				19B99A413620A65D66CDDB1C /* ItemDetails.swift in Sources */,
 				A77E64786D7B7D6048167A45 /* ItemDetailsDraft.swift in Sources */,
 				6E9CE0EFEDF1A7964620CFED /* ItemLaunchOptions.swift in Sources */,
+				8DF647EAFCB26765F93AB4AF /* ItemOpenerMenu.swift in Sources */,
 				D0831BA2E466E8B8F608E20E /* ItemOpenerPolicy.swift in Sources */,
 				8514ACA12F0A704DFC9CFD2B /* ItemPresence.swift in Sources */,
 				864271324E0F6A8D29D859A5 /* ItemPresenceCache.swift in Sources */,
@@ -1461,6 +1468,7 @@
 				B6858291C3FCB4C0832CF470 /* ItemPresenceTests.swift in Sources */,
 				BEB8F4938094E181B3902A6D /* ItemRowStatusTests.swift in Sources */,
 				5A8423B044174A50CDB4DFD5 /* ItemSearchTests.swift in Sources */,
+				BA1BC4BB81367E0552ECA50B /* LaunchOptionsEditingTests.swift in Sources */,
 				4EE7C11D4B52B4B091D06BEC /* LaunchOptionsFakes.swift in Sources */,
 				ACDA6E712AA5797824D7DCB3 /* LaunchOptionsFixtures.swift in Sources */,
 				F9E07A8D7554093B5A9512ED /* LaunchOptionsLauncherTests.swift in Sources */,

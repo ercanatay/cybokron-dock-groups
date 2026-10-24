@@ -14,19 +14,23 @@ enum AppPicker {
         chooseApps(title: L10n.AppPicker.title, message: L10n.AppPicker.message(groupName), attachedTo: window, completion: completion)
     }
 
-    /// The same open panel with its own title and message (Settings → Switching's protected apps).
+    /// The same open panel with its own title and message (Settings → Switching's protected apps,
+    /// the details editor's "Open with" → Other…), its own button and, for one app only, single
+    /// selection.
     static func chooseApps(
         title: String,
         message: String,
+        prompt: String = L10n.Common.add,
+        allowsMultipleSelection: Bool = true,
         attachedTo window: NSWindow?,
         completion: @escaping ([URL]) -> Void
     ) {
         let panel = NSOpenPanel()
         panel.title = title
         panel.message = message
-        panel.prompt = L10n.Common.add
+        panel.prompt = prompt
         panel.allowedContentTypes = [.applicationBundle]
-        panel.allowsMultipleSelection = true
+        panel.allowsMultipleSelection = allowsMultipleSelection
         panel.canChooseFiles = true
         panel.canChooseDirectories = false
         panel.treatsFilePackagesAsDirectories = false

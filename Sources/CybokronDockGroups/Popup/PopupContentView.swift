@@ -839,12 +839,15 @@ private struct PopupAppCell: View {
 }
 
 extension PopupCellText {
-    /// The tooltip: what a click does, then (in editable groups) how the item can be dragged, and
-    /// on a line of its own the item's details: its own name when an alias is shown instead, its
-    /// tags and its notes.
+    /// The tooltip: what a click does (with which app, when one is chosen), then (in editable
+    /// groups) how the item can be dragged and how long Open All and Start wait for it, and on a
+    /// line of its own the item's details: its own name when an alias is shown instead, its tags
+    /// and its notes.
     var helpText: String {
-        guard let details, !details.text.isEmpty else { return actionHelpText }
-        return "\(actionHelpText)\n\(details.text)"
+        let sentences = [actionHelpText] + [launchDelayText].compactMap { $0 }
+        let help = sentences.joined(separator: " ")
+        guard let details, !details.text.isEmpty else { return help }
+        return "\(help)\n\(details.text)"
     }
 
     private var actionHelpText: String {
@@ -855,6 +858,7 @@ extension PopupCellText {
         case .openWebsite(let address): action = L10n.Popup.helpOpenWebsite(address)
         case .openFile(let name): action = L10n.Popup.helpOpenFile(name)
         case .openFolder(let name): action = L10n.Popup.helpOpenFolder(name)
+        case .openWith(let name, let appName): action = L10n.Launch.helpOpenWith(name, appName: appName)
         case .appMissing(let name): action = L10n.Popup.helpMissing(name)
         case .itemMissing(let name): action = L10n.Item.missingHelp(name)
         case .volumeUnavailable(let name, let volume): action = L10n.Item.volumeHelp(name, volume: volume)
@@ -886,6 +890,7 @@ extension PopupCellText {
         case .website: return L10n.Popup.websiteHint
         case .file: return L10n.Popup.fileHint
         case .folder: return L10n.Popup.folderHint
+        case .openWith(let appName): return L10n.Launch.hintOpenWith(appName)
         }
     }
 }

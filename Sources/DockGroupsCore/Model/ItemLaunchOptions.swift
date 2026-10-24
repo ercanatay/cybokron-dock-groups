@@ -93,3 +93,41 @@ extension ItemOpener: Codable {
         try container.encode(name, forKey: .name)
     }
 }
+
+/// The line an item's row in the group window shows under its location when it has launch options
+/// (spec §4.3): "Opens with Visual Studio Code · after 3 s", "Opens with Preview (not on this Mac:
+/// uses the default app)", "After 5 s".
+public struct ItemLaunchCaption: Equatable, Sendable {
+    /// The chosen app's name; `nil` for the default app.
+    public let openerName: String?
+    /// Whether the chosen app was found missing when the window last checked (`nil`: not checked).
+    public let isOpenerMissing: Bool
+    /// Seconds Open All and Start wait; 0 for none.
+    public let delay: Int
+
+    /// The caption of `item`; `nil` when it has no launch options.
+    /// - Parameter isOpenerInstalled: Whether the chosen app is on this Mac, as last checked
+    ///   (`ItemPresenceCache.isOpenerInstalled`); `nil` when it wasn't checked.
+    public init?(item: GroupItem, isOpenerInstalled: Bool?) {
+        let launch = item.launch.allowed(for: item.kind)
+        guard !launch.isEmpty else { return nil }
+        openerName = launch.opener?.name
+        isOpenerMissing = launch.opener != nil && isOpenerInstalled == false
+        delay = launch.delay
+    }
+
+    public var text: String {
+        var parts: [String] = []
+        if let openerName {
+            parts.append(isOpenerMissing
+                ? Localization.format("item.launch.row.openerMissing", "Opens with %@ (not on this Mac: uses the default app)", openerName)
+                : Localization.format("item.launch.row.opener", "Opens with %@", openerName))
+        }
+        if delay > 0 {
+            parts.append(parts.isEmpty
+                ? Localization.format("item.launch.row.delay", "After %ld s", delay)
+                : Localization.format("item.launch.row.delayAfterOpener", "after %ld s", delay))
+        }
+        return parts.joined(separator: " · ")
+    }
+}

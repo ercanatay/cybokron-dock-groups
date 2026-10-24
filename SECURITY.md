@@ -30,7 +30,10 @@ signature before it's mounted and again on the app inside. Nothing about you or 
 sent. Other apps and web pages can send it commands through its URL scheme
 (`cybokrondockgroups://`): quitting asks first, and opening, hiding, starting or finishing groups
 is rate limited; a start or finish link that would quit apps asks first too (or hides them
-instead), and protected apps are never quit by Close All, Start or Finish, whoever asks.
+instead), and protected apps are never quit by Close All, Start or Finish, whoever asks. An app
+chosen to open an item is kept by bundle identifier only and checked each time it's used: it must
+be an app macOS lists for the item that doesn't run what it opens (Terminal and iTerm2 only for
+folders, and never from a backup); otherwise the item isn't opened.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
 `groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.

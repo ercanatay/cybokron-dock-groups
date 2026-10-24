@@ -182,6 +182,9 @@ final class SettingsBackupController: ObservableObject {
         if summary.leftOutItemCount > 0 {
             contents += " " + Texts.leftOut(summary.leftOutItemCount)
         }
+        if summary.resetLaunchOptionCount > 0 {
+            contents += " " + Texts.launchReset(summary.resetLaunchOptionCount)
+        }
         lines.append(contents)
 
         var replace = [Texts.confirmReplace]

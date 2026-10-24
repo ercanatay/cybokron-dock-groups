@@ -507,6 +507,45 @@ enum L10n {
         static func notesSummary(_ notes: String) -> String { tr("popup.search.help.notes", "Notes: %@", notes) }
     }
 
+    /// An item's launch options: the details editor's Opening part, the open panel of "Open with" →
+    /// Other…, and the popup's tooltips. The rows' captions and the editor's notes about a chosen
+    /// app come from DockGroupsCore (`ItemLaunchCaption`, `ItemOpenerStatus`, `ItemOpenerRefusal`).
+    enum Launch {
+        static var section: String { tr("item.launch.section", "Opening") }
+        static var openWith: String { tr("item.launch.openWith", "Open with") }
+        static var defaultApp: String { tr("item.launch.defaultApp", "Default App") }
+        /// The default app, named: "Default App (Preview)".
+        static func defaultApp(named name: String) -> String { tr("item.launch.defaultApp.named", "Default App (%@)", name) }
+        static var other: String { tr("item.launch.otherApp", "Other…") }
+        /// The app chosen before, in the menu, when it isn't on this Mac.
+        static func notOnThisMac(_ name: String) -> String { tr("item.launch.choice.notOnThisMac", "%@ (not on this Mac)", name) }
+        /// The app chosen before, in the menu, when it may not open the item.
+        static func refusedChoice(_ name: String) -> String { tr("item.launch.choice.refused", "%@ (can't open it)", name) }
+        static var delay: String { tr("item.launch.delay", "Delay") }
+        /// A choice of the delay menu: "None", "1 second", "3 seconds".
+        static func delayTitle(_ seconds: Int) -> String {
+            switch seconds {
+            case 0: return tr("item.launch.delay.none", "None")
+            case 1: return tr("item.launch.delay.one", "1 second")
+            default: return tr("item.launch.delay.other", "%ld seconds", seconds)
+            }
+        }
+        static var delayHint: String {
+            tr("item.launch.delay.hint", "Open All and Start wait this long; clicking the item opens it right away.")
+        }
+        static var pickerTitle: String { tr("item.launch.picker.title", "Choose an App") }
+        static func pickerMessage(_ itemName: String) -> String {
+            tr("item.launch.picker.message", "Choose the app that opens “%@”.", itemName)
+        }
+        static var pickerPrompt: String { tr("item.launch.picker.prompt", "Choose") }
+        /// The popup's tooltip of a file, folder or website with a chosen app.
+        static func helpOpenWith(_ name: String, appName: String) -> String {
+            tr("item.launch.help.openWith", "Open %1$@ with %2$@.", name, appName)
+        }
+        /// VoiceOver's hint of such an item.
+        static func hintOpenWith(_ appName: String) -> String { tr("item.launch.hint.openWith", "Opens it with %@", appName) }
+    }
+
     // MARK: - Problems
 
     enum Problems {
@@ -963,6 +1002,13 @@ enum L10n {
                 count == 1
                     ? tr("settings.backup.leftOut.one", "1 item in the backup was left out: it can't be opened safely.")
                     : tr("settings.backup.leftOut.other", "%ld items in the backup were left out: they can't be opened safely.", count)
+            }
+            /// Items of the backup kept without the app chosen to open them
+            /// (`SettingsBackup.resetLaunchOptionCount`).
+            static func launchReset(_ count: Int) -> String {
+                count == 1
+                    ? tr("settings.backup.launchReset.one", "The launch settings of 1 item were reset: they named an app that runs files.")
+                    : tr("settings.backup.launchReset.other", "The launch settings of %ld items were reset: they named apps that run files.", count)
             }
             static var confirmReplace: String {
                 tr("settings.backup.confirm.replace", "Replace All uses the backup's groups and settings instead of yours.")

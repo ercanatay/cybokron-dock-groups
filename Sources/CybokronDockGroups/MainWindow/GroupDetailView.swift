@@ -10,9 +10,11 @@ import SwiftUI
 /// comes to the front (`GroupWindowItems`) and when a volume is connected or ejected — never while
 /// the rows draw.
 ///
-/// An item's alias, tags and task notes are edited in the details editor, opened from its row's ⓘ
-/// button or Edit Details… (a popover) or from the popup's Edit Details… (a sheet). The editor
-/// saves once, when it closes, so a standalone group's app is rebuilt once per edit at most. What
+/// An item's alias, tags, task notes and launch options (a delay; the app that opens a file,
+/// folder or website) are edited in the details editor, opened from its row's ⓘ button or Edit
+/// Details… (a popover) or from the popup's Edit Details… (a sheet). The editor saves once, when it
+/// closes, so a standalone group's app is rebuilt once per edit at most. Its "Open with" → Other…
+/// moves it to a sheet first: the open panel would close the row's popover. What
 /// the popup asks the window to do — that, or the open panel of Add Apps… or Add Files or
 /// Folders… — arrives as `GroupWindowSelection.request`.
 struct GroupDetailView: View {
@@ -45,13 +47,21 @@ struct GroupDetailView: View {
         let message: String
     }
 
-    /// An open details editor: whose, what's typed so far, and how it's shown.
+    /// An open details editor: whose, what's typed and chosen so far, and how it's shown.
     private struct DetailsEditing {
-        let itemID: String
-        let itemName: String
+        /// The item as it was when the editor opened.
+        let item: GroupItem
+        var itemID: String { item.id }
+        var itemName: String { item.name }
         var draft: ItemDetailsDraft
-        /// In a sheet (opened from the popup) rather than the row's popover.
-        let isSheet: Bool
+        /// In a sheet (opened from the popup, or for Other…) rather than the row's popover.
+        var isSheet: Bool
+        /// What opening the item opens, for checking the apps that may open it; `nil` for apps.
+        let target: URL?
+        /// The "Open with" menu, built once when the editor opened; `nil` for apps.
+        let opening: ItemOpenerMenu?
+        /// Why the app chosen with Other… wasn't taken.
+        var openerRefusal: ItemOpenerRefusal?
     }
 
     init(
@@ -220,6 +230,7 @@ struct GroupDetailView: View {
             isDimmed: checked.map { !$0.isOpenable } ?? false,
             onRemove: { store.removeApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id) },
             onLocate: canLocate ? { locate(item) } : nil,
+            launchCaption: ItemLaunchCaption(item: item, isOpenerInstalled: presence.isOpenerInstalled(item)),
             isEditingDetails: isEditingDetailsInPopover(of: item),
             detailsEditor: { detailsEditor() }
         )
@@ -453,15 +464,35 @@ struct GroupDetailView: View {
         // The details as stored now, which that may just have changed.
         let target = identity.lowercased()
         guard let item = storedGroup.apps.first(where: { $0.normalizedBundleIdentifier == target }) else { return }
-        editing = DetailsEditing(itemID: item.id, itemName: item.name, draft: ItemDetailsDraft(item.details), isSheet: inSheet)
+        let opened = openedLocation(of: item)
+        editing = DetailsEditing(
+            item: item,
+            draft: ItemDetailsDraft(item),
+            isSheet: inSheet,
+            target: opened,
+            // LaunchServices is asked for the item's apps once, now.
+            opening: opened.map { ItemOpenerMenu(for: item, opener: item.launch.opener, target: $0, catalog: items.catalog) }
+        )
     }
 
-    /// Closes the open details editor and saves it once (`GroupStore.saveDetails`): nothing after
-    /// Cancel, or when nothing changed. Closing it again does nothing.
+    /// What opening the item opens, as the apps that may open it are checked against: a file's or
+    /// folder's checked location (its own when it couldn't be checked), a website's address; `nil`
+    /// for an app.
+    private func openedLocation(of item: GroupItem) -> URL? {
+        switch item.kind {
+        case .application: return nil
+        case .website: return item.websiteURL
+        case .file, .folder: return presence.presence(of: item)?.location ?? item.fileURL
+        }
+    }
+
+    /// Closes the open details editor and saves it once (`GroupStore.saveItemEdits`: its details
+    /// and its launch options in one change): nothing after Cancel, or when nothing changed.
+    /// Closing it again does nothing.
     private func finishEditing(_ ending: ItemDetailsDraft.Ending) {
         guard let closed = editing else { return }
         editing = nil
-        store.saveDetails(of: closed.draft, endingWith: ending, ofItem: closed.itemID, inGroup: group.id)
+        store.saveItemEdits(of: closed.draft, endingWith: ending, ofItem: closed.itemID, inGroup: group.id)
     }
 
     private func detailsEditor() -> some View {
@@ -471,8 +502,41 @@ struct GroupDetailView: View {
                 get: { editing?.draft ?? ItemDetailsDraft(ItemDetails()) },
                 set: { draft in editing?.draft = draft }
             ),
+            opening: editing?.opening,
+            openerRefusal: editing?.openerRefusal,
+            chooseOtherOpener: chooseOtherOpener,
             finish: finishEditing
         )
+    }
+
+    /// "Open with" → Other…: an open panel for one app, checked as it will be when the item opens
+    /// (`ItemOpenerMenu.check`); a refused app isn't set, and the editor says why. The row's
+    /// popover would close under the panel, so the editor moves to a sheet first, keeping what was
+    /// typed.
+    private func chooseOtherOpener() {
+        guard var current = editing, let target = current.target else { return }
+        current.isSheet = true
+        current.openerRefusal = nil
+        editing = current
+        let item = current.item
+        DispatchQueue.main.async {
+            AppPicker.chooseApps(
+                title: L10n.Launch.pickerTitle,
+                message: L10n.Launch.pickerMessage(item.displayName),
+                prompt: L10n.Launch.pickerPrompt,
+                allowsMultipleSelection: false,
+                attachedTo: nil
+            ) { urls in
+                guard let url = urls.first, editing?.itemID == item.id else { return }
+                switch ItemOpenerMenu.check(url, for: item, target: target, catalog: items.catalog) {
+                case .success(let opener):
+                    editing?.draft.opener = opener
+                    editing?.openerRefusal = nil
+                case .failure(let refusal):
+                    editing?.openerRefusal = refusal
+                }
+            }
+        }
     }
 
     /// Whether `item`'s row shows the editor in its popover; closing the popover another way than

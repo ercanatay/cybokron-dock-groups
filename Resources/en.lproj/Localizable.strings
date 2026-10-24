@@ -726,3 +726,38 @@
 "core.invocation.finishGroup.phrase" = "Finish %1$@ in %2$@";
 "core.invocation.startGroup.link" = "Start";
 "core.invocation.finishGroup.link" = "Finish";
+
+/* An item's launch options: the details editor's Opening part (the app that opens a file, folder or website, and the delay Open All and Start wait), Other…'s open panel and why an app isn't taken, the rows' captions and the popup's tooltips (English only for now: translations show this English text until they add these keys) */
+"item.launch.section" = "Opening";
+"item.launch.openWith" = "Open with";
+"item.launch.defaultApp" = "Default App";
+"item.launch.defaultApp.named" = "Default App (%@)";
+"item.launch.otherApp" = "Other…";
+"item.launch.choice.notOnThisMac" = "%@ (not on this Mac)";
+"item.launch.choice.refused" = "%@ (can't open it)";
+"item.launch.delay" = "Delay";
+"item.launch.delay.none" = "None";
+"item.launch.delay.one" = "1 second";
+"item.launch.delay.other" = "%ld seconds";
+"item.launch.delay.hint" = "Open All and Start wait this long; clicking the item opens it right away.";
+"item.launch.picker.title" = "Choose an App";
+"item.launch.picker.message" = "Choose the app that opens “%@”.";
+"item.launch.picker.prompt" = "Choose";
+"item.launch.help.openWith" = "Open %1$@ with %2$@.";
+"item.launch.hint.openWith" = "Opens it with %@";
+"item.launch.help.delay.one" = "Open All and Start open it after 1 second.";
+"item.launch.help.delay.other" = "Open All and Start open it after %ld seconds.";
+"item.launch.status.notOnThisMac" = "“%@” isn't on this Mac: the item opens with its default app.";
+"item.launch.status.refused" = "“%@” can't open this item safely, so the item won't open. Choose another app.";
+"item.launch.refusal.notAnApp" = "“%@” isn't an app that can open items.";
+"item.launch.refusal.unknown" = "macOS doesn't know “%@” yet. Open it once, then choose it again.";
+"item.launch.refusal.runsItems" = "“%@” runs what it opens, so it can't open this item.";
+"item.launch.refusal.notListed" = "“%@” isn't one of the apps macOS lists for this item.";
+"item.launch.row.openerMissing" = "Opens with %@ (not on this Mac: uses the default app)";
+"item.launch.row.opener" = "Opens with %@";
+"item.launch.row.delay" = "After %ld s";
+"item.launch.row.delayAfterOpener" = "after %ld s";
+
+/* Import Settings…: items of the backup whose chosen app was dropped because it runs what it opens (English only for now: translations show this English text until they add these keys) */
+"settings.backup.launchReset.one" = "The launch settings of 1 item were reset: they named an app that runs files.";
+"settings.backup.launchReset.other" = "The launch settings of %ld items were reset: they named apps that run files.";

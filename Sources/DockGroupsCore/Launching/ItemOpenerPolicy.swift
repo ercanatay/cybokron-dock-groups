@@ -10,6 +10,20 @@ public protocol ApplicationCatalog: AnyObject {
     func applicationURLs(toOpen url: URL) -> [URL]
     /// The bundle identifier of the app at `url`, read from its bundle.
     func bundleIdentifier(ofApplicationAt url: URL) -> String?
+    /// The app that opens `url` when no app is chosen for it; by default the first one listed.
+    func defaultApplicationURL(toOpen url: URL) -> URL?
+    /// The name the app at `url` is shown with; by default its bundle's name without ".app".
+    func name(ofApplicationAt url: URL) -> String
+}
+
+extension ApplicationCatalog {
+    public func defaultApplicationURL(toOpen url: URL) -> URL? {
+        applicationURLs(toOpen: url).first
+    }
+
+    public func name(ofApplicationAt url: URL) -> String {
+        url.deletingPathExtension().lastPathComponent
+    }
 }
 
 /// `ApplicationCatalog` backed by `NSWorkspace` and the apps' bundles.
@@ -31,6 +45,16 @@ public final class SystemApplicationCatalog: ApplicationCatalog {
 
     public func bundleIdentifier(ofApplicationAt url: URL) -> String? {
         Bundle(url: url)?.bundleIdentifier
+    }
+
+    public func defaultApplicationURL(toOpen url: URL) -> URL? {
+        workspace.urlForApplication(toOpen: url)
+    }
+
+    /// The name Finder shows, without ".app".
+    public func name(ofApplicationAt url: URL) -> String {
+        let name = FileManager.default.displayName(atPath: url.path)
+        return name.lowercased().hasSuffix(".app") ? String(name.dropLast(4)) : name
     }
 }
 

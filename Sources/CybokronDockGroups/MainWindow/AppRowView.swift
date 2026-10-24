@@ -5,7 +5,8 @@ import SwiftUI
 /// One item of a group: icon, the name it's shown with (its alias, when it has one) and its tags,
 /// below them its own name when an alias is shown instead, and what the item is — an app's bundle
 /// identifier (or location, for an app without one), a website's address, a file's or folder's
-/// location — or what's wrong with it (`ItemRowStatus`). A missing file or folder has Locate…;
+/// location — or what's wrong with it (`ItemRowStatus`), and under that its launch options when it
+/// has some (`ItemLaunchCaption`). A missing file or folder has Locate…;
 /// every row has an ⓘ button that opens the details editor (`detailsEditor`, in a popover) and a
 /// button that removes the item from the group.
 ///
@@ -20,6 +21,8 @@ struct AppRowView<DetailsEditor: View>: View {
     let onRemove: () -> Void
     /// Says where a missing file or folder is now; `nil` when there's nothing to locate.
     var onLocate: (() -> Void)?
+    /// The delay and the app chosen to open it; `nil` without launch options.
+    var launchCaption: ItemLaunchCaption?
     /// Whether the details editor is open in the ⓘ button's popover.
     @Binding var isEditingDetails: Bool
     @ViewBuilder let detailsEditor: () -> DetailsEditor
@@ -57,6 +60,13 @@ struct AppRowView<DetailsEditor: View>: View {
                     .font(.caption)
                     .lineLimit(1)
                     .truncationMode(.middle)
+                if let launchCaption {
+                    Text(launchCaption.text)
+                        .foregroundStyle(launchCaption.isOpenerMissing ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+                        .font(.caption)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
             }
             .help(ifAny: PopupCellText.Details(item: app)?.text)
             Spacer(minLength: 8)
@@ -67,7 +77,7 @@ struct AppRowView<DetailsEditor: View>: View {
             Button {
                 isEditingDetails = true
             } label: {
-                Image(systemName: app.details.isEmpty ? "info.circle" : "info.circle.fill")
+                Image(systemName: app.details.isEmpty && app.launch.isEmpty ? "info.circle" : "info.circle.fill")
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.borderless)

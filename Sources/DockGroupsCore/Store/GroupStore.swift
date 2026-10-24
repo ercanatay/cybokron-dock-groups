@@ -164,6 +164,22 @@ public final class GroupStore: ObservableObject {
         return true
     }
 
+    /// Gives an item of the group new details and launch options at once (`nil`: kept as they are),
+    /// as one change of the group: one save, one notification of `groups`. An app keeps no opener.
+    /// - Returns: Whether the item changed; `false` when it didn't or the group doesn't have it.
+    @discardableResult
+    public func updateItem(_ identity: String, inGroup id: DockGroup.ID, details: ItemDetails?, launch: ItemLaunchOptions?) -> Bool {
+        guard let groupIndex = index(of: id), let itemIndex = itemIndex(of: identity, inGroupAt: groupIndex) else { return false }
+        let original = groups[groupIndex].apps[itemIndex]
+        var edited = original
+        if let details { edited.details = details }
+        if let launch { edited.launch = launch.allowed(for: edited.kind) }
+        guard edited != original else { return false }
+        groups[groupIndex].apps[itemIndex] = edited
+        scheduleSave()
+        return true
+    }
+
     /// Points a file or folder item at its new location `url`, as "Locate…" does after it was moved
     /// or renamed. It keeps its kind, details, launch options, place in the list and Free Layout
     /// cell; its name becomes `name`, or the location's last component.

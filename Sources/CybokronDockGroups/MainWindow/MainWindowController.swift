@@ -3,20 +3,23 @@ import DockGroupsCore
 import Quartz
 import SwiftUI
 
-/// What the group window's item rows need besides the store: where the items are (checked when
-/// something happened, `ItemPresenceCache`), their icons, and Quick Look.
+/// What the group window's item rows need besides the store: where the items are and whether the
+/// apps chosen to open them are here (checked when something happened, `ItemPresenceCache`), their
+/// icons, Quick Look, and LaunchServices for the details editor's "Open with" menu.
 @MainActor
 final class GroupWindowItems {
     let presence: ItemPresenceCache
     let icons: AppIconProviding
+    let catalog: ApplicationCatalog
     /// Shows a location in Quick Look over the group window; set once the window exists.
     var showPreview: (URL) -> Void = { _ in }
     /// The group window, which open panels attach to as sheets; set once it exists.
     weak var window: NSWindow?
 
-    init(presence: ItemPresenceCache, icons: AppIconProviding) {
+    init(presence: ItemPresenceCache, icons: AppIconProviding, catalog: ApplicationCatalog) {
         self.presence = presence
         self.icons = icons
+        self.catalog = catalog
     }
 }
 
@@ -45,7 +48,12 @@ final class MainWindowController: NSWindowController {
         actions: MainWindowView.Actions
     ) {
         self.store = store
-        let items = GroupWindowItems(presence: ItemPresenceCache(locator: WorkspaceItemLocator()), icons: icons)
+        let catalog = SystemApplicationCatalog()
+        let items = GroupWindowItems(
+            presence: ItemPresenceCache(locator: WorkspaceItemLocator(), catalog: catalog),
+            icons: icons,
+            catalog: catalog
+        )
         self.items = items
         let hostingController = NSHostingController(
             rootView: MainWindowView(

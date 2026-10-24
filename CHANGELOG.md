@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings → Switching: protected apps (Add Apps… or a running app, up to 50) that Start, Finish and Close All never quit and Start and Finish never hide, with what Start and Finish do and the current group
 - Links `cybokrondockgroups://start/<group>` (also `switch/<group>`) and `finish/<group>`; when they would quit apps they ask first: quit, Hide Instead or Cancel (the quit button waits 0.7 seconds)
 - Siri and Shortcuts: Start Group and Finish Group, with phrases such as "Start Work in Cybokron Dock Groups"; they ask there before quitting apps; Settings → Shortcuts & Siri lists their phrases and links
+- Launch options in the details editor's new Opening part: a delay of up to 60 seconds that Open All and Start wait (clicks open right away), and the app that opens a file, folder or website (Terminal or iTerm2 for folders); apps that run what they open are refused, and the editor says why
+- Item rows and popup tooltips show the chosen app and the delay, and when the chosen app isn't on this Mac
+- Importing a backup says how many items' launch settings were reset because they named an app that runs files
 
 ### Changed
 

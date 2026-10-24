@@ -99,6 +99,17 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   can't be found; the popup's tooltip ends with the item's name, tags and the start of its notes.
   Typing in the popup finds an item by any of them (a standalone group's own app too). They stay on
   this Mac, in the groups file and backups.
+- **Opening** (the details editor's last part): a **Delay** — none, or 1 to 60 seconds — that Open
+  All and Start wait before opening the item (a click opens it right away; Finish, starting another
+  group, Hide All and Close All cancel what's still waiting), and for a file, folder or website
+  **Open with**: its default app, one of the apps macOS lists for it, or **Other…**. Apps that run
+  what they open (terminals, installers, script runners) are never offered or taken — except
+  Terminal and iTerm2 for a folder — and Other…'s choice is checked the same way, saying why when
+  it isn't taken. The chosen app is kept by bundle identifier and checked again each time the item
+  opens: one that isn't on this Mac opens the item with its default app (its row says so), one that
+  may not open it leaves it closed. The row shows “Opens with … · after 3 s”, the popup's tooltip
+  says the same. Importing a backup drops chosen apps that run what they open, and the import
+  question says how many items it reset.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are
