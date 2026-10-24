@@ -52,7 +52,7 @@ enum LaunchReportPresenter {
         switch outcome {
         case .notFound: return L10n.Problems.notFound
         case .failed(let reason): return reason
-        case .launched, .activated: return L10n.Problems.opened
+        case .launched, .activated, .scheduled: return L10n.Problems.opened
         }
     }
 }

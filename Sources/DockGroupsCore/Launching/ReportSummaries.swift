@@ -7,6 +7,8 @@ extension LaunchReport {
     public var summary: String {
         let total = entries.count
         guard total > 0 else { return "“\(groupName)” has no apps yet." }
+        let later = scheduled.count
+        guard later == 0 else { return summaryWithScheduledItems(later) }
         let problems = self.problems
         let opened = total - problems.count
         let problemNames = problems.map(\.app.displayName).joined(separator: ", ")
@@ -17,6 +19,21 @@ extension LaunchReport {
             return "Couldn't open the apps in “\(groupName)”: \(problemNames)."
         }
         return "Opened \(opened) of \(total) apps in “\(groupName)”. Couldn't open \(problemNames)."
+    }
+
+    /// "Opened 2 apps in “Work”. 1 more opens in a few seconds."
+    private func summaryWithScheduledItems(_ later: Int) -> String {
+        let problems = self.problems
+        let opened = entries.count - problems.count - later
+        var sentences: [String] = []
+        if opened > 0 {
+            sentences.append(opened == 1 ? "Opened 1 app in “\(groupName)”." : "Opened \(opened) apps in “\(groupName)”.")
+        }
+        if !problems.isEmpty {
+            sentences.append("Couldn't open \(problems.map(\.app.displayName).joined(separator: ", ")).")
+        }
+        sentences.append(later == 1 ? "1 more opens in a few seconds." : "\(later) more open in a few seconds.")
+        return sentences.joined(separator: " ")
     }
 }
 

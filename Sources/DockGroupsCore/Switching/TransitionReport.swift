@@ -53,7 +53,7 @@ extension TransitionReport {
         let other = plan.otherGroupName.map { " of “\($0)”" } ?? ""
         var clauses: [String] = []
         if let launch {
-            let opened = launch.entries.count - launch.problems.count
+            let opened = launch.entries.count - launch.problems.count - launch.scheduled.count
             if opened > 0 { clauses.append("opened \(Self.count(opened, "item"))") }
         }
         if !hidden.done.isEmpty {
@@ -76,6 +76,9 @@ extension TransitionReport {
             ? (isStart ? "Started “\(group)”." : "Finished “\(group)”.")
             : "\(isStart ? "Started" : "Finished") “\(group)”: \(Self.joined(clauses))."]
 
+        if let later = launch?.scheduled.count, later > 0 {
+            sentences.append(later == 1 ? "1 more item opens in a few seconds." : "\(later) more items open in a few seconds.")
+        }
         if let problems = launch?.problems, !problems.isEmpty {
             sentences.append("Couldn't open \(problems.map(\.app.displayName).joined(separator: ", ")).")
         }

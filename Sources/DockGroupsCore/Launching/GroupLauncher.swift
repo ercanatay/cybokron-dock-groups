@@ -5,7 +5,7 @@ import OSLog
 public struct LaunchReport: Equatable, Sendable {
     public enum Outcome: Equatable, Sendable {
         /// The app wasn't running and has been started; a website, file or folder was opened (in
-        /// the browser, its default app or the file viewer).
+        /// the browser, its default app, the app chosen for it, or the file viewer).
         case launched
         /// The app was already running and has been brought to the front.
         case activated
@@ -13,12 +13,21 @@ public struct LaunchReport: Equatable, Sendable {
         case notFound
         /// Launching failed with the given reason.
         case failed(reason: String)
+        /// The item opens after its launch delay, this many seconds after Open All started
+        /// (`DelayedLaunches`); what that does is reported then.
+        case scheduled(seconds: Int)
 
         public var isProblem: Bool {
             switch self {
-            case .launched, .activated: return false
+            case .launched, .activated, .scheduled: return false
             case .notFound, .failed: return true
             }
+        }
+
+        /// Whether the item opens later, after its launch delay.
+        public var isScheduled: Bool {
+            if case .scheduled = self { return true }
+            return false
         }
     }
 
@@ -28,47 +37,72 @@ public struct LaunchReport: Equatable, Sendable {
     }
 
     public let groupName: String
-    /// One entry per app, in the group's order.
+    /// One entry per item, in the group's order.
     public let entries: [Entry]
 
     public var problems: [Entry] { entries.filter { $0.outcome.isProblem } }
+
+    /// The items that open later, after their launch delays.
+    public var scheduled: [Entry] { entries.filter { $0.outcome.isScheduled } }
 }
 
 /// Opens every app in a group ("Open All"), its websites in the default browser, and its files
-/// and folders with their default apps.
+/// and folders with their default apps — or each with the app chosen for it.
 ///
 /// A file or folder is opened only after it's checked, every time, whatever the groups file or
 /// backup it came from says: its location must be valid, it must be there and still of its kind,
 /// and neither its name nor its type (symbolic links followed) may be a program, script,
 /// installer, app or location file (`FileItemPolicy`). Otherwise the workspace isn't asked to open
 /// it at all. An app is only ever started from an app bundle.
+///
+/// An item opened with a chosen app is checked as above first; then the app is
+/// (`ItemOpenerPolicy`): an app that could run the item, or that isn't one that opens it, means
+/// the item isn't opened at all. Open All leaves the items with a launch delay to
+/// `DelayedLaunches`, which opens them later through these same checks; clicking an item opens it
+/// right away.
 @MainActor
 public final class GroupLauncher {
     private let workspace: ApplicationWorkspace
     private let locator: ItemLocating
+    private let catalog: ApplicationCatalog
+    /// Opens Open All's items that have a launch delay; `nil` when delays are ignored.
+    public let pendingLaunches: DelayedLaunches?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "GroupLauncher")
 
-    /// - Parameter locator: Checks files and folders before they're opened; by default a
-    ///   `WorkspaceItemLocator`.
-    public init(workspace: ApplicationWorkspace, locator: ItemLocating? = nil) {
+    /// - Parameters:
+    ///   - locator: Checks files and folders before they're opened; by default a
+    ///     `WorkspaceItemLocator`.
+    ///   - catalog: Finds and checks the apps chosen to open items; by default a
+    ///     `SystemApplicationCatalog`.
+    ///   - pendingLaunches: Opens Open All's items that have a launch delay after it. Without it
+    ///     the delays are ignored and every item opens right away, as in versions without them.
+    public init(
+        workspace: ApplicationWorkspace,
+        locator: ItemLocating? = nil,
+        catalog: ApplicationCatalog? = nil,
+        pendingLaunches: DelayedLaunches? = nil
+    ) {
         self.workspace = workspace
         self.locator = locator ?? WorkspaceItemLocator()
+        self.catalog = catalog ?? SystemApplicationCatalog()
+        self.pendingLaunches = pendingLaunches
     }
 
     public convenience init() {
         self.init(workspace: SystemApplicationWorkspace())
     }
 
-    /// Opens one of the group's apps, as clicking it in the popup does: brings it to the front when
-    /// it's running and starts it otherwise. With `restoringWindows`, a running app also gets its
-    /// hidden and minimized windows back, as from a click on its Dock icon
-    /// (`PopupPreferences.restoresWindowsOfRunningApps`). A website opens in the default browser,
-    /// and a file or folder (once checked) with its default app. The report has a single entry.
+    /// Opens one of the group's items, as clicking it in the popup does — right away, whatever its
+    /// launch delay: brings an app to the front when it's running and starts it otherwise. With
+    /// `restoringWindows`, a running app also gets its hidden and minimized windows back, as from a
+    /// click on its Dock icon (`PopupPreferences.restoresWindowsOfRunningApps`). A website opens in
+    /// the default browser, and a file or folder (once checked) with its default app — or with the
+    /// app chosen for it. The report has a single entry.
     public func open(_ app: AppReference, inGroup group: DockGroup, restoringWindows: Bool = false) async -> LaunchReport {
         let outcome: LaunchReport.Outcome
         switch app.kind {
         case .website:
-            outcome = await openWebsites([app])
+            outcome = await openWebsites([app])[0]
         case .file, .folder:
             outcome = await openFileItems([app])[0]
         case .application:
@@ -94,15 +128,39 @@ public final class GroupLauncher {
 
     /// Starts every app in the group that isn't running and brings the running ones to the front.
     /// Apps are launched concurrently; a running app is never launched a second time. Then the
-    /// group's files and folders open (one request per default app), and its websites together,
-    /// in one request to the default browser. The report keeps the group's order.
+    /// group's files and folders open (one request per app that opens them), and its websites
+    /// together, in one request to the default browser (or to the browser chosen for them). The
+    /// report keeps the group's order.
+    ///
+    /// Items with a launch delay are left to `pendingLaunches` and reported as `.scheduled`; they
+    /// open later, and that is reported through `DelayedLaunches.onFinished`.
     public func openAll(_ group: DockGroup) async -> LaunchReport {
-        var outcomes = [LaunchReport.Outcome?](repeating: nil, count: group.apps.count)
+        let isDelayed = group.apps.map { pendingLaunches != nil && $0.launch.delay > 0 }
+        let delayed = zip(group.apps, isDelayed).filter(\.1).map(\.0)
+        if let pendingLaunches, !delayed.isEmpty {
+            // Scheduled first: the delays count from now.
+            pendingLaunches.schedule(delayed, of: group) { [weak self] items, current in
+                await self?.openRightAway(items, inGroup: current, context: "Delayed Open All in group \(current.id)")
+                    ?? LaunchReport(groupName: current.name, entries: [])
+            }
+        }
+        let immediate = zip(group.apps, isDelayed).filter { !$0.1 }.map(\.0)
+        var opened = await openRightAway(immediate, inGroup: group, context: "Open All in group \(group.id)").entries.makeIterator()
+        let entries = zip(group.apps, isDelayed).map { item, isDelayed in
+            isDelayed ? LaunchReport.Entry(app: item, outcome: .scheduled(seconds: item.launch.delay)) : (opened.next() ?? LaunchReport.Entry(app: item, outcome: .notFound))
+        }
+        return LaunchReport(groupName: group.name, entries: entries)
+    }
+
+    /// Opens `items` now, as Open All opens the items without a launch delay; the report lists
+    /// them in the order given.
+    func openRightAway(_ items: [GroupItem], inGroup group: DockGroup, context: String) async -> LaunchReport {
+        var outcomes = [LaunchReport.Outcome?](repeating: nil, count: items.count)
         var launches: [(index: Int, url: URL)] = []
         var fileItems: [(index: Int, item: GroupItem)] = []
         var websites: [(index: Int, app: AppReference)] = []
 
-        for (index, app) in group.apps.enumerated() {
+        for (index, app) in items.enumerated() {
             switch app.kind {
             case .website:
                 websites.append((index, app))
@@ -142,32 +200,57 @@ public final class GroupLauncher {
             }
         }
         if !websites.isEmpty {
-            let outcome = await openWebsites(websites.map(\.app))
-            for website in websites {
+            let websiteOutcomes = await openWebsites(websites.map(\.app))
+            for (website, outcome) in zip(websites, websiteOutcomes) {
                 outcomes[website.index] = outcome
             }
         }
 
-        let entries = zip(group.apps, outcomes).map { app, outcome in
+        let entries = zip(items, outcomes).map { app, outcome in
             LaunchReport.Entry(app: app, outcome: outcome ?? .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened.")))
         }
         let report = LaunchReport(groupName: group.name, entries: entries)
         for problem in report.problems {
-            logProblem(problem.outcome, of: problem.app, context: "Open All in group \(group.id)")
+            logProblem(problem.outcome, of: problem.app, context: context)
         }
         return report
     }
 
-    /// Opens the websites in the default browser, all in one request.
-    private func openWebsites(_ websites: [AppReference]) async -> LaunchReport.Outcome {
-        let urls = websites.compactMap(\.websiteURL)
-        guard !urls.isEmpty else { return .notFound }
-        do {
-            try await workspace.openWebsites(urls)
-            return .launched
-        } catch {
-            return .failed(reason: error.localizedDescription)
+    /// Opens the websites: those without a chosen browser (or whose browser isn't on this Mac) in
+    /// the default browser, all in one request; the others with their browser, one request per
+    /// browser. The outcomes are in the order of `websites`.
+    private func openWebsites(_ websites: [AppReference]) async -> [LaunchReport.Outcome] {
+        var outcomes = [LaunchReport.Outcome?](repeating: nil, count: websites.count)
+        var inDefaultBrowser: [(index: Int, url: URL)] = []
+        var withApps: [(app: URL, items: [(index: Int, url: URL)])] = []
+        for (index, website) in websites.enumerated() {
+            guard let url = website.websiteURL else {
+                outcomes[index] = .notFound
+                continue
+            }
+            switch openerDecision(for: website, target: url) {
+            case .defaultApp:
+                inDefaultBrowser.append((index, url))
+            case .openWith(let app):
+                Self.add((index, url), to: &withApps, app: app)
+            case .refused(let name):
+                outcomes[index] = .failed(reason: ItemOpeningError.openerRefused(name: name).localizedDescription)
+            }
         }
+        if !inDefaultBrowser.isEmpty {
+            let outcome: LaunchReport.Outcome
+            do {
+                try await workspace.openWebsites(inDefaultBrowser.map(\.url))
+                outcome = .launched
+            } catch {
+                outcome = .failed(reason: error.localizedDescription)
+            }
+            for item in inDefaultBrowser {
+                outcomes[item.index] = outcome
+            }
+        }
+        await open(withApps, into: &outcomes)
+        return outcomes.map { $0 ?? .notFound }
     }
 
     /// Where the app's bundle is. A location that isn't an app bundle — a crafted groups file can
@@ -181,24 +264,70 @@ public final class GroupLauncher {
         return url
     }
 
-    /// Checks the files and folders and opens those that pass, in one call to the workspace.
-    /// The outcomes are in the order of `items`.
+    /// Checks the files and folders and opens those that pass: with their default apps in one call
+    /// to the workspace, and with their chosen apps in one call per app. The outcomes are in the
+    /// order of `items`.
     private func openFileItems(_ items: [GroupItem]) async -> [LaunchReport.Outcome] {
         var outcomes = [LaunchReport.Outcome?](repeating: nil, count: items.count)
-        var checked: [(index: Int, url: URL)] = []
+        var withDefaultApps: [(index: Int, url: URL)] = []
+        var withApps: [(app: URL, items: [(index: Int, url: URL)])] = []
         for (index, item) in items.enumerated() {
             switch check(item) {
-            case .open(let url): checked.append((index, url))
-            case .skip(let outcome): outcomes[index] = outcome
+            case .skip(let outcome):
+                outcomes[index] = outcome
+            case .open(let url):
+                switch openerDecision(for: item, target: url) {
+                case .defaultApp:
+                    withDefaultApps.append((index, url))
+                case .openWith(let app):
+                    Self.add((index, url), to: &withApps, app: app)
+                case .refused(let name):
+                    outcomes[index] = .failed(reason: ItemOpeningError.openerRefused(name: name).localizedDescription)
+                }
             }
         }
-        if !checked.isEmpty {
-            let failures = await workspace.openFileItems(checked.map(\.url))
-            for (index, url) in checked {
+        if !withDefaultApps.isEmpty {
+            let failures = await workspace.openFileItems(withDefaultApps.map(\.url))
+            for (index, url) in withDefaultApps {
                 outcomes[index] = failures[url].map { .failed(reason: $0.localizedDescription) } ?? .launched
             }
         }
+        await open(withApps, into: &outcomes)
         return outcomes.map { $0 ?? .notFound }
+    }
+
+    /// Whether and with which app `item` opens, given what opening it opens (`target`).
+    private func openerDecision(for item: GroupItem, target: URL) -> ItemOpenerDecision {
+        let decision = ItemOpenerPolicy.decide(item.launch.opener, for: item, target: target, catalog: catalog)
+        if case .refused = decision, let opener = item.launch.opener {
+            // The app, not the user's data: the item by its kind only.
+            logger.error("Not opened with \(opener.bundleIdentifier, privacy: .public): \(item.logIdentity, privacy: .public)")
+        }
+        return decision
+    }
+
+    /// Opens each app's items with it, one request per app, and records the outcomes.
+    private func open(_ withApps: [(app: URL, items: [(index: Int, url: URL)])], into outcomes: inout [LaunchReport.Outcome?]) async {
+        for request in withApps {
+            let outcome: LaunchReport.Outcome
+            do {
+                try await workspace.open(request.items.map(\.url), withApplicationAt: request.app)
+                outcome = .launched
+            } catch {
+                outcome = .failed(reason: error.localizedDescription)
+            }
+            for item in request.items {
+                outcomes[item.index] = outcome
+            }
+        }
+    }
+
+    private static func add(_ item: (index: Int, url: URL), to requests: inout [(app: URL, items: [(index: Int, url: URL)])], app: URL) {
+        if let position = requests.firstIndex(where: { $0.app == app }) {
+            requests[position].items.append(item)
+        } else {
+            requests.append((app, [item]))
+        }
     }
 
     /// What to do with a file or folder item.

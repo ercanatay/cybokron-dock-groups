@@ -40,6 +40,15 @@ public struct AppReference: Identifiable, Hashable, Sendable {
     public private(set) var kind: Kind
     /// The item's alias, tags and task notes; empty for most items, and then not written.
     public var details: ItemDetails
+    /// The item's launch delay and, for files, folders and websites, the app that opens it; the
+    /// defaults for most items, and then not written. An app never has an opener.
+    public var launch: ItemLaunchOptions {
+        didSet {
+            if kind == .application, launch.opener != nil {
+                launch = launch.withoutOpener
+            }
+        }
+    }
 
     public var id: String { bundleIdentifier }
 
@@ -49,6 +58,7 @@ public struct AppReference: Identifiable, Hashable, Sendable {
         self.path = path
         kind = .application
         details = ItemDetails()
+        launch = ItemLaunchOptions()
     }
 
     /// A website item for `url`, which should already be checked (`WebsiteAddress.parse`). Without a
@@ -59,6 +69,7 @@ public struct AppReference: Identifiable, Hashable, Sendable {
         path = nil
         kind = .website
         details = ItemDetails()
+        launch = ItemLaunchOptions()
     }
 
     /// A file or folder item for the location `url`, which should already be classified (a plain
@@ -72,6 +83,7 @@ public struct AppReference: Identifiable, Hashable, Sendable {
         path = nil
         self.kind = kind
         details = ItemDetails()
+        launch = ItemLaunchOptions()
     }
 
     /// Reads the identity of the `.app` bundle at `applicationURL`. A bundle without a bundle
@@ -151,7 +163,7 @@ public struct AppReference: Identifiable, Hashable, Sendable {
 
 extension AppReference: Codable {
     private enum CodingKeys: String, CodingKey {
-        case bundleIdentifier, name, path, kind, url, alias, tags, notes
+        case bundleIdentifier, name, path, kind, url, alias, tags, notes, launchDelay, openWith
     }
 
     /// Items without a `kind` are apps, as everything saved before websites existed. A website is
@@ -161,7 +173,8 @@ extension AppReference: Codable {
     /// read, a file or folder whose location can't be, or an item of a kind this version doesn't
     /// know, is kept as an app that can't be found, so it stays visible and removable instead of
     /// making the whole group unreadable. The alias, tags and task notes are each read on their own:
-    /// an unreadable one is left empty.
+    /// an unreadable one is left empty; so are the launch delay (clamped to its range) and the app
+    /// that opens the item, which an app never has.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let identifier = try container.decode(String.self, forKey: .bundleIdentifier)
@@ -174,6 +187,7 @@ extension AppReference: Codable {
         )
         bundleIdentifier = identifier
         kind = .application
+        launch = ItemLaunchOptions()
         let rawKind = container.decodeLeniently(String.self, forKey: .kind)
         if rawKind == Kind.website.rawValue || (rawKind == nil && WebsiteAddress.looksLikeAddress(identifier)) {
             let address = container.decodeLeniently(String.self, forKey: .url) ?? identifier
@@ -189,6 +203,10 @@ extension AppReference: Codable {
                 kind = fileKind
             }
         }
+        launch = ItemLaunchOptions(
+            delay: container.decodeLeniently(Int.self, forKey: .launchDelay) ?? 0,
+            opener: container.decodeLeniently(ItemOpener.self, forKey: .openWith)
+        ).allowed(for: kind)
     }
 
     /// The kind a saved file or folder item has: the saved one, or — without one — what its
@@ -203,7 +221,7 @@ extension AppReference: Codable {
     }
 
     /// Apps are written as before (no `kind`); websites add `kind` and `url`, files and folders
-    /// `kind` only. The alias, tags and task notes are written only when set.
+    /// `kind` only. The alias, tags, task notes, launch delay and opener are written only when set.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(bundleIdentifier, forKey: .bundleIdentifier)
@@ -222,6 +240,10 @@ extension AppReference: Codable {
             try container.encode(details.tags, forKey: .tags)
         }
         try container.encodeIfPresent(details.notes, forKey: .notes)
+        if launch.delay > 0 {
+            try container.encode(launch.delay, forKey: .launchDelay)
+        }
+        try container.encodeIfPresent(launch.opener, forKey: .openWith)
     }
 }
 

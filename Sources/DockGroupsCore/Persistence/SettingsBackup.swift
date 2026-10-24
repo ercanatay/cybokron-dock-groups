@@ -43,6 +43,9 @@ public struct SettingsBackup: Equatable, Sendable {
     /// Items of the file that were left out when it was read, because they can't be opened safely
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
     public private(set) var leftOutItemCount = 0
+    /// Items of the file kept without the app chosen to open them, because that app could run them
+    /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
+    public private(set) var resetLaunchOptionCount = 0
 
     public init(
         appVersion: String,
@@ -127,6 +130,7 @@ public struct SettingsBackup: Equatable, Sendable {
         let sanitized = document.groups.map(Self.sanitizedForImport)
         groups = sanitized.map(\.group)
         leftOutItemCount = sanitized.reduce(0) { $0 + $1.leftOutItemCount }
+        resetLaunchOptionCount = sanitized.reduce(0) { $0 + $1.resetLaunchOptionCount }
         preferences = document.preferences.preferences
     }
 
@@ -153,36 +157,53 @@ public struct SettingsBackup: Equatable, Sendable {
     ///
     /// Alias, tags and task notes are already within their limits (`ItemDetails`), and the Free
     /// Layout cells of left-out items go with them.
-    static func sanitizedForImport(_ group: DockGroup) -> (group: DockGroup, leftOutItemCount: Int) {
+    ///
+    /// The app chosen to open an item is dropped — the item keeps its delay and opens with its
+    /// default app — when it's an app that runs what it opens (`ItemOpenerPolicy.isRunner`),
+    /// Terminal and iTerm2 for folders included: those are accepted only when chosen on this Mac.
+    /// Other chosen apps are checked again every time the item opens.
+    static func sanitizedForImport(_ group: DockGroup) -> (group: DockGroup, leftOutItemCount: Int, resetLaunchOptionCount: Int) {
         var group = group
+        var reset = 0
         let items = group.apps.compactMap { item -> GroupItem? in
-            switch item.kind {
-            case .website:
-                return item
-            case .file, .folder:
-                guard FileItemPolicy.acceptsByIdentity(item) else { return nil }
-                var item = item
-                item.path = nil
-                return item
-            case .application:
-                if item.isIdentifiedByPath {
-                    guard isAppBundlePath(item.bundleIdentifier) else { return nil }
-                } else if item.bundleIdentifier.contains(where: { $0 == "/" || $0 == ":" }) {
-                    // Neither a bundle identifier nor an app's location: a file, folder or other
-                    // item that couldn't be read, which would show as an app that's never found.
-                    return nil
-                }
-                var item = item
-                if let path = item.path, !isAppBundlePath(path) {
-                    item.path = nil
-                }
-                return item
+            guard var item = safeItem(item) else { return nil }
+            if let opener = item.launch.opener, ItemOpenerPolicy.isRunner(bundleIdentifier: opener.bundleIdentifier) {
+                item.launch = item.launch.withoutOpener
+                reset += 1
             }
+            return item
         }
         let leftOut = group.apps.count - items.count
         group.apps = items
         group.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: group.apps)
-        return (group, leftOut)
+        return (group, leftOut, reset)
+    }
+
+    /// `item` if it can be brought in from a backup (see `sanitizedForImport`), with an app's
+    /// location dropped when it isn't an app bundle; `nil` to leave it out.
+    private static func safeItem(_ item: GroupItem) -> GroupItem? {
+        switch item.kind {
+        case .website:
+            return item
+        case .file, .folder:
+            guard FileItemPolicy.acceptsByIdentity(item) else { return nil }
+            var item = item
+            item.path = nil
+            return item
+        case .application:
+            if item.isIdentifiedByPath {
+                guard isAppBundlePath(item.bundleIdentifier) else { return nil }
+            } else if item.bundleIdentifier.contains(where: { $0 == "/" || $0 == ":" }) {
+                // Neither a bundle identifier nor an app's location: a file, folder or other
+                // item that couldn't be read, which would show as an app that's never found.
+                return nil
+            }
+            var item = item
+            if let path = item.path, !isAppBundlePath(path) {
+                item.path = nil
+            }
+            return item
+        }
     }
 }
 
@@ -195,6 +216,8 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     public var itemCount: Int
     /// Items of the backup left out because they can't be opened safely.
     public var leftOutItemCount: Int
+    /// Items of the backup kept without the app chosen to open them, which could run them.
+    public var resetLaunchOptionCount: Int
     /// Current groups that a group of the same name in the backup takes the place of.
     public var replacedGroupCount: Int
     /// Current groups with no group of the same name in the backup; they're removed.
@@ -213,6 +236,7 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         groupCount = backup.groups.count
         itemCount = backup.itemCount
         leftOutItemCount = backup.leftOutItemCount
+        resetLaunchOptionCount = backup.resetLaunchOptionCount
         let backupNames = Set(backup.groups.map(GroupStore.mergeName(of:)))
         let matching = currentGroups.filter { backupNames.contains(GroupStore.mergeName(of: $0)) }.count
         replacedGroupCount = matching

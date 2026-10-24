@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-562 keys.
+563 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -798,7 +798,7 @@ gone from every table).
 | `popup.search.noMatch` | No items match “%@” |
 | `item.group.empty` | No items in this group yet |
 
-## Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first (English only for now; `awaitingTranslation`: `core.switching.`)
+## Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first; an item not opened with the app chosen for it (English only for now; `awaitingTranslation`: `core.switching.`)
 
 The buttons reuse `core.quitConfirmation.quit` (Quit Apps) and `core.quitConfirmation.cancel`
 (Cancel). Siri and Shortcuts show the title and the detail.
@@ -816,3 +816,4 @@ The buttons reuse `core.quitConfirmation.quit` (Quit Apps) and `core.quitConfirm
 | `core.switching.confirmation.save` | Apps can still ask to save changes. |
 | `core.switching.confirmation.quitAndSwitch` | Quit and Switch |
 | `core.switching.confirmation.hideInstead` | Hide Instead |
+| `core.switching.opener.refused` | wasn't opened with “%@”, because that app can't open it safely. |

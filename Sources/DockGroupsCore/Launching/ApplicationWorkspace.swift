@@ -25,11 +25,20 @@ public protocol ApplicationWorkspace: AnyObject {
     func openFileItems(_ urls: [URL]) async -> [URL: any Error]
     /// Shows the files and folders selected in Finder windows (Show in Finder).
     func revealFileItems(_ urls: [URL])
+    /// Opens files, folders or websites (already checked, with an app checked for them,
+    /// `ItemOpenerPolicy`) with the app at `applicationURL`, in one request, and brings it to the
+    /// front.
+    func open(_ urls: [URL], withApplicationAt applicationURL: URL) async throws
 }
 
 extension ApplicationWorkspace {
     public func reopenRunningApplication(bundleIdentifier: String) -> Bool {
         activateRunningApplication(bundleIdentifier: bundleIdentifier)
+    }
+
+    /// By default nothing is opened with a chosen app: a workspace that doesn't say how refuses.
+    public func open(_ urls: [URL], withApplicationAt applicationURL: URL) async throws {
+        throw ItemOpeningError.openerRefused(name: applicationURL.deletingPathExtension().lastPathComponent)
     }
 }
 
@@ -124,7 +133,11 @@ public final class SystemApplicationWorkspace: ApplicationWorkspace {
         workspace.activateFileViewerSelecting(urls)
     }
 
-    private func open(_ urls: [URL], withApplicationAt applicationURL: URL) async throws {
+    /// Only an app bundle opens anything (`ItemOpenerPolicy` checked which one).
+    public func open(_ urls: [URL], withApplicationAt applicationURL: URL) async throws {
+        guard applicationURL.isFileURL, FileLocation.isAppBundlePath(applicationURL.standardizedFileURL.path) else {
+            throw ItemOpeningError.openerRefused(name: applicationURL.lastPathComponent)
+        }
         let configuration = Self.activatingConfiguration()
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             workspace.open(urls, withApplicationAt: applicationURL, configuration: configuration) { _, error in
@@ -193,6 +206,21 @@ public enum FileItemOpeningError: LocalizedError, Equatable, Sendable {
             return Localization.format("core.item.error.volume", "It's on “%@”, which isn't connected.", name)
         case .unchecked:
             return Localization.string("core.item.error.unchecked", "wasn't opened, because macOS didn't allow checking what it is.")
+        }
+    }
+}
+
+/// Why an item wasn't opened with the app chosen for it. The text follows the item's name in the
+/// launch report ("• Notes.txt: wasn't opened with “Terminal”, …").
+public enum ItemOpeningError: LocalizedError, Equatable, Sendable {
+    /// The chosen app could run the item, isn't one that opens it, or isn't what it claims to be
+    /// (`ItemOpenerPolicy`), so the item wasn't opened at all.
+    case openerRefused(name: String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .openerRefused(let name):
+            return Localization.format("core.switching.opener.refused", "wasn't opened with “%@”, because that app can't open it safely.", name)
         }
     }
 }

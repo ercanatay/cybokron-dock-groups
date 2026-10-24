@@ -150,9 +150,23 @@ public final class GroupStore: ObservableObject {
         return true
     }
 
+    /// Gives an item of the group new launch options (delay, the app that opens it); an app keeps
+    /// no opener. Nothing is saved when they are the same as before.
+    /// - Returns: Whether the options changed; `false` when they didn't or the group doesn't have
+    ///   the item.
+    @discardableResult
+    public func updateLaunchOptions(_ options: ItemLaunchOptions, ofItem identity: String, inGroup id: DockGroup.ID) -> Bool {
+        guard let groupIndex = index(of: id), let itemIndex = itemIndex(of: identity, inGroupAt: groupIndex) else { return false }
+        let allowed = options.allowed(for: groups[groupIndex].apps[itemIndex].kind)
+        guard groups[groupIndex].apps[itemIndex].launch != allowed else { return false }
+        groups[groupIndex].apps[itemIndex].launch = allowed
+        scheduleSave()
+        return true
+    }
+
     /// Points a file or folder item at its new location `url`, as "Locate…" does after it was moved
-    /// or renamed. It keeps its kind, details, place in the list and Free Layout cell; its name
-    /// becomes `name`, or the location's last component.
+    /// or renamed. It keeps its kind, details, launch options, place in the list and Free Layout
+    /// cell; its name becomes `name`, or the location's last component.
     /// - Returns: Whether the item now points at `url`; `false` when the group doesn't have the
     ///   item, it isn't a file or folder, `url` can't be one of its kind (`FileItemPolicy`), or
     ///   another item of the group is already there.
@@ -164,6 +178,7 @@ public final class GroupStore: ObservableObject {
         guard original.kind.isFileSystemItem else { return false }
         var relinked = GroupItem(fileURL: url, kind: original.kind, name: name)
         relinked.details = original.details
+        relinked.launch = original.launch
         guard FileItemPolicy.acceptsByIdentity(relinked) else { return false }
         let oldKey = original.normalizedBundleIdentifier
         let newKey = relinked.normalizedBundleIdentifier

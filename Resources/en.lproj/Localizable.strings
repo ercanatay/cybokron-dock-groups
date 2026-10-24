@@ -632,7 +632,7 @@
 "item.group.empty" = "No items in this group yet";
 "item.details.hint" = "Typing any of these in the popup finds this item.";
 
-/* Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first (English only for now: translations show this English text until they add these keys) */
+/* Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first; an item not opened with the app chosen for it (English only for now: translations show this English text until they add these keys) */
 "core.switching.start.title.one" = "Switch to “%@” and quit 1 app?";
 "core.switching.start.title.other" = "Switch to “%1$@” and quit %2$ld apps?";
 "core.switching.start.detail" = "“%1$@” is set to quit the apps of “%2$@” it doesn't use: %3$@.";
@@ -644,3 +644,4 @@
 "core.switching.confirmation.save" = "Apps can still ask to save changes.";
 "core.switching.confirmation.quitAndSwitch" = "Quit and Switch";
 "core.switching.confirmation.hideInstead" = "Hide Instead";
+"core.switching.opener.refused" = "wasn't opened with “%@”, because that app can't open it safely.";

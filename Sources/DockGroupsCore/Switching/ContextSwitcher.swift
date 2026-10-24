@@ -11,7 +11,8 @@ public enum ContextSwitchingError: Error, Equatable, Sendable {
 /// Starts and finishes groups (spec §3.4): plans the transition (`TransitionPlanner`), asks first
 /// when it would quit apps and a link, Siri or Shortcuts asked, then hides, quits (gracefully) and
 /// shows apps again (`GroupTerminator`), opens the started group's items (`GroupLauncher`), and
-/// keeps the current group (`ContextSession`).
+/// keeps the current group (`ContextSession`). Start cancels every item still waiting for its
+/// launch delay, Finish the finished group's (`GroupLauncher.pendingLaunches`).
 ///
 /// Transitions run one at a time, in the order they were asked for: a second one waits — without
 /// polling — until the first is done, so it can't interleave with the first one's Open All, and it
@@ -98,6 +99,9 @@ public final class ContextSwitcher {
             }
             // The group as it is now: asking may have taken a while.
             guard let group = store.group(withID: id) else { throw ContextSwitchingError.groupNotFound(id) }
+            // Items still waiting for their launch delay don't open any more: the user moved on
+            // (and the started group's own are scheduled again by its Open All).
+            launcher.pendingLaunches?.cancelAll()
             var report = TransitionReport(outcome: .done, plan: plan)
             report.hidden = terminator.hide(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))
@@ -134,6 +138,7 @@ public final class ContextSwitcher {
             case .proceed(let confirmedPlan): plan = confirmedPlan
             case .stopped(let outcome): return TransitionReport(outcome: outcome, plan: planned)
             }
+            launcher.pendingLaunches?.cancel(group: id)
             var report = TransitionReport(outcome: .done, plan: plan)
             report.hidden = terminator.hide(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))

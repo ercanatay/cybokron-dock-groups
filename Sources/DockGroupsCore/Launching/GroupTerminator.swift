@@ -108,6 +108,7 @@ public final class GroupTerminator {
     private let listing: RunningApplicationsListing
     private let ownProcessIdentifier: pid_t
     private let protectedApps: () -> ProtectedApps
+    private let pendingLaunches: DelayedLaunches?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "GroupTerminator")
 
     /// - Parameters:
@@ -115,16 +116,20 @@ public final class GroupTerminator {
     ///     `SystemRunningApplicationsListing`.
     ///   - protectedApps: The user's protected apps, read at every call; the always protected ones
     ///     are added to them.
+    ///   - pendingLaunches: The group's items still waiting for their launch delay
+    ///     (`GroupLauncher.pendingLaunches`): Close All and Hide All cancel them.
     public init(
         applications: RunningApplicationsProviding,
         ownProcessIdentifier: pid_t,
         listing: RunningApplicationsListing? = nil,
-        protectedApps: @escaping () -> ProtectedApps = { ProtectedApps() }
+        protectedApps: @escaping () -> ProtectedApps = { ProtectedApps() },
+        pendingLaunches: DelayedLaunches? = nil
     ) {
         self.applications = applications
         self.ownProcessIdentifier = ownProcessIdentifier
         self.listing = listing ?? SystemRunningApplicationsListing()
         self.protectedApps = protectedApps
+        self.pendingLaunches = pendingLaunches
     }
 
     public convenience init() {
@@ -139,8 +144,10 @@ public final class GroupTerminator {
         group.apps.contains { !runningInstances(of: $0).isEmpty }
     }
 
-    /// Quits the group's running apps, except protected ones, which the report lists as kept.
+    /// Quits the group's running apps, except protected ones, which the report lists as kept. The
+    /// group's items still waiting for their launch delay don't open any more.
     public func closeAll(_ group: DockGroup, mode: QuitMode) -> QuitReport {
+        pendingLaunches?.cancel(group: group.id)
         var quit: [AppReference] = []
         var refused: [AppReference] = []
         var kept: [AppReference] = []
@@ -166,8 +173,10 @@ public final class GroupTerminator {
         return QuitReport(groupName: group.name, mode: mode, quit: quit, refused: refused, kept: kept)
     }
 
-    /// Hides every running app of the group. Apps that are already hidden stay hidden.
+    /// Hides every running app of the group. Apps that are already hidden stay hidden. The group's
+    /// items still waiting for their launch delay don't open any more.
     public func hideAll(_ group: DockGroup) -> HideReport {
+        pendingLaunches?.cancel(group: group.id)
         var hidden: [AppReference] = []
         var refused: [AppReference] = []
         for app in group.apps {
