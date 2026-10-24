@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-25
+
 ### Added
 
 - A keyboard shortcut for each group, set in the group window's new Keyboard Shortcut section: click the field and press the keys (at least two of ⌃, ⌥ and ⌘ plus a key; Escape cancels, Delete removes it), then choose what pressing it does: show the popup, Open All, or Start (Finish when the group is current). It works in every app as a hot key, without Accessibility access; the number shortcuts stay as they are
@@ -21,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Backups include archived groups and templates, and the import question says what happens to yours; Merge adds the new ones, and merged groups whose shortcut another group has come in without it
 - Siri and the Shortcuts app say a group is archived instead of acting on it; Settings → Switching says when the current Focus names an archived group; the diagnostics report counts archived groups and templates
 - Going back from Other Versions… to a version older than 0.9.0 keeps a copy of the groups and the settings first (as for older ones), and the question warns when a group has a keyboard shortcut, a group is archived or a template exists: there the shortcuts and the archive are dropped on a save, archived groups show as ordinary groups, and templates stay for when you come back
+
+### Changed
+
+- Number shortcuts stay all-or-none; a group shortcut that can't be registered turns off alone, with no event-monitor fallback and no Accessibility prompt
+- Archived groups show as ordinary groups in versions before 0.9.0; copies of `groups.json` and `preferences.json` are kept before installing one, with a warning when shortcuts, archived groups or templates are in use
 
 ## [0.8.0] - 2026-10-24
 
@@ -447,7 +454,8 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...v0.7.0
 [0.6.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...v0.6.7
