@@ -36,11 +36,18 @@ struct MainWindowView: View {
         /// Hides the group's running apps.
         let hideAll: (DockGroup) -> Void
         let showPopup: (DockGroup) -> Void
+        /// Start and Finish, the user's click.
+        let start: (DockGroup) -> Void
+        let finish: (DockGroup) -> Void
+        /// Settings → Switching, where the protected apps are.
+        let showProtectedApps: () -> Void
     }
 
     @ObservedObject var store: GroupStore
     let tiles: TileImageCache
     let standalone: StandaloneController
+    /// The current group, for the Start and Finish section.
+    let session: ContextSession
     let actions: Actions
     @ObservedObject var selection: GroupWindowSelection
     /// Where the selected group's items are, their icons and Quick Look.
@@ -70,6 +77,7 @@ struct MainWindowView: View {
                 GroupDetailView(
                     store: store,
                     standalone: standalone,
+                    session: session,
                     group: group,
                     tiles: tiles,
                     actions: actions,

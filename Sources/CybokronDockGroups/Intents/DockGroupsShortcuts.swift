@@ -1,7 +1,7 @@
 import AppIntents
 
 /// The app's ready-made shortcuts: Siri phrases and Spotlight/Shortcuts app entries for the
-/// three group actions. Phrases with a group are generated for every group name the app reports
+/// five group actions (5 of the 10 the system allows). Phrases with a group are generated for every group name the app reports
 /// (see `updateAppShortcutParameters()`); the others ask which group.
 struct DockGroupsShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
@@ -37,6 +37,27 @@ struct DockGroupsShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Show Group",
             systemImageName: "square.grid.2x2"
+        )
+        // Keep the first phrase of these two in step with `GroupInvocations.switchingPhrases`.
+        AppShortcut(
+            intent: StartGroupIntent(),
+            phrases: [
+                "Start \(\.$group) in \(.applicationName)",
+                "Switch to \(\.$group) in \(.applicationName)",
+                "Start a group in \(.applicationName)",
+            ],
+            shortTitle: "Start Group",
+            systemImageName: "play.square"
+        )
+        AppShortcut(
+            intent: FinishGroupIntent(),
+            phrases: [
+                "Finish \(\.$group) in \(.applicationName)",
+                "Wind up \(\.$group) in \(.applicationName)",
+                "Finish a group in \(.applicationName)",
+            ],
+            shortTitle: "Finish Group",
+            systemImageName: "stop.circle"
         )
     }
 

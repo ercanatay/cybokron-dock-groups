@@ -25,6 +25,10 @@ import SwiftUI
 /// The Most Used list (`MostUsedGroup.id`) opens like a group, read-only: its apps can be opened
 /// but not reordered or removed. A standalone agent shows its group read-only too
 /// (`allowsEditing: false`): the group belongs to the main app.
+///
+/// With a `ContextSession` (the main app's), a group's popup offers Start — Finish for the current
+/// group — and its summary marks the current group. The Most Used list and standalone groups'
+/// popups don't.
 @MainActor
 final class PopupPanelController: NSObject, NSWindowDelegate {
     struct Actions {
@@ -41,6 +45,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         /// Does in the group window what the popup can't: an item's Edit Details…, the open panels of
         /// Add Apps… and Add Files or Folders…; `nil` where groups can't be edited.
         var inGroupWindow: ((GroupWindowRequest.Action, DockGroup) -> Void)?
+        /// Start and Finish; `nil` where groups aren't started (a standalone group's own app).
+        var start: ((DockGroup) -> Void)?
+        var finish: ((DockGroup) -> Void)?
     }
 
     /// Why the popup closed; logged at debug level to diagnose unexpected closes.
@@ -70,6 +77,8 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
     private let icons: AppIconProviding
     private let runningApps: RunningAppsMonitor
     private let mostUsed: MostUsedProvider?
+    /// The current group, for Start and Finish; `nil` in a standalone group's own app.
+    private let session: ContextSession?
     private let allowsEditing: Bool
     private let actions: Actions
     private let modifierKeys = ModifierKeyState()
@@ -107,6 +116,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         icons: AppIconProviding,
         runningApps: RunningAppsMonitor,
         mostUsed: MostUsedProvider?,
+        session: ContextSession? = nil,
         allowsEditing: Bool = true,
         actions: Actions
     ) {
@@ -116,6 +126,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         self.icons = icons
         self.runningApps = runningApps
         self.mostUsed = mostUsed
+        self.session = session
         self.allowsEditing = allowsEditing
         self.actions = actions
         super.init()
@@ -126,6 +137,7 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         // @Published fires before the value changes; the main-queue hop reads the new value.
         store.$groups.map { _ in () }
             .merge(with: preferences.$preferences.map { _ in () }, mostUsed?.changes ?? Empty().eraseToAnyPublisher())
+            .merge(with: session?.$current.removeDuplicates().map { _ in () }.eraseToAnyPublisher() ?? Empty().eraseToAnyPublisher())
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.refresh() }
             .store(in: &subscriptions)
@@ -259,8 +271,10 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         let gridSize = layout.visibleSize(metrics: metrics)
         let minimumGridHeight = metrics.cellHeight + 2 * metrics.padding
         let gridHeight = min(gridSize.height, max(maximum.height - PopupMetrics.chromeHeight, minimumGridHeight))
+        let switching = switchingOffer(for: group)
+        let minimumWidth = switching == nil ? PopupMetrics.minimumWidth : PopupMetrics.minimumWidthWithSwitching
         let size = CGSize(
-            width: min(max(gridSize.width, PopupMetrics.minimumWidth), maximum.width),
+            width: min(max(gridSize.width, minimumWidth), maximum.width),
             height: PopupMetrics.chromeHeight + gridHeight
         )
 
@@ -283,7 +297,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             usesFrostedGlass: popupPreferences.usesFrostedGlass,
             isEditable: isEditable,
             moveTargets: isEditable ? GroupMoveTarget.targets(in: store.groups, excluding: group.id) : [],
-            isMostUsed: group.id == MostUsedGroup.id
+            isMostUsed: group.id == MostUsedGroup.id,
+            switching: switching,
+            isCurrent: session?.current == group.id
         )
 
         self.content = content
@@ -312,6 +328,13 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         )
 
         return PopupPlacement.frame(size: size, anchor: settings.anchor, dockEdge: dock.edge, screen: dock.screen, source: source)
+    }
+
+    /// Start, or Finish for the current group; `nil` for the Most Used list and where groups aren't
+    /// started.
+    private func switchingOffer(for group: DockGroup) -> SwitchingOffer? {
+        guard let session, group.id != MostUsedGroup.id, actions.start != nil, actions.finish != nil else { return nil }
+        return SwitchingOffer.offer(for: group, current: session.current, previous: session.previous, in: store.groups)
     }
 
     /// Actions look the group up when they run, so they always act on its current state.
@@ -406,6 +429,16 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             isPointerInRemovalArea: { [weak self] in
                 guard let self else { return false }
                 return PopupDrag.isRemovalLocation(NSEvent.mouseLocation, panelFrame: self.panel.frame)
+            },
+            start: { [weak self] in
+                guard let self, let group = self.group(withID: id) else { return }
+                self.close(reason: .appAction)
+                self.actions.start?(group)
+            },
+            finish: { [weak self] in
+                guard let self, let group = self.group(withID: id) else { return }
+                self.close(reason: .appAction)
+                self.actions.finish?(group)
             }
         )
     }

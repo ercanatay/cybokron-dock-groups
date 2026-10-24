@@ -15,7 +15,8 @@ import Foundation
 /// | `cybokrondockgroups://settings/group/<group>` | Open the group window on the group's settings |
 /// | `cybokrondockgroups://groups` | Open the group window |
 ///
-/// Links that start or finish a group (`start/`, `switch/`, `finish/`) are `SwitchingURLCommand`s.
+/// Links that start or finish a group (`start/`, `switch/`, `finish/`) are `SwitchingURLCommand`s;
+/// the app parses both kinds at once as a `LinkCommand`.
 public enum URLCommand: Hashable, Sendable, GatedCommand {
     case showGroup(String)
     case launchGroup(String)
@@ -177,6 +178,39 @@ public enum SwitchingURLCommand: Hashable, Sendable, GatedCommand {
         switch self {
         case .start(let group): return "start/\(GroupLookup.normalizedToken(group))"
         case .finish(let group): return "finish/\(GroupLookup.normalizedToken(group))"
+        }
+    }
+}
+
+/// Every link the app carries out: one of the `URLCommand`s, or a `SwitchingURLCommand` (`start/`,
+/// `switch/`, `finish/`). Parsed in one place, so the app gates every link with one
+/// `URLCommandGate` and handles them in one `switch`.
+public enum LinkCommand: Hashable, Sendable, GatedCommand {
+    case command(URLCommand)
+    case switching(SwitchingURLCommand)
+
+    /// Parses `url`; `nil` for other schemes, unknown commands and missing or extra arguments.
+    public init?(url: URL) {
+        if let command = URLCommand(url: url) {
+            self = .command(command)
+        } else if let command = SwitchingURLCommand(url: url) {
+            self = .switching(command)
+        } else {
+            return nil
+        }
+    }
+
+    public var throttleKey: String {
+        switch self {
+        case .command(let command): return command.throttleKey
+        case .switching(let command): return command.throttleKey
+        }
+    }
+
+    public var groupActionKey: String? {
+        switch self {
+        case .command(let command): return command.groupActionKey
+        case .switching(let command): return command.groupActionKey
         }
     }
 }

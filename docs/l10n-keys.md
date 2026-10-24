@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-563 keys.
+634 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -817,3 +817,107 @@ The buttons reuse `core.quitConfirmation.quit` (Quit Apps) and `core.quitConfirm
 | `core.switching.confirmation.quitAndSwitch` | Quit and Switch |
 | `core.switching.confirmation.hideInstead` | Hide Instead |
 | `core.switching.opener.refused` | wasn't opened with “%@”, because that app can't open it safely. |
+
+## Start and Finish in the popup: the button, its tooltip (also of the menu bar menu's Start and Finish items and the group window's buttons), VoiceOver's label, the current group's marker (English only for now; `awaitingTranslation`: `popup.switching.`)
+
+The button shows only its symbol (▶ / ■) in popups narrower than the standard width; its tooltip and VoiceOver label stay.
+
+| Key | English |
+| --- | --- |
+| `popup.switching.current` | current |
+| `popup.switching.start` | Start |
+| `popup.switching.finish` | Finish |
+| `popup.switching.start.accessibility` | Start %@ |
+| `popup.switching.finish.accessibility` | Finish %@ |
+| `popup.switching.help.start.leave` | Start: open this group's items and leave the other apps as they are. |
+| `popup.switching.help.start.hideAll` | Start: open this group's items and hide all other apps. |
+| `popup.switching.help.start.alone` | Start: open this group's items and make it the current group. |
+| `popup.switching.help.start.quit` | Start: open this group's items and quit the apps of “%@” it doesn't use. |
+| `popup.switching.help.start.hide` | Start: open this group's items and hide the apps of “%@”. |
+| `popup.switching.help.finish.hide` | Finish: hide this group's apps. |
+| `popup.switching.help.finish.hideAndShow` | Finish: hide this group's apps and show “%@” again. |
+| `popup.switching.help.finish.quit` | Finish: quit this group's apps. |
+| `popup.switching.help.finish.quitAndShow` | Finish: quit this group's apps and show “%@” again. |
+| `popup.switching.help.finish.leave` | Finish: leave this group's apps open; it's no longer the current group. |
+| `popup.switching.help.finish.leaveAndShow` | Finish: leave this group's apps open and show “%@” again. |
+
+## Start and Finish in the menu bar menu: the current group and Finish above the groups, the ⌃⌥ alternate of each group (English only for now; `awaitingTranslation`: `menuBar.switching.`)
+
+`menuBar.switching.startHint` is added after `menuBar.group.tooltip` (or `.shortcut`).
+
+| Key | English |
+| --- | --- |
+| `menuBar.switching.current` | Current: %@ |
+| `menuBar.switching.current.tooltip` | “%@” is the current group, the one started last. Choose it to show its popup. |
+| `menuBar.switching.start` | Start “%@” |
+| `menuBar.switching.finish` | Finish “%@” |
+| `menuBar.switching.startHint` | Hold ⌃⌥ to start it. |
+
+## Group window → Start and Finish (English only for now; `awaitingTranslation`: `groupWindow.switching.`)
+
+| Key | English |
+| --- | --- |
+| `groupWindow.switching.section` | Start and Finish |
+| `groupWindow.switching.onStart` | When this group starts |
+| `groupWindow.switching.onFinish` | When this group finishes |
+| `groupWindow.switching.afterFinish` | After finishing |
+| `groupWindow.switching.onStart.leaveOthers` | Leave other apps open |
+| `groupWindow.switching.onStart.hidePreviousGroup` | Hide the previous group's apps |
+| `groupWindow.switching.onStart.hideAllOtherApps` | Hide all other apps |
+| `groupWindow.switching.onStart.quitPreviousGroup` | Quit the previous group's apps |
+| `groupWindow.switching.onFinish.hideApps` | Hide its apps |
+| `groupWindow.switching.onFinish.quitApps` | Quit its apps |
+| `groupWindow.switching.onFinish.leaveApps` | Leave its apps open |
+| `groupWindow.switching.afterFinish.showPreviousGroup` | Show the previous group |
+| `groupWindow.switching.afterFinish.nothing` | Do nothing |
+| `groupWindow.switching.quitWarning` | Quitting asks apps to quit; they can still ask to save changes. Links, Siri and Shortcuts ask you first. |
+| `groupWindow.switching.protectedApps` | Protected Apps… |
+| `groupWindow.switching.protectedApps.help` | Choose the apps that are never hidden or quit, in Settings → Switching. |
+| `groupWindow.switching.current` | This is the current group. |
+| `groupWindow.switching.notCurrent` | Start makes this the current group. |
+| `groupWindow.switching.footer` | Start opens the group's items as Open All does and puts the group started before it away; Finish puts this group away. Protected apps, and apps both groups use, are never hidden or quit. |
+
+## Settings → Switching: protected apps, what Start and Finish do, the current group; the alert about apps a transition left as they were (English only for now; `awaitingTranslation`: `settings.tab.switching`, `switching.`)
+
+Add Apps… reuses `common.addApps`, the problem alert `groupWindow.addApps.problem.title`.
+
+| Key | English |
+| --- | --- |
+| `settings.tab.switching` | Switching |
+| `switching.protected.header` | Protected Apps |
+| `switching.protected.empty` | No protected apps yet. |
+| `switching.protected.addRunning` | Add a Running App |
+| `switching.protected.addRunning.none` | No other running apps |
+| `switching.protected.remove` | Stop protecting %@ |
+| `switching.protected.footer` | Start, Finish and Close All never quit these apps, and switching groups never hides them. %@ and its groups' own apps are always protected, and Finder is never quit. |
+| `switching.protected.full` | The list holds at most %ld apps. |
+| `switching.protected.picker.title` | Add Protected Apps |
+| `switching.protected.picker.message` | Choose apps that Start, Finish and Close All never quit. |
+| `switching.start.header` | Start and Finish |
+| `switching.start.summary` | Start opens a group's items as Open All does, then puts the group started before it away as the group's settings say: by default its apps are hidden, never quit. Finish hides the group's apps and shows the previous group again. Each group's settings are in its group window. |
+| `switching.start.asking` | Links, Siri and Shortcuts ask first when a group is set to quit apps. |
+| `switching.start.quitting` | Groups set to quit apps |
+| `switching.current.label` | Current group |
+| `switching.current.none` | None |
+| `switching.current.previous` | Started before it |
+| `switching.current.detail` | The current group is the one started last, until it's finished. It's forgotten when %@ quits. |
+| `switching.problem.start` | Starting “%@” left some apps as they were. |
+| `switching.problem.finish` | Finishing “%@” left some apps as they were. |
+| `switching.problem.notHidden` | • %@: couldn't be hidden. |
+| `switching.problem.notQuit` | • %@: couldn't be asked to quit. |
+| `switching.problem.notShown` | • %@: couldn't be shown again. |
+
+## Settings → Shortcuts & Siri: Start Group and Finish Group, their phrases and links (English only for now; `awaitingTranslation`: `settings.shortcuts.switching.`, `core.invocation.startGroup`, `core.invocation.finishGroup`)
+
+Keep `core.invocation.startGroup.phrase` and `core.invocation.finishGroup.phrase` identical to the first App Shortcuts phrase of Start Group and Finish Group in the same language. The two `settings.shortcuts.switching.` texts follow `settings.shortcuts.shortcutsApp.detail` and `settings.shortcuts.links.footer`.
+
+| Key | English |
+| --- | --- |
+| `settings.shortcuts.switching.shortcutsApp.detail` | Start Group and Finish Group are there too. Nobody answers questions in an automation, so for groups you start or finish there, choose hiding rather than quitting. |
+| `settings.shortcuts.switching.links.footer` | Start and finish links share the 5-second limit of launch and hide links, and ask first when the group is set to quit apps. |
+| `core.invocation.startGroup` | Start Group |
+| `core.invocation.startGroup.phrase` | Start %1$@ in %2$@ |
+| `core.invocation.finishGroup` | Finish Group |
+| `core.invocation.finishGroup.phrase` | Finish %1$@ in %2$@ |
+| `core.invocation.startGroup.link` | Start |
+| `core.invocation.finishGroup.link` | Finish |

@@ -2,7 +2,8 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, the Most Used list, updates,
+/// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, switching
+/// groups (protected apps, the current group), the Most Used list, updates,
 /// backups with the diagnostics report, the changelog, and ways to support the project (the About
 /// window's content), each in its own pane, picked from a sidebar.
 @MainActor
@@ -24,6 +25,9 @@ final class SettingsWindowController: NSWindowController {
         usage: UsageStore,
         shortcuts: GlobalShortcutMonitor,
         updater: AutoUpdater,
+        session: ContextSession,
+        runningApps: RunningAppsMonitor,
+        icons: AppIconProviding,
         isStatusItemShown: @escaping () -> Bool,
         groupsRestored: @escaping ([DockGroup]) -> Void
     ) {
@@ -46,6 +50,9 @@ final class SettingsWindowController: NSWindowController {
                 usage: usage,
                 shortcuts: shortcuts,
                 updater: updater,
+                session: session,
+                runningApps: runningApps,
+                icons: icons,
                 backup: backup,
                 diagnostics: diagnostics,
                 changelog: changelog,
@@ -73,6 +80,13 @@ final class SettingsWindowController: NSWindowController {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
+    }
+
+    /// Shows the window on `pane` and brings the app to the front.
+    func show(pane: SettingsPane) {
+        // The pane shown is kept in the defaults (`SettingsView.selectedPane`), which the view follows.
+        UserDefaults.standard.set(pane.rawValue, forKey: SettingsView.selectedPaneKey)
+        show()
     }
 
     /// Shows the window and brings the app to the front.
@@ -104,9 +118,10 @@ final class SettingsWindowController: NSWindowController {
 }
 
 /// The Settings window's panes, in sidebar order.
-private enum SettingsPane: String, CaseIterable, Identifiable {
+enum SettingsPane: String, CaseIterable, Identifiable {
     case popup
     case shortcuts
+    case switching
     case mostUsed
     case updates
     case backup
@@ -119,6 +134,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         switch self {
         case .popup: L10n.Settings.popupTab
         case .shortcuts: L10n.Settings.shortcutsTab
+        case .switching: L10n.Switching.Settings.tab
         case .mostUsed: MostUsedGroup.name
         case .updates: L10n.Settings.updatesTab
         case .backup: L10n.Settings.backupTab
@@ -131,6 +147,7 @@ private enum SettingsPane: String, CaseIterable, Identifiable {
         switch self {
         case .popup: "rectangle.grid.2x2"
         case .shortcuts: "keyboard"
+        case .switching: "arrow.left.arrow.right.square"
         case .mostUsed: "star"
         case .updates: "arrow.triangle.2.circlepath"
         case .backup: "externaldrive"
@@ -151,14 +168,20 @@ private struct SettingsView: View {
     let usage: UsageStore
     let shortcuts: GlobalShortcutMonitor
     let updater: AutoUpdater
+    let session: ContextSession
+    let runningApps: RunningAppsMonitor
+    let icons: AppIconProviding
     let backup: SettingsBackupController
     let diagnostics: DiagnosticsController
     let changelog: ChangelogService
     /// Set by `SettingsWindowController` to fit the screen.
     var paneHeight: CGFloat
 
+    /// The defaults key of the pane shown.
+    static let selectedPaneKey = "SettingsSelectedPane"
+
     /// The pane shown, kept across launches as the window's frame is.
-    @AppStorage("SettingsSelectedPane") private var selectedPane: SettingsPane = .popup
+    @AppStorage(SettingsView.selectedPaneKey) private var selectedPane: SettingsPane = .popup
 
     var body: some View {
         HStack(spacing: 0) {
@@ -184,6 +207,8 @@ private struct SettingsView: View {
             PopupSettingsView(preferences: preferences)
         case .shortcuts:
             ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts)
+        case .switching:
+            SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)
         case .mostUsed:
             MostUsedSettingsView(preferences: preferences, usage: usage)
         case .updates:

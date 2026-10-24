@@ -2,8 +2,9 @@ import AppKit
 import DockGroupsCore
 
 /// The menu bar item. Its menu lists the groups with their tiles: choosing one shows the group's
-/// popup, choosing it with ⌥ held opens all of its apps right away, and with ⇧⌥ held hides its
-/// running apps. Below them, the Most Used
+/// popup, choosing it with ⌥ held opens all of its apps right away, with ⇧⌥ held hides its
+/// running apps, and with ⌃⌥ held starts it. While a group is current, the menu begins with it and
+/// Finish. Below the groups, the Most Used
 /// section lists the most launched apps: choosing one opens it, and the section's first item
 /// shows them in a popup.
 @MainActor
@@ -12,6 +13,13 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let showPopup: (DockGroup) -> Void
         let openAll: (DockGroup) -> Void
         let hideAll: (DockGroup) -> Void
+        /// Start and Finish, the user's click.
+        let start: (DockGroup) -> Void
+        let finish: (DockGroup) -> Void
+        /// What Start or Finish would do for the group, for their tooltips.
+        let switchingOffer: (DockGroup) -> SwitchingOffer?
+        /// The current group (`ContextSession.current`), `nil` when none is.
+        let currentGroupID: () -> DockGroup.ID?
         let showMainWindow: () -> Void
         let showSettings: () -> Void
         let showAbout: () -> Void
@@ -72,6 +80,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
     private func rebuildMenu() {
         menu.removeAllItems()
+        addCurrentGroupSection()
         menu.addItem(.sectionHeader(title: L10n.MenuBar.groupsHeader))
         if store.groups.isEmpty {
             let placeholder = NSMenuItem(title: L10n.MenuBar.noGroups, action: nil, keyEquivalent: "")
@@ -82,6 +91,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
                 menu.addItem(popupItem(for: group))
                 menu.addItem(openAllItem(for: group))
                 menu.addItem(hideAllItem(for: group))
+                menu.addItem(startItem(for: group))
             }
         }
         addMostUsedSection()
@@ -109,6 +119,25 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         )
         quit.target = NSApp
         menu.addItem(quit)
+    }
+
+    /// "Current: 💻 Coding" (choosing it shows its popup) and "Finish “Coding”", above the groups,
+    /// while a group is current.
+    private func addCurrentGroupSection() {
+        guard let id = actions.currentGroupID(), let group = store.group(withID: id) else { return }
+        let current = NSMenuItem(title: L10n.Switching.MenuBar.current(group.name), action: #selector(showPopup(_:)), keyEquivalent: "")
+        current.target = self
+        current.representedObject = group.id
+        current.image = actions.tileImage(group)
+        current.toolTip = L10n.Switching.MenuBar.currentTooltip(group.name)
+        menu.addItem(current)
+        let finish = NSMenuItem(title: L10n.Switching.MenuBar.finish(group.name), action: #selector(finishGroup(_:)), keyEquivalent: "")
+        finish.target = self
+        finish.representedObject = group.id
+        finish.indentationLevel = 1
+        finish.toolTip = actions.switchingOffer(group)?.help
+        menu.addItem(finish)
+        menu.addItem(.separator())
     }
 
     private func addMostUsedSection() {
@@ -147,8 +176,9 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         item.keyEquivalentModifierMask = []
         let appCount = group.apps.count
         item.badge = appCount > 0 ? NSMenuItemBadge(count: appCount) : nil
-        item.toolTip = actions.shortcutTitle(group).map { L10n.MenuBar.groupTooltip(group.name, shortcut: $0) }
+        let tooltip = actions.shortcutTitle(group).map { L10n.MenuBar.groupTooltip(group.name, shortcut: $0) }
             ?? L10n.MenuBar.groupTooltip(group.name)
+        item.toolTip = "\(tooltip) \(L10n.Switching.MenuBar.startHint)"
         return item
     }
 
@@ -183,6 +213,19 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         return item
     }
 
+    /// Replaces the group's item while ⌃⌥ is held: Start, for the current group too (it opens what
+    /// isn't open yet).
+    private func startItem(for group: DockGroup) -> NSMenuItem {
+        let item = NSMenuItem(title: L10n.Switching.MenuBar.start(group.name), action: #selector(startGroup(_:)), keyEquivalent: "")
+        item.target = self
+        item.representedObject = group.id
+        item.image = actions.tileImage(group)
+        item.keyEquivalentModifierMask = [.control, .option]
+        item.isAlternate = true
+        item.toolTip = SwitchingOffer.start(group, current: actions.currentGroupID().flatMap(store.group(withID:))).help
+        return item
+    }
+
     private func group(for sender: NSMenuItem) -> DockGroup? {
         (sender.representedObject as? UUID).flatMap(store.group(withID:))
     }
@@ -200,6 +243,16 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc private func hideGroup(_ sender: NSMenuItem) {
         guard let group = group(for: sender) else { return }
         actions.hideAll(group)
+    }
+
+    @objc private func startGroup(_ sender: NSMenuItem) {
+        guard let group = group(for: sender) else { return }
+        actions.start(group)
+    }
+
+    @objc private func finishGroup(_ sender: NSMenuItem) {
+        guard let group = group(for: sender) else { return }
+        actions.finish(group)
     }
 
     @objc private func showMostUsed(_ sender: NSMenuItem) {

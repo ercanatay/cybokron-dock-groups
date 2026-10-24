@@ -87,6 +87,37 @@ public struct ProtectedApps: Hashable, Sendable {
         return ProtectedApps(apps.filter { members.contains($0.normalizedBundleIdentifier) })
     }
 
+    // MARK: - Editing (Settings → Switching)
+
+    /// Whether the list has as many apps as it can keep.
+    public var isFull: Bool { apps.count >= Self.maximumCount }
+
+    /// The list with `newApps` added at the end, cleaned up as `init` does: apps only, each once,
+    /// at most `maximumCount` (the ones past it are left out).
+    public func adding(_ newApps: [GroupItem]) -> ProtectedApps {
+        ProtectedApps(apps + newApps)
+    }
+
+    /// The list without the app with this identity (ignoring case).
+    public func removing(identity: String) -> ProtectedApps {
+        let identity = identity.lowercased()
+        return ProtectedApps(apps.filter { $0.normalizedBundleIdentifier != identity })
+    }
+
+    /// The apps of `candidates` (the running apps, for "Add a Running App") that can still be
+    /// added: apps not listed yet and not always protected anyway — this app and its groups' own
+    /// apps — each once, sorted by name. Finder can be added: it's never quit, but switching may
+    /// hide it.
+    public func addable(from candidates: [GroupItem]) -> [GroupItem] {
+        var seen = identities
+        let apps = candidates.filter { app in
+            app.kind == .application && Self.isAppIdentity(app.bundleIdentifier)
+                && !Self.isAlwaysProtected(identity: app.normalizedBundleIdentifier, action: .hiding)
+                && seen.insert(app.normalizedBundleIdentifier).inserted
+        }
+        return apps.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    }
+
     /// A bundle identifier (no "/" or ":") or the location of an app bundle.
     private static func isAppIdentity(_ identifier: String) -> Bool {
         guard !identifier.isEmpty else { return false }

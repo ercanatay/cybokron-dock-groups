@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Start and Finish a group: Start opens its items as Open All does and puts the group started before it away (by default its apps are hidden; apps both groups use stay), Finish hides its apps and shows the previous group again; quitting is never a default and always graceful
+- Each group's Start and Finish settings, in a new section of the group window: hide the previous group's apps, hide all other apps, quit the previous group's apps or leave them; hide, quit or leave its own apps on Finish; show the previous group again or not
+- The current group (the one started last, until it's finished): the popup says "current" and offers Finish instead of Start, and the menu bar menu begins with it and Finish; it's forgotten when the app quits
+- Start in the popup (▶; ■ Finish for the current group), in the menu bar menu (⌃⌥ while choosing a group) and in the group window
+- Settings → Switching: protected apps (Add Apps… or a running app, up to 50) that Start, Finish and Close All never quit and Start and Finish never hide, with what Start and Finish do and the current group
+- Links `cybokrondockgroups://start/<group>` (also `switch/<group>`) and `finish/<group>`; when they would quit apps they ask first: quit, Hide Instead or Cancel (the quit button waits 0.7 seconds)
+- Siri and Shortcuts: Start Group and Finish Group, with phrases such as "Start Work in Cybokron Dock Groups"; they ask there before quitting apps; Settings → Shortcuts & Siri lists their phrases and links
+
+### Changed
+
+- Close All leaves protected apps alone wherever it's asked: the popup, the menus, quit links, Siri's Quit Group and a standalone group's own app
+- Start and finish links share the 5-second limit of launch and hide links, and their question never shows together with a quit link's
+
 ## [0.7.0] - 2026-10-23
 
 ### Added

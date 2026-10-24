@@ -18,8 +18,9 @@ public struct GroupInvocation: Hashable, Sendable, Identifiable {
 /// The Siri phrases and links of one group, spelled out with its name, as Settings lists them to
 /// copy.
 public enum GroupInvocations {
-    /// What to ask Siri for the group: the first phrase of each of the app's App Shortcuts with
-    /// the group's name, titled like the actions in the Shortcuts app. The App Shortcuts phrases
+    /// What to ask Siri for the group: the first phrase of the Show, Launch and Quit Group App
+    /// Shortcuts with the group's name, titled like the actions in the Shortcuts app (Start and
+    /// Finish Group: `switchingPhrases`). The App Shortcuts phrases
     /// (`DockGroupsShortcuts`) must be literals and can't share these strings: keep both in step,
     /// translations included (a translated phrase here must be the one Siri accepts).
     public static func siriPhrases(groupName: String, appName: String) -> [GroupInvocation] {
@@ -36,6 +37,32 @@ public enum GroupInvocations {
                 title: Localization.string("core.invocation.quitGroup", "Quit Group"),
                 text: Localization.format("core.invocation.quitGroup.phrase", "Quit %1$@ in %2$@", groupName, appName)
             ),
+        ]
+    }
+
+    /// What to ask Siri to start or finish the group (`StartGroupIntent`, `FinishGroupIntent`), as
+    /// `siriPhrases` does for the other App Shortcuts; Settings lists them after those.
+    public static func switchingPhrases(groupName: String, appName: String) -> [GroupInvocation] {
+        [
+            GroupInvocation(
+                title: Localization.string("core.invocation.startGroup", "Start Group"),
+                text: Localization.format("core.invocation.startGroup.phrase", "Start %1$@ in %2$@", groupName, appName)
+            ),
+            GroupInvocation(
+                title: Localization.string("core.invocation.finishGroup", "Finish Group"),
+                text: Localization.format("core.invocation.finishGroup.phrase", "Finish %1$@ in %2$@", groupName, appName)
+            ),
+        ]
+    }
+
+    /// The links that start and finish `group` (see `SwitchingURLCommand`), named as `links`
+    /// names it; Settings lists them after those.
+    public static func switchingLinks(for group: DockGroup, in groups: [DockGroup]) -> [GroupInvocation] {
+        let token = linkToken(for: group, in: groups)
+        let base = "\(URLCommand.scheme)://"
+        return [
+            GroupInvocation(title: Localization.string("core.invocation.startGroup.link", "Start"), text: "\(base)start/\(token)"),
+            GroupInvocation(title: Localization.string("core.invocation.finishGroup.link", "Finish"), text: "\(base)finish/\(token)"),
         ]
     }
 

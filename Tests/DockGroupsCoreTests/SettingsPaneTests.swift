@@ -21,12 +21,21 @@ struct SettingsPaneTests {
     }
 
     @Test func supportIsTheLastPaneAfterTheChangelog() throws {
-        #expect(try Self.paneCases() == ["popup", "shortcuts", "mostUsed", "updates", "backup", "changelog", "support"])
+        #expect(try Self.paneCases() == ["popup", "shortcuts", "switching", "mostUsed", "updates", "backup", "changelog", "support"])
         let settings = try Self.source("CybokronDockGroups", "Settings", "SettingsWindowController.swift")
         #expect(settings.contains("case .support: L10n.Settings.supportTab"))
         #expect(settings.contains("case .support: \"heart\""))
         #expect(settings.contains("case .support:\n            SupportSettingsView()"))
         #expect(try LocalizationTests.table("en")["settings.support.tab"] == "Support")
+    }
+
+    /// Switching (protected apps, the current group) comes right after Shortcuts & Siri (spec §3.10).
+    @Test func switchingFollowsShortcutsAndSiri() throws {
+        let settings = try Self.source("CybokronDockGroups", "Settings", "SettingsWindowController.swift")
+        #expect(settings.contains("case .switching: L10n.Switching.Settings.tab"))
+        #expect(settings.contains("case .switching: \"arrow.left.arrow.right.square\""))
+        #expect(settings.contains("SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)"))
+        #expect(try LocalizationTests.table("en")["settings.tab.switching"] == "Switching")
     }
 
     /// The About window and Settings → Support show the same view, written once.

@@ -21,6 +21,11 @@ import OSLog
 /// and, while the popup is open, a menu bar with Hide and Quit. With it off, the agent stays out of
 /// both, like the `LSUIElement` app its bundle declares, and the Dock shows only its own items.
 ///
+/// The popup and the Dock menu don't offer Start or Finish: the current group is the main app's.
+/// Close All still leaves protected apps alone (the configuration has the protected apps of this
+/// group), and Open All opens items with a launch delay after it, as in the main app; those wait in
+/// the agent's own `DelayedLaunches`, which Hide All, Close All and quitting the agent cancel.
+///
 /// Files and folders in the places macOS guards with its privacy settings (Desktop, Documents,
 /// Downloads, iCloud Drive, other volumes) aren't looked at until they're opened
 /// (`DeferringItemLocator`): each group's app is asked for access on its own, so it doesn't ask
@@ -39,8 +44,20 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
 
     private let groupID: DockGroup.ID
     private var bundleURL = Bundle.main.bundleURL
-    private let launcher = GroupLauncher()
-    private let terminator = GroupTerminator()
+    /// Open All's items that wait for their launch delay, looked up again in this agent's group.
+    private lazy var delayedLaunches: DelayedLaunches = {
+        let delayed = DelayedLaunches { [weak self] id in self?.store?.group(withID: id) }
+        delayed.onFinished = { report in LaunchReportPresenter.presentProblems(in: report) }
+        return delayed
+    }()
+    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches)
+    /// Close All leaves the group's protected apps (from the configuration) alone.
+    private lazy var terminator = GroupTerminator(
+        applications: SystemRunningApplications(),
+        ownProcessIdentifier: ProcessInfo.processInfo.processIdentifier,
+        protectedApps: { [weak self] in self?.preferences?.preferences.protectedApps ?? ProtectedApps() },
+        pendingLaunches: delayedLaunches
+    )
     private let icons = WorkspaceAppIconProvider(locator: DeferringItemLocator(base: WorkspaceItemLocator()))
     private let runningApps = RunningAppsMonitor()
     /// Read before the app finishes launching, so the activation policy is in place first.
@@ -94,6 +111,13 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        // Items still waiting for their launch delay don't open after the agent is gone, and what
+        // the others couldn't open isn't shown in an alert now.
+        delayedLaunches.onFinished = nil
+        delayedLaunches.cancelAll()
     }
 
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {

@@ -45,3 +45,33 @@ extension TileColor {
         )
     }
 }
+
+extension GroupSwitching.OnStart {
+    var title: String {
+        switch self {
+        case .leaveOthers: return L10n.Switching.GroupWindow.leaveOthers
+        case .hidePreviousGroup: return L10n.Switching.GroupWindow.hidePreviousGroup
+        case .hideAllOtherApps: return L10n.Switching.GroupWindow.hideAllOtherApps
+        case .quitPreviousGroup: return L10n.Switching.GroupWindow.quitPreviousGroup
+        }
+    }
+}
+
+extension GroupSwitching.OnFinish {
+    var title: String {
+        switch self {
+        case .hideApps: return L10n.Switching.GroupWindow.hideApps
+        case .quitApps: return L10n.Switching.GroupWindow.quitApps
+        case .leaveApps: return L10n.Switching.GroupWindow.leaveApps
+        }
+    }
+}
+
+extension GroupSwitching.AfterFinish {
+    var title: String {
+        switch self {
+        case .showPreviousGroup: return L10n.Switching.GroupWindow.showPreviousGroup
+        case .nothing: return L10n.Switching.GroupWindow.doNothing
+        }
+    }
+}

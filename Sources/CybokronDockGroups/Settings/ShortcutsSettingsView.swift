@@ -134,7 +134,10 @@ struct ShortcutsSettingsView: View {
                         Text(verbatim: "\(group.emoji)  \(group.name)").tag(group.id)
                     }
                 }
-                ForEach(GroupInvocations.siriPhrases(groupName: group.name, appName: AppInfo.name)) { phrase in
+                ForEach(
+                    GroupInvocations.siriPhrases(groupName: group.name, appName: AppInfo.name)
+                        + GroupInvocations.switchingPhrases(groupName: group.name, appName: AppInfo.name)
+                ) { phrase in
                     copyRow(phrase, text: Text(L10n.Settings.Shortcuts.quotedPhrase(phrase.text)))
                 }
             } else {
@@ -146,6 +149,7 @@ struct ShortcutsSettingsView: View {
             } label: {
                 Text(L10n.Settings.Shortcuts.shortcutsApp)
                 Text(L10n.Settings.Shortcuts.shortcutsAppDetail)
+                Text(L10n.Switching.Shortcuts.shortcutsAppDetail)
             }
         } header: {
             Text(L10n.Settings.Shortcuts.siriHeader)
@@ -159,7 +163,7 @@ struct ShortcutsSettingsView: View {
     private var linksSection: some View {
         Section {
             if let group = invocationGroup {
-                ForEach(GroupInvocations.links(for: group, in: store.groups)) { link in
+                ForEach(GroupInvocations.links(for: group, in: store.groups) + GroupInvocations.switchingLinks(for: group, in: store.groups)) { link in
                     copyRow(link, text: Text(link.text).font(.system(.body, design: .monospaced)))
                 }
             } else {
@@ -169,7 +173,7 @@ struct ShortcutsSettingsView: View {
         } header: {
             Text(L10n.Common.links)
         } footer: {
-            Text(markdown: L10n.Settings.Shortcuts.linksFooter)
+            Text(markdown: "\(L10n.Settings.Shortcuts.linksFooter) \(L10n.Switching.Shortcuts.linksFooter)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

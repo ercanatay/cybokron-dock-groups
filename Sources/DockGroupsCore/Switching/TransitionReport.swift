@@ -23,6 +23,10 @@ public struct TransitionReport: Equatable, Sendable {
     public var hidden = RunningAppsReport()
     public var quit = RunningAppsReport()
     public var shown = RunningAppsReport()
+    /// Whether the user answered a question first (a link's alert, or Siri's or Shortcuts'
+    /// confirmation) — also when the answer was Cancel or Hide Instead. A link's cooldown starts
+    /// again once it's answered, as a quit link's does.
+    public var wasAsked = false
 
     /// Apps the settings would have hidden or quit but that were left alone, and why.
     public var kept: [TransitionPlan.Entry] { plan.kept }

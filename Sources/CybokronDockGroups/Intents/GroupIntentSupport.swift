@@ -13,6 +13,12 @@ protocol GroupIntentHandling: AnyObject {
     /// Close All, without the app's alerts: `confirm` asks in Siri or Shortcuts first, and throws
     /// when the user declines; the apps quit only once it returns.
     func quitAll(_ group: DockGroup, mode: QuitMode, confirm: (QuitConfirmation) async throws -> Void) async throws -> QuitReport
+    /// Start (`ContextSwitcher`, triggered by Siri or Shortcuts), without the app's alerts:
+    /// `confirm` asks there first when it would quit apps, and throws when the user declines —
+    /// then nothing is done.
+    func start(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport
+    /// Finish, as `start`.
+    func finish(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport
 }
 
 /// Connects the intents, which the system creates on its own, to the app's objects.

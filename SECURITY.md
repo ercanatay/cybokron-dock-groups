@@ -28,7 +28,9 @@ elsewhere are refused) and the download of a release's disk image, which is chec
 published size and SHA-256 and, on a Developer ID signed copy, against the team's Developer ID
 signature before it's mounted and again on the app inside. Nothing about you or your groups is
 sent. Other apps and web pages can send it commands through its URL scheme
-(`cybokrondockgroups://`): quitting asks first, and opening or hiding groups is rate limited.
+(`cybokrondockgroups://`): quitting asks first, and opening, hiding, starting or finishing groups
+is rate limited; a start or finish link that would quit apps asks first too (or hides them
+instead), and protected apps are never quit by Close All, Start or Finish, whoever asks.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
 `groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.

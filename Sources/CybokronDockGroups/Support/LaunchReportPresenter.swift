@@ -48,6 +48,31 @@ enum LaunchReportPresenter {
         alert.runModal()
     }
 
+    /// Tells the user what starting or finishing a group couldn't do: items that didn't open (as
+    /// Open All does), then — in one alert — apps that couldn't be hidden, asked to quit or shown
+    /// again. Apps left alone on purpose (protected, shared, this app) aren't problems.
+    static func presentProblems(in report: TransitionReport) {
+        guard report.outcome == .done else { return }
+        if let launch = report.launch {
+            presentProblems(in: launch)
+        }
+        let lines = report.hidden.refused.map { L10n.Switching.Problems.notHidden($0.name) }
+            + report.quit.refused.map { L10n.Switching.Problems.notQuit($0.name) }
+            + report.shown.refused.map { L10n.Switching.Problems.notShown($0.name) }
+        guard !lines.isEmpty else { return }
+
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        if case .start = report.plan.kind {
+            alert.messageText = L10n.Switching.Problems.start(report.plan.groupName)
+        } else {
+            alert.messageText = L10n.Switching.Problems.finish(report.plan.groupName)
+        }
+        alert.informativeText = lines.joined(separator: "\n")
+        NSApp.activate()
+        alert.runModal()
+    }
+
     private static func description(of outcome: LaunchReport.Outcome) -> String {
         switch outcome {
         case .notFound: return L10n.Problems.notFound

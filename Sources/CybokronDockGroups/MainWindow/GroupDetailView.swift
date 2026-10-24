@@ -2,9 +2,9 @@ import AppKit
 import DockGroupsCore
 import SwiftUI
 
-/// Settings of one group: name, emoji, member items (apps, files, folders and websites), Dock tile,
-/// standalone Dock icon and popup preferences. Every change goes straight to the store, which
-/// saves it.
+/// Settings of one group: name, emoji, member items (apps, files, folders and websites), what
+/// Start and Finish do, Dock tile, standalone Dock icon and popup preferences. Every change goes
+/// straight to the store, which saves it.
 ///
 /// Where the items are is checked when the group shows, when its items change, when the window
 /// comes to the front (`GroupWindowItems`) and when a volume is connected or ejected — never while
@@ -18,6 +18,8 @@ import SwiftUI
 struct GroupDetailView: View {
     @ObservedObject var store: GroupStore
     @ObservedObject var standalone: StandaloneController
+    /// The current group, for the Start and Finish section.
+    @ObservedObject var session: ContextSession
     let group: DockGroup
     let tiles: TileImageCache
     let actions: MainWindowView.Actions
@@ -55,6 +57,7 @@ struct GroupDetailView: View {
     init(
         store: GroupStore,
         standalone: StandaloneController,
+        session: ContextSession,
         group: DockGroup,
         tiles: TileImageCache,
         actions: MainWindowView.Actions,
@@ -63,6 +66,7 @@ struct GroupDetailView: View {
     ) {
         self.store = store
         self.standalone = standalone
+        self.session = session
         self.group = group
         self.tiles = tiles
         self.actions = actions
@@ -77,6 +81,7 @@ struct GroupDetailView: View {
         Form {
             identitySection
             itemsSection
+            switchingSection
             tileSection
             standaloneSection
             popupSection
@@ -233,6 +238,65 @@ struct GroupDetailView: View {
         // Dropped on another group in the sidebar, the item moves there.
         .onDrag {
             GroupAppDrag(groupID: group.id, bundleIdentifier: item.bundleIdentifier).itemProvider()
+        }
+    }
+
+    /// What Start and Finish do with this group (spec §4.3), and Start (Finish too while it's the
+    /// current group). The warning shows only while a setting quits apps.
+    private var switchingSection: some View {
+        let isCurrent = session.current == group.id
+        let current = session.current.flatMap(store.group(withID:))
+        let previous = session.previous.flatMap(store.group(withID:))
+        let start = SwitchingOffer.start(group, current: current)
+        return Section {
+            Picker(L10n.Switching.GroupWindow.onStart, selection: binding(\.switching.onStart)) {
+                ForEach(GroupSwitching.OnStart.allCases, id: \.self) { choice in
+                    Text(choice.title).tag(choice)
+                }
+            }
+            Picker(L10n.Switching.GroupWindow.onFinish, selection: binding(\.switching.onFinish)) {
+                ForEach(GroupSwitching.OnFinish.allCases, id: \.self) { choice in
+                    Text(choice.title).tag(choice)
+                }
+            }
+            Picker(L10n.Switching.GroupWindow.afterFinish, selection: binding(\.switching.afterFinish)) {
+                ForEach([GroupSwitching.AfterFinish.showPreviousGroup, .nothing], id: \.self) { choice in
+                    Text(choice.title).tag(choice)
+                }
+            }
+            if group.switching.quitsApps {
+                Label(L10n.Switching.GroupWindow.quitWarning, systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            LabeledContent {
+                HStack {
+                    Button(L10n.Switching.GroupWindow.protectedApps, action: actions.showProtectedApps)
+                        .help(L10n.Switching.GroupWindow.protectedAppsHelp)
+                    if isCurrent {
+                        let finish = SwitchingOffer.finish(group, previous: previous)
+                        Button { actions.finish(group) } label: {
+                            Label(finish.title, systemImage: finish.systemImage)
+                        }
+                        .help(finish.help)
+                        .accessibilityLabel(finish.accessibilityLabel)
+                    }
+                    Button { actions.start(group) } label: {
+                        Label(start.title, systemImage: start.systemImage)
+                    }
+                    .help(start.help)
+                    .accessibilityLabel(start.accessibilityLabel)
+                }
+            } label: {
+                Text(isCurrent ? L10n.Switching.GroupWindow.isCurrent : L10n.Switching.GroupWindow.isNotCurrent)
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text(L10n.Switching.GroupWindow.section)
+        } footer: {
+            Text(L10n.Switching.GroupWindow.footer)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 

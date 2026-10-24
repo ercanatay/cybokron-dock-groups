@@ -11,6 +11,13 @@ enum PopupMetrics {
     /// Narrowest popup; keeps the header (name, Open All, Hide All, Close All) readable for
     /// one-column groups.
     static let minimumWidth: CGFloat = 440
+    /// Narrowest popup of a group that offers Start or Finish: the button needs room beside Open
+    /// All, Hide All and Close All, and the group's name and summary keep theirs. The grid stays
+    /// centered.
+    static let minimumWidthWithSwitching: CGFloat = 520
+    /// Popups narrower than this — only when the screen leaves no room for
+    /// `minimumWidthWithSwitching` — show the Start and Finish button as its symbol only.
+    static let labeledSwitchingButtonWidth: CGFloat = minimumWidthWithSwitching
     static let headerTileSize: CGFloat = 30
     static let iconSize: CGFloat = 52
 
@@ -56,6 +63,11 @@ struct PopupContent {
     let moveTargets: [GroupMoveTarget]
     /// The Most Used list rather than one of the user's groups.
     let isMostUsed: Bool
+    /// Start, or Finish for the current group; `nil` for the Most Used list and in standalone
+    /// groups' own apps.
+    let switching: SwitchingOffer?
+    /// The current group: its summary says so.
+    let isCurrent: Bool
 }
 
 struct PopupActions {
@@ -94,6 +106,9 @@ struct PopupActions {
     let sortApps: () -> Void
     /// Whether the pointer is far enough outside the popup for a drop to remove the dragged app.
     let isPointerInRemovalArea: () -> Bool
+    /// Start and Finish (`PopupContent.switching` says which is offered).
+    let start: () -> Void
+    let finish: () -> Void
 }
 
 /// An app being dragged in the popup grid.
@@ -110,10 +125,11 @@ private struct CellDrag: Equatable {
     var isInRemovalArea: Bool
 }
 
-/// The popup: the group's tile and name with Open All / Hide All / Close All, the app grid, and a
-/// hint line with a gear in its corner. The gear — and "Group Settings…" in the context menu of the
-/// group's tile and name, and of the grid's empty part — opens the group window on the group's
-/// settings (not for the Most Used list).
+/// The popup: the group's tile and name with Start (Finish for the current group), Open All / Hide
+/// All / Close All, the app grid, and a hint line with a gear in its corner. The summary under the
+/// name ends with "current" for the current group. The gear — and "Group Settings…" in the
+/// context menu of the group's tile and name, and of the grid's empty part — opens the group
+/// window on the group's settings (not for the Most Used list).
 ///
 /// Apps can be dragged within the grid to reorder them, and out of the popup to remove them from
 /// the group, as with the Dock; their context menu moves them to another group. In Free Layout a
@@ -188,16 +204,15 @@ struct PopupContentView: View {
                         .foregroundStyle(palette.primaryText)
                         .lineLimit(1)
                         .truncationMode(.tail)
-                    Text(summary(runningCount: runningCount))
-                        .accessibilityIdentifier("popup-summary")
-                        .font(.system(size: 11))
-                        .foregroundStyle(palette.secondaryText)
-                        .lineLimit(1)
+                    summaryLine(runningCount: runningCount, palette: palette)
                 }
             }
             .contentShape(Rectangle())
             .modifier(GroupSettingsContextMenu(showGroupSettings: actions.showGroupSettings))
             Spacer(minLength: 8)
+            if let switching = content.switching {
+                switchingButton(switching)
+            }
             Button(L10n.Common.openAll, action: actions.openAll)
                 .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: true))
                 .fixedSize()
@@ -220,6 +235,47 @@ struct PopupContentView: View {
         }
         .padding(.horizontal, 14)
         .frame(height: PopupMetrics.headerHeight)
+    }
+
+    /// The summary, then "· current" for the current group — never cut off: the summary gives way
+    /// first.
+    private func summaryLine(runningCount: Int, palette: PanelPalette) -> some View {
+        HStack(spacing: 0) {
+            Text(summary(runningCount: runningCount))
+                .lineLimit(1)
+                .foregroundStyle(palette.secondaryText)
+            if content.isCurrent {
+                Text(verbatim: " · ")
+                    .foregroundStyle(palette.secondaryText)
+                    .fixedSize()
+                Text(L10n.Switching.Popup.current)
+                    .foregroundStyle(PanelPalette.teal)
+                    .fixedSize()
+            }
+        }
+        .font(.system(size: 11))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("popup-summary")
+    }
+
+    /// Start (▶), or Finish (■) for the current group; only its symbol in narrow popups, with the
+    /// same help and VoiceOver label.
+    private func switchingButton(_ offer: SwitchingOffer) -> some View {
+        let showsTitle = content.size.width >= PopupMetrics.labeledSwitchingButtonWidth
+        return Button(action: offer.action == .start ? actions.start : actions.finish) {
+            if showsTitle {
+                Label(offer.title, systemImage: offer.systemImage)
+                    .labelStyle(PillLabelStyle())
+            } else {
+                Image(systemName: offer.systemImage)
+                    .font(.system(size: 10, weight: .bold))
+            }
+        }
+        .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false, isCompact: !showsTitle))
+        .fixedSize()
+        .help(offer.help)
+        .accessibilityLabel(offer.accessibilityLabel)
+        .accessibilityHint(offer.help)
     }
 
     /// "8 items · 3 running": a group's apps and websites count alike; the Most Used list has apps
@@ -1019,10 +1075,23 @@ private struct GroupSettingsContextMenu: ViewModifier {
     }
 }
 
-/// Capsule buttons of the popup header, filled or outlined in an accent color.
+/// A small symbol before the title, as the header's Start and Finish button shows it.
+private struct PillLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 5) {
+            configuration.icon
+                .font(.system(size: 9, weight: .bold))
+            configuration.title
+        }
+    }
+}
+
+/// Capsule buttons of the popup header, filled or outlined in an accent color; a compact one (a
+/// symbol only) is a circle.
 struct PillButtonStyle: ButtonStyle {
     let tint: Color
     let filled: Bool
+    var isCompact = false
 
     @Environment(\.isEnabled) private var isEnabled
 
@@ -1030,7 +1099,8 @@ struct PillButtonStyle: ButtonStyle {
         configuration.label
             .font(.system(size: 12, weight: .semibold))
             .foregroundStyle(filled ? Color(.sRGB, red: 0.02, green: 0.12, blue: 0.11) : tint)
-            .padding(.horizontal, 12)
+            .padding(.horizontal, isCompact ? 0 : 12)
+            .frame(minWidth: isCompact ? 26 : nil)
             .frame(height: 26)
             .background(
                 Capsule(style: .continuous)

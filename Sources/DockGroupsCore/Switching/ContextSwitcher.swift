@@ -93,16 +93,17 @@ public final class ContextSwitcher {
                 trigger: trigger
             )
             let plan: TransitionPlan
+            let asked: Bool
             switch try await confirmed(planned, confirm: confirm) {
-            case .proceed(let confirmedPlan): plan = confirmedPlan
-            case .stopped(let outcome): return TransitionReport(outcome: outcome, plan: planned)
+            case .proceed(let confirmedPlan, let wasAsked): (plan, asked) = (confirmedPlan, wasAsked)
+            case .stopped(let outcome): return TransitionReport(outcome: outcome, plan: planned, wasAsked: outcome == .declined)
             }
             // The group as it is now: asking may have taken a while.
             guard let group = store.group(withID: id) else { throw ContextSwitchingError.groupNotFound(id) }
             // Items still waiting for their launch delay don't open any more: the user moved on
             // (and the started group's own are scheduled again by its Open All).
             launcher.pendingLaunches?.cancelAll()
-            var report = TransitionReport(outcome: .done, plan: plan)
+            var report = TransitionReport(outcome: .done, plan: plan, wasAsked: asked)
             report.hidden = terminator.hide(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))
             report.launch = await launcher.openAll(group)
@@ -134,12 +135,13 @@ public final class ContextSwitcher {
                 trigger: trigger
             )
             let plan: TransitionPlan
+            let asked: Bool
             switch try await confirmed(planned, confirm: confirm) {
-            case .proceed(let confirmedPlan): plan = confirmedPlan
-            case .stopped(let outcome): return TransitionReport(outcome: outcome, plan: planned)
+            case .proceed(let confirmedPlan, let wasAsked): (plan, asked) = (confirmedPlan, wasAsked)
+            case .stopped(let outcome): return TransitionReport(outcome: outcome, plan: planned, wasAsked: outcome == .declined)
             }
             launcher.pendingLaunches?.cancel(group: id)
-            var report = TransitionReport(outcome: .done, plan: plan)
+            var report = TransitionReport(outcome: .done, plan: plan, wasAsked: asked)
             report.hidden = terminator.hide(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))
             report.shown = terminator.unhide(plan.unhide.map(\.app), bringingToFront: plan.front)
@@ -152,28 +154,29 @@ public final class ContextSwitcher {
     // MARK: - Asking
 
     private enum Confirmation {
-        case proceed(TransitionPlan)
+        /// Carry `plan` out; `asked` when the user answered a question first.
+        case proceed(TransitionPlan, asked: Bool)
         case stopped(TransitionReport.Outcome)
     }
 
     /// The plan to carry out, after asking when it quits apps and the trigger asks first.
     private func confirmed(_ plan: TransitionPlan, confirm: ((TransitionConfirmation) async throws -> Void)?) async throws -> Confirmation {
-        guard plan.requiresConfirmation, let question = TransitionConfirmation(plan: plan) else { return .proceed(plan) }
+        guard plan.requiresConfirmation, let question = TransitionConfirmation(plan: plan) else { return .proceed(plan, asked: false) }
         switch plan.trigger {
         case .intent:
             guard let confirm else {
                 // Nobody to ask: nothing is quit unasked.
                 logger.error("A transition from Siri or Shortcuts had no way to ask: hiding instead of quitting")
-                return .proceed(TransitionPlanner.hidingInsteadOfQuitting(plan))
+                return .proceed(TransitionPlanner.hidingInsteadOfQuitting(plan), asked: false)
             }
             try await confirm(question)
-            return .proceed(plan)
+            return .proceed(plan, asked: true)
         case .link, .userAction, .focus:
             switch questions.askBeforeTransition(question) {
             case nil: return .stopped(.dropped)
             case .cancel: return .stopped(.declined)
-            case .hideInstead: return .proceed(TransitionPlanner.hidingInsteadOfQuitting(plan))
-            case .quit: return .proceed(plan)
+            case .hideInstead: return .proceed(TransitionPlanner.hidingInsteadOfQuitting(plan), asked: true)
+            case .quit: return .proceed(plan, asked: true)
             }
         }
     }

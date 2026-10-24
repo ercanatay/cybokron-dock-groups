@@ -11,6 +11,11 @@ import OSLog
 /// apps with their own Dock icons (`StandaloneController`); those run with `AgentAppDelegate`.
 /// `AutoUpdater` looks for new releases on GitHub (only here, never in an agent). A second copy of
 /// the app, launched while one runs, hands its URLs to the running copy and quits (`SecondCopyHandoff`).
+///
+/// Groups are started and finished (`ContextSwitcher`) from the popup, the menu bar menu, the group
+/// window, links, Siri and Shortcuts; the current group is kept in memory only (`ContextSession`).
+/// Items with a launch delay wait in one `DelayedLaunches`, shared by Open All, Start, Finish, Hide
+/// All and Close All, and cancelled when the app quits.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // Lazy, like everything that reads the files: a second copy that hands its URLs over and quits
@@ -18,8 +23,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // moves an unreadable file aside under the running copy.
     private lazy var store = GroupStore(persistence: JSONFileGroupPersistence())
     private lazy var preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence())
-    private let launcher = GroupLauncher()
-    private let terminator = GroupTerminator()
+    /// Open All's and Start's items that wait for their launch delay; what they couldn't open is
+    /// shown once they've all had their turn.
+    private lazy var delayedLaunches: DelayedLaunches = {
+        let delayed = DelayedLaunches { [weak self] id in self?.store.group(withID: id) }
+        delayed.onFinished = { report in LaunchReportPresenter.presentProblems(in: report) }
+        return delayed
+    }()
+    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches)
+    /// Close All leaves the protected apps (Settings → Switching) alone, whoever asks.
+    private lazy var terminator = GroupTerminator(
+        applications: SystemRunningApplications(),
+        ownProcessIdentifier: ProcessInfo.processInfo.processIdentifier,
+        protectedApps: { [weak self] in self?.preferences.preferences.protectedApps ?? ProtectedApps() },
+        pendingLaunches: delayedLaunches
+    )
+    /// The current group and the groups started before it, forgotten when the app quits.
+    private let session = ContextSession()
+    /// Start and Finish, one at a time; a link's question goes through `quitRequests`, so it never
+    /// shows while a quit link's does.
+    private lazy var switcher = ContextSwitcher(
+        store: store,
+        preferences: preferences,
+        session: session,
+        launcher: launcher,
+        terminator: terminator,
+        applications: SystemRunningApplicationsListing(),
+        questions: quitRequests
+    )
     private let icons = WorkspaceAppIconProvider()
     private let runningApps = RunningAppsMonitor()
     /// Records launches only while Most Used is on (asked at every launch and activation).
@@ -38,8 +69,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// only hands its URLs over to that copy and quits.
     private var secondCopyHandoff: SecondCopyHandoff?
     private var urlGate = URLCommandGate()
-    /// Close All from every source; a link asks first.
-    private lazy var quitRequests = GroupQuitRequests(prompt: QuitConfirmationAlert()) { [terminator] group, mode in
+    /// Close All from every source; a link asks first. It also asks a start or finish link's
+    /// question, one question at a time.
+    private lazy var quitRequests = GroupQuitRequests(
+        prompt: QuitConfirmationAlert(),
+        transitionPrompt: TransitionConfirmationAlert()
+    ) { [terminator] group, mode in
         terminator.closeAll(group, mode: mode)
     }
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
@@ -51,10 +86,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             tiles: tiles,
             icons: icons,
             standalone: standalone,
+            session: session,
             actions: MainWindowView.Actions(
                 openAll: { [weak self] group in self?.openAll(group) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
-                showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
+                showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) },
+                start: { [weak self] group in self?.start(group) },
+                finish: { [weak self] group in self?.finish(group) },
+                showProtectedApps: { [weak self] in self?.showSwitchingSettings() }
             )
         )
         // A standalone group's Dock tile may have been dragged out of the Dock meanwhile.
@@ -67,6 +106,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         usage: usage,
         shortcuts: shortcutMonitor,
         updater: updater,
+        session: session,
+        runningApps: runningApps,
+        icons: icons,
         isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil },
         // Standalone groups from a backup get their Dock tiles instead of being turned off.
         groupsRestored: { [weak self] groups in self?.standalone.adoptRestoredGroups(groups) }
@@ -85,6 +127,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         icons: icons,
         runningApps: runningApps,
         mostUsed: mostUsed,
+        session: session,
         actions: PopupPanelController.Actions(
             open: { [weak self] app, group in self?.open(app, in: group) },
             openAll: { [weak self] group in self?.openAll(group) },
@@ -95,7 +138,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             addWebsite: { [weak self] group in self?.addWebsiteWindowController.show(for: group) },
             inGroupWindow: { [weak self] action, group in
                 self?.mainWindowController.perform(action, inGroup: group.id)
-            }
+            },
+            start: { [weak self] group in self?.start(group) },
+            finish: { [weak self] group in self?.finish(group) }
         )
     )
 
@@ -148,6 +193,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 },
                 openAll: { [weak self] group in self?.openAll(group) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
+                start: { [weak self] group in self?.start(group) },
+                finish: { [weak self] group in self?.finish(group) },
+                switchingOffer: { [weak self] group in self?.switchingOffer(for: group) },
+                currentGroupID: { [weak self] in self?.session.current },
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
                 showSettings: { [weak self] in self?.showSettingsWindow(nil) },
                 showAbout: { [weak self] in self?.showAboutWindow(nil) },
@@ -220,6 +269,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         // A second copy changed nothing; the copy that runs owns the files.
         guard secondCopyHandoff == nil else { return }
+        // Items still waiting for their launch delay don't open after the app is gone, and what
+        // the others couldn't open isn't shown in an alert now.
+        delayedLaunches.onFinished = nil
+        delayedLaunches.cancelAll()
         store.flushPendingSave()
         preferences.flushPendingSave()
         usage.flushPendingSave()
@@ -233,6 +286,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func showSettingsWindow(_ sender: Any?) {
         popupController.close()
         settingsWindowController.show()
+    }
+
+    /// Settings on the Switching pane (the group window's Protected Apps…).
+    private func showSwitchingSettings() {
+        popupController.close()
+        settingsWindowController.show(pane: .switching)
     }
 
     /// Target of the About menu items.
@@ -287,6 +346,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         LaunchReportPresenter.presentProblems(in: terminator.hideAll(group))
     }
 
+    /// Start from the popup, the menu bar menu or the group window: the user's click, which quits
+    /// what the group's settings say without asking (as Close All does).
+    private func start(_ group: DockGroup) {
+        Task { @MainActor in
+            do {
+                LaunchReportPresenter.presentProblems(in: try await switcher.start(group.id, trigger: .userAction))
+            } catch {
+                logger.error("Starting group \(group.id, privacy: .public) failed: \(String(describing: error), privacy: .public)")
+            }
+        }
+    }
+
+    /// Finish from the popup, the menu bar menu or the group window.
+    private func finish(_ group: DockGroup) {
+        Task { @MainActor in
+            do {
+                LaunchReportPresenter.presentProblems(in: try await switcher.finish(group.id, trigger: .userAction))
+            } catch {
+                logger.error("Finishing group \(group.id, privacy: .public) failed: \(String(describing: error), privacy: .public)")
+            }
+        }
+    }
+
+    /// What the menu bar menu offers for the group: Finish for the current group, Start otherwise.
+    private func switchingOffer(for group: DockGroup) -> SwitchingOffer {
+        SwitchingOffer.offer(for: group, current: session.current, previous: session.previous, in: store.groups)
+    }
+
     // MARK: - Global shortcuts
 
     /// Shortcut *n* shows or hides the *n*-th group's popup.
@@ -316,11 +403,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - URL scheme
 
     private func handle(_ url: URL) {
-        guard let command = URLCommand(url: url) else {
+        guard let link = LinkCommand(url: url) else {
             urlLogger.error("Ignored unsupported URL \(url.absoluteString, privacy: .public)")
             return
         }
-        switch urlGate.accept(command) {
+        switch urlGate.accept(link) {
         case .accepted:
             break
         case .repeated:
@@ -333,7 +420,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         urlLogger.notice("Handling \(url.absoluteString, privacy: .public)")
         // Run once the activation that comes with an opened URL has settled.
         Task { @MainActor [weak self] in
-            self?.perform(command)
+            switch link {
+            case .command(let command): self?.perform(command)
+            case .switching(let command): await self?.perform(command)
+            }
+        }
+    }
+
+    /// A start or finish link: asks first when it would quit apps (`TransitionConfirmationAlert`,
+    /// one question at a time with quit links), offering to hide them instead.
+    private func perform(_ command: SwitchingURLCommand) async {
+        guard let group = group(named: command.group) else { return }
+        let report: TransitionReport
+        do {
+            switch command {
+            case .start: report = try await switcher.start(group.id, trigger: .link)
+            case .finish: report = try await switcher.finish(group.id, trigger: .link)
+            }
+        } catch {
+            urlLogger.error("\(command.throttleKey, privacy: .public) failed: \(String(describing: error), privacy: .public)")
+            return
+        }
+        switch report.outcome {
+        case .done, .repeated:
+            LaunchReportPresenter.presentProblems(in: report)
+        case .declined:
+            urlLogger.notice("\(command.throttleKey, privacy: .public) for group \(group.id, privacy: .public): cancelled")
+        case .dropped:
+            urlLogger.notice("Ignored \(command.throttleKey, privacy: .public) for group \(group.id, privacy: .public): another link's question is showing")
+            return
+        }
+        // As for quit links: the cooldown starts again once the question is answered.
+        if report.wasAsked {
+            urlGate.restartCooldown(for: command)
         }
     }
 
@@ -409,5 +528,15 @@ extension AppDelegate: GroupIntentHandling {
     /// Siri and Shortcuts ask in their own way (`QuitGroupIntent`), not with the app's alert.
     func quitAll(_ group: DockGroup, mode: QuitMode, confirm: (QuitConfirmation) async throws -> Void) async throws -> QuitReport {
         try await quitRequests.requestFromIntent(group, mode: mode, confirm: confirm)
+    }
+
+    /// Start Group: asks in Siri or Shortcuts (`confirm`) before quitting anything.
+    func start(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport {
+        try await switcher.start(group.id, trigger: .intent, confirm: confirm)
+    }
+
+    /// Finish Group: asks in Siri or Shortcuts (`confirm`) before quitting anything.
+    func finish(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport {
+        try await switcher.finish(group.id, trigger: .intent, confirm: confirm)
     }
 }

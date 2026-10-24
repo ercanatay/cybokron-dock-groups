@@ -1196,6 +1196,137 @@ enum L10n {
     }
 }
 
+// MARK: - Start and Finish
+
+extension L10n {
+    /// Starting and finishing groups: the popup's marker, the menu bar menu, the group window's
+    /// Start and Finish section, Settings → Switching and the alert about apps a transition left
+    /// as they were. The Start and Finish buttons' titles and help come from `SwitchingOffer`.
+    enum Switching {
+        enum Popup {
+            /// The summary line's marker of the current group: "8 items · 3 running · current".
+            static var current: String { tr("popup.switching.current", "current") }
+        }
+
+        enum MenuBar {
+            /// The menu's first line while a group is current.
+            static func current(_ groupName: String) -> String { tr("menuBar.switching.current", "Current: %@", groupName) }
+            static func currentTooltip(_ groupName: String) -> String {
+                tr("menuBar.switching.current.tooltip", "“%@” is the current group, the one started last. Choose it to show its popup.", groupName)
+            }
+            static func start(_ groupName: String) -> String { tr("menuBar.switching.start", "Start “%@”", groupName) }
+            static func finish(_ groupName: String) -> String { tr("menuBar.switching.finish", "Finish “%@”", groupName) }
+            /// Added to a group's tooltip.
+            static var startHint: String { tr("menuBar.switching.startHint", "Hold ⌃⌥ to start it.") }
+        }
+
+        enum GroupWindow {
+            static var section: String { tr("groupWindow.switching.section", "Start and Finish") }
+            static var onStart: String { tr("groupWindow.switching.onStart", "When this group starts") }
+            static var onFinish: String { tr("groupWindow.switching.onFinish", "When this group finishes") }
+            static var afterFinish: String { tr("groupWindow.switching.afterFinish", "After finishing") }
+            static var leaveOthers: String { tr("groupWindow.switching.onStart.leaveOthers", "Leave other apps open") }
+            static var hidePreviousGroup: String { tr("groupWindow.switching.onStart.hidePreviousGroup", "Hide the previous group's apps") }
+            static var hideAllOtherApps: String { tr("groupWindow.switching.onStart.hideAllOtherApps", "Hide all other apps") }
+            static var quitPreviousGroup: String { tr("groupWindow.switching.onStart.quitPreviousGroup", "Quit the previous group's apps") }
+            static var hideApps: String { tr("groupWindow.switching.onFinish.hideApps", "Hide its apps") }
+            static var quitApps: String { tr("groupWindow.switching.onFinish.quitApps", "Quit its apps") }
+            static var leaveApps: String { tr("groupWindow.switching.onFinish.leaveApps", "Leave its apps open") }
+            static var showPreviousGroup: String { tr("groupWindow.switching.afterFinish.showPreviousGroup", "Show the previous group") }
+            static var doNothing: String { tr("groupWindow.switching.afterFinish.nothing", "Do nothing") }
+            static var quitWarning: String {
+                tr(
+                    "groupWindow.switching.quitWarning",
+                    "Quitting asks apps to quit; they can still ask to save changes. Links, Siri and Shortcuts ask you first."
+                )
+            }
+            static var protectedApps: String { tr("groupWindow.switching.protectedApps", "Protected Apps…") }
+            static var protectedAppsHelp: String {
+                tr("groupWindow.switching.protectedApps.help", "Choose the apps that are never hidden or quit, in Settings → Switching.")
+            }
+            static var isCurrent: String { tr("groupWindow.switching.current", "This is the current group.") }
+            static var isNotCurrent: String { tr("groupWindow.switching.notCurrent", "Start makes this the current group.") }
+            static var footer: String {
+                tr(
+                    "groupWindow.switching.footer",
+                    "Start opens the group's items as Open All does and puts the group started before it away; Finish puts this group away. Protected apps, and apps both groups use, are never hidden or quit."
+                )
+            }
+        }
+
+        enum Settings {
+            static var tab: String { tr("settings.tab.switching", "Switching") }
+            static var protectedHeader: String { tr("switching.protected.header", "Protected Apps") }
+            static var protectedEmpty: String { tr("switching.protected.empty", "No protected apps yet.") }
+            static var addRunningApp: String { tr("switching.protected.addRunning", "Add a Running App") }
+            static var noRunningApps: String { tr("switching.protected.addRunning.none", "No other running apps") }
+            static func remove(_ appName: String) -> String { tr("switching.protected.remove", "Stop protecting %@", appName) }
+            static func protectedFooter(_ appName: String) -> String {
+                tr(
+                    "switching.protected.footer",
+                    "Start, Finish and Close All never quit these apps, and switching groups never hides them. %@ and its groups' own apps are always protected, and Finder is never quit.",
+                    appName
+                )
+            }
+            static func full(_ count: Int) -> String { tr("switching.protected.full", "The list holds at most %ld apps.", count) }
+            static var pickerTitle: String { tr("switching.protected.picker.title", "Add Protected Apps") }
+            static var pickerMessage: String {
+                tr("switching.protected.picker.message", "Choose apps that Start, Finish and Close All never quit.")
+            }
+            static var startHeader: String { tr("switching.start.header", "Start and Finish") }
+            static var startSummary: String {
+                tr(
+                    "switching.start.summary",
+                    "Start opens a group's items as Open All does, then puts the group started before it away as the group's settings say: by default its apps are hidden, never quit. Finish hides the group's apps and shows the previous group again. Each group's settings are in its group window."
+                )
+            }
+            static var startAsking: String {
+                tr("switching.start.asking", "Links, Siri and Shortcuts ask first when a group is set to quit apps.")
+            }
+            static var quittingGroups: String { tr("switching.start.quitting", "Groups set to quit apps") }
+            static var currentGroup: String { tr("switching.current.label", "Current group") }
+            static var noCurrentGroup: String { tr("switching.current.none", "None") }
+            static var previousGroup: String { tr("switching.current.previous", "Started before it") }
+            static func currentDetail(_ appName: String) -> String {
+                tr(
+                    "switching.current.detail",
+                    "The current group is the one started last, until it's finished. It's forgotten when %@ quits.",
+                    appName
+                )
+            }
+        }
+
+        /// Apps a transition couldn't hide, quit or show again.
+        enum Problems {
+            static func start(_ groupName: String) -> String {
+                tr("switching.problem.start", "Starting “%@” left some apps as they were.", groupName)
+            }
+            static func finish(_ groupName: String) -> String {
+                tr("switching.problem.finish", "Finishing “%@” left some apps as they were.", groupName)
+            }
+            static func notHidden(_ appName: String) -> String { tr("switching.problem.notHidden", "• %@: couldn't be hidden.", appName) }
+            static func notQuit(_ appName: String) -> String { tr("switching.problem.notQuit", "• %@: couldn't be asked to quit.", appName) }
+            static func notShown(_ appName: String) -> String { tr("switching.problem.notShown", "• %@: couldn't be shown again.", appName) }
+        }
+
+        /// Settings → Shortcuts & Siri.
+        enum Shortcuts {
+            static var shortcutsAppDetail: String {
+                tr(
+                    "settings.shortcuts.switching.shortcutsApp.detail",
+                    "Start Group and Finish Group are there too. Nobody answers questions in an automation, so for groups you start or finish there, choose hiding rather than quitting."
+                )
+            }
+            static var linksFooter: String {
+                tr(
+                    "settings.shortcuts.switching.links.footer",
+                    "Start and finish links share the 5-second limit of launch and hide links, and ask first when the group is set to quit apps."
+                )
+            }
+        }
+    }
+}
+
 // MARK: - Lookup
 
 /// `L10n`'s lookups; the key and English text must be literals (`LocalizationTests` read them).

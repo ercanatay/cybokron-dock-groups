@@ -24,16 +24,36 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 ## Features (so far)
 
 - Menu bar item listing your groups with their tiles. Choosing a group shows its **popup**; holding
-  ⌥ while choosing opens all of its apps right away, holding ⇧⌥ hides its running apps.
+  ⌥ while choosing opens all of its apps right away, holding ⇧⌥ hides its running apps, and holding
+  ⌃⌥ **starts** it (below). While a group is current, the menu begins with it and **Finish**.
 - Group popup: a floating panel over the Dock (it doesn't take focus from the app you're using)
   with the group's app icons in a grid and a running indicator per app. Click an app to open it or
   bring it to the front; **Open All** opens every app; **Hide All** hides the group's running apps
   (apps that aren't running stay closed); **Close All** quits the group's running apps
-  normally, ⌘-click force quits them. Escape, a click elsewhere, or switching apps closes it.
+  normally, ⌘-click force quits them — except protected apps (below). **Start** (▶) starts the
+  group, and for the current group **Finish** (■) takes its place; narrow popups show only the
+  symbol. Escape, a click elsewhere, or switching apps closes it.
   Clicking a running app brings it back as a Dock click does: a hidden app un-hides and, when all
   of its windows are minimized, they come back (with Accessibility access; otherwise the app is
   asked to reopen). Settings → Popup → *Restore windows when reopening an app that is running* (on
   by default) turns that off.
+- **Start and Finish**: starting a group opens its items as Open All does and puts the group started
+  before it away — by default its apps are hidden; apps both groups use stay as they are. In the
+  group window's **Start and Finish** section a group can instead hide every other app, ask the
+  previous group's apps to quit, or leave everything else alone. Finishing a group hides its apps
+  (or quits them, or leaves them open) and shows the group started before it again; it never
+  launches anything. The group started last is the **current** group until it's finished: the
+  popup says “current” under its name and offers Finish, the menu bar menu shows it first, and
+  Settings → Switching names it. The app forgets it when it quits, so after a restart no group is
+  current. Quitting is never a default and always graceful (apps can still ask to save changes);
+  a click quits what the group's settings say, while links, Siri and Shortcuts ask first. Starting
+  a group again within 3 seconds does nothing more.
+- **Protected apps** (Settings → Switching): apps that Start, Finish and Close All never quit and
+  that Start and Finish never hide — added with **Add Apps…** or from the running apps, up to 50.
+  Close All skips them wherever it's asked: the popup, the menus, `quit/` links, Siri's Quit Group
+  and a standalone group's own app (Hide All still hides them; Siri's answer says when an app was
+  spared). Cybokron Dock Groups and its standalone groups' apps are always protected, and Finder is
+  never quit.
 - In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
@@ -91,9 +111,13 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   needs Accessibility access (Privacy & Security → Accessibility) and lets the app in front receive
   them too; Settings → Shortcuts & Siri then says so, without the system's prompt.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
-  optionally force quit; it asks there first, every time) and **Show Group** (the popup) actions,
-  and phrases such as “Launch Work in Cybokron Dock Groups”. Groups are matched by ID, so shortcuts survive renames. Settings →
-  Shortcuts & Siri spells out a group's phrases and links, each with a Copy button.
+  optionally force quit; it asks there first, every time), **Show Group** (the popup), **Start
+  Group** and **Finish Group** actions, and phrases such as “Launch Work in Cybokron Dock Groups” or
+  “Start Work in Cybokron Dock Groups”. Start and Finish Group ask there first when the group's
+  settings would quit apps; declining does nothing. In a Shortcuts automation nobody is there to
+  answer, so give the groups you start or finish from automations hiding settings. Groups are
+  matched by ID, so shortcuts survive renames. Settings → Shortcuts & Siri spells out a group's
+  phrases and links, each with a Copy button.
 - Links, e.g. from scripts or other apps (`open "cybokrondockgroups://open/work"`):
 
   | Link | Does |
@@ -102,17 +126,20 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   | `cybokrondockgroups://launch/<group>` | Open All |
   | `cybokrondockgroups://quit/<group>` | Close All once you confirm it; add `?mode=force` to force quit |
   | `cybokrondockgroups://hide/<group>` | Hide All |
+  | `cybokrondockgroups://start/<group>` (or `switch/<group>`) | Start; when that would quit apps it asks first: Quit and Switch, Hide Instead or Cancel |
+  | `cybokrondockgroups://finish/<group>` | Finish; when that would quit apps it asks first: Quit Apps, Hide Instead or Cancel |
   | `cybokrondockgroups://shortcut/<1…9>` | Shows the popup of the group with that shortcut |
   | `cybokrondockgroups://settings/group/<group>` | Opens the group window on the group's settings (as it was when no group matches) |
   | `cybokrondockgroups://close` · `settings` · `groups` | Closes the popup · opens Settings · the group window |
 
   `<group>` is the group's name — case, accents, spaces and punctuation don't matter
   (`Çalışma Alanı` → `calisma-alani`) — or its ID. The same link is ignored when it comes again
-  within 5 seconds, and `launch` / `hide` links share one more 5-second limit: one group's apps are
-  opened or hidden per 5 seconds, whichever group the links name (menus, shortcuts, Siri and
-  Shortcuts aren't limited). A quit link always asks first, in a dialog only a click on its quit
-  button confirms — the button can be clicked 0.7 seconds after the dialog appears, Escape cancels
-  at once; its 5 seconds start again once you've answered.
+  within 5 seconds, and `launch` / `hide` / `start` / `finish` links share one more 5-second limit:
+  one group's apps are opened, hidden, started or finished per 5 seconds, whichever group the links
+  name (menus, shortcuts, Siri and Shortcuts aren't limited). A quit link always asks first, in a
+  dialog only a click on its quit button confirms — the button can be clicked 0.7 seconds after the
+  dialog appears, Escape cancels at once; its 5 seconds start again once you've answered. Start and
+  finish links that would quit apps ask the same way, one question at a time with quit links.
 - **Open All** never launches a running app a second time: running apps are brought to the front.
 - Group management window: add, rename, reorder and delete groups; add apps with an open panel,
   reorder or remove them; **Open All** and **Hide All** there too (and in a group's context menu).
@@ -136,7 +163,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   its own small app, with the group's tile (emoji or app icon grid) as its icon, at the end of the
   Dock. Clicking it shows the group's popup over the Dock, clicking it again hides it, and ⌥-clicking
   it opens all of the group's apps right away — even while Cybokron Dock Groups isn't running. The
-  popup opens apps, Open All, Hide All and Close All as usual; apps are reordered and removed in the main app.
+  popup opens apps, Open All, Hide All and Close All as usual (Close All spares protected apps;
+  Start and Finish are the main app's); apps are reordered and removed in the main app.
   Right-clicking (or Control-clicking) the icon lists the group's apps — checked while running — with
   Open All, Hide All, Close All and Group Settings… (the main app's group window, opened on the
   group, as the popup's gear does). macOS asks only running apps for such a menu, so it appears once
@@ -169,7 +197,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   group can override the layout settings (except free layout) in its own settings. Position *Above
   the Clicked Icon* opens a standalone group's popup right above its Dock icon (beside it for a side
   Dock, on that display) and a group chosen from the menu bar menu under the menu bar icon;
-  shortcuts, links and Siri keep the popup centered over the Dock.
+  shortcuts, links and Siri keep the popup centered over the Dock. **Switching** lists the protected
+  apps, sums up what Start and Finish do, names the groups set to quit apps and shows the current
+  group.
 - **Updates** from the project's [GitHub releases](https://github.com/ercanatay/cybokron-dock-groups/releases):
   **Check for Updates…** in the menu bar menu shows a small window with the result. The app also
   checks shortly after launch and every 6 hours (Settings → Updates turns that off; only the app's

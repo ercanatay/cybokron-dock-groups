@@ -41,13 +41,22 @@ final class MainWindowController: NSWindowController {
         tiles: TileImageCache,
         icons: AppIconProviding,
         standalone: StandaloneController,
+        session: ContextSession,
         actions: MainWindowView.Actions
     ) {
         self.store = store
         let items = GroupWindowItems(presence: ItemPresenceCache(locator: WorkspaceItemLocator()), icons: icons)
         self.items = items
         let hostingController = NSHostingController(
-            rootView: MainWindowView(store: store, tiles: tiles, standalone: standalone, actions: actions, selection: selection, items: items)
+            rootView: MainWindowView(
+                store: store,
+                tiles: tiles,
+                standalone: standalone,
+                session: session,
+                actions: actions,
+                selection: selection,
+                items: items
+            )
         )
         hostingController.sizingOptions = [.minSize]
 

@@ -112,6 +112,31 @@ public struct TransitionConfirmation: Equatable, Sendable {
     public var cancelButton: String {
         Localization.string("core.quitConfirmation.cancel", "Cancel")
     }
+
+    /// A button of the link's alert and the answer it gives.
+    public struct AlertButton: Equatable, Sendable {
+        public let title: String
+        public let answer: Answer
+        /// Enabled only `confirmButtonDelay` after the alert appears.
+        public let isDelayed: Bool
+    }
+
+    /// The link's alert's buttons in the order they're added (the first is the rightmost): quit,
+    /// hide instead, cancel. Only quitting waits `confirmButtonDelay`; hiding can be undone.
+    public var alertButtons: [AlertButton] {
+        [
+            AlertButton(title: confirmButton, answer: .quit, isDelayed: true),
+            AlertButton(title: hideInsteadButton, answer: .hideInstead, isDelayed: false),
+            AlertButton(title: cancelButton, answer: .cancel, isDelayed: false),
+        ]
+    }
+
+    /// The answer of the alert's button at `index` (`alertButtons`); anything else — Escape, the
+    /// alert closed another way — cancels.
+    public func answer(forButtonAt index: Int) -> Answer {
+        let buttons = alertButtons
+        return buttons.indices.contains(index) ? buttons[index].answer : .cancel
+    }
 }
 
 /// Asks the user a link's question before a transition quits apps; the app shows an alert.
