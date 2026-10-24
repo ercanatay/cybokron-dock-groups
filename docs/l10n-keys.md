@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-699 keys.
+710 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1023,3 +1023,21 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `core.shortcut.key.space` | Space |
 | `core.shortcut.key.code` | Key %ld |
 | `core.switching.confirmation.shortcut` | A keyboard shortcut asked for this. |
+
+## Duplicating, archiving and restoring groups: a duplicate's name, an archived group restored without its keyboard shortcut, archived groups and shortcuts in Import Settings…'s confirmation (English only for now; `awaitingTranslation`: `core.group.copyName`, `core.archive.`, `core.backup.library.`, `core.persistence.groups.archivedUnsupported`)
+
+`core.group.copyName*` name a duplicate (“Coding copy”, “Coding copy 2”); a duplicate of a duplicate counts on from the original's name, so keep `%1$@` the original name and `%2$ld` the number. `core.backup.library.*` are sentences added to the lines of Import Settings…'s confirmation.
+
+| Key | English |
+| --- | --- |
+| `core.group.copyName` | %@ copy |
+| `core.group.copyName.numbered` | %1$@ copy %2$ld |
+| `core.archive.restore.noShortcut.title` | “%@” is back without its keyboard shortcut |
+| `core.archive.restore.noShortcut.message` | “%1$@” uses %2$@ now. Choose another shortcut in “%3$@”'s settings. |
+| `core.backup.library.archived.one` | It also has 1 archived group. |
+| `core.backup.library.archived.other` | It also has %ld archived groups. |
+| `core.backup.library.replacesArchived.one` | Your archived group is replaced too. |
+| `core.backup.library.replacesArchived.other` | Your %ld archived groups are replaced too. |
+| `core.backup.library.clearedShortcuts.one` | 1 group comes in without its keyboard shortcut: another group uses those keys. |
+| `core.backup.library.clearedShortcuts.other` | %ld groups come in without their keyboard shortcut: other groups use those keys. |
+| `core.persistence.groups.archivedUnsupported` | The archived groups can't be saved here. |

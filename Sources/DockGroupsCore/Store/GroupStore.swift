@@ -18,8 +18,62 @@ public struct GroupStoreIssue: Identifiable, Equatable, Sendable {
 public struct GroupMergeResult: Equatable, Sendable {
     /// The groups that were added, after the current ones, in the backup's order.
     public let addedGroups: [DockGroup]
+    /// The archived groups that were added, after the current archived ones.
+    public let addedArchivedGroups: [ArchivedGroup]
+    /// Added groups that came in without their keyboard shortcut, because a current group (or one
+    /// added before them) has those keys.
+    public let clearedShortcutCount: Int
     /// The copy of the previous groups file, `nil` when nothing was added or nothing had been saved.
     public let copyURL: URL?
+
+    public init(addedGroups: [DockGroup], addedArchivedGroups: [ArchivedGroup] = [], clearedShortcutCount: Int = 0, copyURL: URL?) {
+        self.addedGroups = addedGroups
+        self.addedArchivedGroups = addedArchivedGroups
+        self.clearedShortcutCount = clearedShortcutCount
+        self.copyURL = copyURL
+    }
+}
+
+/// What merging a backup's groups into the current ones would add (`GroupStore.merging`).
+public struct GroupMergePlan: Equatable, Sendable {
+    /// The groups added, in the backup's order, without the shortcuts other groups have.
+    public let active: [DockGroup]
+    /// The archived groups added, in the backup's order.
+    public let archived: [ArchivedGroup]
+    /// Added groups whose shortcut was taken off, because a current group (or one added before
+    /// them) has those keys.
+    public let clearedShortcutCount: Int
+
+    public var isEmpty: Bool { active.isEmpty && archived.isEmpty }
+}
+
+/// What restoring an archived group did (`GroupStore.restoreGroup`).
+public struct GroupRestoreResult: Equatable, Sendable {
+    /// The group, active again at the end of the list.
+    public let group: DockGroup
+    /// The shortcut it had when archived, taken off because an active group has those keys now.
+    public let removedShortcut: GroupShortcut?
+    /// The active group with those keys.
+    public let shortcutOwner: DockGroup.ID?
+    /// It was standalone when archived. The store leaves Standalone off — its Dock tile has to be
+    /// added first — so the app turns it on the way the group's Standalone toggle does.
+    public let restoresStandalone: Bool
+
+    /// The title of the note that the group came back without its shortcut.
+    public var removedShortcutTitle: String {
+        let name = group.name
+        return Localization.format("core.archive.restore.noShortcut.title", "“%@” is back without its keyboard shortcut", name)
+    }
+
+    /// The note's text: who has the keys now. `keyTitle` is how the keys are shown.
+    public func removedShortcutMessage(ownerName: String, keyTitle: String) -> String {
+        let name = group.name
+        return Localization.format(
+            "core.archive.restore.noShortcut.message",
+            "“%1$@” uses %2$@ now. Choose another shortcut in “%3$@”'s settings.",
+            ownerName, keyTitle, name
+        )
+    }
 }
 
 /// What giving a group a keyboard shortcut did (`GroupStore.setShortcut`).
@@ -39,9 +93,16 @@ public enum GroupShortcutAssignment: Equatable, Sendable {
 /// Every change is written to disk shortly after it happens (changes arriving in quick succession,
 /// such as dragging a color picker, are coalesced into one write). An empty store stays empty:
 /// no sample groups are ever created.
+///
+/// `groups` are the active groups only. Archived groups are kept apart, in `archivedGroups`, so
+/// everything that reads `groups` — the popup, the menus, shortcuts, links, Siri, Focus filters,
+/// standalone apps, delayed launches — never sees one. They can't be edited until restored.
 @MainActor
 public final class GroupStore: ObservableObject {
+    /// The active groups, in list order.
     @Published public private(set) var groups: [DockGroup] = []
+    /// The archived groups, in the order they were archived (`ArchivedGroup`).
+    @Published public private(set) var archivedGroups: [ArchivedGroup] = []
     /// The most recent problem to show the user; cleared with `dismissIssue()`.
     @Published public private(set) var issue: GroupStoreIssue?
     /// `true` when the saved file couldn't be read *and* couldn't be moved aside. Saving is then
@@ -61,8 +122,13 @@ public final class GroupStore: ObservableObject {
         loadFromDisk()
     }
 
+    /// The active group with this identifier; never an archived one.
     public func group(withID id: DockGroup.ID) -> DockGroup? {
         groups.first { $0.id == id }
+    }
+
+    public func archivedGroup(withID id: DockGroup.ID) -> ArchivedGroup? {
+        archivedGroups.first { $0.id == id }
     }
 
     public func dismissIssue() {
@@ -71,7 +137,8 @@ public final class GroupStore: ObservableObject {
 
     // MARK: - Groups
 
-    /// Appends a new, empty group. Without a usable name it gets a unique default ("New Group 2" …).
+    /// Appends a new, empty group. Without a usable name it gets a unique default ("New Group 2" …,
+    /// unique among active and archived groups); a name given is kept as it is, as renaming keeps it.
     @discardableResult
     public func addGroup(named name: String? = nil, emoji: String = DockGroup.defaultEmoji) -> DockGroup {
         let group = DockGroup(
@@ -94,11 +161,88 @@ public final class GroupStore: ObservableObject {
         return true
     }
 
-    /// Removes the group and its app list. The apps themselves aren't touched.
+    /// Removes the group and its app list, active or archived. The apps themselves aren't touched.
     public func deleteGroup(_ id: DockGroup.ID) {
-        guard let index = index(of: id) else { return }
+        guard let index = index(of: id) else {
+            deleteArchivedGroup(id)
+            return
+        }
         groups.remove(at: index)
         scheduleSave()
+    }
+
+    /// Makes a copy of an active group at the end of the list: a new identity (so Siri, Focus
+    /// filters and links naming the original keep naming it), named "<name> copy" (`GroupNaming`),
+    /// with the same items — their details and launch options — and settings, but neither
+    /// standalone nor with a keyboard shortcut. At the end, not next to the original, so no
+    /// group's number shortcut changes.
+    /// - Returns: The copy; `nil` when no active group has this identifier.
+    @discardableResult
+    public func duplicateGroup(_ id: DockGroup.ID) -> DockGroup? {
+        guard let source = group(withID: id) else { return nil }
+        let copy = DockGroup(
+            name: GroupNaming.copyName(of: source.name, taken: takenNames),
+            emoji: source.emoji,
+            apps: source.apps,
+            tile: source.tile,
+            isPinned: source.isPinned,
+            isStandalone: false,
+            popup: source.popup,
+            freeLayoutSlots: source.freeLayoutSlots,
+            switching: source.switching,
+            shortcut: nil
+        )
+        groups.append(copy)
+        scheduleSave()
+        return copy
+    }
+
+    // MARK: - Archive
+
+    /// Archives an active group: it leaves `groups` (and so every menu, shortcut, link and agent)
+    /// and is kept, as it was, in `archivedGroups`. A standalone group is kept with Standalone off
+    /// and `restoresStandalone` on. Running apps aren't touched.
+    /// - Returns: The archived group; `nil` when no active group has this identifier.
+    @discardableResult
+    public func archiveGroup(_ id: DockGroup.ID, at date: Date = Date()) -> ArchivedGroup? {
+        guard let index = index(of: id) else { return nil }
+        let archived = ArchivedGroup(group: groups[index], archivedAt: date)
+        groups.remove(at: index)
+        archivedGroups.append(archived)
+        scheduleSave()
+        return archived
+    }
+
+    /// Makes an archived group active again, at the end of the list, with its settings and name. A
+    /// shortcut whose keys an active group has now is taken off (`GroupRestoreResult.removedShortcut`).
+    /// Standalone stays off (`GroupRestoreResult.restoresStandalone`).
+    /// - Returns: What was restored; `nil` when no archived group has this identifier.
+    @discardableResult
+    public func restoreGroup(_ id: DockGroup.ID) -> GroupRestoreResult? {
+        guard let index = archivedGroups.firstIndex(where: { $0.id == id }) else { return nil }
+        let archived = archivedGroups[index]
+        var group = archived.group
+        var removedShortcut: GroupShortcut?
+        var owner: DockGroup.ID?
+        if let shortcut = group.shortcut, let other = shortcutOwner(of: shortcut.keys, except: id) {
+            removedShortcut = shortcut
+            owner = other
+            group.shortcut = nil
+        }
+        archivedGroups.remove(at: index)
+        groups.append(group)
+        scheduleSave()
+        return GroupRestoreResult(group: group, removedShortcut: removedShortcut, shortcutOwner: owner, restoresStandalone: archived.restoresStandalone)
+    }
+
+    /// Deletes an archived group for good.
+    /// - Returns: Whether an archived group had this identifier.
+    @discardableResult
+    public func deleteArchivedGroup(_ id: DockGroup.ID) -> Bool {
+        guard let index = archivedGroups.firstIndex(where: { $0.id == id }) else { return false }
+        archivedGroups.remove(at: index)
+        scheduleSave()
+        return true
     }
 
     public func moveGroups(fromOffsets source: IndexSet, toOffset destination: Int) {
@@ -355,20 +499,33 @@ public final class GroupStore: ObservableObject {
     /// - Returns: The copy of the previous file, or `nil` when nothing had been saved.
     @discardableResult
     public func replaceGroups(with newGroups: [DockGroup]) throws -> URL? {
+        try replaceGroups(with: StoredGroups(active: newGroups), copyLabel: "pre-import")
+    }
+
+    /// `replaceGroups(with:)` with archived groups too: both lists are replaced. Archived groups
+    /// are cleaned up as active ones are, and keep their shortcuts (archived groups hold no keys).
+    @discardableResult
+    public func replaceGroups(with newGroups: StoredGroups) throws -> URL? {
         try replaceGroups(with: newGroups, copyLabel: "pre-import")
     }
 
     /// `replaceGroups(with:)`; without a `copyLabel` the current file isn't copied first.
     @discardableResult
     func replaceGroups(with newGroups: [DockGroup], copyLabel: String?) throws -> URL? {
+        try replaceGroups(with: StoredGroups(active: newGroups), copyLabel: copyLabel)
+    }
+
+    @discardableResult
+    func replaceGroups(with newGroups: StoredGroups, copyLabel: String?) throws -> URL? {
         // The copy should hold what's on screen, not an older write.
         if !isSavingSuspended {
             flushPendingSave()
         }
         let copyURL = try copyLabel.flatMap { try persistence.preserveCopy(label: $0) }
         let sanitized = Self.sanitizedForRestore(newGroups)
-        try persistence.saveGroups(sanitized)
-        groups = sanitized
+        try persistence.saveStoredGroups(sanitized)
+        archivedGroups = sanitized.archived
+        groups = sanitized.active
         // The unreadable file that suspended saving was just copied aside and replaced.
         isSavingSuspended = false
         issue = nil
@@ -387,44 +544,96 @@ public final class GroupStore: ObservableObject {
         return try persistence.preserveCopy(label: label)
     }
 
-    /// Adds the groups of `incoming` that aren't here yet after the current ones, as merging a
-    /// backup does; every current group stays as it is. A group is skipped when a current group has
-    /// the same name (ignoring case and surrounding spaces) or the same identifier — and so are
-    /// later groups of `incoming` repeating one already added. The added groups are cleaned up the
-    /// way `replaceGroups(with:)` cleans them: one whose shortcut a current group has comes in
-    /// without it. When something is added, the current file is first copied next to itself
-    /// (`groups.pre-import-<timestamp>.json`) and the new list is written before it's shown, so if
-    /// anything fails nothing changes.
+    /// Adds the groups of `incoming` (and the archived groups of `archived`) that aren't here yet
+    /// after the current ones, as merging a backup does; every current group stays as it is. A
+    /// group is skipped when a current group, active or archived, has the same name (ignoring case
+    /// and surrounding spaces) or the same identifier — and so are later groups repeating one
+    /// already added. An added group whose shortcut a current group (or one added before it) has
+    /// comes in without it (`GroupMergeResult.clearedShortcutCount`). The added groups are cleaned
+    /// up the way `replaceGroups(with:)` cleans them. When something is added, the current file is
+    /// first copied next to itself (`groups.pre-import-<timestamp>.json`) and the new list is
+    /// written before it's shown, so if anything fails nothing changes.
     @discardableResult
-    public func mergeGroups(_ incoming: [DockGroup]) throws -> GroupMergeResult {
-        let candidates = Self.groupsAddedByMerging(incoming, into: groups)
-        guard !candidates.isEmpty else { return GroupMergeResult(addedGroups: [], copyURL: nil) }
-        // The current groups first: their shortcuts keep their keys.
-        let merged = Self.sanitizedForRestore(groups + candidates)
-        let candidateIDs = Set(candidates.map(\.id))
-        let added = merged.filter { candidateIDs.contains($0.id) }
+    public func mergeGroups(_ incoming: [DockGroup], archived: [ArchivedGroup] = []) throws -> GroupMergeResult {
+        let plan = Self.merging(StoredGroups(active: incoming, archived: archived), into: StoredGroups(active: groups, archived: archivedGroups))
+        guard !plan.isEmpty else { return GroupMergeResult(addedGroups: [], copyURL: nil) }
+        let merged = Self.sanitizedForRestore(StoredGroups(active: groups + plan.active, archived: archivedGroups + plan.archived))
+        let addedIDs = Set(plan.active.map(\.id))
+        let addedArchivedIDs = Set(plan.archived.map(\.id))
         let copyURL = try replaceGroups(with: merged, copyLabel: "pre-import")
-        return GroupMergeResult(addedGroups: added, copyURL: copyURL)
+        return GroupMergeResult(
+            addedGroups: merged.active.filter { addedIDs.contains($0.id) },
+            addedArchivedGroups: merged.archived.filter { addedArchivedIDs.contains($0.id) },
+            clearedShortcutCount: plan.clearedShortcutCount,
+            copyURL: copyURL
+        )
     }
 
     /// The groups of `incoming` that merging adds to `current`, unchanged and in order: see
-    /// `mergeGroups(_:)`.
+    /// `mergeGroups(_:archived:)`.
     public nonisolated static func groupsAddedByMerging(_ incoming: [DockGroup], into current: [DockGroup]) -> [DockGroup] {
-        var names = Set(current.map(mergeName(of:)))
-        var ids = Set(current.map(\.id))
-        return incoming.filter { group in
+        merging(StoredGroups(active: incoming), into: StoredGroups(active: current), clearingShortcuts: false).active
+    }
+
+    /// What merging `incoming` into `current` adds: see `mergeGroups(_:archived:)`. Names and
+    /// identifiers are matched against active and archived groups alike; active groups come before
+    /// archived ones.
+    public nonisolated static func merging(_ incoming: StoredGroups, into current: StoredGroups) -> GroupMergePlan {
+        merging(incoming, into: current, clearingShortcuts: true)
+    }
+
+    private nonisolated static func merging(_ incoming: StoredGroups, into current: StoredGroups, clearingShortcuts: Bool) -> GroupMergePlan {
+        var names = Set((current.active + current.archived.map(\.group)).map(mergeName(of:)))
+        var ids = Set(current.active.map(\.id) + current.archived.map(\.id))
+        func isNew(_ group: DockGroup) -> Bool {
             let name = mergeName(of: group)
             guard !ids.contains(group.id), !names.contains(name) else { return false }
             names.insert(name)
             ids.insert(group.id)
             return true
         }
+        // Archived groups hold no keys: only the active groups' shortcuts are kept apart.
+        var keys = Set(current.active.compactMap(\.shortcut?.keys))
+        var cleared = 0
+        let active = incoming.active.filter(isNew).map { group -> DockGroup in
+            guard clearingShortcuts, let shortcutKeys = group.shortcut?.keys, !keys.insert(shortcutKeys).inserted else { return group }
+            cleared += 1
+            var group = group
+            group.shortcut = nil
+            return group
+        }
+        let archived = incoming.archived.filter { isNew($0.group) }
+        return GroupMergePlan(active: active, archived: archived, clearedShortcutCount: cleared)
     }
 
     /// The name groups are matched by: as the store keeps it (trimmed, a blank one replaced by the
     /// default), ignoring case.
     nonisolated static func mergeName(of group: DockGroup) -> String {
-        (DockGroup.sanitizedName(group.name) ?? DockGroup.defaultName).lowercased()
+        GroupNaming.comparisonKey(group.name)
+    }
+
+    /// Both lists cleaned up for a restore: the active groups as `sanitizedForRestore(_:)` cleans
+    /// them, the archived ones the same way but keeping their shortcuts (archived groups hold no
+    /// keys), identifiers unique across both.
+    private static func sanitizedForRestore(_ stored: StoredGroups) -> StoredGroups {
+        let active = sanitizedForRestore(stored.active)
+        var seenIDs = Set(active.map(\.id))
+        let archived = stored.archived.compactMap { archived -> ArchivedGroup? in
+            guard seenIDs.insert(archived.id).inserted else { return nil }
+            return archived.replacingGroup(sanitizedGroup(archived.group))
+        }
+        return StoredGroups(active: active, archived: archived)
+    }
+
+    /// A group cleaned up as edits clean it: blank names and emoji get defaults, duplicate apps are
+    /// dropped, Free Layout cells fit its apps.
+    private static func sanitizedGroup(_ group: DockGroup) -> DockGroup {
+        var sanitized = group
+        sanitized.name = DockGroup.sanitizedName(group.name) ?? DockGroup.defaultName
+        sanitized.emoji = DockGroup.sanitizedEmoji(group.emoji) ?? DockGroup.defaultEmoji
+        sanitized.apps = removingDuplicates(group.apps)
+        sanitized.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: sanitized.apps)
+        return sanitized
     }
 
     /// The groups cleaned up as edits clean them; of groups sharing an identifier only the first is
@@ -434,11 +643,7 @@ public final class GroupStore: ObservableObject {
         var seenKeys = Set<KeyCombination>()
         return groups.compactMap { group in
             guard seenIDs.insert(group.id).inserted else { return nil }
-            var sanitized = group
-            sanitized.name = DockGroup.sanitizedName(group.name) ?? DockGroup.defaultName
-            sanitized.emoji = DockGroup.sanitizedEmoji(group.emoji) ?? DockGroup.defaultEmoji
-            sanitized.apps = removingDuplicates(group.apps)
-            sanitized.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: sanitized.apps)
+            var sanitized = sanitizedGroup(group)
             if let keys = group.shortcut?.keys, !seenKeys.insert(keys).inserted {
                 sanitized.shortcut = nil
             }
@@ -457,10 +662,13 @@ public final class GroupStore: ObservableObject {
 
     private func loadFromDisk() {
         do {
-            groups = try persistence.loadGroups()
+            let stored = try persistence.loadStoredGroups()
+            archivedGroups = stored.archived
+            groups = stored.active
         } catch let loadError {
             logger.error("Loading groups failed: \(String(describing: loadError), privacy: .public)")
             groups = []
+            archivedGroups = []
             do {
                 let backupURL = try persistence.preserveUnreadableData()
                 let reason = loadError.localizedDescription
@@ -506,7 +714,7 @@ public final class GroupStore: ObservableObject {
     private func writeToDisk() {
         pendingSave = nil
         do {
-            try persistence.saveGroups(groups)
+            try persistence.saveStoredGroups(StoredGroups(active: groups, archived: archivedGroups))
         } catch {
             logger.error("Saving groups failed: \(String(describing: error), privacy: .public)")
             if issue == nil {
@@ -529,14 +737,13 @@ public final class GroupStore: ObservableObject {
         return groups[groupIndex].apps.firstIndex { $0.normalizedBundleIdentifier == target }
     }
 
+    /// The names of the active and archived groups, which names the store makes avoid.
+    private var takenNames: [String] {
+        groups.map(\.name) + archivedGroups.map(\.group.name)
+    }
+
     private func nextDefaultName() -> String {
-        let existingNames = Set(groups.map(\.name))
-        guard existingNames.contains(DockGroup.defaultName) else { return DockGroup.defaultName }
-        var number = 2
-        while existingNames.contains("\(DockGroup.defaultName) \(number)") {
-            number += 1
-        }
-        return "\(DockGroup.defaultName) \(number)"
+        GroupNaming.uniqueName(DockGroup.defaultName, taken: takenNames)
     }
 
     private static func removingDuplicates(_ apps: [AppReference]) -> [AppReference] {

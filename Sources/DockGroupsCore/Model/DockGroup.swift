@@ -114,6 +114,9 @@ extension DockGroup {
 extension DockGroup: Codable {
     private enum CodingKeys: String, CodingKey {
         case id, name, emoji, apps, tile, isPinned, isStandalone, popup, freeLayoutSlots, switching, shortcut
+        // The marks of an archived group, written beside its own keys by the groups file and backups
+        // (`GroupEntry`), never by a group itself: a version without archives reads it as a group.
+        case archived, archivedAt, restoresStandalone
     }
 
     /// Identity, name and app list are required; display preferences are decoded leniently so a value
@@ -142,6 +145,10 @@ extension DockGroup: Codable {
     /// them are saved as before.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try encodeFields(into: &container)
+    }
+
+    private func encodeFields(into container: inout KeyedEncodingContainer<CodingKeys>) throws {
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(emoji, forKey: .emoji)
@@ -158,6 +165,55 @@ extension DockGroup: Codable {
         }
         if let shortcut {
             try container.encode(shortcut, forKey: .shortcut)
+        }
+    }
+}
+
+// MARK: - Archive marks
+
+extension DockGroup {
+    /// What the groups file and backups write beside an archived group's own keys (`GroupEntry`).
+    struct ArchiveMarks: Equatable {
+        var archived = false
+        var archivedAt: Date?
+        var restoresStandalone = false
+
+        /// Read leniently: only `"archived": true` marks a group archived, so damaged data can only
+        /// make a group visible, never hide one. An unreadable date is no date.
+        init(from decoder: Decoder) {
+            guard let container = try? decoder.container(keyedBy: CodingKeys.self) else { return }
+            archived = container.decodeLeniently(Bool.self, forKey: .archived) == true
+            archivedAt = container.decodeLeniently(String.self, forKey: .archivedAt).flatMap(Self.date(from:))
+            restoresStandalone = container.decodeLeniently(Bool.self, forKey: .restoresStandalone) == true
+        }
+
+        init(archivedAt: Date?, restoresStandalone: Bool) {
+            archived = true
+            self.archivedAt = archivedAt
+            self.restoresStandalone = restoresStandalone
+        }
+
+        /// ISO 8601 in UTC, whole seconds, written by hand: the groups file and backups use different
+        /// date strategies, and the mark must read the same in both.
+        static func string(from date: Date) -> String {
+            date.formatted(.iso8601)
+        }
+
+        static func date(from string: String) -> Date? {
+            try? Date.ISO8601FormatStyle().parse(string)
+        }
+    }
+
+    /// The group as one object with the marks of an archived group beside its own keys.
+    func encode(to encoder: Encoder, marks: ArchiveMarks) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try encodeFields(into: &container)
+        try container.encode(true, forKey: .archived)
+        if let archivedAt = marks.archivedAt {
+            try container.encode(ArchiveMarks.string(from: archivedAt), forKey: .archivedAt)
+        }
+        if marks.restoresStandalone {
+            try container.encode(true, forKey: .restoresStandalone)
         }
     }
 }

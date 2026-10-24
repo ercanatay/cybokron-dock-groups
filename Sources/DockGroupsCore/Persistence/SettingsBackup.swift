@@ -22,7 +22,9 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
 }
 
 /// A backup of the user's groups and app-wide preferences, written by "Export Settings…" and read
-/// back by "Import Settings…". The file is JSON with a `.dockgroups` extension.
+/// back by "Import Settings…". The file is JSON with a `.dockgroups` extension. Archived groups are
+/// in the same `groups` list as in the groups file, after the active ones, marked `"archived": true`
+/// (`GroupEntry`), so a version without archives imports them as ordinary groups.
 ///
 /// Launch statistics for the Most Used list are deliberately left out: they're personal usage data
 /// rebuilt on their own, not settings.
@@ -38,7 +40,10 @@ public struct SettingsBackup: Equatable, Sendable {
     public var schemaVersion: Int
     public var appVersion: String
     public var exportedAt: Date
+    /// The active groups.
     public var groups: [DockGroup]
+    /// The archived groups.
+    public var archivedGroups: [ArchivedGroup]
     public var preferences: PopupPreferences
     /// Items of the file that were left out when it was read, because they can't be opened safely
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
@@ -51,17 +56,20 @@ public struct SettingsBackup: Equatable, Sendable {
         appVersion: String,
         exportedAt: Date = Date(),
         groups: [DockGroup],
+        archivedGroups: [ArchivedGroup] = [],
         preferences: PopupPreferences
     ) {
         schemaVersion = Self.currentSchemaVersion
         self.appVersion = appVersion
         // Whole seconds, as ISO 8601 keeps them, so a backup reads back equal to what was written.
         self.exportedAt = Date(timeIntervalSince1970: exportedAt.timeIntervalSince1970.rounded(.down))
-        self.groups = groups
+        let stored = StoredGroups(active: groups, archived: archivedGroups)
+        self.groups = stored.active
+        self.archivedGroups = stored.archived
         self.preferences = preferences
     }
 
-    /// The number of items (apps, websites, files and folders) across all groups.
+    /// The number of items (apps, websites, files and folders) across the active groups.
     public var itemCount: Int {
         groups.reduce(0) { $0 + $1.apps.count }
     }
@@ -127,10 +135,14 @@ public struct SettingsBackup: Equatable, Sendable {
         schemaVersion = document.schemaVersion
         appVersion = document.appVersion
         exportedAt = document.exportedAt
-        let sanitized = document.groups.map(Self.sanitizedForImport)
+        // Archived groups are brought in under the same rules as active ones.
+        let stored = GroupEntry.storedGroups(from: document.groups)
+        let sanitized = stored.active.map(Self.sanitizedForImport)
+        let sanitizedArchived = stored.archived.map { ($0, Self.sanitizedForImport($0.group)) }
         groups = sanitized.map(\.group)
-        leftOutItemCount = sanitized.reduce(0) { $0 + $1.leftOutItemCount }
-        resetLaunchOptionCount = sanitized.reduce(0) { $0 + $1.resetLaunchOptionCount }
+        archivedGroups = sanitizedArchived.map { $0.0.replacingGroup($0.1.group) }
+        leftOutItemCount = (sanitized.map(\.leftOutItemCount) + sanitizedArchived.map(\.1.leftOutItemCount)).reduce(0, +)
+        resetLaunchOptionCount = (sanitized.map(\.resetLaunchOptionCount) + sanitizedArchived.map(\.1.resetLaunchOptionCount)).reduce(0, +)
         preferences = document.preferences.preferences
     }
 
@@ -211,6 +223,15 @@ public struct SettingsBackup: Equatable, Sendable {
 
 /// What restoring a backup would change, for the confirmation before it happens.
 public struct SettingsRestoreSummary: Equatable, Sendable {
+    /// Archived groups in the backup.
+    public var archivedGroupCount: Int
+    /// Current archived groups, which Replace All replaces with the backup's.
+    public var currentArchivedGroupCount: Int
+    /// Merging: the backup's archived groups that would be added.
+    public var mergedArchivedGroupCount: Int
+    /// Merging: added groups that come in without their keyboard shortcut, because a current group
+    /// (or one added before them) has those keys.
+    public var clearedShortcutCount: Int
     /// Groups in the backup, and the items they hold.
     public var groupCount: Int
     public var itemCount: Int
@@ -232,7 +253,7 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     public var appCount: Int { itemCount }
     public var mergedAppCount: Int { mergedItemCount }
 
-    public init(backup: SettingsBackup, currentGroups: [DockGroup]) {
+    public init(backup: SettingsBackup, currentGroups: [DockGroup], currentArchivedGroups: [ArchivedGroup] = []) {
         groupCount = backup.groups.count
         itemCount = backup.itemCount
         leftOutItemCount = backup.leftOutItemCount
@@ -241,10 +262,56 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         let matching = currentGroups.filter { backupNames.contains(GroupStore.mergeName(of: $0)) }.count
         replacedGroupCount = matching
         removedGroupCount = currentGroups.count - matching
-        let merged = GroupStore.groupsAddedByMerging(backup.groups, into: currentGroups)
-        mergedGroupCount = merged.count
-        mergedItemCount = merged.reduce(0) { $0 + $1.apps.count }
-        skippedGroupCount = backup.groups.count - merged.count
+        let merged = GroupStore.merging(
+            StoredGroups(active: backup.groups, archived: backup.archivedGroups),
+            into: StoredGroups(active: currentGroups, archived: currentArchivedGroups)
+        )
+        mergedGroupCount = merged.active.count
+        mergedItemCount = merged.active.reduce(0) { $0 + $1.apps.count }
+        skippedGroupCount = backup.groups.count + backup.archivedGroups.count - merged.active.count - merged.archived.count
+        archivedGroupCount = backup.archivedGroups.count
+        currentArchivedGroupCount = currentArchivedGroups.count
+        mergedArchivedGroupCount = merged.archived.count
+        clearedShortcutCount = merged.clearedShortcutCount
+    }
+
+    /// For the line about the backup's contents: its archived groups; `nil` when it has none.
+    public var archivedGroupsNote: String? {
+        let count = archivedGroupCount
+        switch count {
+        case 0: return nil
+        case 1: return Localization.string("core.backup.library.archived.one", "It also has 1 archived group.")
+        default: return Localization.format("core.backup.library.archived.other", "It also has %ld archived groups.", count)
+        }
+    }
+
+    /// For the line about Replace All: the current archived groups it replaces; `nil` when there are none.
+    public var replacedArchivedGroupsNote: String? {
+        let count = currentArchivedGroupCount
+        switch count {
+        case 0: return nil
+        case 1: return Localization.string("core.backup.library.replacesArchived.one", "Your archived group is replaced too.")
+        default: return Localization.format("core.backup.library.replacesArchived.other", "Your %ld archived groups are replaced too.", count)
+        }
+    }
+
+    /// For the line about merging: groups that come in without their shortcut; `nil` when none do.
+    public var clearedShortcutsNote: String? {
+        let count = clearedShortcutCount
+        switch count {
+        case 0: return nil
+        case 1:
+            return Localization.string(
+                "core.backup.library.clearedShortcuts.one",
+                "1 group comes in without its keyboard shortcut: another group uses those keys."
+            )
+        default:
+            return Localization.format(
+                "core.backup.library.clearedShortcuts.other",
+                "%ld groups come in without their keyboard shortcut: other groups use those keys.",
+                count
+            )
+        }
     }
 }
 
@@ -261,7 +328,8 @@ private struct BackupDocument: Codable {
     var app: String
     var appVersion: String
     var exportedAt: Date
-    var groups: [DockGroup]
+    /// The active groups, then the archived ones, as in the groups file.
+    var groups: [GroupEntry]
     /// Same contents as `preferences.json`.
     var preferences: PreferencesDocument
 
@@ -270,7 +338,7 @@ private struct BackupDocument: Codable {
         app = SettingsBackup.appIdentifier
         appVersion = backup.appVersion
         exportedAt = backup.exportedAt
-        groups = backup.groups
+        groups = GroupEntry.entries(of: StoredGroups(active: backup.groups, archived: backup.archivedGroups))
         preferences = PreferencesDocument(preferences: backup.preferences)
     }
 
@@ -285,7 +353,7 @@ private struct BackupDocument: Codable {
         // Informational only.
         appVersion = container.decodeLeniently(String.self, forKey: .appVersion) ?? ""
         exportedAt = container.decodeLeniently(Date.self, forKey: .exportedAt) ?? Date(timeIntervalSince1970: 0)
-        groups = try container.decode([DockGroup].self, forKey: .groups)
+        groups = try container.decode([GroupEntry].self, forKey: .groups)
         preferences = try container.decode(PreferencesDocument.self, forKey: .preferences)
     }
 }

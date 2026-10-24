@@ -35,7 +35,10 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = ["core.shortcut.", "core.switching.confirmation.shortcut"]
+    static let awaitingTranslation: [String] = [
+        "core.shortcut.", "core.switching.confirmation.shortcut",
+        "core.group.copyName", "core.archive.", "core.backup.library.", "core.persistence.groups.archivedUnsupported",
+    ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }
