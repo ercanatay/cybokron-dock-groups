@@ -12,13 +12,16 @@ public enum TransitionTrigger: String, Sendable, CaseIterable {
     case intent
     /// A Focus that turned on or off: an automatic trigger nobody watches.
     case focus
+    /// A group's own keyboard shortcut (`GroupShortcutAction.startOrFinish`): pressed by the user,
+    /// but maybe by accident, and it doesn't show what it does.
+    case shortcut
 
     /// A Focus never quits apps: its quitting settings act as hiding.
     public var mayQuit: Bool { self != .focus }
 
-    /// A link, Siri and Shortcuts ask before a transition quits anything; the user's own click
-    /// doesn't (the user chose the setting and clicked, as with Close All).
-    public var asksBeforeQuitting: Bool { self == .link || self == .intent }
+    /// A link, Siri, Shortcuts and a keyboard shortcut ask before a transition quits anything; the
+    /// user's own click doesn't (the user chose the setting and clicked, as with Close All).
+    public var asksBeforeQuitting: Bool { self == .link || self == .intent || self == .shortcut }
 }
 
 /// What a transition will do, app by app, and why: planned before anything happens
@@ -79,8 +82,8 @@ public struct TransitionPlan: Equatable, Sendable {
 
     public var quitsAnything: Bool { !quit.isEmpty }
 
-    /// Whether the user is asked before the plan is carried out: it quits apps, and a link, Siri or
-    /// Shortcuts asked for it.
+    /// Whether the user is asked before the plan is carried out: it quits apps, and a link, Siri,
+    /// Shortcuts or a keyboard shortcut asked for it.
     public var requiresConfirmation: Bool { quitsAnything && trigger.asksBeforeQuitting }
 
     /// Whether carrying the plan out changes nothing but the current group.

@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-677 keys.
+699 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -994,3 +994,32 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `switching.focus.status.openAll` | The current Focus opens the items of “%@”. |
 | `switching.focus.status.showPopup` | The current Focus shows the popup of “%@”. |
 | `switching.focus.status.finishes` | When it turns off, the group is finished: its apps are hidden. |
+
+## A group's own keyboard shortcut: what pressing it does, why keys can't be its shortcut, whether it works now, key names; the source line of a keyboard shortcut's question before Start or Finish quits apps (English only for now; `awaitingTranslation`: `core.shortcut.`, `core.switching.confirmation.shortcut`)
+
+`%@` in the refusal and status texts is the shortcut as macOS writes it (“⌃⌥C”); keep the key symbols. `core.shortcut.key.*` name keys that print nothing; the app shows other keys with the keyboard layout's character.
+
+| Key | English |
+| --- | --- |
+| `core.shortcut.action.showPopup` | Show the Popup |
+| `core.shortcut.action.openAll` | Open All |
+| `core.shortcut.action.startOrFinish` | Start (Finish when current) |
+| `core.shortcut.refusal.tooFewModifiers` | Use at least two of Control (⌃), Option (⌥) and Command (⌘), so the shortcut doesn't take keys that apps and typing need. |
+| `core.shortcut.refusal.keyNotAllowed` | Escape, Return, Tab, Space and Delete can't be part of a group shortcut. |
+| `core.shortcut.refusal.reserved` | macOS uses %@. Choose another shortcut. |
+| `core.shortcut.refusal.system` | macOS uses %@ (System Settings → Keyboard → Keyboard Shortcuts). Choose another shortcut. |
+| `core.shortcut.refusal.number` | %1$@ shows the popup of group number %2$ld in the list (Settings → Shortcuts & Siri). Choose another shortcut, or change the number shortcuts' keys. |
+| `core.shortcut.refusal.taken` | Another group already uses %@. |
+| `core.shortcut.refusal.takenByGroup` | “%1$@” already uses %2$@. |
+| `core.shortcut.status.on` | Works in every app while Cybokron Dock Groups is running. The app in front doesn't receive %@. |
+| `core.shortcut.status.paused` | Paused while a shortcut is being recorded. |
+| `core.shortcut.status.limit` | Off: at most %ld group shortcuts can be on at once. |
+| `core.shortcut.status.unavailable` | Off: macOS didn't accept these keys (error %@). Another app may have reserved them. |
+| `core.shortcut.status.number` | Off: %@ is also a number shortcut, which comes first. |
+| `core.shortcut.status.taken` | Off: a group earlier in the list uses the same keys. |
+| `core.shortcut.status.takenByGroup` | Off: “%@”, earlier in the list, uses the same keys. |
+| `core.shortcut.status.system` | Off: macOS uses these keys (System Settings → Keyboard → Keyboard Shortcuts). |
+| `core.shortcut.key.keypad` | Keypad %@ |
+| `core.shortcut.key.space` | Space |
+| `core.shortcut.key.code` | Key %ld |
+| `core.switching.confirmation.shortcut` | A keyboard shortcut asked for this. |

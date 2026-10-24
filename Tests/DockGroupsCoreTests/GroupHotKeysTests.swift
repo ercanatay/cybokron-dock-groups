@@ -29,8 +29,8 @@ struct GroupHotKeysTests {
             return OSStatus(noErr)
         }
 
-        func unregisterAll() {
-            registered.removeAll()
+        func unregisterAll(signature: OSType) {
+            registered.removeAll { $0.signature == signature }
         }
 
         /// Carbon telling the app a hot key was pressed.

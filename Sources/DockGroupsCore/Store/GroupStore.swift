@@ -22,6 +22,18 @@ public struct GroupMergeResult: Equatable, Sendable {
     public let copyURL: URL?
 }
 
+/// What giving a group a keyboard shortcut did (`GroupStore.setShortcut`).
+public enum GroupShortcutAssignment: Equatable, Sendable {
+    /// The group has the shortcut now (or none, when it was removed).
+    case assigned
+    /// The group already had exactly this shortcut; nothing was saved.
+    case unchanged
+    /// Another group has these keys (rule K6); nothing changed.
+    case refused(GroupShortcutRefusal)
+    /// No group has this identifier.
+    case unknownGroup
+}
+
 /// The single source of truth for the user's groups.
 ///
 /// Every change is written to disk shortly after it happens (changes arriving in quick succession,
@@ -97,8 +109,9 @@ public final class GroupStore: ObservableObject {
         }
     }
 
-    /// Applies `change` to a group. Blank names or emoji are rejected (the previous value is kept)
-    /// and duplicate apps are dropped, so the group's invariants always hold.
+    /// Applies `change` to a group. Blank names or emoji are rejected (the previous value is kept),
+    /// duplicate apps are dropped, and keys another group's shortcut has aren't taken (the previous
+    /// shortcut is kept), so the group's invariants always hold.
     public func updateGroup(_ id: DockGroup.ID, _ change: (inout DockGroup) -> Void) {
         guard let index = index(of: id) else { return }
         let original = groups[index]
@@ -108,9 +121,37 @@ public final class GroupStore: ObservableObject {
         edited.emoji = DockGroup.sanitizedEmoji(edited.emoji) ?? original.emoji
         edited.apps = Self.removingDuplicates(edited.apps)
         edited.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(edited.freeLayoutSlots, apps: edited.apps)
+        if let keys = edited.shortcut?.keys, keys != original.shortcut?.keys, shortcutOwner(of: keys, except: id) != nil {
+            edited.shortcut = original.shortcut
+        }
         guard edited != original else { return }
         groups[index] = edited
         scheduleSave()
+    }
+
+    // MARK: - Shortcuts
+
+    /// Gives a group its own keyboard shortcut, or removes it (`nil`). Keys another group's shortcut
+    /// has are refused (rule K6); the static rules (K1–K3) hold for every `GroupShortcut`. Rules
+    /// that depend on the settings and macOS (K4, K5) aren't the store's: a shortcut they turn off
+    /// is kept and shown as off (`GroupShortcutPlanner`). Keeping the keys and changing only the
+    /// action is always taken.
+    @discardableResult
+    public func setShortcut(_ shortcut: GroupShortcut?, forGroup id: DockGroup.ID) -> GroupShortcutAssignment {
+        guard let index = index(of: id) else { return .unknownGroup }
+        let original = groups[index].shortcut
+        guard shortcut != original else { return .unchanged }
+        if let keys = shortcut?.keys, keys != original?.keys, let owner = shortcutOwner(of: keys, except: id) {
+            return .refused(.takenByGroup(owner))
+        }
+        groups[index].shortcut = shortcut
+        scheduleSave()
+        return .assigned
+    }
+
+    /// The group other than `id` whose shortcut has `keys`.
+    private func shortcutOwner(of keys: KeyCombination, except id: DockGroup.ID) -> DockGroup.ID? {
+        groups.first { $0.id != id && $0.shortcut?.keys == keys }?.id
     }
 
     // MARK: - Items
@@ -308,8 +349,9 @@ public final class GroupStore: ObservableObject {
     /// replaced by the new ones and groups not in `newGroups` are removed. The current file is
     /// first copied next to itself (`groups.pre-import-<timestamp>.json`), and the new list is
     /// written before it's shown, so if anything fails nothing changes. The groups are cleaned up
-    /// the way edits are: blank names and emoji get defaults, duplicate apps are dropped, and of
-    /// groups sharing an identifier only the first is kept.
+    /// the way edits are: blank names and emoji get defaults, duplicate apps are dropped, of
+    /// groups sharing an identifier only the first is kept, and of groups whose shortcuts share
+    /// keys only the first keeps its shortcut.
     /// - Returns: The copy of the previous file, or `nil` when nothing had been saved.
     @discardableResult
     public func replaceGroups(with newGroups: [DockGroup]) throws -> URL? {
@@ -349,14 +391,19 @@ public final class GroupStore: ObservableObject {
     /// backup does; every current group stays as it is. A group is skipped when a current group has
     /// the same name (ignoring case and surrounding spaces) or the same identifier — and so are
     /// later groups of `incoming` repeating one already added. The added groups are cleaned up the
-    /// way `replaceGroups(with:)` cleans them. When something is added, the current file is first
-    /// copied next to itself (`groups.pre-import-<timestamp>.json`) and the new list is written
-    /// before it's shown, so if anything fails nothing changes.
+    /// way `replaceGroups(with:)` cleans them: one whose shortcut a current group has comes in
+    /// without it. When something is added, the current file is first copied next to itself
+    /// (`groups.pre-import-<timestamp>.json`) and the new list is written before it's shown, so if
+    /// anything fails nothing changes.
     @discardableResult
     public func mergeGroups(_ incoming: [DockGroup]) throws -> GroupMergeResult {
-        let added = Self.sanitizedForRestore(Self.groupsAddedByMerging(incoming, into: groups))
-        guard !added.isEmpty else { return GroupMergeResult(addedGroups: [], copyURL: nil) }
-        let copyURL = try replaceGroups(with: groups + added, copyLabel: "pre-import")
+        let candidates = Self.groupsAddedByMerging(incoming, into: groups)
+        guard !candidates.isEmpty else { return GroupMergeResult(addedGroups: [], copyURL: nil) }
+        // The current groups first: their shortcuts keep their keys.
+        let merged = Self.sanitizedForRestore(groups + candidates)
+        let candidateIDs = Set(candidates.map(\.id))
+        let added = merged.filter { candidateIDs.contains($0.id) }
+        let copyURL = try replaceGroups(with: merged, copyLabel: "pre-import")
         return GroupMergeResult(addedGroups: added, copyURL: copyURL)
     }
 
@@ -380,8 +427,11 @@ public final class GroupStore: ObservableObject {
         (DockGroup.sanitizedName(group.name) ?? DockGroup.defaultName).lowercased()
     }
 
+    /// The groups cleaned up as edits clean them; of groups sharing an identifier only the first is
+    /// kept, and of shortcuts sharing keys only the first group's.
     private static func sanitizedForRestore(_ groups: [DockGroup]) -> [DockGroup] {
         var seenIDs = Set<DockGroup.ID>()
+        var seenKeys = Set<KeyCombination>()
         return groups.compactMap { group in
             guard seenIDs.insert(group.id).inserted else { return nil }
             var sanitized = group
@@ -389,6 +439,9 @@ public final class GroupStore: ObservableObject {
             sanitized.emoji = DockGroup.sanitizedEmoji(group.emoji) ?? DockGroup.defaultEmoji
             sanitized.apps = removingDuplicates(group.apps)
             sanitized.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: sanitized.apps)
+            if let keys = group.shortcut?.keys, !seenKeys.insert(keys).inserted {
+                sanitized.shortcut = nil
+            }
             return sanitized
         }
     }

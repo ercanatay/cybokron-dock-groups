@@ -1,8 +1,9 @@
 import Foundation
 
-/// The question a link, Siri or Shortcuts asks before a transition quits apps (spec §2.5): which
-/// group, which apps, and what else stays open. A link's question (the app's alert) can also hide
-/// the apps instead; Siri and Shortcuts ask yes or no (`intentDialog`).
+/// The question a link, Siri, Shortcuts or a group's keyboard shortcut asks before a transition
+/// quits apps (spec §2.5): which group, which apps, and what else stays open. The app's alert (for
+/// a link or a keyboard shortcut) can also hide the apps instead; Siri and Shortcuts ask yes or no
+/// (`intentDialog`).
 public struct TransitionConfirmation: Equatable, Sendable {
     /// What the user chose.
     public enum Answer: Equatable, Sendable {
@@ -21,6 +22,14 @@ public struct TransitionConfirmation: Equatable, Sendable {
         case finish(group: String, nextGroup: String?)
     }
 
+    /// What asked for the transition, as the app's alert says it.
+    public enum Requester: Equatable, Sendable {
+        /// A link another app, a script or a web page opened.
+        case link
+        /// A group's own keyboard shortcut (`TransitionTrigger.shortcut`).
+        case keyboardShortcut
+    }
+
     /// How long the quit button stays disabled after the question appears, as for Close All's
     /// question (`QuitConfirmation.confirmButtonDelay`).
     public static let confirmButtonDelay = QuitConfirmation.confirmButtonDelay
@@ -28,21 +37,25 @@ public struct TransitionConfirmation: Equatable, Sendable {
     public let kind: Kind
     /// The apps it would quit, by the names they're shown with.
     public let appNames: [String]
+    /// What the app's alert says asked for it.
+    public let requester: Requester
 
-    public init(kind: Kind, appNames: [String]) {
+    public init(kind: Kind, appNames: [String], requester: Requester = .link) {
         self.kind = kind
         self.appNames = appNames
+        self.requester = requester
     }
 
     /// The question for `plan`; `nil` when it doesn't quit anything.
     public init?(plan: TransitionPlan) {
         guard plan.quitsAnything else { return nil }
         let names = plan.quit.map(\.app.name)
+        let requester: Requester = plan.trigger == .shortcut ? .keyboardShortcut : .link
         switch plan.kind {
         case .start:
-            self.init(kind: .start(group: plan.groupName, previousGroup: plan.otherGroupName ?? ""), appNames: names)
+            self.init(kind: .start(group: plan.groupName, previousGroup: plan.otherGroupName ?? ""), appNames: names, requester: requester)
         case .finish:
-            self.init(kind: .finish(group: plan.groupName, nextGroup: plan.otherGroupName), appNames: names)
+            self.init(kind: .finish(group: plan.groupName, nextGroup: plan.otherGroupName), appNames: names, requester: requester)
         }
     }
 
@@ -82,14 +95,23 @@ public struct TransitionConfirmation: Equatable, Sendable {
         }
     }
 
-    /// The app's alert for a link: the detail, where the request came from, and that apps can
-    /// still ask to save changes.
+    /// The app's alert for a link or a keyboard shortcut: the detail, where the request came from,
+    /// and that apps can still ask to save changes.
     public var message: String {
         [
             detail,
-            Localization.string("core.switching.confirmation.link", "A link opened by another app, a script or a web page asked for this."),
+            requesterLine,
             Localization.string("core.switching.confirmation.save", "Apps can still ask to save changes."),
         ].joined(separator: "\n\n")
+    }
+
+    private var requesterLine: String {
+        switch requester {
+        case .link:
+            return Localization.string("core.switching.confirmation.link", "A link opened by another app, a script or a web page asked for this.")
+        case .keyboardShortcut:
+            return Localization.string("core.switching.confirmation.shortcut", "A keyboard shortcut asked for this.")
+        }
     }
 
     /// What Siri or Shortcuts asks: the title and the detail. Not where the request came from:
@@ -139,7 +161,8 @@ public struct TransitionConfirmation: Equatable, Sendable {
     }
 }
 
-/// Asks the user a link's question before a transition quits apps; the app shows an alert.
+/// Asks the user a link's or keyboard shortcut's question before a transition quits apps; the app
+/// shows an alert.
 @MainActor
 public protocol TransitionConfirmationPrompting: AnyObject {
     func confirm(_ confirmation: TransitionConfirmation) -> TransitionConfirmation.Answer

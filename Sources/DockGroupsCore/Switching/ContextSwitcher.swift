@@ -38,7 +38,8 @@ public final class ContextSwitcher {
 
     /// - Parameters:
     ///   - applications: The running apps, read once per transition.
-    ///   - questions: Asks a link's question before a transition quits apps (`GroupQuitRequests`).
+    ///   - questions: Asks a link's or keyboard shortcut's question before a transition quits apps
+    ///     (`GroupQuitRequests`).
     ///   - clock: The time, for `ContextSession.repeatInterval`.
     public init(
         store: GroupStore,
@@ -71,7 +72,7 @@ public final class ContextSwitcher {
     /// makes it current.
     /// - Parameter confirm: Siri's or Shortcuts' question (`trigger == .intent`), asked when the
     ///   transition would quit apps; it throws when the user declines, and then nothing is done.
-    ///   Links are asked through `questions`.
+    ///   Links and keyboard shortcuts are asked through `questions`.
     /// - Throws: `ContextSwitchingError.groupNotFound`, or what `confirm` throws.
     public func start(
         _ id: DockGroup.ID,
@@ -176,7 +177,8 @@ public final class ContextSwitcher {
             }
             try await confirm(question)
             return .proceed(plan, asked: true)
-        case .link, .userAction, .focus:
+        case .link, .shortcut, .userAction, .focus:
+            // A link's question, the app's alert: a keyboard shortcut's too, one at a time with them.
             switch questions.askBeforeTransition(question) {
             case nil: return .stopped(.dropped)
             case .cancel: return .stopped(.declined)

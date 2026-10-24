@@ -29,6 +29,11 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
     public var freeLayoutSlots: [String: Int]
     /// What starting and finishing the group does besides opening its items (`GroupSwitching`).
     public var switching: GroupSwitching
+    /// The group's own global keyboard shortcut, `nil` when it has none. Its keys always pass the
+    /// static rules (`GroupShortcut`). Edits never give two groups the same keys (`GroupStore`); of
+    /// groups loaded from a file with the same keys, only the first one's works
+    /// (`GroupShortcutPlanner`).
+    public var shortcut: GroupShortcut?
 
     public init(
         id: UUID = UUID(),
@@ -40,7 +45,8 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         isStandalone: Bool = false,
         popup: PopupOverrides = PopupOverrides(),
         freeLayoutSlots: [String: Int] = [:],
-        switching: GroupSwitching = GroupSwitching()
+        switching: GroupSwitching = GroupSwitching(),
+        shortcut: GroupShortcut? = nil
     ) {
         self.id = id
         self.name = name
@@ -52,6 +58,7 @@ public struct DockGroup: Identifiable, Hashable, Sendable {
         self.popup = popup
         self.freeLayoutSlots = Self.sanitizedFreeLayoutSlots(freeLayoutSlots, apps: apps)
         self.switching = switching
+        self.shortcut = shortcut
     }
 }
 
@@ -106,7 +113,7 @@ extension DockGroup {
 
 extension DockGroup: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, name, emoji, apps, tile, isPinned, isStandalone, popup, freeLayoutSlots, switching
+        case id, name, emoji, apps, tile, isPinned, isStandalone, popup, freeLayoutSlots, switching, shortcut
     }
 
     /// Identity, name and app list are required; display preferences are decoded leniently so a value
@@ -126,10 +133,13 @@ extension DockGroup: Codable {
             apps: apps
         )
         switching = container.decodeLeniently(GroupSwitching.self, forKey: .switching) ?? GroupSwitching()
+        // A shortcut with keys the static rules refuse (⌘C, ⌥E, ⌃⌘Q…) is unreadable: the group has none.
+        shortcut = container.decodeLeniently(GroupShortcut.self, forKey: .shortcut)
     }
 
-    /// Free Layout cells are written only once there are any, and Start and Finish settings only
-    /// when they aren't the defaults, so groups that never used them are saved as before.
+    /// Free Layout cells are written only once there are any, Start and Finish settings only when
+    /// they aren't the defaults, and the shortcut only when there is one, so groups that never used
+    /// them are saved as before.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -145,6 +155,9 @@ extension DockGroup: Codable {
         }
         if !switching.isDefault {
             try container.encode(switching, forKey: .switching)
+        }
+        if let shortcut {
+            try container.encode(shortcut, forKey: .shortcut)
         }
     }
 }

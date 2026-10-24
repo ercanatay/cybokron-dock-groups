@@ -7,7 +7,8 @@ import DockGroupsCore
 /// aren't exclusive); all of them are then told of a press.
 ///
 /// One instance serves the process, which gets the presses of all its hot keys through the one
-/// handler installed here.
+/// handler installed here. The hot keys are kept by signature, so the number shortcuts and the
+/// groups' own shortcuts are let go apart.
 @MainActor
 final class CarbonHotKeys: HotKeyRegistering {
     static let shared = CarbonHotKeys()
@@ -15,7 +16,7 @@ final class CarbonHotKeys: HotKeyRegistering {
     var onPress: ((OSType, UInt32) -> Bool)?
 
     private var handler: EventHandlerRef?
-    private var hotKeys: [EventHotKeyRef] = []
+    private var hotKeys: [OSType: [EventHotKeyRef]] = [:]
 
     private init() {}
 
@@ -33,15 +34,14 @@ final class CarbonHotKeys: HotKeyRegistering {
         )
         guard status == OSStatus(noErr) else { return status }
         guard let hotKey else { return OSStatus(eventInternalErr) }
-        hotKeys.append(hotKey)
+        hotKeys[signature, default: []].append(hotKey)
         return status
     }
 
-    func unregisterAll() {
-        for hotKey in hotKeys {
+    func unregisterAll(signature: OSType) {
+        for hotKey in hotKeys.removeValue(forKey: signature) ?? [] {
             UnregisterEventHotKey(hotKey)
         }
-        hotKeys.removeAll()
     }
 
     /// Installed with the first hot key and kept: it costs nothing while none is registered.
