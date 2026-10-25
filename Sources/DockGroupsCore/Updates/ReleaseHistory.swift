@@ -46,6 +46,15 @@ public enum ReleaseHistory {
         version < firstGroupShortcutsVersion
     }
 
+    /// The first version with triggers. An older one never opens `triggers.json` (or
+    /// `trigger-state.json`), so it keeps them as they are but runs none (`DowngradeProtection`).
+    public static let firstTriggersVersion = SemanticVersion(major: 0, minor: 11, patch: 0)
+
+    /// Whether `version` predates `firstTriggersVersion`.
+    public static func lacksTriggers(_ version: SemanticVersion) -> Bool {
+        version < firstTriggersVersion
+    }
+
     /// The releases to list: neither drafts nor prereleases, one per version (the first listed
     /// wins), newest first.
     public static func installable(_ releases: [ReleaseInfo]) -> [ReleaseInfo] {

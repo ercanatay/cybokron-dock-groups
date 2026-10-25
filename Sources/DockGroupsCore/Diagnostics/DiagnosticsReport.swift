@@ -97,6 +97,10 @@ public struct DiagnosticsInfo: Sendable {
     /// How many groups are archived, and how many templates are kept: counts only, no names.
     public var archivedGroupCount: Int
     public var templateCount: Int
+    /// The triggers: only how many there are, how many are on and their kinds are reported.
+    public var triggers: [GroupTrigger]
+    /// Until when triggers are paused, `nil` when they aren't.
+    public var triggersPausedUntil: Date?
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
     public var generatedAt: Date
@@ -112,6 +116,8 @@ public struct DiagnosticsInfo: Sendable {
         groupShortcutStatuses: [DockGroup.ID: GroupShortcutStatus] = [:],
         archivedGroupCount: Int = 0,
         templateCount: Int = 0,
+        triggers: [GroupTrigger] = [],
+        triggersPausedUntil: Date? = nil,
         recentErrors: [String],
         generatedAt: Date = Date()
     ) {
@@ -125,6 +131,8 @@ public struct DiagnosticsInfo: Sendable {
         self.groupShortcutStatuses = groupShortcutStatuses
         self.archivedGroupCount = archivedGroupCount
         self.templateCount = templateCount
+        self.triggers = triggers
+        self.triggersPausedUntil = triggersPausedUntil
         self.recentErrors = recentErrors
         self.generatedAt = generatedAt
     }
@@ -202,6 +210,11 @@ public enum DiagnosticsReport {
         }
         lines.append("Archived groups: \(info.archivedGroupCount)")
         lines.append("Templates: \(info.templateCount)")
+        // Counts and kinds only: never a time, a display or a network name.
+        lines.append("Triggers: \(describeTriggers(info.triggers))")
+        if let paused = info.triggersPausedUntil, paused > info.generatedAt {
+            lines.append("Triggers paused until: \(paused == .distantFuture ? "resumed" : timestamp(paused))")
+        }
 
         section(.recentErrors, into: &lines)
         let errors = info.recentErrors.suffix(maximumErrorCount)
@@ -254,6 +267,17 @@ public enum DiagnosticsReport {
         guard !ids.isEmpty else { return "none" }
         let on = ids.filter { info.groupShortcutStatuses[$0] == .on }.count
         return "\(ids.count) (\(on) on, \(ids.count - on) off)"
+    }
+
+    /// "none", or "3 (2 on; 2 schedule, 1 display)".
+    private static func describeTriggers(_ triggers: [GroupTrigger]) -> String {
+        guard !triggers.isEmpty else { return "none" }
+        var kinds: [String: Int] = [:]
+        for trigger in triggers {
+            kinds[trigger.event.kindName, default: 0] += 1
+        }
+        let parts = kinds.sorted { $0.key < $1.key }.map { "\($0.value) \($0.key)" }
+        return "\(triggers.count) (\(triggers.filter(\.canRun).count) on; \(parts.joined(separator: ", ")))"
     }
 
     /// "3 apps" when every item is an app, otherwise "5 items (3 apps, 1 website, 1 file)".

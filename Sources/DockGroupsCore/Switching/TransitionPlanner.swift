@@ -15,9 +15,13 @@ public enum TransitionTrigger: String, Sendable, CaseIterable {
     /// A group's own keyboard shortcut (`GroupShortcutAction.startOrFinish`): pressed by the user,
     /// but maybe by accident, and it doesn't show what it does.
     case shortcut
+    /// A trigger (a time, a login, a display, a network: `TriggerCoordinator`): automatic like a
+    /// Focus, and told apart from it so a Focus never finishes a group a trigger started, or the
+    /// other way round.
+    case automation
 
-    /// A Focus never quits apps: its quitting settings act as hiding.
-    public var mayQuit: Bool { self != .focus }
+    /// A Focus and a trigger never quit apps: their quitting settings act as hiding.
+    public var mayQuit: Bool { self != .focus && self != .automation }
 
     /// A link, Siri, Shortcuts and a keyboard shortcut ask before a transition quits anything; the
     /// user's own click doesn't (the user chose the setting and clicked, as with Close All).

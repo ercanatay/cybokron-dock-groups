@@ -177,7 +177,7 @@ public final class ContextSwitcher {
             }
             try await confirm(question)
             return .proceed(plan, asked: true)
-        case .link, .shortcut, .userAction, .focus:
+        case .link, .shortcut, .userAction, .focus, .automation:
             // A link's question, the app's alert: a keyboard shortcut's too, one at a time with them.
             switch questions.askBeforeTransition(question) {
             case nil: return .stopped(.dropped)

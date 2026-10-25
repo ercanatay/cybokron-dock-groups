@@ -163,7 +163,7 @@ struct ShortcutTriggerTests {
         #expect(TransitionTrigger.shortcut.mayQuit)
         #expect(TransitionTrigger.shortcut.asksBeforeQuitting)
         #expect(TransitionTrigger.allCases.filter(\.asksBeforeQuitting) == [.link, .intent, .shortcut])
-        #expect(TransitionTrigger.allCases.filter { !$0.mayQuit } == [.focus])
+        #expect(TransitionTrigger.allCases.filter { !$0.mayQuit } == [.focus, .automation])
     }
 
     @Test func quittingAsksWithTheAppsAlert() async throws {

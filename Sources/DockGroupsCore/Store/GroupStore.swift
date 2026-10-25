@@ -108,6 +108,10 @@ public final class GroupStore: ObservableObject {
     /// `true` when the saved file couldn't be read *and* couldn't be moved aside. Saving is then
     /// disabled, because writing would destroy the user's existing data.
     public private(set) var isSavingSuspended = false
+    /// `true` when the saved file couldn't be read at launch, until groups are restored from a
+    /// backup: what refers to groups by identifier (triggers) mustn't take the empty list for the
+    /// user's groups then.
+    public private(set) var loadFailed = false
 
     private let persistence: GroupPersisting
     private let saveDelay: Duration
@@ -562,6 +566,7 @@ public final class GroupStore: ObservableObject {
         groups = sanitized.active
         // The unreadable file that suspended saving was just copied aside and replaced.
         isSavingSuspended = false
+        loadFailed = false
         issue = nil
         return copyURL
     }
@@ -701,6 +706,7 @@ public final class GroupStore: ObservableObject {
             groups = stored.active
         } catch let loadError {
             logger.error("Loading groups failed: \(String(describing: loadError), privacy: .public)")
+            loadFailed = true
             groups = []
             archivedGroups = []
             do {

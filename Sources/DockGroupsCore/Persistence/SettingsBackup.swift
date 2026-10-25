@@ -26,7 +26,9 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
 /// in the same `groups` list as in the groups file, after the active ones, marked `"archived": true`
 /// (`GroupEntry`), so a version without archives imports them as ordinary groups. Templates are
 /// in an optional `templates` list, written only when there are some; versions without templates
-/// ignore it.
+/// ignore it. Triggers are in an optional `triggers` list likewise; a backup's triggers always come
+/// in turned off (triggers spec §1.13, §4.2 T-S4): a file someone handed over can't make anything run
+/// on its own.
 ///
 /// Launch statistics for the Most Used list are deliberately left out: they're personal usage data
 /// rebuilt on their own, not settings.
@@ -48,6 +50,9 @@ public struct SettingsBackup: Equatable, Sendable {
     public var archivedGroups: [ArchivedGroup]
     /// The templates; none in a backup made without templates (or by a version without them).
     public var templates: [GroupTemplate]
+    /// The triggers; none in a backup made without triggers (or by a version without them). Read
+    /// from a file, they're all off and only of the backup's groups.
+    public var triggers: [GroupTrigger]
     public var preferences: PopupPreferences
     /// Items of the file that were left out when it was read, because they can't be opened safely
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
@@ -62,6 +67,7 @@ public struct SettingsBackup: Equatable, Sendable {
         groups: [DockGroup],
         archivedGroups: [ArchivedGroup] = [],
         templates: [GroupTemplate] = [],
+        triggers: [GroupTrigger] = [],
         preferences: PopupPreferences
     ) {
         schemaVersion = Self.currentSchemaVersion
@@ -72,6 +78,7 @@ public struct SettingsBackup: Equatable, Sendable {
         self.groups = stored.active
         self.archivedGroups = stored.archived
         self.templates = GroupTemplate.sanitized(templates)
+        self.triggers = GroupTrigger.sanitized(triggers)
         self.preferences = preferences
     }
 
@@ -152,7 +159,14 @@ public struct SettingsBackup: Equatable, Sendable {
         let results = sanitized + sanitizedArchived.map(\.1) + sanitizedTemplates.map(\.1)
         leftOutItemCount = results.reduce(0) { $0 + $1.leftOutItemCount }
         resetLaunchOptionCount = results.reduce(0) { $0 + $1.resetLaunchOptionCount }
+        triggers = Self.importedTriggers(document.triggers?.triggers ?? [], groupIDs: Set(groups.map(\.id) + archivedGroups.map(\.id)))
         preferences = document.preferences.preferences
+    }
+
+    /// A backup's triggers as they come in: only those of its own groups, all turned off — turning
+    /// one on is a click on this Mac — within the limits.
+    static func importedTriggers(_ triggers: [GroupTrigger], groupIDs: Set<DockGroup.ID>) -> [GroupTrigger] {
+        GroupTrigger.sanitized(triggers.filter { groupIDs.contains($0.groupID) }).map(\.turnedOff)
     }
 
     // MARK: - Item locations
@@ -237,6 +251,10 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     public var currentTemplateCount: Int
     /// Merging: the backup's templates that would be added.
     public var mergedTemplateCount: Int
+    /// Triggers in the backup (all of them come in turned off).
+    public var triggerCount: Int
+    /// Merging: the backup's triggers that would be added — those of the groups it adds.
+    public var mergedTriggerCount: Int
     /// Groups in the backup, and the items they hold.
     public var groupCount: Int
     public var itemCount: Int
@@ -286,6 +304,30 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         templateCount = backup.templates.count
         currentTemplateCount = currentTemplates.count
         mergedTemplateCount = TemplateStore.templatesAddedByMerging(backup.templates, into: currentTemplates).count
+        triggerCount = backup.triggers.count
+        let addedGroupIDs = Set(merged.active.map(\.id) + merged.archived.map(\.id))
+        mergedTriggerCount = backup.triggers.filter { addedGroupIDs.contains($0.groupID) }.count
+    }
+
+    /// For the line about the backup's contents: its triggers, which come in turned off; `nil` when
+    /// it has none.
+    public var triggersNote: String? {
+        let count = triggerCount
+        switch count {
+        case 0: return nil
+        case 1: return Localization.string("core.backup.triggers.one", "It has 1 trigger. It comes in turned off: turn it on in Settings → Triggers.")
+        default: return Localization.format("core.backup.triggers.other", "It has %ld triggers. They come in turned off: turn them on in Settings → Triggers.", count)
+        }
+    }
+
+    /// For the line about merging: the triggers it adds, turned off; `nil` when it adds none.
+    public var mergedTriggersNote: String? {
+        let count = mergedTriggerCount
+        switch count {
+        case 0: return nil
+        case 1: return Localization.string("core.backup.triggers.merges.one", "It adds 1 trigger, turned off.")
+        default: return Localization.format("core.backup.triggers.merges.other", "It adds %ld triggers, turned off.", count)
+        }
     }
 
     /// For the line about the backup's contents: its templates; `nil` when it has none.
@@ -380,6 +422,8 @@ private struct BackupDocument: Codable {
     var preferences: PreferencesDocument
     /// Written only when there are templates, so a backup without them is as before.
     var templates: [GroupTemplate]?
+    /// Written only when there are triggers, likewise.
+    var triggers: LenientTriggers?
 
     init(_ backup: SettingsBackup) {
         schemaVersion = backup.schemaVersion
@@ -389,10 +433,11 @@ private struct BackupDocument: Codable {
         groups = GroupEntry.entries(of: StoredGroups(active: backup.groups, archived: backup.archivedGroups))
         preferences = PreferencesDocument(preferences: backup.preferences)
         templates = backup.templates.isEmpty ? nil : backup.templates
+        triggers = backup.triggers.isEmpty ? nil : LenientTriggers(backup.triggers)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case schemaVersion, app, appVersion, exportedAt, groups, preferences, templates
+        case schemaVersion, app, appVersion, exportedAt, groups, preferences, templates, triggers
     }
 
     init(from decoder: Decoder) throws {
@@ -405,5 +450,24 @@ private struct BackupDocument: Codable {
         groups = try container.decode([GroupEntry].self, forKey: .groups)
         preferences = try container.decode(PreferencesDocument.self, forKey: .preferences)
         templates = try container.decodeIfPresent([GroupTemplate].self, forKey: .templates)
+        // Leniently: a backup whose triggers can't be read still restores its groups.
+        triggers = container.decodeLeniently(LenientTriggers.self, forKey: .triggers)
+    }
+
+    /// The `triggers` list, an entry that can't be read left out (`TriggersDocument.LenientTrigger`).
+    struct LenientTriggers: Codable {
+        var triggers: [GroupTrigger]
+
+        init(_ triggers: [GroupTrigger]) {
+            self.triggers = triggers
+        }
+
+        init(from decoder: Decoder) throws {
+            triggers = try [TriggersDocument.LenientTrigger](from: decoder).compactMap(\.trigger)
+        }
+
+        func encode(to encoder: Encoder) throws {
+            try triggers.encode(to: encoder)
+        }
     }
 }

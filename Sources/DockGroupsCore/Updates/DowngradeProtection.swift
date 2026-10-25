@@ -20,6 +20,12 @@ import Foundation
 /// group has a shortcut, a group is archived or a template exists (templates stay in
 /// `templates.json`, which that version never opens, so that file needs no copy).
 ///
+/// Going back to a version older than `ReleaseHistory.firstTriggersVersion` needs no copy: triggers
+/// live in `triggers.json` and `trigger-state.json`, which that version never opens, and nothing of
+/// them is in the groups or preferences file. It runs no trigger, though, and Open at Login (a login
+/// item macOS keeps) stays on with no setting for it there, so the question says so
+/// (`triggersWarning`).
+///
 /// `UpdateInstaller` replaces the app only and never reads the settings; this happens around it.
 public enum DowngradeProtection {
     /// The label of the copies: `groups.pre-downgrade-<timestamp>.json`.
@@ -95,6 +101,36 @@ public enum DowngradeProtection {
         preferences: PopupPreferences
     ) -> Bool {
         appliesToContextSwitching(installing: target, over: current) && usesContextSwitching(groups, preferences: preferences)
+    }
+
+    /// Whether installing `target` while `current` runs goes back to a version without triggers.
+    public static func appliesToTriggers(installing target: SemanticVersion, over current: SemanticVersion?) -> Bool {
+        guard ReleaseHistory.lacksTriggers(target) else { return false }
+        return current.map { target < $0 } ?? true
+    }
+
+    /// Whether the install question warns about triggers: going back to a version without them
+    /// while a trigger is on, or while the app opens at login.
+    public static func warnsAboutTriggers(installing target: SemanticVersion, over current: SemanticVersion?, enabledTriggerCount: Int, opensAtLogin: Bool) -> Bool {
+        appliesToTriggers(installing: target, over: current) && (enabledTriggerCount > 0 || opensAtLogin)
+    }
+
+    /// The install question's lines about triggers (none when `warnsAboutTriggers` is false):
+    /// that version runs no trigger but keeps them, and still opens at login when it's on.
+    public static func triggersWarning(installing target: SemanticVersion, over current: SemanticVersion?, enabledTriggerCount: Int, opensAtLogin: Bool) -> [String] {
+        guard appliesToTriggers(installing: target, over: current) else { return [] }
+        var lines: [String] = []
+        if enabledTriggerCount > 0 {
+            let version = target.description
+            lines.append(Localization.format("core.trigger.downgrade.notRun", "Version %@ doesn't run triggers. They're kept and run again after you update.", version))
+        }
+        if opensAtLogin {
+            lines.append(Localization.string(
+                "core.trigger.downgrade.openAtLogin",
+                "Cybokron Dock Groups still opens at login; turn that off in System Settings → General → Login Items."
+            ))
+        }
+        return lines
     }
 
     /// Copies the groups file and the preferences file aside before `target` is installed over

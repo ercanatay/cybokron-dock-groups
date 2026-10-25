@@ -941,3 +941,37 @@
 "capture.sheet.footer" = "Background apps, Finder and %@ aren't listed. Nothing is opened or quit.";
 "capture.sheet.empty" = "No other apps are open.";
 "capture.sheet.allInGroup" = "Every open app is already in “%@”.";
+
+/* Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation (English only for now) */
+"core.trigger.skip.paused" = "triggers were paused";
+"core.trigger.skip.budget" = "triggers ran too often and were paused";
+"core.trigger.skip.notNow" = "you chose Not Now";
+"core.trigger.skip.noAnswer" = "nobody answered";
+"core.trigger.skip.cooldown" = "it ran less than a minute before";
+"core.trigger.skip.alreadyRanToday" = "it already ran today";
+"core.trigger.skip.echo" = "it came right after another automatic action";
+"core.trigger.skip.anotherTrigger" = "another trigger ran instead";
+"core.trigger.skip.alreadyDone" = "that had just been done";
+"core.trigger.skip.notCurrentGroup" = "the group wasn't the current group";
+"core.trigger.skip.notStartedByTrigger" = "the group wasn't started by this trigger";
+"core.trigger.skip.groupMissing" = "the group no longer exists";
+"core.trigger.missed.macAsleep" = "the Mac was asleep";
+"core.trigger.missed.appNotOpen" = "the app wasn't open";
+"core.trigger.missed.sessionInactive" = "another user was using the Mac";
+"core.trigger.budget.paused" = "Triggers paused for an hour: they ran %ld times in an hour.";
+"core.trigger.limit.group" = "A group can have up to %ld triggers.";
+"core.trigger.limit.total" = "You can have up to %ld triggers.";
+"core.trigger.unsupported" = "Made by a newer version of Cybokron Dock Groups: it doesn't run here.";
+"core.trigger.unrunnable" = "Can't run: fix or remove it.";
+"core.trigger.persistence.newer" = "The triggers file was saved by a newer version of Cybokron Dock Groups (format %ld).";
+"core.trigger.loadFailed.title" = "Your triggers couldn't be loaded";
+"core.trigger.loadFailed.kept" = "%1$@ Starting without triggers. A copy was kept at “%2$@”.";
+"core.trigger.loadFailed.empty" = "%@ Starting without triggers.";
+"core.trigger.loadFailed.suspended" = "%@ To protect the existing file, changes to triggers won't be saved until the app is restarted.";
+"core.trigger.saveFailed.title" = "Your triggers couldn't be saved";
+"core.trigger.downgrade.notRun" = "Version %@ doesn't run triggers. They're kept and run again after you update.";
+"core.trigger.downgrade.openAtLogin" = "Cybokron Dock Groups still opens at login; turn that off in System Settings → General → Login Items.";
+"core.backup.triggers.one" = "It has 1 trigger. It comes in turned off: turn it on in Settings → Triggers.";
+"core.backup.triggers.other" = "It has %ld triggers. They come in turned off: turn them on in Settings → Triggers.";
+"core.backup.triggers.merges.one" = "It adds 1 trigger, turned off.";
+"core.backup.triggers.merges.other" = "It adds %ld triggers, turned off.";
