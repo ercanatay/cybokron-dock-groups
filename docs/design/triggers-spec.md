@@ -1,7 +1,7 @@
 # Design spec: automatic group triggers
 
-- **Status:** draft for review (2026-10-25). Design only: no code. The questions the user still has
-  to decide are listed in OPEN QUESTIONS (§9); each has a recommendation this spec is written around.
+- **Status:** design for review (2026-10-25). Design only: no code. The questions the user had to
+  decide are answered in DECISIONS (§9); this spec is written around those answers.
 - **Baseline:** `main` at `4aaddc8` (version 0.10.0, `project.yml` `MARKETING_VERSION: "0.10.0"`),
   1143 `@Test` functions, 827 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
 - **Feature:** phase 4b, **Triggers**: a group starts, opens or shows itself when something happens
@@ -53,7 +53,7 @@
   change.
 
 Non-goals (this wave): a LaunchAgent, daemon or helper that runs while the app is quit (§2.6);
-triggers on an app opening or quitting, a calendar event, a location, a Bluetooth device, a battery
+triggers on an app opening or quitting (0.12.0, §9 Q7), a calendar event, a location, a Bluetooth device, a battery
 level or a Focus (the Focus filter already exists); actions other than the four (Hide All, Close
 All, capture); conditions combined with "and"/"or"; triggers in templates or in standalone groups'
 own apps; Siri intents or links that change triggers.
@@ -96,7 +96,7 @@ the office Wi-Fi, finish Work". Three decisions carry most of the weight:
 | In | Out (and where it would go) |
 | --- | --- |
 | Time: a time + days (weekdays, weekends, any set), catch-up up to 30 minutes (TR-1, TR-5) | Dates, intervals ("every 2 hours"), sunrise/sunset |
-| At login; when Cybokron Dock Groups opens (not after an update or language restart) | When another app opens or quits (OPEN QUESTION 7) |
+| At login; when Cybokron Dock Groups opens (not after an update or language restart) | When another app opens or quits (0.12.0, §9 Q7) |
 | A display connects / disconnects (any external or one display); a set of displays is connected | Display positions or resolutions; mirroring; Sidecar/AirPlay as their own kind |
 | The screens wake / sleep | Lock and unlock (no documented signal, TS-11) |
 | Wi-Fi network joined / left (Location permission, opt-in); Ethernet connects / disconnects; VPN connects / disconnects if TS-8 passes | Router address, gateway hardware address or other ways around macOS's network name protection (§4.2 T-S9) |
@@ -574,7 +574,7 @@ in `scripts/build-app.sh:191-193` and CI, and the Info.plist string. Agents are 
 without entitlements (`AgentInstaller.swift:226-235`), which is right: they never read networks.
 An ad hoc build gets a
 new code identity each build, so TCC forgets its Location answer — a development nuisance only.
-That's why Wi-Fi names are their own PR (PR 4) and an open question (OPEN QUESTION 4).
+That's why Wi-Fi names are their own PR (PR 4) and a decision of their own (§9 Q4).
 
 **Spike register** (each PR records results in `docs/design/triggers-spike.md`):
 
@@ -586,7 +586,7 @@ That's why Wi-Fi names are their own PR (PR 4) and an open question (OPEN QUESTI
 | TS-4 | `NSApplicationLaunchIsDefaultLaunchKey` for Finder, login, link, intent, update relaunch, restored state | 2 | "opens" = no URL and no intent within the 5-second launch settle |
 | TS-5 | Display identity across reconnects, ports, docks, sleep; placeholder serials; clamshell; Sidecar and AirPlay displays (counted as external or not) | 3 | name + vendor + model only; virtual displays excluded |
 | TS-6 | Do external displays leave and rejoin the screen list on wake? | 3 | longer settle on wake (5 s) |
-| TS-7 | `ssid()` and SSID events after authorization on macOS 14, 15, 26, 27; prompt text; Location indicator in the menu bar | 4 | drop Wi-Fi from 0.11.0 (OPEN QUESTION 4) |
+| TS-7 | `ssid()` and SSID events after authorization on macOS 14, 15, 26, 27; prompt text; Location indicator in the menu bar | 4 | drop Wi-Fi from 0.11.0 (§9 Q4) |
 | TS-8 | Primary interface for WireGuard, IKEv2 (built-in), Tailscale, a corporate client; system `utun`s | 4 | VPN events not offered |
 | TS-9 | Ethernet through USB, Thunderbolt and dock adapters in `NWPath` | 4 | Ethernet = a wired interface in `availableInterfaces` with status satisfied |
 | TS-10 | macOS 26+: does a Shortcuts automation with Start Group open the quit app and run without a dialog (hide-only group)? | 2 (manual) | the README recipe says "keep the app open" |
@@ -691,7 +691,7 @@ The question is what happens at 9:00 when the user quit Cybokron Dock Groups at 
 | Effort | 4–5 PRs (§8) | +2–3 PRs, a new target, a new release pipeline step, new manual gates on every update | +2 PRs |
 | Security surface | unchanged | a background executable launched by launchd, a new IPC or launch path | same, smaller |
 
-**Recommendation: (a)**, with Open at Login, the 30-minute catch-up and the Shortcuts recipe.
+**Decision (2026-10-25): (a)**, with Open at Login, the 30-minute catch-up and the Shortcuts recipe (§9 Q1).
 
 - The app is a menu bar utility meant to keep running; Open at Login covers the common gap (after a
   restart), catch-up covers "the lid was closed at 9:00", and quitting the app is a clear way to stop
@@ -705,7 +705,7 @@ The question is what happens at 9:00 when the user quit Cybokron Dock Groups at 
 - (a) changes nothing about signing, updates, agents or the Dock, and keeps every action inside the
   process that owns the session and the stores.
 
-(c) stays the fallback if users of macOS 14 and 15 ask for quit-app time triggers: then a runner mode
+(c) is not in 0.11.0. It stays the fallback if users of macOS 14 and 15 later ask for quit-app time triggers: then a runner mode
 of the same executable, registered as an `SMAppService` agent with `StartInterval` 300, that does
 nothing but open the app with a payload-free "check triggers" request when a schedule is within the
 catch-up window and the app isn't running; the app evaluates its own rules (T-S6). Not in 0.11.0.
@@ -1037,6 +1037,7 @@ network name, says so in the prompt string, and never reads coordinates.
 | Network | one `NWPathMonitor` on a utility queue, started only while a network trigger exists; one `SCDynamicStore` read per settled change | event-driven |
 | Wi-Fi | `CWWiFiClient` SSID events, started only while a Wi-Fi trigger exists **and** Location is authorized | no scans (`scanForNetworks` is never called) |
 | Evaluation | O(rules) per signal, ≤ 100 rules, dictionary lookups | < 1 ms |
+| Budget | the last hour's run times in `trigger-state.json`, pruned on each run | ≤ 12 entries; a pause at the 13th |
 | Files | debounced saves; state ≤ 1 write/s, only on change | — |
 | Notice | one panel, created on first use, released after | — |
 | Idle | with no triggers: no sources started, no timer, no files written | zero |
@@ -1125,7 +1126,7 @@ answers), signal builders, a fixed `Calendar` and time zones.
 | R1 | App Nap delays the timer in a windowless menu bar app | a 9:00 trigger at 9:02 | activity window 90 s before due; TS-1 measures |
 | R2 | Users expect triggers while the app is quit | "it didn't work" | TR-5 texts everywhere; Open at Login; catch-up; Shortcuts recipe; Quit tooltip |
 | R3 | Apps hiding on their own surprise users | lost trust | notice by default, never quit, Not Now, Pause, last-run lines, Finish only for the current group |
-| R4 | Location prompt for Wi-Fi breaks the "no prompt" story; macOS changes SSID access again | fewer users allow; Wi-Fi triggers dead | opt-in on demand; every other trigger works; OPEN QUESTION 4; unknown makes no edge |
+| R4 | Location prompt for Wi-Fi breaks the "no prompt" story; macOS changes SSID access again | fewer users allow; Wi-Fi triggers dead | opt-in on demand; every other trigger works (§9 Q4); unknown makes no edge |
 | R5 | Display identity collisions (placeholder serials, twins) and storms on wake | wrong or repeated edges | vendor+model+name, multiset matching, 2 s settle, state across sleep, cooldown; TS-5/6 |
 | R6 | Network flapping (roaming, DHCP, captive portals) | repeated runs | 5 s settle, unknown ≠ left, cooldown, once a day option |
 | R7 | VPN detection is a heuristic | false edges | offered only if TS-8 passes; otherwise out of 0.11.0 |
@@ -1154,7 +1155,7 @@ and Finish runs through, so it lands alone and fully tested before anything can 
 | **1** | `feat(core): plan automatic group triggers` | Spike first (TS-1; results in `docs/design/triggers-spike.md`). `GroupTrigger` and its event, condition, action, run mode types with lenient coding and unsupported kinds; `DisplayIdentity`, `WiFiNetworkName`; `TriggerSignal`, `NetworkReading`; `TriggerScheduling`; `TriggerEvaluator`; `TriggerReducer`; `TriggerBudget`; `TriggerCoordinator` with `AutomationHandling` and `TriggerNoticePresenting`; `TriggerState` + `trigger-state.json`; `TriggersDocument` + `triggers.json`; `TriggerStore`; `TransitionTrigger.automation`; backup `triggers` (imported off) and summary; `ReleaseHistory.firstTriggersVersion` and `DowngradeProtection` lines; diagnostics; `Version0100Fixtures`. Keys: `core.trigger.`, `core.backup.triggers.`. | Existing tests pass unchanged; §6 Core suites pass; 0.10.0 fixtures byte-identical; agent configuration unchanged; no UI, nothing runs. |
 | **2** | `feat: run time, login and launch triggers while the app runs` | Spikes TS-2, TS-3, TS-4, TS-10. `TriggerController`, `ClockSource`, `WorkspaceSource` (sleep/wake, screens, session), launch kind and quiet-launch marker in `AutoUpdater` and `AppLanguageSupport`; `TriggerNoticePanel`; `AppDelegate` `AutomationHandling`; `LoginItem` (Open at Login); group window Triggers section, editor sheet (time, login, opens, screens), archived note; Settings → Triggers pane; menu bar Pause/Resume, Quit tooltip; README (features, Shortcuts recipe), CHANGELOG, SECURITY.md scope sentence. Keys: `triggers.editor.`, `triggers.notice.`, `groupWindow.triggers.`, `settings.triggers.`, `menuBar.triggers.`, `updates.otherVersions.triggers.`. | Manual list (§6) for time, login, launch, screens, Open at Login, notice, pause, budget; nothing quits; no prompt of any kind; archived groups' triggers never run. **Must not be released without PR 5.** |
 | **3** | `feat: run display triggers` | Spikes TS-5, TS-6. `DisplaySource` (settled set, identity), editor for display, any external, These Displays (Use Current Displays), Finish when it ends; README. Keys: more `triggers.editor.`, `core.trigger.`. | Manual display list (§6); no prompt; edges only on real changes across sleep. |
-| **4** | `feat: run network triggers` | Spikes TS-7, TS-8, TS-9. `NetworkSource` (`NWPathMonitor`, `SCDynamicStore`), Ethernet events, VPN events only if TS-8 passes; `WiFiSource` and `LocationAccess`; `Resources/CybokronDockGroups.entitlements` (Location), `project.yml` `CODE_SIGN_ENTITLEMENTS`, `build-app.sh` and CI `--entitlements`, `NSLocationUsageDescription`; editor for networks, Allow…/Open Privacy Settings…; Location status in Settings; README, SECURITY.md (Location sentence). Keys: more `triggers.editor.`, `settings.triggers.`. | Notarized CI build passes `syspolicy_check` with the entitlement; Location asked only from Allow…; Wi-Fi triggers wait without it and never fire "leaves" on lost access; Ethernet/VPN need no permission. If TS-7 fails or OPEN QUESTION 4 says so, the Wi-Fi half moves to a later release and this PR ships Ethernet (and VPN) only. |
+| **4** | `feat: run network triggers` | Spikes TS-7, TS-8, TS-9. `NetworkSource` (`NWPathMonitor`, `SCDynamicStore`), Ethernet events, VPN events only if TS-8 passes; `WiFiSource` and `LocationAccess`; `Resources/CybokronDockGroups.entitlements` (Location), `project.yml` `CODE_SIGN_ENTITLEMENTS`, `build-app.sh` and CI `--entitlements`, `NSLocationUsageDescription`; editor for networks, Allow…/Open Privacy Settings…; Location status in Settings; README, SECURITY.md (Location sentence). Keys: more `triggers.editor.`, `settings.triggers.`. | Notarized CI build passes `syspolicy_check` with the entitlement; Location asked only from Allow…; Wi-Fi triggers wait without it and never fire "leaves" on lost access; Ethernet/VPN need no permission. If TS-7 fails, the Wi-Fi half moves to a later release and this PR ships Ethernet (and VPN) only. |
 | **5** | `feat: translate trigger keys to all languages` | The new prefixes in the 25 translations (one pass per language, reviewed); `awaitingTranslation` back to `[]`; `docs/l10n-keys.md`. | `LocalizationTests` green, no awaiting prefixes. |
 
 Release order: PR 1 can merge any time (nothing visible, nothing new written until a trigger
@@ -1166,40 +1167,36 @@ manual list, and the 0.11.0 → 0.10.0 → 0.11.0 round trip.
 
 ---
 
-## 9. OPEN QUESTIONS
+## 9. DECISIONS
 
-To be decided by the user before PR 2 (PR 1 doesn't depend on them except where noted). Each has
-the recommendation this spec is written around.
+Decided by the user on 2026-10-25, each as the recommendation in the earlier draft. Each is
+written into the sections above; PR 1 doesn't depend on them except where noted.
 
-1. **Running while the app is quit.** Ship (a) — triggers only while the app runs, with Open at
-   Login, a 30-minute catch-up and the Shortcuts automation recipe for macOS 26+ — and keep (c), a
-   payload-free LaunchAgent waker for time triggers, as a later option if macOS 14/15 users ask?
-   *Recommendation: yes, (a) for 0.11.0* (§2.6).
-2. **Default before running.** Open All, Start and Finish show a 5-second notice with Not Now by
-   default (Ask First and Run Right Away per trigger); Show the Popup runs right away. Or make Ask
-   First the default for Start and Finish? *Recommendation: the 5-second notice* — it keeps "at
-   9:00" meaning 9:00 while still giving a way out.
-3. **Catch-up window.** A missed time runs up to 30 minutes late, fixed. Or 15 minutes, 1 hour, or
-   a per-trigger setting ("If missed: run up to … late / don't run")? *Recommendation: 30 minutes,
-   fixed* (one rule to explain; PR 1 makes it a constant that's easy to change).
-4. **Wi-Fi names and the Location permission.** Ship Wi-Fi triggers in 0.11.0 behind an on-demand
-   Location request (a new kind of prompt for the app, next to the optional Accessibility one for
-   restoring windows, and its first entitlements file), or ship Ethernet (and VPN) only and leave
-   Wi-Fi to Shortcuts automations on macOS 26+? *Recommendation: ship them, opt-in on demand*
-   (PR 4), unless TS-7 shows the name stays redacted after authorization on any supported macOS.
-5. **Finish as an automatic action.** Allow Finish on time, screens sleep and condition edges (only
-   for the current group, hiding only), plus "Finish when it ends" for Start triggers? Or only the
-   paired "Finish when it ends"? *Recommendation: both, as §1.6* — "at 18:00, finish Work" is a
-   main use, and hiding is reversible.
-6. **Where Open at Login lives.** Settings → Triggers (with a link from the group window's Triggers
-   section), never on by itself. Or a general setting elsewhere (Settings → Popup has the app-wide
-   options today)? *Recommendation: Settings → Triggers*, since triggers are its reason.
-7. **"When an app opens / quits" triggers.** Permission-free (`NSWorkspace` launch and terminate
-   notifications the app already observes, `RunningAppsMonitor.swift:21-25`) and common ("when Xcode
-   opens, show Coding"), but loop-prone with Open All. Include in 0.11.0 (as PR 3b, with the echo
-   window covering launches) or later? *Recommendation: later (0.12.0)*, after the four event
-   families have been used.
-8. **Backups and the budget.** Triggers from a backup come in turned off (T-S4), and the budget is
-   12 automatic actions per hour, then a one-hour pause. Keep both, or let Replace All restore
-   triggers as they were, or change the numbers? *Recommendation: keep both* — the backup is the
-   file a user can be handed (SECURITY.md), and 12 an hour is far above real use.
+1. **Running while the app is quit.** **Decision (2026-10-25):** option (a): triggers run only
+   while the app runs, with Open at Login, a 30-minute catch-up and the macOS 26+ Shortcuts recipe;
+   no background helper in 0.11.0. A helper would make Quit mean "quit, except at 9:00" (§2.6).
+   (User-decided.)
+2. **Default before running.** **Decision (2026-10-25):** Open All, Start and Finish show a 5-second
+   notice with Not Now by default (Ask First and Run Right Away per trigger); Show the Popup runs
+   right away. That keeps "at 9:00" meaning 9:00 and still gives a way out. (User-decided.)
+3. **Catch-up window.** **Decision (2026-10-25):** a missed time runs up to 30 minutes late, fixed,
+   with no per-trigger setting; PR 1 keeps it a constant. One rule is easier to explain. (User-decided.)
+4. **Wi-Fi names and the Location permission.** **Decision (2026-10-25):** Wi-Fi triggers ship in
+   0.11.0 (PR 4), with Location requested on demand only when the user adds a Wi-Fi trigger; Ethernet
+   and VPN need no permission. Opt-in keeps "no prompt" for every other trigger. If TS-7 shows the
+   name stays redacted after authorization on a supported macOS, Wi-Fi moves out as §8 PR 4 says.
+   (User-decided.)
+5. **Finish as an automatic action.** **Decision (2026-10-25):** automatic Finish is allowed on time,
+   screens sleep and condition edges, only for the current group and only by hiding; "Finish when it
+   ends" is also allowed for Start triggers (§1.6). "At 18:00, finish Work" is a main use, and hiding
+   is reversible. (User-decided.)
+6. **Where Open at Login lives.** **Decision (2026-10-25):** Settings → Triggers, linked from the group
+   window's Triggers section; it is never turned on by itself. Triggers are the reason for it.
+   (User-decided.)
+7. **"When an app opens / quits" triggers.** **Decision (2026-10-25):** deferred to 0.12.0, not PR 3b
+   in 0.11.0, after the four event families have been used in practice. They are loop-prone with Open
+   All. (User-decided.)
+8. **Backups and the budget.** **Decision (2026-10-25):** triggers from a backup come in turned off
+   (T-S4), and the budget is 12 automatic actions per hour; the 13th pauses all triggers for an hour
+   and is recorded. A backup is the file a user can be handed (SECURITY.md), and 12 an hour is far
+   above real use. (User-decided.)
