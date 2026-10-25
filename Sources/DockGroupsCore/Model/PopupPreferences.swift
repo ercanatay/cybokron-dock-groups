@@ -11,8 +11,8 @@ public enum PanelTheme: String, Codable, CaseIterable, Sendable {
 /// App-wide preferences, stored in `preferences.json`: the popup's look, the layout and position
 /// defaults (a group can override those with its own `PopupOverrides`), the global shortcuts, the
 /// Most Used list, the standalone groups' Dock menus, restoring running apps' windows, whether the
-/// app looks for updates on its own, the language it's shown in, and the apps that switching
-/// groups and Close All leave alone.
+/// app looks for updates on its own, the language it's shown in, the apps that switching groups
+/// and Close All leave alone, and how capturing the open apps lists them.
 public struct PopupPreferences: Hashable, Sendable {
     public static let defaultMaxRows = 4
     public static let defaultMostUsedSessionSeconds = Int(UsageTracker.defaultSessionLength)
@@ -59,6 +59,8 @@ public struct PopupPreferences: Hashable, Sendable {
     public var language: AppLanguage
     /// Apps that Start, Finish and Close All never quit, and that Start and Finish never hide.
     public var protectedApps: ProtectedApps
+    /// The order and the window option of capturing the open apps, as last chosen.
+    public var capture: CaptureSettings
 
     public init(
         theme: PanelTheme = .dark,
@@ -77,7 +79,8 @@ public struct PopupPreferences: Hashable, Sendable {
         showsStandaloneDockMenus: Bool = true,
         restoresWindowsOfRunningApps: Bool = true,
         language: AppLanguage = .system,
-        protectedApps: ProtectedApps = ProtectedApps()
+        protectedApps: ProtectedApps = ProtectedApps(),
+        capture: CaptureSettings = CaptureSettings()
     ) {
         self.theme = theme
         self.usesFrostedGlass = usesFrostedGlass
@@ -96,6 +99,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.restoresWindowsOfRunningApps = restoresWindowsOfRunningApps
         self.language = language
         self.protectedApps = protectedApps
+        self.capture = capture
     }
 
     /// The settings a group's popup uses: the group's overrides where it has them, these defaults
@@ -167,6 +171,7 @@ extension PopupPreferences: Codable {
         case restoresWindowsOfRunningApps = "restoreRunningAppWindows"
         case language
         case protectedApps
+        case capture
     }
 
     /// Every field is optional: a missing, unknown or out-of-range value falls back to its default,
@@ -201,10 +206,12 @@ extension PopupPreferences: Codable {
             ?? defaults.restoresWindowsOfRunningApps
         language = container.decodeLeniently(AppLanguage.self, forKey: .language) ?? defaults.language
         protectedApps = container.decodeLeniently(ProtectedApps.self, forKey: .protectedApps) ?? defaults.protectedApps
+        capture = container.decodeLeniently(CaptureSettings.self, forKey: .capture) ?? defaults.capture
     }
 
-    /// Every setting is written; the protected apps only once there are any, so preferences that
-    /// never had them are saved as before.
+    /// Every setting is written; the protected apps only once there are any, and the capture
+    /// settings only when they aren't the defaults, so preferences that never had them are saved
+    /// as before (byte for byte: a version without them reads and writes the same file).
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(theme, forKey: .theme)
@@ -225,6 +232,9 @@ extension PopupPreferences: Codable {
         try container.encode(language, forKey: .language)
         if !protectedApps.isEmpty {
             try container.encode(protectedApps, forKey: .protectedApps)
+        }
+        if !capture.isDefault {
+            try container.encode(capture, forKey: .capture)
         }
     }
 }

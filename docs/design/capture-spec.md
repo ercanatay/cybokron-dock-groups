@@ -426,10 +426,12 @@ which the SDK header documents as "ordered from front to back" (`CGWindow.h`,
 `kCGWindowListOptionOnScreenOnly`), for `onScreenOrder`; and `.optionAll` for
 `processesWithWindows` (windows of hidden apps, minimized windows and other Spaces are off
 screen). A window counts when its layer is 0, its alpha is above 0 and its bounds are at least
-50 × 50 points, to skip the invisible helper windows some apps keep. That's a heuristic: the PR 1
-spike (§8) records it for hidden apps, minimized-only apps, other Spaces, full screen, Stage
-Manager, and apps known to keep off-screen windows (Mail and Music with windows closed, Xcode with
-no project). Its errors only change a default checkbox.
+50 × 50 points, to skip the invisible helper windows some apps keep; an off-screen window that is a
+square at x = 0 doesn't count either (PR 1 spike, `docs/design/capture-spike.md`: every app keeps
+such helpers off screen). That's a heuristic: the spike records it for hidden apps and apps with
+nothing open; minimized-only apps, other Spaces, full screen and Stage Manager stay manual in PR 2.
+Its errors only change a default checkbox. `openApps()` returns regular apps only (the spike: 10 ms
+for every process's properties, 0.3 ms for the regular ones).
 
 **Activation history.** `CaptureController` (App, main app only) observes
 `didActivateApplicationNotification`, records the regular app's identity

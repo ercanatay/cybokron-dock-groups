@@ -66,6 +66,16 @@ public enum GroupInvocations {
         ]
     }
 
+    /// The link that shows Add Open Apps for `group` (`URLCommand.captureOpenApps`), named as
+    /// `links` names it; Settings lists it after the switching links. The link only shows the
+    /// sheet: nothing is added until the user says so.
+    public static func captureLink(for group: DockGroup, in groups: [DockGroup]) -> GroupInvocation {
+        GroupInvocation(
+            title: Localization.string("core.invocation.capture.link", "Add Open Apps"),
+            text: "\(URLCommand.scheme)://capture/\(linkToken(for: group, in: groups))"
+        )
+    }
+
     /// The URL scheme's links for `group` (see `URLCommand`): show its popup, Open All, Hide All
     /// and Close All.
     /// - Parameter groups: All groups, in order: a name another group answers to first isn't used.

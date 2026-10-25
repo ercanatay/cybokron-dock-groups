@@ -600,6 +600,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .manageGroups:
             popupController.close()
             mainWindowController.show()
+        case .captureNewGroup, .captureOpenApps:
+            // The capture sheet these links show arrives with the app's capture surfaces (capture
+            // spec §8, PR 2). Until then the link is understood, logged and does nothing.
+            urlLogger.notice("Ignored \(command.throttleKey, privacy: .public): capturing open apps isn't available in this build yet")
         }
     }
 

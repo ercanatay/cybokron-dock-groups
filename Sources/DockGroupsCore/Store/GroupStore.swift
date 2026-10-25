@@ -150,6 +150,23 @@ public final class GroupStore: ObservableObject {
         return group
     }
 
+    /// Appends a new group with `items`, as capturing the open apps makes one: the items pass the
+    /// same checks as `addItems(_:toGroup:)` (an app only as a bundle identifier or an app bundle,
+    /// `AppItemPolicy`; a file or folder only where `FileItemPolicy.acceptsByIdentity` allows), each
+    /// once, in order. A usable `name` is kept as it is, as renaming keeps it; a blank one gets a
+    /// unique default ("New Group 2" …). It isn't standalone and has no keyboard shortcut. One
+    /// change of `groups`, one save; nothing is opened.
+    @discardableResult
+    public func addGroup(named name: String, items: [GroupItem]) -> DockGroup {
+        let group = DockGroup(
+            name: DockGroup.sanitizedName(name) ?? nextDefaultName(),
+            apps: Self.removingDuplicates(Self.acceptedItems(items))
+        )
+        groups.append(group)
+        scheduleSave()
+        return group
+    }
+
     /// Appends a group made from `template` (`GroupTemplate.makeGroup`): a new identity, its items
     /// and settings, named as the template — or "name 2", "name 3" … when an active or archived
     /// group has that name. It isn't standalone and has no keyboard shortcut. Nothing is opened.
@@ -321,12 +338,15 @@ public final class GroupStore: ObservableObject {
     }
 
     /// Appends the items (apps, websites, files, folders) that aren't in the group yet, in order.
-    /// A file or folder whose location is invalid or whose name is refused
-    /// (`FileItemPolicy.acceptsByIdentity`) is left out. Returns how many were added.
+    /// Whoever adds them — a picker, capturing the open apps, Siri — they pass the same checks: an
+    /// app whose identity is neither a bundle identifier nor an app bundle's location is left out,
+    /// and its fallback location dropped when it isn't an app bundle (`AppItemPolicy`); a file or
+    /// folder whose location is invalid or whose name is refused (`FileItemPolicy.acceptsByIdentity`)
+    /// is left out. Returns how many were added.
     @discardableResult
     public func addItems(_ items: [GroupItem], toGroup id: DockGroup.ID) -> Int {
         guard let index = index(of: id) else { return 0 }
-        let combined = Self.removingDuplicates(groups[index].apps + items.filter(FileItemPolicy.acceptsByIdentity))
+        let combined = Self.removingDuplicates(groups[index].apps + Self.acceptedItems(items))
         let addedCount = combined.count - groups[index].apps.count
         guard addedCount > 0 else { return 0 }
         groups[index].apps = combined
@@ -751,13 +771,20 @@ public final class GroupStore: ObservableObject {
         return groups[groupIndex].apps.firstIndex { $0.normalizedBundleIdentifier == target }
     }
 
-    /// The names of the active and archived groups, which names the store makes avoid.
-    private var takenNames: [String] {
+    /// The names of the active and archived groups, which names the store makes avoid — and the
+    /// name capturing the open apps suggests (`CapturePlanner.suggestedName`).
+    public var takenNames: [String] {
         groups.map(\.name) + archivedGroups.map(\.group.name)
     }
 
     private func nextDefaultName() -> String {
         GroupNaming.uniqueName(DockGroup.defaultName, taken: takenNames)
+    }
+
+    /// The items the store takes from any caller: apps as `AppItemPolicy` keeps them, files and
+    /// folders as `FileItemPolicy.acceptsByIdentity` allows them, websites as they are.
+    private static func acceptedItems(_ items: [GroupItem]) -> [GroupItem] {
+        items.compactMap(AppItemPolicy.sanitized).filter(FileItemPolicy.acceptsByIdentity)
     }
 
     private static func removingDuplicates(_ apps: [AppReference]) -> [AppReference] {

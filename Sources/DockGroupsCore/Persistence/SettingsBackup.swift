@@ -212,18 +212,8 @@ public struct SettingsBackup: Equatable, Sendable {
             item.path = nil
             return item
         case .application:
-            if item.isIdentifiedByPath {
-                guard isAppBundlePath(item.bundleIdentifier) else { return nil }
-            } else if item.bundleIdentifier.contains(where: { $0 == "/" || $0 == ":" }) {
-                // Neither a bundle identifier nor an app's location: a file, folder or other
-                // item that couldn't be read, which would show as an app that's never found.
-                return nil
-            }
-            var item = item
-            if let path = item.path, !isAppBundlePath(path) {
-                item.path = nil
-            }
-            return item
+            // The rule every app from outside the app's pickers passes (`AppItemPolicy`).
+            return AppItemPolicy.sanitized(item)
         }
     }
 }

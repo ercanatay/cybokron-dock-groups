@@ -17,8 +17,9 @@ public struct AgentConfiguration: Equatable, Sendable {
     /// Settings the agent has no use for are left at their defaults, so changing them doesn't
     /// rebuild every agent: the update setting concerns the main app only, and so do the group's
     /// Start and Finish settings (agents don't start or finish groups) and its keyboard shortcut
-    /// (only the main app registers shortcuts). Of the protected apps, only those in the group are
-    /// kept: the agent's Close All reaches no others.
+    /// (only the main app registers shortcuts), and how capturing the open apps lists them (only the
+    /// main app captures). Of the protected apps, only those in the group are kept: the agent's
+    /// Close All reaches no others.
     public init(group: DockGroup, preferences: PopupPreferences) {
         formatVersion = Self.currentFormatVersion
         var group = group
@@ -28,6 +29,7 @@ public struct AgentConfiguration: Equatable, Sendable {
         var snapshot = preferences
         snapshot.automaticallyChecksForUpdates = PopupPreferences().automaticallyChecksForUpdates
         snapshot.protectedApps = preferences.protectedApps.restricted(to: group)
+        snapshot.capture = CaptureSettings()
         self.preferences = snapshot
     }
 

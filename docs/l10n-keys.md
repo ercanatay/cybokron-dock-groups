@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-791 keys.
+798 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1168,3 +1168,16 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `settings.backup.library.status.archived.other` | Added %ld archived groups |
 | `settings.backup.library.status.templates.one` | Added 1 template |
 | `settings.backup.library.status.templates.other` | Added %ld templates |
+
+## Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, and the "Add Open Apps" link's title in Settings → Shortcuts & Siri → Links (English only for now; `awaitingTranslation`: `core.capture.`, `core.invocation.capture.`)
+
+`core.capture.name.more` is the name offered for a new group: the first app's name and how many other apps it has (“Xcode +3”). Keep the “+” form: it needs no plural forms in any language.
+
+| Key | English |
+| --- | --- |
+| `core.capture.name.none` | Open Apps |
+| `core.capture.name.more` | %1$@ +%2$ld |
+| `core.capture.unavailable.one` | 1 open app can't be added here: it isn't an app bundle, or it runs from a temporary copy (move it to Applications first). |
+| `core.capture.unavailable.other` | %ld open apps can't be added here: they aren't app bundles, or run from a temporary copy (move them to Applications first). |
+| `core.capture.limit` | You can add up to %ld apps at once. |
+| `core.invocation.capture.link` | Add Open Apps |

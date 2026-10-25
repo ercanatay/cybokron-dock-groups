@@ -14,6 +14,8 @@ import Foundation
 /// | `cybokrondockgroups://settings` | Open Settings |
 /// | `cybokrondockgroups://settings/group/<group>` | Open the group window on the group's settings |
 /// | `cybokrondockgroups://groups` | Open the group window |
+/// | `cybokrondockgroups://capture` | Show New Group from Open Apps (nothing is added until the user says so) |
+/// | `cybokrondockgroups://capture/<group>` | Show Add Open Apps for the group (likewise) |
 ///
 /// Links that start or finish a group (`start/`, `switch/`, `finish/`) are `SwitchingURLCommand`s;
 /// the app parses both kinds at once as a `LinkCommand`.
@@ -29,6 +31,12 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
     /// (`GroupSettingsDestination` picks the group to show).
     case showGroupSettings(String)
     case manageGroups
+    /// New Group from Open Apps: the capture sheet for a new group. The link only shows it; the
+    /// user's click makes the group (spec §2.8, Decision 5).
+    case captureNewGroup
+    /// Add Open Apps: the capture sheet for the group the link names, which only the user's click
+    /// adds to. The group's name may contain "/", as in `settings/group/`.
+    case captureOpenApps(String)
 
     public static let scheme = "cybokrondockgroups"
 
@@ -105,6 +113,8 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
         case "groups":
             guard argument.isEmpty else { return nil }
             self = .manageGroups
+        case "capture":
+            self = argument.isEmpty ? .captureNewGroup : .captureOpenApps(argument)
         default:
             return nil
         }
@@ -112,7 +122,8 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
 
     /// The key that links opening or hiding a group's apps share: whichever group they name, only
     /// one of them is carried out per cooldown (`URLCommandGate`), so a page or script can't open
-    /// or hide every group in turn. `nil` for the other commands.
+    /// or hide every group in turn. `nil` for the other commands — the capture links among them:
+    /// they only show a sheet, and are limited per link like `groups` and `settings`.
     public var groupActionKey: String? {
         switch self {
         case .launchGroup, .hideGroup: return Self.groupAppsKey
@@ -133,6 +144,8 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
         case .openSettings: return "settings"
         case .showGroupSettings(let group): return "settings/group/\(GroupLookup.normalizedToken(group))"
         case .manageGroups: return "groups"
+        case .captureNewGroup: return "capture"
+        case .captureOpenApps(let group): return "capture/\(GroupLookup.normalizedToken(group))"
         }
     }
 }
