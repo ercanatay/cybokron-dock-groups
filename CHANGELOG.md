@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-25
+
 ### Added
 
 - Network triggers: **When Ethernet Connects / Disconnects** (no permission) and **When the Mac Joins / Leaves a Wi-Fi Network** by name, with Use Current Network. Wi-Fi names need Location Services: Allow… in the editor asks (the app never reads your location), Open Privacy Settings… helps when it was refused, and Settings → Triggers shows the access. Without it the network is unknown — a Leaves trigger never runs because the app can't see the network. VPNs aren't watched. The app is now signed with the Location entitlement
@@ -20,12 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Wi-Fi triggers ask for Location access only when you add one; without it they wait and never fire "left the network" by mistake
 - The launch after an update's or a language change's restart, and a launch for a link or a Siri or Shortcuts request, isn't counted as the app opening (or as the login) by triggers
 - An archived group's summary says how many triggers it has; they don't run while it's archived, and a time that passed meanwhile doesn't run when it's restored
 
 ### Security
 
-- Triggers act only while the app runs, only on your groups' items through the same checks a click goes through, never quit apps or ask questions (a group set to quit hides instead), and need no permission. Triggers from a backup come in turned off, and an archived or deleted group's triggers never run
+- Triggers act only while the app runs, only on your groups' items through the same checks a click goes through, never quit apps or ask questions (a group set to quit hides instead), and need no permission. Triggers from a backup come in turned off, and an archived or deleted group's triggers never run. Triggers add no new way to run code: crafted files can only choose an existing group action, and no helper process runs in the background. Nothing polls
 
 ## [0.10.0] - 2026-10-25
 
@@ -493,7 +496,8 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...v0.8.0
