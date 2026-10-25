@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Open Apps… (a group's Add menu, and an empty group's popup) adds the open apps to that group, after its items; the apps it has already show as "In this group"
 - The list has regular apps only, once each — no background apps, Finder, Cybokron Dock Groups or standalone groups' own apps — ordered by Most Recently Used or Name. Protected apps are listed but start unchecked, and "Select only apps with open windows" (off by default) unchecks the apps that seem to have none; both choices are remembered. Up to 50 apps per capture; a footnote counts the open apps that can't be added (no app bundle, or run from a temporary copy without a bundle identifier)
 - `cybokrondockgroups://capture` and `cybokrondockgroups://capture/<group>` show the same sheets; nothing is added until you click. Settings → Shortcuts & Siri lists each group's Add Open Apps link
+- Siri and the Shortcuts app: New Group from Open Apps (“Capture my open apps in Cybokron Dock Groups”; an optional name, and returns the group) and Add Open Apps to Group add the open apps the sheet would start with checked — never the Shortcuts app — without asking: nothing is opened or quit. Settings → Shortcuts & Siri lists the phrase
 - The diagnostics report has the two capture settings (no app names)
 
 ### Changed

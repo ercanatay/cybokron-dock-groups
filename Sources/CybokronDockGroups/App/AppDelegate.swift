@@ -681,6 +681,16 @@ extension AppDelegate: GroupIntentHandling {
     func finish(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport {
         try await switcher.finish(group.id, trigger: .intent, confirm: confirm)
     }
+
+    /// New Group from Open Apps from Siri or Shortcuts: no sheet, the app isn't brought forward.
+    func captureNewGroup(named name: String?, onlyAppsWithWindows: Bool?) -> CaptureOutcome {
+        capture.captureWithoutSheet(into: .newGroup, typedName: name, onlyAppsWithWindows: onlyAppsWithWindows)
+    }
+
+    /// Add Open Apps to Group from Siri or Shortcuts: no sheet, the app isn't brought forward.
+    func captureOpenApps(into group: DockGroup, onlyAppsWithWindows: Bool?) -> CaptureOutcome {
+        capture.captureWithoutSheet(into: .group(group.id), typedName: nil, onlyAppsWithWindows: onlyAppsWithWindows)
+    }
 }
 
 // MARK: - Focus

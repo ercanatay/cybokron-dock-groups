@@ -210,6 +210,9 @@ struct ShortcutsSettingsView: View {
                 Text(L10n.Settings.Shortcuts.siriNoGroups)
                     .foregroundStyle(.secondary)
             }
+            // Names no group, so it's there without groups too.
+            let capturePhrase = GroupInvocations.capturePhrase(appName: AppInfo.name)
+            copyRow(capturePhrase, text: Text(L10n.Settings.Shortcuts.quotedPhrase(capturePhrase.text)))
             LabeledContent {
                 Button(L10n.Settings.Shortcuts.openShortcuts, action: openShortcutsApp)
             } label: {

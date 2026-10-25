@@ -127,4 +127,33 @@ final class CaptureController {
         }
         return result
     }
+
+    // MARK: - Siri and Shortcuts
+
+    /// Captures without a sheet (capture spec §1.10, §2.7): reads the open apps now and adds the
+    /// ones the sheet would start with selected — never the Shortcuts app — as a new group named
+    /// `typedName` (the suggestion when blank or `nil`) or to the group `target` names.
+    /// `onlyAppsWithWindows` overrides the remembered window option when given; nothing is
+    /// remembered. Logs counts and group identifiers only.
+    func captureWithoutSheet(into target: CaptureTarget, typedName: String?, onlyAppsWithWindows: Bool?) -> CaptureOutcome {
+        let outcome = store.captureWithoutSheet(
+            snapshot(),
+            into: target,
+            typedName: typedName,
+            settings: CaptureOutcome.settings(settings, onlyAppsWithWindows: onlyAppsWithWindows),
+            protectedApps: preferences.preferences.protectedApps
+        )
+        switch outcome {
+        case .created(let group):
+            logger.notice("Siri or Shortcuts captured \(group.apps.count) apps into a new group \(group.id, privacy: .public)")
+        case .added(let count, _):
+            let id = if case .group(let id) = target { id.uuidString } else { "?" }
+            logger.notice("Siri or Shortcuts captured \(count) apps into group \(id, privacy: .public)")
+        case .everyAppInGroup, .nothingToAdd:
+            logger.notice("Siri or Shortcuts capture: nothing to add")
+        case .unavailableGroup:
+            logger.notice("Siri or Shortcuts capture: the group isn't active; nothing was added")
+        }
+        return outcome
+    }
 }

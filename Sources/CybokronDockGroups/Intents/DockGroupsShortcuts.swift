@@ -1,8 +1,10 @@
 import AppIntents
 
 /// The app's ready-made shortcuts: Siri phrases and Spotlight/Shortcuts app entries for the
-/// five group actions (5 of the 10 the system allows). Phrases with a group are generated for every group name the app reports
-/// (see `updateAppShortcutParameters()`); the others ask which group.
+/// five group actions and New Group from Open Apps (6 of the 10 the system allows). Phrases with a
+/// group are generated for every group name the app reports (see `updateAppShortcutParameters()`);
+/// the others ask which group. Add Open Apps to Group is in the Shortcuts app without a phrase
+/// (capture spec Decision 5).
 struct DockGroupsShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
@@ -58,6 +60,16 @@ struct DockGroupsShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Finish Group",
             systemImageName: "stop.circle"
+        )
+        // Keep the first phrase in step with `GroupInvocations.capturePhrase`.
+        AppShortcut(
+            intent: CaptureOpenAppsIntent(),
+            phrases: [
+                "Capture my open apps in \(.applicationName)",
+                "Make a group from my open apps in \(.applicationName)",
+            ],
+            shortTitle: "New Group from Open Apps",
+            systemImageName: "rectangle.stack.badge.plus"
         )
     }
 

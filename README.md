@@ -185,6 +185,14 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   answer, so give the groups you start or finish from automations hiding settings. Groups are
   matched by ID, so shortcuts survive renames. Settings → Shortcuts & Siri spells out a group's
   phrases and links, each with a Copy button.
+- **New Group from Open Apps** (“Capture my open apps in Cybokron Dock Groups”) and **Add Open Apps
+  to Group** (in the Shortcuts app, without a Siri phrase) capture without the sheet: they add the
+  open apps it would start with checked — not protected apps, not the Shortcuts app, and with
+  *Only Apps with Open Windows* (the sheet's last choice when not set) not the apps that seem to
+  have none — up to 50. New Group from Open Apps takes an optional name (otherwise "Xcode +3") and
+  returns the group, so a shortcut can go on with Launch Group; Add Open Apps to Group adds what the
+  group doesn't have yet. Neither asks first: nothing is opened, hidden or quit, and an archived
+  group gives the usual error.
 - Links, e.g. from scripts or other apps (`open "cybokrondockgroups://open/work"`):
 
   | Link | Does |
@@ -584,6 +592,15 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      Add sheet on that group; an archived or unknown group beeps and shows nothing.
    - An app run from a downloaded disk image without moving it (App Translocation): listed without a
      location, or — without a bundle identifier — counted in the footnote.
+   - In the Shortcuts app, run **New Group from Open Apps** without a name: a group of the open apps
+     that would start checked, named after them, is added at the end of the list; the Shortcuts app
+     isn't in it, and nothing opened or quit. Follow it with **Launch Group**: that group is used.
+     With a name and *Only Apps with Open Windows* on: the name as typed, without the apps that seem
+     to have no window. With only protected apps open: *No open apps to put in a group.* and no group.
+   - **Add Open Apps to Group** on a group: *Added 2 apps to "…"*, after its items; again: *Every
+     open app is already in "…"*. On an archived group: *"…" is archived…*, and the group is left as
+     it was. Ask Siri “Capture my open apps in Cybokron Dock Groups”: the same as the first step,
+     without a question.
 
 ## Project layout
 

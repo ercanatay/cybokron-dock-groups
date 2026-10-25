@@ -55,6 +55,16 @@ public enum GroupInvocations {
         ]
     }
 
+    /// What to ask Siri to make a group of the open apps (`CaptureOpenAppsIntent`): the first
+    /// phrase of its App Shortcut, which names no group. Settings lists it after the group's
+    /// phrases; keep both in step, as `siriPhrases`.
+    public static func capturePhrase(appName: String) -> GroupInvocation {
+        GroupInvocation(
+            title: Localization.string("core.invocation.capture.newGroup", "New Group from Open Apps"),
+            text: Localization.format("core.invocation.capture.newGroup.phrase", "Capture my open apps in %@", appName)
+        )
+    }
+
     /// The links that start and finish `group` (see `SwitchingURLCommand`), named as `links`
     /// names it; Settings lists them after those.
     public static func switchingLinks(for group: DockGroup, in groups: [DockGroup]) -> [GroupInvocation] {

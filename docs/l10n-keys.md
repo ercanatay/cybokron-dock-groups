@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-825 keys.
+827 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1169,9 +1169,11 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `settings.backup.library.status.templates.one` | Added 1 template |
 | `settings.backup.library.status.templates.other` | Added %ld templates |
 
-## Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, and the "Add Open Apps" link's title in Settings → Shortcuts & Siri → Links (English only for now; `awaitingTranslation`: `core.capture.`, `core.invocation.capture.`)
+## Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, the "Add Open Apps" link's title in Settings → Shortcuts & Siri → Links, and the New Group from Open Apps Siri phrase in Settings → Shortcuts & Siri (English only for now; `awaitingTranslation`: `core.capture.`, `core.invocation.capture.`)
 
 `core.capture.name.more` is the name offered for a new group: the first app's name and how many other apps it has (“Xcode +3”). Keep the “+” form: it needs no plural forms in any language.
+
+`%@` in `core.invocation.capture.newGroup.phrase` is the app's name. Keep the phrase identical to the first App Shortcuts phrase of New Group from Open Apps in the same language.
 
 | Key | English |
 | --- | --- |
@@ -1181,6 +1183,8 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `core.capture.unavailable.other` | %ld open apps can't be added here: they aren't app bundles, or run from a temporary copy (move them to Applications first). |
 | `core.capture.limit` | You can add up to %ld apps at once. |
 | `core.invocation.capture.link` | Add Open Apps |
+| `core.invocation.capture.newGroup` | New Group from Open Apps |
+| `core.invocation.capture.newGroup.phrase` | Capture my open apps in %@ |
 
 ## Capturing the open apps in the app: the menu bar menu's New Group from Open Apps…, the group window's + menu and Add menu, an empty group's popup, and the review sheet (English only for now; `awaitingTranslation`: `capture.sheet.`, `menuBar.capture.`, `groupWindow.capture.`, `popup.capture.`)
 

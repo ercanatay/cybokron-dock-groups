@@ -22,6 +22,14 @@ protocol GroupIntentHandling: AnyObject {
     func start(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport
     /// Finish, as `start`.
     func finish(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport
+    /// New Group from Open Apps, without a sheet (capture spec §2.7): the open apps that would start
+    /// selected, never the Shortcuts app, in a new group named `name` (the suggestion when blank or
+    /// `nil`). `onlyAppsWithWindows`: the window option, the remembered one when `nil`. Nothing is
+    /// opened, hidden or quit.
+    func captureNewGroup(named name: String?, onlyAppsWithWindows: Bool?) -> CaptureOutcome
+    /// Add Open Apps to Group, without a sheet: as `captureNewGroup`, adding the apps `group`
+    /// doesn't have yet.
+    func captureOpenApps(into group: DockGroup, onlyAppsWithWindows: Bool?) -> CaptureOutcome
 }
 
 /// Connects the intents, which the system creates on its own, to the app's objects.
@@ -51,10 +59,7 @@ enum GroupIntentSupport {
 
     /// The handler and the group behind `entity`, as it is now. `action` names the intent in the log.
     static func resolve(_ entity: GroupEntity, for action: String) throws -> (GroupIntentHandling, DockGroup) {
-        guard let handler else {
-            logger.error("\(action, privacy: .public): the app isn't ready")
-            throw GroupIntentError.notReady
-        }
+        let handler = try readyHandler(for: action)
         guard let group = handler.groups.first(where: { $0.id == entity.id }) else {
             if let archived = handler.archivedGroups.first(where: { $0.id == entity.id }) {
                 logger.error("\(action, privacy: .public): group \(entity.id, privacy: .public) is archived")
@@ -65,6 +70,16 @@ enum GroupIntentSupport {
         }
         logger.notice("\(action, privacy: .public) for group \(group.id, privacy: .public)")
         return (handler, group)
+    }
+
+    /// The handler, for an intent that names no group; throws `notReady` until the app delegate is
+    /// set up. `action` names the intent in the log.
+    static func readyHandler(for action: String) throws -> GroupIntentHandling {
+        guard let handler else {
+            logger.error("\(action, privacy: .public): the app isn't ready")
+            throw GroupIntentError.notReady
+        }
+        return handler
     }
 }
 
