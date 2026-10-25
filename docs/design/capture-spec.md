@@ -1,12 +1,12 @@
 # Design spec: capturing open apps into groups
 
-- **Status:** draft for review (2026-10-25). Design only: no code. Decisions wait on the OPEN
-  QUESTIONS (§9); each has a recommendation that stands unless the user decides otherwise.
+- **Status:** draft for review (2026-10-25). Design only: no code. Decisions are recorded in
+  DECISIONS (§9), all taken by the user on 2026-10-25.
 - **Baseline:** `main` at `2ea08df` (version 0.9.0, `project.yml` `MARKETING_VERSION: "0.9.0"`),
   1051 `@Test` functions, 792 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
 - **Feature:** phase 4a, **Capture**: make a group from the apps that are open now, or add them to
-  a group. Target: the first part of **0.10.0**. Triggers (time, display, network) are phase 4b
-  and out of this spec.
+  a group. Target: **0.10.0** on its own (Decision 7). Triggers (time, display, network) are phase 4b
+  and out of this spec, shipped in a later release.
 - **Builds on:** `docs/design/group-items-and-tags-spec.md` (A+F, 0.7.0),
   `docs/design/context-switching-spec.md` (C+D+E, 0.8.0) and
   `docs/design/group-shortcuts-and-templates-spec.md` (G+I, 0.9.0). Their Core/App split, lenient
@@ -73,7 +73,7 @@ most of the weight:
 
 | In | Out (and where it would go) |
 | --- | --- |
-| New Group from Open Apps… with a review sheet (CP-1) | One-click capture without review (§9 Q1) |
+| New Group from Open Apps… with a review sheet (CP-1) | One-click capture without the review sheet, e.g. ⌥-click (Decision 1) |
 | Add Open Apps… to an existing group (CP-2) | Capture into a template; replacing a group's items |
 | Regular apps only; Finder, this app, agents, background apps left out (CP-3) | Finder windows' folders, documents, browser tabs (need Automation or Accessibility) |
 | Order: most recently used, or by name; "Select only apps with open windows" (CP-4) | Dock order; choosing single windows |
@@ -161,7 +161,7 @@ most of the weight:
 | An app with an identifier, run from a temporary copy | yes, without a location | found by its identifier, as a backup's app with a non-bundle path (`SettingsBackup.swift:222-225`) |
 | Accessory and background apps (menu bar extras, agents, helpers, `.accessory` / `.prohibited`) | no | not apps a user opens (as Most Used, `UsageMonitor.swift:39`) |
 | Cybokron Dock Groups, another copy of it, a standalone group's own app | no | `ProtectedApps.isAlwaysProtected(…, action: .hiding)` |
-| Finder | no | always running; a group can still get it through Add Apps… (§9 Q2) |
+| Finder | no | always running; a group can still get it through Add Apps… (Decision 2) |
 | The Shortcuts app, when capture runs from Siri or Shortcuts | no | it's the caller, not part of the work (§1.10) |
 | No bundle URL, a bundle URL that isn't a file URL to a `.app`, an identifier with "/", ":" or control characters | no, counted | `AppItemPolicy` (§2.5) |
 | Terminated while the sheet is open | stays listed | the snapshot is frozen; an app item doesn't need the app running |
@@ -187,7 +187,7 @@ All listed apps start selected, except:
 
 - **protected apps** (Settings → Switching): listed with the caption "Protected", not selected.
   They are the apps a user keeps open all day (mail, chat, a password manager), which are rarely
-  part of one task (§9 Q2);
+  part of one task (Decision 2);
 - with **Select only apps with open windows** on: apps without an open window, captioned "No open
   windows";
 - in **Add** mode, apps already in the group: shown checked and disabled, captioned "In this
@@ -203,7 +203,7 @@ defaults; the name follows unless it was edited.
   "Xcode +3" (no plural forms, so every language reads it the same). Nothing selected: "Open Apps".
 - Made unique among active and archived groups (`GroupNaming.uniqueName`): "Xcode +3 2".
 - A name the user typed is kept as typed (as renaming keeps it, G+I §2.3); a blank one falls back
-  to the suggestion. (§9 Q3.)
+  to the suggestion. (Decision 3.)
 
 ### 1.7 Add Open Apps to a group
 
@@ -254,7 +254,7 @@ The popup's grid context menu and the Most Used popup don't get it: the empty st
   or edited. The Shortcuts app itself is left out (§1.3). An archived group gives the existing
   "is archived" error (`GroupIntentSupport.swift:58-65`).
 - One App Shortcut with Siri phrases for the first ("Capture my open apps in Cybokron Dock
-  Groups"): 6 of the 10 allowed (§9 Q5).
+  Groups"): 6 of the 10 allowed (Decision 5).
 
 ### 1.11 Links
 
@@ -276,7 +276,7 @@ regular apps while their Dock menu is on (`PopupPreferences.swift:48-52`).
 
 The sheet's **Order** pop-up and **Select only apps with open windows** checkbox are saved in
 `preferences.json` when changed, and used by the next capture, Siri and Shortcuts included. There
-is no Settings pane for them (§9 Q6). They travel with backups as part of the preferences.
+is no Settings pane for them (Decision 6). They travel with backups as part of the preferences.
 
 ### 1.13 en-US text drafts
 
@@ -872,29 +872,35 @@ alone and fully tested before anything can capture. Each keeps `scripts/test.sh`
 
 Release order: PR 1 can merge any time (nothing visible; preferences unchanged until a setting is
 changed). PRs 2–4 ship together. The version bump (`build: version 0.10.0`, build 1000) isn't part
-of this plan: it follows when 0.10.0 is cut (§9 Q7), then the `v0.10.0` tag → CI's notarized
+of this plan: it follows when 0.10.0 is cut (Decision 7), then the `v0.10.0` tag → CI's notarized
 universal DMG as a **draft** → the `release` environment approval → the user's explicit approval to
 publish. Manual gates to record before tagging: the PR 1 spike and the §6 manual list.
 
 ---
 
-## 9. OPEN QUESTIONS
+## 9. DECISIONS
 
-1. **Review step.** Recommended: capture always shows the sheet; Siri and the Shortcuts app are the
-   no-review path. Alternative: a one-click "Capture Open Apps" (say, the menu item with ⌥ held)
-   that makes the group with the default selection and selects it in the group window.
-2. **Finder and protected apps.** Recommended: Finder is never listed (Add Apps… can add it);
-   protected apps are listed but not selected. Alternatives: protected apps selected like any app;
-   or not listed at all; or Finder listed and not selected.
-3. **Name suggestion.** Recommended: "Xcode +3" (the first selected app and how many more), unique
-   among groups. Alternatives: "Open Apps" ("Open Apps 2" …); or the date ("Apps, Oct 25").
-4. **The window option.** Recommended: "Select only apps with open windows", off by default, which
-   only changes what starts selected. Alternatives: on by default; or a filter that hides apps
-   without windows (riskier: the heuristic would hide apps, R1).
-5. **Siri phrase and link.** Recommended: both intents in the Shortcuts app, one App Shortcut with
-   Siri phrases for New Group from Open Apps (6 of 10), and `capture` links that only open the
-   sheet. Alternatives: intents without a Siri phrase (keeping 5 of 10); or no link.
-6. **Where the settings live.** Recommended: in the sheet only (order pop-up and window option,
-   remembered). Alternative: also a "Capture" section in Settings → Popup or Switching.
-7. **Release.** Recommended: merge capture as it's ready and release it with phase 4b (triggers)
-   as 0.10.0. Alternative: release capture alone as 0.10.0 once PR 4 lands, and triggers as 0.11.0.
+Recorded 2026-10-25 by the user; each one is final for this spec. (User-decided.)
+
+1. **Review step.** **Decision (2026-10-25):** Capture always shows the review sheet; there is no
+   ⌥-click one-click capture. Siri and the Shortcuts app are the only paths without a sheet.
+   (User-decided.) One visible review keeps unwanted apps out of a new group.
+2. **Finder and protected apps.** **Decision (2026-10-25):** Finder is never listed (Add Apps… can
+   still add it); protected apps are listed but not selected. (User-decided.) Protected apps are the
+   all-day apps (mail, chat, a password manager), which are rarely part of one task.
+3. **Name suggestion.** **Decision (2026-10-25):** The suggestion is "Xcode +3" (the first selected
+   app and how many more), made unique among groups. (User-decided.) It names the group after the
+   app that matters and needs no plural forms, so every language reads it the same.
+4. **The window option.** **Decision (2026-10-25):** "Select only apps with open windows" is off by
+   default and only changes which apps start selected; it never hides or removes an app. (User-decided.)
+   Window data is a heuristic without Accessibility, so it must not decide eligibility (R1).
+5. **Siri phrase and link.** **Decision (2026-10-25):** Both intents appear in the Shortcuts app; one
+   App Shortcut carries Siri phrases for New Group from Open Apps (6 of the 10 allowed); `capture`
+   links only open the sheet. (User-decided.) A phrase for the main action fits the limit, and a link
+   that only shows the sheet cannot write anything.
+6. **Where the settings live.** **Decision (2026-10-25):** The order and the window option live only
+   in the sheet, remembered in `preferences.json`; there is no Settings pane. (User-decided.) Two
+   controls used only from the sheet don't justify a new Settings section.
+7. **Release.** **Decision (2026-10-25):** Capture ships on its own as 0.10.0 once PR 4 lands;
+   triggers (phase 4b) follow in a later release. (User-decided.) Capture is complete without
+   triggers, so it ships first.
