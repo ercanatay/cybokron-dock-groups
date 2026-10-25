@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-25
+
 ### Added
 
 - New Group from Open Apps… (the menu bar menu, and the group window's + menu) lists the apps that are open now, the one you were working in first, and makes a group of the ones you keep checked, named after them ("Xcode +3") unless you type a name; it's added at the end of the list and selected
@@ -471,7 +473,8 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...v0.7.0
@@ -482,7 +485,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...v0.10.0
 [0.6.6]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.3...v0.6.4
