@@ -96,166 +96,200 @@ struct MainWindowView: View {
     /// The capture sheet showing; the next one waits in `selection.capture`.
     @State private var shownCapture: CaptureRequest?
 
+    /// The window's content, then its questions, then its sheets, then the stores' problems — the
+    /// same modifiers in the same order as one chain, split so that each part is type-checked on
+    /// its own (as one expression it took the compiler over a second, and CI's gave up on it).
     var body: some View {
+        issueAlerts(sheets(questions(splitView)))
+    }
+
+    /// The group list and the selected group's settings, an archived group's summary, or the
+    /// placeholder.
+    private var splitView: some View {
         NavigationSplitView {
-            GroupSidebarView(
-                store: store,
-                templates: templates,
-                selection: $selection.groupID,
-                actions: GroupSidebarView.Actions(
-                    add: addGroup,
-                    addFromTemplate: addGroup(from:),
-                    manageTemplates: { isManagingTemplates = true },
-                    captureNewGroup: { actions.capture(.newGroup) },
-                    rename: beginRename,
-                    duplicate: duplicate,
-                    saveAsTemplate: { templateSource = $0 },
-                    archive: requestArchive,
-                    restore: restore,
-                    delete: confirmDeletion,
-                    openAll: actions.openAll,
-                    hideAll: actions.hideAll
-                )
-            )
-            .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
+            sidebar
         } detail: {
-            if let id = selection.groupID, let group = store.group(withID: id) {
-                GroupDetailView(
-                    store: store,
-                    standalone: standalone,
-                    session: session,
-                    shortcuts: shortcuts,
-                    group: group,
-                    tiles: tiles,
-                    actions: actions,
-                    items: items,
-                    selection: selection
+            detail
+        }
+        .frame(minWidth: 680, minHeight: 440)
+    }
+
+    private var sidebar: some View {
+        GroupSidebarView(
+            store: store,
+            templates: templates,
+            selection: $selection.groupID,
+            actions: GroupSidebarView.Actions(
+                add: addGroup,
+                addFromTemplate: addGroup(from:),
+                manageTemplates: { isManagingTemplates = true },
+                captureNewGroup: { actions.capture(.newGroup) },
+                rename: beginRename,
+                duplicate: duplicate,
+                saveAsTemplate: { templateSource = $0 },
+                archive: requestArchive,
+                restore: restore,
+                delete: confirmDeletion,
+                openAll: actions.openAll,
+                hideAll: actions.hideAll
+            )
+        )
+        .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 340)
+    }
+
+    @ViewBuilder
+    private var detail: some View {
+        if let id = selection.groupID, let group = store.group(withID: id) {
+            GroupDetailView(
+                store: store,
+                standalone: standalone,
+                session: session,
+                shortcuts: shortcuts,
+                group: group,
+                tiles: tiles,
+                actions: actions,
+                items: items,
+                selection: selection
+            )
+            .id(group.id)
+        } else if let id = selection.groupID, let archived = store.archivedGroup(withID: id) {
+            ArchivedGroupView(
+                archived: archived,
+                onRestore: { restore(archived) },
+                onDelete: { confirmDeletion(archived.group) }
+            )
+            .id(archived.id)
+        } else {
+            ContentUnavailableView {
+                Label(
+                    hasNoGroups ? L10n.GroupWindow.noGroupsTitle : L10n.GroupWindow.noSelectionTitle,
+                    systemImage: "square.grid.2x2"
                 )
-                .id(group.id)
-            } else if let id = selection.groupID, let archived = store.archivedGroup(withID: id) {
-                ArchivedGroupView(
-                    archived: archived,
-                    onRestore: { restore(archived) },
-                    onDelete: { confirmDeletion(archived.group) }
-                )
-                .id(archived.id)
-            } else {
-                ContentUnavailableView {
-                    Label(
-                        hasNoGroups ? L10n.GroupWindow.noGroupsTitle : L10n.GroupWindow.noSelectionTitle,
-                        systemImage: "square.grid.2x2"
-                    )
-                } description: {
-                    Text(hasNoGroups ? L10n.GroupWindow.noGroupsDescription : L10n.GroupWindow.noSelectionDescription)
-                } actions: {
-                    if store.groups.isEmpty {
-                        Button(L10n.GroupWindow.addGroup, action: addGroup)
-                    }
+            } description: {
+                Text(hasNoGroups ? L10n.GroupWindow.noGroupsDescription : L10n.GroupWindow.noSelectionDescription)
+            } actions: {
+                if store.groups.isEmpty {
+                    Button(L10n.GroupWindow.addGroup, action: addGroup)
                 }
             }
         }
-        .frame(minWidth: 680, minHeight: 440)
-        .alert(L10n.GroupWindow.renameTitle, isPresented: $isRenaming) {
-            TextField(L10n.GroupWindow.name, text: $renameText)
-            Button(L10n.GroupWindow.rename, action: commitRename)
-            Button(L10n.Common.cancel, role: .cancel) {}
-        } message: {
-            Text(L10n.GroupWindow.renameMessage)
-        }
-        .confirmationDialog(
-            L10n.GroupWindow.deleteTitle(deletionCandidate?.name ?? ""),
-            isPresented: $isConfirmingDeletion,
-            titleVisibility: .visible,
-            presenting: deletionCandidate
-        ) { group in
-            Button(L10n.GroupWindow.deleteGroup, role: .destructive) { delete(group) }
-            Button(L10n.Common.cancel, role: .cancel) {}
-        } message: { group in
-            Text(group.isStandalone ? L10n.GroupWindow.deleteMessageStandalone : L10n.GroupWindow.deleteMessage)
-        }
-        .confirmationDialog(
-            L10n.GroupWindow.Archive.confirmTitle(archiveCandidate?.name ?? ""),
-            isPresented: $isConfirmingArchive,
-            titleVisibility: .visible,
-            presenting: archiveCandidate
-        ) { group in
-            Button(L10n.GroupWindow.Archive.archive) { archive(group) }
-            Button(L10n.Common.cancel, role: .cancel) {}
-        } message: { _ in
-            Text(L10n.GroupWindow.Archive.confirmMessage)
-        }
-        .alert(
-            restoreNote?.title ?? "",
-            isPresented: Binding(
-                get: { restoreNote != nil },
-                set: { isPresented in if !isPresented { restoreNote = nil } }
-            ),
-            presenting: restoreNote
-        ) { _ in
-            Button(L10n.Common.ok) {}
-        } message: { note in
-            Text(note.message)
-        }
-        .sheet(item: $templateSource) { group in
-            SaveTemplateSheet(templates: templates, store: store, group: group) { templateSource = nil }
-        }
-        .sheet(isPresented: $isManagingTemplates) {
-            ManageTemplatesSheet(
-                templates: templates,
-                onNewGroup: { template in
-                    isManagingTemplates = false
-                    addGroup(from: template)
-                },
-                dismiss: { isManagingTemplates = false }
-            )
-        }
-        .sheet(item: $shownCapture) { request in
-            CaptureSheet(
-                request: request,
-                capture: capture,
-                icons: items.icons,
-                onCreated: { id in selection.groupID = id },
-                dismiss: { shownCapture = nil }
-            )
-        }
-        .onChange(of: selection.capture?.id) {
-            // Once the window that was just asked to come forward is there for the sheet.
-            DispatchQueue.main.async { presentPendingCapture() }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didEndSheetNotification)) { note in
-            guard let window = note.object as? NSWindow, window === items.window else { return }
-            DispatchQueue.main.async { presentPendingCapture() }
-        }
-        .alert(
-            templates.issue?.title ?? "",
-            isPresented: Binding(
-                get: { templates.issue != nil },
-                set: { isPresented in if !isPresented { templates.dismissIssue() } }
-            ),
-            presenting: templates.issue
-        ) { _ in
-            Button(L10n.Common.ok) { templates.dismissIssue() }
-        } message: { issue in
-            Text(issue.message)
-        }
-        .alert(
-            store.issue?.title ?? "",
-            isPresented: Binding(
-                get: { store.issue != nil },
-                set: { isPresented in if !isPresented { store.dismissIssue() } }
-            ),
-            presenting: store.issue
-        ) { _ in
-            Button(L10n.Common.ok) { store.dismissIssue() }
-        } message: { issue in
-            Text(issue.message)
-        }
-        .onAppear {
-            if selection.groupID == nil {
-                selection.groupID = store.groups.first?.id
+    }
+
+    /// Rename, Delete…, Archive (a standalone group asks) and the note after a restore.
+    private func questions<Content: View>(_ content: Content) -> some View {
+        content
+            .alert(L10n.GroupWindow.renameTitle, isPresented: $isRenaming) {
+                TextField(L10n.GroupWindow.name, text: $renameText)
+                Button(L10n.GroupWindow.rename, action: commitRename)
+                Button(L10n.Common.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.GroupWindow.renameMessage)
             }
-            DispatchQueue.main.async { presentPendingCapture() }
-        }
+            .confirmationDialog(
+                L10n.GroupWindow.deleteTitle(deletionCandidate?.name ?? ""),
+                isPresented: $isConfirmingDeletion,
+                titleVisibility: .visible,
+                presenting: deletionCandidate
+            ) { group in
+                Button(L10n.GroupWindow.deleteGroup, role: .destructive) { delete(group) }
+                Button(L10n.Common.cancel, role: .cancel) {}
+            } message: { group in
+                Text(group.isStandalone ? L10n.GroupWindow.deleteMessageStandalone : L10n.GroupWindow.deleteMessage)
+            }
+            .confirmationDialog(
+                L10n.GroupWindow.Archive.confirmTitle(archiveCandidate?.name ?? ""),
+                isPresented: $isConfirmingArchive,
+                titleVisibility: .visible,
+                presenting: archiveCandidate
+            ) { group in
+                Button(L10n.GroupWindow.Archive.archive) { archive(group) }
+                Button(L10n.Common.cancel, role: .cancel) {}
+            } message: { _ in
+                Text(L10n.GroupWindow.Archive.confirmMessage)
+            }
+            .alert(
+                restoreNote?.title ?? "",
+                isPresented: Binding(
+                    get: { restoreNote != nil },
+                    set: { isPresented in if !isPresented { restoreNote = nil } }
+                ),
+                presenting: restoreNote
+            ) { _ in
+                Button(L10n.Common.ok) {}
+            } message: { note in
+                Text(note.message)
+            }
+    }
+
+    /// Save as Template…, Manage Templates and the capture sheet, which waits for any other sheet.
+    private func sheets<Content: View>(_ content: Content) -> some View {
+        content
+            .sheet(item: $templateSource) { group in
+                SaveTemplateSheet(templates: templates, store: store, group: group) { templateSource = nil }
+            }
+            .sheet(isPresented: $isManagingTemplates) {
+                ManageTemplatesSheet(
+                    templates: templates,
+                    onNewGroup: { template in
+                        isManagingTemplates = false
+                        addGroup(from: template)
+                    },
+                    dismiss: { isManagingTemplates = false }
+                )
+            }
+            .sheet(item: $shownCapture) { request in
+                CaptureSheet(
+                    request: request,
+                    capture: capture,
+                    icons: items.icons,
+                    onCreated: { id in selection.groupID = id },
+                    dismiss: { shownCapture = nil }
+                )
+            }
+            .onChange(of: selection.capture?.id) {
+                // Once the window that was just asked to come forward is there for the sheet.
+                DispatchQueue.main.async { presentPendingCapture() }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSWindow.didEndSheetNotification)) { note in
+                guard let window = note.object as? NSWindow, window === items.window else { return }
+                DispatchQueue.main.async { presentPendingCapture() }
+            }
+    }
+
+    /// The templates' and the groups' load and save problems, and what the window does when it
+    /// appears.
+    private func issueAlerts<Content: View>(_ content: Content) -> some View {
+        content
+            .alert(
+                templates.issue?.title ?? "",
+                isPresented: Binding(
+                    get: { templates.issue != nil },
+                    set: { isPresented in if !isPresented { templates.dismissIssue() } }
+                ),
+                presenting: templates.issue
+            ) { _ in
+                Button(L10n.Common.ok) { templates.dismissIssue() }
+            } message: { issue in
+                Text(issue.message)
+            }
+            .alert(
+                store.issue?.title ?? "",
+                isPresented: Binding(
+                    get: { store.issue != nil },
+                    set: { isPresented in if !isPresented { store.dismissIssue() } }
+                ),
+                presenting: store.issue
+            ) { _ in
+                Button(L10n.Common.ok) { store.dismissIssue() }
+            } message: { issue in
+                Text(issue.message)
+            }
+            .onAppear {
+                if selection.groupID == nil {
+                    selection.groupID = store.groups.first?.id
+                }
+                DispatchQueue.main.async { presentPendingCapture() }
+            }
     }
 
     /// Shows the waiting capture sheet unless a sheet, an alert or an open panel is up in the
