@@ -3,8 +3,8 @@ import DockGroupsCore
 import SwiftUI
 
 /// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, switching
-/// groups (protected apps, the current group), triggers (Open at Login, the pause, every trigger),
-/// the Most Used list, updates,
+/// groups (protected apps, the current group), triggers (Open at Login, the pause, Location
+/// access, every trigger), the Most Used list, updates,
 /// backups with the diagnostics report, the changelog, and ways to support the project (the About
 /// window's content), each in its own pane, picked from a sidebar.
 @MainActor
@@ -225,7 +225,14 @@ private struct SettingsView: View {
         case .switching:
             SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)
         case .triggers:
-            TriggersSettingsView(triggers: triggers, store: triggers.store, groups: store, loginItem: triggers.loginItem, showGroupSettings: showGroupSettings)
+            TriggersSettingsView(
+                triggers: triggers,
+                store: triggers.store,
+                groups: store,
+                loginItem: triggers.loginItem,
+                locationAccess: triggers.locationAccess,
+                showGroupSettings: showGroupSettings
+            )
         case .mostUsed:
             MostUsedSettingsView(preferences: preferences, usage: usage)
         case .updates:

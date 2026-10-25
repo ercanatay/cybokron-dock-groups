@@ -45,7 +45,7 @@ struct SettingsPaneTests {
         #expect(cases.firstIndex(of: "triggers") == cases.firstIndex(of: "switching").map { $0 + 1 })
         #expect(settings.contains("case .triggers: L10n.Triggers.Settings.tab"))
         #expect(settings.contains("case .triggers: \"clock.arrow.2.circlepath\""))
-        #expect(settings.contains("TriggersSettingsView(triggers: triggers, store: triggers.store, groups: store, loginItem: triggers.loginItem, showGroupSettings: showGroupSettings)"))
+        #expect(settings.contains("TriggersSettingsView(\n                triggers: triggers,\n                store: triggers.store,\n                groups: store,\n                loginItem: triggers.loginItem,\n                locationAccess: triggers.locationAccess,\n                showGroupSettings: showGroupSettings\n            )"))
         #expect(try LocalizationTests.table("en")["settings.triggers.tab"] == "Triggers")
     }
 

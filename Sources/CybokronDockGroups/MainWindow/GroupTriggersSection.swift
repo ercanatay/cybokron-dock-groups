@@ -5,8 +5,8 @@ import SwiftUI
 /// The group window's Triggers section (triggers spec §3.1): the group's triggers — each with its
 /// switch, its rule and what happened last — Add Trigger…, Edit… and Remove. It says that triggers
 /// run while the app is open and never quit apps, whether they're paused, and when Open at Login is
-/// off. A trigger this version can't edit (a network one, or one a newer version made) can still be
-/// turned off and removed.
+/// off. A trigger this version can't edit (a VPN one, or one a newer version made) can still be
+/// turned off and removed; a Wi-Fi one says when it waits for Location access.
 struct GroupTriggersSection: View {
     @ObservedObject var triggers: TriggerController
     @ObservedObject var store: TriggerStore
@@ -53,7 +53,9 @@ struct GroupTriggersSection: View {
                     existing: request.existing,
                     store: store,
                     loginItem: loginItem,
-                    readDisplays: triggers.connectedDisplays
+                    locationAccess: triggers.locationAccess,
+                    readDisplays: triggers.connectedDisplays,
+                    readNetworkName: triggers.currentWiFiNetworkName
                 ) { editing = nil }
             }
             if triggers.isPaused, !list.isEmpty {

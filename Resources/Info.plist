@@ -49,6 +49,8 @@
 	<string>The app checks that files and folders you put in groups from your Documents folder are still there, and opens them when you ask; it never reads their contents.</string>
 	<key>NSDownloadsFolderUsageDescription</key>
 	<string>The app checks that files and folders you put in groups from your Downloads folder are still there, and opens them when you ask; it never reads their contents.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Cybokron Dock Groups reads the name of the Wi-Fi network your Mac is on, only to run the triggers you set for Wi-Fi networks. macOS treats network names as location information. Your location is never read, kept or sent anywhere.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2026 Ercan Atay (Cybokron). Released under the MIT License.</string>
 	<key>NSNetworkVolumesUsageDescription</key>

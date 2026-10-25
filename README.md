@@ -97,6 +97,15 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   started it. Display triggers need no permission: they read what macOS tells every app about its
   displays (their maker's and model's numbers, the serial number when there's a real one, the name).
   With no display connected at all, nothing can be read, and nothing changes.
+- **Network triggers**: **When Ethernet Connects** or **Disconnects** (a wired connection — built in,
+  an adapter or a dock — has a network, even when Wi-Fi is used first; no permission) and **When the
+  Mac Joins** or **Leaves a Wi-Fi Network**, by the network's name (matched exactly; **Use Current
+  Network** fills it in). macOS shows Wi-Fi names only to apps allowed to use Location Services, so the
+  editor's **Allow…** asks once (and **Open Privacy Settings…** appears if it was refused); the app
+  reads the network's name, never your location, and Settings → Triggers shows the access. Without
+  it a Wi-Fi trigger waits: the network is *unknown*, never "not connected", so a Leaves trigger
+  can't run just because the app lost sight of the network. VPNs aren't watched — macOS doesn't say
+  reliably when one connects.
 - **While the app is quit**, a Shortcuts automation can start a group (macOS 26 and later): in the
   Shortcuts app, **Automation → New Automation → Time of Day** (or Wi-Fi, or Display), choose
   *Run Immediately*, then add the **Start Group** action (or Launch Group, Show Group) with your

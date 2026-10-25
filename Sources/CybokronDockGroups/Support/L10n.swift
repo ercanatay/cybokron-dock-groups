@@ -1695,6 +1695,10 @@ extension L10n {
             static var whenDisplaysDisconnected: String {
                 tr("triggers.editor.event.displaysDisconnected", "When These Displays Are No Longer Connected")
             }
+            static var whenWiFiJoins: String { tr("triggers.editor.event.wifiJoins", "When the Mac Joins a Wi-Fi Network") }
+            static var whenWiFiLeaves: String { tr("triggers.editor.event.wifiLeaves", "When the Mac Leaves a Wi-Fi Network") }
+            static var whenEthernetConnects: String { tr("triggers.editor.event.ethernetConnects", "When Ethernet Connects") }
+            static var whenEthernetDisconnects: String { tr("triggers.editor.event.ethernetDisconnects", "When Ethernet Disconnects") }
             static var display: String { tr("triggers.editor.display", "Display") }
             static var anyExternalDisplay: String { tr("triggers.editor.display.anyExternal", "Any External Display") }
             /// A saved display that isn't connected now: "LG UltraFine (not connected)".
@@ -1709,6 +1713,56 @@ extension L10n {
                 tr(
                     "triggers.editor.displays.hint",
                     "Only which displays are connected counts, built-in included: not where they are, their resolution or which one is main."
+                )
+            }
+            static var networkName: String { tr("triggers.editor.wifi.name", "Network Name") }
+            static var useCurrentNetwork: String { tr("triggers.editor.wifi.useCurrent", "Use Current Network") }
+            static var invalidNetworkName: String {
+                tr("triggers.editor.wifi.invalid", "A Wi-Fi network's name has 1 to 32 bytes and no control characters.")
+            }
+            static var networkNameHint: String {
+                tr("triggers.editor.wifi.hint", "The name is matched exactly, capitals included, and any network with this name counts.")
+            }
+            static var leavesHint: String {
+                tr(
+                    "triggers.editor.wifi.leavesHint",
+                    "Leaving counts when the Mac joins another network or Wi-Fi is turned off — never when the app just can't see the network's name."
+                )
+            }
+            static var locationNeeded: String {
+                tr(
+                    "triggers.editor.wifi.location",
+                    "macOS shows Wi-Fi network names only to apps allowed to use Location Services. Your location is never read."
+                )
+            }
+            static var allowLocation: String { tr("triggers.editor.wifi.allow", "Allow…") }
+            static var openPrivacySettings: String { tr("triggers.editor.wifi.openPrivacySettings", "Open Privacy Settings…") }
+            static var waitsForLocation: String {
+                tr("triggers.editor.wifi.waits", "You can add the trigger now: it waits until macOS lets the app see network names.")
+            }
+            static var locationAllowed: String {
+                tr("triggers.editor.wifi.allowed", "Location access is allowed: the app reads only the network's name.")
+            }
+            static func locationDenied(_ appName: String) -> String {
+                tr(
+                    "triggers.editor.wifi.denied",
+                    "Location access isn't allowed: turn %@ on in System Settings → Privacy & Security → Location Services.",
+                    appName
+                )
+            }
+            static var locationServicesOff: String {
+                tr(
+                    "triggers.editor.wifi.servicesOff",
+                    "Location Services is off on this Mac: turn it on in System Settings → Privacy & Security → Location Services."
+                )
+            }
+            static var locationRestricted: String {
+                tr("triggers.editor.wifi.restricted", "Location access isn't available on this Mac: it's restricted by a profile or Screen Time.")
+            }
+            static var ethernetHint: String {
+                tr(
+                    "triggers.editor.ethernet.hint",
+                    "Ethernet counts as connected while a wired connection — built in, an adapter or a dock — has a network, even when Wi-Fi is used first. It needs no permission."
                 )
             }
             static var finishWhenEnds: String { tr("triggers.editor.finishWhenEnds", "Finish when it ends") }
@@ -1814,6 +1868,10 @@ extension L10n {
             static var turnOn: String { tr("groupWindow.triggers.turnOn", "Turn On…") }
             static var paused: String { tr("groupWindow.triggers.paused", "Triggers are paused: none of them runs now.") }
             static var archived: String { tr("groupWindow.triggers.archived", "Doesn't run while the group is archived.") }
+            static var waitingForLocation: String { tr("groupWindow.triggers.waitingForLocation", "Waiting for Location access.") }
+            static var vpnNotWatched: String {
+                tr("groupWindow.triggers.vpnNotWatched", "Doesn't run in this version: macOS doesn't tell reliably when a VPN connects.")
+            }
             /// The archived group's summary.
             static func archivedCount(_ count: Int) -> String {
                 count == 1
@@ -1840,10 +1898,22 @@ extension L10n {
             static var pause: String { tr("settings.triggers.pause", "Pause") }
             static var resume: String { tr("settings.triggers.resume", "Resume") }
             static var location: String { tr("settings.triggers.location", "Location Access") }
-            static var locationNotUsed: String { tr("settings.triggers.location.notUsed", "Not used") }
-            static var locationDetail: String {
-                tr("settings.triggers.location.detail", "Only triggers that wait for a Wi-Fi network need it; no trigger here does.")
+            static var locationAllowed: String { tr("settings.triggers.location.allowed", "Allowed") }
+            static var locationNotDetermined: String { tr("settings.triggers.location.notDetermined", "Not asked yet") }
+            static var locationDenied: String {
+                tr("settings.triggers.location.denied", "Not allowed: Wi-Fi triggers can't see network names.")
             }
+            static var locationRestricted: String { tr("settings.triggers.location.restricted", "Not available on this Mac") }
+            static var locationServicesOff: String {
+                tr("settings.triggers.location.servicesOff", "Location Services is off: Wi-Fi triggers can't see network names.")
+            }
+            static var locationHint: String {
+                tr(
+                    "settings.triggers.location.hint",
+                    "Only triggers that wait for a Wi-Fi network need it: macOS shows network names only to apps allowed to use Location Services. You're asked only when you click Allow… in such a trigger, and the app reads the network's name, never your location."
+                )
+            }
+            static var openPrivacySettings: String { tr("settings.triggers.location.openSettings", "Open Privacy Settings…") }
             static var listHeader: String { tr("settings.triggers.list", "All Triggers") }
             static var listEmpty: String { tr("settings.triggers.list.empty", "No triggers yet. Add them in a group's settings in the group window.") }
             static var showInGroupWindow: String { tr("settings.triggers.showInGroupWindow", "Show in Group Window…") }

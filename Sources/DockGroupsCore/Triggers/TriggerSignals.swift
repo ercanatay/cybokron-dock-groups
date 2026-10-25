@@ -22,6 +22,72 @@ public enum WiFiReading: Hashable, Sendable {
     case connected(WiFiNetworkName)
 }
 
+/// Location Services access, as far as Wi-Fi triggers care (spec §1.5, §2.3, TS-7): macOS shows the
+/// Wi-Fi network's name only to apps allowed to use Location Services.
+public enum LocationAuthorization: String, CaseIterable, Sendable {
+    /// Never asked: the trigger editor's Allow… asks.
+    case notDetermined
+    case allowed
+    case denied
+    /// Not allowed on this Mac whatever the user chooses (a profile, Screen Time).
+    case restricted
+    /// Location Services is off for the whole Mac.
+    case servicesOff
+
+    /// Whether macOS lets the app read the Wi-Fi network's name.
+    public var allowsNetworkNames: Bool { self == .allowed }
+
+    /// How the diagnostics report says it.
+    public var diagnosticsDescription: String {
+        switch self {
+        case .notDetermined: return "not asked"
+        case .allowed: return "allowed"
+        case .denied: return "not allowed"
+        case .restricted: return "restricted"
+        case .servicesOff: return "Location Services off"
+        }
+    }
+}
+
+/// What CoreWLAN says about the Wi-Fi interface (the app's `WiFiSource`), before it's a
+/// `WiFiReading`.
+public struct WiFiInterfaceState: Hashable, Sendable {
+    public var isPoweredOn: Bool
+    /// Joined to a network as a client (station mode).
+    public var isAssociated: Bool
+    /// The network's name; `nil` when macOS doesn't tell it.
+    public var networkName: String?
+
+    public init(isPoweredOn: Bool, isAssociated: Bool, networkName: String?) {
+        self.isPoweredOn = isPoweredOn
+        self.isAssociated = isAssociated
+        self.networkName = networkName
+    }
+}
+
+extension WiFiReading {
+    /// The reading Wi-Fi triggers get (spec §1.5, T-S9). Without Location access it's always
+    /// unknown — never "not connected", so a "leaves" trigger can't run because the app lost sight
+    /// of the network. With it, Wi-Fi turned off or joined to no network is "not connected"; a
+    /// joined network whose name macOS withholds, or a Mac whose Wi-Fi can't be read, is unknown.
+    public init(interface: WiFiInterfaceState?, authorization: LocationAuthorization) {
+        guard authorization.allowsNetworkNames, let interface else {
+            self = .unknown
+            return
+        }
+        guard interface.isPoweredOn, interface.isAssociated else {
+            self = .notConnected
+            return
+        }
+        guard let name = interface.networkName, !name.isEmpty else {
+            self = .unknown
+            return
+        }
+        // Kept as macOS said it: a name a trigger can't have simply matches none.
+        self = .connected(WiFiNetworkName(stored: name))
+    }
+}
+
 /// The network once it settled (spec §1.5). `nil` values are unknown and change nothing.
 public struct NetworkReading: Hashable, Sendable {
     public var usesEthernet: Bool?

@@ -2,9 +2,12 @@ import Foundation
 
 /// What the trigger editor shows and changes (triggers spec §3.2): when — a moment (a time, login,
 /// the app opening, the screens waking or sleeping) or a change (a display connecting or
-/// disconnecting, a set of displays being connected or no longer) —, the action that event allows
-/// (§1.6), how it runs, At most once a day and, for a Start on a change's start, Finish when it
-/// ends. Show the Popup always runs right away.
+/// disconnecting, a set of displays being connected or no longer, the Mac joining or leaving a
+/// Wi-Fi network, Ethernet connecting or disconnecting) —, the action that event allows (§1.6),
+/// how it runs, At most once a day and, for a Start on a change's start, Finish when it ends. Show
+/// the Popup always runs right away.
+///
+/// VPNs aren't offered: macOS doesn't say reliably when one connects (TS-8).
 public struct TriggerDraft: Equatable, Sendable {
     /// Events that happen at a moment.
     public enum Kind: String, CaseIterable, Sendable {
@@ -23,14 +26,31 @@ public struct TriggerDraft: Equatable, Sendable {
         /// The connected displays become exactly the chosen ones; its end is `displaysDisconnected`.
         case displaysConnected
         case displaysDisconnected
+        /// The Mac joins the named Wi-Fi network; its end is `wifiLeaves`.
+        case wifiJoins
+        case wifiLeaves
+        /// A wired connection gets a network; its end is `ethernetDisconnects`.
+        case ethernetConnects
+        case ethernetDisconnects
 
         /// The condition it starts or ends.
         public var edge: TriggerEdge {
             switch self {
-            case .displayConnects, .displaysConnected: return .starts
-            case .displayDisconnects, .displaysDisconnected: return .ends
+            case .displayConnects, .displaysConnected, .wifiJoins, .ethernetConnects: return .starts
+            case .displayDisconnects, .displaysDisconnected, .wifiLeaves, .ethernetDisconnects: return .ends
             }
         }
+
+        /// Whether it's about the displays (otherwise the network).
+        public var isAboutDisplays: Bool {
+            switch self {
+            case .displayConnects, .displayDisconnects, .displaysConnected, .displaysDisconnected: return true
+            case .wifiJoins, .wifiLeaves, .ethernetConnects, .ethernetDisconnects: return false
+            }
+        }
+
+        /// Whether it waits for a Wi-Fi network's name (Location access, spec §1.5).
+        public var needsLocation: Bool { self == .wifiJoins || self == .wifiLeaves }
     }
 
     /// The editor's When pop-up: a moment or a change.
@@ -38,9 +58,16 @@ public struct TriggerDraft: Equatable, Sendable {
         case moment(Kind)
         case change(Change)
 
-        /// Every event the editor offers, in the pop-up's order.
+        /// Every event the editor offers, in the pop-up's order: the moments, the displays' changes,
+        /// the network's changes.
         public static var offered: [When] {
             Kind.allCases.map(When.moment) + Change.allCases.map(When.change)
+        }
+
+        /// The change, when it's one.
+        public var change: Change? {
+            if case .change(let change) = self { return change }
+            return nil
         }
     }
 
@@ -53,6 +80,9 @@ public struct TriggerDraft: Equatable, Sendable {
     public var display: DisplayMatch
     /// The displays a These Displays trigger waits for (Use Current Displays fills them in).
     public var displays: [DisplayIdentity]
+    /// The Wi-Fi network a Wi-Fi trigger waits for, as typed or as Use Current Network filled it
+    /// in: matched exactly, so it's kept as it is (`isWiFiNameValid`).
+    public var wifiName: String
     public private(set) var action: TriggerAction
     public private(set) var runMode: TriggerRunMode
     public var oncePerDay: Bool
@@ -66,13 +96,14 @@ public struct TriggerDraft: Equatable, Sendable {
         weekdays = TriggerSchedule.workingDays(in: calendar)
         display = .anyExternal
         displays = []
+        wifiName = ""
         action = .start
         runMode = .notice
         oncePerDay = false
         finishesWhenEventEnds = false
     }
 
-    /// The draft of `trigger`; `nil` for an event this editor doesn't offer (a network, or one it
+    /// The draft of `trigger`; `nil` for an event this editor doesn't offer (a VPN, or one it
     /// can't read) and for an action a newer version wrote.
     public init?(editing trigger: GroupTrigger, calendar: Calendar) {
         // An action a newer version wrote: editing would replace it.
@@ -93,7 +124,13 @@ public struct TriggerDraft: Equatable, Sendable {
         case .condition(.displays(let arrangement), let edge):
             when = .change(edge == .starts ? .displaysConnected : .displaysDisconnected)
             displays = arrangement.displays
-        case .condition, .unsupported:
+        case .condition(.wifi(let network), let edge):
+            when = .change(edge == .starts ? .wifiJoins : .wifiLeaves)
+            wifiName = network.name
+        case .condition(.ethernet, let edge):
+            when = .change(edge == .starts ? .ethernetConnects : .ethernetDisconnects)
+        // VPNs aren't offered (TS-8).
+        case .condition(.vpn, _), .unsupported:
             return nil
         }
         action = trigger.action
@@ -131,8 +168,13 @@ public struct TriggerDraft: Equatable, Sendable {
         switch change {
         case .displayConnects, .displayDisconnects: return .display(display)
         case .displaysConnected, .displaysDisconnected: return .displays(DisplayArrangement(displays: displays))
+        case .wifiJoins, .wifiLeaves: return .wifi(WiFiNetworkName(stored: wifiName))
+        case .ethernetConnects, .ethernetDisconnects: return .ethernet
         }
     }
+
+    /// Whether the Wi-Fi network's name can be one: 1 to 32 bytes in UTF-8, no control characters.
+    public var isWiFiNameValid: Bool { WiFiNetworkName.isValid(wifiName) }
 
     public var allowedActions: [TriggerAction] { event.allowedActions }
 
@@ -147,7 +189,7 @@ public struct TriggerDraft: Equatable, Sendable {
     }
 
     /// Whether it can be saved: a time needs at least one day, These Displays one to eight
-    /// displays, a chosen display can't be the built-in one.
+    /// displays, a chosen display can't be the built-in one, a Wi-Fi network a valid name.
     public var isValid: Bool {
         GroupTrigger(groupID: UUID(), event: event, action: action, runMode: runMode).isRunnable
     }

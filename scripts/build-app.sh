@@ -185,12 +185,13 @@ elif [[ -z "$APPINTENTS_PROCESSOR" ]]; then
     echo "note: appintentsmetadataprocessor needs Xcode; Siri and Shortcuts won't list this build's actions." >&2
 fi
 
+ENTITLEMENTS="$ROOT/Resources/CybokronDockGroups.entitlements"
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
     # Release builds: Developer ID signature with the hardened runtime and a secure timestamp, as
     # notarization requires. The app needs no entitlements.
-    codesign --force --deep --sign "$CODESIGN_IDENTITY" --options runtime --timestamp "$APP"
+    codesign --force --deep --sign "$CODESIGN_IDENTITY" --options runtime --entitlements "$ENTITLEMENTS" --timestamp "$APP"
 else
-    codesign --force --sign - --options runtime --timestamp=none "$APP"
+    codesign --force --sign - --options runtime --entitlements "$ENTITLEMENTS" --timestamp=none "$APP"
 fi
 codesign --verify --strict "$APP"
 

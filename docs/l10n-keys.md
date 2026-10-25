@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1001 keys.
+1026 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1355,6 +1355,24 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.displays.hint` | Only which displays are connected counts, built-in included: not where they are, their resolution or which one is main. |
 | `triggers.editor.finishWhenEnds` | Finish when it ends |
 | `triggers.editor.finishWhenEnds.hint` | When it ends, “%@” is finished — its apps hidden — if it's still the current group and this trigger started it. |
+| `triggers.editor.event.wifiJoins` | When the Mac Joins a Wi-Fi Network |
+| `triggers.editor.event.wifiLeaves` | When the Mac Leaves a Wi-Fi Network |
+| `triggers.editor.event.ethernetConnects` | When Ethernet Connects |
+| `triggers.editor.event.ethernetDisconnects` | When Ethernet Disconnects |
+| `triggers.editor.wifi.name` | Network Name |
+| `triggers.editor.wifi.useCurrent` | Use Current Network |
+| `triggers.editor.wifi.invalid` | A Wi-Fi network's name has 1 to 32 bytes and no control characters. |
+| `triggers.editor.wifi.hint` | The name is matched exactly, capitals included, and any network with this name counts. |
+| `triggers.editor.wifi.leavesHint` | Leaving counts when the Mac joins another network or Wi-Fi is turned off — never when the app just can't see the network's name. |
+| `triggers.editor.wifi.location` | macOS shows Wi-Fi network names only to apps allowed to use Location Services. Your location is never read. |
+| `triggers.editor.wifi.allow` | Allow… |
+| `triggers.editor.wifi.openPrivacySettings` | Open Privacy Settings… |
+| `triggers.editor.wifi.waits` | You can add the trigger now: it waits until macOS lets the app see network names. |
+| `triggers.editor.wifi.allowed` | Location access is allowed: the app reads only the network's name. |
+| `triggers.editor.wifi.denied` | Location access isn't allowed: turn %@ on in System Settings → Privacy & Security → Location Services. |
+| `triggers.editor.wifi.servicesOff` | Location Services is off on this Mac: turn it on in System Settings → Privacy & Security → Location Services. |
+| `triggers.editor.wifi.restricted` | Location access isn't available on this Mac: it's restricted by a profile or Screen Time. |
+| `triggers.editor.ethernet.hint` | Ethernet counts as connected while a wired connection — built in, an adapter or a dock — has a network, even when Wi-Fi is used first. It needs no permission. |
 
 ## Triggers: the notice before a trigger runs (English only for now; `awaitingTranslation`: `triggers.notice.`)
 
@@ -1395,6 +1413,8 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `groupWindow.triggers.archived` | Doesn't run while the group is archived. |
 | `groupWindow.triggers.archivedCount.one` | 1 trigger (it doesn't run while the group is archived) |
 | `groupWindow.triggers.archivedCount.other` | %ld triggers (they don't run while the group is archived) |
+| `groupWindow.triggers.waitingForLocation` | Waiting for Location access. |
+| `groupWindow.triggers.vpnNotWatched` | Doesn't run in this version: macOS doesn't tell reliably when a VPN connects. |
 
 ## Triggers: Settings → Triggers (English only for now; `awaitingTranslation`: `settings.triggers.`)
 
@@ -1413,12 +1433,17 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `settings.triggers.pause` | Pause |
 | `settings.triggers.resume` | Resume |
 | `settings.triggers.location` | Location Access |
-| `settings.triggers.location.notUsed` | Not used |
-| `settings.triggers.location.detail` | Only triggers that wait for a Wi-Fi network need it; no trigger here does. |
 | `settings.triggers.list` | All Triggers |
 | `settings.triggers.list.empty` | No triggers yet. Add them in a group's settings in the group window. |
 | `settings.triggers.showInGroupWindow` | Show in Group Window… |
 | `settings.triggers.footer` | Triggers run while %@ is open. When it's quit, the Shortcuts app's automations can still start a group (macOS 26 and later): in Shortcuts, Automation → Time of Day → Start Group. |
+| `settings.triggers.location.allowed` | Allowed |
+| `settings.triggers.location.notDetermined` | Not asked yet |
+| `settings.triggers.location.denied` | Not allowed: Wi-Fi triggers can't see network names. |
+| `settings.triggers.location.restricted` | Not available on this Mac |
+| `settings.triggers.location.servicesOff` | Location Services is off: Wi-Fi triggers can't see network names. |
+| `settings.triggers.location.hint` | Only triggers that wait for a Wi-Fi network need it: macOS shows network names only to apps allowed to use Location Services. You're asked only when you click Allow… in such a trigger, and the app reads the network's name, never your location. |
+| `settings.triggers.location.openSettings` | Open Privacy Settings… |
 
 ## Triggers: the menu bar menu's Pause Triggers and Quit's tooltip (English only for now; `awaitingTranslation`: `menuBar.triggers.`)
 

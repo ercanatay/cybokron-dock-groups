@@ -152,7 +152,8 @@ struct FileAccessPurposesTests {
             #expect(info[key] as? String == text, "Resources/Info.plist \(key)")
         }
         let declared = Set(info.keys.filter { $0.hasSuffix("UsageDescription") })
-        #expect(declared == Set(FileAccessPurposes.infoPlistEntries.keys))
+        // The Location purpose is the only other one (Wi-Fi triggers, `LocationPurpose`).
+        #expect(declared == Set(FileAccessPurposes.infoPlistEntries.keys).union(LocationPurpose.infoPlistEntries.keys))
     }
 
     @Test func everyAgentHasThem() throws {

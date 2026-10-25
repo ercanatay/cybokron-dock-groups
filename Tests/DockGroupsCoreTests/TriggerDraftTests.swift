@@ -112,7 +112,10 @@ struct TriggerDraftTests {
         let unknown = GroupTrigger.on(.unsupported(.object(["kind": .string("bluetooth")])), group: group)
         // Display triggers are edited here since phase 4b PR 3.
         #expect(TriggerDraft(editing: display, calendar: Self.calendar)?.event == display.event)
-        #expect(TriggerDraft(editing: wifi, calendar: Self.calendar) == nil)
+        // Wi-Fi and Ethernet are edited here since phase 4b PR 4; a VPN isn't (TS-8).
+        #expect(TriggerDraft(editing: wifi, calendar: Self.calendar)?.event == wifi.event)
+        let vpn = GroupTrigger.on(.condition(.vpn, edge: .starts), group: group)
+        #expect(TriggerDraft(editing: vpn, calendar: Self.calendar) == nil)
         #expect(TriggerDraft(editing: unknown, calendar: Self.calendar) == nil)
         // An action a newer version wrote: editing would lose it.
         let json = #"{"id":"\#(UUID().uuidString)","groupID":"\#(group.id.uuidString)","enabled":true,"event":{"kind":"login"},"action":"dance"}"#

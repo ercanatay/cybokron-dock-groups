@@ -3,15 +3,17 @@ import DockGroupsCore
 import SwiftUI
 
 /// Settings → Triggers (triggers spec §3.3): Open at Login, whether triggers run or are paused
-/// (with Pause and Resume), where Location access will show (only Wi-Fi triggers need it, and this
-/// version has none), and every trigger by group — each with its switch, its rule and what happened
-/// last, and the way to its group's settings. The footer says triggers run while the app is open,
-/// and how a Shortcuts automation starts a group when it's quit.
+/// (with Pause and Resume), Location access — which only Wi-Fi triggers need; it's shown here, with
+/// Open Privacy Settings… when it isn't allowed, but never asked for here (only the trigger
+/// editor's Allow… asks) —, and every trigger by group — each with its switch, its rule and what
+/// happened last, and the way to its group's settings. The footer says triggers run while the app
+/// is open, and how a Shortcuts automation starts a group when it's quit.
 struct TriggersSettingsView: View {
     @ObservedObject var triggers: TriggerController
     @ObservedObject var store: TriggerStore
     @ObservedObject var groups: GroupStore
     @ObservedObject var loginItem: LoginItem
+    @ObservedObject var locationAccess: LocationAccess
     /// Opens the group window on a group's settings.
     let showGroupSettings: (DockGroup.ID) -> Void
 
@@ -26,7 +28,10 @@ struct TriggersSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 480)
-        .onAppear { loginItem.refresh() }
+        .onAppear {
+            loginItem.refresh()
+            locationAccess.refresh()
+        }
     }
 
     private var loginSection: some View {
@@ -87,13 +92,30 @@ struct TriggersSettingsView: View {
     private var locationSection: some View {
         Section {
             LabeledContent(Texts.location) {
-                Text(Texts.locationNotUsed)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text(locationText)
+                        .foregroundStyle(locationAccess.status == .allowed ? Color.secondary : Color.orange)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if locationAccess.status == .denied || locationAccess.status == .servicesOff {
+                        Button(Texts.openPrivacySettings, action: locationAccess.openPrivacySettings)
+                    }
+                }
             }
-            Text(Texts.locationDetail)
+            Text(Texts.locationHint)
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var locationText: String {
+        switch locationAccess.status {
+        case .allowed: return Texts.locationAllowed
+        case .notDetermined: return Texts.locationNotDetermined
+        case .denied: return Texts.locationDenied
+        case .restricted: return Texts.locationRestricted
+        case .servicesOff: return Texts.locationServicesOff
         }
     }
 

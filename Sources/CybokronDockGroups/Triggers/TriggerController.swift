@@ -5,7 +5,8 @@ import OSLog
 
 /// Runs the triggers while the app runs (triggers spec §2.5, DECISION 1): it owns the triggers
 /// (`TriggerStore`, `triggers.json`), their state (`TriggerStateStore`, `trigger-state.json`), the
-/// coordinator, the notice and the sources — the clock, the workspace and the displays — and
+/// coordinator, the notice and the sources — the clock, the workspace, the displays and the
+/// network — and
 /// passes what the sources see to the coordinator, which decides and carries out through
 /// `AutomationBridge` with `TransitionTrigger.automation`: nothing a trigger does quits an app or
 /// asks a question.
@@ -16,7 +17,10 @@ import OSLog
 /// - The launch is told 5 seconds after the app finished launching (the launch settle): a link or
 ///   a Siri or Shortcuts request meanwhile makes it quiet, and so does the marker an update's or a
 ///   language change's relaunch leaves (`markQuietRelaunch`).
-/// - The display source runs only while a display trigger can run (`TriggerSourceNeeds`).
+/// - The display source runs only while a display trigger can run, the network source only while
+///   an Ethernet or Wi-Fi trigger can — its Wi-Fi part only with Location access (`TriggerSourceNeeds`).
+/// - Location access (`LocationAccess`) is looked at only once a Wi-Fi trigger exists, and asked for
+///   only by the editor's Allow…: no other trigger ever needs or asks for a permission.
 /// - Only the main app creates one (`AppDelegate`): a standalone group's agent never evaluates,
 ///   runs or registers anything.
 @MainActor
@@ -28,6 +32,8 @@ final class TriggerController: ObservableObject {
 
     let store: TriggerStore
     let loginItem: LoginItem
+    /// Location access, for Wi-Fi triggers only.
+    let locationAccess: LocationAccess
     let coordinator: TriggerCoordinator
     /// The state as the coordinator keeps it, for the rows' last-run lines and the pause.
     @Published private(set) var state: TriggerState
@@ -38,6 +44,7 @@ final class TriggerController: ObservableObject {
     private var clock: ClockSource?
     private var workspace: WorkspaceSource?
     private var displaySource: DisplaySource?
+    private var networkSource: NetworkSource?
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
     private var launchSettle: Task<Void, Never>?
@@ -49,15 +56,22 @@ final class TriggerController: ObservableObject {
     private var isLaunchSettled = false
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Triggers")
 
-    /// - Parameters: `store`, `stateStore` and `loginItem` default to the app's own files and login
-    ///   item.
-    init(groups: GroupStore, store: TriggerStore? = nil, stateStore: TriggerStateStore? = nil, loginItem: LoginItem? = nil) {
+    /// - Parameters: `store`, `stateStore`, `loginItem` and `locationAccess` default to the app's own
+    ///   files, login item and Location access.
+    init(
+        groups: GroupStore,
+        store: TriggerStore? = nil,
+        stateStore: TriggerStateStore? = nil,
+        loginItem: LoginItem? = nil,
+        locationAccess: LocationAccess? = nil
+    ) {
         let store = store ?? TriggerStore(persistence: JSONFileTriggerPersistence())
         let stateStore = stateStore ?? TriggerStateStore()
         self.groups = groups
         self.store = store
         self.stateStore = stateStore
         self.loginItem = loginItem ?? LoginItem()
+        self.locationAccess = locationAccess ?? LocationAccess()
         rules = store.triggers
         state = stateStore.state
         // Archived and deleted groups aren't in `groups.groups`: their triggers never run.
@@ -108,6 +122,13 @@ final class TriggerController: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in self?.groupsChanged() }
             .store(in: &subscriptions)
+        // Location access allowed or taken back: the Wi-Fi part starts or stops, the rows say so.
+        locationAccess.$status
+            .dropFirst()
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.locationAccessChanged() }
+            .store(in: &subscriptions)
 
         let clock = ClockSource(
             nextDue: { [weak self] in self?.coordinator.nextDue },
@@ -119,6 +140,10 @@ final class TriggerController: ObservableObject {
         workspace.start()
         clock.start()
         displaySource = DisplaySource { [weak self] signal in self?.coordinator.receive(signal) }
+        networkSource = NetworkSource(
+            send: { [weak self] signal in self?.coordinator.receive(signal) },
+            authorization: { [weak self] in self?.locationAccess.status ?? .notDetermined }
+        )
         updateSources()
 
         launchSettle = Task { @MainActor [weak self] in
@@ -231,11 +256,18 @@ final class TriggerController: ObservableObject {
         TriggerDescriptions.summary(trigger, appName: AppInfo.name, calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
     }
 
-    /// The last-run line of `trigger`, or why it can't run.
+    /// The last-run line of `trigger`, or why it can't run: a VPN isn't watched (TS-8), a Wi-Fi
+    /// network waits for Location access.
     func statusLine(of trigger: GroupTrigger) -> String {
         if let problem = trigger.problem { return problem }
         if groups.archivedGroup(withID: trigger.groupID) != nil {
             return L10n.Triggers.GroupWindow.archived
+        }
+        if case .condition(.vpn, _) = trigger.event {
+            return L10n.Triggers.GroupWindow.vpnNotWatched
+        }
+        if trigger.event.needsLocation, !locationAccess.status.allowsNetworkNames {
+            return L10n.Triggers.GroupWindow.waitingForLocation
         }
         let name = groups.group(withID: trigger.groupID)?.name ?? ""
         return TriggerDescriptions.lastRun(state.entry(for: trigger.id), groupName: name, now: Date(), calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
@@ -273,12 +305,25 @@ final class TriggerController: ObservableObject {
         objectWillChange.send()
     }
 
-    /// Starts the sources the triggers that can run need, and stops the others.
+    /// Starts the sources the triggers that can run need, and stops the others. Location access is
+    /// looked at — never asked for — once a Wi-Fi trigger exists.
     private func updateSources() {
         let needs = TriggerSourceNeeds.of(rules: store.triggers, activeGroups: Set(groups.groups.map(\.id)))
         if let displaySource {
             if needs.contains(.displays) { displaySource.start() } else { displaySource.stop() }
         }
+        if store.triggers.contains(where: { $0.event.needsLocation }) {
+            locationAccess.lookIfNeeded()
+        }
+        networkSource?.watch(NetworkSource.Watching(
+            ethernet: needs.contains(.ethernet),
+            wifi: needs.contains(.wifi) && locationAccess.status.allowsNetworkNames
+        ))
+    }
+
+    private func locationAccessChanged() {
+        updateSources()
+        objectWillChange.send()
     }
 
     // MARK: - What the editor reads
@@ -286,6 +331,13 @@ final class TriggerController: ObservableObject {
     /// The displays connected now, for the editor's chooser and Use Current Displays.
     func connectedDisplays() -> [DisplayIdentity] {
         DisplaySource.connectedDisplays() ?? []
+    }
+
+    /// The Wi-Fi network the Mac is on, for Use Current Network; `nil` without Location access, off
+    /// Wi-Fi, or when its name can't be a trigger's.
+    func currentWiFiNetworkName() -> String? {
+        guard case .connected(let network) = WiFiSource.reading(authorization: locationAccess.status), network.isValid else { return nil }
+        return network.name
     }
 }
 

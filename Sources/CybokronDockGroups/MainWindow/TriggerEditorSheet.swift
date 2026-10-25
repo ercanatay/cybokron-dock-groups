@@ -4,26 +4,37 @@ import SwiftUI
 
 /// New Trigger / Edit Trigger (triggers spec §3.2): when — a time on chosen days, at login, when
 /// the app opens, when the screens wake or sleep, when a display (any external one, or a chosen
-/// one) connects or disconnects, when these displays are connected or no longer —, what to do —
-/// only the actions that event allows, with Finish when it ends for a Start on a change's start —,
-/// how — a notice, Ask First, Run Right Away; Show the Popup runs right away — and At most once a
-/// day. It says what a Start or Finish does (never quitting), how late a missed time still runs,
-/// and when an At Login trigger needs Open at Login. Return saves, Escape cancels.
+/// one) connects or disconnects, when these displays are connected or no longer, when the Mac joins
+/// or leaves a Wi-Fi network, when Ethernet connects or disconnects —, what to do — only the
+/// actions that event allows, with Finish when it ends for a Start on a change's start —, how — a
+/// notice, Ask First, Run Right Away; Show the Popup runs right away — and At most once a day. It
+/// says what a Start or Finish does (never quitting), how late a missed time still runs, and when an
+/// At Login trigger needs Open at Login. Return saves, Escape cancels.
 ///
 /// The display chooser lists the displays connected now, read again when they change, and a saved
 /// display that isn't connected by its name, "not connected".
+///
+/// A Wi-Fi network is typed, or filled in with Use Current Network once macOS lets the app see
+/// network names. That takes Location access, which is asked for only here, only when the user
+/// clicks Allow… (`LocationAccess.request`); refused, Open Privacy Settings… goes to the list. The
+/// trigger can be added either way: it waits for the access. VPNs aren't offered (TS-8).
 struct TriggerEditorSheet: View {
     let group: DockGroup
     let existing: GroupTrigger?
     let store: TriggerStore
     @ObservedObject var loginItem: LoginItem
+    @ObservedObject var locationAccess: LocationAccess
     /// The displays connected now (`DisplaySource.connectedDisplays`).
     let readDisplays: () -> [DisplayIdentity]
+    /// The Wi-Fi network the Mac is on, when macOS shows its name
+    /// (`TriggerController.currentWiFiNetworkName`).
+    let readNetworkName: () -> String?
     let dismiss: () -> Void
 
     @State private var draft: TriggerDraft
     @State private var problem: String?
     @State private var connected: [DisplayIdentity] = []
+    @State private var currentNetwork: String?
 
     private typealias Texts = L10n.Triggers.Editor
     private let calendar = Calendar.autoupdatingCurrent
@@ -33,14 +44,18 @@ struct TriggerEditorSheet: View {
         existing: GroupTrigger?,
         store: TriggerStore,
         loginItem: LoginItem,
+        locationAccess: LocationAccess,
         readDisplays: @escaping () -> [DisplayIdentity],
+        readNetworkName: @escaping () -> String?,
         dismiss: @escaping () -> Void
     ) {
         self.group = group
         self.existing = existing
         self.store = store
         self.loginItem = loginItem
+        self.locationAccess = locationAccess
         self.readDisplays = readDisplays
+        self.readNetworkName = readNetworkName
         self.dismiss = dismiss
         let calendar = Calendar.autoupdatingCurrent
         _draft = State(initialValue: existing.flatMap { TriggerDraft(editing: $0, calendar: calendar) } ?? TriggerDraft(calendar: calendar))
@@ -67,9 +82,16 @@ struct TriggerEditorSheet: View {
         }
         .padding(20)
         .frame(width: 520)
-        .onAppear { connected = readDisplays() }
+        .onAppear {
+            connected = readDisplays()
+            lookAtNetwork()
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
             connected = readDisplays()
+        }
+        // Allowed (or taken back) meanwhile: Use Current Network follows.
+        .onChange(of: locationAccess.status) {
+            currentNetwork = readNetworkName()
         }
     }
 
@@ -81,9 +103,11 @@ struct TriggerEditorSheet: View {
             Text(Texts.when)
                 .gridColumnAlignment(.trailing)
             Picker(Texts.when, selection: Binding(get: { draft.when }, set: { choose($0) })) {
-                ForEach(TriggerDraft.When.offered, id: \.self) { when in
-                    Text(Self.title(of: when)).tag(when)
-                }
+                whenOptions(Self.moments)
+                Divider()
+                whenOptions(Self.displayChanges)
+                Divider()
+                whenOptions(Self.networkChanges)
             }
             .labelsHidden()
             .fixedSize()
@@ -93,7 +117,9 @@ struct TriggerEditorSheet: View {
             displayRow
         case .displaysConnected?, .displaysDisconnected?:
             displaysRow
-        case nil:
+        case .wifiJoins?, .wifiLeaves?:
+            wifiRow
+        case .ethernetConnects?, .ethernetDisconnects?, nil:
             EmptyView()
         }
         if draft.kind == .time {
@@ -114,11 +140,103 @@ struct TriggerEditorSheet: View {
         }
     }
 
-    /// Picks an event; These Displays starts with the displays connected now.
+    /// The When pop-up's three parts, in `TriggerDraft.When.offered`'s order.
+    private static let moments = TriggerDraft.When.offered.filter { $0.change == nil }
+    private static let displayChanges = TriggerDraft.When.offered.filter { $0.change?.isAboutDisplays == true }
+    private static let networkChanges = TriggerDraft.When.offered.filter { $0.change?.isAboutDisplays == false }
+
+    private func whenOptions(_ options: [TriggerDraft.When]) -> some View {
+        ForEach(options, id: \.self) { when in
+            Text(Self.title(of: when)).tag(when)
+        }
+    }
+
+    /// Picks an event; These Displays starts with the displays connected now, a Wi-Fi network looks
+    /// at Location access (it never asks: only Allow… does).
     private func choose(_ when: TriggerDraft.When) {
         draft.setWhen(when)
         if case .change(let change) = when, change == .displaysConnected || change == .displaysDisconnected, draft.displays.isEmpty {
             draft.useDisplays(connected)
+        }
+        lookAtNetwork()
+    }
+
+    private func lookAtNetwork() {
+        guard draft.change?.needsLocation == true else { return }
+        locationAccess.refresh()
+        currentNetwork = readNetworkName()
+    }
+
+    // MARK: - Wi-Fi
+
+    private var wifiRow: some View {
+        GridRow {
+            Text(Texts.networkName)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    TextField(Texts.networkName, text: $draft.wifiName, prompt: Text(Texts.networkName))
+                        .labelsHidden()
+                        .frame(width: 220)
+                    Button(Texts.useCurrentNetwork) {
+                        if let currentNetwork { draft.wifiName = currentNetwork }
+                    }
+                    .disabled(currentNetwork == nil)
+                }
+                if !draft.wifiName.isEmpty, !draft.isWiFiNameValid {
+                    Text(Texts.invalidNetworkName)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text(Texts.networkNameHint)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if draft.change == .wifiLeaves {
+                    Text(Texts.leavesHint)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    /// Whether the app may see network names, with the way to change it: Allow… (the only place
+    /// the app asks), or Open Privacy Settings… after a refusal.
+    @ViewBuilder
+    private var locationNote: some View {
+        switch locationAccess.status {
+        case .allowed:
+            Label(Texts.locationAllowed, systemImage: "checkmark.circle")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        case .notDetermined:
+            locationPrompt(Texts.locationNeeded, button: Texts.allowLocation, action: locationAccess.request)
+        case .denied:
+            locationPrompt(Texts.locationDenied(AppInfo.name), button: Texts.openPrivacySettings, action: locationAccess.openPrivacySettings)
+        case .servicesOff:
+            locationPrompt(Texts.locationServicesOff, button: Texts.openPrivacySettings, action: locationAccess.openPrivacySettings)
+        case .restricted:
+            locationPrompt(Texts.locationRestricted, button: nil, action: nil)
+        }
+    }
+
+    private func locationPrompt(_ text: String, button: String?, action: (() -> Void)?) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline) {
+                Label(text, systemImage: "location.circle")
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer()
+                if let button, let action {
+                    Button(button, action: action)
+                }
+            }
+            Text(Texts.waitsForLocation)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -238,7 +356,8 @@ struct TriggerEditorSheet: View {
 
     // MARK: - Notes
 
-    /// No day chosen; how late a missed time runs; Open at Login for At Login; why it wasn't saved.
+    /// No day chosen; how late a missed time runs; Open at Login for At Login; Location access for a
+    /// Wi-Fi network; what counts as Ethernet; why it wasn't saved.
     @ViewBuilder
     private var notes: some View {
         if draft.kind == .time {
@@ -253,6 +372,15 @@ struct TriggerEditorSheet: View {
         }
         if draft.kind == .login, !loginItem.isOn {
             loginItemNote
+        }
+        if draft.change?.needsLocation == true {
+            locationNote
+        }
+        if draft.change == .ethernetConnects || draft.change == .ethernetDisconnects {
+            Text(Texts.ethernetHint)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
         if let problem {
             Text(problem)
@@ -354,6 +482,10 @@ struct TriggerEditorSheet: View {
         case .change(.displayDisconnects): return Texts.whenDisplayDisconnects
         case .change(.displaysConnected): return Texts.whenDisplaysConnected
         case .change(.displaysDisconnected): return Texts.whenDisplaysDisconnected
+        case .change(.wifiJoins): return Texts.whenWiFiJoins
+        case .change(.wifiLeaves): return Texts.whenWiFiLeaves
+        case .change(.ethernetConnects): return Texts.whenEthernetConnects
+        case .change(.ethernetDisconnects): return Texts.whenEthernetDisconnects
         }
     }
 

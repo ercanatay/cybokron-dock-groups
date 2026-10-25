@@ -103,6 +103,8 @@ public struct DiagnosticsInfo: Sendable {
     public var triggersPausedUntil: Date?
     /// Whether the app opens at login (Settings → Triggers); `nil` when unknown.
     public var opensAtLogin: Bool?
+    /// Location access, which only Wi-Fi triggers need; `nil` when the app hasn't looked at it.
+    public var locationAccess: LocationAuthorization?
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
     public var generatedAt: Date
@@ -121,6 +123,7 @@ public struct DiagnosticsInfo: Sendable {
         triggers: [GroupTrigger] = [],
         triggersPausedUntil: Date? = nil,
         opensAtLogin: Bool? = nil,
+        locationAccess: LocationAuthorization? = nil,
         recentErrors: [String],
         generatedAt: Date = Date()
     ) {
@@ -137,6 +140,7 @@ public struct DiagnosticsInfo: Sendable {
         self.triggers = triggers
         self.triggersPausedUntil = triggersPausedUntil
         self.opensAtLogin = opensAtLogin
+        self.locationAccess = locationAccess
         self.recentErrors = recentErrors
         self.generatedAt = generatedAt
     }
@@ -221,6 +225,10 @@ public enum DiagnosticsReport {
         }
         if let opensAtLogin = info.opensAtLogin {
             lines.append("Open at Login: \(onOff(opensAtLogin))")
+        }
+        // The authorization only: never a network's name.
+        if let locationAccess = info.locationAccess {
+            lines.append("Location access: \(locationAccess.diagnosticsDescription)")
         }
 
         section(.recentErrors, into: &lines)

@@ -158,6 +158,13 @@ public enum TriggerEvent: Hashable, Sendable {
         return false
     }
 
+    /// Whether it waits for a Wi-Fi network's name, which macOS shows only to apps allowed to use
+    /// Location Services (spec §1.5).
+    public var needsLocation: Bool {
+        if case .condition(.wifi, _) = self { return true }
+        return false
+    }
+
     /// A word for the event's kind, for logs and diagnostics: never a time, a name or a display.
     public var kindName: String {
         switch self {

@@ -43,7 +43,7 @@ the window list's owner, position, size and on-screen fields (never window title
 items only as bundle identifiers or app bundle locations — the check every app item passes, from a
 backup or any picker; a `capture` link only shows the review sheet, and nothing is added without a
 click there. Triggers act only while the app runs, only on your groups' items through the same
-checks, never quit apps, and triggers from a backup come in turned off; no link, intent or launch
+checks, never quit apps, and triggers from a backup come in turned off; Wi-Fi triggers read only the name of the Wi-Fi network, and only after you allow Location Services for the app (macOS treats network names as location information; the app never reads, keeps or sends a location, never scans for networks and never reads the access point's address); no link, intent or launch
 argument runs a trigger, and an archived or deleted group's triggers never run.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
