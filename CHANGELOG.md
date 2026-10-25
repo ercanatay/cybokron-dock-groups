@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New Group from Open Apps… (the menu bar menu, and the group window's + menu) lists the apps that are open now, the one you were working in first, and makes a group of the ones you keep checked, named after them ("Xcode +3") unless you type a name; it's added at the end of the list and selected
+- Add Open Apps… (a group's Add menu, and an empty group's popup) adds the open apps to that group, after its items; the apps it has already show as "In this group"
+- The list has regular apps only, once each — no background apps, Finder, Cybokron Dock Groups or standalone groups' own apps — ordered by Most Recently Used or Name. Protected apps are listed but start unchecked, and "Select only apps with open windows" (off by default) unchecks the apps that seem to have none; both choices are remembered. Up to 50 apps per capture; a footnote counts the open apps that can't be added (no app bundle, or run from a temporary copy without a bundle identifier)
+- `cybokrondockgroups://capture` and `cybokrondockgroups://capture/<group>` show the same sheets; nothing is added until you click. Settings → Shortcuts & Siri lists each group's Add Open Apps link
+- The diagnostics report has the two capture settings (no app names)
+
+### Changed
+
+- Apps added to a group from anywhere — the open panel, the running apps, a capture — pass the check backups use: an app is kept only as a bundle identifier or an app bundle's location, and a remembered location that isn't an app bundle is dropped
+
+### Security
+
+- Capturing asks for no permission and never opens, hides or quits an app: it reads the running apps and the window list's owner, position, size and on-screen fields (not window titles, which need Screen Recording), and only adds app items
+
 ## [0.9.0] - 2026-10-25
 
 ### Added

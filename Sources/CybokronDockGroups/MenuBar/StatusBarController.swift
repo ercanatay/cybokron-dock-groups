@@ -6,7 +6,8 @@ import DockGroupsCore
 /// running apps, and with ⌃⌥ held starts it. While a group is current, the menu begins with it and
 /// Finish. Below the groups, the Most Used
 /// section lists the most launched apps: choosing one opens it, and the section's first item
-/// shows them in a popup.
+/// shows them in a popup. New Group from Open Apps… reads the open apps — the app in front is still
+/// the user's, as the menu doesn't activate this app — and shows the capture sheet.
 @MainActor
 final class StatusBarController: NSObject, NSMenuDelegate {
     struct Actions {
@@ -21,6 +22,8 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         /// The current group (`ContextSession.current`), `nil` when none is.
         let currentGroupID: () -> DockGroup.ID?
         let showMainWindow: () -> Void
+        /// New Group from Open Apps…
+        let captureNewGroup: () -> Void
         let showSettings: () -> Void
         let showAbout: () -> Void
         let checkForUpdates: () -> Void
@@ -97,6 +100,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         addMostUsedSection()
 
         menu.addItem(.separator())
+        let capture = NSMenuItem(title: L10n.Capture.menuBarItem, action: #selector(captureNewGroup(_:)), keyEquivalent: "")
+        capture.target = self
+        capture.toolTip = L10n.Capture.menuBarTooltip
+        menu.addItem(capture)
         let manage = NSMenuItem(title: L10n.MenuBar.manageGroups, action: #selector(showMainWindow(_:)), keyEquivalent: "g")
         manage.target = self
         menu.addItem(manage)
@@ -262,6 +269,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
     @objc private func openMostUsedApp(_ sender: NSMenuItem) {
         guard let app = sender.representedObject as? AppReference else { return }
         actions.openMostUsedApp(app)
+    }
+
+    @objc private func captureNewGroup(_ sender: NSMenuItem) {
+        actions.captureNewGroup()
     }
 
     @objc private func showMainWindow(_ sender: NSMenuItem) {

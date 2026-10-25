@@ -1,3 +1,4 @@
+import AppKit
 import DockGroupsCore
 import SwiftUI
 
@@ -9,6 +10,8 @@ final class GroupWindowSelection: ObservableObject {
     @Published var groupID: DockGroup.ID?
     /// Done (and cleared) by the group's settings once they show; `nil` when there's nothing to do.
     @Published var request: GroupWindowRequest?
+    /// A capture sheet to show (capture spec §2.6): shown, and cleared, once no other sheet is up.
+    @Published var capture: CaptureRequest?
 }
 
 /// Something the popup asks the group window to do in one of its groups: the popup can't host the
@@ -31,7 +34,8 @@ struct GroupWindowRequest: Equatable {
 
 /// Group list on the left, the selected group's settings on the right — or, for an archived group,
 /// its read-only summary (`ArchivedGroupView`). Duplicate, Archive, Restore and the templates'
-/// sheets start here (spec §1.6–1.9).
+/// sheets start here (spec §1.6–1.9), and the capture sheet shows here (capture spec §2.6): when
+/// another sheet, alert or open panel is up, it waits until that closes.
 struct MainWindowView: View {
     struct Actions {
         let openAll: (DockGroup) -> Void
@@ -48,6 +52,9 @@ struct MainWindowView: View {
         /// Makes an archived group active again — standalone again when it was; `nil` when no
         /// archived group has this identifier.
         let restore: (DockGroup.ID) -> GroupRestoreResult?
+        /// New Group from Open Apps… and Add Open Apps…: reads the open apps now, then shows the
+        /// capture sheet.
+        let capture: (CaptureTarget) -> Void
     }
 
     /// The note that a restored group came back without its keyboard shortcut.
@@ -65,6 +72,8 @@ struct MainWindowView: View {
     let session: ContextSession
     /// The group shortcuts, for the Keyboard Shortcut section.
     let shortcuts: GlobalShortcutMonitor
+    /// Plans and adds what the capture sheet shows.
+    let capture: CaptureController
     let actions: Actions
     @ObservedObject var selection: GroupWindowSelection
     /// Where the selected group's items are, their icons and Quick Look.
@@ -84,6 +93,8 @@ struct MainWindowView: View {
     /// The group Save as Template… shows its sheet for.
     @State private var templateSource: DockGroup?
     @State private var isManagingTemplates = false
+    /// The capture sheet showing; the next one waits in `selection.capture`.
+    @State private var shownCapture: CaptureRequest?
 
     var body: some View {
         NavigationSplitView {
@@ -95,6 +106,7 @@ struct MainWindowView: View {
                     add: addGroup,
                     addFromTemplate: addGroup(from:),
                     manageTemplates: { isManagingTemplates = true },
+                    captureNewGroup: { actions.capture(.newGroup) },
                     rename: beginRename,
                     duplicate: duplicate,
                     saveAsTemplate: { templateSource = $0 },
@@ -197,6 +209,23 @@ struct MainWindowView: View {
                 dismiss: { isManagingTemplates = false }
             )
         }
+        .sheet(item: $shownCapture) { request in
+            CaptureSheet(
+                request: request,
+                capture: capture,
+                icons: items.icons,
+                onCreated: { id in selection.groupID = id },
+                dismiss: { shownCapture = nil }
+            )
+        }
+        .onChange(of: selection.capture?.id) {
+            // Once the window that was just asked to come forward is there for the sheet.
+            DispatchQueue.main.async { presentPendingCapture() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didEndSheetNotification)) { note in
+            guard let window = note.object as? NSWindow, window === items.window else { return }
+            DispatchQueue.main.async { presentPendingCapture() }
+        }
         .alert(
             templates.issue?.title ?? "",
             isPresented: Binding(
@@ -225,7 +254,21 @@ struct MainWindowView: View {
             if selection.groupID == nil {
                 selection.groupID = store.groups.first?.id
             }
+            DispatchQueue.main.async { presentPendingCapture() }
         }
+    }
+
+    /// Shows the waiting capture sheet unless a sheet, an alert or an open panel is up in the
+    /// window — then it shows once that ends. A group that was archived or deleted meanwhile gets
+    /// no sheet: it's never a target.
+    private func presentPendingCapture() {
+        guard let request = selection.capture, shownCapture == nil, items.window?.attachedSheet == nil else { return }
+        selection.capture = nil
+        if case .group(let id) = request.target, store.group(withID: id) == nil {
+            NSSound.beep()
+            return
+        }
+        shownCapture = request
     }
 
     /// No group at all, active or archived.

@@ -48,6 +48,9 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
         /// Start and Finish; `nil` where groups aren't started (a standalone group's own app).
         var start: ((DockGroup) -> Void)?
         var finish: ((DockGroup) -> Void)?
+        /// Add Open Apps… of an empty group (capture spec §1.9); `nil` where groups can't be edited
+        /// (a standalone group's own app doesn't capture).
+        var captureOpenApps: ((DockGroup) -> Void)?
     }
 
     /// Why the popup closed; logged at debug level to diagnose unexpected closes.
@@ -401,6 +404,13 @@ final class PopupPanelController: NSObject, NSWindowDelegate {
             },
             addApps: inGroupWindow(id).map { perform -> () -> Void in { perform(.addApps) } },
             addFilesAndFolders: inGroupWindow(id).map { perform -> () -> Void in { perform(.addFilesAndFolders) } },
+            addOpenApps: allowsEditing && id != MostUsedGroup.id && actions.captureOpenApps != nil
+                ? { [weak self] in
+                    guard let self, let group = self.group(withID: id) else { return }
+                    self.close(reason: .appAction)
+                    self.actions.captureOpenApps?(group)
+                }
+                : nil,
             moveApp: { [weak self] app, index in
                 guard let self, self.allowsEditing, id != MostUsedGroup.id else { return }
                 self.logger.notice("Moving \(app.logIdentity, privacy: .public) to \(index) in group \(id, privacy: .public)")

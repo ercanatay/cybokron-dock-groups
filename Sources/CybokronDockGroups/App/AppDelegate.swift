@@ -19,6 +19,10 @@ import OSLog
 /// the current group is kept in memory only (`ContextSession`).
 /// Items with a launch delay wait in one `DelayedLaunches`, shared by Open All, Start, Finish, Hide
 /// All and Close All, and cancelled when the app quits.
+///
+/// New Group from Open Apps… and Add Open Apps… (the menu bar menu, the group window, an empty
+/// group's popup, `capture` links) read the open apps first, while the app the user was in is still
+/// in front, and then show the capture sheet in the group window (`beginCapture`, `CaptureController`).
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // Lazy, like everything that reads the files: a second copy that hands its URLs over and quits
@@ -75,6 +79,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var mostUsed = MostUsedProvider(usage: usage, preferences: preferences, icons: icons)
     private lazy var tiles: TileImageCache = TileImageCache(iconProvider: icons)
     private lazy var standalone = StandaloneController(store: store, preferences: preferences, icons: icons)
+    /// Capturing the open apps: the order apps came to the front, the snapshot, the sheet's plan.
+    private lazy var capture = CaptureController(store: store, preferences: preferences)
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
     /// Set while this is a second copy of the app, launched next to the copy that runs: it then
@@ -101,6 +107,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             standalone: standalone,
             session: session,
             shortcuts: shortcutMonitor,
+            capture: capture,
             actions: MainWindowView.Actions(
                 openAll: { [weak self] group in self?.openAll(group) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
@@ -109,7 +116,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 finish: { [weak self] group in self?.finish(group) },
                 showProtectedApps: { [weak self] in self?.showSwitchingSettings() },
                 archive: { [weak self] group in self?.archive(group) },
-                restore: { [weak self] id in self?.restore(id) }
+                restore: { [weak self] id in self?.restore(id) },
+                capture: { [weak self] target in self?.beginCapture(target) }
             )
         )
         // A standalone group's Dock tile may have been dragged out of the Dock meanwhile.
@@ -163,7 +171,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.mainWindowController.perform(action, inGroup: group.id)
             },
             start: { [weak self] group in self?.start(group) },
-            finish: { [weak self] group in self?.finish(group) }
+            finish: { [weak self] group in self?.finish(group) },
+            captureOpenApps: { [weak self] group in self?.beginCapture(.group(group.id)) }
         )
     )
 
@@ -191,6 +200,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         NSApp.mainMenu = MainMenuBuilder.makeMainMenu()
         usageMonitor.start()
+        capture.start()
         preferences.$preferences
             .map(\.mostUsedSessionSeconds)
             .removeDuplicates()
@@ -221,6 +231,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 switchingOffer: { [weak self] group in self?.switchingOffer(for: group) },
                 currentGroupID: { [weak self] in self?.session.current },
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
+                captureNewGroup: { [weak self] in self?.beginCapture(.newGroup) },
                 showSettings: { [weak self] in self?.showSettingsWindow(nil) },
                 showAbout: { [weak self] in self?.showAboutWindow(nil) },
                 checkForUpdates: { [weak self] in self?.checkForUpdates(nil) },
@@ -416,6 +427,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return result
     }
 
+    /// New Group from Open Apps… or Add Open Apps… (capture spec §2.6): the open apps are read now —
+    /// the menu bar menu and the popup don't bring this app to the front, so the app the user was in
+    /// is still the front one; from the group window, the history puts the app used before it first
+    /// — and only then does the group window come forward with the sheet. An archived or deleted
+    /// group is never a target. Nothing is opened, hidden or quit; the sheet's click adds the apps.
+    private func beginCapture(_ target: CaptureTarget) {
+        if case .group(let id) = target, store.group(withID: id) == nil {
+            logger.notice("Capture into group \(id, privacy: .public): no such active group")
+            NSSound.beep()
+            return
+        }
+        let snapshot = capture.snapshot()
+        popupController.close()
+        mainWindowController.capture(target, from: snapshot)
+    }
+
     /// What the menu bar menu offers for the group: Finish for the current group, Start otherwise.
     private func switchingOffer(for group: DockGroup) -> SwitchingOffer {
         SwitchingOffer.offer(for: group, current: session.current, previous: session.previous, in: store.groups)
@@ -600,10 +627,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .manageGroups:
             popupController.close()
             mainWindowController.show()
-        case .captureNewGroup, .captureOpenApps:
-            // The capture sheet these links show arrives with the app's capture surfaces (capture
-            // spec §8, PR 2). Until then the link is understood, logged and does nothing.
-            urlLogger.notice("Ignored \(command.throttleKey, privacy: .public): capturing open apps isn't available in this build yet")
+        case .captureNewGroup:
+            // Only the sheet: the user's click makes the group (capture spec Decision 5).
+            beginCapture(.newGroup)
+        case .captureOpenApps(let name):
+            if let group = group(named: name) { beginCapture(.group(group.id)) }
         }
     }
 

@@ -1618,6 +1618,59 @@ extension L10n.Settings.Backup {
     }
 }
 
+// MARK: - Capture
+
+extension L10n {
+    /// Capturing the open apps into a group (capture spec §1, §3): the menu items that start it and
+    /// the review sheet.
+    enum Capture {
+        static var menuBarItem: String { tr("menuBar.capture.newGroup", "New Group from Open Apps…") }
+        static var menuBarTooltip: String {
+            tr("menuBar.capture.newGroup.tooltip", "Make a group of the apps that are open now. You choose which ones first.")
+        }
+        /// The sidebar's + menu.
+        static var sidebarItem: String { tr("groupWindow.capture.newGroup", "New Group from Open Apps…") }
+        /// A group's Add menu.
+        static var addMenuItem: String { tr("groupWindow.capture.addOpenApps", "Add Open Apps…") }
+        static var addMenuHelp: String { tr("groupWindow.capture.addOpenApps.help", "Add apps that are open now to this group.") }
+        /// The pill of an empty group's popup.
+        static var popupPill: String { tr("popup.capture.addOpenApps", "Add Open Apps…") }
+
+        enum Sheet {
+            static var newGroupTitle: String { tr("capture.sheet.title.new", "New Group from Open Apps") }
+            static func addTitle(_ groupName: String) -> String { tr("capture.sheet.title.add", "Add Open Apps to “%@”", groupName) }
+            static var name: String { tr("capture.sheet.name", "Name") }
+            /// "Open Apps (7)".
+            static func header(_ count: Int) -> String { tr("capture.sheet.header", "Open Apps (%ld)", count) }
+            static var order: String { tr("capture.sheet.order", "Order:") }
+            static var orderRecentlyUsed: String { tr("capture.sheet.order.recentlyUsed", "Most Recently Used") }
+            static var orderName: String { tr("capture.sheet.order.name", "Name") }
+            static var windowsOnly: String { tr("capture.sheet.windowsOnly", "Select only apps with open windows") }
+            static var windowsOnlyUnavailable: String {
+                tr("capture.sheet.windowsOnly.unavailable", "macOS didn't say which apps have open windows.")
+            }
+            static var hidden: String { tr("capture.sheet.note.hidden", "Hidden") }
+            static var noWindows: String { tr("capture.sheet.note.noWindows", "No open windows") }
+            static var protected: String { tr("capture.sheet.note.protected", "Protected") }
+            static var inGroup: String { tr("capture.sheet.note.inGroup", "In this group") }
+            static var selectAll: String { tr("capture.sheet.selectAll", "Select All") }
+            static var selectNone: String { tr("capture.sheet.selectNone", "Select None") }
+            static var create: String { tr("capture.sheet.create", "Create Group") }
+            /// "Add 3 Apps".
+            static func add(_ count: Int) -> String {
+                count == 1 ? tr("capture.sheet.add.one", "Add 1 App") : tr("capture.sheet.add.other", "Add %ld Apps", count)
+            }
+            static func footer(_ appName: String) -> String {
+                tr("capture.sheet.footer", "Background apps, Finder and %@ aren't listed. Nothing is opened or quit.", appName)
+            }
+            static var noOpenApps: String { tr("capture.sheet.empty", "No other apps are open.") }
+            static func allInGroup(_ groupName: String) -> String {
+                tr("capture.sheet.allInGroup", "Every open app is already in “%@”.", groupName)
+            }
+        }
+    }
+}
+
 // MARK: - Lookup
 
 /// `L10n`'s lookups; the key and English text must be literals (`LocalizationTests` read them).

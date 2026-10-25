@@ -197,6 +197,8 @@ struct GroupDetailView: View {
                 Spacer()
                 Menu(L10n.GroupWindow.addMenu) {
                     Button(L10n.Common.addApps, action: addApps)
+                    Button(L10n.Capture.addMenuItem) { actions.capture(.group(group.id)) }
+                        .help(L10n.Capture.addMenuHelp)
                     Button(L10n.AddItems.menu, action: addFilesAndFolders)
                     Button(L10n.Common.addWebsite) { isAddingWebsite = true }
                         .help(L10n.GroupWindow.addWebsiteHelp)

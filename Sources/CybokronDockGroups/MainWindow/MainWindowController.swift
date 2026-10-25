@@ -47,6 +47,7 @@ final class MainWindowController: NSWindowController {
         standalone: StandaloneController,
         session: ContextSession,
         shortcuts: GlobalShortcutMonitor,
+        capture: CaptureController,
         actions: MainWindowView.Actions
     ) {
         self.store = store
@@ -65,6 +66,7 @@ final class MainWindowController: NSWindowController {
                 standalone: standalone,
                 session: session,
                 shortcuts: shortcuts,
+                capture: capture,
                 actions: actions,
                 selection: selection,
                 items: items
@@ -122,6 +124,19 @@ final class MainWindowController: NSWindowController {
         selection.groupID = destination.selection
         show()
         return destination
+    }
+
+    /// The capture sheet for `snapshot` (capture spec §2.6): the window comes forward — on the
+    /// target group when apps are added to one — and shows it once no other sheet is up. The
+    /// snapshot was read before this, while the app the user was in was still in front.
+    func capture(_ target: CaptureTarget, from snapshot: OpenAppsSnapshot) {
+        selection.capture = CaptureRequest(target: target, snapshot: snapshot)
+        switch target {
+        case .newGroup:
+            show()
+        case .group(let id):
+            showSettings(ofGroup: id.uuidString)
+        }
     }
 
     /// What the popup can't do itself: shows the window on the group and does `action` there —

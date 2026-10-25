@@ -166,6 +166,17 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   shortcut) and **Manage Templates…** (each template's item count and save date, New Group,
   Rename…, Delete…). Templates don't follow later edits of their group, and deleting one doesn't
   affect groups made from it.
+- **Capture the open apps**: **New Group from Open Apps…** (the menu bar menu, or the group
+  window's **+** menu) lists the apps that are open now — the one you were working in first — and
+  makes a group of the ones you keep checked, named after them ("Xcode +3") unless you type a name.
+  **Add Open Apps…** (a group's **Add** menu, or an empty group's popup) adds them to that group;
+  the apps it has already show as *In this group*. Only regular apps are listed, once each: not
+  background apps, Finder, this app or a standalone group's own app. Protected apps (Settings →
+  Switching) are listed but start unchecked; *Select only apps with open windows* (off by default)
+  unchecks the apps that seem to have none, a guess made without Accessibility access, so they stay
+  listed. Order the list by *Most Recently Used* or *Name*; both choices are remembered. Up to 50
+  apps per capture. Nothing is opened, hidden or quit, and no permission is asked for: the app reads
+  the running apps and the window list's positions, never window titles.
 - Siri, Spotlight and the Shortcuts app: **Launch Group** (Open All), **Quit Group** (Close All,
   optionally force quit; it asks there first, every time), **Show Group** (the popup), **Start
   Group** and **Finish Group** actions, and phrases such as “Launch Work in Cybokron Dock Groups” or
@@ -186,6 +197,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   | `cybokrondockgroups://finish/<group>` | Finish; when that would quit apps it asks first: Quit Apps, Hide Instead or Cancel |
   | `cybokrondockgroups://shortcut/<1…9>` | Shows the popup of the group with that shortcut |
   | `cybokrondockgroups://settings/group/<group>` | Opens the group window on the group's settings (as it was when no group matches) |
+  | `cybokrondockgroups://capture` | Shows New Group from Open Apps; nothing is added until you click Create Group |
+  | `cybokrondockgroups://capture/<group>` | Shows Add Open Apps for the group; nothing is added until you click Add |
   | `cybokrondockgroups://close` · `settings` · `groups` | Closes the popup · opens Settings · the group window |
 
   `<group>` is the group's name — case, accents, spaces and punctuation don't matter
@@ -545,6 +558,32 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - In the popup, type a tag, then a word of the notes: the item is found after the items whose
      names match, and the footer says *tag “…” of …* or *in the task notes of …*. The standalone
      group's own app finds it the same way.
+6. **Capturing the open apps** — with a copy in `/Applications`, on macOS 14, 15 and 26 (see
+   `docs/design/capture-spike.md` for what the window list shows).
+   - `tccutil reset Accessibility com.cybokron.dockgroups` and `tccutil reset ScreenCapture
+     com.cybokron.dockgroups` (this drops the Accessibility access for restoring windows; allow it
+     again afterwards). Capture from every place below: no prompt appears, and nothing new is listed
+     under Privacy & Security.
+   - In Safari, choose **New Group from Open Apps…** from the menu bar menu: Safari is first, then
+     the apps in the order you last used them. Finder, the app itself, background apps and standalone
+     groups' own apps aren't listed; a protected app is listed unchecked, with *Protected*.
+   - From the group window's **+** menu: the app you used before the group window is first.
+   - Type a name, uncheck an app, **Create Group**: the group is added at the end of the list and
+     selected, with the checked apps in the order shown; nothing opened or quit. Without typing,
+     the name follows the selection ("Xcode +3").
+   - In a group with apps, **Add** → **Add Open Apps…**: its apps show checked and dimmed, *In this
+     group*; **Add 2 Apps** appends the rest. With every open app in the group: *Every open app is
+     already in "…"* and Done. An empty group's popup has the same as a pill; a standalone group's
+     own popup and Dock menu don't.
+   - Order *Name*, and *Select only apps with open windows*: close a document app's last window,
+     hide an app (⌘H), minimize another app's only window (⌘M), move one to another Space, put one
+     in full screen, turn Stage Manager on — record which come up *No open windows*. Close the sheet
+     and open it again: both choices are kept.
+   - With Save as Template… open, run `open "cybokrondockgroups://capture"`: the capture sheet waits
+     and shows when the other sheet closes. `open "cybokrondockgroups://capture/<group>"` opens the
+     Add sheet on that group; an archived or unknown group beeps and shows nothing.
+   - An app run from a downloaded disk image without moving it (App Translocation): listed without a
+     location, or — without a bundle identifier — counted in the footnote.
 
 ## Project layout
 

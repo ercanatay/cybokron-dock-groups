@@ -6,12 +6,14 @@ import SwiftUI
 ///
 /// The archived groups follow in a collapsed Archived section (spec §3.3): dimmed, newest first,
 /// not draggable and taking no drops, with Restore and Delete… only. The + button adds a group; its
-/// menu adds one from a template, or manages the templates.
+/// menu adds one from a template or from the open apps, or manages the templates.
 struct GroupSidebarView: View {
     struct Actions {
         let add: () -> Void
         let addFromTemplate: (GroupTemplate) -> Void
         let manageTemplates: () -> Void
+        /// New Group from Open Apps…: the capture sheet for a new group.
+        let captureNewGroup: () -> Void
         let rename: (DockGroup) -> Void
         let duplicate: (DockGroup) -> Void
         let saveAsTemplate: (DockGroup) -> Void
@@ -156,6 +158,7 @@ struct GroupSidebarView: View {
                     }
                 }
             }
+            Button(L10n.Capture.sidebarItem, action: actions.captureNewGroup)
             Divider()
             Button(L10n.Templates.manage, action: actions.manageTemplates)
         } label: {

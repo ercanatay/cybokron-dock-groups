@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-798 keys.
+825 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1181,3 +1181,37 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `core.capture.unavailable.other` | %ld open apps can't be added here: they aren't app bundles, or run from a temporary copy (move them to Applications first). |
 | `core.capture.limit` | You can add up to %ld apps at once. |
 | `core.invocation.capture.link` | Add Open Apps |
+
+## Capturing the open apps in the app: the menu bar menu's New Group from Open Apps…, the group window's + menu and Add menu, an empty group's popup, and the review sheet (English only for now; `awaitingTranslation`: `capture.sheet.`, `menuBar.capture.`, `groupWindow.capture.`, `popup.capture.`)
+
+`%@` in `capture.sheet.title.add` and `capture.sheet.allInGroup` is the group's name; in `capture.sheet.footer`, the app's name. The captions (`capture.sheet.note.*`) stand next to an app's name in the list, joined with “ · ” when there are several. “Name” is the group's name field (`capture.sheet.name`) and the A-to-Z order (`capture.sheet.order.name`): translate each for its place.
+
+| Key | English |
+| --- | --- |
+| `menuBar.capture.newGroup` | New Group from Open Apps… |
+| `menuBar.capture.newGroup.tooltip` | Make a group of the apps that are open now. You choose which ones first. |
+| `groupWindow.capture.newGroup` | New Group from Open Apps… |
+| `groupWindow.capture.addOpenApps` | Add Open Apps… |
+| `groupWindow.capture.addOpenApps.help` | Add apps that are open now to this group. |
+| `popup.capture.addOpenApps` | Add Open Apps… |
+| `capture.sheet.title.new` | New Group from Open Apps |
+| `capture.sheet.title.add` | Add Open Apps to “%@” |
+| `capture.sheet.name` | Name |
+| `capture.sheet.header` | Open Apps (%ld) |
+| `capture.sheet.order` | Order: |
+| `capture.sheet.order.recentlyUsed` | Most Recently Used |
+| `capture.sheet.order.name` | Name |
+| `capture.sheet.windowsOnly` | Select only apps with open windows |
+| `capture.sheet.windowsOnly.unavailable` | macOS didn't say which apps have open windows. |
+| `capture.sheet.note.hidden` | Hidden |
+| `capture.sheet.note.noWindows` | No open windows |
+| `capture.sheet.note.protected` | Protected |
+| `capture.sheet.note.inGroup` | In this group |
+| `capture.sheet.selectAll` | Select All |
+| `capture.sheet.selectNone` | Select None |
+| `capture.sheet.create` | Create Group |
+| `capture.sheet.add.one` | Add 1 App |
+| `capture.sheet.add.other` | Add %ld Apps |
+| `capture.sheet.footer` | Background apps, Finder and %@ aren't listed. Nothing is opened or quit. |
+| `capture.sheet.empty` | No other apps are open. |
+| `capture.sheet.allInGroup` | Every open app is already in “%@”. |

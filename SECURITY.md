@@ -37,7 +37,12 @@ folders, and never from a backup); otherwise the item isn't opened. A group's ke
 hot key the app takes only while it runs, and only a key press acts on it; keys that typing, editing
 or macOS need (fewer than two of ⌃, ⌥ and ⌘; Escape, Return, Tab, Space, Delete; macOS's own
 shortcuts) are refused wherever they come from, so a groups file or backup can't take ⌘C or ⌘Q,
-and starting or finishing a group from one asks before quitting apps.
+and starting or finishing a group from one asks before quitting apps. Capturing the open apps into
+a group asks for no permission and never opens, hides or quits an app: it reads the running apps and
+the window list's owner, position, size and on-screen fields (never window titles), and adds app
+items only as bundle identifiers or app bundle locations — the check every app item passes, from a
+backup or any picker; a `capture` link only shows the review sheet, and nothing is added without a
+click there.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
 `groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.

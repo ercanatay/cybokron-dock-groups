@@ -94,6 +94,9 @@ struct PopupActions {
     /// window); `nil` where the group can't be edited, which then opens its settings instead.
     let addApps: (() -> Void)?
     let addFilesAndFolders: (() -> Void)?
+    /// Add Open Apps… of an empty group: the capture sheet in the group window; `nil` for the Most
+    /// Used list and in standalone groups' own apps, which don't capture.
+    let addOpenApps: (() -> Void)?
     /// Moves the app to this index of the group's app list.
     let moveApp: (AppReference, Int) -> Void
     /// Free Layout: puts the apps in these cells (`FreeLayout.slots`).
@@ -680,23 +683,24 @@ struct PopupContentView: View {
 
     /// An empty group offers what the group window's Add menu does: Add Apps… and Add Files or
     /// Folders… open their panels there (a standalone group's own app opens the group's settings
-    /// in the main app instead), Add Website… its own window.
+    /// in the main app instead), Add Open Apps… the capture sheet there (not in a standalone
+    /// group's own app), Add Website… its own window. The pills wrap to two rows when they don't
+    /// fit in one (capture spec §3.3).
     @ViewBuilder
     private func emptyState(_ palette: PanelPalette) -> some View {
         if !content.isMostUsed {
-            let showSettings = actions.showGroupSettings ?? actions.manageGroups
             VStack(spacing: 6) {
                 Text(L10n.Item.emptyGroup)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(palette.secondaryText)
-                HStack(spacing: 8) {
-                    Button(L10n.Common.addApps, action: actions.addApps ?? showSettings)
-                        .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
-                    Button(L10n.AddItems.menu, action: actions.addFilesAndFolders ?? showSettings)
-                        .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
-                    if content.isEditable, let addWebsite = actions.addWebsite {
-                        Button(L10n.Common.addWebsite, action: addWebsite)
-                            .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 8) {
+                        appPills
+                        itemPills
+                    }
+                    VStack(spacing: 6) {
+                        HStack(spacing: 8) { appPills }
+                        HStack(spacing: 8) { itemPills }
                     }
                 }
             }
@@ -712,6 +716,33 @@ struct PopupContentView: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, 14)
         }
+    }
+
+    /// Add Apps… and, where the group can capture, Add Open Apps….
+    @ViewBuilder
+    private var appPills: some View {
+        Button(L10n.Common.addApps, action: actions.addApps ?? emptyStateFallback)
+            .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+        if content.isEditable, let addOpenApps = actions.addOpenApps {
+            Button(L10n.Capture.popupPill, action: addOpenApps)
+                .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+        }
+    }
+
+    /// Add Files or Folders… and, where the group can be edited, Add Website….
+    @ViewBuilder
+    private var itemPills: some View {
+        Button(L10n.AddItems.menu, action: actions.addFilesAndFolders ?? emptyStateFallback)
+            .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+        if content.isEditable, let addWebsite = actions.addWebsite {
+            Button(L10n.Common.addWebsite, action: addWebsite)
+                .buttonStyle(PillButtonStyle(tint: PanelPalette.teal, filled: false))
+        }
+    }
+
+    /// Where an empty group's pills lead when its popup can't do it: the group's settings.
+    private var emptyStateFallback: () -> Void {
+        actions.showGroupSettings ?? actions.manageGroups
     }
 
     // MARK: - Footer
