@@ -1689,6 +1689,36 @@ extension L10n {
             static func whenAppOpens(_ appName: String) -> String { tr("triggers.editor.event.appOpens", "When %@ Opens", appName) }
             static var whenScreensWake: String { tr("triggers.editor.event.screensWake", "When the Screens Wake") }
             static var whenScreensSleep: String { tr("triggers.editor.event.screensSleep", "When the Screens Sleep") }
+            static var whenDisplayConnects: String { tr("triggers.editor.event.displayConnects", "When a Display Connects") }
+            static var whenDisplayDisconnects: String { tr("triggers.editor.event.displayDisconnects", "When a Display Disconnects") }
+            static var whenDisplaysConnected: String { tr("triggers.editor.event.displaysConnected", "When These Displays Are Connected") }
+            static var whenDisplaysDisconnected: String {
+                tr("triggers.editor.event.displaysDisconnected", "When These Displays Are No Longer Connected")
+            }
+            static var display: String { tr("triggers.editor.display", "Display") }
+            static var anyExternalDisplay: String { tr("triggers.editor.display.anyExternal", "Any External Display") }
+            /// A saved display that isn't connected now: "LG UltraFine (not connected)".
+            static func notConnected(_ name: String) -> String { tr("triggers.editor.display.notConnected", "%@ (not connected)", name) }
+            static var unnamedDisplay: String { tr("triggers.editor.display.unnamed", "Unnamed Display") }
+            static var displays: String { tr("triggers.editor.displays", "Displays") }
+            static var useCurrentDisplays: String { tr("triggers.editor.displays.useCurrent", "Use Current Displays") }
+            static var noDisplays: String {
+                tr("triggers.editor.displays.none", "No displays chosen: connect them, then click Use Current Displays.")
+            }
+            static var displaysHint: String {
+                tr(
+                    "triggers.editor.displays.hint",
+                    "Only which displays are connected counts, built-in included: not where they are, their resolution or which one is main."
+                )
+            }
+            static var finishWhenEnds: String { tr("triggers.editor.finishWhenEnds", "Finish when it ends") }
+            static func finishWhenEndsHint(_ groupName: String) -> String {
+                tr(
+                    "triggers.editor.finishWhenEnds.hint",
+                    "When it ends, “%@” is finished — its apps hidden — if it's still the current group and this trigger started it.",
+                    groupName
+                )
+            }
             static var time: String { tr("triggers.editor.time", "Time") }
             static var days: String { tr("triggers.editor.days", "Days") }
             static var weekdays: String { tr("triggers.editor.weekdays", "Weekdays") }

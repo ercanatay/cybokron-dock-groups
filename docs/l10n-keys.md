@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-987 keys.
+1001 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1341,6 +1341,20 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.login.turnOn` | Turn On Open at Login |
 | `triggers.editor.add` | Add Trigger |
 | `triggers.editor.save` | Save |
+| `triggers.editor.event.displayConnects` | When a Display Connects |
+| `triggers.editor.event.displayDisconnects` | When a Display Disconnects |
+| `triggers.editor.event.displaysConnected` | When These Displays Are Connected |
+| `triggers.editor.event.displaysDisconnected` | When These Displays Are No Longer Connected |
+| `triggers.editor.display` | Display |
+| `triggers.editor.display.anyExternal` | Any External Display |
+| `triggers.editor.display.notConnected` | %@ (not connected) |
+| `triggers.editor.display.unnamed` | Unnamed Display |
+| `triggers.editor.displays` | Displays |
+| `triggers.editor.displays.useCurrent` | Use Current Displays |
+| `triggers.editor.displays.none` | No displays chosen: connect them, then click Use Current Displays. |
+| `triggers.editor.displays.hint` | Only which displays are connected counts, built-in included: not where they are, their resolution or which one is main. |
+| `triggers.editor.finishWhenEnds` | Finish when it ends |
+| `triggers.editor.finishWhenEnds.hint` | When it ends, “%@” is finished — its apps hidden — if it's still the current group and this trigger started it. |
 
 ## Triggers: the notice before a trigger runs (English only for now; `awaitingTranslation`: `triggers.notice.`)
 

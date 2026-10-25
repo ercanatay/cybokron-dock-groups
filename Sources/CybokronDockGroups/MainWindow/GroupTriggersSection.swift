@@ -5,8 +5,8 @@ import SwiftUI
 /// The group window's Triggers section (triggers spec §3.1): the group's triggers — each with its
 /// switch, its rule and what happened last — Add Trigger…, Edit… and Remove. It says that triggers
 /// run while the app is open and never quit apps, whether they're paused, and when Open at Login is
-/// off. A trigger this version can't edit (a display or network one) can still be turned off and
-/// removed.
+/// off. A trigger this version can't edit (a network one, or one a newer version made) can still be
+/// turned off and removed.
 struct GroupTriggersSection: View {
     @ObservedObject var triggers: TriggerController
     @ObservedObject var store: TriggerStore
@@ -48,7 +48,13 @@ struct GroupTriggersSection: View {
             }
             // On one row: a modifier on the section would go to each of its rows.
             .sheet(item: $editing) { request in
-                TriggerEditorSheet(group: group, existing: request.existing, store: store, loginItem: loginItem) { editing = nil }
+                TriggerEditorSheet(
+                    group: group,
+                    existing: request.existing,
+                    store: store,
+                    loginItem: loginItem,
+                    readDisplays: triggers.connectedDisplays
+                ) { editing = nil }
             }
             if triggers.isPaused, !list.isEmpty {
                 Label(triggers.pauseDescription ?? Texts.paused, systemImage: "pause.circle")

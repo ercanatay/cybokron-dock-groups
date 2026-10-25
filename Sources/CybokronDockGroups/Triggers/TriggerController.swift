@@ -5,7 +5,7 @@ import OSLog
 
 /// Runs the triggers while the app runs (triggers spec §2.5, DECISION 1): it owns the triggers
 /// (`TriggerStore`, `triggers.json`), their state (`TriggerStateStore`, `trigger-state.json`), the
-/// coordinator, the notice and the sources — the clock and the workspace in this version — and
+/// coordinator, the notice and the sources — the clock, the workspace and the displays — and
 /// passes what the sources see to the coordinator, which decides and carries out through
 /// `AutomationBridge` with `TransitionTrigger.automation`: nothing a trigger does quits an app or
 /// asks a question.
@@ -16,6 +16,7 @@ import OSLog
 /// - The launch is told 5 seconds after the app finished launching (the launch settle): a link or
 ///   a Siri or Shortcuts request meanwhile makes it quiet, and so does the marker an update's or a
 ///   language change's relaunch leaves (`markQuietRelaunch`).
+/// - The display source runs only while a display trigger can run (`TriggerSourceNeeds`).
 /// - Only the main app creates one (`AppDelegate`): a standalone group's agent never evaluates,
 ///   runs or registers anything.
 @MainActor
@@ -36,6 +37,7 @@ final class TriggerController: ObservableObject {
     private let notice = TriggerNoticePanel()
     private var clock: ClockSource?
     private var workspace: WorkspaceSource?
+    private var displaySource: DisplaySource?
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
     private var launchSettle: Task<Void, Never>?
@@ -116,6 +118,8 @@ final class TriggerController: ObservableObject {
         self.workspace = workspace
         workspace.start()
         clock.start()
+        displaySource = DisplaySource { [weak self] signal in self?.coordinator.receive(signal) }
+        updateSources()
 
         launchSettle = Task { @MainActor [weak self] in
             try? await Task.sleep(for: Self.launchSettle)
@@ -244,6 +248,7 @@ final class TriggerController: ObservableObject {
         rules = store.triggers
         coordinator.rulesChanged(previous: previous)
         clock?.reschedule()
+        updateSources()
         objectWillChange.send()
     }
 
@@ -264,7 +269,23 @@ final class TriggerController: ObservableObject {
             coordinator.rulesChanged(previous: asBefore)
         }
         clock?.reschedule()
+        updateSources()
         objectWillChange.send()
+    }
+
+    /// Starts the sources the triggers that can run need, and stops the others.
+    private func updateSources() {
+        let needs = TriggerSourceNeeds.of(rules: store.triggers, activeGroups: Set(groups.groups.map(\.id)))
+        if let displaySource {
+            if needs.contains(.displays) { displaySource.start() } else { displaySource.stop() }
+        }
+    }
+
+    // MARK: - What the editor reads
+
+    /// The displays connected now, for the editor's chooser and Use Current Displays.
+    func connectedDisplays() -> [DisplayIdentity] {
+        DisplaySource.connectedDisplays() ?? []
     }
 }
 

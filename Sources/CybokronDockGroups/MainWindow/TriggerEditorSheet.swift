@@ -3,28 +3,44 @@ import DockGroupsCore
 import SwiftUI
 
 /// New Trigger / Edit Trigger (triggers spec §3.2): when — a time on chosen days, at login, when
-/// the app opens, when the screens wake or sleep —, what to do — only the actions that event
-/// allows —, how — a notice, Ask First, Run Right Away; Show the Popup runs right away — and At
-/// most once a day. It says what a Start or Finish does (never quitting), how late a missed time
-/// still runs, and when an At Login trigger needs Open at Login. Return saves, Escape cancels.
+/// the app opens, when the screens wake or sleep, when a display (any external one, or a chosen
+/// one) connects or disconnects, when these displays are connected or no longer —, what to do —
+/// only the actions that event allows, with Finish when it ends for a Start on a change's start —,
+/// how — a notice, Ask First, Run Right Away; Show the Popup runs right away — and At most once a
+/// day. It says what a Start or Finish does (never quitting), how late a missed time still runs,
+/// and when an At Login trigger needs Open at Login. Return saves, Escape cancels.
+///
+/// The display chooser lists the displays connected now, read again when they change, and a saved
+/// display that isn't connected by its name, "not connected".
 struct TriggerEditorSheet: View {
     let group: DockGroup
     let existing: GroupTrigger?
     let store: TriggerStore
     @ObservedObject var loginItem: LoginItem
+    /// The displays connected now (`DisplaySource.connectedDisplays`).
+    let readDisplays: () -> [DisplayIdentity]
     let dismiss: () -> Void
 
     @State private var draft: TriggerDraft
     @State private var problem: String?
+    @State private var connected: [DisplayIdentity] = []
 
     private typealias Texts = L10n.Triggers.Editor
     private let calendar = Calendar.autoupdatingCurrent
 
-    init(group: DockGroup, existing: GroupTrigger?, store: TriggerStore, loginItem: LoginItem, dismiss: @escaping () -> Void) {
+    init(
+        group: DockGroup,
+        existing: GroupTrigger?,
+        store: TriggerStore,
+        loginItem: LoginItem,
+        readDisplays: @escaping () -> [DisplayIdentity],
+        dismiss: @escaping () -> Void
+    ) {
         self.group = group
         self.existing = existing
         self.store = store
         self.loginItem = loginItem
+        self.readDisplays = readDisplays
         self.dismiss = dismiss
         let calendar = Calendar.autoupdatingCurrent
         _draft = State(initialValue: existing.flatMap { TriggerDraft(editing: $0, calendar: calendar) } ?? TriggerDraft(calendar: calendar))
@@ -51,6 +67,10 @@ struct TriggerEditorSheet: View {
         }
         .padding(20)
         .frame(width: 520)
+        .onAppear { connected = readDisplays() }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
+            connected = readDisplays()
+        }
     }
 
     // MARK: - When
@@ -60,13 +80,21 @@ struct TriggerEditorSheet: View {
         GridRow {
             Text(Texts.when)
                 .gridColumnAlignment(.trailing)
-            Picker(Texts.when, selection: Binding(get: { draft.kind }, set: { draft.setKind($0) })) {
-                ForEach(TriggerDraft.Kind.allCases, id: \.self) { kind in
-                    Text(Self.title(of: kind)).tag(kind)
+            Picker(Texts.when, selection: Binding(get: { draft.when }, set: { choose($0) })) {
+                ForEach(TriggerDraft.When.offered, id: \.self) { when in
+                    Text(Self.title(of: when)).tag(when)
                 }
             }
             .labelsHidden()
             .fixedSize()
+        }
+        switch draft.change {
+        case .displayConnects?, .displayDisconnects?:
+            displayRow
+        case .displaysConnected?, .displaysDisconnected?:
+            displaysRow
+        case nil:
+            EmptyView()
         }
         if draft.kind == .time {
             GridRow {
@@ -84,6 +112,70 @@ struct TriggerEditorSheet: View {
                 }
             }
         }
+    }
+
+    /// Picks an event; These Displays starts with the displays connected now.
+    private func choose(_ when: TriggerDraft.When) {
+        draft.setWhen(when)
+        if case .change(let change) = when, change == .displaysConnected || change == .displaysDisconnected, draft.displays.isEmpty {
+            draft.useDisplays(connected)
+        }
+    }
+
+    // MARK: - Displays
+
+    private var displayOptions: [DisplayChoices.Option] {
+        DisplayChoices.options(connected: connected, saved: draft.display)
+    }
+
+    private var displayRow: some View {
+        GridRow {
+            Text(Texts.display)
+            Picker(Texts.display, selection: Binding(
+                get: { DisplayChoices.selection(for: draft.display, in: displayOptions) },
+                set: { draft.display = $0 }
+            )) {
+                ForEach(displayOptions, id: \.self) { option in
+                    Text(Self.title(of: option)).tag(option.match)
+                }
+            }
+            .labelsHidden()
+            .fixedSize()
+        }
+    }
+
+    private var displaysRow: some View {
+        GridRow {
+            Text(Texts.displays)
+            VStack(alignment: .leading, spacing: 6) {
+                if draft.displays.isEmpty {
+                    Text(Texts.noDisplays)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                ForEach(Array(draft.displays.enumerated()), id: \.offset) { _, display in
+                    Label(Self.displayTitle(display, isConnected: DisplayChoices.isConnected(display, in: connected)), systemImage: display.isBuiltIn ? "laptopcomputer" : "display")
+                }
+                Button(Texts.useCurrentDisplays) { draft.useDisplays(connected) }
+                    .disabled(connected.isEmpty)
+                Text(Texts.displaysHint)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    static func title(of option: DisplayChoices.Option) -> String {
+        switch option.match {
+        case .anyExternal: return Texts.anyExternalDisplay
+        case .display(let identity): return displayTitle(identity, isConnected: option.isConnected)
+        }
+    }
+
+    static func displayTitle(_ display: DisplayIdentity, isConnected: Bool) -> String {
+        let name = display.name.isEmpty ? Texts.unnamedDisplay : display.name
+        return isConnected ? name : Texts.notConnected(name)
     }
 
     private var dayPresets: some View {
@@ -113,6 +205,15 @@ struct TriggerEditorSheet: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                }
+                if draft.canFinishWhenEventEnds {
+                    Toggle(Texts.finishWhenEnds, isOn: $draft.finishesWhenEventEnds)
+                    if draft.finishesWhenEventEnds {
+                        Text(Texts.finishWhenEndsHint(group.name))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }
@@ -245,6 +346,16 @@ struct TriggerEditorSheet: View {
     }
 
     // MARK: - Titles
+
+    static func title(of when: TriggerDraft.When) -> String {
+        switch when {
+        case .moment(let kind): return title(of: kind)
+        case .change(.displayConnects): return Texts.whenDisplayConnects
+        case .change(.displayDisconnects): return Texts.whenDisplayDisconnects
+        case .change(.displaysConnected): return Texts.whenDisplaysConnected
+        case .change(.displaysDisconnected): return Texts.whenDisplaysDisconnected
+        }
+    }
 
     static func title(of kind: TriggerDraft.Kind) -> String {
         switch kind {

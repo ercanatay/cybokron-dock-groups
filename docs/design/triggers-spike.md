@@ -1,7 +1,7 @@
 # Spike: triggers (phase 4b)
 
 Results of the spikes in `docs/design/triggers-spec.md` §2.3 (TS-1 … TS-11). Each PR adds the ones it
-needs; PR 1 ran TS-1, PR 2 TS-2, TS-3 and TS-4 (TS-10 is a manual gate).
+needs; PR 1 ran TS-1, PR 2 TS-2, TS-3 and TS-4 (TS-10 is a manual gate), PR 3 TS-5 and TS-6.
 
 ## TS-1: how late a one-shot timer fires in a windowless menu bar app (PR 1)
 
@@ -138,6 +138,43 @@ Day → Run Immediately → Start Group) and a wait for it to fire, which a scri
 it's recorded, the README's recipe and Settings → Triggers only say an automation *can* start a
 group on macOS 26 and later.
 
+## TS-5, TS-6: display identity and displays across sleep (PR 3)
+
+- **Date:** 2026-10-25. **Mac:** Mac16,11 (Mac mini, no built-in display) on macOS 27.0.1 with one
+  external monitor; display sleep was held off by other apps (`pmset -g`: "display sleep prevented
+  by …"), so nothing slept during the runs.
+- **Method:** a throwaway command-line tool (nothing of it is in the repository) read, twice a
+  second apart: `NSScreen.screens` with each screen's `NSScreenNumber`, `localizedName`,
+  `CGDisplayVendorNumber`, `ModelNumber`, `SerialNumber`, `IsBuiltin`, `IsAsleep`, `IsInMirrorSet`,
+  `MirrorsDisplay`, `IsMain`, `IsOnline`, `IsActive`, and `CGGetOnlineDisplayList` /
+  `CGGetActiveDisplayList`.
+
+### Findings
+
+1. The monitor reads as `VX2776-4K-mhd`, vendor 23139, model 28983, serial 16843009 (0x01010101 —
+   the placeholder `DisplayIdentity` drops), not built in, not in a mirror set; the same both times,
+   and the online and active lists hold the same one display. No prompt, no permission.
+2. With the placeholder serial, the identity is vendor + model + name: two of these monitors would be
+   two of the same kind (`DisplayArrangement` counts them; the chooser offers them once).
+3. **Not measured here — manual gates:** unplugging and plugging it again, through a dock and
+   another port; a second, identical monitor; a MacBook's built-in display and clamshell mode;
+   Sidecar and AirPlay displays (whether `NSScreen` lists them, and as built in or not); mirroring
+   (whether `NSScreen` lists a mirror set's displays, which These Displays counts); and TS-6, whether
+   an external monitor leaves and rejoins the screen list when the screens sleep and wake. Display
+   sleep can't be started here without putting the user's screen to sleep.
+
+### Decisions for PR 3
+
+- `DisplaySource` reads `NSScreen.screens` (the `NSScreenNumber` of each, then the four CoreGraphics
+  numbers and `localizedName`) 2 seconds after the last `didChangeScreenParameters`; an empty list is
+  "unknown", never "every display disconnected".
+- TS-6 isn't measured, so the spec's fallback is in from the start: nothing is read while the
+  screens or the Mac sleep (`screensDidSleep`, `willSleep`), and after `screensDidWake` / `didWake`
+  nothing is read for 5 seconds, however the screen list changes meanwhile. The reading after the
+  wake is compared with the set kept from before the sleep (per trigger, in `trigger-state.json`),
+  so a monitor that rejoined makes no edge.
+- The source runs only while a display trigger can run (`TriggerSourceNeeds`).
+
 ## Manual gates still open (record before 0.11.0)
 
 1. **TS-1 on battery:** a MacBook on battery, the lid open, the app idle for an hour before a due
@@ -152,3 +189,11 @@ group on macOS 26 and later.
 5. **TS-10:** macOS 26 or later, the app quit, a Time of Day automation with Start Group on a
    hide-only group: does it open the app and start the group without a dialog? If not, the README
    recipe says to keep the app open.
+6. **TS-5:** an external monitor unplugged and plugged in again — directly, through a dock, into
+   another port: When a Display Connects / Disconnects run once each; the chosen display is still
+   chosen. Two identical monitors; These Displays with both. A MacBook: clamshell (lid closed with a
+   monitor) is no "disconnects" of the built-in display; Sidecar and AirPlay: record how they count.
+   Mirroring on: These Displays still matches.
+7. **TS-6:** with display triggers on, `pmset displaysleepnow` and wake after 1 and after 10 minutes;
+   Mac sleep with the monitor on; the monitor's own power button. No edge unless a display really
+   changed; if a monitor rejoins later than 5 seconds after the wake, lengthen `wakeSettle`.

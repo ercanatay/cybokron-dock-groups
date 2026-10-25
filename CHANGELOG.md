@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A time the Mac sleeps through, or the app isn't open for, still runs up to 30 minutes late — when the Mac wakes or the app opens; later, it's noted as missed. Each row says what happened last ("Last ran today at 9:00: started “Work”.", "Skipped …: you chose Not Now.")
 - Settings → Triggers (after Switching): Open at Login (a login item you turn on or off there; it's never turned on for you, and the pane says when macOS needs your approval), whether triggers run or are paused, with Pause and Resume, and every trigger by group with its switch and Show in Group Window…
 - The menu bar menu has Pause Triggers (For 1 Hour, Until Tomorrow, Until I Resume Them) or Resume Triggers while any trigger exists, and Quit's tooltip says triggers don't run while the app is quit
+- Display triggers: When a Display Connects or Disconnects (any external display, or one chosen from those connected) and When These Displays Are Connected or No Longer Connected (Use Current Displays saves the displays connected now). Displays are read 2 seconds after they change and not while the screens sleep, so a monitor that stays connected through a sleep makes no trigger run; a change while the app was quit counts once when it opens. A Start on a connection can Finish when it ends — hiding only, if the group is still current and that trigger started it
 - The diagnostics report says whether the app opens at login
 
 ### Changed

@@ -105,12 +105,13 @@ struct TriggerDraftTests {
         #expect(trigger.canRun)
     }
 
-    @Test func displayNetworkAndUnknownTriggersArentEditedHere() throws {
+    @Test func networkAndUnknownTriggersArentEditedHere() throws {
         let group = Self.group
         let display = GroupTrigger.on(.condition(.display(.anyExternal), edge: .starts), group: group)
         let wifi = GroupTrigger.on(.condition(.wifi(WiFiNetworkName("Office")!), edge: .ends), group: group, action: .finish)
         let unknown = GroupTrigger.on(.unsupported(.object(["kind": .string("bluetooth")])), group: group)
-        #expect(TriggerDraft(editing: display, calendar: Self.calendar) == nil)
+        // Display triggers are edited here since phase 4b PR 3.
+        #expect(TriggerDraft(editing: display, calendar: Self.calendar)?.event == display.event)
         #expect(TriggerDraft(editing: wifi, calendar: Self.calendar) == nil)
         #expect(TriggerDraft(editing: unknown, calendar: Self.calendar) == nil)
         // An action a newer version wrote: editing would lose it.

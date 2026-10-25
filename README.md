@@ -71,7 +71,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - **Triggers**: in the group window's **Triggers** section, **Add Trigger…** makes a group start,
   open all, show its popup or finish when something happens — **At a Time** (a time on chosen days:
   Weekdays, Weekends, Every Day or your own), **At Login**, **When Cybokron Dock Groups Opens**,
-  **When the Screens Wake** or **When the Screens Sleep** (Finish only). Open All, Start and Finish
+  **When the Screens Wake**, **When the Screens Sleep** (Finish only), or when displays connect or
+  disconnect (below). Open All, Start and Finish
   show a 5-second notice at the top right of the screen first, with **Not Now** (or ask first, or
   run right away); Show the Popup runs right away. **At most once a day** is optional, and a trigger
   waits a minute before it runs again. Triggers never quit an app — a group set to quit hides
@@ -80,10 +81,22 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   happened last ("Last ran today at 9:00: started “Work”."). **Settings → Triggers** lists every
   trigger with its switch, turns **Open at Login** on or off (only you turn it on), and pauses them;
   while any trigger exists, the menu bar menu has **Pause Triggers** (For 1 Hour, Until Tomorrow,
-  Until I Resume Them) or **Resume Triggers**. After 12 runs in an hour they pause for an hour by themselves. Triggers run
-  **while Cybokron Dock Groups is open**; an update's or a language change's restart, and a launch
+  Until I Resume Them) or **Resume Triggers**. After 12 runs in an hour they pause for an hour by
+  themselves. Triggers run **while Cybokron Dock Groups is open**; an update's or a language change's restart, and a launch
   for a link or a Siri request, don't count as the app opening. Up to 10 triggers per group, 100 in
   all; they're kept in `triggers.json`, what they did in `trigger-state.json`.
+- **Display triggers**: **When a Display Connects** or **Disconnects** — any external display, or one
+  you choose from those connected (a chosen display that isn't connected shows its name, "not
+  connected") — and **When These Displays Are Connected** or **No Longer Connected**: **Use Current
+  Displays** saves the displays connected now, built-in included, and the trigger waits for exactly
+  those; where they are, their resolution and which one is main don't matter. Displays are read 2
+  seconds after they change and not while the screens sleep, so a monitor that stays connected
+  through a sleep doesn't count as connecting again, and one that changed while the app was quit
+  counts once when it opens. A Start on a connection can **Finish when it ends**: when the display
+  disconnects, the group finishes — hiding only — if it's still the current group and that trigger
+  started it. Display triggers need no permission: they read what macOS tells every app about its
+  displays (their maker's and model's numbers, the serial number when there's a real one, the name).
+  With no display connected at all, nothing can be read, and nothing changes.
 - **While the app is quit**, a Shortcuts automation can start a group (macOS 26 and later): in the
   Shortcuts app, **Automation → New Automation → Time of Day** (or Wi-Fi, or Display), choose
   *Run Immediately*, then add the **Start Group** action (or Launch Group, Show Group) with your
@@ -649,6 +662,20 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      counts them; restore it after the time: the time passed while archived doesn't run.
    - Quit's tooltip in the menu bar menu says triggers don't run while the app is quit. No prompt of
      any kind appears in any of these steps.
+8. **Display triggers** — with an external monitor and a MacBook's built-in display or a second
+   display (with no display left at all, the app can't read the displays and nothing changes; the
+   open steps are TS-5 and TS-6 in `docs/design/triggers-spike.md`).
+   - When a Display Connects (Any External Display), Start, Finish when it ends: unplug the monitor
+     and plug it in again — the notice and Start once, a few seconds after it's back; unplug it —
+     the group finishes, its apps hidden. Start another group in between: unplugging finishes
+     nothing.
+   - The same with the monitor chosen by name, then with another monitor: only the chosen one
+     counts. Edit the trigger with it unplugged: the chooser shows it "(not connected)".
+   - When These Displays Are Connected: Use Current Displays with the monitor in; unplug it — the
+     "No Longer Connected" trigger runs; plug it in — the "Connected" one runs.
+   - With the monitor connected, `pmset displaysleepnow`, wait, wake the screens; sleep the Mac and
+     wake it: no trigger runs. Quit the app, unplug the monitor, open the app: the disconnect runs
+     once, a few seconds after the launch.
 
 ## Project layout
 
