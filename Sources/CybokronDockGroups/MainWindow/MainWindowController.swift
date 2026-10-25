@@ -48,6 +48,7 @@ final class MainWindowController: NSWindowController {
         session: ContextSession,
         shortcuts: GlobalShortcutMonitor,
         capture: CaptureController,
+        triggers: TriggerController,
         actions: MainWindowView.Actions
     ) {
         self.store = store
@@ -67,6 +68,7 @@ final class MainWindowController: NSWindowController {
                 session: session,
                 shortcuts: shortcuts,
                 capture: capture,
+                triggers: triggers,
                 actions: actions,
                 selection: selection,
                 items: items

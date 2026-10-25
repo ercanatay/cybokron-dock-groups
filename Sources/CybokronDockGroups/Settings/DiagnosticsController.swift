@@ -27,6 +27,7 @@ final class DiagnosticsController: ObservableObject {
     private let templates: TemplateStore
     private let updater: AutoUpdater
     private let shortcuts: GlobalShortcutMonitor
+    private let triggers: TriggerController?
     private let isStatusItemShown: () -> Bool
     private var feedbackReset: Task<Void, Never>?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Diagnostics")
@@ -37,6 +38,7 @@ final class DiagnosticsController: ObservableObject {
         templates: TemplateStore,
         updater: AutoUpdater,
         shortcuts: GlobalShortcutMonitor,
+        triggers: TriggerController? = nil,
         isStatusItemShown: @escaping () -> Bool
     ) {
         self.preferences = preferences
@@ -44,6 +46,7 @@ final class DiagnosticsController: ObservableObject {
         self.templates = templates
         self.updater = updater
         self.shortcuts = shortcuts
+        self.triggers = triggers
         self.isStatusItemShown = isStatusItemShown
     }
 
@@ -139,6 +142,9 @@ final class DiagnosticsController: ObservableObject {
             groupShortcutStatuses: shortcuts.groupStatuses,
             archivedGroupCount: store.archivedGroups.count,
             templateCount: templates.templates.count,
+            triggers: triggers?.store.triggers ?? [],
+            triggersPausedUntil: triggers?.state.pausedUntil,
+            opensAtLogin: triggers?.loginItem.isOn,
             recentErrors: []
         )
     }

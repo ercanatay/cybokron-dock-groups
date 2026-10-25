@@ -3,8 +3,8 @@ import DockGroupsCore
 import SwiftUI
 
 /// Settings of one group: name, emoji, member items (apps, files, folders and websites), what
-/// Start and Finish do, its keyboard shortcut, Dock tile, standalone Dock icon and popup
-/// preferences. Every change goes straight to the store, which saves it.
+/// Start and Finish do, its keyboard shortcut, its triggers, Dock tile, standalone Dock icon and
+/// popup preferences. Every change goes straight to the store, which saves it.
 ///
 /// Where the items are is checked when the group shows, when its items change, when the window
 /// comes to the front (`GroupWindowItems`) and when a volume is connected or ejected — never while
@@ -26,6 +26,8 @@ struct GroupDetailView: View {
     let shortcuts: GlobalShortcutMonitor
     let group: DockGroup
     let tiles: TileImageCache
+    /// The group's triggers, for the Triggers section.
+    let triggers: TriggerController
     let actions: MainWindowView.Actions
     let items: GroupWindowItems
     @ObservedObject var selection: GroupWindowSelection
@@ -73,6 +75,7 @@ struct GroupDetailView: View {
         shortcuts: GlobalShortcutMonitor,
         group: DockGroup,
         tiles: TileImageCache,
+        triggers: TriggerController,
         actions: MainWindowView.Actions,
         items: GroupWindowItems,
         selection: GroupWindowSelection
@@ -83,6 +86,7 @@ struct GroupDetailView: View {
         self.shortcuts = shortcuts
         self.group = group
         self.tiles = tiles
+        self.triggers = triggers
         self.actions = actions
         self.items = items
         self.selection = selection
@@ -97,6 +101,13 @@ struct GroupDetailView: View {
             itemsSection
             switchingSection
             GroupShortcutSection(store: store, shortcuts: shortcuts, group: group)
+            GroupTriggersSection(
+                triggers: triggers,
+                store: triggers.store,
+                loginItem: triggers.loginItem,
+                group: group,
+                showTriggerSettings: actions.showTriggerSettings
+            )
             tileSection
             standaloneSection
             popupSection

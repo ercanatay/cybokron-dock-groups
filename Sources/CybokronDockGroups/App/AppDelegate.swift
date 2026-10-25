@@ -23,6 +23,11 @@ import OSLog
 /// New Group from Open Apps… and Add Open Apps… (the menu bar menu, the group window, an empty
 /// group's popup, `capture` links) read the open apps first, while the app the user was in is still
 /// in front, and then show the capture sheet in the group window (`beginCapture`, `CaptureController`).
+///
+/// Triggers (a time, login, the app opening, the screens waking or sleeping) run while the app runs
+/// (`TriggerController`): they start, open, show or finish groups through `AutomationBridge` with
+/// `TransitionTrigger.automation`, so they never quit an app or ask a question. Links and Siri or
+/// Shortcuts requests that come with the launch make it quiet, as an update's relaunch does.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     // Lazy, like everything that reads the files: a second copy that hands its URLs over and quits
@@ -30,6 +35,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // moves an unreadable file aside under the running copy.
     private lazy var store = GroupStore(persistence: JSONFileGroupPersistence())
     private lazy var preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence())
+    /// The triggers (`triggers.json`, `trigger-state.json`), read when the app finishes launching
+    /// (or when a link arrives before that), so a second copy that hands its URLs over reads nothing.
+    private var loadedTriggers: TriggerController?
+    private var triggers: TriggerController {
+        if let loadedTriggers { return loadedTriggers }
+        let triggers = TriggerController(groups: store)
+        loadedTriggers = triggers
+        return triggers
+    }
+    /// What triggers do, the way the app's own buttons do it, as `TransitionTrigger.automation`.
+    private lazy var automation = AutomationBridge(actions: AutomationBridge.Actions(
+        group: { [weak self] id in self?.store.group(withID: id) },
+        currentGroupID: { [weak self] in self?.session.current },
+        currentGroupStartTrigger: { [weak self] in self?.session.startTrigger },
+        start: { [weak self] id, trigger in
+            guard let self else { throw CancellationError() }
+            return try await self.switcher.start(id, trigger: trigger)
+        },
+        finish: { [weak self] id, trigger, showsPrevious in
+            guard let self else { throw CancellationError() }
+            return try await self.switcher.finish(id, trigger: trigger, showsPrevious: showsPrevious)
+        },
+        // The app delegate lives as long as the app.
+        openAll: { [unowned self] group in await self.launcher.openAll(group) },
+        showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
+    ))
     /// The templates (`templates.json`), read when the group window or Settings first needs them,
     /// so quitting before that reads nothing.
     private var loadedTemplates: TemplateStore?
@@ -108,6 +139,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             session: session,
             shortcuts: shortcutMonitor,
             capture: capture,
+            triggers: triggers,
             actions: MainWindowView.Actions(
                 openAll: { [weak self] group in self?.openAll(group) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
@@ -117,7 +149,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 showProtectedApps: { [weak self] in self?.showSwitchingSettings() },
                 archive: { [weak self] group in self?.archive(group) },
                 restore: { [weak self] id in self?.restore(id) },
-                capture: { [weak self] target in self?.beginCapture(target) }
+                capture: { [weak self] target in self?.beginCapture(target) },
+                showTriggerSettings: { [weak self] in self?.showTriggerSettings() }
             )
         )
         // A standalone group's Dock tile may have been dragged out of the Dock meanwhile.
@@ -134,6 +167,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         session: session,
         runningApps: runningApps,
         icons: icons,
+        triggers: triggers,
         isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil },
         // Standalone groups from a backup get their Dock tiles instead of being turned off.
         groupsRestored: { [weak self] groups in self?.standalone.adoptRestoredGroups(groups) },
@@ -188,6 +222,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // While the open-application event is the one being handled (TS-3).
+        let launchedAsLoginItem = LaunchSignals.isLoginItemLaunch()
         var launchURLs: [URL] = []
         if let handoff = secondCopyHandoff {
             if handoff.isPrimaryRunning {
@@ -232,6 +268,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 currentGroupID: { [weak self] in self?.session.current },
                 showMainWindow: { [weak self] in self?.mainWindowController.show() },
                 captureNewGroup: { [weak self] in self?.beginCapture(.newGroup) },
+                triggerMenu: { [weak self] in self?.triggerMenu() },
+                pauseTriggers: { [weak self] length in self?.triggers.pause(length) },
+                resumeTriggers: { [weak self] in self?.triggers.resume() },
                 showSettings: { [weak self] in self?.showSettingsWindow(nil) },
                 showAbout: { [weak self] in self?.showAboutWindow(nil) },
                 checkForUpdates: { [weak self] in self?.checkForUpdates(nil) },
@@ -258,11 +297,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         updater.closeWindow = { [weak self] in self?.updateWindowController.close() }
         updater.isWindowShown = { [weak self] in self?.updateWindowController.window?.isVisible == true }
+        // The launch after an update's or a language change's relaunch runs no launch trigger.
+        updater.beforeRelaunch = { [weak self] in self?.triggers.markQuietRelaunch() }
+        updater.triggerStatus = { [weak self] in
+            guard let self else { return (0, false) }
+            return (self.triggers.store.enabledCount, self.triggers.loginItem.isOn)
+        }
+        AppLanguageSupport.beforeRelaunch = { [weak self] in self?.triggers.markQuietRelaunch() }
         updater.start()
         // Focus filter calls that came while the app started wait until now.
         FocusFilterBridge.coordinator.handler = self
+        triggers.start(
+            handler: automation,
+            launchedAsLoginItem: launchedAsLoginItem,
+            launchedAt: NSRunningApplication.current.launchDate ?? Date()
+        )
         // The window stays closed at launch unless there's a problem the user needs to see.
-        if store.issue != nil {
+        if store.issue != nil || triggers.store.issue != nil {
             mainWindowController.show()
         }
         for url in launchURLs {
@@ -313,6 +364,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         preferences.flushPendingSave()
         usage.flushPendingSave()
         loadedTemplates?.flushPendingSave()
+        loadedTriggers?.flush()
     }
 
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
@@ -329,6 +381,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showSwitchingSettings() {
         popupController.close()
         settingsWindowController.show(pane: .switching)
+    }
+
+    /// Settings on the Triggers pane (the group window's Open at Login Turn On…).
+    private func showTriggerSettings() {
+        popupController.close()
+        settingsWindowController.show(pane: .triggers)
+    }
+
+    /// What the menu bar menu shows about triggers: nothing without any.
+    private func triggerMenu() -> StatusBarController.TriggerMenu? {
+        let triggers = self.triggers
+        guard !triggers.store.triggers.isEmpty else { return nil }
+        return StatusBarController.TriggerMenu(
+            pauseDescription: triggers.pauseDescription,
+            isPaused: triggers.isPaused,
+            quitTooltip: triggers.hasRunnableTriggers ? L10n.Triggers.MenuBar.quitTooltip(AppInfo.name) : nil
+        )
     }
 
     /// Target of the About menu items.
@@ -531,6 +600,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - URL scheme
 
     private func handle(_ url: URL) {
+        // A link that comes with the launch: the app was opened for it, not for launch triggers.
+        triggers.noteRequest()
         guard let link = LinkCommand(url: url) else {
             urlLogger.error("Ignored unsupported URL \(url.absoluteString, privacy: .public)")
             return
@@ -660,36 +731,43 @@ extension AppDelegate: GroupIntentHandling {
     var archivedGroups: [ArchivedGroup] { store.archivedGroups }
 
     func showPopup(forGroup id: DockGroup.ID) {
+        triggers.noteRequest()
         popupController.show(groupID: id)
     }
 
     func launchAll(_ group: DockGroup) async -> LaunchReport {
-        await launcher.openAll(group)
+        triggers.noteRequest()
+        return await launcher.openAll(group)
     }
 
     /// Siri and Shortcuts ask in their own way (`QuitGroupIntent`), not with the app's alert.
     func quitAll(_ group: DockGroup, mode: QuitMode, confirm: (QuitConfirmation) async throws -> Void) async throws -> QuitReport {
-        try await quitRequests.requestFromIntent(group, mode: mode, confirm: confirm)
+        triggers.noteRequest()
+        return try await quitRequests.requestFromIntent(group, mode: mode, confirm: confirm)
     }
 
     /// Start Group: asks in Siri or Shortcuts (`confirm`) before quitting anything.
     func start(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport {
-        try await switcher.start(group.id, trigger: .intent, confirm: confirm)
+        triggers.noteRequest()
+        return try await switcher.start(group.id, trigger: .intent, confirm: confirm)
     }
 
     /// Finish Group: asks in Siri or Shortcuts (`confirm`) before quitting anything.
     func finish(_ group: DockGroup, confirm: @escaping (TransitionConfirmation) async throws -> Void) async throws -> TransitionReport {
-        try await switcher.finish(group.id, trigger: .intent, confirm: confirm)
+        triggers.noteRequest()
+        return try await switcher.finish(group.id, trigger: .intent, confirm: confirm)
     }
 
     /// New Group from Open Apps from Siri or Shortcuts: no sheet, the app isn't brought forward.
     func captureNewGroup(named name: String?, onlyAppsWithWindows: Bool?) -> CaptureOutcome {
-        capture.captureWithoutSheet(into: .newGroup, typedName: name, onlyAppsWithWindows: onlyAppsWithWindows)
+        triggers.noteRequest()
+        return capture.captureWithoutSheet(into: .newGroup, typedName: name, onlyAppsWithWindows: onlyAppsWithWindows)
     }
 
     /// Add Open Apps to Group from Siri or Shortcuts: no sheet, the app isn't brought forward.
     func captureOpenApps(into group: DockGroup, onlyAppsWithWindows: Bool?) -> CaptureOutcome {
-        capture.captureWithoutSheet(into: .group(group.id), typedName: nil, onlyAppsWithWindows: onlyAppsWithWindows)
+        triggers.noteRequest()
+        return capture.captureWithoutSheet(into: .group(group.id), typedName: nil, onlyAppsWithWindows: onlyAppsWithWindows)
     }
 }
 

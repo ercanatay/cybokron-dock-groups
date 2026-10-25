@@ -101,6 +101,8 @@ public struct DiagnosticsInfo: Sendable {
     public var triggers: [GroupTrigger]
     /// Until when triggers are paused, `nil` when they aren't.
     public var triggersPausedUntil: Date?
+    /// Whether the app opens at login (Settings → Triggers); `nil` when unknown.
+    public var opensAtLogin: Bool?
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
     public var generatedAt: Date
@@ -118,6 +120,7 @@ public struct DiagnosticsInfo: Sendable {
         templateCount: Int = 0,
         triggers: [GroupTrigger] = [],
         triggersPausedUntil: Date? = nil,
+        opensAtLogin: Bool? = nil,
         recentErrors: [String],
         generatedAt: Date = Date()
     ) {
@@ -133,6 +136,7 @@ public struct DiagnosticsInfo: Sendable {
         self.templateCount = templateCount
         self.triggers = triggers
         self.triggersPausedUntil = triggersPausedUntil
+        self.opensAtLogin = opensAtLogin
         self.recentErrors = recentErrors
         self.generatedAt = generatedAt
     }
@@ -214,6 +218,9 @@ public enum DiagnosticsReport {
         lines.append("Triggers: \(describeTriggers(info.triggers))")
         if let paused = info.triggersPausedUntil, paused > info.generatedAt {
             lines.append("Triggers paused until: \(paused == .distantFuture ? "resumed" : timestamp(paused))")
+        }
+        if let opensAtLogin = info.opensAtLogin {
+            lines.append("Open at Login: \(onOff(opensAtLogin))")
         }
 
         section(.recentErrors, into: &lines)

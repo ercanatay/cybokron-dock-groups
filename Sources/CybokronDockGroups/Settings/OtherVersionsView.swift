@@ -132,7 +132,8 @@ struct OtherVersionsView: View {
                         current: updater.currentVersion,
                         dropsGroupItems: updater.warnsAboutGroupItems(installing: release.version),
                         dropsSwitching: updater.warnsAboutContextSwitching(installing: release.version),
-                        dropsLibrary: updater.warnsAboutGroupLibrary(installing: release.version)
+                        dropsLibrary: updater.warnsAboutGroupLibrary(installing: release.version),
+                        triggerLines: updater.triggersWarning(installing: release.version)
                     )
                 }
                 .disabled(!hasInstaller || updater.isBusy)
@@ -159,6 +160,8 @@ private struct PendingInstall {
     /// The version ignores group shortcuts, archived groups or templates in use
     /// (`DowngradeProtection.warnsAboutGroupLibrary`).
     let dropsLibrary: Bool
+    /// The version runs no trigger, and keeps opening at login (`DowngradeProtection.triggersWarning`).
+    let triggerLines: [String]
 
     private var target: SemanticVersion { release.version }
 
@@ -201,6 +204,7 @@ private struct PendingInstall {
             if dropsLibrary {
                 parts.append(L10n.Settings.OtherVersions.libraryWarning(target.description))
             }
+            parts.append(contentsOf: triggerLines)
             parts.append(L10n.Settings.OtherVersions.confirmOlder)
         case .upgrade:
             parts.append(L10n.Settings.OtherVersions.confirmUpgrade)

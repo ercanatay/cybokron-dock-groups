@@ -39,6 +39,12 @@ struct LocalizationTests {
         // Triggers, Core (phase 4b PR 1).
         "core.trigger.",
         "core.backup.triggers.",
+        // Triggers, the app (phase 4b PR 2).
+        "triggers.editor.",
+        "triggers.notice.",
+        "groupWindow.triggers.",
+        "settings.triggers.",
+        "menuBar.triggers.",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

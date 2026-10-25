@@ -42,7 +42,9 @@ a group asks for no permission and never opens, hides or quits an app: it reads 
 the window list's owner, position, size and on-screen fields (never window titles), and adds app
 items only as bundle identifiers or app bundle locations — the check every app item passes, from a
 backup or any picker; a `capture` link only shows the review sheet, and nothing is added without a
-click there.
+click there. Triggers act only while the app runs, only on your groups' items through the same
+checks, never quit apps, and triggers from a backup come in turned off; no link, intent or launch
+argument runs a trigger, and an archived or deleted group's triggers never run.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
 `groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.

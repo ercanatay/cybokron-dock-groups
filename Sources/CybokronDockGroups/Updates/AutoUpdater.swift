@@ -66,6 +66,12 @@ final class AutoUpdater: ObservableObject {
     var closeWindow: () -> Void = {}
     /// Whether the update window is on screen; set by the app delegate.
     var isWindowShown: () -> Bool = { false }
+    /// Called right before the app quits to reopen as the new version: the launch after it is
+    /// quiet for triggers (`TriggerController.markQuietRelaunch`); set by the app delegate.
+    var beforeRelaunch: () -> Void = {}
+    /// How many triggers are on, and whether the app opens at login, for the question before going
+    /// back to a version without triggers; set by the app delegate.
+    var triggerStatus: () -> (enabled: Int, opensAtLogin: Bool) = { (0, false) }
 
     private let preferences: PreferencesStore
     /// The groups, copied aside before going back to a version without group items.
@@ -344,6 +350,19 @@ final class AutoUpdater: ObservableObject {
         )
     }
 
+    /// The install question's lines about triggers when installing `version` goes back to a version
+    /// without them (`DowngradeProtection.triggersWarning`): it runs none but keeps them, and still
+    /// opens at login.
+    func triggersWarning(installing version: SemanticVersion) -> [String] {
+        let status = triggerStatus()
+        return DowngradeProtection.triggersWarning(
+            installing: version,
+            over: currentVersion,
+            enabledTriggerCount: status.enabled,
+            opensAtLogin: status.opensAtLogin
+        )
+    }
+
     /// Clears the skipped versions, so automatic checks offer every newer release again.
     func clearSkippedVersions() {
         state.skippedVersions = []
@@ -449,6 +468,7 @@ final class AutoUpdater: ObservableObject {
         process.standardInput = FileHandle.nullDevice
         process.standardOutput = FileHandle.nullDevice
         process.standardError = FileHandle.nullDevice
+        beforeRelaunch()
         do {
             try process.run()
         } catch {

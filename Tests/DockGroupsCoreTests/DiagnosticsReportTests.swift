@@ -147,4 +147,13 @@ struct DiagnosticsReportTests {
         #expect(!system.hardwareModel.isEmpty)
         #expect(!system.macOSVersion.isEmpty)
     }
+
+    @Test func openAtLoginShowsWhenKnown() {
+        var report = info()
+        #expect(!DiagnosticsReport.text(for: report).contains("Open at Login"))
+        report.opensAtLogin = true
+        #expect(DiagnosticsReport.text(for: report).contains("Open at Login: on"))
+        report.opensAtLogin = false
+        #expect(DiagnosticsReport.text(for: report).contains("Open at Login: off"))
+    }
 }

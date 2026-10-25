@@ -14,6 +14,9 @@ enum AppLanguageSupport {
 
     /// The language this process was started with; a different choice shows after a restart.
     private(set) static var launchLanguage: AppLanguage = .system
+    /// Called right before the restart: the launch after it is quiet for triggers
+    /// (`TriggerController.markQuietRelaunch`); set by the app delegate.
+    static var beforeRelaunch: (() -> Void)?
 
     /// Reads the picked language — from `preferences.json`, or an agent's configuration — and puts
     /// it into effect. Call first thing in `main`, before any text is looked up.
@@ -72,6 +75,7 @@ enum AppLanguageSupport {
         process.standardInput = FileHandle.nullDevice
         process.standardOutput = FileHandle.nullDevice
         process.standardError = FileHandle.nullDevice
+        beforeRelaunch?()
         do {
             try process.run()
         } catch {

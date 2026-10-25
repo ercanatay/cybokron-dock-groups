@@ -2,9 +2,10 @@ import AppKit
 import DockGroupsCore
 import UniformTypeIdentifiers
 
-/// Exports the groups — archived ones too — the templates and the preferences to a `.dockgroups`
-/// backup file and restores them from one: either replacing everything (the templates only when the
-/// backup has some), or merging the backup's new groups and templates into the current ones.
+/// Exports the groups — archived ones too — the templates, the triggers and the preferences to a
+/// `.dockgroups` backup file and restores them from one: either replacing everything (the templates
+/// and the triggers only when the backup has some; its triggers come in turned off), or merging the
+/// backup's new groups, templates and those groups' triggers (turned off) into the current ones.
 /// Panels and alerts are sheets on the Settings window, and files are read and written off the
 /// main thread, so the rest of the app keeps working meanwhile.
 @MainActor
@@ -25,6 +26,7 @@ final class SettingsBackupController: ObservableObject {
     private let store: GroupStore
     private let preferences: PreferencesStore
     private let templates: TemplateStore
+    private let triggers: TriggerStore?
     /// Told about the groups a restore or merge put in the store, so standalone ones get their
     /// Dock tiles (`StandaloneController.adoptRestoredGroups`).
     private let groupsRestored: ([DockGroup]) -> Void
@@ -36,11 +38,13 @@ final class SettingsBackupController: ObservableObject {
         store: GroupStore,
         preferences: PreferencesStore,
         templates: TemplateStore,
+        triggers: TriggerStore? = nil,
         groupsRestored: @escaping ([DockGroup]) -> Void = { _ in }
     ) {
         self.store = store
         self.preferences = preferences
         self.templates = templates
+        self.triggers = triggers
         self.groupsRestored = groupsRestored
     }
 
@@ -60,7 +64,7 @@ final class SettingsBackupController: ObservableObject {
 
     private func export(to url: URL) {
         // Taken now, so the backup holds what's on screen when the user confirms.
-        let backup = SettingsBackup(groups: store, preferences: preferences, templates: templates, appVersion: AppInfo.version)
+        let backup = SettingsBackup(groups: store, preferences: preferences, templates: templates, triggers: triggers, appVersion: AppInfo.version)
         isBusy = true
         Task {
             let result = await Task.detached {
@@ -138,7 +142,7 @@ final class SettingsBackupController: ObservableObject {
 
     private func restore(_ backup: SettingsBackup) {
         do {
-            try backup.restore(to: store, preferences: preferences, templates: templates)
+            try backup.restore(to: store, preferences: preferences, templates: templates, triggers: triggers)
             groupsRestored(store.groups)
             status = .imported(groupCount: backup.groups.count, itemCount: backup.itemCount)
         } catch {
@@ -153,7 +157,7 @@ final class SettingsBackupController: ObservableObject {
     private func merge(_ backup: SettingsBackup) {
         let groupsBefore = Set(store.groups.map(\.id))
         do {
-            let result = try backup.merge(into: store, templates: templates)
+            let result = try backup.merge(into: store, templates: templates, triggers: triggers)
             // Archived groups aren't standalone: only the active ones may need a Dock tile.
             groupsRestored(result.groups.addedGroups)
             status = .merged(
@@ -208,7 +212,7 @@ final class SettingsBackupController: ObservableObject {
         if summary.resetLaunchOptionCount > 0 {
             contents += " " + Texts.launchReset(summary.resetLaunchOptionCount)
         }
-        for note in [summary.archivedGroupsNote, summary.templatesNote].compactMap({ $0 }) {
+        for note in [summary.archivedGroupsNote, summary.templatesNote, summary.triggersNote].compactMap({ $0 }) {
             contents += " " + note
         }
         lines.append(contents)
@@ -254,7 +258,7 @@ final class SettingsBackupController: ObservableObject {
         if summary.mergedArchivedGroupCount > 0 {
             merge.append(Texts.Library.mergesArchived(summary.mergedArchivedGroupCount))
         }
-        merge.append(contentsOf: [summary.mergedTemplatesNote, summary.clearedShortcutsNote].compactMap { $0 })
+        merge.append(contentsOf: [summary.mergedTemplatesNote, summary.mergedTriggersNote, summary.clearedShortcutsNote].compactMap { $0 })
         return merge.joined(separator: " ")
     }
 

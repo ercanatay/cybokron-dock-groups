@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-859 keys.
+987 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1258,3 +1258,163 @@ The `core.trigger.skip.*` and `core.trigger.missed.*` texts complete a sentence 
 | `core.backup.triggers.other` | It has %ld triggers. They come in turned off: turn them on in Settings → Triggers. |
 | `core.backup.triggers.merges.one` | It adds 1 trigger, turned off. |
 | `core.backup.triggers.merges.other` | It adds %ld triggers, turned off. |
+
+## Triggers (Core): a trigger's rule as its row and the notice show it, and what happened the last time it came (English only for now; `awaitingTranslation`: `core.trigger.`)
+
+A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the `core.trigger.summary.action.*` texts start in lowercase; the `core.trigger.lastRun.todayAt` / `yesterdayAt` texts fill the `%1$@` of the last-run lines ("Last ran today at 9:00: …"). Times come from the locale's own format, weekday names from the calendar.
+
+| Key | English |
+| --- | --- |
+| `core.trigger.summary.time.everyDay` | At %@ every day |
+| `core.trigger.summary.time.weekdays` | At %@ on weekdays |
+| `core.trigger.summary.time.weekends` | At %@ on weekends |
+| `core.trigger.summary.time.days` | At %1$@ on %2$@ |
+| `core.trigger.summary.login` | At login |
+| `core.trigger.summary.appOpens` | When %@ opens |
+| `core.trigger.summary.screensWake` | When the screens wake |
+| `core.trigger.summary.screensSleep` | When the screens sleep |
+| `core.trigger.summary.unsupported` | A trigger made by a newer version |
+| `core.trigger.summary.display.anyConnects` | When a display connects |
+| `core.trigger.summary.display.anyDisconnects` | When a display disconnects |
+| `core.trigger.summary.display.connects` | When “%@” connects |
+| `core.trigger.summary.display.disconnects` | When “%@” disconnects |
+| `core.trigger.summary.displays.connected` | When these displays are connected |
+| `core.trigger.summary.displays.disconnected` | When these displays are no longer connected |
+| `core.trigger.summary.wifi.joins` | When the Mac joins “%@” |
+| `core.trigger.summary.wifi.leaves` | When the Mac leaves “%@” |
+| `core.trigger.summary.ethernet.connects` | When Ethernet connects |
+| `core.trigger.summary.ethernet.disconnects` | When Ethernet disconnects |
+| `core.trigger.summary.vpn.connects` | When a VPN connects |
+| `core.trigger.summary.vpn.disconnects` | When a VPN disconnects |
+| `core.trigger.summary.action.showPopup` | show the popup |
+| `core.trigger.summary.action.openAll` | open all |
+| `core.trigger.summary.action.start` | start |
+| `core.trigger.summary.action.finish` | finish |
+| `core.trigger.summary.ruleFinishing` | %1$@: %2$@, finish when it ends |
+| `core.trigger.summary.rule` | %1$@: %2$@ |
+| `core.trigger.lastRun.todayAt` | today at %@ |
+| `core.trigger.lastRun.yesterdayAt` | yesterday at %@ |
+| `core.trigger.lastRun.never` | Not run yet. |
+| `core.trigger.lastRun.recently` | recently |
+| `core.trigger.lastRun.started` | Last ran %1$@: started “%2$@”. |
+| `core.trigger.lastRun.opened` | Last ran %1$@: opened “%2$@”. |
+| `core.trigger.lastRun.shown` | Last ran %1$@: showed “%2$@”. |
+| `core.trigger.lastRun.finished` | Last ran %1$@: finished “%2$@”. |
+| `core.trigger.lastRun.skipped` | Skipped %1$@: %2$@. |
+| `core.trigger.lastRun.missed` | Missed %1$@: %2$@. |
+
+## Triggers: the New Trigger / Edit Trigger sheet (English only for now; `awaitingTranslation`: `triggers.editor.`)
+
+| Key | English |
+| --- | --- |
+| `triggers.editor.title.new` | New Trigger for “%@” |
+| `triggers.editor.title.edit` | Edit Trigger |
+| `triggers.editor.when` | When |
+| `triggers.editor.do` | Do |
+| `triggers.editor.how` | How |
+| `triggers.editor.event.time` | At a Time |
+| `triggers.editor.event.login` | At Login |
+| `triggers.editor.event.appOpens` | When %@ Opens |
+| `triggers.editor.event.screensWake` | When the Screens Wake |
+| `triggers.editor.event.screensSleep` | When the Screens Sleep |
+| `triggers.editor.time` | Time |
+| `triggers.editor.days` | Days |
+| `triggers.editor.weekdays` | Weekdays |
+| `triggers.editor.weekends` | Weekends |
+| `triggers.editor.everyDay` | Every Day |
+| `triggers.editor.day.on` | %@, on |
+| `triggers.editor.day.off` | %@, off |
+| `triggers.editor.noDays` | Choose at least one day. |
+| `triggers.editor.action.showPopup` | Show the Popup |
+| `triggers.editor.action.openAll` | Open All |
+| `triggers.editor.action.start` | Start |
+| `triggers.editor.action.finish` | Finish |
+| `triggers.editor.runMode.notice` | Show a 5-Second Notice |
+| `triggers.editor.runMode.askFirst` | Ask First |
+| `triggers.editor.runMode.immediately` | Run Right Away |
+| `triggers.editor.oncePerDay` | At most once a day |
+| `triggers.editor.hint.start` | Starting hides the apps of the group started before, as “%@” is set to. A trigger never quits apps. |
+| `triggers.editor.hint.finish` | Finish runs only while “%@” is the current group, and hides its apps; it never quits them. |
+| `triggers.editor.hint.screensSleep` | Nobody can answer a notice while the screens sleep, so this trigger finishes the group right away. |
+| `triggers.editor.catchUp` | If the Mac is asleep at %@, the trigger runs when it wakes, up to 30 minutes late. |
+| `triggers.editor.login.needsLoginItem` | At Login triggers need %@ to open at login. |
+| `triggers.editor.login.turnOn` | Turn On Open at Login |
+| `triggers.editor.add` | Add Trigger |
+| `triggers.editor.save` | Save |
+
+## Triggers: the notice before a trigger runs (English only for now; `awaitingTranslation`: `triggers.notice.`)
+
+| Key | English |
+| --- | --- |
+| `triggers.notice.starting` | Starting “%@” |
+| `triggers.notice.opening` | Opening “%@” |
+| `triggers.notice.finishing` | Finishing “%@” |
+| `triggers.notice.showing` | Showing “%@” |
+| `triggers.notice.ask.start` | Start “%@”? |
+| `triggers.notice.ask.openAll` | Open All in “%@”? |
+| `triggers.notice.ask.finish` | Finish “%@”? |
+| `triggers.notice.ask.showPopup` | Show “%@”? |
+| `triggers.notice.notNow` | Not Now |
+| `triggers.notice.startNow` | Start Now |
+| `triggers.notice.openNow` | Open Now |
+| `triggers.notice.finishNow` | Finish Now |
+| `triggers.notice.showNow` | Show Now |
+| `triggers.notice.seconds.one` | 1 second |
+| `triggers.notice.seconds.other` | %ld seconds |
+| `triggers.notice.announcement` | %1$@. %2$@. |
+
+## Triggers: the group window's Triggers section and the archived group's summary (English only for now; `awaitingTranslation`: `groupWindow.triggers.`)
+
+| Key | English |
+| --- | --- |
+| `groupWindow.triggers.section` | Triggers |
+| `groupWindow.triggers.empty` | No triggers. A trigger starts, opens or shows this group when something happens. |
+| `groupWindow.triggers.add` | Add Trigger… |
+| `groupWindow.triggers.edit` | Edit… |
+| `groupWindow.triggers.remove` | Remove |
+| `groupWindow.triggers.cantEdit` | This version can't edit this kind of trigger; you can turn it off or remove it. |
+| `groupWindow.triggers.toggle.help` | Turn this trigger on or off |
+| `groupWindow.triggers.footer` | Triggers run while %@ is open. They never quit apps. |
+| `groupWindow.triggers.loginItemOff` | Open at Login is off. |
+| `groupWindow.triggers.turnOn` | Turn On… |
+| `groupWindow.triggers.paused` | Triggers are paused: none of them runs now. |
+| `groupWindow.triggers.archived` | Doesn't run while the group is archived. |
+| `groupWindow.triggers.archivedCount.one` | 1 trigger (it doesn't run while the group is archived) |
+| `groupWindow.triggers.archivedCount.other` | %ld triggers (they don't run while the group is archived) |
+
+## Triggers: Settings → Triggers (English only for now; `awaitingTranslation`: `settings.triggers.`)
+
+| Key | English |
+| --- | --- |
+| `settings.triggers.tab` | Triggers |
+| `settings.triggers.openAtLogin` | Open at Login |
+| `settings.triggers.openAtLogin.detail` | Opens %@ when you log in, so At Login and other triggers can run. |
+| `settings.triggers.openAtLogin.approval` | macOS needs your approval in Login Items. |
+| `settings.triggers.openAtLogin.settings` | Open Login Items Settings… |
+| `settings.triggers.openAtLogin.failed` | macOS didn't change Open at Login: %@ |
+| `settings.triggers.status` | Status |
+| `settings.triggers.status.running` | Running |
+| `settings.triggers.status.pausedUntil` | Paused until %@ |
+| `settings.triggers.status.pausedIndefinitely` | Paused until you resume them |
+| `settings.triggers.pause` | Pause |
+| `settings.triggers.resume` | Resume |
+| `settings.triggers.location` | Location Access |
+| `settings.triggers.location.notUsed` | Not used |
+| `settings.triggers.location.detail` | Only triggers that wait for a Wi-Fi network need it; no trigger here does. |
+| `settings.triggers.list` | All Triggers |
+| `settings.triggers.list.empty` | No triggers yet. Add them in a group's settings in the group window. |
+| `settings.triggers.showInGroupWindow` | Show in Group Window… |
+| `settings.triggers.footer` | Triggers run while %@ is open. When it's quit, the Shortcuts app's automations can still start a group (macOS 26 and later): in Shortcuts, Automation → Time of Day → Start Group. |
+
+## Triggers: the menu bar menu's Pause Triggers and Quit's tooltip (English only for now; `awaitingTranslation`: `menuBar.triggers.`)
+
+| Key | English |
+| --- | --- |
+| `menuBar.triggers.pause` | Pause Triggers |
+| `menuBar.triggers.pause.oneHour` | For 1 Hour |
+| `menuBar.triggers.pause.untilTomorrow` | Until Tomorrow |
+| `menuBar.triggers.pause.untilResumed` | Until I Resume Them |
+| `menuBar.triggers.resume` | Resume Triggers |
+| `menuBar.triggers.pausedUntil` | Triggers paused until %@ |
+| `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
+| `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |

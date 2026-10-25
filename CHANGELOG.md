@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Triggers: the group window's new Triggers section (after Keyboard Shortcut) adds, edits, turns on or off and removes a group's triggers. A trigger starts the group, opens all of its items, shows its popup or finishes it **At a Time** (a time on chosen days, with Weekdays, Weekends and Every Day), **At Login**, **When Cybokron Dock Groups Opens**, **When the Screens Wake** or **When the Screens Sleep** (Finish only). Up to 10 per group, 100 in all
+- Open All, Start and Finish triggers show a 5-second notice at the top right of the screen first — it never takes the keyboard — with Not Now and a button to run at once; they can instead Ask First (no countdown, closes unanswered after 2 minutes) or Run Right Away. Show the Popup always runs right away. VoiceOver announces the notice
+- A time the Mac sleeps through, or the app isn't open for, still runs up to 30 minutes late — when the Mac wakes or the app opens; later, it's noted as missed. Each row says what happened last ("Last ran today at 9:00: started “Work”.", "Skipped …: you chose Not Now.")
+- Settings → Triggers (after Switching): Open at Login (a login item you turn on or off there; it's never turned on for you, and the pane says when macOS needs your approval), whether triggers run or are paused, with Pause and Resume, and every trigger by group with its switch and Show in Group Window…
+- The menu bar menu has Pause Triggers (For 1 Hour, Until Tomorrow, Until I Resume Them) or Resume Triggers while any trigger exists, and Quit's tooltip says triggers don't run while the app is quit
+- The diagnostics report says whether the app opens at login
+
+### Changed
+
+- The launch after an update's or a language change's restart, and a launch for a link or a Siri or Shortcuts request, isn't counted as the app opening (or as the login) by triggers
+- An archived group's summary says how many triggers it has; they don't run while it's archived, and a time that passed meanwhile doesn't run when it's restored
+
+### Security
+
+- Triggers act only while the app runs, only on your groups' items through the same checks a click goes through, never quit apps or ask questions (a group set to quit hides instead), and need no permission. Triggers from a backup come in turned off, and an archived or deleted group's triggers never run
+
 ## [0.10.0] - 2026-10-25
 
 ### Added

@@ -3,7 +3,8 @@ import DockGroupsCore
 import SwiftUI
 
 /// The Settings window (⌘,): the app's language and popup settings, shortcuts and Siri, switching
-/// groups (protected apps, the current group), the Most Used list, updates,
+/// groups (protected apps, the current group), triggers (Open at Login, the pause, every trigger),
+/// the Most Used list, updates,
 /// backups with the diagnostics report, the changelog, and ways to support the project (the About
 /// window's content), each in its own pane, picked from a sidebar.
 @MainActor
@@ -29,17 +30,19 @@ final class SettingsWindowController: NSWindowController {
         session: ContextSession,
         runningApps: RunningAppsMonitor,
         icons: AppIconProviding,
+        triggers: TriggerController,
         isStatusItemShown: @escaping () -> Bool,
         groupsRestored: @escaping ([DockGroup]) -> Void,
         showGroupSettings: @escaping (DockGroup.ID) -> Void
     ) {
-        let backup = SettingsBackupController(store: store, preferences: preferences, templates: templates, groupsRestored: groupsRestored)
+        let backup = SettingsBackupController(store: store, preferences: preferences, templates: templates, triggers: triggers.store, groupsRestored: groupsRestored)
         let diagnostics = DiagnosticsController(
             preferences: preferences,
             store: store,
             templates: templates,
             updater: updater,
             shortcuts: shortcuts,
+            triggers: triggers,
             isStatusItemShown: isStatusItemShown
         )
         // Reads the saved release list now, so the Changelog pane shows it at once.
@@ -57,6 +60,7 @@ final class SettingsWindowController: NSWindowController {
                 session: session,
                 runningApps: runningApps,
                 icons: icons,
+                triggers: triggers,
                 backup: backup,
                 diagnostics: diagnostics,
                 changelog: changelog,
@@ -127,6 +131,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
     case popup
     case shortcuts
     case switching
+    case triggers
     case mostUsed
     case updates
     case backup
@@ -140,6 +145,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .popup: L10n.Settings.popupTab
         case .shortcuts: L10n.Settings.shortcutsTab
         case .switching: L10n.Switching.Settings.tab
+        case .triggers: L10n.Triggers.Settings.tab
         case .mostUsed: MostUsedGroup.name
         case .updates: L10n.Settings.updatesTab
         case .backup: L10n.Settings.backupTab
@@ -153,6 +159,7 @@ enum SettingsPane: String, CaseIterable, Identifiable {
         case .popup: "rectangle.grid.2x2"
         case .shortcuts: "keyboard"
         case .switching: "arrow.left.arrow.right.square"
+        case .triggers: "clock.arrow.2.circlepath"
         case .mostUsed: "star"
         case .updates: "arrow.triangle.2.circlepath"
         case .backup: "externaldrive"
@@ -176,6 +183,7 @@ private struct SettingsView: View {
     let session: ContextSession
     let runningApps: RunningAppsMonitor
     let icons: AppIconProviding
+    let triggers: TriggerController
     let backup: SettingsBackupController
     let diagnostics: DiagnosticsController
     let changelog: ChangelogService
@@ -216,6 +224,8 @@ private struct SettingsView: View {
             ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts, showGroupSettings: showGroupSettings)
         case .switching:
             SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)
+        case .triggers:
+            TriggersSettingsView(triggers: triggers, store: triggers.store, groups: store, loginItem: triggers.loginItem, showGroupSettings: showGroupSettings)
         case .mostUsed:
             MostUsedSettingsView(preferences: preferences, usage: usage)
         case .updates:

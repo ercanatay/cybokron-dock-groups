@@ -55,6 +55,8 @@ struct MainWindowView: View {
         /// New Group from Open Apps… and Add Open Apps…: reads the open apps now, then shows the
         /// capture sheet.
         let capture: (CaptureTarget) -> Void
+        /// Settings → Triggers (Open at Login).
+        let showTriggerSettings: () -> Void
     }
 
     /// The note that a restored group came back without its keyboard shortcut.
@@ -74,6 +76,8 @@ struct MainWindowView: View {
     let shortcuts: GlobalShortcutMonitor
     /// Plans and adds what the capture sheet shows.
     let capture: CaptureController
+    /// The triggers, for the Triggers section and an archived group's summary.
+    let triggers: TriggerController
     let actions: Actions
     @ObservedObject var selection: GroupWindowSelection
     /// Where the selected group's items are, their icons and Quick Look.
@@ -147,6 +151,7 @@ struct MainWindowView: View {
                 shortcuts: shortcuts,
                 group: group,
                 tiles: tiles,
+                triggers: triggers,
                 actions: actions,
                 items: items,
                 selection: selection
@@ -155,6 +160,7 @@ struct MainWindowView: View {
         } else if let id = selection.groupID, let archived = store.archivedGroup(withID: id) {
             ArchivedGroupView(
                 archived: archived,
+                triggerCount: triggers.store.triggers(ofGroup: archived.id).count,
                 onRestore: { restore(archived) },
                 onDelete: { confirmDeletion(archived.group) }
             )
@@ -256,10 +262,11 @@ struct MainWindowView: View {
             }
     }
 
-    /// The templates' and the groups' load and save problems, and what the window does when it
-    /// appears.
+    /// The templates', the groups' and the triggers' load and save problems, and what the window does
+    /// when it appears.
     private func issueAlerts<Content: View>(_ content: Content) -> some View {
         content
+            .modifier(TriggerIssueAlert(store: triggers.store))
             .alert(
                 templates.issue?.title ?? "",
                 isPresented: Binding(
@@ -381,5 +388,26 @@ struct MainWindowView: View {
         }
         store.deleteGroup(group.id)
         deletionCandidate = nil
+    }
+}
+
+/// The triggers file's load and save problems (`TriggerStore.issue`), watched on their own so a
+/// change of the triggers doesn't redraw the whole window.
+private struct TriggerIssueAlert: ViewModifier {
+    @ObservedObject var store: TriggerStore
+
+    func body(content: Content) -> some View {
+        content.alert(
+            store.issue?.title ?? "",
+            isPresented: Binding(
+                get: { store.issue != nil },
+                set: { isPresented in if !isPresented { store.dismissIssue() } }
+            ),
+            presenting: store.issue
+        ) { _ in
+            Button(L10n.Common.ok) { store.dismissIssue() }
+        } message: { issue in
+            Text(issue.message)
+        }
     }
 }

@@ -68,6 +68,27 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   automations, a Focus automation works too: in Shortcuts → Automation, add one for the Focus
   “When Turning On”, with the **Start Group** action (or Show Group, Launch Group) and your group;
   use a group that hides rather than quits, since nobody answers questions in an automation.
+- **Triggers**: in the group window's **Triggers** section, **Add Trigger…** makes a group start,
+  open all, show its popup or finish when something happens — **At a Time** (a time on chosen days:
+  Weekdays, Weekends, Every Day or your own), **At Login**, **When Cybokron Dock Groups Opens**,
+  **When the Screens Wake** or **When the Screens Sleep** (Finish only). Open All, Start and Finish
+  show a 5-second notice at the top right of the screen first, with **Not Now** (or ask first, or
+  run right away); Show the Popup runs right away. **At most once a day** is optional, and a trigger
+  waits a minute before it runs again. Triggers never quit an app — a group set to quit hides
+  instead — never ask a question, and never run for an archived group. A time the Mac sleeps
+  through runs when it wakes, up to 30 minutes late; later it's noted as missed. Each row says what
+  happened last ("Last ran today at 9:00: started “Work”."). **Settings → Triggers** lists every
+  trigger with its switch, turns **Open at Login** on or off (only you turn it on), and pauses them;
+  while any trigger exists, the menu bar menu has **Pause Triggers** (For 1 Hour, Until Tomorrow,
+  Until I Resume Them) or **Resume Triggers**. After 12 runs in an hour they pause for an hour by themselves. Triggers run
+  **while Cybokron Dock Groups is open**; an update's or a language change's restart, and a launch
+  for a link or a Siri request, don't count as the app opening. Up to 10 triggers per group, 100 in
+  all; they're kept in `triggers.json`, what they did in `trigger-state.json`.
+- **While the app is quit**, a Shortcuts automation can start a group (macOS 26 and later): in the
+  Shortcuts app, **Automation → New Automation → Time of Day** (or Wi-Fi, or Display), choose
+  *Run Immediately*, then add the **Start Group** action (or Launch Group, Show Group) with your
+  group. Use a group that hides rather than quits, since nobody answers questions in an
+  automation.
 - In the popup, drag an app to another place to reorder the group, or drag it out of the popup to
   remove it from the group (the app itself isn't touched). The new order is saved right away.
   **A→Z** in the popup's footer (or **Sort A→Z** in the group window) sorts the group's apps by
@@ -300,6 +321,7 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   app's links, books and other projects — as the last pane of Settings.
 - Everything stays on your Mac, in `~/Library/Application Support/Cybokron/DockGroups/`:
   `groups.json` for the groups (archived ones too), `templates.json` for the templates,
+  `triggers.json` / `trigger-state.json` for the triggers and what they last did,
   `preferences.json` for the settings, `usage-stats.json` /
   `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
   standalone groups' apps, `update-state.json` / `updates/` for the updater (last check,
@@ -313,7 +335,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   imports'). Archived groups and templates are in the backup too: Replace All replaces your archived
   groups, and your templates only when the backup has some; Merge adds the archived groups and
   templates whose name you don't have yet, and a merged group whose keyboard shortcut another group
-  has comes in without it. The question says how many of each.
+  has comes in without it. The question says how many of each. A backup has the triggers too; they
+  come in turned off (Replace All replaces yours only when the backup has some, Merge adds those of
+  the groups it adds), so nothing runs until you turn them on.
   Most Used launch counts aren't part of a backup. Files over 5 MB aren't read, and an app location
   in a backup that isn't an absolute path to a `.app` bundle is dropped (an app known only by such a
   location is left out). Backups can also carry file and folder items and each item's alias, tags
@@ -324,7 +348,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - **Export Diagnostics** (Settings → Backup → Diagnostics): **Copy** or **Save to File…** a plain-text
   report to attach to a GitHub issue — app and macOS versions, Mac model, settings, update checks,
   group names with item counts by kind (never the items themselves), how many groups are archived
-  and how many templates there are (counts only) and recent errors; nothing is sent anywhere.
+  and how many templates there are (counts only), how many triggers of each kind (never their times
+  or names), whether they're paused and whether the app opens at login, and recent errors; nothing
+  is sent anywhere.
 
 The app has no Dock icon of its own (`LSUIElement`); standalone groups bring theirs. Opening it again while it runs (Finder, Spotlight,
 `open -a "Cybokron Dock Groups"`) shows the popup of the group shown last (or the first group); if a
@@ -601,6 +627,28 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      open app is already in "…"*. On an archived group: *"…" is archived…*, and the group is left as
      it was. Ask Siri “Capture my open apps in Cybokron Dock Groups”: the same as the first step,
      without a question.
+7. **Triggers** — with a copy in `/Applications`, on macOS 14, 15 and 26 or later (the open steps
+   are in `docs/design/triggers-spike.md` and the triggers spec's §6).
+   - A trigger at the next minute, Start, with a notice: at that minute (plus a second) the notice
+     shows at the top right with a countdown; it never takes the keyboard from the app you type in.
+     Let it run: the group starts, and a group set to quit the previous group's apps hides them.
+     Not Now: nothing happens, and the row says *Skipped today at …: you chose Not Now.* Ask First:
+     no countdown; unanswered, it closes after 2 minutes. Show the Popup: the popup, no notice.
+   - Sleep the Mac through the time and wake it within 30 minutes: it runs then; after 30 minutes:
+     *Missed …: the Mac was asleep.* Quit the app, then open it within 30 minutes of the time: it runs
+     5 seconds after the launch.
+   - **When … Opens**: quit and open the app — it runs; quit it and open a `cybokrondockgroups://`
+     link, change the language with Restart Now, or install an update — it doesn't.
+   - **At Login**: turn on Open at Login in Settings → Triggers, log out and in — it runs once;
+     quitting and reopening the app afterwards doesn't run it again. Turn Open at Login off in System
+     Settings → General → Login Items: Settings → Triggers follows when the app comes forward.
+   - **When the Screens Sleep / Wake**: `pmset displaysleepnow`, then wake them; and the lid, on a
+     laptop. Finish at the screens' sleep runs without a notice.
+   - Pause Triggers → For 1 Hour in the menu bar menu: a due trigger is *Skipped …: triggers were
+     paused.*; Resume Triggers. Archive the group: its triggers don't run, and the archived summary
+     counts them; restore it after the time: the time passed while archived doesn't run.
+   - Quit's tooltip in the menu bar menu says triggers don't run while the app is quit. No prompt of
+     any kind appears in any of these steps.
 
 ## Project layout
 

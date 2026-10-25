@@ -1671,6 +1671,176 @@ extension L10n {
     }
 }
 
+// MARK: - Triggers
+
+extension L10n {
+    /// Triggers (triggers spec §1.14, §3): the editor, the notice, the group window's section,
+    /// Settings → Triggers and the menu bar's pause. The rules' and last runs' words come from
+    /// DockGroupsCore (`TriggerDescriptions`).
+    enum Triggers {
+        enum Editor {
+            static func newTitle(_ groupName: String) -> String { tr("triggers.editor.title.new", "New Trigger for “%@”", groupName) }
+            static var editTitle: String { tr("triggers.editor.title.edit", "Edit Trigger") }
+            static var when: String { tr("triggers.editor.when", "When") }
+            static var action: String { tr("triggers.editor.do", "Do") }
+            static var how: String { tr("triggers.editor.how", "How") }
+            static var atATime: String { tr("triggers.editor.event.time", "At a Time") }
+            static var atLogin: String { tr("triggers.editor.event.login", "At Login") }
+            static func whenAppOpens(_ appName: String) -> String { tr("triggers.editor.event.appOpens", "When %@ Opens", appName) }
+            static var whenScreensWake: String { tr("triggers.editor.event.screensWake", "When the Screens Wake") }
+            static var whenScreensSleep: String { tr("triggers.editor.event.screensSleep", "When the Screens Sleep") }
+            static var time: String { tr("triggers.editor.time", "Time") }
+            static var days: String { tr("triggers.editor.days", "Days") }
+            static var weekdays: String { tr("triggers.editor.weekdays", "Weekdays") }
+            static var weekends: String { tr("triggers.editor.weekends", "Weekends") }
+            static var everyDay: String { tr("triggers.editor.everyDay", "Every Day") }
+            /// A day's button for VoiceOver: "Monday, on".
+            static func dayOn(_ day: String) -> String { tr("triggers.editor.day.on", "%@, on", day) }
+            static func dayOff(_ day: String) -> String { tr("triggers.editor.day.off", "%@, off", day) }
+            static var noDays: String { tr("triggers.editor.noDays", "Choose at least one day.") }
+            static var showPopup: String { tr("triggers.editor.action.showPopup", "Show the Popup") }
+            static var openAll: String { tr("triggers.editor.action.openAll", "Open All") }
+            static var start: String { tr("triggers.editor.action.start", "Start") }
+            static var finish: String { tr("triggers.editor.action.finish", "Finish") }
+            static var notice: String { tr("triggers.editor.runMode.notice", "Show a 5-Second Notice") }
+            static var askFirst: String { tr("triggers.editor.runMode.askFirst", "Ask First") }
+            static var rightAway: String { tr("triggers.editor.runMode.immediately", "Run Right Away") }
+            static var oncePerDay: String { tr("triggers.editor.oncePerDay", "At most once a day") }
+            static func startHint(_ groupName: String) -> String {
+                tr(
+                    "triggers.editor.hint.start",
+                    "Starting hides the apps of the group started before, as “%@” is set to. A trigger never quits apps.",
+                    groupName
+                )
+            }
+            static func finishHint(_ groupName: String) -> String {
+                tr(
+                    "triggers.editor.hint.finish",
+                    "Finish runs only while “%@” is the current group, and hides its apps; it never quits them.",
+                    groupName
+                )
+            }
+            static var sleepHint: String {
+                tr(
+                    "triggers.editor.hint.screensSleep",
+                    "Nobody can answer a notice while the screens sleep, so this trigger finishes the group right away."
+                )
+            }
+            static func catchUp(_ time: String) -> String {
+                tr(
+                    "triggers.editor.catchUp",
+                    "If the Mac is asleep at %@, the trigger runs when it wakes, up to 30 minutes late.",
+                    time
+                )
+            }
+            static func loginNeedsLoginItem(_ appName: String) -> String {
+                tr("triggers.editor.login.needsLoginItem", "At Login triggers need %@ to open at login.", appName)
+            }
+            static var turnOnLoginItem: String { tr("triggers.editor.login.turnOn", "Turn On Open at Login") }
+            static var add: String { tr("triggers.editor.add", "Add Trigger") }
+            static var save: String { tr("triggers.editor.save", "Save") }
+        }
+
+        enum Notice {
+            static func starting(_ groupName: String) -> String { tr("triggers.notice.starting", "Starting “%@”", groupName) }
+            static func opening(_ groupName: String) -> String { tr("triggers.notice.opening", "Opening “%@”", groupName) }
+            static func finishing(_ groupName: String) -> String { tr("triggers.notice.finishing", "Finishing “%@”", groupName) }
+            static func showing(_ groupName: String) -> String { tr("triggers.notice.showing", "Showing “%@”", groupName) }
+            static func askStart(_ groupName: String) -> String { tr("triggers.notice.ask.start", "Start “%@”?", groupName) }
+            static func askOpen(_ groupName: String) -> String { tr("triggers.notice.ask.openAll", "Open All in “%@”?", groupName) }
+            static func askFinish(_ groupName: String) -> String { tr("triggers.notice.ask.finish", "Finish “%@”?", groupName) }
+            static func askShow(_ groupName: String) -> String { tr("triggers.notice.ask.showPopup", "Show “%@”?", groupName) }
+            static var notNow: String { tr("triggers.notice.notNow", "Not Now") }
+            static var startNow: String { tr("triggers.notice.startNow", "Start Now") }
+            static var openNow: String { tr("triggers.notice.openNow", "Open Now") }
+            static var finishNow: String { tr("triggers.notice.finishNow", "Finish Now") }
+            static var showNow: String { tr("triggers.notice.showNow", "Show Now") }
+            /// The countdown's accessibility value: "5 seconds".
+            static func seconds(_ count: Int) -> String {
+                count == 1 ? tr("triggers.notice.seconds.one", "1 second") : tr("triggers.notice.seconds.other", "%ld seconds", count)
+            }
+            /// What VoiceOver says when the notice appears.
+            static func announcement(_ title: String, _ detail: String) -> String {
+                tr("triggers.notice.announcement", "%1$@. %2$@.", title, detail)
+            }
+        }
+
+        enum GroupWindow {
+            static var section: String { tr("groupWindow.triggers.section", "Triggers") }
+            static var empty: String {
+                tr("groupWindow.triggers.empty", "No triggers. A trigger starts, opens or shows this group when something happens.")
+            }
+            static var add: String { tr("groupWindow.triggers.add", "Add Trigger…") }
+            static var edit: String { tr("groupWindow.triggers.edit", "Edit…") }
+            static var remove: String { tr("groupWindow.triggers.remove", "Remove") }
+            static var cantEdit: String {
+                tr("groupWindow.triggers.cantEdit", "This version can't edit this kind of trigger; you can turn it off or remove it.")
+            }
+            static var toggleHelp: String { tr("groupWindow.triggers.toggle.help", "Turn this trigger on or off") }
+            static func footer(_ appName: String) -> String {
+                tr("groupWindow.triggers.footer", "Triggers run while %@ is open. They never quit apps.", appName)
+            }
+            static var loginItemOff: String { tr("groupWindow.triggers.loginItemOff", "Open at Login is off.") }
+            static var turnOn: String { tr("groupWindow.triggers.turnOn", "Turn On…") }
+            static var paused: String { tr("groupWindow.triggers.paused", "Triggers are paused: none of them runs now.") }
+            static var archived: String { tr("groupWindow.triggers.archived", "Doesn't run while the group is archived.") }
+            /// The archived group's summary.
+            static func archivedCount(_ count: Int) -> String {
+                count == 1
+                    ? tr("groupWindow.triggers.archivedCount.one", "1 trigger (it doesn't run while the group is archived)")
+                    : tr("groupWindow.triggers.archivedCount.other", "%ld triggers (they don't run while the group is archived)", count)
+            }
+        }
+
+        enum Settings {
+            static var tab: String { tr("settings.triggers.tab", "Triggers") }
+            static var openAtLogin: String { tr("settings.triggers.openAtLogin", "Open at Login") }
+            static func openAtLoginDetail(_ appName: String) -> String {
+                tr("settings.triggers.openAtLogin.detail", "Opens %@ when you log in, so At Login and other triggers can run.", appName)
+            }
+            static var needsApproval: String { tr("settings.triggers.openAtLogin.approval", "macOS needs your approval in Login Items.") }
+            static var openLoginItems: String { tr("settings.triggers.openAtLogin.settings", "Open Login Items Settings…") }
+            static func loginItemFailed(_ reason: String) -> String {
+                tr("settings.triggers.openAtLogin.failed", "macOS didn't change Open at Login: %@", reason)
+            }
+            static var status: String { tr("settings.triggers.status", "Status") }
+            static var running: String { tr("settings.triggers.status.running", "Running") }
+            static func pausedUntil(_ date: String) -> String { tr("settings.triggers.status.pausedUntil", "Paused until %@", date) }
+            static var pausedIndefinitely: String { tr("settings.triggers.status.pausedIndefinitely", "Paused until you resume them") }
+            static var pause: String { tr("settings.triggers.pause", "Pause") }
+            static var resume: String { tr("settings.triggers.resume", "Resume") }
+            static var location: String { tr("settings.triggers.location", "Location Access") }
+            static var locationNotUsed: String { tr("settings.triggers.location.notUsed", "Not used") }
+            static var locationDetail: String {
+                tr("settings.triggers.location.detail", "Only triggers that wait for a Wi-Fi network need it; no trigger here does.")
+            }
+            static var listHeader: String { tr("settings.triggers.list", "All Triggers") }
+            static var listEmpty: String { tr("settings.triggers.list.empty", "No triggers yet. Add them in a group's settings in the group window.") }
+            static var showInGroupWindow: String { tr("settings.triggers.showInGroupWindow", "Show in Group Window…") }
+            static func footer(_ appName: String) -> String {
+                tr(
+                    "settings.triggers.footer",
+                    "Triggers run while %@ is open. When it's quit, the Shortcuts app's automations can still start a group (macOS 26 and later): in Shortcuts, Automation → Time of Day → Start Group.",
+                    appName
+                )
+            }
+        }
+
+        enum MenuBar {
+            static var pause: String { tr("menuBar.triggers.pause", "Pause Triggers") }
+            static var forOneHour: String { tr("menuBar.triggers.pause.oneHour", "For 1 Hour") }
+            static var untilTomorrow: String { tr("menuBar.triggers.pause.untilTomorrow", "Until Tomorrow") }
+            static var untilResumed: String { tr("menuBar.triggers.pause.untilResumed", "Until I Resume Them") }
+            static var resume: String { tr("menuBar.triggers.resume", "Resume Triggers") }
+            static func pausedUntil(_ date: String) -> String { tr("menuBar.triggers.pausedUntil", "Triggers paused until %@", date) }
+            static var pausedIndefinitely: String { tr("menuBar.triggers.pausedIndefinitely", "Triggers paused until you resume them") }
+            static func quitTooltip(_ appName: String) -> String {
+                tr("menuBar.triggers.quitTooltip", "Triggers don't run while %@ is quit.", appName)
+            }
+        }
+    }
+}
+
 // MARK: - Lookup
 
 /// `L10n`'s lookups; the key and English text must be literals (`LocalizationTests` read them).

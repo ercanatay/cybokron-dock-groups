@@ -7,9 +7,21 @@ import DockGroupsCore
 /// Finish. Below the groups, the Most Used
 /// section lists the most launched apps: choosing one opens it, and the section's first item
 /// shows them in a popup. New Group from Open Apps… reads the open apps — the app in front is still
-/// the user's, as the menu doesn't activate this app — and shows the capture sheet.
+/// the user's, as the menu doesn't activate this app — and shows the capture sheet. While any
+/// trigger exists, Pause Triggers ▸ (For 1 Hour, Until Tomorrow, Until I Resume Them) — or Resume
+/// Triggers with what the pause is — follows it, and Quit's tooltip says triggers don't run while
+/// the app is quit.
 @MainActor
 final class StatusBarController: NSObject, NSMenuDelegate {
+    /// What the menu shows about triggers.
+    struct TriggerMenu {
+        /// "Triggers paused until 18:00"; `nil` while they run.
+        let pauseDescription: String?
+        let isPaused: Bool
+        /// Quit's tooltip, when a trigger is on.
+        let quitTooltip: String?
+    }
+
     struct Actions {
         let showPopup: (DockGroup) -> Void
         let openAll: (DockGroup) -> Void
@@ -24,6 +36,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let showMainWindow: () -> Void
         /// New Group from Open Apps…
         let captureNewGroup: () -> Void
+        /// The triggers' part of the menu; `nil` when there are no triggers.
+        let triggerMenu: () -> TriggerMenu?
+        let pauseTriggers: (TriggerPauseLength) -> Void
+        let resumeTriggers: () -> Void
         let showSettings: () -> Void
         let showAbout: () -> Void
         let checkForUpdates: () -> Void
@@ -104,6 +120,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         capture.target = self
         capture.toolTip = L10n.Capture.menuBarTooltip
         menu.addItem(capture)
+        let triggerMenu = actions.triggerMenu()
+        if let triggerMenu {
+            addTriggerItems(triggerMenu)
+        }
         let manage = NSMenuItem(title: L10n.MenuBar.manageGroups, action: #selector(showMainWindow(_:)), keyEquivalent: "g")
         manage.target = self
         menu.addItem(manage)
@@ -125,7 +145,43 @@ final class StatusBarController: NSObject, NSMenuDelegate {
             keyEquivalent: "q"
         )
         quit.target = NSApp
+        quit.toolTip = triggerMenu?.quitTooltip
         menu.addItem(quit)
+    }
+
+    /// Pause Triggers ▸ while they run; the pause and Resume Triggers while they're paused.
+    private func addTriggerItems(_ state: TriggerMenu) {
+        typealias Texts = L10n.Triggers.MenuBar
+        if state.isPaused {
+            if let description = state.pauseDescription {
+                let line = NSMenuItem(title: description, action: nil, keyEquivalent: "")
+                line.isEnabled = false
+                menu.addItem(line)
+            }
+            let resume = NSMenuItem(title: Texts.resume, action: #selector(resumeTriggers(_:)), keyEquivalent: "")
+            resume.target = self
+            menu.addItem(resume)
+            return
+        }
+        let pause = NSMenuItem(title: Texts.pause, action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        for (title, length) in [(Texts.forOneHour, TriggerPauseLength.oneHour), (Texts.untilTomorrow, .untilTomorrow), (Texts.untilResumed, .untilResumed)] {
+            let item = NSMenuItem(title: title, action: #selector(pauseTriggers(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = length.rawValue
+            submenu.addItem(item)
+        }
+        pause.submenu = submenu
+        menu.addItem(pause)
+    }
+
+    @objc private func pauseTriggers(_ sender: NSMenuItem) {
+        guard let raw = sender.representedObject as? String, let length = TriggerPauseLength(rawValue: raw) else { return }
+        actions.pauseTriggers(length)
+    }
+
+    @objc private func resumeTriggers(_ sender: NSMenuItem) {
+        actions.resumeTriggers()
     }
 
     /// "Current: 💻 Coding" (choosing it shows its popup) and "Finish “Coding”", above the groups,
