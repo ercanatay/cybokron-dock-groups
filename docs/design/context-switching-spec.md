@@ -1,6 +1,7 @@
 # Design spec: context switching — Start and Finish, Focus, and item launch options
 
-- **Status:** draft; decisions recorded 2026-10-24 (see DECISIONS). Design only: no code.
+- **Status:** C+D+E phase 1 shipped in **0.8.0**; retained as a historical design spec.
+- **Original design status:** draft; decisions recorded 2026-10-24 (see DECISIONS). Design only: no code.
 - **Baseline:** `main` at `b32f6af` (version 0.7.0, `project.yml` `MARKETING_VERSION: "0.7.0"`), 725
   tests in 106 suites, 551 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
 - **Features:** C (Start and Finish a group, with protected apps), D (pair a group with a macOS
@@ -12,6 +13,13 @@
   summary in §1 and this repository only. Every claim about current code cites `file:line` at
   `b32f6af` (paths are relative to `Sources/` unless they start with `Tests/`, `docs/` or a file at
   the repository root).
+
+> **As shipped (0.11.1, 2026-10-26):** Start/Finish, protected apps, the Focus filter and item
+> delay/Open With options are implemented. Focus delivery is supported while the app is running;
+> real Focus on/off delivery across supported macOS versions remains a manual gate. E phase 2
+> (arguments, browser profiles, terminal commands and scripts) remains deferred. The baseline,
+> decisions and staged plan below are historical; manual transition, confirmation, protected-app,
+> opener, delay and downgrade checks also remain open.
 
 ## Acceptance criteria (behavior)
 

@@ -42,7 +42,10 @@ a group asks for no permission and never opens, hides or quits an app: it reads 
 the window list's owner, position, size and on-screen fields (never window titles), and adds app
 items only as bundle identifiers or app bundle locations — the check every app item passes, from a
 backup or any picker; a `capture` link only shows the review sheet, and nothing is added without a
-click there. Triggers act only while the app runs, only on your groups' items through the same
+click there. The Siri/Shortcuts New Group from Open Apps and Add Open Apps to Group intents create
+a group or add items without a sheet, selecting only eligible, safe running apps through the same
+app-item checks; they exclude protected apps and Shortcuts and never launch, hide or quit an app.
+Triggers act only while the app runs, only on your groups' items through the same
 checks, never quit apps, and triggers from a backup come in turned off; Wi-Fi triggers read only the name of the Wi-Fi network, and only after you allow Location Services for the app (macOS treats network names as location information; the app never reads, keeps or sends a location, never scans for networks and never reads the access point's address); no link, intent or launch
 argument runs a trigger, and an archived or deleted group's triggers never run.
 

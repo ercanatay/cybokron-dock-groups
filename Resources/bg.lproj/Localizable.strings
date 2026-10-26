@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Добавете група, за да видите какво да кажете на Siri за нея.";
 "settings.shortcuts.openShortcuts" = "Отвори Преки пътища";
 "settings.shortcuts.shortcutsApp" = "Приложение Преки пътища";
-"settings.shortcuts.shortcutsApp.detail" = "Стартиране на група, Затваряне на група и Показване на група са действия там и в Spotlight: добавете ги към собствените си преки пътища, със собствен задействащ елемент.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps и Add Open Apps to Group са действия в Shortcuts и Spotlight: добавете ги към собствените си команди, със собствен тригер.";
 "settings.shortcuts.siri.header" = "Siri и Преки пътища";
 "settings.shortcuts.siri.footer" = "Говорете на Siri с тези думи, с глас или с писане. Те използват текущото име на групата; преките пътища, които създадете, продължават да работят след преименуване.";
 "settings.shortcuts.links.noGroups" = "Добавете група, за да видите нейните връзки.";

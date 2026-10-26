@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "أضف مجموعة لترى ما تطلبه من Siri لها.";
 "settings.shortcuts.openShortcuts" = "فتح الاختصارات";
 "settings.shortcuts.shortcutsApp" = "تطبيق الاختصارات";
-"settings.shortcuts.shortcutsApp.detail" = "«Launch Group» و«Quit Group» و«Show Group» إجراءات هناك وفي Spotlight: أضفها إلى اختصاراتك، بالمشغّل الذي تختاره.";
+"settings.shortcuts.shortcutsApp.detail" = "أوامر Launch Group وQuit Group وShow Group وNew Group from Open Apps وAdd Open Apps to Group هي إجراءات في Shortcuts وSpotlight: أضفها إلى اختصاراتك الخاصة، مع المشغّل الذي تختاره.";
 "settings.shortcuts.siri.header" = "Siri والاختصارات";
 "settings.shortcuts.siri.footer" = "اطلب من Siri بهذه العبارات، بالصوت أو بالكتابة. تستخدم الاسم الحالي للمجموعة، والاختصارات التي تبنيها تستمر في العمل بعد إعادة التسمية.";
 "settings.shortcuts.links.noGroups" = "أضف مجموعة لترى روابطها.";

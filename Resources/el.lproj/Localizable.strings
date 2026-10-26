@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Προσθέστε μια ομάδα για να δείτε τι μπορείτε να ζητήσετε από τον Siri γι' αυτήν.";
 "settings.shortcuts.openShortcuts" = "Άνοιγμα Συντομεύσεων";
 "settings.shortcuts.shortcutsApp" = "Εφαρμογή Συντομεύσεις";
-"settings.shortcuts.shortcutsApp.detail" = "Οι ενέργειες Εκκίνηση ομάδας, Έξοδος από ομάδα και Εμφάνιση ομάδας υπάρχουν εκεί και στο Spotlight: προσθέστε τες στις δικές σας συντομεύσεις, με τη δική σας εντολή εκκίνησης.";
+"settings.shortcuts.shortcutsApp.detail" = "Οι ενέργειες Launch Group, Quit Group, Show Group, New Group from Open Apps και Add Open Apps to Group είναι διαθέσιμες στο Shortcuts και στο Spotlight: προσθέστε τις στις δικές σας συντομεύσεις, με τη δική σας ενεργοποίηση.";
 "settings.shortcuts.siri.header" = "Siri και Συντομεύσεις";
 "settings.shortcuts.siri.footer" = "Ζητήστε από τον Siri με αυτές τις φράσεις, με φωνή ή πληκτρολογώντας. Χρησιμοποιούν το τρέχον όνομα της ομάδας· οι συντομεύσεις που δημιουργείτε συνεχίζουν να λειτουργούν μετά από μετονομασία.";
 "settings.shortcuts.links.noGroups" = "Προσθέστε μια ομάδα για να δείτε τους συνδέσμους της.";

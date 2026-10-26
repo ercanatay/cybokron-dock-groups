@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Siri-dən nə soruşacağınızı görmək üçün qrup əlavə edin.";
 "settings.shortcuts.openShortcuts" = "Qısayolları aç";
 "settings.shortcuts.shortcutsApp" = "Qısayollar tətbiqi";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group və Show Group orada və Spotlight-da əməliyyatlardır: onları öz tetikleyicinizlə öz qısayollarınıza əlavə edin.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps və Add Open Apps to Group Shortcuts və Spotlight-da əməliyyatlardır: onları öz qısayollarınıza, öz tətikləyicinizlə əlavə edin.";
 "settings.shortcuts.siri.header" = "Siri və Qısayollar";
 "settings.shortcuts.siri.footer" = "Siri-yə bu sözlərlə səslə və ya yazaraq müraciət edin. Onlar qrupun cari adından istifadə edir; yaratdığınız qısayollar adı dəyişdikdən sonra da işləməyə davam edir.";
 "settings.shortcuts.links.noGroups" = "Keçidlərini görmək üçün qrup əlavə edin.";

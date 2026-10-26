@@ -741,7 +741,7 @@ enum L10n {
             static var shortcutsAppDetail: String {
                 tr(
                     "settings.shortcuts.shortcutsApp.detail",
-                    "Launch Group, Quit Group and Show Group are actions there and in Spotlight: add them to your own shortcuts, with your own trigger."
+                    "Launch Group, Quit Group, Show Group, New Group from Open Apps and Add Open Apps to Group are actions in Shortcuts and Spotlight: add them to your own shortcuts, with your own trigger."
                 )
             }
             static var siriHeader: String { tr("settings.shortcuts.siri.header", "Siri and Shortcuts") }

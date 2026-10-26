@@ -1,12 +1,19 @@
 # Design spec: general group items (apps, websites, files, folders) and item details (alias, tags, task notes)
 
-- **Status:** draft for review. Design only: no code, no commits.
+- **Status:** A+F shipped in **0.7.0**; retained as a historical design spec.
+- **Original design status:** draft for review. Design only: no code, no commits.
 - **Baseline:** `main` at `a1448db` (version 0.6.7, `project.yml` `MARKETING_VERSION: "0.6.7"`).
 - **Features:** F1 (Pillar A): a group item can be an app, a website, a **file** or a **folder**.
   F2 (Pillar F): each item can have an optional **alias**, **tags** and **task notes**, and the
   popup filter finds items by them.
 - **Clean room:** the behavior below comes from the written acceptance criteria and from this
   repository only. Every claim about current code cites `file:line` at `a1448db`.
+
+> **As shipped (0.11.1, 2026-10-26):** groups support files and folders alongside apps and
+> websites, with aliases, tags and task notes included in popup search. The baseline inventory,
+> design and PR plan below describe the original work, not pending implementation. Manual checks
+> for file access permissions, Quick Look, Locate, item details and downgrade copies remain open;
+> shipping the feature does not close those gates.
 
 ## Acceptance criteria (behavior)
 

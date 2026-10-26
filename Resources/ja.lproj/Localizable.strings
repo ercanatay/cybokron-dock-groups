@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "グループを追加すると、Siri にどう頼めばよいか表示されます。";
 "settings.shortcuts.openShortcuts" = "ショートカットを開く";
 "settings.shortcuts.shortcutsApp" = "ショートカット App";
-"settings.shortcuts.shortcutsApp.detail" = "グループを開く、グループを終了、グループを表示は、ショートカット App と Spotlight にもアクションとして用意されています。独自のトリガーを使って、自分のショートカットに追加できます。";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group、Quit Group、Show Group、New Group from Open Apps、Add Open Apps to Group は、ショートカットと Spotlight のアクションです。独自のトリガーを使って、自分のショートカットに追加できます。";
 "settings.shortcuts.siri.header" = "Siri とショートカット";
 "settings.shortcuts.siri.footer" = "次の言葉を音声または入力で Siri に伝えてください。グループの現在の名前が使われます。作成したショートカットは、名前を変更しても引き続き動作します。";
 "settings.shortcuts.links.noGroups" = "グループを追加すると、そのリンクが表示されます。";

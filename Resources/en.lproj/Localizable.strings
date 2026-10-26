@@ -277,7 +277,7 @@
 "settings.shortcuts.siri.noGroups" = "Add a group to see what to ask Siri for it.";
 "settings.shortcuts.openShortcuts" = "Open Shortcuts";
 "settings.shortcuts.shortcutsApp" = "Shortcuts app";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group and Show Group are actions there and in Spotlight: add them to your own shortcuts, with your own trigger.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps and Add Open Apps to Group are actions in Shortcuts and Spotlight: add them to your own shortcuts, with your own trigger.";
 "settings.shortcuts.siri.header" = "Siri and Shortcuts";
 "settings.shortcuts.siri.footer" = "Ask Siri with these words, by voice or by typing. They use the group's current name; shortcuts you build keep working after a rename.";
 "settings.shortcuts.links.noGroups" = "Add a group to see its links.";

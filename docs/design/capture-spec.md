@@ -1,6 +1,7 @@
 # Design spec: capturing open apps into groups
 
-- **Status:** draft for review (2026-10-25). Design only: no code. Decisions are recorded in
+- **Status:** phase 4a shipped in **0.10.0**; retained as a historical design spec.
+- **Original design status:** draft for review (2026-10-25). Design only: no code. Decisions are recorded in
   DECISIONS (§9), all taken by the user on 2026-10-25.
 - **Baseline:** `main` at `2ea08df` (version 0.9.0, `project.yml` `MARKETING_VERSION: "0.9.0"`),
   1051 `@Test` functions, 792 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
@@ -14,6 +15,13 @@
 - **Clean room:** behavior comes from the written acceptance criteria and this repository only.
   Claims about current code cite `file:line` at `2ea08df` (paths relative to `Sources/` unless they
   start with `Tests/`, `docs/` or name a file at the repository root).
+
+> **As shipped (0.11.1, 2026-10-26):** New Group from Open Apps and Add Open Apps to Group are
+> implemented. Menus and `capture` links open the review sheet; Siri and Shortcuts use the safe
+> default selection without a sheet, creating or adding items without opening, hiding or quitting
+> apps. Triggers subsequently shipped separately in 0.11.0. The baseline, decisions and PR plan
+> below are historical; permission, ordering, window-selection, target-group, intent execution
+> and downgrade behavior still have open manual checks.
 
 ## Acceptance criteria (behavior)
 
