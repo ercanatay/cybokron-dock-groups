@@ -24,9 +24,9 @@ esac
 
 APP_NAME="Cybokron Dock Groups"
 BUNDLE_ID="com.cybokron.dockgroups"
-MARKETING_VERSION="0.11.0"
-# CFBundleVersion: major * 10000 + minor * 100 + patch of MARKETING_VERSION (scripts/check-version.sh).
-BUILD_NUMBER="1100"
+MARKETING_VERSION="0.11.1"
+# CFBundleVersion: major * 10000 + minor * 100 + patch of MARKETING_VERSION (0.11.1 → 1101; scripts/check-version.sh).
+BUILD_NUMBER="1101"
 MINIMUM_MACOS="14.0"
 PRODUCT="CybokronDockGroups"
 

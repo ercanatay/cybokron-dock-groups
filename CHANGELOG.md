@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-10-26
+
+### Fixed
+
+- Restored Siri, Shortcuts and Focus filter metadata in SwiftPM app bundles built with Xcode 26 by using compatible compiler flags
+- Packaging now fails if App Intents metadata is missing or empty, instead of distributing a build without its actions
+
 ## [0.11.0] - 2026-10-25
 
 ### Added
@@ -496,21 +503,20 @@ First public release.
 - **Most Used**: app launches are counted on this Mac and the most opened apps are listed in the
   menu bar and in a popup; Settings sets the list's length and session length and clears the
   history.
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.0...HEAD
-[0.11.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...v0.11.0
-[0.10.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...v0.10.0
-[0.9.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...v0.9.0
-[0.8.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...v0.8.0
-[0.7.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...v0.7.0
-[0.6.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...v0.6.7
   rebuilt when the group or the app changes and removed (with its Dock tile) when it's turned off or
   deleted.
 - Settings window with Popup, Shortcuts and Most Used tabs, and an About window.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.0...v0.11.1
+[0.11.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.9.0...v0.10.0
+[0.9.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.8.0...v0.9.0
+[0.8.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.7...v0.7.0
+[0.6.7]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.6.3...v0.6.4
