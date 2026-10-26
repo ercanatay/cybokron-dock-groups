@@ -29,6 +29,8 @@ MARKETING_VERSION="0.11.1"
 BUILD_NUMBER="1101"
 MINIMUM_MACOS="14.0"
 PRODUCT="CybokronDockGroups"
+CLI_PRODUCT="CybokronDockGroupsCLI"
+CLI_NAME="cybokrondockgroups"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -70,12 +72,17 @@ if [[ -n "$APPINTENTS_PROCESSOR" ]]; then
         exit 1
     fi
 fi
+BIN_DIRECTORY="$(swift build "${BUILD_ARGS[@]}" --show-bin-path)"
+BINARY="$BIN_DIRECTORY/$PRODUCT"
+# Build the app last so metadata extraction uses its current const sidecars.
+swift build --product "$CLI_PRODUCT" "${BUILD_ARGS[@]}"
 swift build --product "$PRODUCT" "${BUILD_ARGS[@]}"
-BINARY="$(swift build "${BUILD_ARGS[@]}" --show-bin-path)/$PRODUCT"
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BINARY" "$APP/Contents/MacOS/$APP_NAME"
+CLI="$APP/Contents/MacOS/$CLI_NAME"
+cp "$BIN_DIRECTORY/$CLI_PRODUCT" "$CLI"
 
 PLIST="$APP/Contents/Info.plist"
 cp Resources/Info.plist "$PLIST"
@@ -191,11 +198,14 @@ ENTITLEMENTS="$ROOT/Resources/CybokronDockGroups.entitlements"
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
     # Release builds: Developer ID signature with the hardened runtime and a secure timestamp, as
     # notarization requires. The app needs no entitlements.
+    codesign --force --sign "$CODESIGN_IDENTITY" --options runtime --timestamp "$CLI"
     codesign --force --deep --sign "$CODESIGN_IDENTITY" --options runtime --entitlements "$ENTITLEMENTS" --timestamp "$APP"
 else
+    codesign --force --sign - --options runtime --timestamp=none "$CLI"
     codesign --force --sign - --options runtime --entitlements "$ENTITLEMENTS" --timestamp=none "$APP"
 fi
-codesign --verify --strict "$APP"
+codesign --verify --strict "$CLI"
+codesign --verify --deep --strict "$APP"
 
 echo "Built $APP"
 lipo -archs "$APP/Contents/MacOS/$APP_NAME"

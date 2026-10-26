@@ -475,9 +475,11 @@ struct AppIntentsPackagingTests {
                 swift)
                     printf '%s\n' "$@" >> "$FIXTURE_ROOT/build-arguments"
                     configuration=debug
+                    product=""
                     previous=""
                     for argument in "$@"; do
                         [[ "$previous" != -c ]] || configuration="$argument"
+                        [[ "$previous" != --product ]] || product="$argument"
                         previous="$argument"
                     done
                     if [[ "$FIXTURE_MODE" != clt ]]; then
@@ -495,8 +497,13 @@ struct AppIntentsPackagingTests {
                     fi
                     directory="$SWIFTPM_SCRATCH_PATH/arm64-apple-macosx/$configuration"
                     mkdir -p "$directory/CybokronDockGroups.build"
-                    printf 'binary' > "$directory/CybokronDockGroups"
-                    printf 'constant values' > "$directory/CybokronDockGroups.build/AppDelegate.swiftconstvalues"
+                    if [[ "$product" == CybokronDockGroups ]]; then
+                        printf 'binary' > "$directory/CybokronDockGroups"
+                        printf 'constant values' > "$directory/CybokronDockGroups.build/AppDelegate.swiftconstvalues"
+                    elif [[ "$product" == cybokrondockgroups || "$product" == CybokronDockGroupsCLI ]]; then
+                        printf 'cli' > "$directory/$product"
+                        chmod +x "$directory/$product"
+                    fi
                     [[ " $* " != *' --show-bin-path '* ]] || echo "$directory" ;;
                 appintentsmetadataprocessor)
                     output=""
@@ -505,7 +512,7 @@ struct AppIntentsPackagingTests {
                             --output) output="$2"; shift ;;
                             --swift-const-vals-list)
                                 [[ -s "$2" ]]
-                                while IFS= read -r values; do [[ -s "$values" ]]; done < "$2"
+                                while IFS= read -r values; do [[ -s "$values" ]] || exit 1; done < "$2"
                                 shift ;;
                         esac
                         shift
@@ -519,7 +526,9 @@ struct AppIntentsPackagingTests {
                 xcodebuild) echo 'Build version fixture' ;;
                 iconutil) touch "$4" ;;
                 lipo) echo 'arm64 x86_64' ;;
-                plutil | codesign) ;;
+                codesign)
+                    [[ "$1" != --force ]] || printf '%s\n' "${@: -1}" >> "$FIXTURE_ROOT/signed-paths" ;;
+                plutil) ;;
             esac
             """#
     }
@@ -570,5 +579,19 @@ struct AppIntentsPackagingTests {
         #expect(!calls.contains("swiftc"))
         #expect(!calls.contains("appintentsmetadataprocessor"))
         #expect(calls.contains("codesign"))
+    }
+
+    @Test(arguments: ["debug", "release"])
+    func theCLIIsPackagedAndSignedBeforeTheApp(configuration: String) throws {
+        let fixture = try Toolchain()
+        defer { fixture.temporary.remove() }
+        let result = try fixture.run(configuration)
+        #expect(result.status == 0, "\(result.errors)")
+        let app = fixture.root.appending(path: "build/\(configuration)/Cybokron Dock Groups.app")
+        let cli = app.appending(path: "Contents/MacOS/cybokrondockgroups")
+        #expect(FileManager.default.isExecutableFile(atPath: cli.path))
+        #expect(try String(contentsOf: cli, encoding: .utf8) == "cli")
+        #expect(try String(contentsOf: app.appending(path: "Contents/MacOS/Cybokron Dock Groups"), encoding: .utf8) == "binary")
+        #expect(try fixture.text("signed-paths") == "\(cli.path)\n\(app.path)\n")
     }
 }

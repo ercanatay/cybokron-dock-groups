@@ -447,6 +447,43 @@ they never open). Before **Other Versions…** installs one, `groups.json` and `
 copied next to themselves (`….pre-downgrade-<time>.json`), and the question warns when a group has a
 shortcut, a group is archived or a template exists.
 
+## Command-line interface
+
+This CLI is available in source builds and is intended for a future release. The published
+v0.11.1 app does not include it. Builds from this source tree bundle `cybokrondockgroups` in
+`Contents/MacOS`. Use its full path, or create a link in a directory you already have on `PATH`
+(installation does not change your shell configuration):
+
+```sh
+"/Applications/Cybokron Dock Groups.app/Contents/MacOS/cybokrondockgroups" --help
+# If $HOME/.local/bin is on your PATH:
+mkdir -p "$HOME/.local/bin"
+ln -s "/Applications/Cybokron Dock Groups.app/Contents/MacOS/cybokrondockgroups" "$HOME/.local/bin/cybokrondockgroups"
+
+cybokrondockgroups start "Work"
+cybokrondockgroups finish "Work"
+cybokrondockgroups open "Work"   # show the popup; does not run Open All
+cybokrondockgroups status
+cybokrondockgroups --version
+```
+
+`start`, `finish` and `open` take exactly one active group's UUID or name. Quote names as a single
+shell argument; spaces, slashes, Unicode, `?`, `#` and `%` are encoded as data. These commands send
+the existing app links through macOS, which can launch a stopped app. The app keeps its link
+cooldown (five seconds) and asks before a Start or Finish that would quit apps. A launch for a
+CLI link does not count as opening the app for launch triggers.
+
+Exit **0** means macOS accepted URL dispatch, not that the group existed, a confirmation was
+accepted, or the action finished; the CLI reports this limit on stderr. Exit **2** means invalid
+arguments; **3** means dispatch failed or is unavailable. There is no completion/status channel
+for group actions.
+
+`status` is read-only: it prints `running VERSION` (exit 0) or `stopped VERSION` (exit 3) for the
+app containing that CLI, resolving a symbolic link first. Another installed or development copy
+does not count as that app running. `--version` prints that bundle's version (exit 0); it is not a
+separately versioned tool. Neither command reads group files. Use the bundled executable rather
+than copying it out of the app; an unbundled CLI can show help but cannot resolve its app (exit 3).
+
 ## Requirements
 
 - macOS 14 Sonoma or later (Apple silicon or Intel)

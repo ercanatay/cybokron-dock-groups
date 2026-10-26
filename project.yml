@@ -61,6 +61,12 @@ targets:
         buildPhase: none
     dependencies:
       - target: DockGroupsCore
+      - target: CybokronDockGroupsCLI
+        link: false
+        embed: true
+        codeSign: true
+        copy:
+          destination: executables
     settings:
       base:
         PRODUCT_NAME: Cybokron Dock Groups
@@ -76,6 +82,22 @@ targets:
         ENABLE_DEBUG_DYLIB: NO
         COMBINE_HIDPI_IMAGES: YES
         # Universal (arm64 + x86_64) for Release; Debug builds only the active architecture.
+        ARCHS: $(ARCHS_STANDARD)
+
+  CybokronDockGroupsCLI:
+    type: tool
+    platform: macOS
+    productName: cybokrondockgroups
+    sources:
+      - path: Sources/CybokronDockGroupsCLI
+    dependencies:
+      - target: DockGroupsCore
+    settings:
+      base:
+        PRODUCT_NAME: cybokrondockgroups
+        PRODUCT_MODULE_NAME: CybokronDockGroupsCLI
+        SKIP_INSTALL: YES
+        ENABLE_HARDENED_RUNTIME: YES
         ARCHS: $(ARCHS_STANDARD)
 
   DockGroupsCoreTests:
