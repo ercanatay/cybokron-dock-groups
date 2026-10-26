@@ -128,6 +128,7 @@
 		5824AEC356A5CBB43BFD4F69 /* CaptureCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EDDC223751BE7FD4D10B6E /* CaptureCompatibilityTests.swift */; };
 		5831131A3D9A58F0CDDE73D1 /* GroupShortcutRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F43FC389A6550CEF794226 /* GroupShortcutRegistrarTests.swift */; };
 		58A70872868D1A62D783B88C /* TileGridGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9412A6748C89FB1D2771BEA /* TileGridGeometry.swift */; };
+		590143C66C356EE17F786FF1 /* CLITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A44F3E53FEA43BF7FC36F98 /* CLITests.swift */; };
 		5A8423B044174A50CDB4DFD5 /* ItemSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2181A7F8895AC9CEEAF2A3F /* ItemSearchTests.swift */; };
 		5AA17438C8FFDCC240BFF9F4 /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9983C8AD4CBF5C4EC1E9893F /* UsageStore.swift */; };
 		5B2A78253882C4659364D7BF /* TriggerSignals.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10ACD88113FA35552CA95D6 /* TriggerSignals.swift */; };
@@ -158,6 +159,7 @@
 		6F7BC3D5439C12E975C0AEED /* GroupShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD00B8920D9002314BAFE6C /* GroupShortcuts.swift */; };
 		72620C71872560BF765E73CB /* UpdatesSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22FD8F9E1099E382CFD66D /* UpdatesSettingsView.swift */; };
 		73A3929800FC2185C0118580 /* WindowRestorerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D022ACDC376346B0EA5BC2 /* WindowRestorerTests.swift */; };
+		7403451409D5233DAAB3D9EF /* libDockGroupsCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */; };
 		740D713823F359E093F9885F /* TriggerEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CF253D246F74DD86B5046B /* TriggerEvaluator.swift */; };
 		747B1E116B8770E6893E7FB9 /* ItemDetailsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22F48E66A91144FD8580B80 /* ItemDetailsEditor.swift */; };
 		7495ED03D2A519746C220115 /* GroupSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDC60218E7F9A86D5162161 /* GroupSidebarView.swift */; };
@@ -165,6 +167,7 @@
 		75326B53103610C4DFE868B7 /* GroupShortcutSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692E2620DC9DA74C8EBC5941 /* GroupShortcutSystemTests.swift */; };
 		75542FCED70F6CF687869A9A /* Version0100Fixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C911ACDF03456795612508C0 /* Version0100Fixtures.swift */; };
 		76101E2D0E73E2AA75096A3C /* ChangelogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD8E5B6E646F67099D9E297 /* ChangelogService.swift */; };
+		76F66D6B8D02D32DDFA0509C /* cybokrondockgroups in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 476782FB8C45BE93CAA127FB /* cybokrondockgroups */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		771D5FC2ABB5BD5128874143 /* TriggerNetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB15ACA671263DE82657DB4 /* TriggerNetworkTests.swift */; };
 		7777D649B86A26ECCD6EB9D2 /* SettingsBackup+Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = E705D5D9796ECFD25107AB3B /* SettingsBackup+Stores.swift */; };
 		78293B48E303FA8F2A832C03 /* MostUsed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED1306DE77F4410761A9C0D /* MostUsed.swift */; };
@@ -226,6 +229,7 @@
 		A15EE759F1A38CE4CC8021E8 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68BC4F0C083DD4941B334E4 /* Localization.swift */; };
 		A170D7A18772108BB4EB8717 /* AccessibilityAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01E8CA54FEEB3BE9E35C712 /* AccessibilityAccess.swift */; };
 		A1AFA5BF619BD3BFD068B2A6 /* ItemPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DDC41D27A2CC29CC3B1132 /* ItemPicker.swift */; };
+		A1F8D7CF23074DC0B143C533 /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359A85DA226E34453B7703FD /* CLI.swift */; };
 		A2074F93752DAD33ECA79C43 /* PopupPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3185825EF35AC54DE92D41 /* PopupPreferencesTests.swift */; };
 		A33EABBFD77C1220BB5DAE35 /* GroupHotKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F4288751040A5BAB01A0CA /* GroupHotKeys.swift */; };
 		A44DF6E8038AB10A4371ABB4 /* RunningAppSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E77166743F4BFD7B84B6B /* RunningAppSnapshot.swift */; };
@@ -273,6 +277,7 @@
 		C09A838DE0721FAEE7CC2862 /* ItemAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C9A57653CECB1CACC3DCE7A /* ItemAction.swift */; };
 		C1C99DBD8A834A04E609B252 /* DisplayNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFB3BEC6E712399D629ACCB /* DisplayNames.swift */; };
 		C2540B3DC0079DCF1E1D72AA /* AboutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C085B0A9127EDD43DD922BA4 /* AboutData.swift */; };
+		C2CC27EF1757636ACBEF3DCA /* DockGroupsCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12CB7124AFAE38B6477EB822 /* DockGroupsCLI.swift */; };
 		C45AE83829FFDBC3927286F8 /* GroupShortcutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61F4453A596239F7F4EA9E0 /* GroupShortcutSection.swift */; };
 		C53269759D7E3AF86B0580D3 /* UpdateSignatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B742E35580E9C38323FE5 /* UpdateSignatureTests.swift */; };
 		C6C5DA2A48359D6546CF5767 /* AppPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */; };
@@ -356,6 +361,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		658E588426140EE756D18351 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48CD32E7F1DE5DAB97211E0D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3357CFA9B66526925FFFE868;
+			remoteInfo = DockGroupsCore;
+		};
 		67ADCC7E0FB3C2D786B49BE8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 48CD32E7F1DE5DAB97211E0D /* Project object */;
@@ -370,7 +382,28 @@
 			remoteGlobalIDString = 3357CFA9B66526925FFFE868;
 			remoteInfo = DockGroupsCore;
 		};
+		AEFED5FDF44885BA5168AEEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 48CD32E7F1DE5DAB97211E0D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04D1CABC2A17004A0A54296D;
+			remoteInfo = CybokronDockGroupsCLI;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		284FC662D263BDF794EFAE9B /* Embed Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				76F66D6B8D02D32DDFA0509C /* cybokrondockgroups in Embed Dependencies */,
+			);
+			name = "Embed Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00841BD537DA29382FE4C19A /* GroupSettingsDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSettingsDestination.swift; sourceTree = "<group>"; };
@@ -396,6 +429,7 @@
 		0EA0505FFDB78ECC58BA1352 /* TriggersSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggersSettingsView.swift; sourceTree = "<group>"; };
 		0EB868DA281AB52C557743C6 /* TriggerStatePersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerStatePersistence.swift; sourceTree = "<group>"; };
 		11B3043E6F318287321A6C4D /* FileLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLocation.swift; sourceTree = "<group>"; };
+		12CB7124AFAE38B6477EB822 /* DockGroupsCLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockGroupsCLI.swift; sourceTree = "<group>"; };
 		1317946282D755F9C07E6C8B /* PopupDrag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupDrag.swift; sourceTree = "<group>"; };
 		138F540E6BBA3FFB79519647 /* WebsiteAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteAddress.swift; sourceTree = "<group>"; };
 		13AB9B3DB19872BA66EA39B0 /* AppRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRowView.swift; sourceTree = "<group>"; };
@@ -437,6 +471,7 @@
 		31C21CDEB78566E9B9875A13 /* CaptureStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureStoreTests.swift; sourceTree = "<group>"; };
 		3442B2CF81EDEB8EA95ABE2B /* GroupArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupArchiveTests.swift; sourceTree = "<group>"; };
 		346D8E3D56FAC77F400AFFBF /* GroupIntentSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupIntentSupport.swift; sourceTree = "<group>"; };
+		359A85DA226E34453B7703FD /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		36D1915625A4729CA6B1D6AD /* SettingsBackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBackupTests.swift; sourceTree = "<group>"; };
 		381AFF91B72715F1B1867414 /* AgentInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentInstaller.swift; sourceTree = "<group>"; };
 		3907666074E21B678A97BE64 /* ItemSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSearch.swift; sourceTree = "<group>"; };
@@ -469,6 +504,7 @@
 		4602D0C24FADB64FD801B521 /* WebsiteItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteItemTests.swift; sourceTree = "<group>"; };
 		46396BA0E2EA9371AEF2D194 /* ArchivedGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedGroupView.swift; sourceTree = "<group>"; };
 		467F84A6D4DBAAAC35C64818 /* DiagnosticsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsController.swift; sourceTree = "<group>"; };
+		476782FB8C45BE93CAA127FB /* cybokrondockgroups */ = {isa = PBXFileReference; includeInIndex = 0; path = cybokrondockgroups; sourceTree = BUILT_PRODUCTS_DIR; };
 		485479D5ADC0CA4D0184E7D4 /* CaptureFakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFakes.swift; sourceTree = "<group>"; };
 		497C1AC0F9956B613E91A8F7 /* ReleaseInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseInfoTests.swift; sourceTree = "<group>"; };
 		49875A12D1B55403C9F60526 /* ScriptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptTests.swift; sourceTree = "<group>"; };
@@ -553,6 +589,7 @@
 		7915888693FFC3FF792ACB7B /* FocusRequestCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusRequestCoordinator.swift; sourceTree = "<group>"; };
 		79B854A1363C8CFD95BAEE6D /* AgentAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentAppDelegate.swift; sourceTree = "<group>"; };
 		7A3680A0091065D2D5CA9FD6 /* AgentPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPlanner.swift; sourceTree = "<group>"; };
+		7A44F3E53FEA43BF7FC36F98 /* CLITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLITests.swift; sourceTree = "<group>"; };
 		7AD98BFAE130C9A4C2E47FDB /* TemplateFakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateFakes.swift; sourceTree = "<group>"; };
 		7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPicker.swift; sourceTree = "<group>"; };
 		7B39AF2B71D9CA7E08F7DCC8 /* TriggerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerController.swift; sourceTree = "<group>"; };
@@ -758,6 +795,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4E72F2D869DB18C5A742D286 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7403451409D5233DAAB3D9EF /* libDockGroupsCore.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AE02532D89B9A89468F10A62 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -871,6 +916,7 @@
 		505055019F79FD763320ABAA /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				12CB7124AFAE38B6477EB822 /* DockGroupsCLI.swift */,
 				3DFE5C11001817DDE901A930 /* GroupInvocations.swift */,
 				58073CD1F0B940C9E3330224 /* GroupLookup.swift */,
 				E68B979CA937B03478C5B973 /* GroupQuitRequests.swift */,
@@ -1027,6 +1073,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		6E63B1FE367A33F2DA9CDB12 /* CybokronDockGroupsCLI */ = {
+			isa = PBXGroup;
+			children = (
+				359A85DA226E34453B7703FD /* CLI.swift */,
+			);
+			path = CybokronDockGroupsCLI;
+			sourceTree = "<group>";
+		};
 		78451AB2EF93204403338861 /* Store */ = {
 			isa = PBXGroup;
 			children = (
@@ -1110,6 +1164,7 @@
 		A5EA865D580D2C8466E98237 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				476782FB8C45BE93CAA127FB /* cybokrondockgroups */,
 				9E6AF56C61E37C0803DBFCF6 /* CybokronDockGroups.app */,
 				FC61FE43A3730EC426FD8569 /* DockGroupsCoreTests.xctest */,
 				BD5DD7E7ED76C88011F696DB /* libDockGroupsCore.a */,
@@ -1178,6 +1233,7 @@
 				31C21CDEB78566E9B9875A13 /* CaptureStoreTests.swift */,
 				8AD710AC869E0DBF49482A65 /* CaptureSurfaceTests.swift */,
 				5C089DC1E44BB070B6D52770 /* ChangelogServiceTests.swift */,
+				7A44F3E53FEA43BF7FC36F98 /* CLITests.swift */,
 				5046D51835514FFEAAF343F7 /* ContextSessionTests.swift */,
 				D64B3E6E4AE605786B9BAF60 /* ContextSwitcherTests.swift */,
 				50FB08803576EDFB522E3E83 /* DeferringItemLocatorTests.swift */,
@@ -1303,6 +1359,7 @@
 			isa = PBXGroup;
 			children = (
 				E1205CF7B951F7988F3849F0 /* CybokronDockGroups */,
+				6E63B1FE367A33F2DA9CDB12 /* CybokronDockGroupsCLI */,
 				8F9301BC76FF0C014B3126BF /* DockGroupsCore */,
 			);
 			path = Sources;
@@ -1439,6 +1496,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		04D1CABC2A17004A0A54296D /* CybokronDockGroupsCLI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 538E685CA013620163890BE4 /* Build configuration list for PBXNativeTarget "CybokronDockGroupsCLI" */;
+			buildPhases = (
+				5859EAF5A8C88964B2BB43C0 /* Sources */,
+				4E72F2D869DB18C5A742D286 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2072633202ED4D4CEC04EB15 /* PBXTargetDependency */,
+			);
+			name = CybokronDockGroupsCLI;
+			packageProductDependencies = (
+			);
+			productName = CybokronDockGroupsCLI;
+			productReference = 476782FB8C45BE93CAA127FB /* cybokrondockgroups */;
+			productType = "com.apple.product-type.tool";
+		};
 		3357CFA9B66526925FFFE868 /* DockGroupsCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = EB194E510280E92A64388326 /* Build configuration list for PBXNativeTarget "DockGroupsCore" */;
@@ -1482,11 +1558,13 @@
 				7F1406F7B05E60D128734822 /* Sources */,
 				8C070DE8355F0296F536108C /* Resources */,
 				AE02532D89B9A89468F10A62 /* Frameworks */,
+				284FC662D263BDF794EFAE9B /* Embed Dependencies */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				D8DF0A1BAD2FB29663257C85 /* PBXTargetDependency */,
+				843E6B630075F936B5FA7B33 /* PBXTargetDependency */,
 			);
 			name = CybokronDockGroups;
 			packageProductDependencies = (
@@ -1504,6 +1582,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					04D1CABC2A17004A0A54296D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
 					3357CFA9B66526925FFFE868 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Manual;
@@ -1559,6 +1641,7 @@
 			targets = (
 				3357CFA9B66526925FFFE868 /* DockGroupsCore */,
 				99A62B3788A3CE6D92ED396D /* CybokronDockGroups */,
+				04D1CABC2A17004A0A54296D /* CybokronDockGroupsCLI */,
 				7CE145F124F677FBB08AA94C /* DockGroupsCoreTests */,
 			);
 		};
@@ -1577,6 +1660,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5859EAF5A8C88964B2BB43C0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1F8D7CF23074DC0B143C533 /* CLI.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7F1406F7B05E60D128734822 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1698,6 +1789,7 @@
 				2F9B831D82CFF1E88AC9E808 /* DiagnosticsReport.swift in Sources */,
 				F1B4DD8F468A20CDC9E51CEC /* DisplayIdentity.swift in Sources */,
 				4D779D910731F57A8EB71E41 /* DockGroup.swift in Sources */,
+				C2CC27EF1757636ACBEF3DCA /* DockGroupsCLI.swift in Sources */,
 				F81BF4C25E606DF2CEDE5486 /* DockTileList.swift in Sources */,
 				3FD01A541DBC7A7EA082E74A /* DowngradeProtection.swift in Sources */,
 				D886CD3227E4B5C49C660D6E /* FileAccessPurposes.swift in Sources */,
@@ -1824,6 +1916,7 @@
 				D23C03AF25D18BD13CA9EE38 /* AppIconProviderTests.swift in Sources */,
 				51942273E4A82B34674D86AB /* AppReferenceTests.swift in Sources */,
 				49B5964D0782AE429CAE3A42 /* ArchiveFakes.swift in Sources */,
+				590143C66C356EE17F786FF1 /* CLITests.swift in Sources */,
 				5824AEC356A5CBB43BFD4F69 /* CaptureCompatibilityTests.swift in Sources */,
 				31FD2C3DAA7A612675F37C47 /* CaptureFakes.swift in Sources */,
 				5E9713E3E1D8743E657A6600 /* CaptureIntentTests.swift in Sources */,
@@ -1943,10 +2036,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2072633202ED4D4CEC04EB15 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3357CFA9B66526925FFFE868 /* DockGroupsCore */;
+			targetProxy = 658E588426140EE756D18351 /* PBXContainerItemProxy */;
+		};
 		3DC361056834E89E64CE0F5A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3357CFA9B66526925FFFE868 /* DockGroupsCore */;
 			targetProxy = 83B6FB2FE3A3BE29C6481244 /* PBXContainerItemProxy */;
+		};
+		843E6B630075F936B5FA7B33 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 04D1CABC2A17004A0A54296D /* CybokronDockGroupsCLI */;
+			targetProxy = AEFED5FDF44885BA5168AEEE /* PBXContainerItemProxy */;
 		};
 		D8DF0A1BAD2FB29663257C85 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2033,6 +2136,50 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 			};
 			name = Debug;
+		};
+		1CD1749E85CBBF093650FDA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cybokron.CybokronDockGroupsCLI;
+				PRODUCT_MODULE_NAME = CybokronDockGroupsCLI;
+				PRODUCT_NAME = cybokrondockgroups;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		29E6C4CDE4E16F633FFFE6D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cybokron.CybokronDockGroupsCLI;
+				PRODUCT_MODULE_NAME = CybokronDockGroupsCLI;
+				PRODUCT_NAME = cybokrondockgroups;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
 		};
 		440774BA39D3C40890AD986F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2253,6 +2400,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		538E685CA013620163890BE4 /* Build configuration list for PBXNativeTarget "CybokronDockGroupsCLI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CD1749E85CBBF093650FDA8 /* Debug */,
+				29E6C4CDE4E16F633FFFE6D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		92A081FB6C627A436D92860F /* Build configuration list for PBXNativeTarget "CybokronDockGroups" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

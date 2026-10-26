@@ -10,6 +10,8 @@ let package = Package(
     platforms: [.macOS(.v14)],
     products: [
         .executable(name: "CybokronDockGroups", targets: ["CybokronDockGroups"]),
+        // Distinct even on case-insensitive volumes; packaging gives the tool its lowercase name.
+        .executable(name: "CybokronDockGroupsCLI", targets: ["CybokronDockGroupsCLI"]),
         .library(name: "DockGroupsCore", targets: ["DockGroupsCore"]),
     ],
     targets: [
@@ -26,6 +28,11 @@ let package = Package(
             name: "DockGroupsCoreTests",
             dependencies: ["DockGroupsCore"],
             path: "Tests/DockGroupsCoreTests"
+        ),
+        .executableTarget(
+            name: "CybokronDockGroupsCLI",
+            dependencies: ["DockGroupsCore"],
+            path: "Sources/CybokronDockGroupsCLI"
         ),
     ],
     swiftLanguageModes: [.v5]
