@@ -9,15 +9,27 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/popup-panel.png" width="380" alt="Group popup over the Dock with Open All, Hide All and Close All, and a website next to the apps"><br><sub>Group popup with apps and a website</sub></td>
-    <td align="center"><img src="docs/screenshots/popup-filter.png" width="380" alt="Group popup filtered by typing “mic”"><br><sub>Type to filter, Return to open</sub></td>
+    <td align="center" colspan="2"><img src="docs/screenshots/groups-window.png" width="700" alt="Group window: the AI IDE group's apps with Add, Sort A→Z, Show Popup, Open All and Hide All"><br><sub>Group window: your groups, their items and quick actions</sub></td>
   </tr>
   <tr>
-    <td align="center" colspan="2"><img src="docs/screenshots/groups-window.png" width="640" alt="Group management window with Add Website, Sort A→Z and Hide All"><br><sub>Group management window</sub></td>
+    <td align="center"><img src="docs/screenshots/popup-panel.png" width="400" alt="Group popup with 13 apps, a dot under each running app, and Open All, Hide All and Force Quit"><br><sub>The popup: open, hide or quit a whole group</sub></td>
+    <td align="center"><img src="docs/screenshots/settings-triggers.png" width="380" alt="Settings → Triggers: Open at Login, trigger status with Pause, and Location access"><br><sub>Settings → Triggers</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/settings.png" width="360" alt="Settings → Updates with Check Now and Other Versions"><br><sub>Settings → Updates, with Other Versions…</sub></td>
-    <td align="center"><img src="docs/screenshots/about.png" width="300" alt="About window with social profiles, support links and books"><br><sub>About</sub></td>
+    <td align="center"><img src="docs/screenshots/group-switching-triggers.png" width="400" alt="A group's Start and Finish settings, its keyboard shortcut and its triggers"><br><sub>Per group: Start and Finish, its own shortcut and triggers</sub></td>
+    <td align="center"><img src="docs/screenshots/group-dock-tile.png" width="380" alt="A group's Dock tile preview, standalone Dock icon and popup settings"><br><sub>Dock tile, standalone icon and popup layout</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/settings-switching.png" width="380" alt="Settings → Switching: protected apps, Start and Finish, and Focus"><br><sub>Settings → Switching</sub></td>
+    <td align="center"><img src="docs/screenshots/settings-shortcuts.png" width="380" alt="Settings → Shortcuts &amp; Siri: ⌃⌥1 to ⌃⌥9 and the groups they open"><br><sub>Settings → Shortcuts &amp; Siri</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/settings-updates.png" width="380" alt="Settings → Updates with automatic checks, the current version and Check Now"><br><sub>Settings → Updates</sub></td>
+    <td align="center"><img src="docs/screenshots/settings-other-versions.png" width="380" alt="Other Versions: published releases, each with an Install button"><br><sub>Other Versions…: install any published release</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/popup-filter.png" width="380" alt="Group popup filtered by typing “mic”"><br><sub>Type to filter, Return to open (v0.5.6)</sub></td>
+    <td align="center"><img src="docs/screenshots/about.png" width="300" alt="About window with social profiles, support links and books"><br><sub>About (v0.5.6)</sub></td>
   </tr>
 </table>
 
