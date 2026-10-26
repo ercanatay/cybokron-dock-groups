@@ -56,6 +56,11 @@ jobs:
           UNIVERSAL: "1"
         run: scripts/build-app.sh release
 
+      - name: Verify App Intents metadata
+        run: |
+          test -s "build/release/Cybokron Dock Groups.app/Contents/Resources/Metadata.appintents/extract.actionsdata" \
+            || { echo "::error::App Intents metadata is missing or empty"; exit 1; }
+
       - name: Check the app's version and build number
         # CFBundleVersion must be major * 10000 + minor * 100 + patch (0.6.4 → 604).
         env:
@@ -191,6 +196,11 @@ jobs:
         run: |
           scripts/build-app.sh release
           echo "APP=build/release/Cybokron Dock Groups.app" >> "$GITHUB_ENV"
+
+      - name: Verify App Intents metadata
+        run: |
+          test -s "build/release/Cybokron Dock Groups.app/Contents/Resources/Metadata.appintents/extract.actionsdata" \
+            || { echo "::error::App Intents metadata is missing or empty"; exit 1; }
 
       - name: Check the app's version and build number
         # CFBundleVersion must be major * 10000 + minor * 100 + patch (0.6.4 → 604).
