@@ -1,6 +1,7 @@
 # Design spec: automatic group triggers
 
-- **Status:** design for review (2026-10-25). Design only: no code. The questions the user had to
+- **Status:** phase 4b shipped in **0.11.0**; retained as a historical design spec.
+- **Original design status:** design for review (2026-10-25). Design only: no code. The questions the user had to
   decide are answered in DECISIONS (§9); this spec is written around those answers.
 - **Baseline:** `main` at `4aaddc8` (version 0.10.0, `project.yml` `MARKETING_VERSION: "0.10.0"`),
   1143 `@Test` functions, 827 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
@@ -17,6 +18,13 @@
   start with `Tests/`, `docs/` or name a file at the repository root). Claims about macOS cite the
   macOS 27.0 SDK headers (Xcode 27.1, 27A9275) or Apple's documentation; what neither settles is
   marked **spike** (§2.3, TS-1…TS-11) and decided by the PR that needs it.
+
+> **As shipped (0.11.1, 2026-10-26):** time, login/app-opening, display, screen sleep/wake,
+> Ethernet and opt-in Wi-Fi triggers run only while the app runs; they never quit apps. VPNs are
+> not watched or offered (TS-8), despite the conditional VPN design below. Triggers on another app
+> opening or quitting remain deferred to the proposed 0.12.0 wave (Decision 7), not implemented.
+> The baseline, decisions and PR plan are historical. Manual time/login, display/sleep, network
+> permission, pause/budget, archived-group and downgrade checks remain open.
 
 ## Acceptance criteria (behavior)
 

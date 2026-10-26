@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Adaugă un grup pentru a vedea ce să-i ceri lui Siri.";
 "settings.shortcuts.openShortcuts" = "Deschide Comenzi rapide";
 "settings.shortcuts.shortcutsApp" = "Aplicația Comenzi rapide";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group și Show Group sunt acțiuni acolo și în Spotlight: adaugă-le la propriile comenzi rapide, cu propriul declanșator.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps și Add Open Apps to Group sunt acțiuni în Shortcuts și Spotlight: adaugă-le în propriile scurtături, cu propriul declanșator.";
 "settings.shortcuts.siri.header" = "Siri și Comenzi rapide";
 "settings.shortcuts.siri.footer" = "Cere-i lui Siri cu aceste cuvinte, vocal sau scris. Ele folosesc numele actual al grupului; comenzile rapide create continuă să funcționeze după o redenumire.";
 "settings.shortcuts.links.noGroups" = "Adaugă un grup pentru a-i vedea linkurile.";

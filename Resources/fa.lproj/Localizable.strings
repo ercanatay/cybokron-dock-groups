@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "یک گروه اضافه کنید تا ببینید برای آن از Siri چه بخواهید.";
 "settings.shortcuts.openShortcuts" = "باز کردن میان‌برها";
 "settings.shortcuts.shortcutsApp" = "برنامهٔ میان‌برها";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group، Quit Group و Show Group در آنجا و در Spotlight به‌عنوان اقدام موجودند: آنها را با محرک دلخواه خودتان به میان‌برهای خود اضافه کنید.";
+"settings.shortcuts.shortcutsApp.detail" = "نام‌های Launch Group، Quit Group، Show Group، New Group from Open Apps و Add Open Apps to Group اقدام‌هایی در Shortcuts و Spotlight هستند: آن‌ها را به میان‌برهای خودتان با محرک دلخواه خودتان اضافه کنید.";
 "settings.shortcuts.siri.header" = "Siri و میان‌برها";
 "settings.shortcuts.siri.footer" = "با این عبارات از Siri بخواهید، با صدا یا با تایپ. آنها از نام فعلی گروه استفاده می‌کنند؛ میان‌برهایی که می‌سازید پس از تغییر نام هم کار می‌کنند.";
 "settings.shortcuts.links.noGroups" = "یک گروه اضافه کنید تا پیوندهایش را ببینید.";

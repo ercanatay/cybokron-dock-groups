@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Adjon hozzá egy csoportot, hogy lássa, mit kérjen tőle Sirivel.";
 "settings.shortcuts.openShortcuts" = "Parancsok megnyitása";
 "settings.shortcuts.shortcutsApp" = "Parancsok alkalmazás";
-"settings.shortcuts.shortcutsApp.detail" = "A Launch Group, a Quit Group és a Show Group műveletek ott és a Spotlightban is elérhetők: adja őket saját parancsaihoz, saját indítóval.";
+"settings.shortcuts.shortcutsApp.detail" = "A Launch Group, Quit Group, Show Group, New Group from Open Apps és Add Open Apps to Group a Shortcuts és a Spotlight műveletei: add őket a saját parancsikonjaidhoz, saját indítóeseménnyel.";
 "settings.shortcuts.siri.header" = "Siri és Parancsok";
 "settings.shortcuts.siri.footer" = "Ezekkel a szavakkal kérje Sirit, hangon vagy gépelve. A csoport aktuális nevét használják; az Ön által készített parancsok átnevezés után is működnek.";
 "settings.shortcuts.links.noGroups" = "Adjon hozzá egy csoportot, hogy lássa a hivatkozásait.";

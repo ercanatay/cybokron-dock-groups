@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Přidejte skupinu, abyste viděli, o co pro ni požádat Siri.";
 "settings.shortcuts.openShortcuts" = "Otevřít Zástupce";
 "settings.shortcuts.shortcutsApp" = "Aplikace Zástupci";
-"settings.shortcuts.shortcutsApp.detail" = "Spustit skupinu, Ukončit skupinu a Zobrazit skupinu jsou tam i ve Spotlightu k dispozici jako akce: přidejte je do svých vlastních zástupců s vlastním spouštěčem.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps a Add Open Apps to Group jsou akce v Shortcuts a Spotlight: přidejte je do svých vlastních zkratek s vlastním spouštěčem.";
 "settings.shortcuts.siri.header" = "Siri a Zástupci";
 "settings.shortcuts.siri.footer" = "Požádejte Siri těmito slovy, hlasem nebo psaním. Používají aktuální název skupiny; zástupci, které vytvoříte, fungují i po přejmenování.";
 "settings.shortcuts.links.noGroups" = "Přidejte skupinu, abyste viděli její odkazy.";

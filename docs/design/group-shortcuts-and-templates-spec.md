@@ -1,6 +1,7 @@
 # Design spec: group shortcuts, and duplicating, archiving and templating groups
 
-- **Status:** design decided (2026-10-25), ready for implementation. Design only: no code. The seven decisions in §9 were
+- **Status:** G+I shipped in **0.9.0**; retained as a historical design spec.
+- **Original design status:** design decided (2026-10-25), ready for implementation. Design only: no code. The seven decisions in §9 were
   made by the user on 2026-10-25.
 - **Baseline:** `main` at `8127967` (version 0.8.0, `project.yml` `MARKETING_VERSION: "0.8.0"`),
   906 `@Test` functions, 677 `en.lproj` keys, `LocalizationTests.awaitingTranslation` empty.
@@ -13,6 +14,12 @@
 - **Clean room:** behavior comes from the written acceptance criteria and this repository only.
   Claims about current code cite `file:line` at `8127967` (paths relative to `Sources/` unless they
   start with `Tests/`, `docs/` or name a file at the repository root).
+
+> **As shipped (0.11.1, 2026-10-26):** per-group keyboard shortcuts, Duplicate, Archive/Restore
+> and user-created templates are implemented, including backup and downgrade handling. The
+> baseline, decisions and PR plan below retain the original design history. Manual gates for
+> shortcut conflicts and recording, archived-group visibility, standalone restore, templates,
+> backup variants and downgrade copies remain open.
 
 ## Acceptance criteria (behavior)
 

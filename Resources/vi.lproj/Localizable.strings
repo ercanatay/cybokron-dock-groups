@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Thêm một nhóm để xem bạn có thể yêu cầu Siri điều gì.";
 "settings.shortcuts.openShortcuts" = "Mở Lối tắt";
 "settings.shortcuts.shortcutsApp" = "Ứng dụng Lối tắt";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group và Show Group là các thao tác ở đó cũng như trong Spotlight: hãy thêm chúng vào lối tắt của riêng bạn, với điều kiện kích hoạt của bạn.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps và Add Open Apps to Group là các hành động trong Shortcuts và Spotlight: hãy thêm chúng vào các phím tắt của riêng bạn, với điều kiện kích hoạt riêng.";
 "settings.shortcuts.siri.header" = "Siri và Lối tắt";
 "settings.shortcuts.siri.footer" = "Yêu cầu Siri bằng các từ này, bằng giọng nói hoặc gõ chữ. Chúng dùng tên hiện tại của nhóm; lối tắt bạn tạo vẫn hoạt động sau khi đổi tên.";
 "settings.shortcuts.links.noGroups" = "Thêm một nhóm để xem liên kết của nhóm.";

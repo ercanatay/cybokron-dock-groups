@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Voeg een groep toe om te zien wat je Siri ervoor kunt vragen.";
 "settings.shortcuts.openShortcuts" = "Open Snelkoppelingen";
 "settings.shortcuts.shortcutsApp" = "App Snelkoppelingen";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group en Show Group zijn daar acties, net als in Spotlight: voeg ze toe aan je eigen snelkoppelingen, met je eigen trigger.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps en Add Open Apps to Group zijn acties in Shortcuts en Spotlight: voeg ze toe aan je eigen snelkoppelingen, met je eigen trigger.";
 "settings.shortcuts.siri.header" = "Siri en Snelkoppelingen";
 "settings.shortcuts.siri.footer" = "Vraag Siri met deze woorden, met je stem of door te typen. Ze gebruiken de huidige naam van de groep; snelkoppelingen die je maakt blijven werken na een hernoeming.";
 "settings.shortcuts.links.noGroups" = "Voeg een groep toe om de links ervan te zien.";

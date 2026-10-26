@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Aggiungi un gruppo per vedere cosa chiedere a Siri.";
 "settings.shortcuts.openShortcuts" = "Apri Comandi rapidi";
 "settings.shortcuts.shortcutsApp" = "App Comandi rapidi";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group e Show Group sono azioni lì e in Spotlight: aggiungile ai tuoi comandi rapidi, con il tuo trigger.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps e Add Open Apps to Group sono azioni in Shortcuts e Spotlight: aggiungile alle tue scorciatoie, con il tuo trigger.";
 "settings.shortcuts.siri.header" = "Siri e Comandi rapidi";
 "settings.shortcuts.siri.footer" = "Chiedi a Siri con queste parole, a voce o scrivendole. Usano il nome attuale del gruppo; i comandi rapidi che crei continuano a funzionare dopo una rinomina.";
 "settings.shortcuts.links.noGroups" = "Aggiungi un gruppo per vederne i link.";

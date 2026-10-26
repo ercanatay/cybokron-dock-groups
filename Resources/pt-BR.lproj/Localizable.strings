@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Adicione um grupo para ver o que pedir à Siri.";
 "settings.shortcuts.openShortcuts" = "Abrir Atalhos";
 "settings.shortcuts.shortcutsApp" = "App Atalhos";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group e Show Group são ações lá e no Spotlight: adicione-as aos seus próprios atalhos, com o gatilho que preferir.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps e Add Open Apps to Group são ações do Atalhos e do Spotlight: adicione-as aos seus próprios atalhos, com o seu próprio gatilho.";
 "settings.shortcuts.siri.header" = "Siri e Atalhos";
 "settings.shortcuts.siri.footer" = "Peça à Siri com estas palavras, por voz ou digitando. Elas usam o nome atual do grupo; os atalhos que você criar continuam funcionando depois de uma renomeação.";
 "settings.shortcuts.links.noGroups" = "Adicione um grupo para ver os links dele.";

@@ -272,7 +272,7 @@
 "settings.shortcuts.siri.noGroups" = "Siri'den ne isteyeceğinizi görmek için bir grup ekleyin.";
 "settings.shortcuts.openShortcuts" = "Kısayollar'ı Aç";
 "settings.shortcuts.shortcutsApp" = "Kısayollar uygulaması";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group ve Show Group, oradaki ve Spotlight'taki eylemlerdir: kendi tetikleyicilerinizle kendi kısayollarınıza ekleyin.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps ve Add Open Apps to Group, Kısayollar ve Spotlight'ta yer alan eylemlerdir: bunları kendi kısayollarınıza, kendi tetikleyicinizle ekleyin.";
 "settings.shortcuts.siri.header" = "Siri ve Kısayollar";
 "settings.shortcuts.siri.footer" = "Bu sözlerle Siri'ye sesli ya da yazarak sorun. Grubun güncel adını kullanırlar; kurduğunuz kısayollar, yeniden adlandırmadan sonra da çalışmaya devam eder.";
 "settings.shortcuts.links.noGroups" = "Bağlantılarını görmek için bir grup ekleyin.";

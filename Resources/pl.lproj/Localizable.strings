@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Dodaj grupę, aby zobaczyć, o co poprosić Siri.";
 "settings.shortcuts.openShortcuts" = "Otwórz Skróty";
 "settings.shortcuts.shortcutsApp" = "Aplikacja Skróty";
-"settings.shortcuts.shortcutsApp.detail" = "Uruchom grupę, Zakończ grupę i Pokaż grupę to tam dostępne akcje, a także w Spotlight: dodaj je do własnych skrótów z własnym wyzwalaczem.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps i Add Open Apps to Group to akcje w Skrótach i Spotlight: dodaj je do własnych skrótów, z własnym wyzwalaczem.";
 "settings.shortcuts.siri.header" = "Siri i Skróty";
 "settings.shortcuts.siri.footer" = "Poproś Siri tymi słowami, głosem lub wpisując. Używają bieżącej nazwy grupy; skróty, które zbudujesz, działają nadal po zmianie nazwy.";
 "settings.shortcuts.links.noGroups" = "Dodaj grupę, aby zobaczyć jej linki.";

@@ -273,7 +273,7 @@
 "settings.shortcuts.siri.noGroups" = "Додайте групу, щоб побачити, що сказати Siri для її відкриття.";
 "settings.shortcuts.openShortcuts" = "Відкрити Швидкі команди";
 "settings.shortcuts.shortcutsApp" = "Застосунок «Швидкі команди»";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group і Show Group — це дії там і в Spotlight: додайте їх до своїх команд із власним запуском.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps і Add Open Apps to Group — це дії в Shortcuts і Spotlight: додайте їх до власних швидких команд із власним тригером.";
 "settings.shortcuts.siri.header" = "Siri і Швидкі команди";
 "settings.shortcuts.siri.footer" = "Скажіть Siri ці слова голосом або введіть їх. Вони використовують поточну назву групи; команди, які ви створили, працюють і після перейменування.";
 "settings.shortcuts.links.noGroups" = "Додайте групу, щоб побачити її посилання.";

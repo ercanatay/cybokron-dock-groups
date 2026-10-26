@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "समूह के लिए Siri से क्या पूछें, यह देखने के लिए एक समूह जोड़ें।";
 "settings.shortcuts.openShortcuts" = "शॉर्टकट खोलें";
 "settings.shortcuts.shortcutsApp" = "शॉर्टकट ऐप";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group और Show Group वहाँ और Spotlight में क्रियाएँ हैं: इन्हें अपने शॉर्टकट में, अपने ट्रिगर के साथ जोड़ें।";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps और Add Open Apps to Group, Shortcuts और Spotlight में क्रियाएँ हैं: इन्हें अपने स्वयं के ट्रिगर के साथ अपने शॉर्टकट्स में जोड़ें।";
 "settings.shortcuts.siri.header" = "Siri और शॉर्टकट";
 "settings.shortcuts.siri.footer" = "इन शब्दों से Siri से बोलकर या टाइप करके पूछें। वे समूह का मौजूदा नाम इस्तेमाल करते हैं; नाम बदलने के बाद भी आपके बनाए शॉर्टकट काम करते रहते हैं।";
 "settings.shortcuts.links.noGroups" = "उसके लिंक देखने के लिए एक समूह जोड़ें।";

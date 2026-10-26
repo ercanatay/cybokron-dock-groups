@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Fügen Sie eine Gruppe hinzu, um zu sehen, was Sie Siri dafür sagen können.";
 "settings.shortcuts.openShortcuts" = "Kurzbefehle öffnen";
 "settings.shortcuts.shortcutsApp" = "App Kurzbefehle";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group und Show Group sind dort und in Spotlight Aktionen: Fügen Sie sie Ihren eigenen Kurzbefehlen mit eigenem Auslöser hinzu.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps und Add Open Apps to Group sind Aktionen in Kurzbefehlen und Spotlight: Füge sie deinen eigenen Kurzbefehlen mit eigenem Auslöser hinzu.";
 "settings.shortcuts.siri.header" = "Siri und Kurzbefehle";
 "settings.shortcuts.siri.footer" = "Fragen Sie Siri mit diesen Worten, per Sprache oder durch Tippen. Sie verwenden den aktuellen Namen der Gruppe; selbst erstellte Kurzbefehle funktionieren nach einer Umbenennung weiter.";
 "settings.shortcuts.links.noGroups" = "Fügen Sie eine Gruppe hinzu, um ihre Links zu sehen.";

@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "添加一个分组，即可查看可以对 Siri 说什么。";
 "settings.shortcuts.openShortcuts" = "打开快捷指令";
 "settings.shortcuts.shortcutsApp" = "快捷指令 App";
-"settings.shortcuts.shortcutsApp.detail" = "“启动分组”、“退出分组”和“显示分组”是那里以及在聚焦搜索中可用的操作：将它们添加到你自己的快捷指令中，并设置你自己的触发方式。";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group、Quit Group、Show Group、New Group from Open Apps 和 Add Open Apps to Group 是 Shortcuts 和 Spotlight 中的操作：将它们添加到你自己的快捷指令中，并设置你自己的触发方式。";
 "settings.shortcuts.siri.header" = "Siri 与快捷指令";
 "settings.shortcuts.siri.footer" = "用这些词语通过语音或输入向 Siri 发出指令。它们使用分组的当前名称；重命名后，你创建的快捷指令仍然有效。";
 "settings.shortcuts.links.noGroups" = "添加一个分组，即可查看其链接。";

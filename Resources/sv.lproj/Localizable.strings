@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Lägg till en grupp för att se vad du kan be Siri om för den.";
 "settings.shortcuts.openShortcuts" = "Öppna Genvägar";
 "settings.shortcuts.shortcutsApp" = "Appen Genvägar";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group och Show Group är åtgärder där och i Spotlight: lägg till dem i dina egna genvägar, med din egen utlösare.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps och Add Open Apps to Group är åtgärder i Shortcuts och Spotlight: lägg till dem i dina egna genvägar, med din egen utlösare.";
 "settings.shortcuts.siri.header" = "Siri och Genvägar";
 "settings.shortcuts.siri.footer" = "Be Siri med dessa ord, med röst eller genom att skriva. De använder gruppens aktuella namn; genvägar du bygger fortsätter att fungera efter ett namnbyte.";
 "settings.shortcuts.links.noGroups" = "Lägg till en grupp för att se dess länkar.";

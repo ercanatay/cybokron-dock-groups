@@ -274,7 +274,7 @@
 "settings.shortcuts.siri.noGroups" = "Tambahkan grup untuk melihat apa yang bisa Anda minta ke Siri.";
 "settings.shortcuts.openShortcuts" = "Buka Pintasan";
 "settings.shortcuts.shortcutsApp" = "App Pintasan";
-"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group dan Show Group adalah aksi di sana dan di Spotlight: tambahkan ke pintasan Anda sendiri, dengan pemicu Anda sendiri.";
+"settings.shortcuts.shortcutsApp.detail" = "Launch Group, Quit Group, Show Group, New Group from Open Apps, dan Add Open Apps to Group adalah tindakan di Shortcuts dan Spotlight: tambahkan ke pintasan Anda sendiri, dengan pemicu Anda sendiri.";
 "settings.shortcuts.siri.header" = "Siri dan Pintasan";
 "settings.shortcuts.siri.footer" = "Minta Siri dengan kata-kata ini, dengan suara atau mengetik. Kata-kata itu memakai nama grup yang terkini; pintasan yang Anda buat tetap berfungsi setelah diganti nama.";
 "settings.shortcuts.links.noGroups" = "Tambahkan grup untuk melihat tautannya.";
