@@ -43,14 +43,14 @@ if [[ "${UNIVERSAL:-0}" == 1 ]]; then
     BUILD_ARGS+=(--arch arm64 --arch x86_64)
 fi
 APPINTENTS_PROCESSOR="$(xcrun --find appintentsmetadataprocessor 2>/dev/null || true)"
-# The swiftc driver of CI's Xcode 26.x rejects the const-values flags (only Xcode 27+ has them), so
-# probe the driver instead of assuming.
+# Xcode 26 supports const gathering through the frontend; the direct driver spelling arrived
+# later. Probe the same compatible flags that the SwiftPM build will use.
 swiftc_supports_const_gather() {
     local dir ok=1
     dir="$(mktemp -d)"
     printf 'import Foundation\nfunc probe() {}\n' > "$dir/probe.swift"
     xcrun swiftc -c "$dir/probe.swift" -o "$dir/probe.o" -emit-const-values \
-        -const-gather-protocols-list "$ROOT/scripts/appintents-const-protocols.json" \
+        -Xfrontend -const-gather-protocols-file -Xfrontend "$ROOT/scripts/appintents-const-protocols.json" \
         >/dev/null 2>&1 || ok=0
     rm -rf "$dir"
     [[ "$ok" == 1 ]]
@@ -62,10 +62,12 @@ if [[ -n "$APPINTENTS_PROCESSOR" ]]; then
         # The compiler writes the constant values the metadata is extracted from (a .swiftconstvalues
         # file per source file). The protocol list's path must stay the same between builds, or
         # every build would recompile everything.
-        BUILD_ARGS+=(-Xswiftc -emit-const-values -Xswiftc -const-gather-protocols-list
+        BUILD_ARGS+=(-Xswiftc -emit-const-values -Xswiftc -Xfrontend
+            -Xswiftc -const-gather-protocols-file -Xswiftc -Xfrontend
             -Xswiftc "$ROOT/scripts/appintents-const-protocols.json")
     else
-        echo "App Intents metadata skipped: driver does not support const protocol gathering"
+        echo "error: compiler does not support App Intents constant gathering; select a compatible Xcode toolchain." >&2
+        exit 1
     fi
 fi
 swift build --product "$PRODUCT" "${BUILD_ARGS[@]}"
@@ -173,8 +175,8 @@ extract_app_intents_metadata() {
         --swift-const-vals-list "$const_values" \
         --output "$APP/Contents/Resources" \
         --force
-    if [[ ! -f "$APP/Contents/Resources/Metadata.appintents/extract.actionsdata" ]]; then
-        echo "error: App Intents metadata extraction produced no Metadata.appintents" >&2
+    if [[ ! -s "$APP/Contents/Resources/Metadata.appintents/extract.actionsdata" ]]; then
+        echo "error: App Intents metadata extraction produced no nonempty Metadata.appintents/extract.actionsdata" >&2
         exit 1
     fi
     echo "App Intents metadata: $APP/Contents/Resources/Metadata.appintents"

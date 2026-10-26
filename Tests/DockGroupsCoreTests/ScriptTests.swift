@@ -337,4 +337,238 @@ struct WorkflowTests {
         #expect(text.contains(#"[[ "$COUNT" == 1 ]] \"#))
         #expect(text.contains(#"it must hold only the Developer ID Application one"; exit 1; }"#))
     }
+
+    @Test(arguments: ["swiftpm", "release"])
+    func distributedAppsRequireNonemptyAppIntentsMetadata(job: String) throws {
+        let workflow = try String(contentsOf: Self.workflows.appending(path: "swift.yml"), encoding: .utf8)
+        let remainder = try #require(workflow.components(separatedBy: "\n  \(job):").dropFirst().first)
+        let jobText = remainder.components(separatedBy: .newlines).prefix { line in
+            !(line.hasPrefix("  ") && !line.hasPrefix("   ") && line.hasSuffix(":"))
+        }.joined(separator: "\n")
+        let steps = jobText.components(separatedBy: "      - name: ")
+        let gate = try #require(steps.first { $0.hasPrefix("Verify App Intents metadata\n") })
+        let body = try #require(gate.components(separatedBy: "        run: |\n").dropFirst().first)
+        let script = body.components(separatedBy: .newlines).map { String($0.dropFirst(10)) }.joined(separator: "\n")
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let metadata = temporary.url.appending(path: "build/release/Cybokron Dock Groups.app/Contents/Resources/Metadata.appintents/extract.actionsdata")
+        try FileManager.default.createDirectory(at: metadata.deletingLastPathComponent(), withIntermediateDirectories: true)
+        for state in ["missing", "empty", "present"] {
+            if state != "missing" { try Data((state == "present" ? "actions" : "").utf8).write(to: metadata) }
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/bash")
+            process.arguments = ["-e", "-c", script]
+            process.currentDirectoryURL = temporary.url
+            process.standardOutput = FileHandle.nullDevice
+            process.standardError = FileHandle.nullDevice
+            try process.run()
+            process.waitUntilExit()
+            #expect((process.terminationStatus == 0) == (state == "present"), "\(job): \(state) metadata")
+        }
+    }
+}
+
+/// Executes the real packaging script in a tiny checkout, with an Xcode 26-style compiler that
+/// supports const gathering through the frontend but rejects the newer driver-only spelling.
+@Suite("SwiftPM App Intents packaging")
+struct AppIntentsPackagingTests {
+    private struct Toolchain {
+        let temporary: TemporaryDirectory
+        let root: URL
+
+        init() throws {
+            temporary = try TemporaryDirectory()
+            root = temporary.url.appending(path: "checkout with spaces")
+            for name in ["build-app.sh", "swiftpm-env.sh", "appintents-const-protocols.json"] {
+                try write("scripts/\(name)", String(contentsOf: RepositoryScript.root.appending(components: "scripts", name), encoding: .utf8))
+            }
+            try write("Resources/Info.plist", "<plist version=\"1.0\"><dict/></plist>")
+            try write("Resources/en.lproj/Localizable.strings", "\"test\" = \"test\";")
+            try write("Resources/Assets.xcassets/AppIcon.appiconset/icon_16.png", "fixture")
+            try write("Sources/CybokronDockGroups/AppDelegate.swift", "// fixture")
+            for tool in ["xcrun", "swiftc", "swift", "appintentsmetadataprocessor", "xcode-select", "xcodebuild", "plutil", "iconutil", "codesign", "lipo"] {
+                try write("bin/\(tool)", Self.stub, executable: true)
+            }
+        }
+
+        func write(_ path: String, _ text: String, executable: Bool = false) throws {
+            let url = root.appending(path: path)
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data(text.utf8).write(to: url)
+            if executable {
+                try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: url.path)
+            }
+        }
+
+        func run(_ configuration: String = "release", mode: String = "supported", metadata: String = "present") throws -> RepositoryScript.Result {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/bin/bash")
+            process.arguments = [root.appending(path: "scripts/build-app.sh").path, configuration]
+            var environment = ProcessInfo.processInfo.environment
+            for key in ["CODESIGN_IDENTITY", "DEVELOPER_DIR", "SDKROOT"] { environment.removeValue(forKey: key) }
+            environment.merge([
+                "PATH": root.appending(path: "bin").path + ":/usr/bin:/bin",
+                "FIXTURE_ROOT": root.path, "FIXTURE_MODE": mode, "FIXTURE_METADATA": metadata,
+                "SWIFTPM_SCRATCH_PATH": root.appending(path: "scratch").path, "UNIVERSAL": "1",
+            ]) { $1 }
+            if mode == "clt" { environment["SDKROOT"] = "/SDK/MacOSX26.sdk" }
+            process.environment = environment
+            process.standardInput = FileHandle.nullDevice
+            // Files keep a failed stub's diagnostics from filling a pipe and blocking the test.
+            let output = root.appending(path: "stdout")
+            let errors = root.appending(path: "stderr")
+            try Data().write(to: output)
+            try Data().write(to: errors)
+            let outputHandle = try FileHandle(forWritingTo: output)
+            let errorHandle = try FileHandle(forWritingTo: errors)
+            defer { try? outputHandle.close(); try? errorHandle.close() }
+            process.standardOutput = outputHandle
+            process.standardError = errorHandle
+            try process.run()
+            process.waitUntilExit()
+            return RepositoryScript.Result(status: process.terminationStatus,
+                output: try String(contentsOf: output, encoding: .utf8),
+                errors: try String(contentsOf: errors, encoding: .utf8))
+        }
+
+        func text(_ path: String) throws -> String {
+            try String(contentsOf: root.appending(path: path), encoding: .utf8)
+        }
+
+        private static let stub = #"""
+            #!/bin/bash
+            set -euo pipefail
+            tool="${0##*/}"
+            printf '%s\n' "$tool" >> "$FIXTURE_ROOT/calls"
+            case "$tool" in
+                xcode-select)
+                    if [[ "$FIXTURE_MODE" == clt ]]; then
+                        echo /Library/Developer/CommandLineTools
+                    else
+                        echo /Applications/Xcode.app/Contents/Developer
+                    fi ;;
+                xcrun)
+                    if [[ "$1" == --find ]]; then
+                        [[ "$FIXTURE_MODE" != clt ]] || exit 1
+                        echo "$FIXTURE_ROOT/bin/appintentsmetadataprocessor"
+                    elif [[ "$1" == swiftc ]]; then
+                        shift
+                        exec "$FIXTURE_ROOT/bin/swiftc" "$@"
+                    else
+                        echo /SDK/MacOSX.sdk
+                    fi ;;
+                swiftc)
+                    printf '%s\n' "$@" > "$FIXTURE_ROOT/probe-arguments"
+                    [[ "$FIXTURE_MODE" != unsupported ]] || exit 1
+                    arguments=("$@")
+                    count=${#arguments[@]}
+                    # Reject the driver-only flag on the simulated Xcode 26 toolchain.
+                    for argument in "$@"; do
+                        [[ "$argument" != -const-gather-protocols-list ]] || exit 1
+                    done
+                    [[ "${arguments[$((count-5))]}" == -emit-const-values ]]
+                    [[ "${arguments[$((count-4))]}" == -Xfrontend ]]
+                    [[ "${arguments[$((count-3))]}" == -const-gather-protocols-file ]]
+                    [[ "${arguments[$((count-2))]}" == -Xfrontend ]]
+                    [[ "${arguments[$((count-1))]}" == "$FIXTURE_ROOT/scripts/appintents-const-protocols.json" ]]
+                    grep -q '"AppIntent"' "${arguments[$((count-1))]}" ;;
+                swift)
+                    printf '%s\n' "$@" >> "$FIXTURE_ROOT/build-arguments"
+                    configuration=debug
+                    previous=""
+                    for argument in "$@"; do
+                        [[ "$previous" != -c ]] || configuration="$argument"
+                        previous="$argument"
+                    done
+                    if [[ "$FIXTURE_MODE" != clt ]]; then
+                        expected=(-Xswiftc -emit-const-values -Xswiftc -Xfrontend -Xswiftc -const-gather-protocols-file -Xswiftc -Xfrontend -Xswiftc "$FIXTURE_ROOT/scripts/appintents-const-protocols.json")
+                        arguments=("$@")
+                        found=0
+                        for ((i=0; i+${#expected[@]}<=${#arguments[@]}; i++)); do
+                            match=1
+                            for ((j=0; j<${#expected[@]}; j++)); do
+                                [[ "${arguments[$((i+j))]}" == "${expected[$j]}" ]] || match=0
+                            done
+                            [[ "$match" != 1 ]] || found=1
+                        done
+                        [[ "$found" == 1 ]] || { echo 'missing SwiftPM frontend forwarding' >&2; exit 1; }
+                    fi
+                    directory="$SWIFTPM_SCRATCH_PATH/arm64-apple-macosx/$configuration"
+                    mkdir -p "$directory/CybokronDockGroups.build"
+                    printf 'binary' > "$directory/CybokronDockGroups"
+                    printf 'constant values' > "$directory/CybokronDockGroups.build/AppDelegate.swiftconstvalues"
+                    [[ " $* " != *' --show-bin-path '* ]] || echo "$directory" ;;
+                appintentsmetadataprocessor)
+                    output=""
+                    while [[ $# -gt 0 ]]; do
+                        case "$1" in
+                            --output) output="$2"; shift ;;
+                            --swift-const-vals-list)
+                                [[ -s "$2" ]]
+                                while IFS= read -r values; do [[ -s "$values" ]]; done < "$2"
+                                shift ;;
+                        esac
+                        shift
+                    done
+                    mkdir -p "$output/Metadata.appintents"
+                    case "$FIXTURE_METADATA" in
+                        present) printf 'actions' > "$output/Metadata.appintents/extract.actionsdata" ;;
+                        empty) touch "$output/Metadata.appintents/extract.actionsdata" ;;
+                        missing) ;;
+                    esac ;;
+                xcodebuild) echo 'Build version fixture' ;;
+                iconutil) touch "$4" ;;
+                lipo) echo 'arm64 x86_64' ;;
+                plutil | codesign) ;;
+            esac
+            """#
+    }
+
+    @Test(arguments: ["debug", "release"])
+    func xcode26FrontendFlagsProducePackagedMetadata(configuration: String) throws {
+        let fixture = try Toolchain()
+        defer { fixture.temporary.remove() }
+        let result = try fixture.run(configuration)
+
+        #expect(result.status == 0, "\(result.output)\n\(result.errors)")
+        #expect(try fixture.text("build/\(configuration)/Cybokron Dock Groups.app/Contents/Resources/Metadata.appintents/extract.actionsdata") == "actions")
+        let arguments = try fixture.text("build-arguments")
+        #expect(arguments.contains("--arch\narm64\n--arch\nx86_64\n"))
+        #expect(result.output.contains("App Intents metadata:"))
+        #expect(try fixture.text("calls").contains("codesign\ncodesign\n"))
+    }
+
+    @Test func anAvailableProcessorWithAnUnsupportedCompilerFailsBeforeBuilding() throws {
+        let fixture = try Toolchain()
+        defer { fixture.temporary.remove() }
+        let result = try fixture.run(mode: "unsupported")
+
+        #expect(result.status != 0)
+        #expect(result.errors.contains("compiler does not support App Intents constant gathering"))
+        #expect(!FileManager.default.fileExists(atPath: fixture.root.appending(path: "build-arguments").path))
+    }
+
+    @Test(arguments: ["missing", "empty"])
+    func extractionMustProduceNonemptyMetadata(metadata: String) throws {
+        let fixture = try Toolchain()
+        defer { fixture.temporary.remove() }
+        let result = try fixture.run(metadata: metadata)
+
+        #expect(result.status != 0)
+        #expect(result.errors.contains("App Intents metadata extraction produced no nonempty"))
+        #expect(try !fixture.text("calls").contains("codesign"))
+    }
+
+    @Test func commandLineToolsMayBuildWithoutShortcutsActions() throws {
+        let fixture = try Toolchain()
+        defer { fixture.temporary.remove() }
+        let result = try fixture.run(mode: "clt")
+
+        #expect(result.status == 0, "\(result.errors)")
+        #expect(result.errors.contains("Siri and Shortcuts won't list this build's actions"))
+        let calls = try fixture.text("calls")
+        #expect(!calls.contains("swiftc"))
+        #expect(!calls.contains("appintentsmetadataprocessor"))
+        #expect(calls.contains("codesign"))
+    }
 }

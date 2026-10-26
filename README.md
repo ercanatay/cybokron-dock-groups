@@ -496,7 +496,10 @@ notes are the tag's section of [CHANGELOG.md](CHANGELOG.md) plus its compare lin
 
 With Xcode installed, `build-app.sh` also extracts the App Intents metadata
 (`Contents/Resources/Metadata.appintents`) that Siri and the Shortcuts app read, as Xcode does;
-builds made with the Command Line Tools alone work but don't offer the Shortcuts actions.
+it uses frontend constant gathering compatible with Xcode 26 and later. If the compiler cannot
+gather constants or extraction produces missing or empty metadata, the build fails. Both CI app
+artifact and release builds also require nonempty metadata before packaging. Builds made with the
+Command Line Tools alone work but don't offer the Shortcuts actions.
 
 Ad hoc signed builds get a new signature every time they're built, so macOS treats each build as a
 new app for Accessibility access: after rebuilding, remove the app from the Accessibility list and
