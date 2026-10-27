@@ -158,6 +158,21 @@ successful attempts occurred at different times, so the input encoding is a stro
 than a controlled proof of the sole cause. No AX writes, screen capture, system-wide window list or other apps' windows were
 used in this second fixture.
 
+### Own-window geometry collision
+
+A third fixture created two distinct standard windows in its own process at the same frame, then
+queried CG metadata using only their own fixture handles. In one run on macOS 27.0.1, both CG
+descriptions had the same owner PID and identical bounds, while their window numbers differed.
+The fixture moved only its second window by 24 points on each AppKit axis. A second read found
+the first window's CG bounds unchanged and the second window's bounds changed; the latter's
+earlier geometry was therefore stale. Twenty fixture checks passed, and the fixture exited.
+
+This controlled example shows that owner PID plus geometry is not a unique window identity and
+that geometry can change between observations. It does not demonstrate an actual concurrent
+time-of-check/time-of-use race, prove that rechecking makes a move safe, or establish AX-to-CG
+identity. No other app's windows, AX calls, screen capture, or system-wide window list were used.
+The original H gate remains open.
+
 ## Required work still open
 
 | Gate from design §5 | Status |
