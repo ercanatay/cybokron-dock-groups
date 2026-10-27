@@ -125,6 +125,37 @@ fixture on one display does not establish
 other-app, multiple-display, Space, full-screen, error recovery or timing behavior. Visual
 observation of the brief motion was not independently confirmed.
 
+## Subsequent own-window eligibility and CG observations
+
+A separate read-only AX fixture tested four window sets on macOS 27.0.1. One standard,
+unminimized window was labeled only as a candidate, with visibility and Space unverified. Two
+standard windows and a standard window accompanied by an `AXDialog` were skipped. A minimized
+window was reported as both minimized and `AXDialog` and was skipped under the dialog rule.
+The observer was launched directly from an already trusted environment; its `trusted=true`
+result does not prove a separate application grant. No user-window data was read or modified.
+
+A second fixture queried only its own known window ID with
+`CGWindowListCreateDescriptionFromArray`. Passing an `NSNumber` object as an array element
+returned an empty array in two attempts, using both 64-bit and 32-bit values. A subsequent build
+passed the ID as an integer-sized bit pattern in a `CFArray` with nil callbacks, like the earlier
+successful probe, and received exactly one dictionary matching its own PID and ID at every stage.
+The resulting observations were:
+
+| Fixture state | AppKit visible | AppKit minimized | CG on-screen key |
+| --- | --- | --- | --- |
+| Normal | true | false | true |
+| Minimized | false | true | absent |
+| Restored | true | false | true |
+| App hidden | false | false | absent |
+
+The SDK describes an absent `kCGWindowIsOnscreen` key as not ordered on screen. This one fixture
+does not establish visible pixels, occlusion, current Space, full-screen or Stage Manager state.
+The fixture already knew its own window ID; the result does not establish a safe way to match a
+different app's AX window to a CG window ID. The failed and successful attempts occurred at
+different times, so the input encoding is a strong lead rather than a controlled proof of the
+sole cause. No AX writes, screen capture, system-wide window list or other apps' windows were
+used in this second fixture.
+
 ## Required work still open
 
 | Gate from design §5 | Status |
@@ -136,7 +167,7 @@ observation of the brief motion was not independently confirmed.
 | Position/size writability via `AXUIElementIsAttributeSettable` | Both settable for the single fixture window; refusal cases remain open |
 | Normal and deliberately unresponsive app response times; bounded AX timeout | Not run |
 | One-window AX move/resize and geometry read-back, including refusal/partial results | One fixture roundtrip and independent restore readback passed; refusal and partial cases remain open |
-| Reliable exclusion of multiple plausible windows, dialogs, minimized/full-screen windows, other Spaces, split view and Stage Manager | Two-element fixture failed closed; current Space, Stage Manager and broader cases remain unclassified |
+| Reliable exclusion of multiple plausible windows, dialogs, minimized/full-screen windows, other Spaces, split view and Stage Manager | Own-window fixtures skipped multiple, dialog and minimized cases; current Space, Stage Manager and broader cases remain unclassified |
 | Two displays, unplug/replug, changed scaling/resolution/rotation, left/right arrangement and primary-display fallback | Not run |
 | Dock/menu bar changes, `visibleFrame` clamping and per-app minimum/maximum sizes | Not run; only the current static visible frame was observed |
 | macOS 14, 15 and 26 | No runtime results |
