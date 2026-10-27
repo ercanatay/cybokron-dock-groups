@@ -1,8 +1,9 @@
-# Spike: window layouts — permission-free preflight and own-window geometry
+# Spike: window layouts — preflight, own-window geometry and restricted AX roundtrip
 
-- **Date:** 2026-10-26. **Status:** partial evidence only; the H implementation gate is still open.
-- **Baseline:** `main` at `5ca0ac2` (0.11.1, build 1101). Scope is the permission-free part of
+- **Dates:** 2026-10-26–27. **Status:** partial evidence only; the H implementation gate is still open.
+- **Baseline:** `main` at `5ca0ac2` (0.11.1, build 1101). The initial scope was the permission-free part of
   [the required Accessibility spike](window-layouts-and-cli-spec.md#5-required-accessibility-spike-before-h-code-pr).
+  The restricted AX follow-up used `main` at `87ec301` with the same app version and build number.
 - **Environment actually run:** macOS 27.0.1 (26A434), arm64, Xcode 27.1 (27A9275), macOS 27.0 SDK.
   No result here establishes behavior on macOS 14, 15 or 26.
 - **Method:** a disposable app outside the repository, with its own unique bundle identifier,
@@ -28,7 +29,8 @@ finding was identified; it was not repeated or extended to AX operations.
 
 There was **no post-probe trust recheck**. The `false` field in the final geometry result is the
 stored initial preflight result, not a second call or evidence about the later permission state.
-Grant, denial, revocation and relaunch behavior remain untested.
+Grant and revocation were subsequently exercised with a separate client as described below; denial
+and the original probe's later trust state remain untested.
 
 ## Measurements obtained
 
@@ -72,8 +74,9 @@ Rectangles below are `(x, y, width, height)` for the whole window frame, includi
 
 For this primary screen, `cgY = 1440 - (159 + 252) = 1029`; x and size were unchanged. The
 AppKit-to-CG result matched exactly. The two-times backing scale did not double these CG bounds.
-This is **not an AX coordinate measurement**: AX position and size were never read. It does not
-validate multi-display transforms, display matching, normalized layout persistence or clamping.
+This initial sample is **not an AX coordinate measurement**: that probe did not read AX position
+or size. It does not validate multi-display transforms, display matching, normalized layout
+persistence or clamping.
 
 ### Own-window CG timing
 
@@ -84,32 +87,70 @@ validate multi-display transforms, display matching, normalized layout persisten
 These are local sample timings, including the initial cold query; they establish no latency or
 timeout bound for AX calls, another application's windows or a nonresponsive process.
 
+## Restricted AX follow-up
+
+A separate, locally ad hoc signed client and a disposable one-window AppKit target were built
+outside the repository. The client accepted only the unique target process with the expected bundle,
+bundle path and executable path, used a two-second AX messaging timeout, and read no window title,
+content or document path. Raw logs and signed fixtures remain local. No group data or other app's
+windows were targeted.
+
+An untrusted LaunchServices launch returned `false` from `AXIsProcessTrustedWithOptions(nil)` and
+the client appeared disabled in System Settings. A user enabled the exact client; a fresh launch
+returned `true`. After the experiment, its switch was disabled and another fresh launch returned
+`false`. The entry remained in the list, disabled. A direct executable launch under an already
+trusted shell had earlier returned `true` without a separate client grant; its responsible-app
+attribution was ambiguous, so it was not used to establish client-specific permission. The user
+removed an entry created before a rebuild and re-added the current ad hoc-signed bundle before
+the grant worked; the cause of the initial mismatch was not proven. No
+conclusion about prompt absence follows: a post-call screenshot showed no modal, but transient UI
+and the user's visual observation were not independently confirmed.
+
+The first target's AX window array contained **two** AX elements. A read-only diagnostic restricted
+to that fixture found one nonminimized `AXDialog` and one nonminimized `AXStandardWindow`; the
+client's one-window guard stopped before moving either. The dialog was nonmodal, 66 × 20 points,
+and six points from the standard window's top-left corner. Its location resembled an on-screen
+indicator, but its identity was not established. After restarting the disposable target, and
+without taking a CUA screenshot or observing that target through CUA after restart, the diagnostic
+found one standard window. This comparison does not establish the cause of the extra element.
+The design's conservative dialog exclusion remains in force.
+
+For the restarted target, a fresh LaunchServices client reported one standard, nonminimized window
+at AX position `(100, 1040)` and size `(400, 300)` points; both geometry attributes were settable.
+A single roundtrip moved the window by `(16, 16)` points and increased its size by `(24, 16)`
+points. Trial writes and readback matched within one point; both original geometry writes and
+restoration readback matched within one point. A separate client launch then read the original
+position and size again. The test target was closed after the permission was disabled. This one
+fixture on one display does not establish
+other-app, multiple-display, Space, full-screen, error recovery or timing behavior. Visual
+observation of the brief motion was not independently confirmed.
+
 ## Required work still open
 
 | Gate from design §5 | Status |
 | --- | --- |
-| Prompt-free untrusted preflight | **Unverified** because of the system warning/TCC record above; no later trust check |
-| Explicit permission grant, denial, revocation and relaunch | Not run |
+| Prompt-free untrusted preflight | **Unverified**: the original system warning/TCC record and incomplete UI observation remain |
+| Explicit permission grant, denial, revocation and relaunch | Grant and disable/relaunch observed for the separate fixture; denial and original-probe follow-up remain open |
 | Untrusted AX enumeration failure and clear recovery path | Not run; no AX enumeration attempted |
-| `kAXWindowsAttribute`, role/subrole, minimized, position and size | Not run |
-| Position/size writability via `AXUIElementIsAttributeSettable` | Not run |
+| `kAXWindowsAttribute`, role/subrole, minimized, position and size | Read for the restricted fixture; other apps and eligibility cases remain open |
+| Position/size writability via `AXUIElementIsAttributeSettable` | Both settable for the single fixture window; refusal cases remain open |
 | Normal and deliberately unresponsive app response times; bounded AX timeout | Not run |
-| One-window AX move/resize and geometry read-back, including refusal/partial results | Not run |
-| Reliable exclusion of multiple plausible windows, dialogs, minimized/full-screen windows, other Spaces, split view and Stage Manager | Not run; current Space and Stage Manager were not classified |
+| One-window AX move/resize and geometry read-back, including refusal/partial results | One fixture roundtrip and independent restore readback passed; refusal and partial cases remain open |
+| Reliable exclusion of multiple plausible windows, dialogs, minimized/full-screen windows, other Spaces, split view and Stage Manager | Two-element fixture failed closed; current Space, Stage Manager and broader cases remain unclassified |
 | Two displays, unplug/replug, changed scaling/resolution/rotation, left/right arrangement and primary-display fallback | Not run |
 | Dock/menu bar changes, `visibleFrame` clamping and per-app minimum/maximum sizes | Not run; only the current static visible frame was observed |
 | macOS 14, 15 and 26 | No runtime results |
-| macOS 27 | Only the restricted preflight/own-window measurements above |
+| macOS 27 | Restricted own-window preflight, permission cycle and one AX fixture roundtrip above |
 
-**Decision:** this partial experiment is not a go decision for H. The own-window CG sample does
-not prove that a current-Space, visible standard window can be selected safely through AX.
-Resolve the prompt-observation uncertainty in an observed manual session before extending the
-spike, then complete the eligibility, timeout, write/read-back and OS/display matrix. No
-production window-moving implementation is justified by these results.
+**Decision:** this partial experiment is not a go decision for H. One successful fixture roundtrip
+does not prove that a current-Space, visible standard window can be selected safely across apps.
+Resolve prompt-observation uncertainty and complete the eligibility, timeout, refusal and
+OS/display matrix before production window-moving implementation.
 
 ## API references
 
 - Apple: [`AXIsProcessTrustedWithOptions`](https://developer.apple.com/documentation/applicationservices/1459186-axisprocesstrustedwithoptions).
+- Apple: [`kAXWindowsAttribute`](https://developer.apple.com/documentation/applicationservices/kaxwindowsattribute).
 - Apple: [`CGWindowListCreateDescriptionFromArray`](https://developer.apple.com/documentation/coregraphics/cgwindowlistcreatedescriptionfromarray(_:)).
 - Apple: [`NSScreen.visibleFrame`](https://developer.apple.com/documentation/appkit/nsscreen/visibleframe).
 - SDK headers inspected: `AXUIElement.h`, `CGWindow.h`, `CGDisplayConfiguration.h` and
