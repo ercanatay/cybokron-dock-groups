@@ -150,10 +150,12 @@ The resulting observations were:
 
 The SDK describes an absent `kCGWindowIsOnscreen` key as not ordered on screen. This one fixture
 does not establish visible pixels, occlusion, current Space, full-screen or Stage Manager state.
-The fixture already knew its own window ID; the result does not establish a safe way to match a
-different app's AX window to a CG window ID. The failed and successful attempts occurred at
-different times, so the input encoding is a strong lead rather than a controlled proof of the
-sole cause. No AX writes, screen capture, system-wide window list or other apps' windows were
+The fixture supplied its own `NSWindow.windowNumber` and observed matching CG metadata. Apple
+documents that this AppKit window-device number is not the global number assigned by the window
+server; the observed match is not a documented identity guarantee. The result also does not
+establish a safe way to match a different app's AX window to a CG window ID. The failed and
+successful attempts occurred at different times, so the input encoding is a strong lead rather
+than a controlled proof of the sole cause. No AX writes, screen capture, system-wide window list or other apps' windows were
 used in this second fixture.
 
 ## Required work still open
@@ -183,6 +185,7 @@ OS/display matrix before production window-moving implementation.
 - Apple: [`AXIsProcessTrustedWithOptions`](https://developer.apple.com/documentation/applicationservices/1459186-axisprocesstrustedwithoptions).
 - Apple: [`kAXWindowsAttribute`](https://developer.apple.com/documentation/applicationservices/kaxwindowsattribute).
 - Apple: [`CGWindowListCreateDescriptionFromArray`](https://developer.apple.com/documentation/coregraphics/cgwindowlistcreatedescriptionfromarray(_:)).
+- Apple: [`NSWindow.windowNumber`](https://developer.apple.com/documentation/appkit/nswindow/windownumber).
 - Apple: [`NSScreen.visibleFrame`](https://developer.apple.com/documentation/appkit/nsscreen/visibleframe).
 - SDK headers inspected: `AXUIElement.h`, `CGWindow.h`, `CGDisplayConfiguration.h` and
   `CGDirectDisplay.h` from the macOS 27.0 SDK. `CGWindow.h` defines the CG bounds origin at the
