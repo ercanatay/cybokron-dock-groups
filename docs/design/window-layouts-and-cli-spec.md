@@ -1,6 +1,9 @@
 # Design spec: group window layouts (H) and command-line interface
 
-- **Status:** draft for review (2026-10-26). Design and API research only; neither feature is implemented.
+- **Status:** H window layouts remain a draft and are not implemented. The CLI was merged to
+  `main` in [PR #11](https://github.com/ercanatay/cybokron-dock-groups/pull/11) after this design
+  was written; it is not included in the released v0.11.1 package. See the implementation and
+  current release notes for shipped behavior.
 - **Baseline:** `main` at `61c763c` (0.11.1, build 1101). This document describes proposed behavior, not a release promise.
 - **Scope:** an explicit, per-group window layout on the current desktop; a bundled CLI that dispatches the existing `start`, `finish`, and `open` links and reports whether the app is running.
 - **Gate:** no window-moving implementation PR until the Accessibility spike in §5 passes on the actual macOS releases and window managers we support.
