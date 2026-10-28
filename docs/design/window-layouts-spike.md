@@ -173,6 +173,20 @@ time-of-check/time-of-use race, prove that rechecking makes a move safe, or esta
 identity. No other app's windows, AX calls, screen capture, or system-wide window list were used.
 The original H gate remains open.
 
+### Own-window position swap
+
+A fourth fixture placed two same-sized windows belonging to its own process at different
+positions, then exchanged their positions and queried only their known fixture handles. In one
+run on macOS 27.0.1, both handles remained stable: each window's final CG bounds matched the
+other window's initial bounds. The unordered set of bounds was unchanged while the mapping from
+fixture handle to bounds changed. All 28 fixture checks passed and the process exited.
+
+This controlled example shows that the same set of geometries does not establish that the same
+window remains at each position. It did not query AX identities, demonstrate an actual
+concurrent race, or establish an AX-to-CG identity mechanism. No other app's windows,
+system-wide window list, screen capture or AX calls were used. Space and third-party behavior
+remain untested; the H gate stays open.
+
 ## Required work still open
 
 | Gate from design §5 | Status |
