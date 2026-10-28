@@ -6,6 +6,7 @@ Status: design only, not shipped or implemented. This extends the [H and CLI des
 
 - Groups and preferences have separate files. `JSONFileSupport` uses an atomic write and provides unreadable-file move-aside and pre-import copies; these are existing helpers, not a complete transaction across multiple files.
 - `SettingsBackup.read` caps reading at 5 MiB plus one byte and rejects oversized data. Its restore copies existing stores and attempts rollback on subsequent errors; rollback itself uses `try?` and can fail. Its merge adds groups and may retain earlier changes if a later store fails. Do not describe either behavior as crash-safe, or assume layouts inherit transactional guarantees.
+- `GroupStore.mergeGroups` skips incoming groups when either their UUID or normalized name matches an existing active or archived group. An incoming layout must not be attached to a skipped group just because its UUID or name looks related; a future merge policy must use the actual added-group result and specify failures and omissions.
 - A version that does not know `layouts.json` must not read, delete, rewrite, or enable it. Verify this with actual downgrade copies, not only a unit test.
 
 ## Proposed contract, before implementation
