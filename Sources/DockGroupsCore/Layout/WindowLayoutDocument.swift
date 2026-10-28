@@ -162,7 +162,7 @@ struct WindowLayoutDocument: Equatable, Sendable {
                 guard identifiers.insert(window.bundleIdentifier.lowercased()).inserted else {
                     throw ValidationError.duplicateBundleIdentifier(groupID: group.id, windowIndex: index)
                 }
-                guard Self.isAcceptable(window.frame) else {
+                guard Self.isAcceptable(relativeWindowFrame: window.frame) else {
                     throw ValidationError.geometryOutOfRange(groupID: group.id, windowIndex: index)
                 }
             }
@@ -228,7 +228,7 @@ struct WindowLayoutDocument: Equatable, Sendable {
     /// The stored display hint is deliberately not used to re-run `capture` or `restore`: it is a
     /// best-effort match that may describe another display than the one restore picks, and a round
     /// trip would add floating-point tolerance rules without rejecting anything these checks miss.
-    private static func isAcceptable(_ frame: RelativeWindowFrame) -> Bool {
+    internal static func isAcceptable(relativeWindowFrame frame: RelativeWindowFrame) -> Bool {
         guard frame.x.isFinite, frame.y.isFinite,
               frame.width.isFinite, frame.height.isFinite,
               frame.width > 0, frame.height > 0,
