@@ -154,6 +154,41 @@ struct WindowLayoutDocumentTests {
         #expect(document.groups.count == 2)
     }
 
+    /// Both identifier limits are measured, and each is inclusive at its documented value: 255 ASCII
+    /// characters are 255 bytes, and 255 characters of a four-byte scalar are exactly the 1,020-byte
+    /// cap. A string whose characters are each one scalar therefore never reaches the byte cap first.
+    @Test func acceptsIdentifiersAtTheCharacterAndByteLimits() throws {
+        let ascii = String(repeating: "a", count: WindowLayoutDocument.maximumBundleIdentifierLength)
+        let fourByteScalar = "\u{1D11E}" // U+1D11E MUSICAL SYMBOL G CLEF, one scalar of four bytes.
+        let wide = String(repeating: fourByteScalar, count: WindowLayoutDocument.maximumBundleIdentifierLength)
+        #expect(ascii.utf8.count == WindowLayoutDocument.maximumBundleIdentifierLength)
+        #expect(wide.count == WindowLayoutDocument.maximumBundleIdentifierLength)
+        #expect(wide.utf8.count == WindowLayoutDocument.maximumBundleIdentifierByteCount)
+
+        let document = try makeDocument([makeGroup(windows: [
+            makeWindow(ascii),
+            makeWindow(wide),
+        ])])
+
+        #expect(document.groups.first?.windows.map(\.bundleIdentifier) == [ascii, wide])
+    }
+
+    /// A non-ASCII identity that is well inside the byte cap is kept verbatim: the limits bound the
+    /// size, they do not restrict an identifier to ASCII. The first identity carries a combining
+    /// acute (two scalars in one character) and the second is CJK.
+    @Test func acceptsUnicodeIdentifiersWithinTheByteCap() throws {
+        let accented = "com.e\u{0301}xample.Uygulama"
+        let cjk = "com.example.应用"
+        #expect(accented.count < accented.utf8.count)
+
+        let document = try makeDocument([makeGroup(windows: [
+            makeWindow(accented),
+            makeWindow(cjk),
+        ])])
+
+        #expect(document.groups.first?.windows.map(\.bundleIdentifier) == [accented, cjk])
+    }
+
     @Test func acceptsDisplaySizesAtTheDocumentedLimits() throws {
         let document = try makeDocument([makeGroup(windows: [
             makeWindow("com.example.Small", display: WindowLayoutDocument.DisplaySize(width: 1, height: 1)),
@@ -282,6 +317,81 @@ struct WindowLayoutDocumentTests {
             )) {
                 _ = try makeDocument([makeGroup(id: id, windows: [makeWindow(identifier)])])
             }
+        }
+    }
+
+    /// `String.count` counts extended grapheme clusters, not UTF-8 bytes: an "a" followed by tens of
+    /// thousands of combining marks is a *single* character, so the 255-character limit cannot see
+    /// its size. The identifier is described by its two counts and never printed, so a hostile
+    /// string cannot flood the test log through a failed expectation.
+    @Test func refusesAOneCharacterIdentifierMadeOfTensOfThousandsOfUTF8Bytes() {
+        let id = UUID()
+        let attack = "a" + String(repeating: "\u{0301}", count: 32_768)
+        let graphemeCount = attack.count
+        let byteCount = attack.utf8.count
+        // The precondition this test exists for: one grapheme cluster, far past the byte cap.
+        #expect(graphemeCount == 1)
+        #expect(byteCount > WindowLayoutDocument.maximumBundleIdentifierByteCount)
+
+        #expect(throws: WindowLayoutDocument.ValidationError.malformedBundleIdentifier(
+            groupID: id,
+            windowIndex: 0
+        )) {
+            _ = try makeDocument([makeGroup(id: id, windows: [makeWindow(attack)])])
+        }
+    }
+
+    /// The byte cap is the limit that binds when a single character is built from many scalars: one
+    /// grapheme cluster of "a" plus 509 combining marks is 1,019 bytes and is kept, and one more mark
+    /// is 1,021 bytes and is refused while its character count is still 1. Only the identifiers'
+    /// sizes are described here, never the strings themselves.
+    @Test func refusesAnIdentifierOneByteOverTheByteCapWhileItsCharacterCountIsAllowed() throws {
+        let id = UUID()
+        let belowCap = "a" + String(repeating: "\u{0301}", count: 509)
+        let aboveCap = "a" + String(repeating: "\u{0301}", count: 510)
+        let belowByteCount = belowCap.utf8.count
+        let aboveByteCount = aboveCap.utf8.count
+        let belowCharacterCount = belowCap.count
+        let aboveCharacterCount = aboveCap.count
+        #expect(belowByteCount == WindowLayoutDocument.maximumBundleIdentifierByteCount - 1)
+        #expect(aboveByteCount == WindowLayoutDocument.maximumBundleIdentifierByteCount + 1)
+        #expect(belowCharacterCount == 1)
+        #expect(aboveCharacterCount == 1)
+
+        let document = try makeDocument([makeGroup(windows: [makeWindow(belowCap)])])
+        #expect(document.groups.first?.windows.first?.bundleIdentifier == belowCap)
+
+        #expect(throws: WindowLayoutDocument.ValidationError.malformedBundleIdentifier(
+            groupID: id,
+            windowIndex: 0
+        )) {
+            _ = try makeDocument([makeGroup(id: id, windows: [makeWindow(aboveCap)])])
+        }
+    }
+
+    /// The character limit still applies on its own: 256 four-byte characters are 1,024 bytes, so
+    /// either limit refuses them, and the refusal must not name the identifier.
+    @Test func refusesAnIdentifierLongerInCharactersThanTheLimitWhateverItsBytes() {
+        let id = UUID()
+        let tooMany = String(
+            repeating: "\u{1D11E}",
+            count: WindowLayoutDocument.maximumBundleIdentifierLength + 1
+        )
+        let characterCount = tooMany.count
+        let byteCount = tooMany.utf8.count
+        #expect(characterCount == WindowLayoutDocument.maximumBundleIdentifierLength + 1)
+        #expect(byteCount > WindowLayoutDocument.maximumBundleIdentifierByteCount)
+
+        do {
+            _ = try makeDocument([makeGroup(id: id, windows: [makeWindow(tooMany)])])
+            Issue.record("expected a validation error")
+        } catch {
+            let refusal = error as? WindowLayoutDocument.ValidationError
+            #expect(refusal == WindowLayoutDocument.ValidationError.malformedBundleIdentifier(
+                groupID: id,
+                windowIndex: 0
+            ))
+            #expect(!String(describing: error).contains("\u{1D11E}"))
         }
     }
 

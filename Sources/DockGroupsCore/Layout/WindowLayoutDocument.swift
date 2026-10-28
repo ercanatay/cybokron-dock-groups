@@ -37,6 +37,21 @@ struct WindowLayoutDocument: Equatable, Sendable {
     /// length alone.
     static let maximumBundleIdentifierLength = 255
 
+    /// The most UTF-8 bytes a bundle identifier may occupy: 1,020 — four bytes for each of
+    /// `maximumBundleIdentifierLength` characters. A provisional product limit, not a fact about
+    /// bundle identifiers: it exists because `String.count` counts extended grapheme clusters, not
+    /// bytes, so a *one-character* identifier can still be arbitrarily large. A single "a" followed
+    /// by tens of thousands of combining marks is one cluster and passes the 255-character limit
+    /// while occupying hundreds of kilobytes, which would make that limit no bound at all.
+    ///
+    /// Four bytes per character is the widest a UTF-8 scalar gets, so a string whose characters are
+    /// each one scalar is never refused here for its size alone: 255 ASCII characters are 255 bytes
+    /// and 255 four-byte scalars are exactly 1,020. Only a character built from several scalars
+    /// (combining marks, a ZWJ sequence, a flag) can reach the byte cap first. Capture currently
+    /// has no equivalent byte limit, so this provisional model can reject an identifier capture
+    /// accepts; that compatibility needs review before the model is used for persistence.
+    static let maximumBundleIdentifierByteCount = 4 * maximumBundleIdentifierLength
+
     /// The largest display visible frame per axis a document may record, in points: 100,000. A
     /// provisional product limit, not a verified bound on displays: it is set well above any
     /// plausible visible frame so a corrupt hint cannot carry meaningless fractions.
@@ -168,16 +183,24 @@ struct WindowLayoutDocument: Equatable, Sendable {
     }
 
     /// Whether `identifier` has the shape of an app's bundle identifier rather than that of a path,
-    /// URL or other string: non-empty, at most `maximumBundleIdentifierLength` characters, with no
-    /// "/" or ":" (the marks of a location or web address, `AppItemPolicy.isBundleIdentifier`) and
-    /// no whitespace or control characters — the same rule capture applies to a running app. A dot
-    /// is not required, because the group store and capture both keep identifiers without one.
+    /// URL or other string: non-empty, at most `maximumBundleIdentifierLength` characters and at
+    /// most `maximumBundleIdentifierByteCount` UTF-8 bytes, with no "/" or ":" (the marks of a
+    /// location or web address, `AppItemPolicy.isBundleIdentifier`) and no whitespace or control
+    /// characters. Capture applies the character and syntax checks but not the byte cap. A dot is
+    /// not required, because
+    /// the group store and capture both keep identifiers without one.
+    ///
+    /// Both size limits are needed. `count` is the limit capture applies and is what an identity is
+    /// measured in, but it counts extended grapheme clusters, so one character made of many scalars
+    /// slips under it at any size; the byte cap is the bound that does not. Neither limit's value is
+    /// reported in an error (see `ValidationError`), so a hostile string stays out of logs.
     ///
     /// This is syntax only. It cannot prove that an app with this identifier is installed, that the
     /// identifier resolves to a bundle, or that any window belongs to it; those are separate checks
     /// for capture and restore.
     private static func isAcceptableBundleIdentifier(_ identifier: String) -> Bool {
         guard !identifier.isEmpty, identifier.count <= maximumBundleIdentifierLength,
+              identifier.utf8.count <= maximumBundleIdentifierByteCount,
               AppItemPolicy.isBundleIdentifier(identifier)
         else { return false }
         return !identifier.unicodeScalars.contains {
