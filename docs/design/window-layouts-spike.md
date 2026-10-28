@@ -203,6 +203,24 @@ terminal record and exit code; the fixture target was closed. The fixture's 152 
 checks passed, but other applications, Spaces, multiple displays and full-screen behavior remain
 untested. The H gate stays open.
 
+### Two overlapping AX windows and rejected inputs
+
+In another two-process fixture, the target created two of its own standard windows at the same
+AppKit frame. A separate read-only observer verified that target and found two standard,
+unminimized AX windows with identical AX position and size. The target's two AppKit frames were
+also equal. These comparisons were made separately within each coordinate convention; AX array
+order was not mapped to the target's window labels. The observer recorded an ambiguous result
+and its defined skip exit code, rather than identifying a safe candidate. The fixture ran once
+on macOS 27.0.1; 171 pure contract checks also passed.
+
+With the fixture target stopped, three separate calls were rejected before the AX trust check or
+window query: a missing control record, a PID that did not match the record, and a valid record
+whose target process was no longer running. Each produced a complete skip record and matching
+exit code. This does not test revoked permission, hung applications, concurrent races or other
+failure cases. The observer ran directly from an already trusted environment; its trust result
+does not prove a separate app grant or the absence of a prompt. No AX writes, CG window query,
+screen capture or user-window read was performed. Identity, Space and visibility remain open.
+
 ## Required work still open
 
 | Gate from design §5 | Status |
