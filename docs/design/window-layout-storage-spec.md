@@ -1,0 +1,27 @@
+# Draft: window layout storage and import safety
+
+Status: design only, not shipped or implemented. This extends the [H and CLI design](window-layouts-and-cli-spec.md); it does not close the Accessibility, window identity, current Space, or real-display safety gates. The in-memory model in PR #22 is provisional. Its limits and types do not by themselves define an on-disk format or provide a decoder.
+
+## Existing behavior to preserve
+
+- Groups and preferences have separate files. `JSONFileSupport` uses an atomic write and provides unreadable-file move-aside and pre-import copies; these are existing helpers, not a complete transaction across multiple files.
+- `SettingsBackup.read` caps reading at 5 MiB plus one byte and rejects oversized data. Its restore copies existing stores and attempts rollback on subsequent errors; rollback itself uses `try?` and can fail. Its merge adds groups and may retain earlier changes if a later store fails. Do not describe either behavior as crash-safe, or assume layouts inherit transactional guarantees.
+- `GroupStore.mergeGroups` skips incoming groups when either their UUID or normalized name matches an existing active or archived group. An incoming layout must not be attached to a skipped group just because its UUID or name looks related; a future merge policy must use the actual added-group result and specify failures and omissions.
+- A version that does not know `layouts.json` must not read, delete, rewrite, or enable it. Verify this with actual downgrade copies, not only a unit test.
+
+## Proposed contract, before implementation
+
+1. Store layouts separately from groups and preferences. Persist only a group UUID, app bundle identifier, normalized rectangle and display matching hints; never a window title, URL, document path, screenshot, AX element, process identifier, or raw display identity. Multiple windows in one group may refer to different displays. This data is local; avoid printing its contents, malformed input, paths or identifiers in logs.
+2. Define the exact versioned JSON envelope and bounded byte/count/string limits before writing a codec. Size bounds must apply both before a file read and to data supplied directly to a decoder; the read must remain bounded if the file grows between a size check and the read. Check lengths while decoding, before accepting large arrays or allocating unbounded structures. The draft model's limits need product review and a compatibility check against the byte cap before they become a persistent contract.
+3. Treat every import and on-disk file as untrusted. Reject unsupported versions, malformed structure, duplicate group UUIDs and duplicate app records per group, invalid numbers and geometry, and identifiers with a path or URL shape. Syntactic identifier validation does not establish that an installed application owns a window. Define and test the behavior of unknown object keys and duplicate JSON member names explicitly; ordinary `JSONDecoder` key handling alone must not be assumed to reject duplicates.
+4. Decode and validate a complete candidate before mutating any store. On corruption or an unsupported newer format, preserve the original bytes. Do not overwrite, silently replace, truncate, or move a newer file merely because the current version cannot understand it. Define a visible, explicit recovery path for corrupt data; if preservation fails, do not reset or write a replacement. Race conditions and failures in preservation and atomic replacement need tests.
+5. A backup payload is optional: distinguish absent from explicitly empty. A backup made without layout support must not silently erase current layouts. For replace and merge, specify group-ID collisions, archived/deleted groups, orphaned layout records, and whether existing layouts are kept before any integration is implemented. Do not auto-run an imported layout or move windows: restoring a layout always requires the explicit preview and user confirmation in the H spec.
+6. Before any import that could replace layout data, create and verify a recoverable copy, and specify what happens if any other store or rollback fails. A sequence of atomic writes is not an atomic multi-store transaction. Tests must cover failures at each step, including failed copy, failed write, failed rollback, interruption, and restart. Do not promise crash atomicity without a tested recovery mechanism.
+7. Group archive keeps its layout dormant; delete removes the associated layout only when the group deletion is committed. Define ordering and recovery for failures across the two files. No group, trigger, Siri, URL, or CLI action should implicitly restore a layout in the first release.
+
+## Required validation before use
+
+- Decoder tests: byte/count boundaries, malformed JSON, duplicate keys and records, unknown versions and keys, nonfinite/out-of-range values, path-like and oversized identifiers, multiple displays, and privacy of errors.
+- Persistence tests in isolated temporary directories: oversized/growing input, unreadable and newer files, copy/write/rollback failures, interruption recovery, save/delete ordering, and preservation of original bytes.
+- Backup tests: absent versus empty layout payload, replace and merge collision cases, archived and orphaned groups, failed imports, and imported data remaining dormant.
+- Manual tests: genuine downgrade/upgrade with copies of user data, two displays and changed topology, and the separate H accessibility/identity/Space matrix. No implementation or release claim follows from this document alone.
