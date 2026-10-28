@@ -187,6 +187,22 @@ concurrent race, or establish an AX-to-CG identity mechanism. No other app's win
 system-wide window list, screen capture or AX calls were used. Space and third-party behavior
 remain untested; the H gate stays open.
 
+### Two-process AX and AppKit observation
+
+For a separate single-window fixture, the target recorded its own AppKit window frame in a private
+control record. A separate observer verified the target process and read only that target's AX
+window attributes. In one run on macOS 27.0.1, AX reported one standard, unminimized window;
+both the target's AppKit frame and AX size were 420 by 300 points. Their raw positions were
+`(140, 140)` and `(140, 1000)`, respectively. These values use different coordinate origins;
+the raw difference is not a general conversion rule or an identity or visibility guarantee.
+
+The observer was invoked directly from a trusted environment, so its `trusted=true` result does
+not establish a separate application grant or the absence of a permission prompt. The target and
+observer performed no AX writes, CG window queries or screen capture. The log had a matching
+terminal record and exit code; the fixture target was closed. The fixture's 152 pure contract
+checks passed, but other applications, Spaces, multiple displays and full-screen behavior remain
+untested. The H gate stays open.
+
 ## Required work still open
 
 | Gate from design §5 | Status |
