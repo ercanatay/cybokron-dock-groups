@@ -232,4 +232,21 @@ struct WindowLayoutJSONDecoderTests {
         #expect(try WindowLayoutJSONDecoder.decode(WindowLayoutJSONEncoder.encode(original)) == original)
     }
 
+    @Test func variedValidModelsRoundTrip() throws {
+        for i in 0..<200 {
+            let x = CGFloat(i % 17) / 100 - 0.08
+            let y = CGFloat(i % 13) / 100
+            let width = CGFloat(41 + i % 23) / 100
+            let height = CGFloat(52 + i % 19) / 100
+            let window = WindowLayoutDocument.Window(
+                bundleIdentifier: "com.example.RoundTrip\(i)",
+                display: .init(width: CGFloat(800 + i), height: CGFloat(600 + i)),
+                frame: .init(x: x, y: y, width: width, height: height)
+            )
+            let original = try WindowLayoutDocument(groups: [.init(id: UUID(), windows: [window])])
+            let data = try WindowLayoutJSONEncoder.encode(original)
+            #expect(try WindowLayoutJSONDecoder.decode(data) == original)
+        }
+    }
+
 }
