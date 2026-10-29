@@ -352,4 +352,33 @@ struct LayoutFileReaderTests {
         #expect(throws: LayoutFileReaderError.cannotRead) { try LayoutFileReader.readLayout(from: file, readImpl: invalidReader) }
     }
 
+    @Test func fileGrowingDuringReadIsRejected() throws {
+        let dir = try tempDir()
+        defer { cleanup(dir) }
+        let file = dir.appendingPathComponent("growing.json")
+        let prefix = Data(#"{"formatVersion":1,"groups":[]}"#.utf8)
+        var original = prefix
+        original.append(Data(repeating: 0x20, count: 2 * 1024 * 1024 - prefix.count))
+        try original.write(to: file)
+        var grew = false
+        let spy: (Int32, UnsafeMutablePointer<UInt8>, Int) -> Int = { fd, buffer, requested in
+            let n = read(fd, buffer, requested)
+            if n > 0 && !grew {
+                grew = true
+                do {
+                    let handle = try FileHandle(forWritingTo: file)
+                    defer { try? handle.close() }
+                    try handle.seekToEnd()
+                    try handle.write(contentsOf: Data([0x20]))
+                } catch {
+                    Issue.record("Could not grow synthetic fixture")
+                }
+            }
+            return n
+        }
+        #expect(throws: LayoutFileReaderError.tooLarge) { try LayoutFileReader.readLayout(from: file, readImpl: spy) }
+        #expect(grew)
+        #expect(try Data(contentsOf: file).count == original.count + 1)
+    }
+
 }
