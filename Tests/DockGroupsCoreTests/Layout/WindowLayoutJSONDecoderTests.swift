@@ -249,4 +249,9 @@ struct WindowLayoutJSONDecoderTests {
         }
     }
 
+    @Test func newerVersionWithDifferentStructureIsRecognized() {
+        let data = Data(#"{"formatVersion":99,"futureField":{"layout":"new"},"groups":{"future":"shape"}}"#.utf8)
+        #expect(throws: WindowLayoutJSONDecodeError.unsupportedFormatVersion) { try WindowLayoutJSONDecoder.decode(data) }
+    }
+
 }

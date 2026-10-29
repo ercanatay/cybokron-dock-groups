@@ -26,8 +26,9 @@ internal enum WindowLayoutJSONDecoder {
         }
         let decoder = JSONDecoder()
         do {
+            let header = try decoder.decode(StrictRootHeaderDecoder.self, from: data)
             let document = try decoder.decode(RootDocumentDecoder.self, from: data)
-            return try WindowLayoutDocument(formatVersion: document.formatVersion, groups: document.groups)
+            return try WindowLayoutDocument(formatVersion: header.formatVersion, groups: document.groups)
         } catch let error as WindowLayoutJSONDecodeError {
             throw error
         } catch let error as DecodingError {
@@ -54,6 +55,17 @@ private struct AnyCodingKey: CodingKey {
     init?(intValue: Int) {
         self.stringValue = String(intValue)
         self.intValue = intValue
+    }
+}
+
+private struct StrictRootHeaderDecoder: Decodable {
+    let formatVersion: Int
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: AnyCodingKey.self)
+        formatVersion = try container.decode(Int.self, forKey: AnyCodingKey(stringValue: "formatVersion"))
+        if formatVersion != WindowLayoutDocument.currentFormatVersion {
+            throw WindowLayoutJSONDecodeError.unsupportedFormatVersion
+        }
     }
 }
 
