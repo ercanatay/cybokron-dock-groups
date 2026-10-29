@@ -216,4 +216,20 @@ struct WindowLayoutJSONDecoderTests {
         #expect(throws: (any Error).self) { try WindowLayoutJSONDecoder.decode(data) }
     }
 
+    @Test func encoderDecoderRoundTripPreservesValidatedModel() throws {
+        let id = UUID()
+        let windows = [
+            WindowLayoutDocument.Window(bundleIdentifier: "com.example.Alpha", display: .init(width: 1920, height: 1080), frame: .init(x: -0.1, y: 0.1, width: 0.8, height: 0.6)),
+            WindowLayoutDocument.Window(bundleIdentifier: "com.example.Beta", display: .init(width: 1440, height: 900), frame: .init(x: 0, y: 0, width: 1, height: 1))
+        ]
+        let original = try WindowLayoutDocument(groups: [.init(id: id, windows: windows)])
+        let data = try WindowLayoutJSONEncoder.encode(original)
+        #expect(try WindowLayoutJSONDecoder.decode(data) == original)
+    }
+
+    @Test func encoderDecoderRoundTripPreservesEmptyDocument() throws {
+        let original = try WindowLayoutDocument(groups: [])
+        #expect(try WindowLayoutJSONDecoder.decode(WindowLayoutJSONEncoder.encode(original)) == original)
+    }
+
 }
