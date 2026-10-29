@@ -14,6 +14,8 @@ A separate stable lock file in the trusted directory is a possible coordination 
 
 A local synthetic experiment on one macOS machine used a readiness pipe and isolated temporary directory. In ten repeated runs, a second process was blocked while the original inode was locked, acquired the lock after the holder exited, and independently locked a newly created inode while the old inode remained locked. In a separate single-process observation, distinct descriptors conflicted across two threads, while `dup` shared a lock and unlocking the duplicate released it for another descriptor. These observations support keeping a shared lock-file identity stable and explicitly managing descriptor ownership in that environment; they do not establish behavior on other filesystems, protect against non-cooperating processes, or prove crash recovery.
 
+The local `rename(2)` manual also says `RENAME_SWAP` can swap objects of different types, including a file and a directory. Volume support alone therefore does not validate the target, protect against a target changing before publication, or establish a recoverable backup. Any future use needs explicit object-type and identity checks under its stated coordination assumptions, plus tests for unsupported volumes and unexpected targets.
+
 ## Required preservation and publication properties
 
 1. Record the exact prior bytes and their format status without exposing paths, identifiers, or content in logs or errors. The snapshot must be bounded while reading, including if the file grows. Validate the original before a normal replacement; preserve a newer or malformed original untouched.
