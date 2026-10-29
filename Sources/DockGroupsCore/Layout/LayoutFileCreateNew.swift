@@ -44,6 +44,9 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.invalidURL
         }
         let path = url.path
+        guard path.hasPrefix("/") else {
+            throw LayoutFileCreateNewError.invalidURL
+        }
         guard !path.utf8.contains(UInt8(0)) else {
             throw LayoutFileCreateNewError.invalidURL
         }

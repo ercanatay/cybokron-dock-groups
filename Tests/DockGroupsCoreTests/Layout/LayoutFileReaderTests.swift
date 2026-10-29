@@ -381,4 +381,10 @@ struct LayoutFileReaderTests {
         #expect(try Data(contentsOf: file).count == original.count + 1)
     }
 
+
+    @Test func relativeFileURLIsRejectedBeforeRead() throws {
+        let url = try #require(URL(string: "file:missing-\(UUID().uuidString)/layout.json"))
+        #expect(throws: LayoutFileReaderError.cannotRead) { try LayoutFileReader.readLayout(from: url) }
+    }
+
 }
