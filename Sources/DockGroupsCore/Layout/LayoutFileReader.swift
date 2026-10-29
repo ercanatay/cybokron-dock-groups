@@ -37,6 +37,9 @@ internal enum LayoutFileReader {
             throw LayoutFileReaderError.cannotRead
         }
         let path = url.path
+        guard path.hasPrefix("/") else {
+            throw LayoutFileReaderError.cannotRead
+        }
         guard !path.utf8.contains(UInt8(0)) else {
             throw LayoutFileReaderError.cannotRead
         }

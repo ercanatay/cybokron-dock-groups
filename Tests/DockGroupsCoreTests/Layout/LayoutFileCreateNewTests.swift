@@ -256,4 +256,13 @@ struct LayoutFileCreateNewTests {
         #expect(!FileManager.default.fileExists(atPath: target.path))
     }
 
+
+    @Test func relativeFileURLIsRejectedBeforeCreate() throws {
+        let url = try #require(URL(string: "file:missing-\(UUID().uuidString)/layout.json"))
+        let document = try WindowLayoutDocument(groups: [])
+        #expect(throws: LayoutFileCreateNewError.invalidURL) {
+            try LayoutFileCreateNew.createNew(from: document, at: url)
+        }
+    }
+
 }
