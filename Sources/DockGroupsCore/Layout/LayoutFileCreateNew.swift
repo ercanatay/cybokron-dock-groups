@@ -180,6 +180,6 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.cleanupFailedAfterPublish
         }
 
-        // Done: file created atomically at url with mode 0600 (from openat), no overwrite, no truncation.
+        // Done: file created atomically at url with mode at most 0600 (from openat), subject to umask, no overwrite, no truncation.
     }
 }

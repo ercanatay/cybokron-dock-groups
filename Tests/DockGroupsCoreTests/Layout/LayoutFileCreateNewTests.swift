@@ -228,4 +228,32 @@ struct LayoutFileCreateNewTests {
         }
         #expect(try FileManager.default.contentsOfDirectory(atPath: dir.path).isEmpty)
     }
+
+    @Test func zeroByteWriteDoesNotPublish() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let target = dir.appendingPathComponent("zero.json")
+        let doc = try WindowLayoutDocument(groups: [])
+        let noProgress: (Int32, UnsafeRawPointer, Int) -> Int = { _, _, _ in 0 }
+        #expect(throws: LayoutFileCreateNewError.tempWriteFailed) {
+            try LayoutFileCreateNew.createNew(from: doc, at: target, writeImpl: noProgress)
+        }
+        #expect(try FileManager.default.contentsOfDirectory(atPath: dir.path).isEmpty)
+    }
+
+    @Test func failedWriteAndCleanupReportRemainingTemporaryFile() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let target = dir.appendingPathComponent("failed.json")
+        let doc = try WindowLayoutDocument(groups: [])
+        let failedWrite: (Int32, UnsafeRawPointer, Int) -> Int = { _, _, _ in errno = EIO; return -1 }
+        let failedCleanup: (Int32, String) -> Int32 = { _, _ in errno = EACCES; return -1 }
+        #expect(throws: LayoutFileCreateNewError.cleanupFailedBeforePublish) {
+            try LayoutFileCreateNew.createNew(from: doc, at: target, writeImpl: failedWrite, unlinkImpl: failedCleanup)
+        }
+        let names = try FileManager.default.contentsOfDirectory(atPath: dir.path)
+        #expect(names.count == 1 && names[0].hasPrefix(".tmp."))
+        #expect(!FileManager.default.fileExists(atPath: target.path))
+    }
+
 }
