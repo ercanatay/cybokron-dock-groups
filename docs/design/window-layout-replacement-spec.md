@@ -8,6 +8,10 @@ A future explicit save or import may need to replace a supported, valid `layouts
 
 The parent directory is app-controlled and trusted. Any proposed concurrency protection must state which processes cooperate and what happens if they do not. A lock used only by cooperating writers cannot protect against hostile same-user filesystem mutation, a non-cooperating older process, or ancestor symlink traversal. Rechecking a file immediately before rename is not an atomic compare-and-swap; another process can change it between those operations. Do not claim lost-update prevention unless the actual serialization mechanism and its assumptions are verified.
 
+## Candidate coordination to evaluate
+
+A separate stable lock file in the trusted directory is a possible coordination point for cooperating processes; locking the replaceable layout file itself cannot be assumed to serialize access to its replacement after a rename. All participating versions would need the same lock and protocol, and must hold it from snapshot through publication and cleanup. The lock file must not be unlinked and recreated while in use, or different processes could lock different file objects. This is a candidate, not a proven implementation or protection against non-cooperating writers. Apple exposes [whether a volume supports advisory locking](https://developer.apple.com/documentation/foundation/urlresourcevalues/volumesupportsadvisoryfilelocking); unsupported or unknown capability needs a defined fail-closed behavior and tests. Lock scope, same-process thread semantics, timeout, process termination, and lock-file substitution remain to be established for the selected API and filesystem.
+
 ## Required preservation and publication properties
 
 1. Record the exact prior bytes and their format status without exposing paths, identifiers, or content in logs or errors. The snapshot must be bounded while reading, including if the file grows. Validate the original before a normal replacement; preserve a newer or malformed original untouched.
