@@ -119,6 +119,7 @@ public final class TriggerCoordinator {
     private var processing: Task<Void, Never>?
     /// The trigger that started each group, while this app runs (never saved).
     private var startedBy: [DockGroup.ID: GroupTrigger.ID] = [:]
+    private var applicationTracker = AppPresenceRuleTracker()
 
     /// - Parameters:
     ///   - rules: The triggers, in Settings → Triggers' order.
@@ -145,6 +146,72 @@ public final class TriggerCoordinator {
     /// The firings waiting to be carried out, in order.
     public var waitingFirings: [TriggerFiring] { queue }
 
+    // MARK: - Application presence observations
+
+    public func beginApplicationObservations(generation: UInt64) -> Bool {
+        guard environment.canAct else { return false }
+        guard refresh() else { return false }
+        return applicationTracker.beginGeneration(generation)
+    }
+
+    public func observeApplications(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
+        guard environment.canAct else {
+            applicationTracker.stop()
+            return
+        }
+        guard refresh() else { return }
+        let ids = applicationTracker.observe(generation: generation, sequence: sequence, counts: counts)
+        let originalRules = rules()
+        func currentRule(for id: UUID) -> GroupTrigger? {
+            guard refresh() else { return nil }
+            guard environment.canAct else { return nil }
+            guard applicationTracker.isActive(generation: generation) else { return nil }
+            let currentRules = rules()
+            guard let current = currentRules.first(where: { $0.id == id }) else { return nil }
+            guard let original = originalRules.first(where: { $0.id == id }) else { return nil }
+            guard current == original else { return nil }
+            guard current.canRun else { return nil }
+            guard activeGroups().contains(current.groupID) else { return nil }
+            return current
+        }
+        for id in ids {
+            guard let current = currentRule(for: id) else { break }
+            guard case .applicationPresence(_, let edge) = current.event else { break }
+            receive(.applicationEdge(triggerID: id, edge: edge))
+            if currentRule(for: id) == nil {
+                pending.removeAll { $0.triggerID == id }
+                queue.removeAll { $0.triggerID == id }
+                break
+            }
+        }
+    }
+
+    public func stopApplicationObservations() {
+        applicationTracker.stop()
+    }
+
+    private func refresh() -> Bool {
+        let currentRules = rules()
+        let active = activeGroups()
+        var eligible: [AppPresenceRuleTracker.Rule] = []
+        for trigger in currentRules {
+            guard trigger.canRun else { continue }
+            guard case .applicationPresence(let bundleID, let edge) = trigger.event else { continue }
+            guard active.contains(trigger.groupID) else { continue }
+            guard let identifier = TriggerApplicationIdentifier(bundleID) else {
+                applicationTracker.stop()
+                return false
+            }
+            eligible.append(.init(id: trigger.id, identifier: identifier, edge: edge))
+        }
+        let ok = applicationTracker.configure(eligible)
+        if eligible.isEmpty || !ok {
+            applicationTracker.stop()
+            return false
+        }
+        return true
+    }
+
     // MARK: - Rules
 
     /// Gives every trigger without remembered state its baseline. Call once at launch, before the
@@ -163,6 +230,9 @@ public final class TriggerCoordinator {
     /// baseline; firings of changed, gone or off triggers are dropped.
     public func rulesChanged(previous: [GroupTrigger]) {
         let nowRules = rules()
+        if previous != nowRules {
+            applicationTracker.stop()
+        }
         update(TriggerEvaluator.rebaseline(previous: previous, rules: nowRules, state: state, now: clock(), calendar: calendar()))
         let currentByID = Dictionary(nowRules.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let previousByID = Dictionary(previous.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -247,6 +317,7 @@ public final class TriggerCoordinator {
         default: shouldInvalidate = false
         }
         if shouldInvalidate {
+            applicationTracker.stop()
             let isAppPresenceEvent: (UUID) -> Bool = { (id: UUID) -> Bool in
                 guard let trigger = self.rules().first(where: { $0.id == id }) else { return false }
                 if case .applicationPresence = trigger.event { return true }

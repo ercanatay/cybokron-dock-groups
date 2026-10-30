@@ -215,7 +215,7 @@ public enum TriggerEvaluator {
     private static func evaluatesSchedules(_ signal: TriggerSignal) -> Bool {
         switch signal {
         case .clock, .launched, .screens(asleep: false), .session(active: true): return true
-        case .screens, .session, .displays, .network, .applicationEdge: return false
+        case .screens, .session, .displays, .network, .applicationEdge(_, _): return false
         }
     }
 

@@ -74,6 +74,10 @@ internal struct AppPresenceRuleTracker {
         return true
     }
 
+    func isActive(generation: UInt64) -> Bool {
+        !isStopped && currentGeneration == generation
+    }
+
     mutating func stop() {
         isStopped = true
         for key in trackers.keys {
