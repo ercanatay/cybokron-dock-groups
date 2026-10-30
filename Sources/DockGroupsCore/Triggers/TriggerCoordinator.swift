@@ -113,6 +113,7 @@ public final class TriggerCoordinator {
     /// The firing being carried out, and whether its notice is showing.
     private var current: TriggerFiring?
     private var isPresentingNotice = false
+    private var currentInvalidated = false  // stays true until the next firing clears it
     private var generation = 0
     private var settleTask: Task<Void, Never>?
     private var processing: Task<Void, Never>?
@@ -159,13 +160,24 @@ public final class TriggerCoordinator {
     }
 
     /// The triggers changed from `previous`: new, re-enabled and changed ones start from a fresh
-    /// baseline, and firings of triggers that are gone or off are dropped.
+    /// baseline; firings of changed, gone or off triggers are dropped.
     public func rulesChanged(previous: [GroupTrigger]) {
-        let current = rules()
-        update(TriggerEvaluator.rebaseline(previous: previous, rules: current, state: state, now: clock(), calendar: calendar()))
-        let runnable = Set(current.filter(\.canRun).map(\.id))
-        pending.removeAll { !runnable.contains($0.triggerID) }
-        queue.removeAll { !runnable.contains($0.triggerID) }
+        let nowRules = rules()
+        update(TriggerEvaluator.rebaseline(previous: previous, rules: nowRules, state: state, now: clock(), calendar: calendar()))
+        let currentByID = Dictionary(nowRules.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let previousByID = Dictionary(previous.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        func invalidated(_ firing: TriggerFiring) -> Bool {
+            guard let nowRule = currentByID[firing.triggerID] else { return true }
+            if !nowRule.canRun { return true }
+            guard let oldRule = previousByID[firing.triggerID] else { return true }
+            return oldRule != nowRule
+        }
+        pending.removeAll { invalidated($0) }
+        queue.removeAll { invalidated($0) }
+        if isPresentingNotice, let currentFiring = current, invalidated(currentFiring) {
+            currentInvalidated = true
+            noticePresenter?.dismiss()
+        }
     }
 
     /// When the clock must look next (`TriggerEvaluator.nextDue`).
@@ -303,6 +315,7 @@ public final class TriggerCoordinator {
         while let next = queue.first, handler != nil, canCarryOut(next) {
             let firing = queue.removeFirst()
             current = firing
+            currentInvalidated = false
             await carryOut(firing)
             current = nil
         }
@@ -345,10 +358,19 @@ public final class TriggerCoordinator {
             let answer = await presenter.present(TriggerNotice(triggerID: trigger.id, groupID: group.id, groupName: group.name, action: firing.action, runMode: runMode))
             isPresentingNotice = false
             switch answer {
-            case .run: break
+            case .run:
+                break
             case .notNow: skip(firing, .notNow); return
             case .timedOut: skip(firing, .noAnswer); return
             case .replaced: skip(firing, .anotherTrigger); return
+            }
+            guard !currentInvalidated else {
+                skip(firing, .anotherTrigger)
+                return
+            }
+            guard let currentRule = rules().first(where: { $0.id == firing.triggerID }), currentRule.canRun, currentRule == trigger else {
+                skip(firing, .anotherTrigger)
+                return
             }
             // A notice takes seconds: the group, the pause and the current group are looked at again.
             guard let stillHandler = self.handler else {
