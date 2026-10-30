@@ -160,6 +160,7 @@
 		689435259CF0FCFDA9E66297 /* PopupDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1317946282D755F9C07E6C8B /* PopupDrag.swift */; };
 		68AA29E10B80B0DBD03CCA43 /* URLCommandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEFAA5173C545673160724A /* URLCommandTests.swift */; };
 		69BF01E3BA752B1135E0A320 /* ReleaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14ABDA64DB2E8523B1E5D3C4 /* ReleaseFixtures.swift */; };
+		6E0D0DC71E52541B30E22B77 /* TriggerApplicationIdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3044941B4AD95FCE9F830E8B /* TriggerApplicationIdentifierTests.swift */; };
 		6E9C714B2B344AEA0DD820A8 /* GroupArchiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3442B2CF81EDEB8EA95ABE2B /* GroupArchiveTests.swift */; };
 		6E9CE0EFEDF1A7964620CFED /* ItemLaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0842C1AE08A9FA6595C82765 /* ItemLaunchOptions.swift */; };
 		6EA1902143CABA315701031A /* TriggerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B39AF2B71D9CA7E08F7DCC8 /* TriggerController.swift */; };
@@ -233,6 +234,7 @@
 		9AA4BBAE96B7FDBAF6B243C9 /* FileItemPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A3AAE2ACB384A4F2C3B94D /* FileItemPolicyTests.swift */; };
 		9AC33BB60CE12F4894651466 /* AppIconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9578B5BA199D40A6EFD6C0 /* AppIconProvider.swift */; };
 		9AE012290B234D8E0CF1FCB9 /* TriggerStatePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB868DA281AB52C557743C6 /* TriggerStatePersistence.swift */; };
+		9BFC8876E9D293ADEF5A4FB1 /* TriggerApplicationIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A7E57856CD53102E6C6EA0 /* TriggerApplicationIdentifier.swift */; };
 		9C55BDFD9985B003409CDE51 /* TileAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5179989231E27CC02A3150EF /* TileAppearance.swift */; };
 		9DC0715E45F52BB7C65C1FDF /* PanelPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7300BEB8728DDA0A6667F453 /* PanelPalette.swift */; };
 		9EACB84ADB866216D0A914A6 /* AgentIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7753E685D63ED3E1F873BC33 /* AgentIdentity.swift */; };
@@ -500,6 +502,7 @@
 		2EE522D4D1392492E4C20F3E /* JSONDuplicateKeyPreflightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDuplicateKeyPreflightTests.swift; sourceTree = "<group>"; };
 		2F024BDAD137F49641A5E5B3 /* TriggerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerState.swift; sourceTree = "<group>"; };
 		2F059E750DEAAAE9C1A88E1B /* SystemShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemShortcuts.swift; sourceTree = "<group>"; };
+		3044941B4AD95FCE9F830E8B /* TriggerApplicationIdentifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerApplicationIdentifierTests.swift; sourceTree = "<group>"; };
 		30FFA0365D0830EFFB829133 /* InstanceHandoffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceHandoffTests.swift; sourceTree = "<group>"; };
 		31C21CDEB78566E9B9875A13 /* CaptureStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureStoreTests.swift; sourceTree = "<group>"; };
 		340352724A9E6AB0B5125563 /* LayoutFileReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutFileReaderTests.swift; sourceTree = "<group>"; };
@@ -585,6 +588,7 @@
 		5EEFAA5173C545673160724A /* URLCommandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCommandTests.swift; sourceTree = "<group>"; };
 		5FA42F3E523ECDB9727DA946 /* AgentModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentModelTests.swift; sourceTree = "<group>"; };
 		5FA493A0AC4BBA8DF2B16A4E /* Version090ArchiveFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version090ArchiveFixtures.swift; sourceTree = "<group>"; };
+		60A7E57856CD53102E6C6EA0 /* TriggerApplicationIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerApplicationIdentifier.swift; sourceTree = "<group>"; };
 		611B05FDB3747A790E898281 /* TriggerDescriptionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerDescriptionsTests.swift; sourceTree = "<group>"; };
 		61303C0A282B599B5294F25C /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6144640F7107B2BDD2E6005D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -929,6 +933,7 @@
 			children = (
 				11CBA6672F4B2B187438818A /* AppPresenceTracker.swift */,
 				DDD7328ED659F45D32CB3090 /* LaunchClassifier.swift */,
+				60A7E57856CD53102E6C6EA0 /* TriggerApplicationIdentifier.swift */,
 				20BA2C81E946EAB603677698 /* TriggerBudget.swift */,
 				A01A35CF0CF08D6D441A2782 /* TriggerCoordinator.swift */,
 				E74BA4F784048326B9CE9E12 /* TriggerDescriptions.swift */,
@@ -1385,6 +1390,7 @@
 				9D2910543B6521799B99E5C2 /* TestSupport.swift */,
 				59D7624C7F23DA0C1E3E6908 /* TileTests.swift */,
 				C170A1505F530882C68757CA /* TransitionPlannerTests.swift */,
+				3044941B4AD95FCE9F830E8B /* TriggerApplicationIdentifierTests.swift */,
 				A41D8E7D9D13B64822C6E09E /* TriggerAppSourceTests.swift */,
 				1C19DA1A7525C9D921E1E98B /* TriggerBackupTests.swift */,
 				D6BBB14C3899B11F1B489FC4 /* TriggerCompatibilityTests.swift */,
@@ -1977,6 +1983,7 @@
 				23B8913E5BB081F06CD064D9 /* TransitionConfirmation.swift in Sources */,
 				0B56F1B52270EE1A0E14ADB6 /* TransitionPlanner.swift in Sources */,
 				3AD17B31CA54785683FCF01E /* TransitionReport.swift in Sources */,
+				9BFC8876E9D293ADEF5A4FB1 /* TriggerApplicationIdentifier.swift in Sources */,
 				BB7D65B94F265D737C6D22D4 /* TriggerBudget.swift in Sources */,
 				E03D563A5AF3D77633DC7D6A /* TriggerCoordinator.swift in Sources */,
 				7915692B63B4A6A10E5AFF32 /* TriggerDescriptions.swift in Sources */,
@@ -2120,6 +2127,7 @@
 				A7DB0248A348D918456120D2 /* TileTests.swift in Sources */,
 				B3C254124EB6BBA53FC42731 /* TransitionPlannerTests.swift in Sources */,
 				9A166E00E69365460219091C /* TriggerAppSourceTests.swift in Sources */,
+				6E0D0DC71E52541B30E22B77 /* TriggerApplicationIdentifierTests.swift in Sources */,
 				036CF196760E5DB17BB7485F /* TriggerBackupTests.swift in Sources */,
 				2A0D9FE4CECD8B2C121F00C6 /* TriggerCompatibilityTests.swift in Sources */,
 				8DC5666A85A791A18D8FA1A9 /* TriggerCoordinatorTests.swift in Sources */,
