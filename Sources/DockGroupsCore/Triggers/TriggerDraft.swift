@@ -228,6 +228,17 @@ public struct TriggerDraft: Equatable, Sendable {
         self.runMode = runMode
     }
 
+    /// Select an application for the application-presence event. Only `.application` kinds,
+    /// with non-path bundle identifiers accepted by `TriggerApplicationIdentifier`, are taken;
+    /// the exact original identifier is kept.
+    public mutating func selectApplication(_ app: AppReference) -> Bool {
+        guard app.kind == .application, !app.isIdentifiedByPath, TriggerApplicationIdentifier(app.bundleIdentifier) != nil else {
+            return false
+        }
+        applicationBundleIdentifier = app.bundleIdentifier
+        return true
+    }
+
     /// Use Current Displays: the displays connected now, at most `DisplayArrangement.maximumCount`.
     public mutating func useDisplays(_ connected: [DisplayIdentity]) {
         displays = Array(connected.prefix(DisplayArrangement.maximumCount))

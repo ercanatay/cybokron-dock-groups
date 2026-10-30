@@ -183,4 +183,55 @@ struct TriggerDraftTests {
         let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "com.apple.Safari", edge: .starts), action: .start)
         #expect(TriggerDraft(editing: trigger, calendar: Self.calendar) == nil)
     }
+
+    @Test func selectApplicationKeepsTheExactOriginalIdentifierAndReturnsTrue() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let app = AppReference(bundleIdentifier: "My.Custom-App-123", name: "Custom")
+        let result = draft.selectApplication(app)
+        #expect(result)
+        #expect(draft.applicationBundleIdentifier == "My.Custom-App-123")
+        draft.setWhen(.application(.starts))
+        #expect(draft.event == .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .starts))
+    }
+
+    @Test func selectApplicationAcceptsMixedCaseExactId() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let app = AppReference(bundleIdentifier: "MY.APP", name: "Upper")
+        let resultMixed = draft.selectApplication(app)
+        #expect(resultMixed)
+        #expect(draft.applicationBundleIdentifier == "MY.APP")
+    }
+
+    @Test func selectApplicationRejectsNonAppsAndPaths() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let file = AppReference(bundleIdentifier: "/Users/me/notes.txt", name: "notes", path: "/Users/me/notes.txt")
+        let folder = AppReference(fileURL: URL(fileURLWithPath: "/Users/me/Pictures/"), kind: .folder, name: "Pictures")
+        let fileResult = draft.selectApplication(file)
+        #expect(!fileResult)
+        let folderResult = draft.selectApplication(folder)
+        #expect(!folderResult)
+        // Non-path identifiers the validator rejects.
+        let badURL = AppReference(bundleIdentifier: "http://example.com", name: "url")
+        let spaces = AppReference(bundleIdentifier: "foo bar", name: "space")
+        let newline = AppReference(bundleIdentifier: "foo\nbar", name: "nl")
+        let tab = AppReference(bundleIdentifier: "\tfoo", name: "tab")
+        let badURLResult = draft.selectApplication(badURL)
+        #expect(!badURLResult)
+        let spacesResult = draft.selectApplication(spaces)
+        #expect(!spacesResult)
+        let newlineResult = draft.selectApplication(newline)
+        #expect(!newlineResult)
+        let tabResult = draft.selectApplication(tab)
+        #expect(!tabResult)
+        #expect(draft.applicationBundleIdentifier == "")
+    }
+
+    @Test func selectApplicationLeavesAPreviousSelectionOnFailure() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = "com.existing.App"
+        let rejected = AppReference(websiteURL: URL(string: "http://bad")!, name: "bad")
+        let rejectedResult = draft.selectApplication(rejected)
+        #expect(!rejectedResult)
+        #expect(draft.applicationBundleIdentifier == "com.existing.App")
+    }
 }
