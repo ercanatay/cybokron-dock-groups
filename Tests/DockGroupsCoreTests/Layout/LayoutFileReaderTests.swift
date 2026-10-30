@@ -387,4 +387,62 @@ struct LayoutFileReaderTests {
         #expect(throws: LayoutFileReaderError.cannotRead) { try LayoutFileReader.readLayout(from: url) }
     }
 
+    @Test func snapshotRetainsTheExactBytesItDecoded() throws {
+        let dir = try tempDir()
+        defer { cleanup(dir) }
+        let file = dir.appendingPathComponent("layout.json")
+        let bytes = Data("{\n  \"formatVersion\" : 1,\n  \"groups\" : []\n}\n".utf8)
+        try bytes.write(to: file)
+        let result = try LayoutFileReader.readSnapshot(from: file)
+        let snapshot = try #require(result)
+        #expect(snapshot.data == bytes)
+        #expect(snapshot.document == (try WindowLayoutJSONDecoder.decode(bytes)))
+        #expect(try WindowLayoutJSONEncoder.encode(snapshot.document) != bytes)
+        #expect(try Data(contentsOf: file) == bytes)
+    }
+
+    @Test func snapshotMissingReturnsNil() throws {
+        let dir = try tempDir()
+        defer { cleanup(dir) }
+        #expect(try LayoutFileReader.readSnapshot(from: dir.appendingPathComponent("missing.json")).map { _ in true } == nil)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: dir.path).isEmpty)
+    }
+
+    @Test func snapshotRejectsInvalidAndFutureFilesWithoutChangingBytes() throws {
+        let dir = try tempDir()
+        defer { cleanup(dir) }
+        let file = dir.appendingPathComponent("layout.json")
+        let invalid = Data("{invalid".utf8)
+        try invalid.write(to: file)
+        #expect(throws: LayoutFileReaderError.invalidDocument) { try LayoutFileReader.readSnapshot(from: file) }
+        #expect(try Data(contentsOf: file) == invalid)
+        let future = Data("{\"formatVersion\":999,\"groups\":[]}".utf8)
+        try future.write(to: file)
+        #expect(throws: LayoutFileReaderError.unsupportedFormat) { try LayoutFileReader.readSnapshot(from: file) }
+        #expect(try Data(contentsOf: file) == future)
+    }
+
+    @Test func snapshotDecodesTheSameBoundedReadStreamItReturns() throws {
+        let dir = try tempDir()
+        defer { cleanup(dir) }
+        let file = dir.appendingPathComponent("layout.json")
+        let onDisk = Data("different invalid contents".utf8)
+        try onDisk.write(to: file)
+        let bytes = Data("{\"formatVersion\":1,\"groups\":[]}".utf8)
+        let source = Array(bytes)
+        var offset = 0
+        let fakeRead: (Int32, UnsafeMutablePointer<UInt8>, Int) -> Int = { _, buffer, count in
+            let length = min(3, count, source.count - offset)
+            for i in 0..<length { buffer[i] = source[offset + i] }
+            offset += length
+            return length
+        }
+        let result = try LayoutFileReader.readSnapshot(from: file, readImpl: fakeRead)
+        let snapshot = try #require(result)
+        #expect(snapshot.data == bytes)
+        #expect(snapshot.document == (try WindowLayoutJSONDecoder.decode(bytes)))
+        #expect(offset == bytes.count)
+        #expect(try Data(contentsOf: file) == onDisk)
+    }
+
 }
