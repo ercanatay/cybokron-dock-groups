@@ -28,7 +28,11 @@ internal enum LayoutFileReader {
     private static let maxRead = maxBytes + 1
     private static let chunkSize = 65536
 
-    static func readLayout(from url: URL, readImpl: (Int32, UnsafeMutablePointer<UInt8>, Int) -> Int = { fd, buf, count in read(fd, buf, count) }) throws -> WindowLayoutDocument? {
+    /// Bounded read + strict decode; returns accumulated `Data` with the decoded
+    /// document. `Data` is the bytes actually read and validated, not a stable
+    /// filesystem snapshot against concurrent mutation. No writing, recovery,
+    /// backup, app integration, or crash guarantee is provided.
+    static func readSnapshot(from url: URL, readImpl: (Int32, UnsafeMutablePointer<UInt8>, Int) -> Int = { fd, buf, count in read(fd, buf, count) }) throws -> Snapshot? {
         // Reject non-file URLs before accessing any path.
         guard url.isFileURL else {
             throw LayoutFileReaderError.cannotRead
@@ -109,7 +113,8 @@ internal enum LayoutFileReader {
 
         // Decode; never embed input/path/raw OS error in thrown error.
         do {
-            return try WindowLayoutJSONDecoder.decode(data)
+            let document = try WindowLayoutJSONDecoder.decode(data)
+            return Snapshot(data: data, document: document)
         } catch let error as WindowLayoutJSONDecodeError {
             switch error {
             case .unsupportedFormatVersion:
@@ -119,6 +124,24 @@ internal enum LayoutFileReader {
             }
         } catch {
             throw LayoutFileReaderError.invalidDocument
+        }
+    }
+
+    static func readLayout(from url: URL, readImpl: (Int32, UnsafeMutablePointer<UInt8>, Int) -> Int = { fd, buf, count in read(fd, buf, count) }) throws -> WindowLayoutDocument? {
+        return try readSnapshot(from: url, readImpl: readImpl)?.document
+    }
+
+    /// Result of a bounded read-and-decode pass.
+    ///
+    /// `data` is the bytes actually read and validated, not a stable filesystem
+    /// snapshot against concurrent mutation. No crash guarantee is provided.
+    /// The initializer remains `fileprivate`; fields are `let`.
+    struct Snapshot {
+        let data: Data
+        let document: WindowLayoutDocument
+        fileprivate init(data: Data, document: WindowLayoutDocument) {
+            self.data = data
+            self.document = document
         }
     }
 }
