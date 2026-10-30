@@ -149,6 +149,8 @@ public enum TriggerEvaluator {
                 }
             case .unsupported:
                 break
+            case .applicationPresence:
+                break
             }
             state.entries[trigger.id] = entry
         }

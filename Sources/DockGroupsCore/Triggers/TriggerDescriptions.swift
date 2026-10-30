@@ -79,6 +79,8 @@ public enum TriggerDescriptions {
             return Self.condition(condition, edge: edge)
         case .unsupported:
             return Localization.string("core.trigger.summary.unsupported", "A trigger made by a newer version")
+        case .applicationPresence:
+            return Localization.string("core.trigger.summary.unsupported", "A trigger made by a newer version")
         }
     }
 

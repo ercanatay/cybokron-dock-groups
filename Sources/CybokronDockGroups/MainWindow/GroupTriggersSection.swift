@@ -97,6 +97,7 @@ struct GroupTriggersSection: View {
         case .screensSleep: return 4
         case .condition: return 5
         case .unsupported: return 6
+        case .applicationPresence: return 6
         }
     }
 
@@ -179,6 +180,7 @@ struct TriggerRow: View {
         case .condition(.ethernet, _): return "cable.connector"
         case .condition(.vpn, _): return "lock.shield"
         case .unsupported: return "questionmark.circle"
+        case .applicationPresence: return "questionmark.circle"
         }
     }
 }

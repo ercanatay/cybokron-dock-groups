@@ -123,6 +123,7 @@ public enum TriggerEvent: Hashable, Sendable {
     case screensWake
     case screensSleep
     case condition(TriggerCondition, edge: TriggerEdge)
+    case applicationPresence(bundleIdentifier: String, edge: TriggerEdge)
     /// An event this version doesn't understand — a newer version's kind, or a known kind it can't
     /// read: kept as read and written back unchanged; it never runs.
     case unsupported(JSONValue)
@@ -133,6 +134,7 @@ public enum TriggerEvent: Hashable, Sendable {
         case .schedule, .condition: return TriggerAction.allCases
         case .login, .appOpens, .screensWake: return [.showPopup, .openAll, .start]
         case .screensSleep: return [.finish]
+        case .applicationPresence: return TriggerAction.allCases
         case .unsupported: return []
         }
     }
@@ -143,6 +145,7 @@ public enum TriggerEvent: Hashable, Sendable {
         case .schedule(let schedule): return schedule.isValid
         case .condition(let condition, _): return condition.isValid
         case .login, .appOpens, .screensWake, .screensSleep: return true
+        case .applicationPresence: return false
         case .unsupported: return false
         }
     }
@@ -150,6 +153,7 @@ public enum TriggerEvent: Hashable, Sendable {
     /// Whether it's a change that settles (a display or a network), which the echo window holds back.
     public var isEdge: Bool {
         if case .condition = self { return true }
+        if case .applicationPresence = self { return true }
         return false
     }
 
@@ -181,6 +185,7 @@ public enum TriggerEvent: Hashable, Sendable {
             case .ethernet: return "ethernet"
             case .vpn: return "vpn"
             }
+        case .applicationPresence: return "applicationPresence"
         case .unsupported: return "unsupported"
         }
     }
@@ -375,6 +380,20 @@ extension TriggerEvent {
                 return
             }
             self = .condition(condition, edge: edge)
+        case "applicationPresence":
+            guard let obj = json.objectValue,
+                  Set(obj.keys) == Set(["kind", "bundleIdentifier", "edge"]),
+                  obj["kind"] == .string("applicationPresence"),
+                  let bundleValue = obj["bundleIdentifier"]?.stringValue,
+                  TriggerApplicationIdentifier(bundleValue) != nil,
+                  let edgeValue = obj["edge"]?.stringValue,
+                  let edge = TriggerEdge(rawValue: edgeValue),
+                  (edge == .starts || edge == .ends)
+            else {
+                self = .unsupported(json)
+                return
+            }
+            self = .applicationPresence(bundleIdentifier: bundleValue, edge: edge)
         default:
             self = .unsupported(json)
         }
@@ -395,6 +414,8 @@ extension TriggerEvent {
         case .screensSleep: return .object(["kind": .string("screensSleep")])
         case .condition(let condition, let edge):
             return .object(["kind": .string("condition"), "condition": condition.json, "edge": .string(edge.rawValue)])
+        case .applicationPresence(let bundleIdentifier, let edge):
+            return .object(["kind": .string("applicationPresence"), "bundleIdentifier": .string(bundleIdentifier), "edge": .string(edge.rawValue)])
         case .unsupported(let raw):
             return raw
         }
