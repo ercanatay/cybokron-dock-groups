@@ -35,7 +35,48 @@ internal enum LayoutFileCreateNew {
 
     /// Creates `url` from an already-validated `document` with atomic no-clobber publication.
     /// The parent directory must exist and be trusted by the caller; it is not created here.
+    ///
+    /// Writes the freshly encoded document bytes; never touches the original or replaces/deletes the target.
+    /// The final target never overwrites any existing file, directory or symlink.
+    /// Errors are constant and never carry path or payload.
     static func createNew(from document: WindowLayoutDocument, at url: URL, writeImpl: (Int32, UnsafeRawPointer, Int) -> Int = { Darwin.write($0,$1,$2) }, unlinkImpl: (Int32, String) -> Int32 = { fd, name in name.withCString { Darwin.unlinkat(fd, $0, 0) } }) throws {
+        let (parentFd, finalName) = try Self.validatedParentFd(for: url)
+        defer { _ = close(parentFd) }
+
+        let encoded: Data
+        do {
+            encoded = try WindowLayoutJSONEncoder.encode(document)
+        } catch WindowLayoutJSONEncoder.EncodingError.exceedsByteLimit {
+            throw LayoutFileCreateNewError.documentTooLarge
+        } catch {
+            throw LayoutFileCreateNewError.documentTooLarge
+        }
+
+        try Self.createBytes(encoded, parentFd: parentFd, finalName: finalName, writeImpl: writeImpl, unlinkImpl: unlinkImpl)
+    }
+
+    /// Creates a new file at `url` from the exact bytes a reader previously read and validated
+    /// (the snapshot's `data`), using the same atomic no-clobber creation path.
+    ///
+    /// Documents bytes read earlier from the snapshot; it never re-encodes and never writes to or
+    /// replaces/deletes the source. The final target never overwrites any existing file, directory or symlink.
+    ///
+    /// LIMITATIONS — read before relying:
+    /// - Writes the bytes read earlier; does not guarantee a disk snapshot or crash durability, and is
+    ///   not backup management.
+    /// - INTERNAL ONLY for creating a previously nonexistent file from a validated snapshot.
+    /// - NO replacement, recovery, backups, app/UI/AX/permission/window integration.
+    /// - Errors are constant and never carry path or payload.
+    static func createNew(from snapshot: LayoutFileReader.Snapshot, at url: URL, writeImpl: (Int32, UnsafeRawPointer, Int) -> Int = { Darwin.write($0,$1,$2) }, unlinkImpl: (Int32, String) -> Int32 = { fd, name in name.withCString { Darwin.unlinkat(fd, $0, 0) } }) throws {
+        let (parentFd, finalName) = try Self.validatedParentFd(for: url)
+        defer { _ = close(parentFd) }
+
+        try Self.createBytes(snapshot.data, parentFd: parentFd, finalName: finalName, writeImpl: writeImpl, unlinkImpl: unlinkImpl)
+    }
+
+    // MARK: - Private creation path
+
+    private static func validatedParentFd(for url: URL) throws -> (parentFd: Int32, finalName: String) {
         // 1. URL validation (constant errors, no path leakage)
         guard url.isFileURL else {
             throw LayoutFileCreateNewError.invalidURL
@@ -51,7 +92,10 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.invalidURL
         }
 
-        // 2. Parent directory must exist and be a directory (caller-supplied, trusted; not protected from traversal)
+        // 2. Final component name (validated after cap check, as per original precedence; see createBytes)
+        let finalName = url.lastPathComponent
+
+        // Parent directory must exist and be a directory (caller-supplied, trusted; not protected from traversal)
         let parentURL = url.deletingLastPathComponent()
         guard parentURL.isFileURL else {
             throw LayoutFileCreateNewError.invalidParent
@@ -61,49 +105,37 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.invalidParent
         }
 
-        // Open parent directory with O_DIRECTORY | O_NOFOLLOW to reduce symlink-traversal risk of parent itself
         let parentFd = open(parentPath, O_RDONLY | O_CLOEXEC | O_DIRECTORY | O_NOFOLLOW)
         guard parentFd >= 0 else {
             throw LayoutFileCreateNewError.invalidParent
         }
-        defer {
-            // Parent fd is only used for openat/linkat/unlinkat; close at end.
-            _ = close(parentFd)
-        }
 
-        // Verify parent is a directory via fstat (defense in depth)
         var parentStat = stat()
         guard fstat(parentFd, &parentStat) == 0 else {
+            _ = close(parentFd)
             throw LayoutFileCreateNewError.invalidParent
         }
         guard (Int32(parentStat.st_mode) & Int32(S_IFMT)) == Int32(S_IFDIR) else {
+            _ = close(parentFd)
             throw LayoutFileCreateNewError.invalidParent
         }
 
-        // 3. Encode and enforce 2 MiB cap BEFORE any filesystem modification (even temp creation)
-        let encoded: Data
-        do {
-            encoded = try WindowLayoutJSONEncoder.encode(document)
-        } catch WindowLayoutJSONEncoder.EncodingError.exceedsByteLimit {
-            throw LayoutFileCreateNewError.documentTooLarge
-        } catch {
-            // Any unforeseen encoding failure treated as too large / invalid
-            throw LayoutFileCreateNewError.documentTooLarge
-        }
-        guard encoded.count <= Self.maxBytes else {
+        return (parentFd, finalName)
+    }
+
+    private static func createBytes(_ data: Data, parentFd: Int32, finalName: String, writeImpl: (Int32, UnsafeRawPointer, Int) -> Int, unlinkImpl: (Int32, String) -> Int32) throws {
+        // 1. Enforce 2 MiB cap BEFORE any filesystem modification (even temp creation); snapshot recheck is intentional.
+        guard data.count <= maxBytes else {
             throw LayoutFileCreateNewError.documentTooLarge
         }
 
-        // 4. Final component name
-        let finalName = url.lastPathComponent
-        guard !finalName.isEmpty else {
-            throw LayoutFileCreateNewError.invalidURL
-        }
+        // 2. Final component name (validated after cap check, as per original precedence)
+        guard !finalName.isEmpty else { throw LayoutFileCreateNewError.invalidURL }
         if finalName == "." || finalName == ".." || finalName.contains("/") || finalName.utf8.contains(UInt8(0)) {
             throw LayoutFileCreateNewError.invalidURL
         }
 
-        // 5. Random private temporary file in the opened parent directory
+        // 3. Random private temporary file in the opened parent directory
         let tempName = ".tmp.\(UUID().uuidString)"
         let tempFd = openat(parentFd, tempName, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC | O_NOFOLLOW, 0o600)
         guard tempFd >= 0 else {
@@ -111,35 +143,33 @@ internal enum LayoutFileCreateNew {
         }
 
         // Write loop executed entirely inside withUnsafeBytes; base address used only inside closure.
-        var written = 0
-        let totalLength = encoded.count
         var writeFailed = false
-        encoded.withUnsafeBytes { raw in
-                guard let base = raw.baseAddress else {
+        var written = 0
+        let totalLength = data.count
+        data.withUnsafeBytes { raw in
+            guard let base = raw.baseAddress else {
+                writeFailed = true
+                return
+            }
+            while written < totalLength {
+                let remaining = totalLength - written
+                let n = writeImpl(tempFd, base.advanced(by: written), remaining)
+                if n < 0 {
+                    if errno == EINTR { continue }
                     writeFailed = true
                     return
                 }
-                while written < totalLength {
-                    let remaining = totalLength - written
-                    let n = writeImpl(tempFd, base.advanced(by: written), remaining)
-                    if n < 0 {
-                        if errno == EINTR {
-                            continue
-                        }
-                        writeFailed = true
-                        return
-                    }
-                    if n == 0 {
-                        writeFailed = true
-                        return
-                    }
-                    if n > remaining {
-                        writeFailed = true
-                        return
-                    }
-                    written += n
+                if n == 0 {
+                    writeFailed = true
+                    return
                 }
+                if n > remaining {
+                    writeFailed = true
+                    return
+                }
+                written += n
             }
+        }
 
         if writeFailed {
             _ = close(tempFd)
@@ -149,7 +179,6 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.tempWriteFailed
         }
 
-        // 6. fsync before link
         if fsync(tempFd) != 0 {
             _ = close(tempFd)
             if unlinkImpl(parentFd, tempName) < 0 {
@@ -165,7 +194,6 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.tempCloseFailed
         }
 
-        // 7. Atomic linkat temporary -> final (same parent directory, hard link, no overwrite)
         let linkRes = linkat(parentFd, tempName, parentFd, finalName, 0)
         if linkRes < 0 {
             let capturedErrno = errno
@@ -178,11 +206,8 @@ internal enum LayoutFileCreateNew {
             throw LayoutFileCreateNewError.linkFailed
         }
 
-        // 8. Publication succeeded; unlink only the unique temporary name (leaves final intact as hard-link target)
         if unlinkImpl(parentFd, tempName) < 0 {
             throw LayoutFileCreateNewError.cleanupFailedAfterPublish
         }
-
-        // Done: file created atomically at url with mode at most 0600 (from openat), subject to umask, no overwrite, no truncation.
     }
 }

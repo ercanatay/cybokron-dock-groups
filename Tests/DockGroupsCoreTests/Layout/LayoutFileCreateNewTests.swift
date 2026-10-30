@@ -265,4 +265,98 @@ struct LayoutFileCreateNewTests {
         }
     }
 
+    @Test func createsNewFileWithExactValidatedSnapshotBytes() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let original = dir.appendingPathComponent("original.json")
+        let bytes = Data("{\n  \"formatVersion\" : 1,\n  \"groups\" : []\n}\n".utf8)
+        try bytes.write(to: original)
+        let read = try LayoutFileReader.readSnapshot(from: original)
+        let snapshot = try #require(read)
+        let target = dir.appendingPathComponent("copy.json")
+        try LayoutFileCreateNew.createNew(from: snapshot, at: target)
+        #expect(try Data(contentsOf: target) == bytes)
+        #expect(try Data(contentsOf: original) == bytes)
+        #expect(try LayoutFileReader.readLayout(from: target) == snapshot.document)
+    }
+
+    @Test func snapshotCreationDoesNotReplaceExistingFile() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let original = dir.appendingPathComponent("original.json")
+        let bytes = Data("{\"formatVersion\":1,\"groups\":[]}".utf8)
+        try bytes.write(to: original)
+        let read = try LayoutFileReader.readSnapshot(from: original)
+        let snapshot = try #require(read)
+        let target = dir.appendingPathComponent("occupied.json")
+        let sentinel = Data("existing".utf8)
+        try sentinel.write(to: target)
+        #expect(throws: LayoutFileCreateNewError.targetExists) {
+            try LayoutFileCreateNew.createNew(from: snapshot, at: target)
+        }
+        #expect(try Data(contentsOf: target) == sentinel)
+        #expect(try Data(contentsOf: original) == bytes)
+        let names = try FileManager.default.contentsOfDirectory(atPath: dir.path)
+        #expect(!names.contains { $0.hasPrefix(".tmp.") })
+    }
+
+    @Test func snapshotCreationHandlesShortAndInterruptedWrites() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let original = dir.appendingPathComponent("original.json")
+        let bytes = Data("{\"formatVersion\":1,\"groups\":[]}".utf8)
+        try bytes.write(to: original)
+        let read = try LayoutFileReader.readSnapshot(from: original)
+        let snapshot = try #require(read)
+        let target = dir.appendingPathComponent("copy.json")
+        var calls = 0
+        let shortWrite: (Int32, UnsafeRawPointer, Int) -> Int = { fd, pointer, count in
+            calls += 1
+            if calls == 1 { errno = EINTR; return -1 }
+            return write(fd, pointer, min(count, 2))
+        }
+        try LayoutFileCreateNew.createNew(from: snapshot, at: target, writeImpl: shortWrite)
+        #expect(calls > 2)
+        #expect(try Data(contentsOf: target) == bytes)
+        #expect(try Data(contentsOf: original) == bytes)
+    }
+
+    @Test func snapshotCreationDoesNotReplaceSymlink() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let original = dir.appendingPathComponent("original.json")
+        let bytes = Data("{\"formatVersion\":1,\"groups\":[]}".utf8)
+        try bytes.write(to: original)
+        let read = try LayoutFileReader.readSnapshot(from: original)
+        let snapshot = try #require(read)
+        let victim = dir.appendingPathComponent("victim")
+        let sentinel = Data("keep".utf8)
+        try sentinel.write(to: victim)
+        let target = dir.appendingPathComponent("link.json")
+        try FileManager.default.createSymbolicLink(at: target, withDestinationURL: victim)
+        #expect(throws: LayoutFileCreateNewError.targetExists) {
+            try LayoutFileCreateNew.createNew(from: snapshot, at: target)
+        }
+        #expect(try Data(contentsOf: victim) == sentinel)
+        #expect(try FileManager.default.destinationOfSymbolicLink(atPath: target.path) == victim.path)
+    }
+
+    @Test func snapshotCleanupFailureAfterPublicationReportsPublishedBytes() throws {
+        let dir = try isolatedDir()
+        defer { remove(dir) }
+        let original = dir.appendingPathComponent("original.json")
+        let bytes = Data("{ \"formatVersion\": 1, \"groups\": [] }".utf8)
+        try bytes.write(to: original)
+        let read = try LayoutFileReader.readSnapshot(from: original)
+        let snapshot = try #require(read)
+        let target = dir.appendingPathComponent("copy.json")
+        let failCleanup: (Int32, String) -> Int32 = { _, _ in errno = EACCES; return -1 }
+        #expect(throws: LayoutFileCreateNewError.cleanupFailedAfterPublish) {
+            try LayoutFileCreateNew.createNew(from: snapshot, at: target, unlinkImpl: failCleanup)
+        }
+        #expect(try Data(contentsOf: target) == bytes)
+        let names = try FileManager.default.contentsOfDirectory(atPath: dir.path)
+        #expect(names.filter { $0.hasPrefix(".tmp.") }.count == 1)
+    }
+
 }
