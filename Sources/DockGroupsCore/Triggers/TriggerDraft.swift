@@ -57,6 +57,7 @@ public struct TriggerDraft: Equatable, Sendable {
     public enum When: Hashable, Sendable {
         case moment(Kind)
         case change(Change)
+        case application(TriggerEdge)
 
         /// Every event the editor offers, in the pop-up's order: the moments, the displays' changes,
         /// the network's changes.
@@ -83,6 +84,7 @@ public struct TriggerDraft: Equatable, Sendable {
     /// The Wi-Fi network a Wi-Fi trigger waits for, as typed or as Use Current Network filled it
     /// in: matched exactly, so it's kept as it is (`isWiFiNameValid`).
     public var wifiName: String
+    public var applicationBundleIdentifier: String = ""
     public private(set) var action: TriggerAction
     public private(set) var runMode: TriggerRunMode
     public var oncePerDay: Bool
@@ -161,6 +163,7 @@ public struct TriggerDraft: Equatable, Sendable {
         case .moment(.screensWake): return .screensWake
         case .moment(.screensSleep): return .screensSleep
         case .change(let change): return .condition(condition(of: change), edge: change.edge)
+        case .application(let edge): return .applicationPresence(bundleIdentifier: applicationBundleIdentifier, edge: edge)
         }
     }
 

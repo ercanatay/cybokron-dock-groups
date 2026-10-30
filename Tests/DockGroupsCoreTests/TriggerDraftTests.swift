@@ -141,4 +141,46 @@ struct TriggerDraftTests {
         }
         #expect(Set(TriggerDraft.Kind.allCases) == Set(events.keys).union([.time]))
     }
+
+    @Test func applicationEventsUseExactIdentifier() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = "My.Custom-App-123"
+        draft.setWhen(.application(.starts))
+        #expect(draft.event == .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .starts))
+        draft.setWhen(.application(.ends))
+        #expect(draft.event == .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .ends))
+    }
+
+    @Test func invalidOrEmptyApplicationIdentifierMakesDraftInvalid() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = ""
+        draft.setWhen(.application(.starts))
+        #expect(!draft.isValid)
+        draft.applicationBundleIdentifier = "bad id!"
+        #expect(!draft.isValid)
+    }
+
+    @Test func applicationActionsNormalizeCorrectly() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = "com.example.App"
+        draft.setWhen(.application(.starts))
+        draft.setAction(.finish)
+        #expect(draft.action == .finish)
+        draft.setAction(.start)
+        #expect(draft.action == .start)
+        draft.setAction(.showPopup)
+        #expect(draft.action == .showPopup)
+    }
+
+    @Test func applicationCasesAreAbsentFromOffered() {
+        #expect(!TriggerDraft.When.offered.contains(where: {
+            if case .application = $0 { return true }
+            return false
+        }))
+    }
+
+    @Test func existingApplicationEventStaysUneditable() {
+        let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "com.apple.Safari", edge: .starts), action: .start)
+        #expect(TriggerDraft(editing: trigger, calendar: Self.calendar) == nil)
+    }
 }

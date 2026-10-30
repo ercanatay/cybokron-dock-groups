@@ -486,6 +486,7 @@ struct TriggerEditorSheet: View {
         case .change(.wifiLeaves): return Texts.whenWiFiLeaves
         case .change(.ethernetConnects): return Texts.whenEthernetConnects
         case .change(.ethernetDisconnects): return Texts.whenEthernetDisconnects
+        case .application: return ""
         }
     }
 
