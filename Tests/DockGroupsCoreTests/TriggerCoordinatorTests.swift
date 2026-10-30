@@ -347,6 +347,96 @@ struct TriggerCoordinatorTests {
         #expect(rig.handler.calls.isEmpty)
     }
 
+    @Test func changedEventCancelsPendingFiring() async {
+        let trigger = GroupTrigger.on(.appOpens, group: work, action: .showPopup)
+        let rig = TriggerRig([trigger])
+        rig.coordinator.receive(.launched(.normal))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        let previous = rig.rules
+        rig.rules[0].event = .screensWake
+        rig.coordinator.rulesChanged(previous: previous)
+        rig.sleeper.wakeAll()
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func disabledRuleCannotRunAfterNoticeIsAnswered() async {
+        let trigger = GroupTrigger.on(.login, group: work, runMode: .notice)
+        let rig = TriggerRig([trigger])
+        rig.presenter.holds = true
+        await rig.send(.launched(.login(session: session)))
+        #expect(rig.presenter.isShowing)
+        let previous = rig.rules
+        rig.rules[0].isEnabled = false
+        rig.coordinator.rulesChanged(previous: previous)
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func changedGroupCancelsQueuedFiring() async {
+        let trigger = GroupTrigger.on(.appOpens, group: work, action: .showPopup)
+        let rig = TriggerRig([trigger], handler: false)
+        rig.coordinator.receive(.launched(.normal))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.sleeper.wakeAll()
+        await settle { !rig.coordinator.waitingFirings.isEmpty }
+        let previous = rig.rules
+        rig.rules[0].groupID = design.id
+        rig.coordinator.rulesChanged(previous: previous)
+        #expect(rig.coordinator.waitingFirings.isEmpty)
+        rig.coordinator.handler = rig.handler
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func changedRuleWithoutNotificationIsRecheckedAfterNotice() async {
+        let trigger = GroupTrigger.on(.login, group: work, runMode: .notice)
+        let rig = TriggerRig([trigger])
+        rig.presenter.holds = true
+        await rig.send(.launched(.login(session: session)))
+        #expect(rig.presenter.isShowing)
+        rig.rules[0].event = .appOpens
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func disableThenReenableDoesNotReviveNotice() async {
+        let trigger = GroupTrigger.on(.login, group: work, runMode: .notice)
+        let rig = TriggerRig([trigger])
+        rig.presenter.holds = true
+        await rig.send(.launched(.login(session: session)))
+        #expect(rig.presenter.isShowing)
+        let beforeDisable = rig.rules
+        rig.rules[0].isEnabled = false
+        rig.coordinator.rulesChanged(previous: beforeDisable)
+        let beforeEnable = rig.rules
+        rig.rules[0].isEnabled = true
+        rig.coordinator.rulesChanged(previous: beforeEnable)
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func ruleInvalidationAfterNoticeAnswerCannotBeUndone() async {
+        let trigger = GroupTrigger.on(.login, group: work, runMode: .notice)
+        let rig = TriggerRig([trigger])
+        rig.presenter.holds = true
+        await rig.send(.launched(.login(session: session)))
+        #expect(rig.presenter.isShowing)
+        // Resume the notice, but change the rule before the main actor resumes its caller.
+        rig.presenter.release(.run)
+        let beforeDisable = rig.rules
+        rig.rules[0].isEnabled = false
+        rig.coordinator.rulesChanged(previous: beforeDisable)
+        let beforeEnable = rig.rules
+        rig.rules[0].isEnabled = true
+        rig.coordinator.rulesChanged(previous: beforeEnable)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
     // MARK: - Launches and the clock
 
     @Test func aQuietLaunchMarkerMakesTheNextLaunchQuiet() async {
