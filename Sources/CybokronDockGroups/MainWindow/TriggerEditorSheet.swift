@@ -122,6 +122,9 @@ struct TriggerEditorSheet: View {
         case .ethernetConnects?, .ethernetDisconnects?, nil:
             EmptyView()
         }
+        if case .application = draft.when {
+            appRow
+        }
         if draft.kind == .time {
             GridRow {
                 Text(Texts.time)
@@ -197,6 +200,39 @@ struct TriggerEditorSheet: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    private var appRow: some View {
+        GridRow {
+            Text("Application")
+            HStack {
+                Text(draft.applicationBundleIdentifier.isEmpty ? "No app selected" : draft.applicationBundleIdentifier)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .foregroundStyle(draft.applicationBundleIdentifier.isEmpty ? .secondary : .primary)
+                Button("Choose") {
+                    AppPicker.chooseApps(
+                        title: "Choose Application",
+                        message: "Select an application for the trigger.",
+                        prompt: "Choose",
+                        allowsMultipleSelection: false,
+                        attachedTo: NSApp.keyWindow
+                    ) { urls in
+                        guard let url = urls.first else { return }
+                        do {
+                            let app = try AppReference(applicationURL: url)
+                            if draft.selectApplication(app) {
+                                problem = nil
+                            } else {
+                                problem = "Invalid or unidentified app selected."
+                            }
+                        } catch {
+                            problem = "Invalid or unidentified app selected."
+                        }
+                    }
                 }
             }
         }
