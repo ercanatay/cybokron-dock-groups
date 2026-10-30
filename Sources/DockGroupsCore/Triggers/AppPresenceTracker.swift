@@ -1,3 +1,23 @@
+/// Empty result signals unknown if any identifier is nil; global fail-closed policy is provisional and can disable all triggers.
+public enum ApplicationSnapshotCounter {
+    public static func counts(keys: Set<String>, identifiers: [String?]) -> [String: Int] {
+        guard identifiers.allSatisfy({ $0 != nil }) else { return [:] }
+        guard !keys.isEmpty else { return [:] }
+        var result: [String: Int] = [:]
+        for key in keys {
+            result[key.lowercased()] = 0
+        }
+        for id in identifiers {
+            guard let id = id else { return [:] }
+            let lower = id.lowercased()
+            if result.keys.contains(lower) {
+                result[lower, default: 0] += 1
+            }
+        }
+        return result
+    }
+}
+
 internal struct AppPresenceTracker {
     private(set) var generation: UInt64
     private var baseline: Int?

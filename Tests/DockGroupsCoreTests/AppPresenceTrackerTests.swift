@@ -100,4 +100,27 @@ struct AppPresenceTrackerTests {
         #expect(tracker.observe(count: 1, generation: generation) == nil)
         #expect(tracker.observe(count: 0, generation: generation) == nil)
     }
+
+    @Test func snapshotCountsNilAnywhereReturnsEmpty() {
+        #expect(ApplicationSnapshotCounter.counts(keys: ["a"], identifiers: ["b", nil, "c"]) == [:])
+    }
+
+    @Test func snapshotCountsEmptyKeysReturnsEmpty() {
+        #expect(ApplicationSnapshotCounter.counts(keys: [], identifiers: ["a", "b"]) == [:])
+    }
+
+    @Test func snapshotCountsCaseInsensitiveDuplicates() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["A"], identifiers: ["a", "A", "a", "A"])
+        #expect(result == ["a": 4])
+    }
+
+    @Test func snapshotCountsUnrelatedIdReturnsZero() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["x"], identifiers: ["y", "z"])
+        #expect(result == ["x": 0])
+    }
+
+    @Test func snapshotCountsNoSelectedIdsReturnsZero() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["x", "y"], identifiers: [])
+        #expect(result == ["x": 0, "y": 0])
+    }
 }
