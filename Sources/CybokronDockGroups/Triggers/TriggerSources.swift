@@ -155,3 +155,53 @@ enum LaunchSignals {
         }
     }
 }
+
+@MainActor
+final class ApplicationPresenceSource {
+    private let callback: (UInt64, UInt64, [String: Int]) -> Void
+    private var observation: NSKeyValueObservation?
+    private var token: UUID?
+    private var keys: Set<String> = []
+    private var generation: UInt64 = 0
+    private var sequence: UInt64 = 0
+
+    init(callback: @escaping (UInt64, UInt64, [String: Int]) -> Void) {
+        self.callback = callback
+    }
+
+    func start(keys: Set<String>, generation: UInt64) {
+        stop()
+        self.keys = keys
+        self.generation = generation
+        let token = UUID()
+        self.token = token
+        observation = NSWorkspace.shared.observe(\.runningApplications, options: [.initial, .new]) { [weak self] workspace, _ in
+            DispatchQueue.main.async { [weak self] in
+                self?.deliver(workspace: workspace, expectedToken: token)
+            }
+        }
+    }
+
+    private func deliver(workspace: NSWorkspace, expectedToken: UUID) {
+        guard let token = token, token == expectedToken else { return }
+        if sequence == .max {
+            stop()
+            return
+        }
+        sequence += 1
+        let ids = workspace.runningApplications.map(\.bundleIdentifier)
+        let counts = ApplicationSnapshotCounter.counts(keys: keys, identifiers: ids)
+        callback(generation, sequence, counts)
+    }
+
+    // KVO can coalesce; callback and snapshot are not atomic.
+    // A global nil policy blocks all observations.
+
+    func stop() {
+        observation?.invalidate()
+        observation = nil
+        token = nil
+        keys = []
+        sequence = 0
+    }
+}
