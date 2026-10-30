@@ -145,7 +145,7 @@ public enum TriggerEvent: Hashable, Sendable {
         case .schedule(let schedule): return schedule.isValid
         case .condition(let condition, _): return condition.isValid
         case .login, .appOpens, .screensWake, .screensSleep: return true
-        case .applicationPresence: return false
+        case .applicationPresence(let bundleIdentifier, _): return TriggerApplicationIdentifier(bundleIdentifier) != nil
         case .unsupported: return false
         }
     }

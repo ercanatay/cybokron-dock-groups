@@ -437,6 +437,81 @@ struct TriggerCoordinatorTests {
         #expect(rig.handler.calls.isEmpty)
     }
 
+    @Test func appPresenceTrackerEdgeReachesCoordinator() async {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([trigger])
+        var tracker = AppPresenceRuleTracker()
+        let identifier = TriggerApplicationIdentifier("com.example.App")!
+        #expect(tracker.configure([.init(id: trigger.id, identifier: identifier, edge: .starts)]) == true)
+        #expect(tracker.beginGeneration(1) == true)
+        #expect(tracker.observe(generation: 1, sequence: 1, counts: [identifier.matchKey: 0]) == [])
+        let edges = tracker.observe(generation: 1, sequence: 2, counts: [identifier.matchKey: 1])
+        for id in edges {
+            rig.coordinator.receive(.applicationEdge(triggerID: id, edge: .starts))
+        }
+        await rig.settleDown()
+        #expect(rig.handler.calls == ["popup:Work"])
+    }
+
+    @Test func appPresencePendingAtSleepDoesNotReplayOnWake() async {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([trigger])
+        rig.coordinator.receive(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.coordinator.receive(.screens(asleep: true))
+        rig.sleeper.wakeAll()
+        rig.coordinator.receive(.screens(asleep: false))
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func appPresenceNoticeInvalidatedAtSleepCannotRunAfterWake() async {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, runMode: .notice)
+        let rig = TriggerRig([trigger])
+        rig.presenter.holds = true
+        await rig.send(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        #expect(rig.presenter.isShowing)
+        rig.coordinator.receive(.screens(asleep: true))
+        rig.presenter.release(.run)
+        rig.coordinator.receive(.screens(asleep: false))
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func appPresencePendingAtSessionChangeDoesNotReplay() async {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([trigger])
+        rig.coordinator.receive(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.coordinator.receive(.session(active: false))
+        rig.sleeper.wakeAll()
+        rig.coordinator.receive(.session(active: true))
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func appPresenceAnsweredNoticeCannotResumeAfterSleepWake() async {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, runMode: .notice)
+        let rig = TriggerRig([trigger])
+        rig.presenter.holds = true
+        await rig.send(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        #expect(rig.presenter.isShowing)
+        rig.presenter.release(.run)
+        rig.coordinator.receive(.screens(asleep: true))
+        rig.coordinator.receive(.screens(asleep: false))
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func appPresenceRespectsHourlyBudget() async {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
+        let recent = TriggerTime.date(2026, 10, 28, 7, 59)
+        let rig = TriggerRig([trigger], state: TriggerState(recentRuns: Array(repeating: recent, count: 12)))
+        await rig.send(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        #expect(rig.handler.calls.isEmpty)
+        #expect(rig.outcome(trigger) == .skipped(.budget))
+    }
+
     // MARK: - Launches and the clock
 
     @Test func aQuietLaunchMarkerMakesTheNextLaunchQuiet() async {

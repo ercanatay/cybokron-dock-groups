@@ -22,7 +22,7 @@ struct TriggerApplicationEventCodingTests {
         let json = #"{"kind":"applicationPresence","bundleIdentifier":"com.example.app","edge":"starts"}"#
         let event = try decodeEvent(json)
         #expect(event == .applicationPresence(bundleIdentifier: "com.example.app", edge: .starts))
-        #expect(!event.isValid)
+        #expect(event.isValid)
         #expect(event.isEdge)
         #expect(event.kindName == "applicationPresence")
         #expect(event.allowedActions == TriggerAction.allCases)
@@ -76,12 +76,12 @@ struct TriggerApplicationEventCodingTests {
         #expect(event.isUnsupported)
     }
 
-    @Test func noRunningOrEditingForValidFutureEvent() throws {
+    @Test func validEventIsRunnableButNotYetEditable() throws {
         let trigger = GroupTrigger(groupID: Self.group, event: .applicationPresence(bundleIdentifier: "com.apple.Safari", edge: .starts), action: .start)
-        #expect(!trigger.canRun)
-        #expect(!trigger.isRunnable)
+        #expect(trigger.canRun)
+        #expect(trigger.isRunnable)
         #expect(trigger.isEnabled)
-        #expect(trigger.event.isValid == false)
+        #expect(trigger.event.isValid == true)
         #expect(trigger.event.allowedActions.contains(.finish))
         #expect(TriggerDraft(editing: trigger, calendar: Calendar(identifier: .gregorian)) == nil)
     }
@@ -94,14 +94,14 @@ struct TriggerApplicationEventCodingTests {
         #expect(event.allowedActions == [])
     }
 
-    @Test func fullRuleRoundTripsWhileRemainingUnrunnable() throws {
+    @Test func fullRuleRoundTrips() throws {
         let original = GroupTrigger(id: Self.id, groupID: Self.group,
             event: .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .ends),
             action: .start, isEnabled: true)
         let data = try JSONEncoder().encode(original)
         let restored = try JSONDecoder().decode(GroupTrigger.self, from: data)
         #expect(restored == original)
-        #expect(!restored.canRun)
+        #expect(restored.canRun)
     }
 
     @Test func fullRulePreservesUnknownEventFieldsAcrossRoundTrip() throws {

@@ -149,8 +149,9 @@ public enum TriggerEvaluator {
                 }
             case .unsupported:
                 break
-            case .applicationPresence:
-                break
+            case .applicationPresence(_, let edge):
+                guard case .applicationEdge(let signalID, let signalEdge) = signal, trigger.id == signalID, edge == signalEdge, live, environment.canAct else { break }
+                fire(trigger.action, at: now, edge: true)
             }
             state.entries[trigger.id] = entry
         }
@@ -214,7 +215,7 @@ public enum TriggerEvaluator {
     private static func evaluatesSchedules(_ signal: TriggerSignal) -> Bool {
         switch signal {
         case .clock, .launched, .screens(asleep: false), .session(active: true): return true
-        case .screens, .session, .displays, .network: return false
+        case .screens, .session, .displays, .network, .applicationEdge: return false
         }
     }
 

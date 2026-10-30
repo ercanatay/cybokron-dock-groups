@@ -239,6 +239,27 @@ public final class TriggerCoordinator {
         } else {
             update(evaluation.state)
         }
+        // If the screens go to sleep or the session stops being active, drop any waiting
+        // application-presence firings and invalidate an awaiting notice.
+        let shouldInvalidate: Bool
+        switch signal {
+        case .screens(asleep: true), .session(active: false): shouldInvalidate = true
+        default: shouldInvalidate = false
+        }
+        if shouldInvalidate {
+            let isAppPresenceEvent: (UUID) -> Bool = { (id: UUID) -> Bool in
+                guard let trigger = self.rules().first(where: { $0.id == id }) else { return false }
+                if case .applicationPresence = trigger.event { return true }
+                return false
+            }
+            if isPresentingNotice, let currentFiring = current, isAppPresenceEvent(currentFiring.triggerID) {
+                currentInvalidated = true
+                noticePresenter?.dismiss()
+            }
+            // Remove only pending/queued firings whose current event is applicationPresence.
+            pending.removeAll { isAppPresenceEvent($0.triggerID) }
+            queue.removeAll { isAppPresenceEvent($0.triggerID) }
+        }
         if !evaluation.firings.isEmpty {
             for firing in evaluation.firings {
                 logger.notice("Trigger \(firing.triggerID, privacy: .public) asks to \(firing.action.rawValue, privacy: .public) group \(firing.groupID, privacy: .public)")

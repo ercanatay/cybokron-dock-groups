@@ -121,6 +121,8 @@ public enum TriggerSignal: Hashable, Sendable {
     case displays([DisplayIdentity]?)
     /// The network, once it settled.
     case network(NetworkReading)
+    /// An application's presence changed (starts/ends), matched by trigger identifier and edge.
+    case applicationEdge(triggerID: UUID, edge: TriggerEdge)
 }
 
 extension TriggerCondition {
