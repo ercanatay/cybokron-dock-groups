@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Eine Anwendung wird geschlossen";
 "core.trigger.summary.application.opens" = "Wenn %@ geöffnet wird";
 "core.trigger.summary.application.closes" = "Wenn %@ geschlossen wird";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Wartend: macOS kann nicht jede laufende App identifizieren.";

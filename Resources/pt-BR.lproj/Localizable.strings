@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Um aplicativo é fechado";
 "core.trigger.summary.application.opens" = "Quando %@ abre";
 "core.trigger.summary.application.closes" = "Quando %@ fecha";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Aguardando: o macOS não consegue identificar todos os apps em execução.";

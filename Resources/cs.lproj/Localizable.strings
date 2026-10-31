@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Aplikace se zavírá";
 "core.trigger.summary.application.opens" = "Když se %@ otevře";
 "core.trigger.summary.application.closes" = "Když se %@ zavře";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Čekání: macOS nedokáže identifikovat každou spuštěnou aplikaci.";

@@ -1877,6 +1877,7 @@ extension L10n {
             static var paused: String { tr("groupWindow.triggers.paused", "Triggers are paused: none of them runs now.") }
             static var archived: String { tr("groupWindow.triggers.archived", "Doesn't run while the group is archived.") }
             static var waitingForLocation: String { tr("groupWindow.triggers.waitingForLocation", "Waiting for Location access.") }
+            static var waitingForApplicationIdentity: String { tr("groupWindow.triggers.waitingForApplicationIdentity", "Waiting: macOS cannot identify every running app.") }
             static var vpnNotWatched: String {
                 tr("groupWindow.triggers.vpnNotWatched", "Doesn't run in this version: macOS doesn't tell reliably when a VPN connects.")
             }

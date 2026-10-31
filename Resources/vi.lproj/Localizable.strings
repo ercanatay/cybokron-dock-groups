@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Một ứng dụng được đóng";
 "core.trigger.summary.application.opens" = "Khi %@ mở";
 "core.trigger.summary.application.closes" = "Khi %@ đóng";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Đang chờ: macOS không thể nhận dạng mọi ứng dụng đang chạy.";

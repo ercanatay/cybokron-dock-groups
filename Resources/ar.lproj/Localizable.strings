@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "عند إغلاق تطبيق";
 "core.trigger.summary.application.opens" = "عند فتح %@";
 "core.trigger.summary.application.closes" = "عند إغلاق %@";
+"groupWindow.triggers.waitingForApplicationIdentity" = "في انتظار: لا يستطيع macOS التعرّف على كل التطبيقات قيد التشغيل.";

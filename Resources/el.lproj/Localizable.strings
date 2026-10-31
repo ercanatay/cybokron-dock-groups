@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Μια εφαρμογή κλείνει";
 "core.trigger.summary.application.opens" = "Όταν ανοίγει το %@";
 "core.trigger.summary.application.closes" = "Όταν κλείνει το %@";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Αναμονή: Το macOS δεν μπορεί να αναγνωρίσει κάθε εκτελούμενη εφαρμογή.";

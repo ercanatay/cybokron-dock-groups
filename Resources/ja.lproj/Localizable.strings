@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "アプリケーションが閉じたとき";
 "core.trigger.summary.application.opens" = "%@ が開いたとき";
 "core.trigger.summary.application.closes" = "%@ が閉じたとき";
+"groupWindow.triggers.waitingForApplicationIdentity" = "待機中: macOS は実行中のすべてのアプリを識別できません。";

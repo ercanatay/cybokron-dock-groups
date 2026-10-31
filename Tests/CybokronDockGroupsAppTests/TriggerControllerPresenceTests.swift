@@ -70,6 +70,17 @@ struct TriggerControllerPresenceTests {
         #expect(controller.isApplicationPresenceObserving == true)
         let firstGen = controller.applicationObservationGeneration
 
+        // An unknown snapshot is visible only on runnable application rules.
+        controller.handleApplicationSnapshot(generation: firstGen, sequence: 100, counts: [:])
+        #expect(controller.statusLine(of: trigger) == "Waiting: macOS cannot identify every running app.")
+        var disabled = trigger
+        disabled.isEnabled = false
+        #expect(controller.statusLine(of: disabled) != "Waiting: macOS cannot identify every running app.")
+        controller.handleApplicationSnapshot(generation: firstGen - 1, sequence: 101, counts: ["com.cybokronfixture.normal": 0])
+        #expect(controller.statusLine(of: trigger) == "Waiting: macOS cannot identify every running app.")
+        controller.handleApplicationSnapshot(generation: firstGen, sequence: 101, counts: ["com.cybokronfixture.normal": 0])
+        #expect(controller.statusLine(of: trigger) != "Waiting: macOS cannot identify every running app.")
+
         // Sleep stops observations
         controller.handleWorkspaceSignal(.screens(asleep: true))
         try await Task.sleep(for: .milliseconds(50))

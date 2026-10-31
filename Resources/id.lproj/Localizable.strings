@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Sebuah aplikasi ditutup";
 "core.trigger.summary.application.opens" = "Saat %@ dibuka";
 "core.trigger.summary.application.closes" = "Saat %@ ditutup";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Menunggu: macOS tidak dapat mengidentifikasi setiap aplikasi yang sedang berjalan.";

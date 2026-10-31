@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "एक एप्लिकेशन बंद होता है";
 "core.trigger.summary.application.opens" = "जब %@ खुलता है";
 "core.trigger.summary.application.closes" = "जब %@ बंद होता है";
+"groupWindow.triggers.waitingForApplicationIdentity" = "रुकिए: macOS हर चल रहे ऐप की पहचान नहीं कर सकता।";

@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Egy alkalmazás bezárul";
 "core.trigger.summary.application.opens" = "Amikor %@ megnyílik";
 "core.trigger.summary.application.closes" = "Amikor %@ bezárul";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Várakozás: a macOS nem tudja azonosítani az összes futó alkalmazást.";

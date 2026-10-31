@@ -47,6 +47,8 @@ final class TriggerController: ObservableObject {
     private var networkSource: NetworkSource?
     private var applicationPresenceSource: ApplicationPresenceSource?
     private(set) var applicationObservationGeneration: UInt64 = 0
+    /// macOS cannot currently identify all running apps for the presence trigger.
+    @Published private var applicationPresenceUncertain = false
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
     private var launchSettle: Task<Void, Never>?
@@ -149,7 +151,7 @@ final class TriggerController: ObservableObject {
             authorization: { [weak self] in self?.locationAccess.status ?? .notDetermined }
         )
         let presenceSource = ApplicationPresenceSource { [weak self] generation, sequence, counts in
-            self?.coordinator.observeApplications(generation: generation, sequence: sequence, counts: counts)
+            self?.handleApplicationSnapshot(generation: generation, sequence: sequence, counts: counts)
         }
         self.applicationPresenceSource = presenceSource
         updateSources()
@@ -272,6 +274,9 @@ final class TriggerController: ObservableObject {
         if groups.archivedGroup(withID: trigger.groupID) != nil {
             return L10n.Triggers.GroupWindow.archived
         }
+        if case .applicationPresence = trigger.event, trigger.canRun, applicationPresenceUncertain {
+            return L10n.Triggers.GroupWindow.waitingForApplicationIdentity
+        }
         if case .condition(.vpn, _) = trigger.event {
             return L10n.Triggers.GroupWindow.vpnNotWatched
         }
@@ -355,6 +360,7 @@ final class TriggerController: ObservableObject {
     /// Stops the presence source and its observations, bumps the generation monotonically, then restarts
     /// them under the current rules if a runnable `applicationPresence` rule exists in an active group.
     private func resetApplicationPresenceSource() {
+        applicationPresenceUncertain = false
         applicationPresenceSource?.stop()
         coordinator.stopApplicationObservations()
         guard applicationObservationGeneration < UInt64.max else { return }
@@ -380,6 +386,13 @@ final class TriggerController: ObservableObject {
         return network.name
     }
 
+    /// Internal seam for tests to simulate application presence snapshots deterministically.
+    internal func handleApplicationSnapshot(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
+        guard generation == applicationObservationGeneration, applicationPresenceSource?.isObserving == true else { return }
+        applicationPresenceUncertain = counts.isEmpty
+        coordinator.observeApplications(generation: generation, sequence: sequence, counts: counts)
+    }
+
     /// Internal seam for tests to simulate workspace sleep/wake / session changes without
     /// relying on real NSWorkspace notifications.
     internal func handleWorkspaceSignal(_ signal: TriggerSignal) {
@@ -392,6 +405,7 @@ final class TriggerController: ObservableObject {
                 if canActAfter {
                     resetApplicationPresenceSource()
                 } else {
+                    applicationPresenceUncertain = false
                     applicationPresenceSource?.stop()
                     coordinator.stopApplicationObservations()
                 }

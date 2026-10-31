@@ -1113,3 +1113,4 @@
 "triggers.editor.application.closes" = "Застосунок закривається";
 "core.trigger.summary.application.opens" = "Коли відкривається %@";
 "core.trigger.summary.application.closes" = "Коли закривається %@";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Очікування: macOS не може ідентифікувати всі запущені програми.";

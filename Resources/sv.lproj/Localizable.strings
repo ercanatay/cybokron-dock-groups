@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "En applikation stängs";
 "core.trigger.summary.application.opens" = "När %@ öppnas";
 "core.trigger.summary.application.closes" = "När %@ stängs";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Väntar: macOS kan inte identifiera alla igångvarande appar.";

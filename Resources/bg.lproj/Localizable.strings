@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Приложение се затваря";
 "core.trigger.summary.application.opens" = "Когато %@ се отвори";
 "core.trigger.summary.application.closes" = "Когато %@ се затвори";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Изчакване: macOS не може да идентифицира всички работещи приложения.";

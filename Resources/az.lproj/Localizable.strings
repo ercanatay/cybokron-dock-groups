@@ -1114,3 +1114,4 @@
 "triggers.editor.application.closes" = "Tətbiq bağlanır";
 "core.trigger.summary.application.opens" = "%@ açıldıqda";
 "core.trigger.summary.application.closes" = "%@ bağlandıqda";
+"groupWindow.triggers.waitingForApplicationIdentity" = "Gözləmə: macOS işləyən bütün tətbiqləri tanıya bilmir.";
