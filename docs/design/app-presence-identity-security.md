@@ -32,6 +32,16 @@ A separate static check accepted a valid ad hoc fixture and rejected copies whos
 removed or whose sealed bundle metadata was changed. The invalid fixtures were not launched;
 this does not establish behavior for every signature, platform or process state.
 
+A local universal-binary fixture exposed an additional blocker: the hash returned by the default
+static-code lookup differed from the hash of the same executable while it was running. Explicit
+architecture attributes for `arm64` and `arm64e` matched that process in this particular run;
+other requested architectures did not. This is one OS and one fixture, not a portable algorithm
+for enumerating slices or choosing the correct one. In another run with this fixture, a deliberately
+invalid architecture name returned success and the default slice rather than failing; API success
+alone therefore did not prove that the requested architecture existed. A single default static
+hash is not sufficient as the identity of a universal application. Until validated architecture handling is
+designed, this mismatch must remain unknown and must not be treated as evidence of a close.
+
 ## Candidate: locally verified binding
 
 1. On an explicit application selection, examine the selected bundle's signature and derive a
@@ -40,12 +50,17 @@ this does not establish behavior for every signature, platform or process state.
    A valid signature alone is not a trusted publisher, and an app-supplied designated requirement
    alone must not be assumed sufficiently restrictive. Do not execute the selected bundle.
 2. For each matching running process, validate the running code against that binding before using
-   it in a presence count. A known different identity must not trigger the rule; an unavailable,
-   timed-out, ambiguous, or otherwise unverifiable reading is unknown, never evidence that the
-   selected app closed. Do not record other apps' paths, PIDs, names, or signing data in logs.
+   it in a presence count. A different identity with the same bundle identifier must not trigger
+   the rule and makes that app's observation unknown: it might be a legitimate update, so do not
+   infer a close from the mismatch. An unavailable, timed-out, ambiguous, or otherwise
+   unverifiable reading is also unknown, never evidence that the selected app closed. Do not
+   record other apps' paths, PIDs, names, or signing data in logs.
 3. Handle process exit, PID reuse, app replacement, cancellation, timeouts, and callbacks racing
    with rule edits. Do not assume a PID, path, a prior on-disk check, or a signature string makes
-   the read and action atomic. A completed verification must still pass current-rule, source
+   the read and action atomic. Apple's SDK warns that static validation is secure only without
+   concurrent modification, and that unclean paths containing embedded `//` or `/../` can
+   misconstrue a bundle; the experimental static helper does not yet establish either guarantee.
+   A completed verification must still pass current-rule, source
    generation, active-group, pause and pending-action checks.
 4. Do not trust identity bindings or arbitrary requirements supplied in backups or edited JSON.
    Imported rules stay off; they need a locally established binding before they can run. Older
