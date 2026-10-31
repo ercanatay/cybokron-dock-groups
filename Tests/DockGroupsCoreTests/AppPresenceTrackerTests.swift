@@ -4,6 +4,10 @@ import Testing
 
 @Suite("App presence tracker")
 struct AppPresenceTrackerTests {
+    @Test func nonASCIIIdentityCannotMatchASCIIApplicationKey() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.exampke.app"], identifiers: ["com.exampKe.app"])
+        #expect(result["com.exampke.app"] == 0)
+    }
     @Test func snapshotCountsEmptyIdentifierReturnsUnknown() {
         let result = ApplicationSnapshotCounter.counts(keys: ["com.example.app"], identifiers: ["com.example.app", ""])
         #expect(result.isEmpty)

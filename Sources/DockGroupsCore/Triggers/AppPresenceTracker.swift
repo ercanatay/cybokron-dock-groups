@@ -9,6 +9,8 @@ public enum ApplicationSnapshotCounter {
         }
         for id in identifiers {
             guard let id = id else { return [:] }
+            // Unicode case folding must not match ASCII-only valid target IDs
+            guard id.utf8.allSatisfy({ $0 < 128 }) else { continue }
             let lower = id.lowercased()
             if result.keys.contains(lower) {
                 result[lower, default: 0] += 1
