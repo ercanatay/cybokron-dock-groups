@@ -20,6 +20,15 @@ Mac, two task-owned ad hoc bundles, and one requirement. It does not establish p
 release compatibility, PID-reuse safety, or behavior for every signing type and app update.
 Extracting a designated requirement alone does **not** validate a signature.
 
+A second fixture used an explicitly weak designated requirement containing only the bundle
+identifier. Both different ad hoc signed processes satisfied that same requirement in a dynamic
+check. In this setup, blindly pinning an app-provided designated requirement does not prevent
+impersonation. A further local experiment first validated the selected static fixture, obtained
+its `kSecCodeInfoUnique` code-directory hash, and built a `cdhash` requirement. The selected
+running fixture passed and the other one failed, even though their weak designated requirements
+and bundle identifiers matched. This shows a possible narrower binding for these fixtures; it
+is not a proof of publisher identity, collision resistance, architecture coverage, or race safety.
+
 ## Candidate: locally verified binding
 
 1. On an explicit application selection, examine the selected bundle's signature and derive a
@@ -40,9 +49,9 @@ Extracting a designated requirement alone does **not** validate a signature.
    rules lacking a binding should remain safely disabled or waiting until explicitly reselected.
    Reject oversized or malformed identity data, preserve unknown fields according to the downgrade
    policy, and test migration and restore before changing the file format.
-5. Plan an explicit update/reselection path. Pinning an ad hoc code hash may reject legitimate
-   updates, while using a looser publisher/identifier requirement may accept other code by that
-   publisher. Explain the tradeoff and fail closed when the selected binding cannot be verified.
+5. Plan an explicit update/reselection path. Pinning an exact code-directory hash may reject
+   legitimate updates or a different architecture of the same app, while using a looser
+   publisher/identifier requirement may accept other code by that publisher. Explain the tradeoff and fail closed when the selected binding cannot be verified.
    A user-selected exception, if ever considered, needs a separate threat model and clear warning.
 
 ## Evidence needed before implementation or release
