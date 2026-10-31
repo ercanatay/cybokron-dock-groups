@@ -1,7 +1,9 @@
 /// Empty result signals unknown if any identifier is nil or empty; global fail-closed policy is provisional and can disable all triggers.
 public enum ApplicationSnapshotCounter {
-    public static func counts(keys: Set<String>, identifiers: [String?]) -> [String: Int] {
-        guard identifiers.allSatisfy({ ($0 ?? "").isEmpty == false }) else { return [:] }
+    public static func counts(keys: Set<String>, identifiers: [String?], ignoreUnidentified: Bool = false) -> [String: Int] {
+        if !ignoreUnidentified {
+            guard identifiers.allSatisfy({ ($0 ?? "").isEmpty == false }) else { return [:] }
+        }
         guard !keys.isEmpty else { return [:] }
         for key in keys {
             guard TriggerApplicationIdentifier(key) != nil else { return [:] }
@@ -11,7 +13,7 @@ public enum ApplicationSnapshotCounter {
             result[key.lowercased()] = 0
         }
         for id in identifiers {
-            guard let id = id else { return [:] }
+            guard let id, !id.isEmpty else { if ignoreUnidentified { continue }; return [:] }
             // Unicode case folding must not match ASCII-only valid target IDs
             guard id.utf8.allSatisfy({ $0 < 128 }) else { continue }
             let lower = id.lowercased()

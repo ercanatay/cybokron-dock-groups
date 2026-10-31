@@ -35,14 +35,17 @@ public struct TriggerFiring: Hashable, Sendable {
     public let isFinishWhenEnded: Bool
     /// Where the trigger is in the list (Settings → Triggers' order): the first wins a tie.
     public let order: Int
+    /// Whether this firing was created by an applicationPresence event (recorded at creation).
+    public let isApplicationPresence: Bool
 
-    public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0) {
+    public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0, isApplicationPresence: Bool = false) {
         self.triggerID = triggerID
         self.groupID = groupID
         self.action = action
         self.occurrence = occurrence
         self.isFinishWhenEnded = isFinishWhenEnded
         self.order = order
+        self.isApplicationPresence = isApplicationPresence
     }
 }
 
@@ -100,7 +103,11 @@ public enum TriggerEvaluator {
                     entry.lastOutcome = .skipped(reason)
                     entry.lastOutcomeAt = occurrence
                 } else {
-                    firings.append(TriggerFiring(triggerID: trigger.id, groupID: trigger.groupID, action: action, occurrence: occurrence, isFinishWhenEnded: finishWhenEnded, order: order))
+                    let isAppPresence: Bool = {
+                        if case .applicationPresence = trigger.event { return true }
+                        return false
+                    }()
+                    firings.append(TriggerFiring(triggerID: trigger.id, groupID: trigger.groupID, action: action, occurrence: occurrence, isFinishWhenEnded: finishWhenEnded, order: order, isApplicationPresence: isAppPresence))
                 }
             }
             switch trigger.event {

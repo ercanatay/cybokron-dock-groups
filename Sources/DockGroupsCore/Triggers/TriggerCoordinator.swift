@@ -190,6 +190,16 @@ public final class TriggerCoordinator {
         applicationTracker.stop()
     }
 
+    public func cancelApplicationPresenceForPolicyChange() {
+        applicationTracker.stop()
+        if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence {
+            currentInvalidated = true
+            noticePresenter?.dismiss()
+        }
+        pending.removeAll { $0.isApplicationPresence }
+        queue.removeAll { $0.isApplicationPresence }
+    }
+
     private func refresh() -> Bool {
         let currentRules = rules()
         let active = activeGroups()
@@ -318,18 +328,13 @@ public final class TriggerCoordinator {
         }
         if shouldInvalidate {
             applicationTracker.stop()
-            let isAppPresenceEvent: (UUID) -> Bool = { (id: UUID) -> Bool in
-                guard let trigger = self.rules().first(where: { $0.id == id }) else { return false }
-                if case .applicationPresence = trigger.event { return true }
-                return false
-            }
-            if isPresentingNotice, let currentFiring = current, isAppPresenceEvent(currentFiring.triggerID) {
+            if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence {
                 currentInvalidated = true
                 noticePresenter?.dismiss()
             }
-            // Remove only pending/queued firings whose current event is applicationPresence.
-            pending.removeAll { isAppPresenceEvent($0.triggerID) }
-            queue.removeAll { isAppPresenceEvent($0.triggerID) }
+            // Remove only pending/queued firings that were originally applicationPresence.
+            pending.removeAll { $0.isApplicationPresence }
+            queue.removeAll { $0.isApplicationPresence }
         }
         if !evaluation.firings.isEmpty {
             for firing in evaluation.firings {

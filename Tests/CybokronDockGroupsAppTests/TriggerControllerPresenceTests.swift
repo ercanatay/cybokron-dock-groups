@@ -51,6 +51,39 @@ private final class CountingPresenceHandler: AutomationHandling {
 @MainActor
 struct TriggerControllerPresenceTests {
 
+    @Test func sessionPolicyDefaultsStrictAndCancelsPendingAction() async throws {
+        let dir = try makeTempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: dir.appendingPathComponent("groups.json")), saveDelay: .zero)
+        let group = groups.addGroup(named: "Fixture")
+        let triggers = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
+        _ = triggers.add(GroupTrigger(groupID: group.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts), action: .showPopup))
+        let handler = CountingPresenceHandler(groups: [group])
+        let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
+        #expect(!controller.monitorIdentifiedAppsOnlyForSession)
+        controller.start(handler: handler, launchedAsLoginItem: false, launchedAt: Date())
+        let initialGeneration = controller.applicationObservationGeneration
+        controller.handleApplicationSnapshot(generation: initialGeneration, sequence: 100, counts: ["com.cybokronfixture.normal": 0])
+        controller.handleApplicationSnapshot(generation: initialGeneration, sequence: 101, counts: ["com.cybokronfixture.normal": 1])
+        controller.setMonitorIdentifiedAppsOnlyForSession(true)
+        #expect(controller.monitorIdentifiedAppsOnlyForSession)
+        #expect(controller.applicationObservationGeneration > initialGeneration)
+        let second = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: controller.loginItem, locationAccess: controller.locationAccess)
+        #expect(!second.monitorIdentifiedAppsOnlyForSession)
+        try await Task.sleep(for: .milliseconds(2300))
+        #expect(handler.popupCount == 0)
+        let enabledGeneration = controller.applicationObservationGeneration
+        controller.setMonitorIdentifiedAppsOnlyForSession(false)
+        #expect(!controller.monitorIdentifiedAppsOnlyForSession)
+        #expect(controller.applicationObservationGeneration > enabledGeneration)
+        controller.handleWorkspaceSignal(.screens(asleep: true))
+        controller.setMonitorIdentifiedAppsOnlyForSession(true)
+        #expect(!controller.isApplicationPresenceObserving)
+        controller.handleWorkspaceSignal(.screens(asleep: false))
+        #expect(controller.isApplicationPresenceObserving)
+    }
+
     @Test func unknownSnapshotRebaselinesBeforeNextOpening() async throws {
         let dir = try makeTempDir()
         defer { try? FileManager.default.removeItem(at: dir) }

@@ -158,21 +158,25 @@ enum LaunchSignals {
 
 @MainActor
 final class ApplicationPresenceSource {
+    private let readIdentifiers: (NSWorkspace) -> [String?]
     private let callback: (UInt64, UInt64, [String: Int]) -> Void
     private var observation: NSKeyValueObservation?
     private var token: UUID?
     private var keys: Set<String> = []
     private var generation: UInt64 = 0
     private var sequence: UInt64 = 0
+    private var ignoreUnidentified = false
 
     internal var isObserving: Bool { observation != nil }
 
-    init(callback: @escaping (UInt64, UInt64, [String: Int]) -> Void) {
+    init(readIdentifiers: @escaping (NSWorkspace) -> [String?] = { $0.runningApplications.map(\.bundleIdentifier) }, callback: @escaping (UInt64, UInt64, [String: Int]) -> Void) {
+        self.readIdentifiers = readIdentifiers
         self.callback = callback
     }
 
-    func start(keys: Set<String>, generation: UInt64) {
+    func start(keys: Set<String>, generation: UInt64, ignoreUnidentified: Bool = false) {
         stop()
+        self.ignoreUnidentified = ignoreUnidentified
         self.keys = keys
         self.generation = generation
         let token = UUID()
@@ -191,8 +195,8 @@ final class ApplicationPresenceSource {
             return
         }
         sequence += 1
-        let ids = workspace.runningApplications.map(\.bundleIdentifier)
-        let counts = ApplicationSnapshotCounter.counts(keys: keys, identifiers: ids)
+        let ids = readIdentifiers(workspace)
+        let counts = ApplicationSnapshotCounter.counts(keys: keys, identifiers: ids, ignoreUnidentified: ignoreUnidentified)
         callback(generation, sequence, counts)
     }
 
@@ -203,6 +207,7 @@ final class ApplicationPresenceSource {
         observation?.invalidate()
         observation = nil
         token = nil
+        ignoreUnidentified = false
         keys = []
         sequence = 0
     }

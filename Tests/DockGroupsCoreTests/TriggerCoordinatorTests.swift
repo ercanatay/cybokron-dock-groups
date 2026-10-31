@@ -64,6 +64,87 @@ struct TriggerCoordinatorTests {
     private let design = TriggerRig.design
     private var session: Date { TriggerTime.date(2026, 10, 28, 7, 59) }
 
+    @Test func changingPresencePolicyDropsPendingApplicationActionOnly() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let login = GroupTrigger.on(.login, group: design, action: .openAll, runMode: .immediately)
+        let rig = TriggerRig([app, login])
+        rig.coordinator.receive(.applicationEdge(triggerID: app.id, edge: .starts))
+        rig.coordinator.receive(.launched(.login(session: session)))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.coordinator.cancelApplicationPresenceForPolicyChange()
+        rig.sleeper.wakeAll()
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls == ["openAll:Design"])
+    }
+
+    @Test func changingPresencePolicyInvalidatesAnAwaitingNotice() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, runMode: .notice)
+        let rig = TriggerRig([app])
+        rig.presenter.holds = true
+        await rig.send(.applicationEdge(triggerID: app.id, edge: .starts))
+        #expect(rig.presenter.isShowing)
+        rig.coordinator.cancelApplicationPresenceForPolicyChange()
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func changingPresencePolicyDuringDeliveryCannotQueueOldFiring() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([])
+        rig.rules = [app]
+        var changed = false
+        rig.coordinator.onStateChange = { [weak rig] _ in
+            guard let rig, !changed else { return }
+            changed = true
+            rig.coordinator.cancelApplicationPresenceForPolicyChange()
+        }
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        await rig.settleDown()
+        #expect(changed)
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func changingPolicyCancelsOriginalAppFiringEvenIfRuleKindChanged() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([app])
+        rig.coordinator.receive(.applicationEdge(triggerID: app.id, edge: .starts))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.rules[0].event = .login
+        rig.coordinator.cancelApplicationPresenceForPolicyChange()
+        rig.sleeper.wakeAll()
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func sleepCancelsOriginalAppFiringEvenIfRuleKindChanged() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([app])
+        rig.coordinator.receive(.applicationEdge(triggerID: app.id, edge: .starts))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.rules[0].event = .login
+        rig.coordinator.receive(.screens(asleep: true))
+        rig.sleeper.wakeAll()
+        rig.coordinator.receive(.screens(asleep: false))
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func changingPolicyInvalidatesOriginalAppNoticeAfterRuleKindChanged() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, runMode: .notice)
+        let rig = TriggerRig([app])
+        rig.presenter.holds = true
+        await rig.send(.applicationEdge(triggerID: app.id, edge: .starts))
+        #expect(rig.presenter.isShowing)
+        rig.rules[0].event = .login
+        rig.coordinator.cancelApplicationPresenceForPolicyChange()
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
     @Test func aTriggerStartsItsGroupAfterTheSettleNeverQuitting() async {
         let login = GroupTrigger.on(.login, group: work)
         let rig = TriggerRig([login])

@@ -48,6 +48,7 @@ final class TriggerController: ObservableObject {
     private var applicationPresenceSource: ApplicationPresenceSource?
     private(set) var applicationObservationGeneration: UInt64 = 0
     /// macOS cannot currently identify all running apps for the presence trigger.
+    @Published private(set) var monitorIdentifiedAppsOnlyForSession = false
     @Published private var applicationPresenceUncertain = false
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
@@ -368,7 +369,7 @@ final class TriggerController: ObservableObject {
         let generation = applicationObservationGeneration
         let keys = applicationPresenceKeys()
         if !keys.isEmpty, coordinator.beginApplicationObservations(generation: generation) {
-            applicationPresenceSource?.start(keys: keys, generation: generation)
+            applicationPresenceSource?.start(keys: keys, generation: generation, ignoreUnidentified: monitorIdentifiedAppsOnlyForSession)
         }
     }
 
@@ -413,6 +414,14 @@ final class TriggerController: ObservableObject {
         default:
             break
         }
+    }
+
+    internal func setMonitorIdentifiedAppsOnlyForSession(_ enabled: Bool) {
+        guard enabled != monitorIdentifiedAppsOnlyForSession else { return }
+        applicationPresenceSource?.stop()
+        coordinator.cancelApplicationPresenceForPolicyChange()
+        monitorIdentifiedAppsOnlyForSession = enabled
+        resetApplicationPresenceSource()
     }
 
     /// Minimal read-only observation state for test assertions.

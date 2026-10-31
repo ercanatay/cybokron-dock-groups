@@ -4,6 +4,15 @@ import Testing
 
 @Suite("App presence tracker")
 struct AppPresenceTrackerTests {
+    @Test func identifiedOnlyModeCountsKnownAppsDespiteUnidentifiedInstances() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.example.app"], identifiers: [nil, "", "COM.EXAMPLE.APP", "com.other.app"], ignoreUnidentified: true)
+        #expect(result == ["com.example.app": 1])
+    }
+
+    @Test func identifiedOnlyModeStillRejectsInvalidTarget() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.exampKe.app"], identifiers: [nil, "com.exampke.app"], ignoreUnidentified: true)
+        #expect(result.isEmpty)
+    }
     @Test func invalidTargetIdentityCannotBeNormalizedIntoAValidKey() {
         let result = ApplicationSnapshotCounter.counts(keys: ["com.exampKe.app"], identifiers: ["com.exampke.app"])
         #expect(result.isEmpty)
