@@ -179,9 +179,21 @@ struct TriggerDraftTests {
         }))
     }
 
-    @Test func existingApplicationEventStaysUneditable() {
-        let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "com.apple.Safari", edge: .starts), action: .start)
-        #expect(TriggerDraft(editing: trigger, calendar: Self.calendar) == nil)
+    @Test func editingApplicationPresencePreservesRule() throws {
+        for edge in [TriggerEdge.starts, .ends] {
+            let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "com.Example.App", edge: edge), action: .start, runMode: .askFirst, isEnabled: false, oncePerDay: true)
+            let draft = try #require(TriggerDraft(editing: trigger, calendar: Self.calendar))
+            #expect(draft.when == .application(edge))
+            #expect(draft.applicationBundleIdentifier == "com.Example.App")
+            #expect(draft.trigger(groupID: UUID(), replacing: trigger) == trigger)
+        }
+    }
+
+    @Test func editingInvalidApplicationIdentifierCannotBeSaved() throws {
+        let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "bad id", edge: .starts), action: .start)
+        let draft = try #require(TriggerDraft(editing: trigger, calendar: Self.calendar))
+        #expect(draft.applicationBundleIdentifier == "bad id")
+        #expect(!draft.isValid)
     }
 
     @Test func selectApplicationKeepsTheExactOriginalIdentifierAndReturnsTrue() {

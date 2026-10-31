@@ -180,7 +180,7 @@ struct TriggerRow: View {
         case .condition(.ethernet, _): return "cable.connector"
         case .condition(.vpn, _): return "lock.shield"
         case .unsupported: return "questionmark.circle"
-        case .applicationPresence: return "questionmark.circle"
+        case .applicationPresence: return "app"
         }
     }
 }

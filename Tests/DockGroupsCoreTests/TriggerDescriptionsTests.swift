@@ -25,6 +25,13 @@ struct TriggerDescriptionsTests {
         TriggerDescriptions.summary(trigger, appName: Self.appName, calendar: Self.calendar(), locale: locale)
     }
 
+    @Test func applicationPresenceDescriptionsPreserveIdentifier() {
+        let opens = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.Example.App", edge: .starts), group: Self.group)
+        let closes = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.Example.App", edge: .ends), group: Self.group)
+        #expect(summary(opens) == "When com.Example.App opens: start")
+        #expect(summary(closes) == "When com.Example.App closes: start")
+    }
+
     // MARK: - Times and days
 
     @Test func timesFollowTheLocale() {

@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Ứng dụng đã chọn cần có bundle identifier hợp lệ.";
 "triggers.editor.application.opens" = "Một ứng dụng được mở";
 "triggers.editor.application.closes" = "Một ứng dụng được đóng";
+"core.trigger.summary.application.opens" = "Khi %@ mở";
+"core.trigger.summary.application.closes" = "Khi %@ đóng";

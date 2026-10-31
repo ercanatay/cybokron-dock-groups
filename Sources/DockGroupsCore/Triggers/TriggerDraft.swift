@@ -131,9 +131,12 @@ public struct TriggerDraft: Equatable, Sendable {
             wifiName = network.name
         case .condition(.ethernet, let edge):
             when = .change(edge == .starts ? .ethernetConnects : .ethernetDisconnects)
-        // VPNs aren't offered (TS-8). Application presence isn't offered (intermediate, disabled by default).
-        case .condition(.vpn, _), .applicationPresence, .unsupported:
+        // VPN and unsupported events are not offered by this editor.
+        case .condition(.vpn, _), .unsupported:
             return nil
+        case .applicationPresence(let bundleIdentifier, let edge):
+            when = .application(edge)
+            applicationBundleIdentifier = bundleIdentifier
         }
         action = trigger.action
         runMode = trigger.runMode

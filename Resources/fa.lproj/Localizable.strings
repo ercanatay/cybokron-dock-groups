@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "برنامهٔ انتخاب‌شده به یک شناسهٔ باندل معتبر نیاز دارد.";
 "triggers.editor.application.opens" = "یک برنامه باز می‌شود";
 "triggers.editor.application.closes" = "یک برنامه بسته می‌شود";
+"core.trigger.summary.application.opens" = "وقتی %@ باز می‌شود";
+"core.trigger.summary.application.closes" = "وقتی %@ بسته می‌شود";

@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Η επιλεγμένη εφαρμογή χρειάζεται έγκυρο bundle identifier.";
 "triggers.editor.application.opens" = "Μια εφαρμογή ανοίγει";
 "triggers.editor.application.closes" = "Μια εφαρμογή κλείνει";
+"core.trigger.summary.application.opens" = "Όταν ανοίγει το %@";
+"core.trigger.summary.application.closes" = "Όταν κλείνει το %@";

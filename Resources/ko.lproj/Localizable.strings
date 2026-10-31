@@ -1110,3 +1110,5 @@
 "triggers.editor.application.invalid" = "선택한 애플리케이션에는 유효한 번들 식별자가 필요합니다.";
 "triggers.editor.application.opens" = "애플리케이션이 열릴 때";
 "triggers.editor.application.closes" = "애플리케이션이 닫힐 때";
+"core.trigger.summary.application.opens" = "%@이(가) 열릴 때";
+"core.trigger.summary.application.closes" = "%@이(가) 닫힐 때";

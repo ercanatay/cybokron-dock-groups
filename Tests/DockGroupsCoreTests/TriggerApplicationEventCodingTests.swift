@@ -76,14 +76,15 @@ struct TriggerApplicationEventCodingTests {
         #expect(event.isUnsupported)
     }
 
-    @Test func validEventIsRunnableButNotYetEditable() throws {
+    @Test func validEventIsRunnableAndEditableWithoutLosingData() throws {
         let trigger = GroupTrigger(groupID: Self.group, event: .applicationPresence(bundleIdentifier: "com.apple.Safari", edge: .starts), action: .start)
         #expect(trigger.canRun)
         #expect(trigger.isRunnable)
         #expect(trigger.isEnabled)
         #expect(trigger.event.isValid == true)
         #expect(trigger.event.allowedActions.contains(.finish))
-        #expect(TriggerDraft(editing: trigger, calendar: Calendar(identifier: .gregorian)) == nil)
+        let draft = try #require(TriggerDraft(editing: trigger, calendar: Calendar(identifier: .gregorian)))
+        #expect(draft.trigger(groupID: Self.group, replacing: trigger) == trigger)
     }
 
     @Test func existingUnknownBehaviorUnchanged() throws {

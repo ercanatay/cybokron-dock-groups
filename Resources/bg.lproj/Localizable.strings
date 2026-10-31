@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Избраното приложение изисква валиден идентификатор на пакета.";
 "triggers.editor.application.opens" = "Приложение се отваря";
 "triggers.editor.application.closes" = "Приложение се затваря";
+"core.trigger.summary.application.opens" = "Когато %@ се отвори";
+"core.trigger.summary.application.closes" = "Когато %@ се затвори";

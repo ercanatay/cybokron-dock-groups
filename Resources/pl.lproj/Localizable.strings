@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Wybrana aplikacja wymaga prawidłowego identyfikatora pakietu.";
 "triggers.editor.application.opens" = "Aplikacja zostaje otwarta";
 "triggers.editor.application.closes" = "Aplikacja zostaje zamknięta";
+"core.trigger.summary.application.opens" = "Gdy otwierane jest %@";
+"core.trigger.summary.application.closes" = "Gdy zamykane jest %@";

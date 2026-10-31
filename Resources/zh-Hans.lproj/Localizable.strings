@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "所选应用需要有效的 Bundle ID。";
 "triggers.editor.application.opens" = "应用打开时";
 "triggers.editor.application.closes" = "应用关闭时";
+"core.trigger.summary.application.opens" = "当 %@ 打开时";
+"core.trigger.summary.application.closes" = "当 %@ 关闭时";

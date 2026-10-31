@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "La aplicación seleccionada necesita un identificador de paquete válido.";
 "triggers.editor.application.opens" = "Se abre una aplicación";
 "triggers.editor.application.closes" = "Se cierra una aplicación";
+"core.trigger.summary.application.opens" = "Cuando se abre %@";
+"core.trigger.summary.application.closes" = "Cuando se cierra %@";

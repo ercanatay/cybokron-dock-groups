@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Vybraná aplikace potřebuje platný identifikátor balíčku.";
 "triggers.editor.application.opens" = "Aplikace se otevírá";
 "triggers.editor.application.closes" = "Aplikace se zavírá";
+"core.trigger.summary.application.opens" = "Když se %@ otevře";
+"core.trigger.summary.application.closes" = "Když se %@ zavře";

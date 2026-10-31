@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Seçilmiş tətbiq etibarlı bundle identifikatoru tələb edir.";
 "triggers.editor.application.opens" = "Tətbiq açılır";
 "triggers.editor.application.closes" = "Tətbiq bağlanır";
+"core.trigger.summary.application.opens" = "%@ açıldıqda";
+"core.trigger.summary.application.closes" = "%@ bağlandıqda";

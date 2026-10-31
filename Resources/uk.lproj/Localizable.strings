@@ -1111,3 +1111,5 @@
 "triggers.editor.application.invalid" = "Вибраний застосунок потребує дійсного ідентифікатора пакета.";
 "triggers.editor.application.opens" = "Застосунок відкривається";
 "triggers.editor.application.closes" = "Застосунок закривається";
+"core.trigger.summary.application.opens" = "Коли відкривається %@";
+"core.trigger.summary.application.closes" = "Коли закривається %@";

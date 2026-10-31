@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "選択したアプリケーションには有効なバンドル識別子が必要です。";
 "triggers.editor.application.opens" = "アプリケーションが開いたとき";
 "triggers.editor.application.closes" = "アプリケーションが閉じたとき";
+"core.trigger.summary.application.opens" = "%@ が開いたとき";
+"core.trigger.summary.application.closes" = "%@ が閉じたとき";

@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Aplicația selectată necesită un identificator de pachet valid.";
 "triggers.editor.application.opens" = "O aplicație se deschide";
 "triggers.editor.application.closes" = "O aplicație se închide";
+"core.trigger.summary.application.opens" = "Când %@ se deschide";
+"core.trigger.summary.application.closes" = "Când %@ se închide";

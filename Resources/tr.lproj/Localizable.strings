@@ -1110,3 +1110,5 @@
 "triggers.editor.application.invalid" = "Seçilen uygulama geçerli bir paket tanımlayıcısına sahip olmalıdır.";
 "triggers.editor.application.opens" = "Bir uygulama açılır";
 "triggers.editor.application.closes" = "Bir uygulama kapanır";
+"core.trigger.summary.application.opens" = "%@ açıldığında";
+"core.trigger.summary.application.closes" = "%@ kapandığında";

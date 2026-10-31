@@ -1111,3 +1111,5 @@
 "triggers.editor.application.invalid" = "Выбранному приложению требуется допустимый идентификатор пакета (bundle identifier).";
 "triggers.editor.application.opens" = "Приложение открывается";
 "triggers.editor.application.closes" = "Приложение закрывается";
+"core.trigger.summary.application.opens" = "Когда %@ открывается";
+"core.trigger.summary.application.closes" = "Когда %@ закрывается";

@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Den valda applikationen behöver en giltig bundle-identifierare.";
 "triggers.editor.application.opens" = "En applikation öppnas";
 "triggers.editor.application.closes" = "En applikation stängs";
+"core.trigger.summary.application.opens" = "När %@ öppnas";
+"core.trigger.summary.application.closes" = "När %@ stängs";

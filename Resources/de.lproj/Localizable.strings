@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "Die ausgewählte Anwendung benötigt eine gültige Bundle-Kennung.";
 "triggers.editor.application.opens" = "Eine Anwendung wird geöffnet";
 "triggers.editor.application.closes" = "Eine Anwendung wird geschlossen";
+"core.trigger.summary.application.opens" = "Wenn %@ geöffnet wird";
+"core.trigger.summary.application.closes" = "Wenn %@ geschlossen wird";

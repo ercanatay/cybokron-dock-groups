@@ -1112,3 +1112,5 @@
 "triggers.editor.application.invalid" = "चयनित एप्लिकेशन को एक मान्य बंडल आइडेंटिफ़ायर की आवश्यकता है।";
 "triggers.editor.application.opens" = "एक एप्लिकेशन खुलता है";
 "triggers.editor.application.closes" = "एक एप्लिकेशन बंद होता है";
+"core.trigger.summary.application.opens" = "जब %@ खुलता है";
+"core.trigger.summary.application.closes" = "जब %@ बंद होता है";
