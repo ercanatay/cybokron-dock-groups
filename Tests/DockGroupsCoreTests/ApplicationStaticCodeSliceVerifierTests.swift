@@ -28,7 +28,7 @@ struct ApplicationStaticCodeSliceVerifierTests {
         process.arguments = ["20"]
         try process.run()
         defer { if process.isRunning { process.terminate() }; process.waitUntilExit() }
-        let comparisons = hashes.map { ApplicationRunningCodeVerifier.compare(pid: process.processIdentifier, expected: $0) }
+        let comparisons = hashes.map { ApplicationRunningCodeVerifier.compare(pid: process.processIdentifier, expected: $0, bundleIdentifier: "com.cybokron.fixture.slices") }
         #expect(comparisons.contains(.matching))
         try FileManager.default.copyItem(at: selected, to: tampered)
         let infoURL = tampered.appendingPathComponent("Contents/Info.plist")

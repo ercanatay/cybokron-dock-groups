@@ -11,8 +11,8 @@ struct ApplicationRunningCodeVerifierTests {
         let other = root.appendingPathComponent("Other.app", isDirectory: true)
         try makeSignedBundle(at: selected, name: "Selected")
         try makeSignedBundle(at: other, name: "Other")
-        let expected = try #require(ApplicationStaticCodeVerifier.codeHash(for: selected))
-        let different = try #require(ApplicationStaticCodeVerifier.codeHash(for: other))
+        let expected = try #require(ApplicationStaticCodeVerifier.codeHashes(for: selected)?.first)
+        let different = try #require(ApplicationStaticCodeVerifier.codeHashes(for: other)?.first)
         #expect(expected != different)
         var children: [Process] = []
         defer {
@@ -23,13 +23,17 @@ struct ApplicationRunningCodeVerifierTests {
         }
         let first = try runSleeper(in: selected); children.append(first)
         let second = try runSleeper(in: other); children.append(second)
-        #expect(ApplicationRunningCodeVerifier.compare(pid: first.processIdentifier, expected: expected) == .matching)
-        let mismatch = ApplicationRunningCodeVerifier.compare(pid: second.processIdentifier, expected: expected)
+        #expect(ApplicationRunningCodeVerifier.compare(pid: first.processIdentifier, expected: expected, bundleIdentifier: "com.cybokron.fixture.running") == .matching)
+        let wrongIdentifier = ApplicationRunningCodeVerifier.compare(pid: first.processIdentifier, expected: expected, bundleIdentifier: "com.cybokron.fixture.other")
+        #expect(wrongIdentifier == .different)
+        #expect(ApplicationIdentityCount.count([wrongIdentifier]) == nil)
+        #expect(ApplicationRunningCodeVerifier.compare(pid: first.processIdentifier, expected: expected, bundleIdentifier: "x\" or anchor apple") == .unknown)
+        let mismatch = ApplicationRunningCodeVerifier.compare(pid: second.processIdentifier, expected: expected, bundleIdentifier: "com.cybokron.fixture.running")
         #expect(mismatch == .different)
         #expect(ApplicationIdentityCount.count([mismatch]) == nil)
-        #expect(ApplicationRunningCodeVerifier.compare(pid: 0, expected: expected) == .unknown)
-        #expect(ApplicationRunningCodeVerifier.compare(pid: -1, expected: expected) == .unknown)
-        #expect(ApplicationRunningCodeVerifier.compare(pid: Int32.max, expected: expected) == .unknown)
+        #expect(ApplicationRunningCodeVerifier.compare(pid: 0, expected: expected, bundleIdentifier: "com.cybokron.fixture.running") == .unknown)
+        #expect(ApplicationRunningCodeVerifier.compare(pid: -1, expected: expected, bundleIdentifier: "com.cybokron.fixture.running") == .unknown)
+        #expect(ApplicationRunningCodeVerifier.compare(pid: Int32.max, expected: expected, bundleIdentifier: "com.cybokron.fixture.running") == .unknown)
     }
 
     private func makeSignedBundle(at url: URL, name: String) throws {

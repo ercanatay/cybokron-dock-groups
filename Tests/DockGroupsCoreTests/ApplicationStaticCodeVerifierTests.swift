@@ -30,18 +30,19 @@ struct ApplicationStaticCodeVerifierTests {
         try process.run()
         process.waitUntilExit()
         try #require(process.terminationStatus == 0)
-        let valid = try #require(ApplicationStaticCodeVerifier.codeHash(for: signed))
-        #expect(valid.hex.utf8.count == 40)
-        #expect(ApplicationStaticCodeVerifier.codeHash(for: unsigned) == nil)
-        #expect(ApplicationStaticCodeVerifier.codeHash(for: unsealed) == nil)
+        let valid = try #require(ApplicationStaticCodeVerifier.codeHashes(for: signed))
+        #expect(!valid.isEmpty)
+        #expect(valid.allSatisfy { $0.hex.utf8.count == 40 })
+        #expect(ApplicationStaticCodeVerifier.codeHashes(for: unsigned) == nil)
+        #expect(ApplicationStaticCodeVerifier.codeHashes(for: unsealed) == nil)
         try FileManager.default.copyItem(at: signed, to: tampered)
         let infoURL = tampered.appendingPathComponent("Contents/Info.plist")
         var info = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: infoURL), format: nil) as? [String: Any])
         info["CFBundleName"] = "Modified After Signing"
         let changed = try PropertyListSerialization.data(fromPropertyList: info, format: .xml, options: 0)
         try changed.write(to: infoURL)
-        #expect(ApplicationStaticCodeVerifier.codeHash(for: tampered) == nil)
-        #expect(ApplicationStaticCodeVerifier.codeHash(for: URL(string: "https://example.invalid/Fake.app")!) == nil)
+        #expect(ApplicationStaticCodeVerifier.codeHashes(for: tampered) == nil)
+        #expect(ApplicationStaticCodeVerifier.codeHashes(for: URL(string: "https://example.invalid/Fake.app")!) == nil)
     }
 
     private func createBundle(at url: URL) throws {
