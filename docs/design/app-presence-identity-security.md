@@ -61,7 +61,10 @@ designed, this mismatch must remain unknown and must not be treated as evidence 
    concurrent modification, and that unclean paths containing embedded `//` or `/../` can
    misconstrue a bundle; the experimental static helper does not yet establish either guarantee.
    A completed verification must still pass current-rule, source
-   generation, active-group, pause and pending-action checks.
+   generation, active-group, pause and pending-action checks. Apple advises comparing
+   `NSRunningApplication` instances rather than their PIDs, and its launch date is available only
+   for LaunchServices launches. Neither fact establishes atomic identity across an asynchronous
+   signature check; a missing or changed instance must fail closed.
 4. Do not trust identity bindings or arbitrary requirements supplied in backups or edited JSON.
    Imported rules stay off; they need a locally established binding before they can run. Older
    rules lacking a binding should remain safely disabled or waiting until explicitly reselected.
@@ -97,3 +100,5 @@ that all spoofing or time-of-check/time-of-use races can be eliminated.
 - [Validating running signed code against a requirement](https://developer.apple.com/documentation/security/seccodecheckvalidity%28_%3A_%3A_%3A%29)
 - [Designated requirements and the fact that retrieving one does not validate a signature](https://developer.apple.com/documentation/security/seccodecopydesignatedrequirement%28_%3A_%3A_%3A%29)
 - [Signing-information dictionary keys](https://developer.apple.com/documentation/security/signing-information-dictionary-keys)
+- [`NSRunningApplication.processIdentifier` and process comparisons](https://developer.apple.com/documentation/appkit/nsrunningapplication/processidentifier)
+- [`NSRunningApplication.launchDate`](https://developer.apple.com/documentation/appkit/nsrunningapplication/launchdate)

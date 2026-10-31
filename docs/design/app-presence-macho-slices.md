@@ -34,9 +34,13 @@ The Security APIs take a path, not the already-open file descriptor used for par
 fixture experiment, after the original executable header was read through an open file handle, the
 selected bundle path was replaced with a different signed fixture. The subsequent path-based
 Security check returned the replacement's code hash; the original fixture remained separately
-preserved. This is a concrete selection-to-check race, not merely a hypothetical one. Rechecking
-path, file metadata or hashes cannot by itself prove that the file was never replaced or modified
-between operations. Symbolic links, network volumes, app updates, architecture aliases, OS
+preserved. This is a concrete selection-to-check race, not merely a hypothetical one. A separate
+local experiment obtained a dynamic code object for the original running fixture before replacing
+its path. Its requirement check rejected the replacement's hash in both runs; the original hash
+was rejected in one run and accepted in the other. In the second run the fixture was still running
+during checks and had passed the original requirement before replacement. These observations do not
+establish an atomic selection protocol or PID-reuse safety. Rechecking path, file metadata or
+hashes cannot by itself prove that the file was never replaced or modified between operations. Symbolic links, network volumes, app updates, architecture aliases, OS
 compatibility, process/PID lifetime, asynchronous cancellation, unknown signatures, and malformed
 or adversarial files require separate evidence and a fail-closed design. This parser must not be
 wired into production monitoring solely because its unit tests pass.
