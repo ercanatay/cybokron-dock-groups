@@ -1,4 +1,4 @@
-/// Empty result signals unknown if any identifier is nil or empty; global fail-closed policy is provisional and can disable all triggers.
+/// Nil or empty identifiers return unknown by default; explicit ignoreUnidentified skips them.
 public enum ApplicationSnapshotCounter {
     public static func counts(keys: Set<String>, identifiers: [String?], ignoreUnidentified: Bool = false) -> [String: Int] {
         if !ignoreUnidentified {

@@ -47,8 +47,9 @@ final class TriggerController: ObservableObject {
     private var networkSource: NetworkSource?
     private var applicationPresenceSource: ApplicationPresenceSource?
     private(set) var applicationObservationGeneration: UInt64 = 0
-    /// macOS cannot currently identify all running apps for the presence trigger.
+    /// In-memory; resets on app restart.
     @Published private(set) var monitorIdentifiedAppsOnlyForSession = false
+    /// macOS cannot currently identify all running apps for the presence trigger.
     @Published private var applicationPresenceUncertain = false
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
