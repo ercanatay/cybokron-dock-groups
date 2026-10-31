@@ -1107,7 +1107,7 @@
 "triggers.editor.application.choose" = "Seçin…";
 "triggers.editor.application.title" = "Uygulama Seçin";
 "triggers.editor.application.message" = "Tetikleyici için bir uygulama seçin.";
-"triggers.editor.application.invalid" = "Seçilen uygulama geçerli bir paket tanımlayıcısına sahip olmalıdır.";
+"triggers.editor.application.invalid" = "Geçerli bir paket tanımlayıcısına ve çalıştırılabilir dosyaya sahip bir uygulama seçin.";
 "triggers.editor.application.opens" = "Bir uygulama açılır";
 "triggers.editor.application.closes" = "Bir uygulama kapanır";
 "core.trigger.summary.application.opens" = "%@ açıldığında";

@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "चुनें…";
 "triggers.editor.application.title" = "एप्लिकेशन चुनें";
 "triggers.editor.application.message" = "ट्रिगर के लिए एक एप्लिकेशन चुनें।";
-"triggers.editor.application.invalid" = "चयनित एप्लिकेशन को एक मान्य बंडल आइडेंटिफ़ायर की आवश्यकता है।";
+"triggers.editor.application.invalid" = "एक ऐप चुनें जिसमें वैध बंडल आइडेंटिफ़ायर और एक्ज़ीक्यूटेबल फ़ाइल हो।";
 "triggers.editor.application.opens" = "एक एप्लिकेशन खुलता है";
 "triggers.editor.application.closes" = "एक एप्लिकेशन बंद होता है";
 "core.trigger.summary.application.opens" = "जब %@ खुलता है";

@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Elegir…";
 "triggers.editor.application.title" = "Elegir aplicación";
 "triggers.editor.application.message" = "Seleccione una aplicación para el disparador.";
-"triggers.editor.application.invalid" = "La aplicación seleccionada necesita un identificador de paquete válido.";
+"triggers.editor.application.invalid" = "Elija una aplicación con un identificador de paquete y un archivo ejecutable válidos.";
 "triggers.editor.application.opens" = "Se abre una aplicación";
 "triggers.editor.application.closes" = "Se cierra una aplicación";
 "core.trigger.summary.application.opens" = "Cuando se abre %@";

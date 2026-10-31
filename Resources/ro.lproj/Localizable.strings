@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Alegeți…";
 "triggers.editor.application.title" = "Alegeți aplicația";
 "triggers.editor.application.message" = "Selectați o aplicație pentru declanșator.";
-"triggers.editor.application.invalid" = "Aplicația selectată necesită un identificator de pachet valid.";
+"triggers.editor.application.invalid" = "Alegeți o aplicație cu un identificator de pachet valid și un fișier executabil.";
 "triggers.editor.application.opens" = "O aplicație se deschide";
 "triggers.editor.application.closes" = "O aplicație se închide";
 "core.trigger.summary.application.opens" = "Când %@ se deschide";

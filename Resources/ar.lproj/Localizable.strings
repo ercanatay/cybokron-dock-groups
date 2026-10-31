@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "اختر…";
 "triggers.editor.application.title" = "اختر التطبيق";
 "triggers.editor.application.message" = "حدّد تطبيقًا للمشغّل.";
-"triggers.editor.application.invalid" = "يجب أن يحتوي التطبيق المحدد على معرّف الحزمة (Bundle Identifier) صالح.";
+"triggers.editor.application.invalid" = "اختر تطبيقًا يحتوي على معرّف حزمة (Bundle Identifier) صالح وملف تنفيذي صالح.";
 "triggers.editor.application.opens" = "عند فتح تطبيق";
 "triggers.editor.application.closes" = "عند إغلاق تطبيق";
 "core.trigger.summary.application.opens" = "عند فتح %@";

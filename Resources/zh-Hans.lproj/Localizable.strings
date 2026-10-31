@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "选择…";
 "triggers.editor.application.title" = "选择应用";
 "triggers.editor.application.message" = "为此触发器选择一个应用。";
-"triggers.editor.application.invalid" = "所选应用需要有效的 Bundle ID。";
+"triggers.editor.application.invalid" = "选择一个具有有效 Bundle Identifier 和可执行文件的应用。";
 "triggers.editor.application.opens" = "应用打开时";
 "triggers.editor.application.closes" = "应用关闭时";
 "core.trigger.summary.application.opens" = "当 %@ 打开时";

@@ -226,14 +226,13 @@ struct TriggerEditorSheet: View {
                         attachedTo: NSApp.keyWindow
                     ) { urls in
                         guard let url = urls.first else { return }
-                        do {
-                            let app = try AppReference(applicationURL: url)
+                        if let app = AppPicker.triggerApplication(at: url) {
                             if draft.selectApplication(app) {
                                 problem = nil
                             } else {
                                 problem = Texts.applicationInvalid
                             }
-                        } catch {
+                        } else {
                             problem = Texts.applicationInvalid
                         }
                     }

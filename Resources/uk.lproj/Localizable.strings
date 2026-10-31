@@ -1108,7 +1108,7 @@
 "triggers.editor.application.choose" = "Вибрати…";
 "triggers.editor.application.title" = "Вибрати застосунок";
 "triggers.editor.application.message" = "Виберіть застосунок для тригера.";
-"triggers.editor.application.invalid" = "Вибраний застосунок потребує дійсного ідентифікатора пакета.";
+"triggers.editor.application.invalid" = "Виберіть застосунок із дійсним ідентифікатором пакета та виконуваним файлом.";
 "triggers.editor.application.opens" = "Застосунок відкривається";
 "triggers.editor.application.closes" = "Застосунок закривається";
 "core.trigger.summary.application.opens" = "Коли відкривається %@";

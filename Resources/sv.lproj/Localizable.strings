@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Välj…";
 "triggers.editor.application.title" = "Välj program";
 "triggers.editor.application.message" = "Välj en applikation för utlösaren.";
-"triggers.editor.application.invalid" = "Den valda applikationen behöver en giltig bundle-identifierare.";
+"triggers.editor.application.invalid" = "Välj en app med en giltig paketidentifierare och en körbar fil.";
 "triggers.editor.application.opens" = "En applikation öppnas";
 "triggers.editor.application.closes" = "En applikation stängs";
 "core.trigger.summary.application.opens" = "När %@ öppnas";

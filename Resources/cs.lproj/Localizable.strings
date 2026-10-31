@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Vyberte…";
 "triggers.editor.application.title" = "Vybrat aplikaci";
 "triggers.editor.application.message" = "Vyberte aplikaci pro spouštěč.";
-"triggers.editor.application.invalid" = "Vybraná aplikace potřebuje platný identifikátor balíčku.";
+"triggers.editor.application.invalid" = "Vyberte aplikaci s platným identifikátorem balíčku a spustitelným souborem.";
 "triggers.editor.application.opens" = "Aplikace se otevírá";
 "triggers.editor.application.closes" = "Aplikace se zavírá";
 "core.trigger.summary.application.opens" = "Když se %@ otevře";

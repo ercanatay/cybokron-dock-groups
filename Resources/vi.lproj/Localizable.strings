@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Chọn…";
 "triggers.editor.application.title" = "Chọn ứng dụng";
 "triggers.editor.application.message" = "Chọn một ứng dụng cho trình kích hoạt.";
-"triggers.editor.application.invalid" = "Ứng dụng đã chọn cần có bundle identifier hợp lệ.";
+"triggers.editor.application.invalid" = "Chọn một ứng dụng có bundle identifier và tệp thực thi hợp lệ.";
 "triggers.editor.application.opens" = "Một ứng dụng được mở";
 "triggers.editor.application.closes" = "Một ứng dụng được đóng";
 "core.trigger.summary.application.opens" = "Khi %@ mở";

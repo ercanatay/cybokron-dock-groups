@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "یک گزینه انتخاب کنید…";
 "triggers.editor.application.title" = "انتخاب برنامه";
 "triggers.editor.application.message" = "برنامهٔ مورد نظر را برای این تریگر انتخاب کنید.";
-"triggers.editor.application.invalid" = "برنامهٔ انتخاب‌شده به یک شناسهٔ باندل معتبر نیاز دارد.";
+"triggers.editor.application.invalid" = "یک برنامه با شناسه باندل معتبر و فایل اجرایی معتبر انتخاب کنید.";
 "triggers.editor.application.opens" = "یک برنامه باز می‌شود";
 "triggers.editor.application.closes" = "یک برنامه بسته می‌شود";
 "core.trigger.summary.application.opens" = "وقتی %@ باز می‌شود";

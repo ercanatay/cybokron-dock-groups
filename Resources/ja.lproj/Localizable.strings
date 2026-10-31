@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "選択…";
 "triggers.editor.application.title" = "アプリケーションを選択";
 "triggers.editor.application.message" = "トリガーのアプリケーションを選択してください。";
-"triggers.editor.application.invalid" = "選択したアプリケーションには有効なバンドル識別子が必要です。";
+"triggers.editor.application.invalid" = "アプリを選択してください。有効なバンドル識別子と実行ファイルを持つアプリです。";
 "triggers.editor.application.opens" = "アプリケーションが開いたとき";
 "triggers.editor.application.closes" = "アプリケーションが閉じたとき";
 "core.trigger.summary.application.opens" = "%@ が開いたとき";

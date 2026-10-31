@@ -1151,7 +1151,7 @@
 "triggers.editor.application.choose" = "Choose…";
 "triggers.editor.application.title" = "Choose Application";
 "triggers.editor.application.message" = "Select an application for the trigger.";
-"triggers.editor.application.invalid" = "The selected application needs a valid bundle identifier.";
+"triggers.editor.application.invalid" = "Choose an app with a valid bundle identifier and executable file.";
 "triggers.editor.application.opens" = "An application opens";
 "triggers.editor.application.closes" = "An application closes";
 "core.trigger.summary.application.opens" = "When %@ opens";

@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Επιλογή…";
 "triggers.editor.application.title" = "Επιλογή εφαρμογής";
 "triggers.editor.application.message" = "Επιλέξτε μια εφαρμογή για τον ενεργοποιητή.";
-"triggers.editor.application.invalid" = "Η επιλεγμένη εφαρμογή χρειάζεται έγκυρο bundle identifier.";
+"triggers.editor.application.invalid" = "Επιλέξτε μια εφαρμογή με έγκυρο αναγνωριστικό πακέτου και εκτελέσιμο αρχείο.";
 "triggers.editor.application.opens" = "Μια εφαρμογή ανοίγει";
 "triggers.editor.application.closes" = "Μια εφαρμογή κλείνει";
 "core.trigger.summary.application.opens" = "Όταν ανοίγει το %@";

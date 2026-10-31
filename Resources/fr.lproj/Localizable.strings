@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Choisir…";
 "triggers.editor.application.title" = "Choisir une application";
 "triggers.editor.application.message" = "Sélectionnez une application pour le déclencheur.";
-"triggers.editor.application.invalid" = "L'application sélectionnée nécessite un identifiant de bundle valide.";
+"triggers.editor.application.invalid" = "Choisissez une application dotée d'un identifiant de bundle et d'un fichier exécutable valides.";
 "triggers.editor.application.opens" = "Une application s'ouvre";
 "triggers.editor.application.closes" = "Une application se ferme";
 "core.trigger.summary.application.opens" = "Quand %@ s'ouvre";

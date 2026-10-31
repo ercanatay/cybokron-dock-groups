@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Seçin…";
 "triggers.editor.application.title" = "Tətbiq seçin";
 "triggers.editor.application.message" = "Tətikləyici üçün tətbiq seçin.";
-"triggers.editor.application.invalid" = "Seçilmiş tətbiq etibarlı bundle identifikatoru tələb edir.";
+"triggers.editor.application.invalid" = "Etibarlı paket identifikatoru və icra faylı olan tətbiqi seçin.";
 "triggers.editor.application.opens" = "Tətbiq açılır";
 "triggers.editor.application.closes" = "Tətbiq bağlanır";
 "core.trigger.summary.application.opens" = "%@ açıldıqda";

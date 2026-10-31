@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Wybierz…";
 "triggers.editor.application.title" = "Wybierz aplikację";
 "triggers.editor.application.message" = "Wybierz aplikację dla wyzwalacza.";
-"triggers.editor.application.invalid" = "Wybrana aplikacja wymaga prawidłowego identyfikatora pakietu.";
+"triggers.editor.application.invalid" = "Wybierz aplikację z prawidłowym identyfikatorem pakietu i plikiem wykonywalnym.";
 "triggers.editor.application.opens" = "Aplikacja zostaje otwarta";
 "triggers.editor.application.closes" = "Aplikacja zostaje zamknięta";
 "core.trigger.summary.application.opens" = "Gdy otwierane jest %@";

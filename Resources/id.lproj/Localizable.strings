@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Pilih…";
 "triggers.editor.application.title" = "Pilih Aplikasi";
 "triggers.editor.application.message" = "Pilih aplikasi untuk pemicu.";
-"triggers.editor.application.invalid" = "Aplikasi yang dipilih memerlukan pengenal bundle yang valid.";
+"triggers.editor.application.invalid" = "Pilih aplikasi dengan bundle identifier dan file executable yang valid.";
 "triggers.editor.application.opens" = "Sebuah aplikasi dibuka";
 "triggers.editor.application.closes" = "Sebuah aplikasi ditutup";
 "core.trigger.summary.application.opens" = "Saat %@ dibuka";

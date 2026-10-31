@@ -1109,7 +1109,7 @@
 "triggers.editor.application.choose" = "Изберете…";
 "triggers.editor.application.title" = "Изберете приложение";
 "triggers.editor.application.message" = "Изберете приложение за тригера.";
-"triggers.editor.application.invalid" = "Избраното приложение изисква валиден идентификатор на пакета.";
+"triggers.editor.application.invalid" = "Изберете приложение с валиден идентификатор на пакет и изпълним файл.";
 "triggers.editor.application.opens" = "Приложение се отваря";
 "triggers.editor.application.closes" = "Приложение се затваря";
 "core.trigger.summary.application.opens" = "Когато %@ се отвори";

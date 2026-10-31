@@ -1828,7 +1828,7 @@ extension L10n {
             static var applicationChoose: String { tr("triggers.editor.application.choose", "Choose…") }
             static var applicationTitle: String { tr("triggers.editor.application.title", "Choose Application") }
             static var applicationMessage: String { tr("triggers.editor.application.message", "Select an application for the trigger.") }
-            static var applicationInvalid: String { tr("triggers.editor.application.invalid", "The selected application needs a valid bundle identifier.") }
+            static var applicationInvalid: String { tr("triggers.editor.application.invalid", "Choose an app with a valid bundle identifier and executable file.") }
             static var applicationOpens: String { tr("triggers.editor.application.opens", "An application opens") }
             static var applicationCloses: String { tr("triggers.editor.application.closes", "An application closes") }
         }
