@@ -30,6 +30,7 @@
 		08BFA351A36755AB554E4C10 /* StandaloneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A00BB27EBFC8303BE8F82D8 /* StandaloneController.swift */; };
 		0920533F591EAE9369ED8B95 /* DockGroupCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3439C241A0C71C41130903F /* DockGroupCodingTests.swift */; };
 		092EF77DAF1657D8F0F32B6E /* CybokronDockGroupsMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF457A0549DA59C556944F /* CybokronDockGroupsMain.swift */; };
+		09817C54FEAAC34B0E0558C0 /* MachOSliceTableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8760AFD9D6A7D250379F145F /* MachOSliceTableTests.swift */; };
 		09DD7EEFB2440DB08D48B2D6 /* ArchivedGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46396BA0E2EA9371AEF2D194 /* ArchivedGroupView.swift */; };
 		0A03488A11F2BB4346C1B7AD /* PopupPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01087437BC208F3DCF5CF5A /* PopupPreferences.swift */; };
 		0A5AE4440CCED082EF89C9B1 /* TriggerPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39DBAF7BB8FE859A7ABE953 /* TriggerPersistence.swift */; };
@@ -227,6 +228,7 @@
 		9540DBD57E54FDB91A5CAAB0 /* CaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B97B92EA6CB70B9DF31C06F /* CaptureController.swift */; };
 		955487F296038FAF745DB3C7 /* AppPresenceTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9176373393E289434BFCD09B /* AppPresenceTrackerTests.swift */; };
 		9559A069E5F0933C5776E143 /* OtherVersionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3709AAA87F1E19FE5B66B /* OtherVersionsView.swift */; };
+		955DDF577937B6C3C3A61678 /* MachOSliceTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89225414F69A5632611B0BCA /* MachOSliceTable.swift */; };
 		96062A763BA1BAF729087AF4 /* PopupKeyboardState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B259DE0CA07F045F0C6DBF9 /* PopupKeyboardState.swift */; };
 		96301FA6616B1474E2868A66 /* UsageTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50AA49824D4E87A81D3F6B1 /* UsageTracker.swift */; };
 		96A201BBA00267CF405D8D07 /* MostUsedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1E3A1CF00A2CBC285D9C7F /* MostUsedSettingsView.swift */; };
@@ -672,9 +674,11 @@
 		856D49552AD49CB588B0A022 /* ItemPresenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPresenceTests.swift; sourceTree = "<group>"; };
 		85899CC1DF8BC3CDD82C1E86 /* SystemTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTools.swift; sourceTree = "<group>"; };
 		8641953B25E194F500CD30E3 /* CaptureIntentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureIntentTests.swift; sourceTree = "<group>"; };
+		8760AFD9D6A7D250379F145F /* MachOSliceTableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachOSliceTableTests.swift; sourceTree = "<group>"; };
 		87DA8C48DDF9E954677F819A /* ApplicationIdentityCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationIdentityCount.swift; sourceTree = "<group>"; };
 		889366A1C43E902E8112A021 /* InstanceHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceHandoff.swift; sourceTree = "<group>"; };
 		88F3F9EB67D54D2B26F398BC /* LayoutFileCreateNewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutFileCreateNewTests.swift; sourceTree = "<group>"; };
+		89225414F69A5632611B0BCA /* MachOSliceTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachOSliceTable.swift; sourceTree = "<group>"; };
 		89440FDF52AFBBFF1AA40E3E /* ItemOpenerPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOpenerPolicy.swift; sourceTree = "<group>"; };
 		89A4B873DDB84E1584F33D48 /* WindowLayoutGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowLayoutGeometry.swift; sourceTree = "<group>"; };
 		89B3E343131C65A89DA04197 /* AppReferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReferenceTests.swift; sourceTree = "<group>"; };
@@ -962,6 +966,7 @@
 				61ECBBA474FF916EF94D7431 /* AppPresenceRuleTracker.swift */,
 				11CBA6672F4B2B187438818A /* AppPresenceTracker.swift */,
 				DDD7328ED659F45D32CB3090 /* LaunchClassifier.swift */,
+				89225414F69A5632611B0BCA /* MachOSliceTable.swift */,
 				60A7E57856CD53102E6C6EA0 /* TriggerApplicationIdentifier.swift */,
 				20BA2C81E946EAB603677698 /* TriggerBudget.swift */,
 				A01A35CF0CF08D6D441A2782 /* TriggerCoordinator.swift */,
@@ -1394,6 +1399,7 @@
 				C2231F9DD0B652E08F6216B2 /* LayoutCandidateEligibilityTests.swift */,
 				6AEE6CACA9E835DA2080C23A /* LinkPolicyTests.swift */,
 				1DD2AF97281C362D5B2ADB56 /* LocalizationTests.swift */,
+				8760AFD9D6A7D250379F145F /* MachOSliceTableTests.swift */,
 				E5BE38322DF8AD7DF8ECBCAE /* MaintenanceFixesTests.swift */,
 				BCCFBA8CF08D9467419865DB /* MoveBetweenGroupsTests.swift */,
 				A9C8EDE18D836E1B44E32A43 /* PathIdentifiedAppTests.swift */,
@@ -1983,6 +1989,7 @@
 				90BF1289352A073D5EDAC7D4 /* LinkPolicy.swift in Sources */,
 				A15EE759F1A38CE4CC8021E8 /* Localization.swift in Sources */,
 				179B978D27C90F759540E7FF /* LocationPurpose.swift in Sources */,
+				955DDF577937B6C3C3A61678 /* MachOSliceTable.swift in Sources */,
 				78293B48E303FA8F2A832C03 /* MostUsed.swift in Sources */,
 				2491AF821CBCDDD2FEE21A48 /* OpenApps.swift in Sources */,
 				04FCF887E179FE27E3EF38C6 /* PopupCellText.swift in Sources */,
@@ -2142,6 +2149,7 @@
 				8D8DDF5039C71D66ACAEA1C1 /* LayoutVerifiedCopyTests.swift in Sources */,
 				4B114DC8D9F12FDD6648C179 /* LinkPolicyTests.swift in Sources */,
 				87DB6E5E4EE84070383621BD /* LocalizationTests.swift in Sources */,
+				09817C54FEAAC34B0E0558C0 /* MachOSliceTableTests.swift in Sources */,
 				52A4E5A4C5F3D0AC8D846B11 /* MaintenanceFixesTests.swift in Sources */,
 				B998F03A617DF8C638C9EC11 /* MoveBetweenGroupsTests.swift in Sources */,
 				3C4326E575B2EBF6357517E3 /* PathIdentifiedAppTests.swift in Sources */,
