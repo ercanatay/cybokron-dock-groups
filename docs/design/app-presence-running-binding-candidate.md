@@ -98,7 +98,16 @@ versions beyond this Mac.
 A second fixture packaged the executable in an ad-hoc-signed `.app` but launched its executable
 directly with `Process`. In that run AppKit did not expose the original fixture as a running app,
 so no `NSRunningApplication` equality or termination conclusion can be drawn from it; the Security
-lookup observations repeated. LaunchServices-based app behavior remains to be tested separately.
+lookup observations repeated.
+
+A separate, windowless AppKit fixture launched via `NSWorkspace.openApplication` then executed
+`/bin/sleep` in its own process. In four local runs, a fresh Security lookup observed code that no
+longer matched the original requirement, while the retained pre-exec `SecCode` still matched. The
+original `NSRunningApplication` reported not terminated, and a fresh lookup by the same PID returned
+an object equal to the original. These results demonstrate that instance equality alone did not
+detect this fixture's in-place code replacement on the tested OS. They do not prove behavior on
+other macOS versions or make fresh PID-based lookups race-free. The fixture was launched without
+activation, exits on its own, and never touches user groups or applications.
 
 Consequently, retaining a successful `SecCode` object or an equal process instance is not enough
 to prove that the same code is still executing. A fresh lookup helps detect this observed case but
