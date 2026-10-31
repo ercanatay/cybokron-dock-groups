@@ -3,6 +3,9 @@ public enum ApplicationSnapshotCounter {
     public static func counts(keys: Set<String>, identifiers: [String?]) -> [String: Int] {
         guard identifiers.allSatisfy({ ($0 ?? "").isEmpty == false }) else { return [:] }
         guard !keys.isEmpty else { return [:] }
+        for key in keys {
+            guard TriggerApplicationIdentifier(key) != nil else { return [:] }
+        }
         var result: [String: Int] = [:]
         for key in keys {
             result[key.lowercased()] = 0

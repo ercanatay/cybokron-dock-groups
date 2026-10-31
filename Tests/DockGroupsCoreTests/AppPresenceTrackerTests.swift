@@ -4,6 +4,10 @@ import Testing
 
 @Suite("App presence tracker")
 struct AppPresenceTrackerTests {
+    @Test func invalidTargetIdentityCannotBeNormalizedIntoAValidKey() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.exampKe.app"], identifiers: ["com.exampke.app"])
+        #expect(result.isEmpty)
+    }
     @Test func nonASCIIIdentityCannotMatchASCIIApplicationKey() {
         let result = ApplicationSnapshotCounter.counts(keys: ["com.exampke.app"], identifiers: ["com.exampKe.app"])
         #expect(result["com.exampke.app"] == 0)
