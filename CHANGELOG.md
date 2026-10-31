@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Application triggers can react when the first instance of a chosen app opens or its last instance closes. The current state is a baseline when observation starts; short-lived changes can be missed. If macOS cannot identify a running app, observation waits by default. An optional, clearly warned setting monitors only identifiable apps for this session and resets when Cybokron Dock Groups quits; it applies to every application trigger.
+
 ## [0.11.1] - 2026-10-26
 
 ### Fixed

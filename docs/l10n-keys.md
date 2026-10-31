@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1026 keys.
+1039 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1271,6 +1271,8 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `core.trigger.summary.time.days` | At %1$@ on %2$@ |
 | `core.trigger.summary.login` | At login |
 | `core.trigger.summary.appOpens` | When %@ opens |
+| `core.trigger.summary.application.opens` | When %@ opens |
+| `core.trigger.summary.application.closes` | When %@ closes |
 | `core.trigger.summary.screensWake` | When the screens wake |
 | `core.trigger.summary.screensSleep` | When the screens sleep |
 | `core.trigger.summary.unsupported` | A trigger made by a newer version |
@@ -1310,6 +1312,14 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.title.new` | New Trigger for “%@” |
 | `triggers.editor.title.edit` | Edit Trigger |
 | `triggers.editor.when` | When |
+| `triggers.editor.application.label` | Application |
+| `triggers.editor.application.none` | No app selected |
+| `triggers.editor.application.choose` | Choose… |
+| `triggers.editor.application.title` | Choose Application |
+| `triggers.editor.application.message` | Select an application for the trigger. |
+| `triggers.editor.application.invalid` | Choose an app with a valid bundle identifier and executable file. |
+| `triggers.editor.application.opens` | An application opens |
+| `triggers.editor.application.closes` | An application closes |
 | `triggers.editor.do` | Do |
 | `triggers.editor.how` | How |
 | `triggers.editor.event.time` | At a Time |
@@ -1414,6 +1424,9 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `groupWindow.triggers.archivedCount.one` | 1 trigger (it doesn't run while the group is archived) |
 | `groupWindow.triggers.archivedCount.other` | %ld triggers (they don't run while the group is archived) |
 | `groupWindow.triggers.waitingForLocation` | Waiting for Location access. |
+| `groupWindow.triggers.waitingForApplicationIdentity` | Waiting: macOS cannot identify every running app. |
+| `groupWindow.triggers.identifiedAppsOnly` | Monitor identified applications only |
+| `groupWindow.triggers.identifiedAppsWarning` | Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits. |
 | `groupWindow.triggers.vpnNotWatched` | Doesn't run in this version: macOS doesn't tell reliably when a VPN connects. |
 
 ## Triggers: Settings → Triggers (English only for now; `awaitingTranslation`: `settings.triggers.`)
