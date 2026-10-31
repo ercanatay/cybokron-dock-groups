@@ -4,6 +4,10 @@ import Testing
 
 @Suite("App presence tracker")
 struct AppPresenceTrackerTests {
+    @Test func snapshotCountsEmptyIdentifierReturnsUnknown() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.example.app"], identifiers: ["com.example.app", ""])
+        #expect(result.isEmpty)
+    }
     @Test func initialValidCountSetsBaselineWithNoEdge() {
         var tracker = AppPresenceTracker()
         #expect(tracker.observe(count: 1, generation: tracker.generation) == nil)

@@ -1,7 +1,7 @@
-/// Empty result signals unknown if any identifier is nil; global fail-closed policy is provisional and can disable all triggers.
+/// Empty result signals unknown if any identifier is nil or empty; global fail-closed policy is provisional and can disable all triggers.
 public enum ApplicationSnapshotCounter {
     public static func counts(keys: Set<String>, identifiers: [String?]) -> [String: Int] {
-        guard identifiers.allSatisfy({ $0 != nil }) else { return [:] }
+        guard identifiers.allSatisfy({ ($0 ?? "").isEmpty == false }) else { return [:] }
         guard !keys.isEmpty else { return [:] }
         var result: [String: Int] = [:]
         for key in keys {
