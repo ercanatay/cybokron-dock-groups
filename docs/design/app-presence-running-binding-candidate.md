@@ -62,9 +62,36 @@ actual packaged-app UI. Supported macOS versions and user-visible Accessibility/
 separate verification. No requirement, hash or identity helper in the experimental branch should
 be interpreted as completing these gates.
 
+## Audit-token investigation (2026-11-01)
+
+Apple's published Security source explicitly marks its PID-only convenience lookup as raceable
+and implements an audit-token lookup through `kSecGuestAttributeAudit`. This is evidence of a
+possible stronger input to Security, not a public recipe for acquiring a trustworthy audit token
+for an arbitrary application chosen through `NSWorkspace`. Apple's `NSRunningApplication`
+interface documents a PID and instance comparison, but does not document an audit-token property.
+Do not manufacture an audit token from a PID, depend on private APIs, or infer that a token is
+bound to the user's selection merely because a Security lookup accepts it.
+
+Endpoint Security events expose an audit token, but creating a client requires an entitlement
+requested from Apple and user approval for Full Disk Access; Apple's client sample also handles a
+not-privileged failure. This is not a drop-in replacement for existing application observation.
+Do not add Endpoint Security, a privileged helper, or additional permissions as part of this
+experiment. Even if obtained, an event token would need a separately specified association with
+the selected app, initial running state, event loss, confirmation, and process exit handling.
+
+The current release gate therefore remains open: identify a supported, proportionate way to bind
+the locally confirmed app selection to an actual process instance, or keep this trigger unavailable
+when that association cannot be established. Failed or unavailable checks must remain unknown and
+must never be translated into an application-close event.
+
 ## Primary references
 
 - [NSRunningApplication process-identity guidance](https://developer.apple.com/documentation/appkit/nsrunningapplication/processidentifier)
 - [NSRunningApplication launch-date limitation](https://developer.apple.com/documentation/appkit/nsrunningapplication/launchdate)
 - [Dynamic signed-code validation](https://developer.apple.com/documentation/security/seccodecheckvalidity%28_%3A_%3A_%3A%29)
 - [Guest-code attributes](https://developer.apple.com/documentation/security/guest-attribute-dictionary-keys)
+- [Apple Security source: PID and audit-token lookups](https://github.com/apple-oss-distributions/Security/blob/main/OSX/libsecurity_codesigning/lib/SecCode.cpp)
+- [NSRunningApplication interface](https://developer.apple.com/documentation/appkit/nsrunningapplication)
+- [Endpoint Security process audit token](https://developer.apple.com/documentation/endpointsecurity/es_process_t/audit_token)
+- [Endpoint Security client requirements](https://developer.apple.com/documentation/endpointsecurity/es_new_client%28_%3A_%3A%29)
+- [Endpoint Security entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.endpoint-security.client)
