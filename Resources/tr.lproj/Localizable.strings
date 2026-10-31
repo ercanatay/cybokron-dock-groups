@@ -1115,4 +1115,4 @@
 "groupWindow.triggers.waitingForApplicationIdentity" = "Bekleniyor: macOS çalışan her uygulamayı tanımlayamıyor.";
 
 "groupWindow.triggers.identifiedAppsOnly" = "Yalnızca tanımlanan uygulamaları izle";
-"groupWindow.triggers.identifiedAppsWarning" = "Yalnızca macOS tarafından tanımlanan uygulamalar izlenir. Tanımlanmamış örnekler kaçırılabilir ve kapatma yanlış bildirilebilir. Bu ayar tüm uygulama tetikleyicilerini kapsar ve Cybokron Dock Groups kapatıldığında sıfırlanır.";
+"groupWindow.triggers.identifiedAppsWarning" = "Yalnızca macOS tarafından tanımlanan uygulamalar izlenir. Tanımlanmamış örnekler kaçırılabilir ve bir uygulamanın kapanışı yanlış bildirilebilir. Bu ayar tüm uygulama tetikleyicilerini kapsar ve Cybokron Dock Groups kapatıldığında sıfırlanır.";
