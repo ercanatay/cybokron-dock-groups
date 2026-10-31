@@ -30,7 +30,11 @@ The SDK's `mach-o/fat.h` documents big-endian fat headers and 32- and 64-bit sli
 
 ## Unresolved gates
 
-The Security APIs take a path, not the already-open file descriptor used for parsing. Rechecking
+The Security APIs take a path, not the already-open file descriptor used for parsing. In a local
+fixture experiment, after the original executable header was read through an open file handle, the
+selected bundle path was replaced with a different signed fixture. The subsequent path-based
+Security check returned the replacement's code hash; the original fixture remained separately
+preserved. This is a concrete selection-to-check race, not merely a hypothetical one. Rechecking
 path, file metadata or hashes cannot by itself prove that the file was never replaced or modified
 between operations. Symbolic links, network volumes, app updates, architecture aliases, OS
 compatibility, process/PID lifetime, asynchronous cancellation, unknown signatures, and malformed
