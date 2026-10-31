@@ -246,4 +246,19 @@ struct TriggerDraftTests {
         #expect(!rejectedResult)
         #expect(draft.applicationBundleIdentifier == "com.existing.App")
     }
+
+    @Test func choosingTestBundlesAcceptsOnlyReportedIdentifier() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let validURL = try directory.makeAppBundle(named: "Valid", info: ["CFBundleIdentifier": "com.Example.Fixture"])
+        let noIDURL = try directory.makeAppBundle(named: "NoID", info: ["CFBundleName": "No ID"])
+        let validApp = try AppReference(applicationURL: validURL)
+        let noIDApp = try AppReference(applicationURL: noIDURL)
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let accepted = draft.selectApplication(validApp)
+        let rejected = draft.selectApplication(noIDApp)
+        #expect(accepted)
+        #expect(!rejected)
+        #expect(draft.applicationBundleIdentifier == "com.Example.Fixture")
+    }
 }
