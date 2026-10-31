@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "عند فتح %@";
 "core.trigger.summary.application.closes" = "عند إغلاق %@";
 "groupWindow.triggers.waitingForApplicationIdentity" = "في انتظار: لا يستطيع macOS التعرّف على كل التطبيقات قيد التشغيل.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "مراقبة التطبيقات المحددة فقط";
+"groupWindow.triggers.identifiedAppsWarning" = "تُراقَب التطبيقات التي حدّدها macOS فقط. قد تفوتك النسخ غير المحددة، وقد يُبلَّغ عن إغلاق التطبيق بشكل غير صحيح. هذا الإعداد ينطبق على جميع مشغلات التطبيقات، ويُعاد ضبطه عند إغلاق Cybokron Dock Groups.";

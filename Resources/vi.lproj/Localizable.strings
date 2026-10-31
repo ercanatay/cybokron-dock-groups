@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Khi %@ mở";
 "core.trigger.summary.application.closes" = "Khi %@ đóng";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Đang chờ: macOS không thể nhận dạng mọi ứng dụng đang chạy.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Chỉ giám sát các ứng dụng đã được nhận diện";
+"groupWindow.triggers.identifiedAppsWarning" = "Chỉ các ứng dụng được macOS nhận diện mới được giám sát. Các phiên bản chưa được nhận diện có thể bị bỏ sót, và việc đóng ứng dụng có thể được báo cáo không chính xác. Cài đặt này áp dụng cho tất cả các trình kích hoạt ứng dụng và sẽ được đặt lại khi Cybokron Dock Groups thoát.";

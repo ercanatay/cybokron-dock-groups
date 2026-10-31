@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Saat %@ dibuka";
 "core.trigger.summary.application.closes" = "Saat %@ ditutup";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Menunggu: macOS tidak dapat mengidentifikasi setiap aplikasi yang sedang berjalan.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Pantau hanya aplikasi yang teridentifikasi";
+"groupWindow.triggers.identifiedAppsWarning" = "Hanya aplikasi yang teridentifikasi oleh macOS yang dipantau. Instans yang tidak teridentifikasi mungkin terlewat, dan penutupan dapat dilaporkan secara tidak akurat. Pengaturan ini berlaku untuk semua pemicu aplikasi dan akan kembali ke default saat Cybokron Dock Groups ditutup.";

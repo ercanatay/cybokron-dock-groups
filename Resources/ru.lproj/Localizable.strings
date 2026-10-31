@@ -1114,3 +1114,6 @@
 "core.trigger.summary.application.opens" = "Когда %@ открывается";
 "core.trigger.summary.application.closes" = "Когда %@ закрывается";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Ожидание: macOS не может определить все запущенные приложения.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Отслеживать только определённые приложения";
+"groupWindow.triggers.identifiedAppsWarning" = "Отслеживаются только приложения, которые определяет macOS. Неопределённые экземпляры могут быть пропущены, а закрытие может быть зафиксировано неверно. Этот параметр применяется ко всем триггерам приложения и сбрасывается при выходе из Cybokron Dock Groups.";

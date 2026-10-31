@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "وقتی %@ باز می‌شود";
 "core.trigger.summary.application.closes" = "وقتی %@ بسته می‌شود";
 "groupWindow.triggers.waitingForApplicationIdentity" = "در انتظار: macOS نمی‌تواند هر برنامهٔ در حال اجرا را شناسایی کند.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "فقط برنامه‌های شناسایی‌شده را پایش کن";
+"groupWindow.triggers.identifiedAppsWarning" = "فقط برنامه‌هایی پایش می‌شوند که macOS آن‌ها را شناسایی کرده باشد. نمونه‌های شناسایی‌نشده ممکن است از قلم بیفتند و بسته‌شدن برنامه ممکن است به‌اشتباه گزارش شود. این تنظیم برای همه تریگرهای برنامه اعمال می‌شود و با خروج Cybokron Dock Groups بازنشانی می‌شود.";

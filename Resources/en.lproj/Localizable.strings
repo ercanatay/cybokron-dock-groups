@@ -1157,3 +1157,6 @@
 "core.trigger.summary.application.opens" = "When %@ opens";
 "core.trigger.summary.application.closes" = "When %@ closes";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Waiting: macOS cannot identify every running app.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Monitor identified applications only";
+"groupWindow.triggers.identifiedAppsWarning" = "Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits.";

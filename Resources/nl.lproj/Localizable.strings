@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Wanneer %@ opent";
 "core.trigger.summary.application.closes" = "Wanneer %@ sluit";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Wachten: macOS kan niet elke draaiende app identificeren.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Alleen geïdentificeerde applicaties bewaken";
+"groupWindow.triggers.identifiedAppsWarning" = "Alleen applicaties die door macOS zijn geïdentificeerd, worden bewaakt. Niet-geïdentificeerde exemplaren kunnen worden gemist, en een afsluiting kan onjuist worden gemeld. Deze instelling geldt voor alle applicatietriggers en wordt teruggezet wanneer Cybokron Dock Groups wordt afgesloten.";

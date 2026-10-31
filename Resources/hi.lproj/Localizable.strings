@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "जब %@ खुलता है";
 "core.trigger.summary.application.closes" = "जब %@ बंद होता है";
 "groupWindow.triggers.waitingForApplicationIdentity" = "रुकिए: macOS हर चल रहे ऐप की पहचान नहीं कर सकता।";
+
+"groupWindow.triggers.identifiedAppsOnly" = "केवल पहचाने गए एप्लिकेशन की निगरानी करें";
+"groupWindow.triggers.identifiedAppsWarning" = "केवल वे एप्लिकेशन निगरानी में लिए जाते हैं जिन्हें macOS ने पहचाना है। बिना पहचाने गए उदाहरण छूट सकते हैं, और बंद होने की घटना गलत तरीके से रिपोर्ट हो सकती है। यह सेटिंग सभी एप्लिकेशन ट्रिगर्स पर लागू होती है और Cybokron Dock Groups बंद होने पर रीसेट हो जाती है।";

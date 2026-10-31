@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Όταν ανοίγει το %@";
 "core.trigger.summary.application.closes" = "Όταν κλείνει το %@";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Αναμονή: Το macOS δεν μπορεί να αναγνωρίσει κάθε εκτελούμενη εφαρμογή.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Παρακολούθηση μόνο αναγνωρισμένων εφαρμογών";
+"groupWindow.triggers.identifiedAppsWarning" = "Παρακολουθούνται μόνο οι εφαρμογές που αναγνωρίζει το macOS. Τα μη αναγνωρισμένα στιγμιότυπα ενδέχεται να μην εντοπιστούν και ένα κλείσιμο ενδέχεται να αναφερθεί λανθασμένα. Αυτή η ρύθμιση ισχύει για όλες τις ενεργοποιήσεις εφαρμογών και επαναφέρεται όταν τερματιστεί το Cybokron Dock Groups.";

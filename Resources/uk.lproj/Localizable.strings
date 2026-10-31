@@ -1114,3 +1114,6 @@
 "core.trigger.summary.application.opens" = "Коли відкривається %@";
 "core.trigger.summary.application.closes" = "Коли закривається %@";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Очікування: macOS не може ідентифікувати всі запущені програми.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Моніторити лише ідентифіковані застосунки";
+"groupWindow.triggers.identifiedAppsWarning" = "Відстежуються лише застосунки, які ідентифікує macOS. Неідентифіковані екземпляри можуть бути пропущені, а закриття може бути зафіксовано некоректно. Цей параметр застосовується до всіх тригерів програми та скидається під час виходу з Cybokron Dock Groups.";

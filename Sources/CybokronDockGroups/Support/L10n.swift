@@ -1887,6 +1887,8 @@ extension L10n {
                     ? tr("groupWindow.triggers.archivedCount.one", "1 trigger (it doesn't run while the group is archived)")
                     : tr("groupWindow.triggers.archivedCount.other", "%ld triggers (they don't run while the group is archived)", count)
             }
+            static var identifiedAppsOnly: String { tr("groupWindow.triggers.identifiedAppsOnly", "Monitor identified applications only") }
+            static var identifiedAppsWarning: String { tr("groupWindow.triggers.identifiedAppsWarning", "Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits.") }
         }
 
         enum Settings {

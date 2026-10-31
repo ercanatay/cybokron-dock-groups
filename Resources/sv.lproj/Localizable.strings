@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "När %@ öppnas";
 "core.trigger.summary.application.closes" = "När %@ stängs";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Väntar: macOS kan inte identifiera alla igångvarande appar.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Övervaka endast identifierade appar";
+"groupWindow.triggers.identifiedAppsWarning" = "Endast appar som identifieras av macOS övervakas. Oidentifierade instanser kan missas, och en avslutning kan rapporteras felaktigt. Denna inställning gäller för alla programutlösare och återställs när Cybokron Dock Groups avslutas.";

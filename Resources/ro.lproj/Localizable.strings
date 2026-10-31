@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Când %@ se deschide";
 "core.trigger.summary.application.closes" = "Când %@ se închide";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Așteptare: macOS nu poate identifica fiecare aplicație care rulează.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Monitorizează doar aplicațiile identificate";
+"groupWindow.triggers.identifiedAppsWarning" = "Sunt monitorizate doar aplicațiile identificate de macOS. Instanțele neidentificate pot fi ratate, iar închiderea unei aplicații poate fi raportată incorect. Această setare se aplică tuturor declanșatoarelor aplicației și se resetează atunci când Cybokron Dock Groups se închide.";

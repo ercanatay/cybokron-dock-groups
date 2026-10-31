@@ -1113,3 +1113,6 @@
 "core.trigger.summary.application.opens" = "%@이(가) 열릴 때";
 "core.trigger.summary.application.closes" = "%@이(가) 닫힐 때";
 "groupWindow.triggers.waitingForApplicationIdentity" = "대기 중: macOS가 실행 중인 모든 앱을 식별할 수 없습니다.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "식별된 애플리케이션만 모니터링";
+"groupWindow.triggers.identifiedAppsWarning" = "macOS에서 식별된 애플리케이션만 모니터링됩니다. 식별되지 않은 인스턴스는 놓칠 수 있으며, 종료가 잘못 보고될 수 있습니다. 이 설정은 모든 애플리케이션 트리거에 적용되며, Cybokron Dock Groups가 종료되면 초기화됩니다.";

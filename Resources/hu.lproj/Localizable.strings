@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Amikor %@ megnyílik";
 "core.trigger.summary.application.closes" = "Amikor %@ bezárul";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Várakozás: a macOS nem tudja azonosítani az összes futó alkalmazást.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Csak azonosított alkalmazásokat figyelünk";
+"groupWindow.triggers.identifiedAppsWarning" = "Csak a macOS által azonosított alkalmazások vannak figyelés alatt. Az azonosítatlan példányok kimaradhatnak, az alkalmazás bezárása pedig tévesen jelenthető. Ez a beállítás minden alkalmazás-triggerre vonatkozik, és visszaáll alapértelmezettre, amikor a Cybokron Dock Groups kilép.";

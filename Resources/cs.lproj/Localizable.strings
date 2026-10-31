@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Když se %@ otevře";
 "core.trigger.summary.application.closes" = "Když se %@ zavře";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Čekání: macOS nedokáže identifikovat každou spuštěnou aplikaci.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Sledovat pouze identifikované aplikace";
+"groupWindow.triggers.identifiedAppsWarning" = "Sledovány jsou pouze aplikace, které macOS identifikoval. Neidentifikované instance mohou zůstat bez povšimnutí a ukončení aplikace může být nesprávně nahlášeno. Toto nastavení platí pro všechna spouštění aplikací a resetuje se, když ukončíte Cybokron Dock Groups.";

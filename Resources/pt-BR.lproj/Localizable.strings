@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Quando %@ abre";
 "core.trigger.summary.application.closes" = "Quando %@ fecha";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Aguardando: o macOS não consegue identificar todos os apps em execução.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Monitorar apenas aplicativos identificados";
+"groupWindow.triggers.identifiedAppsWarning" = "Somente aplicativos identificados pelo macOS são monitorados. Instâncias não identificadas podem passar despercebidas, e o fechamento de um aplicativo pode ser informado incorretamente. Esta configuração se aplica a todos os gatilhos de aplicativos e é redefinida quando o Cybokron Dock Groups é encerrado.";

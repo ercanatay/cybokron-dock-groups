@@ -1113,3 +1113,6 @@
 "core.trigger.summary.application.opens" = "%@ açıldığında";
 "core.trigger.summary.application.closes" = "%@ kapandığında";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Bekleniyor: macOS çalışan her uygulamayı tanımlayamıyor.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Yalnızca tanımlanan uygulamaları izle";
+"groupWindow.triggers.identifiedAppsWarning" = "Yalnızca macOS tarafından tanımlanan uygulamalar izlenir. Tanımlanmamış örnekler kaçırılabilir ve kapatma yanlış bildirilebilir. Bu ayar tüm uygulama tetikleyicilerini kapsar ve Cybokron Dock Groups kapatıldığında sıfırlanır.";

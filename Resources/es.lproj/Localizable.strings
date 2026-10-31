@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "Cuando se abre %@";
 "core.trigger.summary.application.closes" = "Cuando se cierra %@";
 "groupWindow.triggers.waitingForApplicationIdentity" = "Esperando: macOS no puede identificar todas las aplicaciones en ejecución.";
+
+"groupWindow.triggers.identifiedAppsOnly" = "Supervisar solo las aplicaciones identificadas";
+"groupWindow.triggers.identifiedAppsWarning" = "Solo se supervisan las aplicaciones que macOS identifica. Es posible que se pasen por alto las instancias no identificadas y que un cierre se notifique incorrectamente. Esta configuración se aplica a todos los disparadores de aplicaciones y se restablece cuando Cybokron Dock Groups se cierra.";

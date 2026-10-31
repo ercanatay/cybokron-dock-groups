@@ -40,6 +40,10 @@ struct GroupTriggersSection: View {
             ForEach(list) { trigger in
                 TriggerRow(trigger: trigger, triggers: triggers, store: store, onEdit: { editing = TriggerEditing(existing: trigger) })
             }
+            if list.contains(where: { if case .applicationPresence = $0.event { return true }; return false }) {
+                Toggle(Texts.identifiedAppsOnly, isOn: Binding(get: { triggers.monitorIdentifiedAppsOnlyForSession }, set: { triggers.setMonitorIdentifiedAppsOnlyForSession($0) }))
+                Text(Texts.identifiedAppsWarning).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
             HStack {
                 Button(Texts.add) { editing = TriggerEditing(existing: nil) }
                     .disabled(limitMessage != nil)

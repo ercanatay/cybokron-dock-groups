@@ -1115,3 +1115,6 @@
 "core.trigger.summary.application.opens" = "%@ が開いたとき";
 "core.trigger.summary.application.closes" = "%@ が閉じたとき";
 "groupWindow.triggers.waitingForApplicationIdentity" = "待機中: macOS は実行中のすべてのアプリを識別できません。";
+
+"groupWindow.triggers.identifiedAppsOnly" = "識別されたアプリケーションのみを監視";
+"groupWindow.triggers.identifiedAppsWarning" = "macOSによって識別されたアプリケーションのみが監視されます。識別されていないインスタンスは見逃される可能性があり、アプリの終了が誤って報告されることがあります。この設定はすべてのアプリケーショントリガーに適用され、Cybokron Dock Groups が終了するとリセットされます。";
