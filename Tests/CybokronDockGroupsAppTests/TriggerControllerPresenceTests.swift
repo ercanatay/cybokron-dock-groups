@@ -28,10 +28,80 @@ final class FakePresenceAutomationHandler: AutomationHandling {
     func showPopup(of group: DockGroup) {}
 }
 
+@MainActor
+private final class CountingPresenceHandler: AutomationHandling {
+    let groups: [DockGroup]
+    private(set) var popupCount = 0
+    private(set) var openAllCount = 0
+    init(groups: [DockGroup]) { self.groups = groups }
+    func group(withID id: DockGroup.ID) -> DockGroup? { groups.first { $0.id == id } }
+    var currentGroupID: DockGroup.ID? { nil }
+    var currentGroupStartTrigger: TransitionTrigger? { nil }
+    func startGroup(_ id: DockGroup.ID, trigger: TransitionTrigger) async -> TransitionReport? { nil }
+    func finishGroup(_ id: DockGroup.ID, trigger: TransitionTrigger, showsPrevious: Bool) async -> TransitionReport? { nil }
+    func openAllItems(of group: DockGroup) async -> LaunchReport {
+        openAllCount += 1
+        return LaunchReport(groupName: group.name, entries: [])
+    }
+    func showPopup(of group: DockGroup) { popupCount += 1 }
+}
+
 // MARK: - Tests
 
 @MainActor
 struct TriggerControllerPresenceTests {
+
+    @Test func unknownSnapshotRebaselinesBeforeNextOpening() async throws {
+        let dir = try makeTempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: dir.appendingPathComponent("groups.json")), saveDelay: .zero)
+        let group = groups.addGroup(named: "Fixture")
+        let triggers = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
+        _ = triggers.add(GroupTrigger(groupID: group.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts), action: .showPopup))
+        let handler = CountingPresenceHandler(groups: [group])
+        let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
+        controller.start(handler: handler, launchedAsLoginItem: false, launchedAt: Date())
+        let generation = controller.applicationObservationGeneration
+        controller.handleApplicationSnapshot(generation: generation, sequence: 100, counts: ["com.cybokronfixture.normal": 0])
+        controller.handleApplicationSnapshot(generation: generation, sequence: 101, counts: [:])
+        controller.handleApplicationSnapshot(generation: generation, sequence: 102, counts: ["com.cybokronfixture.normal": 1])
+        try await Task.sleep(for: .milliseconds(2300))
+        #expect(handler.popupCount == 0)
+        controller.handleApplicationSnapshot(generation: generation, sequence: 103, counts: ["com.cybokronfixture.normal": 0])
+        controller.handleApplicationSnapshot(generation: generation, sequence: 104, counts: ["com.cybokronfixture.normal": 1])
+        for _ in 0..<60 {
+            if handler.popupCount == 1 { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        #expect(handler.popupCount == 1)
+    }
+
+    @Test func syntheticSnapshotsReachFirstStartAndLastEndOnly() async throws {
+        let dir = try makeTempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: dir.appendingPathComponent("groups.json")), saveDelay: .zero)
+        let opensGroup = groups.addGroup(named: "Opens")
+        let closesGroup = groups.addGroup(named: "Closes")
+        let triggers = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
+        _ = triggers.add(GroupTrigger(groupID: opensGroup.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts), action: .showPopup))
+        _ = triggers.add(GroupTrigger(groupID: closesGroup.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .ends), action: .openAll, runMode: .immediately))
+        let handler = CountingPresenceHandler(groups: [opensGroup, closesGroup])
+        let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
+        controller.start(handler: handler, launchedAsLoginItem: false, launchedAt: Date())
+        let generation = controller.applicationObservationGeneration
+        #expect(controller.isApplicationPresenceObserving)
+        for (offset, count) in [0, 1, 2, 1, 0].enumerated() {
+            controller.handleApplicationSnapshot(generation: generation, sequence: UInt64(100 + offset), counts: ["com.cybokronfixture.normal": count])
+        }
+        for _ in 0..<60 {
+            if handler.popupCount >= 1 && handler.openAllCount >= 1 { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        #expect(handler.popupCount == 1)
+        #expect(handler.openAllCount == 1)
+    }
 
     @Test func presenceLifecycle() async throws {
         let dir = try makeTempDir()
