@@ -45,6 +45,8 @@ final class TriggerController: ObservableObject {
     private var workspace: WorkspaceSource?
     private var displaySource: DisplaySource?
     private var networkSource: NetworkSource?
+    private var applicationPresenceSource: ApplicationPresenceSource?
+    private(set) var applicationObservationGeneration: UInt64 = 0
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
     private var launchSettle: Task<Void, Never>?
@@ -135,7 +137,9 @@ final class TriggerController: ObservableObject {
             onTick: { [weak self] in self?.coordinator.receive(.clock) }
         )
         self.clock = clock
-        let workspace = WorkspaceSource { [weak self] signal in self?.coordinator.receive(signal) }
+        let workspace = WorkspaceSource { [weak self] signal in
+            self?.handleWorkspaceSignal(signal)
+        }
         self.workspace = workspace
         workspace.start()
         clock.start()
@@ -144,7 +148,12 @@ final class TriggerController: ObservableObject {
             send: { [weak self] signal in self?.coordinator.receive(signal) },
             authorization: { [weak self] in self?.locationAccess.status ?? .notDetermined }
         )
+        let presenceSource = ApplicationPresenceSource { [weak self] generation, sequence, counts in
+            self?.coordinator.observeApplications(generation: generation, sequence: sequence, counts: counts)
+        }
+        self.applicationPresenceSource = presenceSource
         updateSources()
+        resetApplicationPresenceSource()
 
         launchSettle = Task { @MainActor [weak self] in
             try? await Task.sleep(for: Self.launchSettle)
@@ -279,6 +288,7 @@ final class TriggerController: ObservableObject {
         let previous = rules
         rules = store.triggers
         coordinator.rulesChanged(previous: previous)
+        resetApplicationPresenceSource()
         clock?.reschedule()
         updateSources()
         objectWillChange.send()
@@ -287,9 +297,10 @@ final class TriggerController: ObservableObject {
     /// Triggers of deleted groups go. A restored group's triggers start from a fresh baseline, as
     /// turned-on ones do: what came while it was archived never runs.
     private func groupsChanged() {
-        let active = Set(groups.groups.map(\.id))
-        let restored = active.subtracting(activeGroupIDs)
-        activeGroupIDs = active
+        let newActive = Set(groups.groups.map(\.id))
+        let oldActive = activeGroupIDs
+        let restored = newActive.subtracting(oldActive)
+        activeGroupIDs = newActive
         store.pruneTriggers(for: groups)
         if store.triggers.contains(where: { restored.contains($0.groupID) }) {
             let asBefore = store.triggers.map { trigger -> GroupTrigger in
@@ -302,6 +313,9 @@ final class TriggerController: ObservableObject {
         }
         clock?.reschedule()
         updateSources()
+        if oldActive != newActive {
+            resetApplicationPresenceSource()
+        }
         objectWillChange.send()
     }
 
@@ -326,6 +340,32 @@ final class TriggerController: ObservableObject {
         objectWillChange.send()
     }
 
+    /// The lowercased bundle identifiers of every enabled runnable `applicationPresence` trigger in an
+    /// active group, as keys for the presence source.
+    private func applicationPresenceKeys() -> Set<String> {
+        let activeGroupIDs = Set(groups.groups.map(\.id))
+        return Set(store.triggers.compactMap { trigger -> String? in
+            guard trigger.canRun else { return nil }
+            guard case .applicationPresence(let bundleIdentifier, _) = trigger.event else { return nil }
+            guard activeGroupIDs.contains(trigger.groupID) else { return nil }
+            return bundleIdentifier.lowercased()
+        })
+    }
+
+    /// Stops the presence source and its observations, bumps the generation monotonically, then restarts
+    /// them under the current rules if a runnable `applicationPresence` rule exists in an active group.
+    private func resetApplicationPresenceSource() {
+        applicationPresenceSource?.stop()
+        coordinator.stopApplicationObservations()
+        guard applicationObservationGeneration < UInt64.max else { return }
+        applicationObservationGeneration += 1
+        let generation = applicationObservationGeneration
+        let keys = applicationPresenceKeys()
+        if !keys.isEmpty, coordinator.beginApplicationObservations(generation: generation) {
+            applicationPresenceSource?.start(keys: keys, generation: generation)
+        }
+    }
+
     // MARK: - What the editor reads
 
     /// The displays connected now, for the editor's chooser and Use Current Displays.
@@ -338,6 +378,32 @@ final class TriggerController: ObservableObject {
     func currentWiFiNetworkName() -> String? {
         guard case .connected(let network) = WiFiSource.reading(authorization: locationAccess.status), network.isValid else { return nil }
         return network.name
+    }
+
+    /// Internal seam for tests to simulate workspace sleep/wake / session changes without
+    /// relying on real NSWorkspace notifications.
+    internal func handleWorkspaceSignal(_ signal: TriggerSignal) {
+        let couldActBefore = coordinator.environment.canAct
+        coordinator.receive(signal)
+        let canActAfter = coordinator.environment.canAct
+        switch signal {
+        case .screens, .session:
+            if couldActBefore != canActAfter {
+                if canActAfter {
+                    resetApplicationPresenceSource()
+                } else {
+                    applicationPresenceSource?.stop()
+                    coordinator.stopApplicationObservations()
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    /// Minimal read-only observation state for test assertions.
+    var isApplicationPresenceObserving: Bool {
+        applicationPresenceSource?.isObserving ?? false
     }
 }
 

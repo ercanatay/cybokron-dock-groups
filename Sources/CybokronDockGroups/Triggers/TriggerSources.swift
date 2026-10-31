@@ -165,6 +165,8 @@ final class ApplicationPresenceSource {
     private var generation: UInt64 = 0
     private var sequence: UInt64 = 0
 
+    internal var isObserving: Bool { observation != nil }
+
     init(callback: @escaping (UInt64, UInt64, [String: Int]) -> Void) {
         self.callback = callback
     }
