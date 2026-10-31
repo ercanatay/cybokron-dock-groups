@@ -84,6 +84,28 @@ the locally confirmed app selection to an actual process instance, or keep this 
 when that association cannot be established. Failed or unavailable checks must remain unknown and
 must never be translated into an application-close event.
 
+## Same-PID exec experiment (2026-11-01)
+
+A locally compiled, ad-hoc-signed command-line fixture waited for input and then called `exec` to
+replace itself with `/bin/sleep`, retaining its PID. In four runs on one Mac, a fresh `SecCode`
+lookup after the replacement rejected the fixture's original cdhash requirement; a `SecCode`
+object retained from before the replacement still accepted that requirement. The running process
+remained alive during those checks. The test distinguished the executables using signing
+information obtained through `SecCodeCopyStaticCode`; that disk association itself is not a
+race-free identity proof. The experiment did not test an AppKit app, PID reuse, or supported OS
+versions beyond this Mac.
+
+A second fixture packaged the executable in an ad-hoc-signed `.app` but launched its executable
+directly with `Process`. In that run AppKit did not expose the original fixture as a running app,
+so no `NSRunningApplication` equality or termination conclusion can be drawn from it; the Security
+lookup observations repeated. LaunchServices-based app behavior remains to be tested separately.
+
+Consequently, retaining a successful `SecCode` object or an equal process instance is not enough
+to prove that the same code is still executing. A fresh lookup helps detect this observed case but
+does not close the race between lookup and action. Treat code replacement during verification as
+unknown, discard stale work, and keep the release gate open until a supported binding and execution
+protocol has been established. Test artifacts are local-only and contain no user application data.
+
 ## Primary references
 
 - [NSRunningApplication process-identity guidance](https://developer.apple.com/documentation/appkit/nsrunningapplication/processidentifier)
