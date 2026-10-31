@@ -59,10 +59,10 @@ public struct TriggerDraft: Equatable, Sendable {
         case change(Change)
         case application(TriggerEdge)
 
-        /// Every event the editor offers, in the pop-up's order: the moments, the displays' changes,
-        /// the network's changes.
+        /// Every event the editor offers, in the pop-up's order: the moments, the application's
+        /// starts/ends, the displays' changes, the network's changes.
         public static var offered: [When] {
-            Kind.allCases.map(When.moment) + Change.allCases.map(When.change)
+            Kind.allCases.map(When.moment) + [.application(.starts), .application(.ends)] + Change.allCases.map(When.change)
         }
 
         /// The change, when it's one.

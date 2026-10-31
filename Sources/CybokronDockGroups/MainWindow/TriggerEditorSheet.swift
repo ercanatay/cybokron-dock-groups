@@ -103,7 +103,7 @@ struct TriggerEditorSheet: View {
             Text(Texts.when)
                 .gridColumnAlignment(.trailing)
             Picker(Texts.when, selection: Binding(get: { draft.when }, set: { choose($0) })) {
-                whenOptions(Self.moments + existingApplicationOptions)
+                whenOptions(Self.moments)
                 Divider()
                 whenOptions(Self.displayChanges)
                 Divider()
@@ -145,10 +145,6 @@ struct TriggerEditorSheet: View {
 
     /// The When pop-up's three parts, in `TriggerDraft.When.offered`'s order.
     private static let moments = TriggerDraft.When.offered.filter { $0.change == nil }
-    private var existingApplicationOptions: [TriggerDraft.When] {
-        guard let existing, case .applicationPresence = existing.event else { return [] }
-        return [.application(.starts), .application(.ends)]
-    }
     private static let displayChanges = TriggerDraft.When.offered.filter { $0.change?.isAboutDisplays == true }
     private static let networkChanges = TriggerDraft.When.offered.filter { $0.change?.isAboutDisplays == false }
 

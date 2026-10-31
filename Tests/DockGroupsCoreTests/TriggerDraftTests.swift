@@ -172,11 +172,10 @@ struct TriggerDraftTests {
         #expect(draft.action == .showPopup)
     }
 
-    @Test func applicationCasesAreAbsentFromOffered() {
-        #expect(!TriggerDraft.When.offered.contains(where: {
-            if case .application = $0 { return true }
-            return false
-        }))
+    @Test func applicationOpeningAndClosingAreOfferedExactlyOnce() {
+        let offered = TriggerDraft.When.offered
+        #expect(offered.filter { $0 == .application(.starts) }.count == 1)
+        #expect(offered.filter { $0 == .application(.ends) }.count == 1)
     }
 
     @Test func editingApplicationPresencePreservesRule() throws {
