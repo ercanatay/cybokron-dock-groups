@@ -64,6 +64,90 @@ struct TriggerCoordinatorTests {
     private let design = TriggerRig.design
     private var session: Date { TriggerTime.date(2026, 10, 28, 7, 59) }
 
+    @Test func unknownPresenceCancelsPendingActionButKeepsOtherTriggers() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let login = GroupTrigger.on(.login, group: design, action: .openAll, runMode: .immediately)
+        let rig = TriggerRig([app, login])
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        rig.coordinator.receive(.launched(.login(session: session)))
+        rig.coordinator.observeApplications(generation: 1, sequence: 3, counts: [:])
+        await rig.settleDown()
+        #expect(rig.handler.calls == ["openAll:Design"])
+    }
+
+    @Test func staleUnknownPresenceDoesNotCancelPendingAction() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([app])
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: [:])
+        rig.coordinator.observeApplications(generation: 0, sequence: 3, counts: [:])
+        await rig.settleDown()
+        #expect(rig.handler.calls == ["popup:Work"])
+    }
+
+    @Test func unknownPresenceInvalidatesAwaitingNotice() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, runMode: .notice)
+        let rig = TriggerRig([app])
+        rig.presenter.holds = true
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        await rig.settleDown()
+        #expect(rig.presenter.isShowing)
+        rig.coordinator.observeApplications(generation: 1, sequence: 3, counts: [:])
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func incompletePresenceSnapshotDropsPendingAndRebaselines() async {
+        let first = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.first", edge: .starts), group: work, action: .showPopup)
+        let second = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.second", edge: .starts), group: design, action: .showPopup)
+        let rig = TriggerRig([first, second])
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.first": 0, "com.example.second": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.first": 1, "com.example.second": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 3, counts: ["com.example.first": 1])
+        await rig.settleDown()
+        #expect(rig.handler.calls.isEmpty)
+        rig.coordinator.observeApplications(generation: 1, sequence: 4, counts: ["com.example.first": 1, "com.example.second": 1])
+        await rig.settleDown()
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func presenceSequenceGapDropsPendingAction() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([app])
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        rig.coordinator.observeApplications(generation: 1, sequence: 4, counts: ["com.example.app": 1])
+        await rig.settleDown()
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func unknownPresenceDuringEdgeDeliveryCannotQueueStaleAction() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([])
+        rig.rules = [app]
+        var deliveredUnknown = false
+        rig.coordinator.onStateChange = { [weak rig] _ in
+            guard let rig, !deliveredUnknown else { return }
+            deliveredUnknown = true
+            rig.coordinator.observeApplications(generation: 1, sequence: 3, counts: [:])
+        }
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        await rig.settleDown()
+        #expect(deliveredUnknown)
+        #expect(rig.handler.calls.isEmpty)
+    }
+
     @Test func changingPresencePolicyDropsPendingApplicationActionOnly() async {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
         let login = GroupTrigger.on(.login, group: design, action: .openAll, runMode: .immediately)

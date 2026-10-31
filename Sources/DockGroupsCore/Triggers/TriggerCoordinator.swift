@@ -160,9 +160,19 @@ public final class TriggerCoordinator {
             return
         }
         guard refresh() else { return }
-        let ids = applicationTracker.observe(generation: generation, sequence: sequence, counts: counts)
+        let observation = applicationTracker.observeDetailed(generation: generation, sequence: sequence, counts: counts)
+        if observation.isUncertain {
+            // Fail closed: drop presence firings (queued, pending, awaiting notice) but keep
+            // observing and leave other triggers' firings alone. Baselines are already reset.
+            invalidateApplicationPresenceFirings()
+            processIfNeeded()
+            return
+        }
+        let ids = observation.firedRuleIDs
         let originalRules = rules()
+        let observedRevision = applicationTracker.revision
         func currentRule(for id: UUID) -> GroupTrigger? {
+            guard applicationTracker.isCurrent(revision: observedRevision) else { return nil }
             guard refresh() else { return nil }
             guard environment.canAct else { return nil }
             guard applicationTracker.isActive(generation: generation) else { return nil }
@@ -178,7 +188,9 @@ public final class TriggerCoordinator {
             guard let current = currentRule(for: id) else { break }
             guard case .applicationPresence(_, let edge) = current.event else { break }
             receive(.applicationEdge(triggerID: id, edge: edge))
-            if currentRule(for: id) == nil {
+            // Re-check immediately after delivery: an accepted uncertain observation (or any rule
+            // change) during receive() makes this firing stale, whatever was appended meanwhile.
+            if !applicationTracker.isCurrent(revision: observedRevision) || currentRule(for: id) == nil {
                 pending.removeAll { $0.triggerID == id }
                 queue.removeAll { $0.triggerID == id }
                 break
@@ -192,12 +204,18 @@ public final class TriggerCoordinator {
 
     public func cancelApplicationPresenceForPolicyChange() {
         applicationTracker.stop()
+        invalidateApplicationPresenceFirings()
+    }
+
+    /// Drops every application-presence firing that is pending, queued or awaiting its notice.
+    /// Firings keep their original origin flag; other triggers' firings are untouched.
+    private func invalidateApplicationPresenceFirings() {
+        pending.removeAll { $0.isApplicationPresence }
+        queue.removeAll { $0.isApplicationPresence }
         if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence {
             currentInvalidated = true
             noticePresenter?.dismiss()
         }
-        pending.removeAll { $0.isApplicationPresence }
-        queue.removeAll { $0.isApplicationPresence }
     }
 
     private func refresh() -> Bool {

@@ -13,8 +13,27 @@ internal struct AppPresenceRuleTracker {
     private var currentGeneration: UInt64?
     private var lastSequence: UInt64?
     private var isStopped = false
+    /// Advances on every accepted uncertain observation. Stale and duplicate observations never
+    /// change it. A delivery captures it and treats any change as "my observation is outdated".
+    private(set) var revision: UInt64 = 0
+    private var revisionExhausted = false
 
     init() {}
+
+    /// Whether `captured` is still the latest revision. Fails closed once the counter overflowed.
+    func isCurrent(revision captured: UInt64) -> Bool {
+        !revisionExhausted && revision == captured
+    }
+
+    private mutating func advanceRevision() {
+        if revision == UInt64.max {
+            // Can't tell revisions apart any more: fail closed, permanently.
+            revisionExhausted = true
+            isStopped = true
+        } else {
+            revision += 1
+        }
+    }
 
     @discardableResult
     mutating func configure(_ newRules: [Rule]) -> Bool {
@@ -85,14 +104,37 @@ internal struct AppPresenceRuleTracker {
         }
     }
 
+    /// The result of an accepted snapshot.
+    struct Observation: Equatable, Sendable {
+        /// Rules whose edge fired. Always empty when `isUncertain`.
+        var firedRuleIDs: [UUID] = []
+        /// The snapshot was accepted but can't be trusted: a sequence gap, or a configured rule's
+        /// count is missing or negative. All baselines were reset.
+        var isUncertain = false
+        /// The snapshot was accepted (active, current generation, newer sequence).
+        var isAccepted = false
+    }
+
     @discardableResult
     mutating func observe(generation: UInt64, sequence: UInt64, counts: [String: Int]) -> [UUID] {
-        guard !isStopped else { return [] }
-        guard let current = currentGeneration, generation == current else { return [] }
+        process(generation: generation, sequence: sequence, counts: counts, failClosed: false).firedRuleIDs
+    }
 
+    /// Like `observe`, but reports uncertainty. On an uncertain snapshot every baseline is reset
+    /// and nothing fires; the next reliable snapshot only establishes the baseline.
+    mutating func observeDetailed(generation: UInt64, sequence: UInt64, counts: [String: Int]) -> Observation {
+        process(generation: generation, sequence: sequence, counts: counts, failClosed: true)
+    }
+
+    private mutating func process(generation: UInt64, sequence: UInt64, counts: [String: Int], failClosed: Bool) -> Observation {
+        guard !isStopped else { return Observation() }
+        guard let current = currentGeneration, generation == current else { return Observation() }
+
+        var gap = false
         if let last = lastSequence {
-            guard sequence > last else { return [] }
+            guard sequence > last else { return Observation() }
             if last != UInt64.max, last + 1 != sequence {
+                gap = true
                 for key in trackers.keys {
                     trackers[key] = AppPresenceTracker(generation: current)
                 }
@@ -100,6 +142,20 @@ internal struct AppPresenceRuleTracker {
         }
 
         lastSequence = sequence
+
+        if failClosed {
+            let missing = rules.contains { rule in
+                guard let count = counts[rule.identifier.matchKey] else { return true }
+                return count < 0
+            }
+            if gap || missing {
+                for rule in rules {
+                    trackers[rule.id] = AppPresenceTracker(generation: current)
+                }
+                advanceRevision()
+                return Observation(firedRuleIDs: [], isUncertain: true, isAccepted: true)
+            }
+        }
 
         var emitted: [UUID] = []
         for rule in rules {
@@ -127,6 +183,6 @@ internal struct AppPresenceRuleTracker {
             trackers[rule.id] = tracker
         }
 
-        return emitted
+        return Observation(firedRuleIDs: emitted, isUncertain: false, isAccepted: true)
     }
 }
