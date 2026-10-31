@@ -111,7 +111,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   With no display connected at all, nothing can be read, and nothing changes.
 - **Application triggers** (unreleased): choose an app and run a trigger when its first instance opens
   or its last instance closes. The current state is a baseline when monitoring starts, so an app
-  already open does not count as a new opening. macOS observations can miss short-lived changes.
+  already open does not count as a new opening. Matching uses the bundle identifier, not a verified
+  app signature or publisher, and macOS observations can miss short-lived changes.
   If macOS cannot identify a running app, these triggers wait by default. You may choose **Monitor
   identified applications only** in a group's Triggers section: unidentified instances can be missed
   and a close can be reported incorrectly. The choice affects all application triggers, lasts only

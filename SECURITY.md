@@ -47,7 +47,7 @@ a group or add items without a sheet, selecting only eligible, safe running apps
 app-item checks; they exclude protected apps and Shortcuts and never launch, hide or quit an app.
 Triggers act only while the app runs, only on your groups' items through the same
 checks, never quit apps, and triggers from a backup come in turned off; Wi-Fi triggers read only the name of the Wi-Fi network, and only after you allow Location Services for the app (macOS treats network names as location information; the app never reads, keeps or sends a location, never scans for networks and never reads the access point's address); no link, intent or launch
-argument runs a trigger, and an archived or deleted group's triggers never run.
+argument runs a trigger, and an archived or deleted group's triggers never run. The unreleased application-presence trigger matches running apps by bundle identifier; that identifier is not proof of an app's signature or publisher, so another process with the same identifier can be counted. Its configured action remains subject to the existing trigger protections. If macOS reports an unidentified running app, observation waits by default; the user may explicitly choose identified-app-only monitoring for the current session, with the risk of missed instances and incorrect close events.
 
 Of particular interest are issues that let another process, a web page or link, a crafted
 `groups.json` or `.dockgroups` backup, or a tampered update launch unintended apps or run code.
