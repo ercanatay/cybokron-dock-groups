@@ -28,6 +28,9 @@ its `kSecCodeInfoUnique` code-directory hash, and built a `cdhash` requirement. 
 running fixture passed and the other one failed, even though their weak designated requirements
 and bundle identifiers matched. This shows a possible narrower binding for these fixtures; it
 is not a proof of publisher identity, collision resistance, architecture coverage, or race safety.
+A separate static check accepted a valid ad hoc fixture and rejected copies whose signature was
+removed or whose sealed bundle metadata was changed. The invalid fixtures were not launched;
+this does not establish behavior for every signature, platform or process state.
 
 ## Candidate: locally verified binding
 
