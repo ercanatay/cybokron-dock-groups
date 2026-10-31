@@ -1103,3 +1103,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers призупинено до %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers призупинено, доки ви їх не відновите";
 "menuBar.triggers.quitTooltip" = "Triggers не працюють, коли %@ закрито.";
+"triggers.editor.application.label" = "Застосунок";
+"triggers.editor.application.none" = "Застосунок не вибрано";
+"triggers.editor.application.choose" = "Вибрати…";
+"triggers.editor.application.title" = "Вибрати застосунок";
+"triggers.editor.application.message" = "Виберіть застосунок для тригера.";
+"triggers.editor.application.invalid" = "Вибраний застосунок потребує дійсного ідентифікатора пакета.";
+"triggers.editor.application.opens" = "Застосунок відкривається";
+"triggers.editor.application.closes" = "Застосунок закривається";

@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggerek szüneteltetve eddig: %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggerek szüneteltetve, amíg újra nem indítja";
 "menuBar.triggers.quitTooltip" = "A triggerek nem futnak, amíg a(z) %@ be van zárva.";
+"triggers.editor.application.label" = "Alkalmazás";
+"triggers.editor.application.none" = "Nincs kiválasztott alkalmazás";
+"triggers.editor.application.choose" = "Válasszon…";
+"triggers.editor.application.title" = "Alkalmazás kiválasztása";
+"triggers.editor.application.message" = "Válasszon egy alkalmazást az eseményindítóhoz.";
+"triggers.editor.application.invalid" = "A kiválasztott alkalmazásnak érvényes csomagazonosítóval kell rendelkeznie.";
+"triggers.editor.application.opens" = "Egy alkalmazás megnyílik";
+"triggers.editor.application.closes" = "Egy alkalmazás bezárul";

@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Trigger-ele întrerupte până la %@";
 "menuBar.triggers.pausedIndefinitely" = "Trigger-ele întrerupte până le reiei";
 "menuBar.triggers.quitTooltip" = "Trigger-ele nu rulează cât timp %@ este închis.";
+"triggers.editor.application.label" = "Aplicație";
+"triggers.editor.application.none" = "Nicio aplicație selectată";
+"triggers.editor.application.choose" = "Alegeți…";
+"triggers.editor.application.title" = "Alegeți aplicația";
+"triggers.editor.application.message" = "Selectați o aplicație pentru declanșator.";
+"triggers.editor.application.invalid" = "Aplicația selectată necesită un identificator de pachet valid.";
+"triggers.editor.application.opens" = "O aplicație se deschide";
+"triggers.editor.application.closes" = "O aplicație se închide";

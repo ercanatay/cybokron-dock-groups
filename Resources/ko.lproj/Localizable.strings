@@ -1102,3 +1102,11 @@
 "menuBar.triggers.pausedUntil" = "%@까지 Triggers 일시 정지됨";
 "menuBar.triggers.pausedIndefinitely" = "재개할 때까지 Triggers 일시 정지됨";
 "menuBar.triggers.quitTooltip" = "%@이(가) 종료되어 있는 동안 Triggers는 실행되지 않습니다.";
+"triggers.editor.application.label" = "애플리케이션";
+"triggers.editor.application.none" = "선택된 앱 없음";
+"triggers.editor.application.choose" = "선택…";
+"triggers.editor.application.title" = "애플리케이션 선택";
+"triggers.editor.application.message" = "트리거에 사용할 애플리케이션을 선택하세요.";
+"triggers.editor.application.invalid" = "선택한 애플리케이션에는 유효한 번들 식별자가 필요합니다.";
+"triggers.editor.application.opens" = "애플리케이션이 열릴 때";
+"triggers.editor.application.closes" = "애플리케이션이 닫힐 때";

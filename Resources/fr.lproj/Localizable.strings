@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers en pause jusqu'à %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers en pause jusqu'à ce que vous les repreniez";
 "menuBar.triggers.quitTooltip" = "Les triggers ne s'exécutent pas pendant que %@ est quitté.";
+"triggers.editor.application.label" = "Application";
+"triggers.editor.application.none" = "Aucune application sélectionnée";
+"triggers.editor.application.choose" = "Choisir…";
+"triggers.editor.application.title" = "Choisir une application";
+"triggers.editor.application.message" = "Sélectionnez une application pour le déclencheur.";
+"triggers.editor.application.invalid" = "L'application sélectionnée nécessite un identifiant de bundle valide.";
+"triggers.editor.application.opens" = "Une application s'ouvre";
+"triggers.editor.application.closes" = "Une application se ferme";

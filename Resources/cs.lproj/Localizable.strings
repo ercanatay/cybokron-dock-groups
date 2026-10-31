@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggery pozastaveny do %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggery pozastaveny, dokud je neobnovíte";
 "menuBar.triggers.quitTooltip" = "Triggery neběží, když je %@ ukončen.";
+"triggers.editor.application.label" = "Aplikace";
+"triggers.editor.application.none" = "Žádná aplikace nevybrána";
+"triggers.editor.application.choose" = "Vyberte…";
+"triggers.editor.application.title" = "Vybrat aplikaci";
+"triggers.editor.application.message" = "Vyberte aplikaci pro spouštěč.";
+"triggers.editor.application.invalid" = "Vybraná aplikace potřebuje platný identifikátor balíčku.";
+"triggers.editor.application.opens" = "Aplikace se otevírá";
+"triggers.editor.application.closes" = "Aplikace se zavírá";

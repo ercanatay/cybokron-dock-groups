@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Trigger 暂停至 %@";
 "menuBar.triggers.pausedIndefinitely" = "Trigger 已暂停，直到你恢复";
 "menuBar.triggers.quitTooltip" = "%@ 退出时 Trigger 不会运行。";
+"triggers.editor.application.label" = "应用";
+"triggers.editor.application.none" = "未选择应用";
+"triggers.editor.application.choose" = "选择…";
+"triggers.editor.application.title" = "选择应用";
+"triggers.editor.application.message" = "为此触发器选择一个应用。";
+"triggers.editor.application.invalid" = "所选应用需要有效的 Bundle ID。";
+"triggers.editor.application.opens" = "应用打开时";
+"triggers.editor.application.closes" = "应用关闭时";

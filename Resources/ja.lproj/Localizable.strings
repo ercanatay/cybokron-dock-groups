@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "%@ まで Triggers を一時停止中";
 "menuBar.triggers.pausedIndefinitely" = "再開するまで Triggers を一時停止中";
 "menuBar.triggers.quitTooltip" = "%@ が終了している間、Triggers は実行されません。";
+"triggers.editor.application.label" = "アプリケーション";
+"triggers.editor.application.none" = "アプリが選択されていません";
+"triggers.editor.application.choose" = "選択…";
+"triggers.editor.application.title" = "アプリケーションを選択";
+"triggers.editor.application.message" = "トリガーのアプリケーションを選択してください。";
+"triggers.editor.application.invalid" = "選択したアプリケーションには有効なバンドル識別子が必要です。";
+"triggers.editor.application.opens" = "アプリケーションが開いたとき";
+"triggers.editor.application.closes" = "アプリケーションが閉じたとき";

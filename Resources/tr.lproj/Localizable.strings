@@ -1102,3 +1102,11 @@
 "menuBar.triggers.pausedUntil" = "Trigger’lar %@ tarihine kadar duraklatıldı";
 "menuBar.triggers.pausedIndefinitely" = "Trigger’lar devam ettirene kadar duraklatıldı";
 "menuBar.triggers.quitTooltip" = "%@ kapalıyken trigger’lar çalışmaz.";
+"triggers.editor.application.label" = "Uygulama";
+"triggers.editor.application.none" = "Hiçbir uygulama seçilmedi";
+"triggers.editor.application.choose" = "Seçin…";
+"triggers.editor.application.title" = "Uygulama Seçin";
+"triggers.editor.application.message" = "Tetikleyici için bir uygulama seçin.";
+"triggers.editor.application.invalid" = "Seçilen uygulama geçerli bir paket tanımlayıcısına sahip olmalıdır.";
+"triggers.editor.application.opens" = "Bir uygulama açılır";
+"triggers.editor.application.closes" = "Bir uygulama kapanır";

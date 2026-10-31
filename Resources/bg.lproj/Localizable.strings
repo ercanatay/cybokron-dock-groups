@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers са на пауза до %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers са на пауза, докато ги възобновите";
 "menuBar.triggers.quitTooltip" = "Triggers не се изпълняват, докато %@ е затворено.";
+"triggers.editor.application.label" = "Приложение";
+"triggers.editor.application.none" = "Не е избрано приложение";
+"triggers.editor.application.choose" = "Изберете…";
+"triggers.editor.application.title" = "Изберете приложение";
+"triggers.editor.application.message" = "Изберете приложение за тригера.";
+"triggers.editor.application.invalid" = "Избраното приложение изисква валиден идентификатор на пакета.";
+"triggers.editor.application.opens" = "Приложение се отваря";
+"triggers.editor.application.closes" = "Приложение се затваря";

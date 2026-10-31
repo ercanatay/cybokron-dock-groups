@@ -207,17 +207,17 @@ struct TriggerEditorSheet: View {
 
     private var appRow: some View {
         GridRow {
-            Text("Application")
+            Text(Texts.applicationLabel)
             HStack {
-                Text(draft.applicationBundleIdentifier.isEmpty ? "No app selected" : draft.applicationBundleIdentifier)
+                Text(draft.applicationBundleIdentifier.isEmpty ? Texts.applicationNone : draft.applicationBundleIdentifier)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .foregroundStyle(draft.applicationBundleIdentifier.isEmpty ? .secondary : .primary)
-                Button("Choose") {
+                Button(Texts.applicationChoose) {
                     AppPicker.chooseApps(
-                        title: "Choose Application",
-                        message: "Select an application for the trigger.",
-                        prompt: "Choose",
+                        title: Texts.applicationTitle,
+                        message: Texts.applicationMessage,
+                        prompt: Texts.applicationChoose,
                         allowsMultipleSelection: false,
                         attachedTo: NSApp.keyWindow
                     ) { urls in
@@ -227,10 +227,10 @@ struct TriggerEditorSheet: View {
                             if draft.selectApplication(app) {
                                 problem = nil
                             } else {
-                                problem = "Invalid or unidentified app selected."
+                                problem = Texts.applicationInvalid
                             }
                         } catch {
-                            problem = "Invalid or unidentified app selected."
+                            problem = Texts.applicationInvalid
                         }
                     }
                 }
@@ -522,7 +522,8 @@ struct TriggerEditorSheet: View {
         case .change(.wifiLeaves): return Texts.whenWiFiLeaves
         case .change(.ethernetConnects): return Texts.whenEthernetConnects
         case .change(.ethernetDisconnects): return Texts.whenEthernetDisconnects
-        case .application: return ""
+        case .application(.starts): return Texts.applicationOpens
+        case .application(.ends): return Texts.applicationCloses
         }
     }
 

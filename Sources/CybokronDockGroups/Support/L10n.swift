@@ -1823,6 +1823,14 @@ extension L10n {
             static var turnOnLoginItem: String { tr("triggers.editor.login.turnOn", "Turn On Open at Login") }
             static var add: String { tr("triggers.editor.add", "Add Trigger") }
             static var save: String { tr("triggers.editor.save", "Save") }
+            static var applicationLabel: String { tr("triggers.editor.application.label", "Application") }
+            static var applicationNone: String { tr("triggers.editor.application.none", "No app selected") }
+            static var applicationChoose: String { tr("triggers.editor.application.choose", "Choose…") }
+            static var applicationTitle: String { tr("triggers.editor.application.title", "Choose Application") }
+            static var applicationMessage: String { tr("triggers.editor.application.message", "Select an application for the trigger.") }
+            static var applicationInvalid: String { tr("triggers.editor.application.invalid", "The selected application needs a valid bundle identifier.") }
+            static var applicationOpens: String { tr("triggers.editor.application.opens", "An application opens") }
+            static var applicationCloses: String { tr("triggers.editor.application.closes", "An application closes") }
         }
 
         enum Notice {

@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers pausade till %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers pausade tills du återupptar dem";
 "menuBar.triggers.quitTooltip" = "Triggers körs inte medan %@ är avslutad.";
+"triggers.editor.application.label" = "Applikation";
+"triggers.editor.application.none" = "Ingen app vald";
+"triggers.editor.application.choose" = "Välj…";
+"triggers.editor.application.title" = "Välj program";
+"triggers.editor.application.message" = "Välj en applikation för utlösaren.";
+"triggers.editor.application.invalid" = "Den valda applikationen behöver en giltig bundle-identifierare.";
+"triggers.editor.application.opens" = "En applikation öppnas";
+"triggers.editor.application.closes" = "En applikation stängs";

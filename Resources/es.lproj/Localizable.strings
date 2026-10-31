@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers en pausa hasta %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers en pausa hasta que los reanudes";
 "menuBar.triggers.quitTooltip" = "Los triggers no se ejecutan mientras %@ está cerrado.";
+"triggers.editor.application.label" = "Aplicación";
+"triggers.editor.application.none" = "Ninguna aplicación seleccionada";
+"triggers.editor.application.choose" = "Elegir…";
+"triggers.editor.application.title" = "Elegir aplicación";
+"triggers.editor.application.message" = "Seleccione una aplicación para el disparador.";
+"triggers.editor.application.invalid" = "La aplicación seleccionada necesita un identificador de paquete válido.";
+"triggers.editor.application.opens" = "Se abre una aplicación";
+"triggers.editor.application.closes" = "Se cierra una aplicación";

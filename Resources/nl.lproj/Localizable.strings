@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers gepauzeerd tot %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers gepauzeerd tot je ze hervat";
 "menuBar.triggers.quitTooltip" = "Triggers worden niet uitgevoerd terwijl %@ is afgesloten.";
+"triggers.editor.application.label" = "Applicatie";
+"triggers.editor.application.none" = "Geen app geselecteerd";
+"triggers.editor.application.choose" = "Kies…";
+"triggers.editor.application.title" = "Applicatie kiezen";
+"triggers.editor.application.message" = "Selecteer een applicatie voor de trigger.";
+"triggers.editor.application.invalid" = "De geselecteerde applicatie heeft een geldige bundle-identifier nodig.";
+"triggers.editor.application.opens" = "Een applicatie wordt geopend";
+"triggers.editor.application.closes" = "Een applicatie wordt gesloten";

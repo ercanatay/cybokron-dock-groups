@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Trigger-lər %@-dək dayandırılıb";
 "menuBar.triggers.pausedIndefinitely" = "Trigger-lər davam etdirənə qədər dayandırılıb";
 "menuBar.triggers.quitTooltip" = "%@ bağlı olduqda trigger-lər işləmir.";
+"triggers.editor.application.label" = "Tətbiq";
+"triggers.editor.application.none" = "Heç bir tətbiq seçilməyib";
+"triggers.editor.application.choose" = "Seçin…";
+"triggers.editor.application.title" = "Tətbiq seçin";
+"triggers.editor.application.message" = "Tətikləyici üçün tətbiq seçin.";
+"triggers.editor.application.invalid" = "Seçilmiş tətbiq etibarlı bundle identifikatoru tələb edir.";
+"triggers.editor.application.opens" = "Tətbiq açılır";
+"triggers.editor.application.closes" = "Tətbiq bağlanır";

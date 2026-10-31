@@ -1103,3 +1103,11 @@
 "menuBar.triggers.pausedUntil" = "Триггеры приостановлены до %@";
 "menuBar.triggers.pausedIndefinitely" = "Триггеры приостановлены, пока вы их не возобновите";
 "menuBar.triggers.quitTooltip" = "Триггеры не работают, пока %@ закрыто.";
+"triggers.editor.application.label" = "Приложение";
+"triggers.editor.application.none" = "Приложение не выбрано";
+"triggers.editor.application.choose" = "Выбрать…";
+"triggers.editor.application.title" = "Выберите приложение";
+"triggers.editor.application.message" = "Выберите приложение для триггера.";
+"triggers.editor.application.invalid" = "Выбранному приложению требуется допустимый идентификатор пакета (bundle identifier).";
+"triggers.editor.application.opens" = "Приложение открывается";
+"triggers.editor.application.closes" = "Приложение закрывается";

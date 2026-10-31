@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggers pausados até %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggers pausados até você retomar";
 "menuBar.triggers.quitTooltip" = "Os triggers não rodam enquanto %@ estiver fechado.";
+"triggers.editor.application.label" = "Aplicativo";
+"triggers.editor.application.none" = "Nenhum aplicativo selecionado";
+"triggers.editor.application.choose" = "Escolher…";
+"triggers.editor.application.title" = "Escolher aplicativo";
+"triggers.editor.application.message" = "Selecione um aplicativo para o gatilho.";
+"triggers.editor.application.invalid" = "O aplicativo selecionado precisa de um identificador de bundle válido.";
+"triggers.editor.application.opens" = "Um aplicativo é aberto";
+"triggers.editor.application.closes" = "Um aplicativo é fechado";

@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Trigger pausiert bis %@";
 "menuBar.triggers.pausedIndefinitely" = "Trigger pausiert, bis du sie fortsetzt";
 "menuBar.triggers.quitTooltip" = "Trigger laufen nicht, während %@ beendet ist.";
+"triggers.editor.application.label" = "Anwendung";
+"triggers.editor.application.none" = "Keine App ausgewählt";
+"triggers.editor.application.choose" = "Auswählen…";
+"triggers.editor.application.title" = "Anwendung auswählen";
+"triggers.editor.application.message" = "Wählen Sie eine Anwendung für den Auslöser aus.";
+"triggers.editor.application.invalid" = "Die ausgewählte Anwendung benötigt eine gültige Bundle-Kennung.";
+"triggers.editor.application.opens" = "Eine Anwendung wird geöffnet";
+"triggers.editor.application.closes" = "Eine Anwendung wird geschlossen";

@@ -1104,3 +1104,11 @@
 "menuBar.triggers.pausedUntil" = "Triggery wstrzymane do %@";
 "menuBar.triggers.pausedIndefinitely" = "Triggery wstrzymane do czasu wznowienia";
 "menuBar.triggers.quitTooltip" = "Triggery nie działają, gdy %@ jest zamknięte.";
+"triggers.editor.application.label" = "Aplikacja";
+"triggers.editor.application.none" = "Nie wybrano aplikacji";
+"triggers.editor.application.choose" = "Wybierz…";
+"triggers.editor.application.title" = "Wybierz aplikację";
+"triggers.editor.application.message" = "Wybierz aplikację dla wyzwalacza.";
+"triggers.editor.application.invalid" = "Wybrana aplikacja wymaga prawidłowego identyfikatora pakietu.";
+"triggers.editor.application.opens" = "Aplikacja zostaje otwarta";
+"triggers.editor.application.closes" = "Aplikacja zostaje zamknięta";
