@@ -109,6 +109,41 @@ detect this fixture's in-place code replacement on the tested OS. They do not pr
 other macOS versions or make fresh PID-based lookups race-free. The fixture was launched without
 activation, exits on its own, and never touches user groups or applications.
 
+The same LaunchServices fixture was tested with a `runningApplications` KVO observer, with
+callbacks delivered on the main queue as in the app's source. In three controlled runs, the
+observer recorded one callback before exec (the fixture's launch), and none during a 0.7-second
+window after a fresh Security lookup detected changed code. The fixture remained in the running
+applications snapshot under its old bundle ID. Another initial run had the same post-exec result
+but did not log the positive-control count. This is evidence from one machine and short observation
+windows, not a guarantee of all AppKit behavior. It rules out relying on a list-change callback
+as the sole detector for this demonstrated transition. A design must account for code changes
+without a list change and must still address the race between any recheck and action.
+
+## Process-event probe (2026-11-01)
+
+Apple's documented `kqueue` `EVFILT_PROC` supports `NOTE_EXEC` and `NOTE_EXIT` for an observable
+process. In four local LaunchServices-fixture runs, a watch registered before exec received
+`NOTE_EXEC` while the process was still alive. Three controlled runs recorded one app-list KVO
+callback before exec and zero in the subsequent short observation window; an earlier run received
+one callback in that window, whose cause was not established. Both outcomes reinforce that list
+callbacks cannot be used as proof of whether exec occurred. A separate owned child fixture produced
+`NOTE_EXIT` without `NOTE_EXEC` when its input closed and it exited.
+
+In one negative-control run, registering the watch only after Security had observed the changed
+code produced no historical exec notification. Registration is PID-based and can fail; a process
+may exit, exec, or be replaced around registration and verification. Events can be queued or
+delivered after a decision; subscribing does not make selection, signature checking, notification
+handling, and group actions atomic. Event coalescing, resource limits, sandboxes, privilege and
+supported macOS versions require separate testing. No real user app was monitored and no elevated
+permission was requested in these probes.
+
+This makes process events a promising **detection and invalidation** component, not an identity
+token or an authorization mechanism. A candidate design would need to register a watch before
+accepting a verified running instance, fail closed on registration errors and uncertain ordering,
+invalidate pending work on exec/exit or observation failure, and prevent stale event handlers from
+affecting a later generation. An explicit threat model must still address the registration race,
+selection-to-confirmation binding, and the final check-to-action window before any integration.
+
 Consequently, retaining a successful `SecCode` object or an equal process instance is not enough
 to prove that the same code is still executing. A fresh lookup helps detect this observed case but
 does not close the race between lookup and action. Treat code replacement during verification as
@@ -126,3 +161,4 @@ protocol has been established. Test artifacts are local-only and contain no user
 - [Endpoint Security process audit token](https://developer.apple.com/documentation/endpointsecurity/es_process_t/audit_token)
 - [Endpoint Security client requirements](https://developer.apple.com/documentation/endpointsecurity/es_new_client%28_%3A_%3A%29)
 - [Endpoint Security entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.endpoint-security.client)
+- [kqueue process-event filter](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/kqueue.2.html)
