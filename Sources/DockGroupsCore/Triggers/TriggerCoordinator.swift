@@ -151,7 +151,10 @@ public final class TriggerCoordinator {
     public func beginApplicationObservations(generation: UInt64) -> Bool {
         guard environment.canAct else { return false }
         guard refresh() else { return false }
-        return applicationTracker.beginGeneration(generation)
+        guard applicationTracker.beginGeneration(generation) else { return false }
+        // A new generation replaces the previous one: its presence firings no longer count.
+        invalidateApplicationPresenceFirings()
+        return true
     }
 
     public func observeApplications(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
@@ -187,12 +190,14 @@ public final class TriggerCoordinator {
         for id in ids {
             guard let current = currentRule(for: id) else { break }
             guard case .applicationPresence(_, let edge) = current.event else { break }
-            receive(.applicationEdge(triggerID: id, edge: edge))
-            // Re-check immediately after delivery: an accepted uncertain observation (or any rule
-            // change) during receive() makes this firing stale, whatever was appended meanwhile.
+            // The validity check runs inside receive(), after the state update and its reentrant
+            // callbacks but before this delivery's firings are enqueued, so a stale firing is never
+            // enqueued and a valid nested newer firing (same trigger ID) is never touched.
+            receive(.applicationEdge(triggerID: id, edge: edge), presenceValidity: {
+                self.applicationTracker.isCurrent(revision: observedRevision) && currentRule(for: id) != nil
+            })
+            // Stop delivering the rest of this (now stale) observation.
             if !applicationTracker.isCurrent(revision: observedRevision) || currentRule(for: id) == nil {
-                pending.removeAll { $0.triggerID == id && $0.isApplicationPresence }
-                queue.removeAll { $0.triggerID == id && $0.isApplicationPresence }
                 break
             }
         }
@@ -200,6 +205,7 @@ public final class TriggerCoordinator {
 
     public func stopApplicationObservations() {
         applicationTracker.stop()
+        invalidateApplicationPresenceFirings()
     }
 
     public func cancelApplicationPresenceForPolicyChange() {
@@ -320,6 +326,13 @@ public final class TriggerCoordinator {
 
     /// A system source reported `signal`.
     public func receive(_ signal: TriggerSignal) {
+        receive(signal, presenceValidity: nil)
+    }
+
+    /// - Parameter presenceValidity: Evaluated after the state update (and any reentrant callbacks
+    ///   it caused) and right before the firings are enqueued; when it returns `false`, only the
+    ///   application-presence firings of this delivery are dropped.
+    private func receive(_ signal: TriggerSignal, presenceValidity: (() -> Bool)?) {
         let evaluation = TriggerEvaluator.evaluate(
             signal,
             rules: rules(),
@@ -354,11 +367,15 @@ public final class TriggerCoordinator {
             pending.removeAll { $0.isApplicationPresence }
             queue.removeAll { $0.isApplicationPresence }
         }
-        if !evaluation.firings.isEmpty {
-            for firing in evaluation.firings {
+        var firings = evaluation.firings
+        if let presenceValidity, !firings.isEmpty, !presenceValidity() {
+            firings.removeAll { $0.isApplicationPresence }
+        }
+        if !firings.isEmpty {
+            for firing in firings {
                 logger.notice("Trigger \(firing.triggerID, privacy: .public) asks to \(firing.action.rawValue, privacy: .public) group \(firing.groupID, privacy: .public)")
             }
-            pending += evaluation.firings
+            pending += firings
             restartSettle()
         }
         // The screens woke or the session came back: what waited can go on.
