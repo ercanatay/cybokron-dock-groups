@@ -269,13 +269,15 @@ struct ApplicationIdentityAuthorizationTests {
         #expect(evaluate(appTrigger(.openAll, identity: .authorize(.fixture(Self.bundle)))).firings.map(\.action) == [.openAll])
     }
 
-    @Test func theSkipIsSavedAndDescribedWithExistingText() throws {
+    @Test func theSkipIsSavedAndDescribedWithItsOwnText() throws {
         var state = TriggerState()
         state.record(.skipped(.applicationNotVerified), for: Self.id, at: Date(timeIntervalSince1970: 1_800_000_000))
         let restored = try JSONDecoder().decode(TriggerState.self, from: JSONEncoder().encode(state))
         #expect(restored.entry(for: Self.id).lastOutcome == .skipped(.applicationNotVerified))
         let line = TriggerDescriptions.lastRun(restored.entry(for: Self.id), groupName: "Work", now: Date(timeIntervalSince1970: 1_800_000_000), calendar: Calendar(identifier: .gregorian), locale: Locale(identifier: "en_US"))
-        #expect(line == "Can't run: fix or remove it.")
+        #expect(line.hasPrefix("Skipped "))
+        #expect(line.hasSuffix(": the app isn't verified, so only Show Popup can run."))
+        #expect(!line.contains("Can't run"))
     }
 
     // MARK: - Coordinator

@@ -182,8 +182,6 @@ public enum TriggerDescriptions {
             return Localization.format("core.trigger.lastRun.shown", "Last ran %1$@: showed “%2$@”.", when, groupName)
         case .ran(.finish):
             return Localization.format("core.trigger.lastRun.finished", "Last ran %1$@: finished “%2$@”.", when, groupName)
-        case .skipped(.applicationNotVerified):
-            return TriggerSkipReason.applicationNotVerified.explanation
         case .skipped(let reason):
             let why = reason.explanation
             return Localization.format("core.trigger.lastRun.skipped", "Skipped %1$@: %2$@.", when, why)

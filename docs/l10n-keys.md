@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1039 keys.
+1056 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1470,3 +1470,31 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `menuBar.triggers.pausedUntil` | Triggers paused until %@ |
 | `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
 | `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |
+
+## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.`, `core.trigger.skip.applicationNotVerified`)
+
+An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
+only Show Popup runs. *Needs re-approval*, *Invalid* and *Verification unavailable* run nothing. This
+version can't check an app's code, so the texts say so rather than offer a button that does nothing.
+`core.trigger.skip.applicationNotVerified` completes “Skipped today at 9:00: …”, so it starts in
+lowercase.
+
+| Key | English |
+| --- | --- |
+| `core.trigger.skip.applicationNotVerified` | the app isn't verified, so only Show Popup can run |
+| `triggers.identity.badge.unverified` | Unverified |
+| `triggers.identity.badge.needsReapproval` | Needs re-approval |
+| `triggers.identity.badge.invalid` | Invalid |
+| `triggers.identity.badge.verificationUnavailable` | Verification unavailable |
+| `triggers.identity.status.needsReapproval` | Needs re-approval: the app's code changed since it was approved, so this trigger doesn't run. |
+| `triggers.identity.status.invalid` | Invalid: its app approval can't be read, so this trigger doesn't run. |
+| `triggers.identity.status.verificationUnavailable` | Doesn't run: this version can't check the running app's code yet. |
+| `triggers.identity.detail.unverified` | Matched by bundle identifier only, which another app could also use. Only Show Popup runs, and the trigger starts turned off. |
+| `triggers.identity.detail.needsReapproval` | The app was updated or replaced since this trigger was approved for it. Nothing runs until its new code is approved. |
+| `triggers.identity.detail.invalid` | The saved approval for this trigger's app can't be read. Nothing runs. |
+| `triggers.identity.detail.verificationUnavailable` | This trigger was approved for a specific build of the app, but this version can't check which code is running, so nothing runs. |
+| `triggers.identity.howToReapprove` | This version can't check an app's code, so it can't approve a trigger again. To use it now, remove it and add it again: the new trigger is unverified, starts turned off, and only shows the popup. |
+| `triggers.identity.action.needsVerifiedApp` | %@ (needs a verified app) |
+| `triggers.identity.editor.onlyShowPopup` | This app is matched by its bundle identifier only (unverified), so only Show Popup can run. Other actions need a verified app, and this version can't verify apps yet. |
+| `triggers.identity.editor.chooseShowPopup` | Choose Show Popup to save: other actions don't run for an unverified app. |
+| `triggers.identity.sectionNote` | In this version, application triggers match apps by bundle identifier only: they start turned off and can only show the popup. Checking an app's code isn't available yet. |

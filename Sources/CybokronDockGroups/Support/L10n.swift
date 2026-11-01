@@ -1833,6 +1833,70 @@ extension L10n {
             static var applicationCloses: String { tr("triggers.editor.application.closes", "An application closes") }
         }
 
+        /// An application trigger's authorization (`TriggerApplicationIdentityState`): its label in
+        /// the trigger lists, its status line, what it means, and the editor's action notes.
+        enum Identity {
+            static func badge(_ state: TriggerApplicationIdentityState) -> String {
+                switch state {
+                case .unverified: return tr("triggers.identity.badge.unverified", "Unverified")
+                case .needsReapproval: return tr("triggers.identity.badge.needsReapproval", "Needs re-approval")
+                case .invalid: return tr("triggers.identity.badge.invalid", "Invalid")
+                case .verificationUnavailable: return tr("triggers.identity.badge.verificationUnavailable", "Verification unavailable")
+                }
+            }
+
+            /// The list's status line for a state in which nothing runs; `nil` for an unverified
+            /// trigger, whose last run is shown instead.
+            static func statusLine(_ state: TriggerApplicationIdentityState) -> String? {
+                switch state {
+                case .unverified: return nil
+                case .needsReapproval:
+                    return tr("triggers.identity.status.needsReapproval", "Needs re-approval: the app's code changed since it was approved, so this trigger doesn't run.")
+                case .invalid:
+                    return tr("triggers.identity.status.invalid", "Invalid: its app approval can't be read, so this trigger doesn't run.")
+                case .verificationUnavailable:
+                    return tr("triggers.identity.status.verificationUnavailable", "Doesn't run: this version can't check the running app's code yet.")
+                }
+            }
+
+            /// What the state means: the label's tooltip and the editor's note.
+            static func detail(_ state: TriggerApplicationIdentityState) -> String {
+                switch state {
+                case .unverified:
+                    return tr("triggers.identity.detail.unverified", "Matched by bundle identifier only, which another app could also use. Only Show Popup runs, and the trigger starts turned off.")
+                case .needsReapproval:
+                    return tr("triggers.identity.detail.needsReapproval", "The app was updated or replaced since this trigger was approved for it. Nothing runs until its new code is approved.")
+                case .invalid:
+                    return tr("triggers.identity.detail.invalid", "The saved approval for this trigger's app can't be read. Nothing runs.")
+                case .verificationUnavailable:
+                    return tr("triggers.identity.detail.verificationUnavailable", "This trigger was approved for a specific build of the app, but this version can't check which code is running, so nothing runs.")
+                }
+            }
+
+            /// How to use a trigger that waits for approval (or can't be checked) in this version.
+            static var howToReapprove: String {
+                tr("triggers.identity.howToReapprove", "This version can't check an app's code, so it can't approve a trigger again. To use it now, remove it and add it again: the new trigger is unverified, starts turned off, and only shows the popup.")
+            }
+
+            /// A disabled action in the editor's action pop-up.
+            static func actionNeedsVerifiedApp(_ action: String) -> String {
+                tr("triggers.identity.action.needsVerifiedApp", "%@ (needs a verified app)", action)
+            }
+
+            static var editorOnlyShowPopup: String {
+                tr("triggers.identity.editor.onlyShowPopup", "This app is matched by its bundle identifier only (unverified), so only Show Popup can run. Other actions need a verified app, and this version can't verify apps yet.")
+            }
+
+            static var editorChooseShowPopup: String {
+                tr("triggers.identity.editor.chooseShowPopup", "Choose Show Popup to save: other actions don't run for an unverified app.")
+            }
+
+            /// Below the group's triggers when one of them waits for an application.
+            static var sectionNote: String {
+                tr("triggers.identity.sectionNote", "In this version, application triggers match apps by bundle identifier only: they start turned off and can only show the popup. Checking an app's code isn't available yet.")
+            }
+        }
+
         enum Notice {
             static func starting(_ groupName: String) -> String { tr("triggers.notice.starting", "Starting “%@”", groupName) }
             static func opening(_ groupName: String) -> String { tr("triggers.notice.opening", "Opening “%@”", groupName) }

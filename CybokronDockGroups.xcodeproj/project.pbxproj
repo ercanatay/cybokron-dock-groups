@@ -92,6 +92,7 @@
 		2F61516392467A0BBFA36048 /* TriggerDescriptionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611B05FDB3747A790E898281 /* TriggerDescriptionsTests.swift */; };
 		2F9B831D82CFF1E88AC9E808 /* DiagnosticsReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF183B9943356BFDBB35EBAD /* DiagnosticsReport.swift */; };
 		305936C26E745BEC00DE19AA /* PopupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056659382DC22FBC5FC3A912 /* PopupSettingsView.swift */; };
+		30905D0A894994B9BBC438E2 /* TriggerApplicationIdentityPresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC068B729A8ADC30DF52573E /* TriggerApplicationIdentityPresentationTests.swift */; };
 		30F51CEFD4A3E05107268379 /* GroupShortcutCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C293DCFCFA75AEEB02DF0 /* GroupShortcutCompatibilityTests.swift */; };
 		3108F3ADAF7CEADF410B2E78 /* GroupHotKeysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94916DF0A1BCFBCF73968F43 /* GroupHotKeysTests.swift */; };
 		31F724BAB09462341B2E5BA1 /* RunningApplicationLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A027660E679C7B4E0B67C /* RunningApplicationLookup.swift */; };
@@ -209,6 +210,7 @@
 		87AE1C70EF61F82FFC398715 /* ReleaseNotesMarkdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97FD6F114FD68AAA097426E4 /* ReleaseNotesMarkdown.swift */; };
 		87DB6E5E4EE84070383621BD /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD2AF97281C362D5B2ADB56 /* LocalizationTests.swift */; };
 		87E24325C1EEDE8386A6CCF0 /* ItemSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3907666074E21B678A97BE64 /* ItemSearch.swift */; };
+		8920FBC09C8C398EEBF738A0 /* TriggerApplicationIdentityPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FB3C9E06D2DF0F668EFB0F /* TriggerApplicationIdentityPresentation.swift */; };
 		8A1A4F7C5384A630819CD00C /* FileItemPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B801784416AC1F4C1FC1C691 /* FileItemPolicy.swift */; };
 		8AD2E09D1A01202092C273EE /* Version090ArchiveFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA493A0AC4BBA8DF2B16A4E /* Version090ArchiveFixtures.swift */; };
 		8B1037A8E298CEED7DD0FDD7 /* IntentConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F8542EBF1C0052C9D7348A /* IntentConfirmation.swift */; };
@@ -656,6 +658,7 @@
 		74FDE90419ADF0ACB2FB92E9 /* WindowLayoutJSONEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowLayoutJSONEncoderTests.swift; sourceTree = "<group>"; };
 		7530A0B6D58051418AA33AA5 /* DevelopmentOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopmentOverrides.swift; sourceTree = "<group>"; };
 		755FF6B51BC76DACD761EA59 /* PopupDragTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupDragTests.swift; sourceTree = "<group>"; };
+		75FB3C9E06D2DF0F668EFB0F /* TriggerApplicationIdentityPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerApplicationIdentityPresentation.swift; sourceTree = "<group>"; };
 		76882B8F4929E6EC847697D9 /* KeyCodeNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodeNames.swift; sourceTree = "<group>"; };
 		773386E9EC7D8FB2E1DBFCCB /* ApplicationStaticCodeVerifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStaticCodeVerifierTests.swift; sourceTree = "<group>"; };
 		7753E685D63ED3E1F873BC33 /* AgentIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentIdentity.swift; sourceTree = "<group>"; };
@@ -829,6 +832,7 @@
 		D96B59D775D8B02F95C3A312 /* WindowLayoutJSONDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowLayoutJSONDecoder.swift; sourceTree = "<group>"; };
 		DAA7EE618192F73585A81F86 /* SwitchingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingSettingsView.swift; sourceTree = "<group>"; };
 		DBC1AFFB13CBAC2BE182153F /* TriggerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerStore.swift; sourceTree = "<group>"; };
+		DC068B729A8ADC30DF52573E /* TriggerApplicationIdentityPresentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerApplicationIdentityPresentationTests.swift; sourceTree = "<group>"; };
 		DC7ABF82FB4DB9BF78BD35F0 /* SwitchingIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingIntents.swift; sourceTree = "<group>"; };
 		DD41400EF1868C6738AC2BB4 /* ArchivedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedGroup.swift; sourceTree = "<group>"; };
 		DD5F97D27AA6526C9A8A20D0 /* TriggerEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerEditorSheet.swift; sourceTree = "<group>"; };
@@ -985,6 +989,7 @@
 				DDD7328ED659F45D32CB3090 /* LaunchClassifier.swift */,
 				89225414F69A5632611B0BCA /* MachOSliceTable.swift */,
 				60A7E57856CD53102E6C6EA0 /* TriggerApplicationIdentifier.swift */,
+				75FB3C9E06D2DF0F668EFB0F /* TriggerApplicationIdentityPresentation.swift */,
 				20BA2C81E946EAB603677698 /* TriggerBudget.swift */,
 				A01A35CF0CF08D6D441A2782 /* TriggerCoordinator.swift */,
 				E74BA4F784048326B9CE9E12 /* TriggerDescriptions.swift */,
@@ -1454,6 +1459,7 @@
 				C170A1505F530882C68757CA /* TransitionPlannerTests.swift */,
 				077EA31DCC10925F4ED64E74 /* TriggerApplicationEventCodingTests.swift */,
 				3044941B4AD95FCE9F830E8B /* TriggerApplicationIdentifierTests.swift */,
+				DC068B729A8ADC30DF52573E /* TriggerApplicationIdentityPresentationTests.swift */,
 				A41D8E7D9D13B64822C6E09E /* TriggerAppSourceTests.swift */,
 				1C19DA1A7525C9D921E1E98B /* TriggerBackupTests.swift */,
 				D6BBB14C3899B11F1B489FC4 /* TriggerCompatibilityTests.swift */,
@@ -2056,6 +2062,7 @@
 				0B56F1B52270EE1A0E14ADB6 /* TransitionPlanner.swift in Sources */,
 				3AD17B31CA54785683FCF01E /* TransitionReport.swift in Sources */,
 				9BFC8876E9D293ADEF5A4FB1 /* TriggerApplicationIdentifier.swift in Sources */,
+				8920FBC09C8C398EEBF738A0 /* TriggerApplicationIdentityPresentation.swift in Sources */,
 				BB7D65B94F265D737C6D22D4 /* TriggerBudget.swift in Sources */,
 				E03D563A5AF3D77633DC7D6A /* TriggerCoordinator.swift in Sources */,
 				7915692B63B4A6A10E5AFF32 /* TriggerDescriptions.swift in Sources */,
@@ -2212,6 +2219,7 @@
 				9A166E00E69365460219091C /* TriggerAppSourceTests.swift in Sources */,
 				C7A5BB2261C2FD28B7173559 /* TriggerApplicationEventCodingTests.swift in Sources */,
 				6E0D0DC71E52541B30E22B77 /* TriggerApplicationIdentifierTests.swift in Sources */,
+				30905D0A894994B9BBC438E2 /* TriggerApplicationIdentityPresentationTests.swift in Sources */,
 				036CF196760E5DB17BB7485F /* TriggerBackupTests.swift in Sources */,
 				2A0D9FE4CECD8B2C121F00C6 /* TriggerCompatibilityTests.swift in Sources */,
 				8DC5666A85A791A18D8FA1A9 /* TriggerCoordinatorTests.swift in Sources */,

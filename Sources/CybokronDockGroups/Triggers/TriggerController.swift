@@ -269,9 +269,15 @@ final class TriggerController: ObservableObject {
         TriggerDescriptions.summary(trigger, appName: AppInfo.name, calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
     }
 
-    /// The last-run line of `trigger`, or why it can't run: a VPN isn't watched (TS-8), a Wi-Fi
-    /// network waits for Location access.
+    /// The last-run line of `trigger`, or why it can't run: an application trigger's approval, a VPN
+    /// isn't watched (TS-8), a Wi-Fi network waits for Location access.
     func statusLine(of trigger: GroupTrigger) -> String {
+        // An application trigger that runs nothing because of its approval says why, instead of
+        // the generic "can't run" (a newer version's trigger keeps its own message).
+        if !trigger.isFromNewerVersion, let state = trigger.applicationIdentityState,
+           let line = L10n.Triggers.Identity.statusLine(state) {
+            return line
+        }
         if let problem = trigger.problem { return problem }
         if groups.archivedGroup(withID: trigger.groupID) != nil {
             return L10n.Triggers.GroupWindow.archived

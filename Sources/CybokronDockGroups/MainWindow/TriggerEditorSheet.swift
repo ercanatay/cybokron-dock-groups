@@ -18,6 +18,13 @@ import SwiftUI
 /// network names. That takes Location access, which is asked for only here, only when the user
 /// clicks Allow… (`LocationAccess.request`); refused, Open Privacy Settings… goes to the list. The
 /// trigger can be added either way: it waits for the access. VPNs aren't offered (TS-8).
+///
+/// An application trigger matched by bundle identifier only (unverified: a new one, or one whose
+/// app was changed) can only Show the Popup: the other actions are shown disabled with the reason,
+/// choosing such an app switches to Show the Popup, and an older trigger with another action can't
+/// be saved until Show the Popup is chosen. A trigger waiting for re-approval, with an unreadable
+/// approval or one this version can't verify says so and how to use it now; there's no button to
+/// approve, since this version can't check an app's code.
 struct TriggerEditorSheet: View {
     let group: DockGroup
     let existing: GroupTrigger?
@@ -77,7 +84,7 @@ struct TriggerEditorSheet: View {
                     .keyboardShortcut(.cancelAction)
                 Button(existing == nil ? Texts.add : Texts.save, action: save)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(!draft.isValid)
+                    .disabled(!draft.canBeSaved(replacing: existing))
             }
         }
         .padding(20)
@@ -158,10 +165,24 @@ struct TriggerEditorSheet: View {
     /// at Location access (it never asks: only Allow… does).
     private func choose(_ when: TriggerDraft.When) {
         draft.setWhen(when)
+        keepActionPermitted()
         if case .change(let change) = when, change == .displaysConnected || change == .displaysDisconnected, draft.displays.isEmpty {
             draft.useDisplays(connected)
         }
         lookAtNetwork()
+    }
+
+    /// What the saved trigger's application approval would be (`nil` for other events).
+    private var identityState: TriggerApplicationIdentityState? {
+        draft.applicationIdentityState(replacing: existing)
+    }
+
+    /// After a change the user made (another event or app): an unverified application trigger
+    /// switches to Show the Popup, the only action it can run.
+    private func keepActionPermitted() {
+        if !draft.permitsAction(draft.action, replacing: existing), draft.permitsAction(.showPopup, replacing: existing) {
+            draft.setAction(.showPopup)
+        }
     }
 
     private func lookAtNetwork() {
@@ -225,6 +246,7 @@ struct TriggerEditorSheet: View {
                         if let app = AppPicker.triggerApplication(at: url) {
                             if draft.selectApplication(app) {
                                 problem = nil
+                                keepActionPermitted()
                             } else {
                                 problem = Texts.applicationInvalid
                             }
@@ -346,13 +368,20 @@ struct TriggerEditorSheet: View {
         GridRow {
             Text(Texts.action)
             VStack(alignment: .leading, spacing: 6) {
-                Picker(Texts.action, selection: Binding(get: { draft.action }, set: { draft.setAction($0) })) {
+                Picker(Texts.action, selection: Binding(
+                    get: { draft.action },
+                    set: { if draft.permitsAction($0, replacing: existing) { draft.setAction($0) } }
+                )) {
                     ForEach(draft.allowedActions, id: \.self) { action in
-                        Text(Self.title(of: action)).tag(action)
+                        let permitted = draft.permitsAction(action, replacing: existing)
+                        Text(permitted ? Self.title(of: action) : L10n.Triggers.Identity.actionNeedsVerifiedApp(Self.title(of: action)))
+                            .tag(action)
+                            .disabled(!permitted)
                     }
                 }
                 .labelsHidden()
                 .fixedSize()
+                identityNote
                 if let hint {
                     Text(hint)
                         .font(.caption)
@@ -368,6 +397,36 @@ struct TriggerEditorSheet: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
+            }
+        }
+    }
+
+    /// Under the action pop-up of an application trigger: why only Show the Popup can be chosen,
+    /// or why the trigger doesn't run and how to use it now.
+    @ViewBuilder
+    private var identityNote: some View {
+        if let state = identityState {
+            if state == .unverified {
+                Label(L10n.Triggers.Identity.editorOnlyShowPopup, systemImage: TriggerIdentityLabel.symbol(for: state))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if !state.permits(draft.action) {
+                    Text(L10n.Triggers.Identity.editorChooseShowPopup)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 2) {
+                    Label(L10n.Triggers.Identity.badge(state), systemImage: TriggerIdentityLabel.symbol(for: state))
+                        .foregroundStyle(.orange)
+                    Text(L10n.Triggers.Identity.detail(state))
+                    Text(L10n.Triggers.Identity.howToReapprove)
+                        .foregroundStyle(.secondary)
+                }
+                .font(.caption)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -490,7 +549,7 @@ struct TriggerEditorSheet: View {
     // MARK: - Saving
 
     private func save() {
-        guard draft.isValid else { return }
+        guard draft.canBeSaved(replacing: existing) else { return }
         let trigger = draft.trigger(groupID: group.id, replacing: existing)
         if existing != nil {
             if store.update(trigger) {
