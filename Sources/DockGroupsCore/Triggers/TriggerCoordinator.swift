@@ -157,19 +157,32 @@ public final class TriggerCoordinator {
         return true
     }
 
-    public func observeApplications(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
+    /// What `observeApplications` did with a snapshot, so a UI status can follow the coordinator's
+    /// decision instead of guessing it.
+    public enum ApplicationObservationOutcome: Equatable, Sendable {
+        /// Rejected (stale generation, old or repeated sequence): nothing changed.
+        case rejected
+        /// The tracker stopped (the Mac can't act, or the rules can't be tracked): the state is unknown.
+        case stopped
+        /// Accepted; `isUncertain` when macOS couldn't identify every running app.
+        case accepted(isUncertain: Bool)
+    }
+
+    @discardableResult
+    public func observeApplications(generation: UInt64, sequence: UInt64, counts: [String: Int]) -> ApplicationObservationOutcome {
         guard environment.canAct else {
             stopApplicationTracker()
-            return
+            return .stopped
         }
-        guard refresh() else { return }
+        guard refresh() else { return .stopped }
         let observation = applicationTracker.observeDetailed(generation: generation, sequence: sequence, counts: counts)
+        guard observation.isAccepted else { return .rejected }
         if observation.isUncertain {
             // Fail closed: drop presence firings (queued, pending, awaiting notice) but keep
             // observing and leave other triggers' firings alone. Baselines are already reset.
             invalidateApplicationPresenceFirings()
             processIfNeeded()
-            return
+            return .accepted(isUncertain: true)
         }
         let ids = observation.firedRuleIDs
         let originalRules = rules()
@@ -203,6 +216,7 @@ public final class TriggerCoordinator {
                 break
             }
         }
+        return .accepted(isUncertain: false)
     }
 
     public func stopApplicationObservations() {

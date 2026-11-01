@@ -93,6 +93,21 @@ struct TriggerCoordinatorTests {
         #expect(rig.handler.calls == ["openAll:Design"])
     }
 
+    @Test func observeApplicationsReportsRejectedAcceptedAndStopped() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([app])
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        #expect(rig.coordinator.observeApplications(generation: 1, sequence: 5, counts: ["com.example.app": 0]) == .accepted(isUncertain: false))
+        // Stale generation, old and repeated sequences are rejected.
+        #expect(rig.coordinator.observeApplications(generation: 0, sequence: 6, counts: [:]) == .rejected)
+        #expect(rig.coordinator.observeApplications(generation: 1, sequence: 5, counts: [:]) == .rejected)
+        #expect(rig.coordinator.observeApplications(generation: 1, sequence: 4, counts: [:]) == .rejected)
+        #expect(rig.coordinator.observeApplications(generation: 1, sequence: 6, counts: [:]) == .accepted(isUncertain: true))
+        // The rule stops being runnable: refresh() stops the tracker and the caller is told.
+        rig.rules[0].isEnabled = false
+        #expect(rig.coordinator.observeApplications(generation: 1, sequence: 7, counts: ["com.example.app": 0]) == .stopped)
+    }
+
     @Test func staleUnknownPresenceDoesNotCancelPendingAction() async {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
         let rig = TriggerRig([app])

@@ -391,8 +391,13 @@ final class TriggerController: ObservableObject {
     /// Internal seam for tests to simulate application presence snapshots deterministically.
     internal func handleApplicationSnapshot(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
         guard generation == applicationObservationGeneration, applicationPresenceSource?.isObserving == true else { return }
-        applicationPresenceUncertain = counts.isEmpty
-        coordinator.observeApplications(generation: generation, sequence: sequence, counts: counts)
+        // The status follows the coordinator's verdict: a rejected (stale) snapshot leaves it alone,
+        // and a stopped tracker (refresh failed, can't act) is shown as unknown, not left stale.
+        switch coordinator.observeApplications(generation: generation, sequence: sequence, counts: counts) {
+        case .rejected: break
+        case .stopped: applicationPresenceUncertain = true
+        case .accepted(let isUncertain): applicationPresenceUncertain = isUncertain
+        }
     }
 
     /// Internal seam for tests to simulate workspace sleep/wake / session changes without

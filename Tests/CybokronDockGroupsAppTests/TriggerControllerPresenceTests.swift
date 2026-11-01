@@ -110,6 +110,33 @@ struct TriggerControllerPresenceTests {
         #expect(handler.popupCount == 1)
     }
 
+    @Test func rejectedSnapshotDoesNotChangeUnknownStatus() async throws {
+        let dir = try makeTempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: dir.appendingPathComponent("groups.json")), saveDelay: .zero)
+        let group = groups.addGroup(named: "Fixture")
+        let triggers = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
+        let trigger = GroupTrigger(groupID: group.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts), action: .showPopup)
+        triggers.add(trigger)
+        let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
+        controller.start(handler: CountingPresenceHandler(groups: [group]), launchedAsLoginItem: false, launchedAt: Date())
+        let generation = controller.applicationObservationGeneration
+        let waiting = "Waiting: macOS cannot identify every running app."
+        controller.handleApplicationSnapshot(generation: generation, sequence: 100, counts: [:])
+        #expect(controller.statusLine(of: trigger) == waiting)
+        // A snapshot with an old sequence is rejected by the tracker: still unknown.
+        controller.handleApplicationSnapshot(generation: generation, sequence: 99, counts: ["com.cybokronfixture.normal": 0])
+        #expect(controller.statusLine(of: trigger) == waiting)
+        controller.handleApplicationSnapshot(generation: generation, sequence: 100, counts: ["com.cybokronfixture.normal": 0])
+        #expect(controller.statusLine(of: trigger) == waiting)
+        // The next accepted, identified snapshot clears it; a later rejected unknown one doesn't bring it back.
+        controller.handleApplicationSnapshot(generation: generation, sequence: 101, counts: ["com.cybokronfixture.normal": 0])
+        #expect(controller.statusLine(of: trigger) != waiting)
+        controller.handleApplicationSnapshot(generation: generation, sequence: 50, counts: [:])
+        #expect(controller.statusLine(of: trigger) != waiting)
+    }
+
     @Test func syntheticSnapshotsReachFirstStartAndLastEndOnly() async throws {
         let dir = try makeTempDir()
         defer { try? FileManager.default.removeItem(at: dir) }
