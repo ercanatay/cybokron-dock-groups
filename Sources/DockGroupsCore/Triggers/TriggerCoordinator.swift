@@ -159,7 +159,7 @@ public final class TriggerCoordinator {
 
     public func observeApplications(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
         guard environment.canAct else {
-            applicationTracker.stop()
+            stopApplicationTracker()
             return
         }
         guard refresh() else { return }
@@ -192,10 +192,12 @@ public final class TriggerCoordinator {
             guard case .applicationPresence(_, let edge) = current.event else { break }
             // The validity check runs inside receive(), after the state update and its reentrant
             // callbacks but before this delivery's firings are enqueued, so a stale firing is never
-            // enqueued and a valid nested newer firing (same trigger ID) is never touched.
-            receive(.applicationEdge(triggerID: id, edge: edge), presenceValidity: {
+            // enqueued and a valid nested newer firing (same trigger ID) is never touched. The stamp
+            // is checked again right before the firing is carried out.
+            let stamp = ApplicationPresenceStamp(generation: generation, revision: observedRevision, rule: current)
+            receive(.applicationEdge(triggerID: id, edge: edge), presence: (stamp, {
                 self.applicationTracker.isCurrent(revision: observedRevision) && currentRule(for: id) != nil
-            })
+            }))
             // Stop delivering the rest of this (now stale) observation.
             if !applicationTracker.isCurrent(revision: observedRevision) || currentRule(for: id) == nil {
                 break
@@ -204,13 +206,40 @@ public final class TriggerCoordinator {
     }
 
     public func stopApplicationObservations() {
+        stopApplicationTracker()
+    }
+
+    public func cancelApplicationPresenceForPolicyChange() {
+        stopApplicationTracker()
+    }
+
+    /// Every path that stops the tracker comes here: a stopped tracker makes every presence firing
+    /// stale, so they are dropped at once (carry-out would refuse them anyway, see
+    /// `isApplicationPresenceFiringCurrent`).
+    private func stopApplicationTracker() {
         applicationTracker.stop()
         invalidateApplicationPresenceFirings()
     }
 
-    public func cancelApplicationPresenceForPolicyChange() {
-        applicationTracker.stop()
-        invalidateApplicationPresenceFirings()
+    /// Whether `firing` may still be carried out. Other triggers' firings always may. An
+    /// application-presence firing only while the tracker still runs the generation and revision
+    /// of its observation, its rule is unchanged and can run, its group is active and the Mac can
+    /// act. Checked by the coordinator itself, so a stop path that forgot to invalidate can't let a
+    /// stale firing run.
+    private func isApplicationPresenceFiringCurrent(_ firing: TriggerFiring) -> Bool {
+        guard firing.isApplicationPresence else { return true }
+        guard let stamp = firing.presenceStamp else { return false }
+        guard environment.canAct else { return false }
+        guard applicationTracker.isActive(generation: stamp.generation),
+              applicationTracker.isCurrent(revision: stamp.revision) else { return false }
+        guard let rule = rules().first(where: { $0.id == firing.triggerID }), rule == stamp.rule, rule.canRun else { return false }
+        return activeGroups().contains(rule.groupID)
+    }
+
+    /// Drops the presence firings that are pending or queued but no longer current.
+    private func dropStaleApplicationPresenceFirings() {
+        pending.removeAll { !isApplicationPresenceFiringCurrent($0) }
+        queue.removeAll { !isApplicationPresenceFiringCurrent($0) }
     }
 
     /// Drops every application-presence firing that is pending, queued or awaiting its notice.
@@ -233,14 +262,14 @@ public final class TriggerCoordinator {
             guard case .applicationPresence(let bundleID, let edge) = trigger.event else { continue }
             guard active.contains(trigger.groupID) else { continue }
             guard let identifier = TriggerApplicationIdentifier(bundleID) else {
-                applicationTracker.stop()
+                stopApplicationTracker()
                 return false
             }
             eligible.append(.init(id: trigger.id, identifier: identifier, edge: edge))
         }
         let ok = applicationTracker.configure(eligible)
         if eligible.isEmpty || !ok {
-            applicationTracker.stop()
+            stopApplicationTracker()
             return false
         }
         return true
@@ -265,7 +294,7 @@ public final class TriggerCoordinator {
     public func rulesChanged(previous: [GroupTrigger]) {
         let nowRules = rules()
         if previous != nowRules {
-            applicationTracker.stop()
+            stopApplicationTracker()
         }
         update(TriggerEvaluator.rebaseline(previous: previous, rules: nowRules, state: state, now: clock(), calendar: calendar()))
         let currentByID = Dictionary(nowRules.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -324,15 +353,22 @@ public final class TriggerCoordinator {
 
     // MARK: - Signals
 
-    /// A system source reported `signal`.
+    /// A system source reported `signal`. `.applicationEdge` is ignored here: application edges come
+    /// only from `observeApplications`, which checks the tracker generation and revision.
     public func receive(_ signal: TriggerSignal) {
-        receive(signal, presenceValidity: nil)
+        if case .applicationEdge = signal {
+            logger.error("An application edge was sent outside the presence tracker: ignored")
+            return
+        }
+        receive(signal, presence: nil)
     }
 
-    /// - Parameter presenceValidity: Evaluated after the state update (and any reentrant callbacks
-    ///   it caused) and right before the firings are enqueued; when it returns `false`, only the
-    ///   application-presence firings of this delivery are dropped.
-    private func receive(_ signal: TriggerSignal, presenceValidity: (() -> Bool)?) {
+    /// - Parameter presence: For an edge from `observeApplications`: the stamp its firings carry,
+    ///   and a check evaluated after the state update (and any reentrant callbacks it caused) and
+    ///   right before the firings are enqueued; when it returns `false`, only the
+    ///   application-presence firings of this delivery are dropped. Without it, application-presence
+    ///   firings are never enqueued.
+    private func receive(_ signal: TriggerSignal, presence: (stamp: ApplicationPresenceStamp, isValid: () -> Bool)?) {
         let evaluation = TriggerEvaluator.evaluate(
             signal,
             rules: rules(),
@@ -358,17 +394,18 @@ public final class TriggerCoordinator {
         default: shouldInvalidate = false
         }
         if shouldInvalidate {
-            applicationTracker.stop()
-            if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence {
-                currentInvalidated = true
-                noticePresenter?.dismiss()
-            }
-            // Remove only pending/queued firings that were originally applicationPresence.
-            pending.removeAll { $0.isApplicationPresence }
-            queue.removeAll { $0.isApplicationPresence }
+            // Removes only firings that were originally applicationPresence.
+            stopApplicationTracker()
         }
         var firings = evaluation.firings
-        if let presenceValidity, !firings.isEmpty, !presenceValidity() {
+        if let presence, !firings.isEmpty, presence.isValid() {
+            firings = firings.map { firing in
+                guard firing.isApplicationPresence else { return firing }
+                var stamped = firing
+                stamped.presenceStamp = presence.stamp
+                return stamped
+            }
+        } else {
             firings.removeAll { $0.isApplicationPresence }
         }
         if !firings.isEmpty {
@@ -400,6 +437,8 @@ public final class TriggerCoordinator {
     }
 
     private func settled() {
+        // A stale presence firing must not win the reduction over a firing that can still run.
+        dropStaleApplicationPresenceFirings()
         let batch = pending
         pending = []
         let reduction = TriggerReducer.reduce(queue + batch)
@@ -462,6 +501,12 @@ public final class TriggerCoordinator {
             logger.notice("Trigger \(firing.triggerID, privacy: .public) is gone or off: nothing done")
             return
         }
+        // Like a push invalidation of a queued firing: dropped without a recorded outcome.
+        guard isApplicationPresenceFiringCurrent(firing) else {
+            logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated application observation: nothing done")
+            dropStaleApplicationPresenceFirings()
+            return
+        }
         guard clock().timeIntervalSince(firing.occurrence) <= TriggerEvaluator.catchUpWindow else {
             var state = state
             state.record(.missed(.macAsleep), for: trigger.id, at: firing.occurrence)
@@ -484,6 +529,12 @@ public final class TriggerCoordinator {
             guard let presenter = noticePresenter else {
                 logger.error("Trigger \(trigger.id, privacy: .public) needs a notice and none can be shown: nothing done")
                 skip(firing, .noAnswer)
+                return
+            }
+            // No notice for a firing the checks above made stale.
+            guard isApplicationPresenceFiringCurrent(firing) else {
+                logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated application observation: nothing done")
+                dropStaleApplicationPresenceFirings()
                 return
             }
             isPresentingNotice = true
@@ -516,6 +567,15 @@ public final class TriggerCoordinator {
         }
         guard let handler = self.handler, let group = handler.group(withID: firing.groupID) else {
             skip(firing, .groupMissing)
+            return
+        }
+        // The last look before the handler is called (no suspension point until then): the checks
+        // above may have called out (state changes, the handler), so the observation is looked at
+        // again. An action that already started is not undone.
+        guard isApplicationPresenceFiringCurrent(firing) else {
+            logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated application observation: nothing done")
+            dropStaleApplicationPresenceFirings()
+            if runMode != .immediately { skip(firing, .anotherTrigger) }
             return
         }
         await run(firing, trigger: trigger, group: group, handler: handler)

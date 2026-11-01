@@ -122,6 +122,8 @@ public enum TriggerSignal: Hashable, Sendable {
     /// The network, once it settled.
     case network(NetworkReading)
     /// An application's presence changed (starts/ends), matched by trigger identifier and edge.
+    /// Only `TriggerCoordinator.observeApplications` delivers it; `TriggerCoordinator.receive(_:)`
+    /// ignores it, so it can't bypass the tracker's generation and revision checks.
     case applicationEdge(triggerID: UUID, edge: TriggerEdge)
 }
 

@@ -14,6 +14,9 @@ final class FakeAutomationHandler: AutomationHandling {
     private(set) var calls: [String] = []
     /// Called while an action runs, before it returns (to send signals in the middle of one).
     var duringAction: (() -> Void)?
+    /// Called once, on the next `group(withID:)` the coordinator makes (its checks before an
+    /// action), then cleared: to change things after a firing was taken but before its action.
+    var duringNextGroupLookup: (() -> Void)?
 
     init(groups: [DockGroup]) {
         self.groups = groups
@@ -27,7 +30,13 @@ final class FakeAutomationHandler: AutomationHandling {
         TransitionReport(outcome: outcome, plan: TransitionPlan(kind: kind, trigger: trigger, groupName: name(id), otherGroupName: nil))
     }
 
-    func group(withID id: DockGroup.ID) -> DockGroup? { groups.first { $0.id == id } }
+    func group(withID id: DockGroup.ID) -> DockGroup? {
+        if let hook = duringNextGroupLookup {
+            duringNextGroupLookup = nil
+            hook()
+        }
+        return groups.first { $0.id == id }
+    }
     var currentGroupID: DockGroup.ID? { current }
     var currentGroupStartTrigger: TransitionTrigger? { trigger }
 

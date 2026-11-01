@@ -32,7 +32,11 @@ the option cancels pending application-trigger actions and starts a fresh baseli
 Events must enter the existing trigger coordinator and retain its pause, echo,
 cooldown, daily and hourly budgets, confirmation, and automatic no-quit policies.
 Suppressed events are consumed. Pending actions must be revalidated against current
-rules and active groups. The existing unknown-reading behavior of other conditions must
+rules and active groups: each application firing carries its observation's generation,
+revision and rule, and is dropped if any of them is outdated, the tracker stopped or the group
+is inactive, checked again right before its action starts (a started action is not undone).
+Application edges enter only through the coordinator's presence observations, never as a
+plain signal. The existing unknown-reading behavior of other conditions must
 not accidentally preserve an app baseline through a gap. An observed identifier can
 only activate an action already configured in an enabled rule; it cannot choose a new
 action. Imports remain disabled by default.

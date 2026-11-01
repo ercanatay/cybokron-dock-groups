@@ -46,6 +46,22 @@ final class TriggerRig {
         await settleDown()
     }
 
+    private(set) var presenceGeneration: UInt64 = 0
+
+    /// Delivers `trigger`'s application edge the way the app does: a fresh tracker generation, a
+    /// baseline snapshot, then the change (`receive(.applicationEdge)` is ignored).
+    func deliverApplicationEdge(of trigger: GroupTrigger) {
+        guard case .applicationPresence(let bundleIdentifier, let edge) = trigger.event else {
+            Issue.record("not an application trigger")
+            return
+        }
+        presenceGeneration += 1
+        let key = bundleIdentifier.lowercased()
+        #expect(coordinator.beginApplicationObservations(generation: presenceGeneration))
+        coordinator.observeApplications(generation: presenceGeneration, sequence: 1, counts: [key: edge == .starts ? 0 : 1])
+        coordinator.observeApplications(generation: presenceGeneration, sequence: 2, counts: [key: edge == .starts ? 1 : 0])
+    }
+
     func settleDown() async {
         await settle { sleeper.sleepingCount > 0 || coordinator.isIdle }
         sleeper.wakeAll()
@@ -243,7 +259,7 @@ struct TriggerCoordinatorTests {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
         let login = GroupTrigger.on(.login, group: design, action: .openAll, runMode: .immediately)
         let rig = TriggerRig([app, login])
-        rig.coordinator.receive(.applicationEdge(triggerID: app.id, edge: .starts))
+        rig.deliverApplicationEdge(of: app)
         rig.coordinator.receive(.launched(.login(session: session)))
         await settle { rig.sleeper.sleepingCount > 0 }
         rig.coordinator.cancelApplicationPresenceForPolicyChange()
@@ -256,7 +272,8 @@ struct TriggerCoordinatorTests {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, runMode: .notice)
         let rig = TriggerRig([app])
         rig.presenter.holds = true
-        await rig.send(.applicationEdge(triggerID: app.id, edge: .starts))
+        rig.deliverApplicationEdge(of: app)
+        await rig.settleDown()
         #expect(rig.presenter.isShowing)
         rig.coordinator.cancelApplicationPresenceForPolicyChange()
         rig.presenter.release(.run)
@@ -285,7 +302,7 @@ struct TriggerCoordinatorTests {
     @Test func changingPolicyCancelsOriginalAppFiringEvenIfRuleKindChanged() async {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
         let rig = TriggerRig([app])
-        rig.coordinator.receive(.applicationEdge(triggerID: app.id, edge: .starts))
+        rig.deliverApplicationEdge(of: app)
         await settle { rig.sleeper.sleepingCount > 0 }
         rig.rules[0].event = .login
         rig.coordinator.cancelApplicationPresenceForPolicyChange()
@@ -297,7 +314,7 @@ struct TriggerCoordinatorTests {
     @Test func sleepCancelsOriginalAppFiringEvenIfRuleKindChanged() async {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
         let rig = TriggerRig([app])
-        rig.coordinator.receive(.applicationEdge(triggerID: app.id, edge: .starts))
+        rig.deliverApplicationEdge(of: app)
         await settle { rig.sleeper.sleepingCount > 0 }
         rig.rules[0].event = .login
         rig.coordinator.receive(.screens(asleep: true))
@@ -311,7 +328,8 @@ struct TriggerCoordinatorTests {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, runMode: .notice)
         let rig = TriggerRig([app])
         rig.presenter.holds = true
-        await rig.send(.applicationEdge(triggerID: app.id, edge: .starts))
+        rig.deliverApplicationEdge(of: app)
+        await rig.settleDown()
         #expect(rig.presenter.isShowing)
         rig.rules[0].event = .login
         rig.coordinator.cancelApplicationPresenceForPolicyChange()
@@ -693,7 +711,7 @@ struct TriggerCoordinatorTests {
         #expect(rig.handler.calls.isEmpty)
     }
 
-    @Test func appPresenceTrackerEdgeReachesCoordinator() async {
+    @Test func applicationEdgeSentOutsideTheCoordinatorsTrackerRunsNothing() async {
         let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
         let rig = TriggerRig([trigger])
         var tracker = AppPresenceRuleTracker()
@@ -702,11 +720,125 @@ struct TriggerCoordinatorTests {
         #expect(tracker.beginGeneration(1) == true)
         #expect(tracker.observe(generation: 1, sequence: 1, counts: [identifier.matchKey: 0]) == [])
         let edges = tracker.observe(generation: 1, sequence: 2, counts: [identifier.matchKey: 1])
+        #expect(edges == [trigger.id])
+        // Even while the coordinator's own tracker runs this generation, a hand-sent edge is ignored.
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: [identifier.matchKey: 1])
+        let before = rig.coordinator.state
         for id in edges {
             rig.coordinator.receive(.applicationEdge(triggerID: id, edge: .starts))
         }
+        #expect(rig.coordinator.isIdle)
+        #expect(rig.coordinator.state == before)
         await rig.settleDown()
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    // MARK: Application presence: checks at carry-out
+
+    /// An application trigger whose next group lookup (the coordinator's last checks before the
+    /// action) runs `change`; `action` is what it would do.
+    private func carryOut(_ action: TriggerAction = .showPopup, runMode: TriggerRunMode? = .immediately, changing change: @escaping (TriggerRig, GroupTrigger) -> Void) async -> TriggerRig {
+        let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: action, runMode: runMode)
+        let rig = TriggerRig([trigger])
+        rig.handler.duringNextGroupLookup = { [weak rig] in
+            guard let rig else { return }
+            change(rig, trigger)
+        }
+        rig.deliverApplicationEdge(of: trigger)
+        await rig.settleDown()
+        return rig
+    }
+
+    @Test func presenceFiringRunsWhenNothingChangedBeforeItsAction() async {
+        var looked = false
+        let rig = await carryOut { _, _ in looked = true }
+        #expect(looked)
         #expect(rig.handler.calls == ["popup:Work"])
+    }
+
+    @Test func trackerStoppedAfterTheFiringWasTakenRunsNothing() async {
+        // The firing is no longer queued or showing a notice, so the push invalidation misses it:
+        // only the carry-out check stops it.
+        let rig = await carryOut { rig, _ in rig.coordinator.stopApplicationObservations() }
+        #expect(rig.handler.calls.isEmpty)
+        #expect(rig.coordinator.isIdle)
+    }
+
+    @Test func newPresenceGenerationAfterTheFiringWasTakenRunsNothing() async {
+        let rig = await carryOut { rig, _ in
+            #expect(rig.coordinator.beginApplicationObservations(generation: rig.presenceGeneration + 1))
+        }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func presenceRevisionChangeAfterTheFiringWasTakenRunsNothing() async {
+        // An unknown snapshot in the same generation: the tracker keeps running, its revision moves.
+        let rig = await carryOut { rig, _ in
+            rig.coordinator.observeApplications(generation: rig.presenceGeneration, sequence: 3, counts: [:])
+        }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func ruleChangedWithoutNoticeAfterTheFiringWasTakenRunsNothing() async {
+        // The store changed the rule and its change notification hasn't reached the coordinator.
+        let rig = await carryOut { rig, _ in rig.rules[0].action = .openAll }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func trackerStoppedDuringTheChecksBeforeANoticeShowsNoNotice() async {
+        let rig = await carryOut(.start, runMode: .notice) { rig, _ in rig.coordinator.stopApplicationObservations() }
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.rules[0].runMode == .notice)
+        #expect(rig.presenter.shown.isEmpty)
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func trackerStoppedAfterAnsweredNoticeRunsNothingAndIsSkipped() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, runMode: .notice) // a popup never shows a notice
+        let rig = TriggerRig([app])
+        rig.presenter.holds = true
+        rig.deliverApplicationEdge(of: app)
+        await rig.settleDown()
+        #expect(rig.presenter.isShowing)
+        // The stop comes during the checks after the notice ended, when no notice shows any more:
+        // nothing is dismissed and the firing is no longer queued.
+        rig.handler.duringNextGroupLookup = { [weak rig] in rig?.coordinator.stopApplicationObservations() }
+        rig.presenter.release(.run)
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.duringNextGroupLookup == nil)
+        #expect(rig.presenter.dismissCount == 0)
+        #expect(rig.handler.calls.isEmpty)
+        #expect(rig.outcome(app) == .skipped(.anotherTrigger))
+    }
+
+    @Test func staleQueuedPresenceFiringIsDroppedWithoutPushInvalidation() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([app])
+        rig.deliverApplicationEdge(of: app)
+        await settle { rig.sleeper.sleepingCount > 0 }
+        // A changed tracker configuration (the rule's identifier) stops the tracker inside
+        // configure() without the coordinator being told through rulesChanged.
+        rig.rules[0].event = .applicationPresence(bundleIdentifier: "com.example.Other", edge: .starts)
+        rig.coordinator.observeApplications(generation: rig.presenceGeneration, sequence: 3, counts: ["com.example.other": 1])
+        rig.rules[0].event = app.event
+        rig.sleeper.wakeAll()
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls.isEmpty)
+    }
+
+    @Test func stalePresenceStartDoesNotWinTheReductionOverAValidStart() async {
+        // Listed first, the application Start would win the tie and the login Start be skipped.
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work)
+        let login = GroupTrigger.on(.login, group: design)
+        let rig = TriggerRig([app, login])
+        rig.deliverApplicationEdge(of: app)
+        rig.coordinator.receive(.launched(.login(session: session)))
+        await settle { rig.sleeper.sleepingCount > 0 }
+        rig.rules[0].action = .openAll  // not told through rulesChanged
+        rig.sleeper.wakeAll()
+        await settle { rig.coordinator.isIdle }
+        #expect(rig.handler.calls == ["start:Design:automation"])
     }
 
     @Test func appPresenceSnapshotsReachCoordinatorWithoutManualEdges() async {
@@ -856,7 +988,7 @@ struct TriggerCoordinatorTests {
     @Test func appPresencePendingAtSleepDoesNotReplayOnWake() async {
         let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
         let rig = TriggerRig([trigger])
-        rig.coordinator.receive(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        rig.deliverApplicationEdge(of: trigger)
         await settle { rig.sleeper.sleepingCount > 0 }
         rig.coordinator.receive(.screens(asleep: true))
         rig.sleeper.wakeAll()
@@ -869,7 +1001,8 @@ struct TriggerCoordinatorTests {
         let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, runMode: .notice)
         let rig = TriggerRig([trigger])
         rig.presenter.holds = true
-        await rig.send(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        rig.deliverApplicationEdge(of: trigger)
+        await rig.settleDown()
         #expect(rig.presenter.isShowing)
         rig.coordinator.receive(.screens(asleep: true))
         rig.presenter.release(.run)
@@ -881,7 +1014,7 @@ struct TriggerCoordinatorTests {
     @Test func appPresencePendingAtSessionChangeDoesNotReplay() async {
         let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
         let rig = TriggerRig([trigger])
-        rig.coordinator.receive(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        rig.deliverApplicationEdge(of: trigger)
         await settle { rig.sleeper.sleepingCount > 0 }
         rig.coordinator.receive(.session(active: false))
         rig.sleeper.wakeAll()
@@ -894,7 +1027,8 @@ struct TriggerCoordinatorTests {
         let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, runMode: .notice)
         let rig = TriggerRig([trigger])
         rig.presenter.holds = true
-        await rig.send(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        rig.deliverApplicationEdge(of: trigger)
+        await rig.settleDown()
         #expect(rig.presenter.isShowing)
         rig.presenter.release(.run)
         rig.coordinator.receive(.screens(asleep: true))
@@ -907,7 +1041,8 @@ struct TriggerCoordinatorTests {
         let trigger = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.App", edge: .starts), group: work, action: .showPopup)
         let recent = TriggerTime.date(2026, 10, 28, 7, 59)
         let rig = TriggerRig([trigger], state: TriggerState(recentRuns: Array(repeating: recent, count: 12)))
-        await rig.send(.applicationEdge(triggerID: trigger.id, edge: .starts))
+        rig.deliverApplicationEdge(of: trigger)
+        await rig.settleDown()
         #expect(rig.handler.calls.isEmpty)
         #expect(rig.outcome(trigger) == .skipped(.budget))
     }

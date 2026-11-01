@@ -37,6 +37,9 @@ public struct TriggerFiring: Hashable, Sendable {
     public let order: Int
     /// Whether this firing was created by an applicationPresence event (recorded at creation).
     public let isApplicationPresence: Bool
+    /// The observation an application-presence firing came from, set by the coordinator when it
+    /// enqueues one. A presence firing without it never runs.
+    var presenceStamp: ApplicationPresenceStamp?
 
     public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0, isApplicationPresence: Bool = false) {
         self.triggerID = triggerID
@@ -47,6 +50,15 @@ public struct TriggerFiring: Hashable, Sendable {
         self.order = order
         self.isApplicationPresence = isApplicationPresence
     }
+}
+
+/// Where an application-presence firing came from: the tracker generation and revision of its
+/// observation and the rule as it was then. The coordinator re-checks all three right before it
+/// carries the firing out.
+struct ApplicationPresenceStamp: Hashable, Sendable {
+    let generation: UInt64
+    let revision: UInt64
+    let rule: GroupTrigger
 }
 
 /// What one signal led to: the firings to settle, and the state and environment after it.
