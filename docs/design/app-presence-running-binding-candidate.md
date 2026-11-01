@@ -137,6 +137,10 @@ handling, and group actions atomic. Event coalescing, resource limits, sandboxes
 supported macOS versions require separate testing. No real user app was monitored and no elevated
 permission was requested in these probes.
 
+In another local negative control, a test-owned `/usr/bin/true` child was reaped before the
+registration attempt; the attempt failed with `ESRCH`. This does not exclude PID reuse or establish
+what happens when the process exits concurrently with registration.
+
 This makes process events a promising **detection and invalidation** component, not an identity
 token or an authorization mechanism. A candidate design would need to register a watch before
 accepting a verified running instance, fail closed on registration errors and uncertain ordering,
