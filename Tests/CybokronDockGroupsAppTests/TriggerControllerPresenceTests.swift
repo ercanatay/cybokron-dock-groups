@@ -146,7 +146,10 @@ struct TriggerControllerPresenceTests {
         let triggers = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
         let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
         _ = triggers.add(GroupTrigger(groupID: opensGroup.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts), action: .showPopup))
-        _ = triggers.add(GroupTrigger(groupID: closesGroup.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .ends), action: .openAll, runMode: .immediately))
+        // Unverified (bundle identifier only): its Open All is recorded as skipped, which shows that
+        // the last end reached the evaluator, but never runs.
+        let closes = GroupTrigger(groupID: closesGroup.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .ends), action: .openAll, runMode: .immediately)
+        _ = triggers.add(closes)
         let handler = CountingPresenceHandler(groups: [opensGroup, closesGroup])
         let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
         controller.start(handler: handler, launchedAsLoginItem: false, launchedAt: Date())
@@ -156,11 +159,41 @@ struct TriggerControllerPresenceTests {
             controller.handleApplicationSnapshot(generation: generation, sequence: UInt64(100 + offset), counts: ["com.cybokronfixture.normal": count])
         }
         for _ in 0..<60 {
-            if handler.popupCount >= 1 && handler.openAllCount >= 1 { break }
+            if handler.popupCount >= 1 && controller.state.entry(for: closes.id).lastOutcome != nil { break }
             try await Task.sleep(for: .milliseconds(100))
         }
         #expect(handler.popupCount == 1)
-        #expect(handler.openAllCount == 1)
+        #expect(handler.openAllCount == 0)
+        #expect(controller.state.entry(for: closes.id).lastOutcome == .skipped(.applicationNotVerified))
+    }
+
+    /// The app's own coordinator has no running-code verifier yet: a rule authorized for a code hash
+    /// (as only a future verified selection could make) runs nothing and isn't even observed, while
+    /// an unverified Show the Popup rule still runs.
+    @Test func productionVerifierFailsClosedForAuthorizedRules() async throws {
+        let dir = try makeTempDir()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: dir.appendingPathComponent("groups.json")), saveDelay: .zero)
+        let group = groups.addGroup(named: "Fixture")
+        let triggers = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
+        var authorized = GroupTrigger(groupID: group.id, event: .applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts), action: .openAll, runMode: .immediately)
+        let hash = try #require(ApplicationCodeHash(hex: String(repeating: "ab", count: 20)))
+        let binding = try #require(ApplicationIdentityBinding(identifier: "com.cybokronfixture.normal", codeHash: hash, signature: .developerID, authorizedAt: Date()))
+        authorized.applicationIdentity = .authorize(binding)
+        _ = triggers.add(authorized)
+        let handler = CountingPresenceHandler(groups: [group])
+        let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
+        controller.start(handler: handler, launchedAsLoginItem: false, launchedAt: Date())
+        #expect(!controller.isApplicationPresenceObserving)
+        let generation = controller.applicationObservationGeneration
+        #expect(!controller.coordinator.beginApplicationObservations(generation: generation + 1))
+        controller.handleApplicationSnapshot(generation: generation, sequence: 100, counts: ["com.cybokronfixture.normal": 0])
+        controller.handleApplicationSnapshot(generation: generation, sequence: 101, counts: ["com.cybokronfixture.normal": 1])
+        try await Task.sleep(for: .milliseconds(2300))
+        #expect(handler.openAllCount == 0)
+        #expect(handler.popupCount == 0)
+        #expect(controller.state.entry(for: authorized.id).lastOutcome == nil)
     }
 
     @Test func presenceLifecycle() async throws {

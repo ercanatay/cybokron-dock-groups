@@ -14,6 +14,8 @@ final class TriggerRig {
     let clock = TestClock()
     let handler = FakeAutomationHandler(groups: [work, design])
     let presenter = FakeNoticePresenter()
+    /// Confirms the fixture bindings `GroupTrigger.on` gives application triggers.
+    let verifier = FakeApplicationIdentityVerifier(.verified)
     let coordinator: TriggerCoordinator
     private(set) var savedStates: [TriggerState] = []
 
@@ -32,6 +34,7 @@ final class TriggerRig {
             calendar: { TriggerTime.calendar() }
         )
         box = self
+        coordinator.applicationIdentityVerifier = verifier
         coordinator.onStateChange = { [weak self] state in self?.savedStates.append(state) }
         if withHandler { coordinator.handler = handler }
         if withPresenter { coordinator.noticePresenter = presenter }

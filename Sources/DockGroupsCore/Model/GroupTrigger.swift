@@ -230,6 +230,10 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     }
     /// An action a newer version wrote that this one doesn't know; then the trigger doesn't run.
     private(set) var unrecognizedAction: String?
+    /// Application-presence rules only (`nil` for every other event): which code the rule was
+    /// authorized for, or that it matches by bundle identifier only (`ApplicationIdentityAuthorization`).
+    /// Never trusted from an import or a restore (`droppingImportedIdentity`).
+    var applicationIdentity: ApplicationIdentityAuthorization?
 
     public init(
         id: UUID = UUID(),
@@ -256,6 +260,17 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     /// action that event allows.
     public var isRunnable: Bool {
         unrecognizedAction == nil && event.isValid && event.allowedActions.contains(action)
+            && applicationIdentityStatus != .invalid && applicationIdentityStatus != .needsReapproval
+    }
+
+    /// The application-presence rule's authorization as it stands: `unverified` without a record, and
+    /// `invalid` when an authorized (or waiting) record names another identifier than the event's.
+    /// `nil` for other events.
+    var applicationIdentityStatus: ApplicationIdentityAuthorization.Status? {
+        guard case .applicationPresence(let bundleIdentifier, _) = event else { return nil }
+        guard let identity = applicationIdentity else { return .unverified }
+        if let binding = identity.binding, binding.identifier != bundleIdentifier { return .invalid }
+        return identity.status
     }
 
     /// Whether it runs when its event comes: turned on and runnable.
@@ -278,11 +293,32 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         return true
     }
 
-    /// Show the Popup always runs right away; "Finish when it ends" only where it applies.
+    /// Show the Popup always runs right away; "Finish when it ends" only where it applies. An
+    /// application-presence rule always has an authorization record (`unverified` when it has none,
+    /// or when its application changed from the one authorized); other events have none.
     private mutating func normalize() {
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            if applicationIdentity == nil {
+                applicationIdentity = .unverified
+            } else if let binding = applicationIdentity?.binding, binding.identifier != bundleIdentifier {
+                applicationIdentity = .unverified
+            }
+        } else if applicationIdentity != nil {
+            applicationIdentity = nil
+        }
         guard unrecognizedAction == nil else { return }
         if action == .showPopup, runMode != .immediately { runMode = .immediately }
         if finishesWhenEventEnds, !canFinishWhenEventEnds { finishesWhenEventEnds = false }
+    }
+
+    /// The rule with its application authorization reset to `unverified`: how a rule leaves this Mac
+    /// (a backup) and how one comes in (an import or a restore). A code hash, signing data or status
+    /// from a file is never trusted; authorizing again is a choice on this Mac.
+    var droppingImportedIdentity: GroupTrigger {
+        guard applicationIdentity != nil else { return self }
+        var trigger = self
+        trigger.applicationIdentity = .unverified
+        return trigger
     }
 
     /// `triggers` as a store keeps them: each identifier once (the first), at most `maximumPerGroup`
@@ -305,7 +341,7 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
 
 extension GroupTrigger: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds
+        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds, applicationIdentity
     }
 
     /// The identifier and the group are required (an entry without them is left out by the file);
@@ -329,6 +365,23 @@ extension GroupTrigger: Codable {
         isEnabled = container.decodeLeniently(Bool.self, forKey: .enabled) ?? false
         oncePerDay = container.decodeLeniently(Bool.self, forKey: .oncePerDay) ?? false
         finishesWhenEventEnds = container.decodeLeniently(Bool.self, forKey: .finishesWhenEventEnds) ?? false
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            let rawIdentity = container.decodeLeniently(JSONValue.self, forKey: .applicationIdentity) ?? .null
+            if rawIdentity == .null {
+                // Saved before authorization records existed (or with the record removed): matched by
+                // bundle identifier only, and turned off, so it never starts running again by itself.
+                applicationIdentity = .unverified
+                isEnabled = false
+            } else {
+                let identity = ApplicationIdentityAuthorization(json: rawIdentity)
+                // A record for another identifier is never moved over to this rule.
+                if let binding = identity.binding, binding.identifier != bundleIdentifier {
+                    applicationIdentity = .invalid(rawIdentity)
+                } else {
+                    applicationIdentity = identity
+                }
+            }
+        }
         normalize()
     }
 
@@ -347,6 +400,7 @@ extension GroupTrigger: Codable {
         if finishesWhenEventEnds {
             try container.encode(true, forKey: .finishesWhenEventEnds)
         }
+        try container.encodeIfPresent(applicationIdentity?.json, forKey: .applicationIdentity)
     }
 }
 

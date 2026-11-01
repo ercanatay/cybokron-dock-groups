@@ -111,7 +111,8 @@ public enum TriggerEvaluator {
             let live = trigger.canRun && activeGroups.contains(trigger.groupID)
             var entry = state.entry(for: trigger.id)
             func fire(_ action: TriggerAction, at occurrence: Date, edge: Bool, finishWhenEnded: Bool = false) {
-                if let reason = gate(trigger, entry: entry, isEdge: edge, isFinishWhenEnded: finishWhenEnded, state: state, environment: environment, now: now, calendar: calendar) {
+                if let reason = identityGate(trigger, action: action)
+                    ?? gate(trigger, entry: entry, isEdge: edge, isFinishWhenEnded: finishWhenEnded, state: state, environment: environment, now: now, calendar: calendar) {
                     entry.lastOutcome = .skipped(reason)
                     entry.lastOutcomeAt = occurrence
                 } else {
@@ -243,6 +244,19 @@ public enum TriggerEvaluator {
         case .launched: return .appNotOpen
         case .session: return .sessionInactive
         default: return .macAsleep
+        }
+    }
+
+    /// An application-presence rule's saved authorization: an unverified rule (bundle identifier
+    /// only) runs nothing but Show the Popup; the rest is skipped and recorded. Rules waiting for
+    /// approval or with an unreadable record can't run at all (`GroupTrigger.isRunnable`), and an
+    /// authorized rule is checked against the verifier by the coordinator.
+    private static func identityGate(_ trigger: GroupTrigger, action: TriggerAction) -> TriggerSkipReason? {
+        guard let status = trigger.applicationIdentityStatus else { return nil }
+        switch status {
+        case .authorized: return nil
+        case .unverified: return action == .showPopup ? nil : .applicationNotVerified
+        case .needsReapproval, .invalid: return .applicationNotVerified
         }
     }
 

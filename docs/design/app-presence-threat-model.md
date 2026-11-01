@@ -5,7 +5,9 @@ Status: review record for the unreleased branch `codex/app-presence-code-hash` (
 Evidence and experiments are in `app-presence-identity-security.md`,
 `app-presence-macho-slices.md`, `app-presence-running-binding-candidate.md` and
 `app-presence-watch-protocol-draft.md`; behavior is specified in `app-presence-trigger-spec.md`.
-File references are `path:line` at the reviewed commit.
+File references are `path:line` at the reviewed commit. Later changes are marked *after review*;
+the local authorization model added afterwards is described in
+`app-presence-identity-authorization.md` and its effect on each threat is listed in §3.1.
 
 ## 1. What actually runs today
 
@@ -86,7 +88,30 @@ means no public, proportionate API known to this review provides the guarantee.
 | T13 | Sleep, wake, fast user switching, session change | Achievable: no edge across a sleep or session gap | `willSleep`/`screensDidSleep`/session notifications stop observation and drop presence firings; wake starts a new generation (`TriggerCoordinator.swift:354-366`, `TriggerController.swift:400-417`) | Changes during sleep are lost by design; no replay | First post-wake snapshot is a baseline only |
 | T14 | Legitimate app update (code hash changes) | Achievable: detection; not automatic continuity | Exact `cdhash` pin | Exact pins break on every update; a looser publisher requirement would accept other code by the same signer | Rule waits for explicit reselection; never silently re-binds or widens |
 | T15 | Different architecture (universal binary, Rosetta, `arm64` vs `arm64e`) | Partially achievable: per-slice hashes via explicit file offsets on one tested OS | `MachOSliceTable` (bounded parser) plus `kSecCodeAttributeUniversalFileOffset` (`ApplicationStaticCodeVerifier.swift:50-78`) | Default static lookup can return the wrong slice; an invalid architecture name returned success in one run; Rosetta-translated processes are untested; offset honoring is not verified in code | A running slice not in the authorized set is unknown, never a close |
-| T16 | Identity data from import, restore, legacy rules or edited JSON | Achievable for imports and restores: they arrive disabled (`TriggerBackupTests.swift:36-48`). Not achievable against direct edits of the local trigger file by A1 | Backup tests; strict event decoder | Today an enabled, hand-edited `applicationPresence` rule in the local file runs, because no binding exists to require. A1 can also add rules or bindings | Candidate: imported, restored and legacy rules stay disabled or unbound; imported hashes or requirement text never authorize; unknown fields keep the rule `.unsupported` |
+| T16 | Identity data from import, restore, legacy rules or edited JSON | Achievable for imports and restores: they arrive disabled (`TriggerBackupTests.swift:36-48`) and, after review, with any authorization reset to `unverified`. Not achievable against direct edits of the local trigger file by A1 | Backup tests; strict event and authorization decoders (`ApplicationIdentityAuthorizationTests`) | At review an enabled, hand-edited `applicationPresence` rule in the local file ran with every action. After review a rule without a record loads disabled, and an edited `unverified` record runs Show Popup only. A1 can still add rules or write records | Candidate: imported, restored and legacy rules stay disabled or unbound; imported hashes or requirement text never authorize; unknown fields keep the rule `.unsupported` |
+
+### 3.1 After the local authorization model (after review)
+
+What `app-presence-identity-authorization.md` changes, per threat. "Partly closed" means a gate exists
+in code and tests; nothing below is a race-freedom or publisher-trust claim.
+
+- **T1:** partly closed for actions. Bundle-ID-only rules are `unverified`: off by default, Show Popup
+  only, other actions skipped (`applicationNotVerified`). Every action needs `authorized` plus a
+  `verified` verdict, and the production verifier never answers `verified`. Identity itself is still
+  not established: no binding can be created yet.
+- **T2:** unchanged. The model only records that a binding must come from a user-chosen, verified
+  running instance (K3); no selection or binding code exists.
+- **T3:** partly closed in the model. A `codeChanged` verdict clears nothing and the rule is not
+  observed; there is no verifier that produces it yet, and the transition is not persisted.
+- **T5, T6:** unchanged.
+- **T13:** unchanged; the new gates run inside the existing sleep/session invalidation.
+- **T14:** partly closed in the model. Exact `cdhash` pin; `needsReapproval` blocks the rule and is
+  never left without an explicit `reapproved(with:)` for the same identifier; nothing widens trust.
+  Detection (a verifier) and the re-approval flow are missing.
+- **T15:** unchanged. The signature kind is recorded; architectures and slices are not.
+- **T16:** closed for imports, restores and merges (authorization reset to `unverified`, rules off,
+  no hashes in exported backups) and for legacy rules (loaded `unverified` and off). Malformed records
+  are `invalid` and never run. Direct edits by A1 remain out of scope.
 
 ## 4. Review findings at `c7a9f57`
 
@@ -95,6 +120,9 @@ Production path:
 - **F1 (design, high):** the bundle-ID-only trigger is user-reachable in this branch's build with all
   actions allowed (`TriggerDraft.swift:65`, `GroupTrigger.swift:137`). This is the documented
   weakness, but nothing gates it at runtime.
+  *Partly addressed after review:* such rules are now `unverified`, created and migrated turned off,
+  and only Show Popup runs; other actions are skipped and recorded. The editor still offers every
+  action and shows no "unverified" label (UI step).
 - **F2 (robustness, medium):** presence firings are invalidated only by push
   (`invalidateApplicationPresenceFirings`, `TriggerCoordinator.swift:218-225`). Several paths stop the
   tracker without invalidating: `refresh()` (`:236`, `:243`), the `canAct == false` branch of
@@ -210,9 +238,13 @@ observed", not race freedom, not publisher trust and not protection from A1.
 ### (c) Minimum safe contract for a release containing this trigger
 
 1. No identity fact (bundle ID, path, PID, imported hash or requirement text) alone authorizes a rule.
+   *After review:* enforced for actions other than Show Popup (an `authorized` record also needs a
+   `verified` verdict); the binding flow itself does not exist yet.
 2. Unknown is never converted to zero: no close without a verified, complete count.
 3. Imported, restored and legacy application rules arrive disabled and unbound; re-selection is local.
+   *After review:* implemented (authorization reset to `unverified`, rules off).
 4. Different code under the selected identifier makes the rule wait; it never re-binds or widens.
+   *After review:* modelled (`needsReapproval`, `codeChanged` clears nothing); no verifier yet.
 5. Exec, exit, watch failure, uncertainty, rule or session change invalidates pending and notice-stage
    presence firings; already-started actions are not undone and nothing is replayed.
 6. Verification runs off the main thread with bounded work, cancellation and a timeout; timeout is
@@ -220,6 +252,8 @@ observed", not race freedom, not publisher trust and not protection from A1.
 7. No paths, PIDs, names or signing data of other apps are logged or persisted.
 8. If the product decides to keep a bundle-ID-only mode, it is off by default, labelled as unverified
    at the point of choice, and subject to the open question on allowed actions below.
+   *After review:* decided (K1): kept, off by default, recorded `unverified`, Show Popup only. The
+   label at the point of choice is still missing.
 
 If items 1-7 cannot be met, the application trigger stays out of the release. The bundle-ID-only
 experimental path must not be approved silently because its downstream gates exist: those gates

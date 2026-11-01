@@ -120,6 +120,10 @@ public final class TriggerCoordinator {
     /// The trigger that started each group, while this app runs (never saved).
     private var startedBy: [DockGroup.ID: GroupTrigger.ID] = [:]
     private var applicationTracker = AppPresenceRuleTracker()
+    /// Confirms that the code running under an authorized application rule's identifier is the
+    /// authorized code. Until running-code verification is integrated it never confirms anything, so
+    /// authorized rules don't act (fail closed); tests put in their own.
+    var applicationIdentityVerifier: any ApplicationIdentityVerifying = UnavailableApplicationIdentityVerifier()
 
     /// - Parameters:
     ///   - rules: The triggers, in Settings → Triggers' order.
@@ -198,6 +202,8 @@ public final class TriggerCoordinator {
             guard current == original else { return nil }
             guard current.canRun else { return nil }
             guard activeGroups().contains(current.groupID) else { return nil }
+            // An unverified rule still goes through: the evaluator records why its action is skipped.
+            guard applicationIdentityClearance(of: current) != .none else { return nil }
             return current
         }
         for id in ids {
@@ -227,6 +233,22 @@ public final class TriggerCoordinator {
         stopApplicationTracker()
     }
 
+    /// The verifier's verdicts may have changed (the hook for running-code verification): presence
+    /// firings that are no longer cleared are dropped at once, an awaiting notice of one is
+    /// dismissed (it's skipped). Carry-out checks the clearance again anyway.
+    func applicationIdentityVerdictsChanged() {
+        dropStaleApplicationPresenceFirings()
+        if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence, !isApplicationPresenceFiringCurrent(currentFiring) {
+            currentInvalidated = true
+            noticePresenter?.dismiss()
+        }
+    }
+
+    /// What an application rule may do now (`ApplicationIdentityClearance`).
+    private func applicationIdentityClearance(of rule: GroupTrigger) -> ApplicationIdentityClearance {
+        ApplicationIdentityClearance.of(rule, verifier: applicationIdentityVerifier)
+    }
+
     /// Every path that stops the tracker comes here: a stopped tracker makes every presence firing
     /// stale, so they are dropped at once (carry-out would refuse them anyway, see
     /// `isApplicationPresenceFiringCurrent`).
@@ -237,9 +259,10 @@ public final class TriggerCoordinator {
 
     /// Whether `firing` may still be carried out. Other triggers' firings always may. An
     /// application-presence firing only while the tracker still runs the generation and revision
-    /// of its observation, its rule is unchanged and can run, its group is active and the Mac can
-    /// act. Checked by the coordinator itself, so a stop path that forgot to invalidate can't let a
-    /// stale firing run.
+    /// of its observation, its rule is unchanged and can run, its application identity still clears
+    /// its action (`ApplicationIdentityClearance`), its group is active and the Mac can act. Checked
+    /// by the coordinator itself, so a stop path that forgot to invalidate can't let a stale firing
+    /// run.
     private func isApplicationPresenceFiringCurrent(_ firing: TriggerFiring) -> Bool {
         guard firing.isApplicationPresence else { return true }
         guard let stamp = firing.presenceStamp else { return false }
@@ -247,6 +270,7 @@ public final class TriggerCoordinator {
         guard applicationTracker.isActive(generation: stamp.generation),
               applicationTracker.isCurrent(revision: stamp.revision) else { return false }
         guard let rule = rules().first(where: { $0.id == firing.triggerID }), rule == stamp.rule, rule.canRun else { return false }
+        guard applicationIdentityClearance(of: rule).permits(firing.action) else { return false }
         return activeGroups().contains(rule.groupID)
     }
 
@@ -275,6 +299,9 @@ public final class TriggerCoordinator {
             guard trigger.canRun else { continue }
             guard case .applicationPresence(let bundleID, let edge) = trigger.event else { continue }
             guard active.contains(trigger.groupID) else { continue }
+            // A rule whose identity clears nothing (waiting for approval, unreadable, or authorized
+            // but not confirmed by the verifier) isn't observed at all.
+            guard applicationIdentityClearance(of: trigger) != .none else { continue }
             guard let identifier = TriggerApplicationIdentifier(bundleID) else {
                 stopApplicationTracker()
                 return false

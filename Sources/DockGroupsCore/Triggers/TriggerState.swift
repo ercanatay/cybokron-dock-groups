@@ -21,6 +21,9 @@ public enum TriggerSkipReason: String, CaseIterable, Sendable {
     /// "Finish when it ends": the current group wasn't started by this trigger.
     case notStartedByTrigger
     case groupMissing
+    /// An application-presence rule that matches by bundle identifier only (unverified) asked for an
+    /// action other than Show the Popup.
+    case applicationNotVerified
 
     public var explanation: String {
         switch self {
@@ -36,6 +39,9 @@ public enum TriggerSkipReason: String, CaseIterable, Sendable {
         case .notCurrentGroup: return Localization.string("core.trigger.skip.notCurrentGroup", "the group wasn't the current group")
         case .notStartedByTrigger: return Localization.string("core.trigger.skip.notStartedByTrigger", "the group wasn't started by this trigger")
         case .groupMissing: return Localization.string("core.trigger.skip.groupMissing", "the group no longer exists")
+        // Its own text comes with the application trigger's interface; until then the existing
+        // "can't run" sentence (`TriggerDescriptions.lastRun` shows it on its own).
+        case .applicationNotVerified: return Localization.string("core.trigger.unrunnable", "Can't run: fix or remove it.")
         }
     }
 }

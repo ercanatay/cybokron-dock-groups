@@ -195,9 +195,41 @@ extension GroupTrigger {
         GroupTrigger(id: id, groupID: group.id, event: .schedule(TriggerSchedule(hour: hour, minute: minute, weekdays: days)), action: action, runMode: runMode)
     }
 
-    /// A trigger of `group` on `event`, running right away unless told otherwise.
+    /// A trigger of `group` on `event`, running right away unless told otherwise. An application
+    /// trigger is authorized for a fixture code hash (`ApplicationIdentityBinding.fixture`), so the
+    /// coordinator's rig (whose verifier confirms it) runs every action; tests of unverified,
+    /// waiting or invalid rules set `applicationIdentity` themselves.
     static func on(_ event: TriggerEvent, group: DockGroup, action: TriggerAction = .start, runMode: TriggerRunMode? = .immediately, finishesWhenEventEnds: Bool = false, oncePerDay: Bool = false, id: UUID = UUID()) -> GroupTrigger {
-        GroupTrigger(id: id, groupID: group.id, event: event, action: action, runMode: runMode, oncePerDay: oncePerDay, finishesWhenEventEnds: finishesWhenEventEnds)
+        var trigger = GroupTrigger(id: id, groupID: group.id, event: event, action: action, runMode: runMode, oncePerDay: oncePerDay, finishesWhenEventEnds: finishesWhenEventEnds)
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            trigger.applicationIdentity = .authorize(.fixture(bundleIdentifier))
+        }
+        return trigger
+    }
+}
+
+extension ApplicationIdentityBinding {
+    static let fixtureHash = ApplicationCodeHash(hex: "0123456789abcdef0123456789abcdef01234567")!
+
+    /// A binding for `identifier` to the fixture hash, signed with a Developer ID.
+    static func fixture(_ identifier: String, hash: ApplicationCodeHash = fixtureHash, signature: SignatureKind = .developerID) -> ApplicationIdentityBinding {
+        ApplicationIdentityBinding(identifier: identifier, codeHash: hash, signature: signature, authorizedAt: Date(timeIntervalSince1970: 1_793_000_000))!
+    }
+}
+
+/// An identity verifier whose verdict a test sets; it records what it was asked about.
+@MainActor
+final class FakeApplicationIdentityVerifier: ApplicationIdentityVerifying {
+    var verdict: ApplicationIdentityVerdict
+    private(set) var askedAbout: [ApplicationIdentityBinding] = []
+
+    init(_ verdict: ApplicationIdentityVerdict = .verified) {
+        self.verdict = verdict
+    }
+
+    func verdict(for binding: ApplicationIdentityBinding) -> ApplicationIdentityVerdict {
+        askedAbout.append(binding)
+        return verdict
     }
 }
 

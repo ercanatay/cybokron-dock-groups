@@ -247,18 +247,35 @@ public struct TriggerDraft: Equatable, Sendable {
         displays = Array(connected.prefix(DisplayArrangement.maximumCount))
     }
 
-    /// The trigger: a new one, or `existing` changed (its identifier and switch kept).
+    /// The trigger: a new one, or `existing` changed (its identifier and switch kept). An application
+    /// trigger keeps `existing`'s authorization only for the same application; a new one, or one
+    /// whose application changed, matches by bundle identifier only (unverified) and starts turned
+    /// off: that weak mode is never on by default.
     public func trigger(groupID: DockGroup.ID, replacing existing: GroupTrigger? = nil) -> GroupTrigger {
-        GroupTrigger(
+        var isEnabled = existing?.isEnabled ?? true
+        var identity: ApplicationIdentityAuthorization?
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            if let existing, case .applicationPresence(let existingIdentifier, _) = existing.event, existingIdentifier == bundleIdentifier {
+                identity = existing.applicationIdentity
+            } else {
+                identity = .unverified
+                isEnabled = false
+            }
+        }
+        var trigger = GroupTrigger(
             id: existing?.id ?? UUID(),
             groupID: existing?.groupID ?? groupID,
             event: event,
             action: action,
             runMode: runMode,
-            isEnabled: existing?.isEnabled ?? true,
+            isEnabled: isEnabled,
             oncePerDay: oncePerDay,
             finishesWhenEventEnds: finishesWhenEventEnds && canFinishWhenEventEnds
         )
+        if let identity {
+            trigger.applicationIdentity = identity
+        }
+        return trigger
     }
 
     private mutating func normalize() {

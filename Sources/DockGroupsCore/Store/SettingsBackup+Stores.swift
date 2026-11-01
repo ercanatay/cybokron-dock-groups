@@ -122,9 +122,11 @@ extension SettingsBackup {
 }
 
 extension GroupTrigger {
-    /// The trigger turned off, as a backup's triggers come in (spec §4.2 T-S4).
+    /// The trigger turned off, as a backup's triggers come in (spec §4.2 T-S4), without any
+    /// application authorization it carried: what a file says about an app's code never authorizes
+    /// a rule here (`droppingImportedIdentity`).
     var turnedOff: GroupTrigger {
-        var trigger = self
+        var trigger = droppingImportedIdentity
         trigger.isEnabled = false
         return trigger
     }
