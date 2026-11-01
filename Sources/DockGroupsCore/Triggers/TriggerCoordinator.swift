@@ -191,8 +191,8 @@ public final class TriggerCoordinator {
             // Re-check immediately after delivery: an accepted uncertain observation (or any rule
             // change) during receive() makes this firing stale, whatever was appended meanwhile.
             if !applicationTracker.isCurrent(revision: observedRevision) || currentRule(for: id) == nil {
-                pending.removeAll { $0.triggerID == id }
-                queue.removeAll { $0.triggerID == id }
+                pending.removeAll { $0.triggerID == id && $0.isApplicationPresence }
+                queue.removeAll { $0.triggerID == id && $0.isApplicationPresence }
                 break
             }
         }

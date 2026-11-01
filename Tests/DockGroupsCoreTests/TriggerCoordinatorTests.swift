@@ -148,6 +148,26 @@ struct TriggerCoordinatorTests {
         #expect(rig.handler.calls.isEmpty)
     }
 
+    @Test func ruleKindChangeDuringPresenceDeliveryKeepsNewNonPresenceFiring() async {
+        let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
+        let rig = TriggerRig([])
+        rig.rules = [app]
+        let loginSession = session
+        var changed = false
+        rig.coordinator.onStateChange = { [weak rig] _ in
+            guard let rig, !changed else { return }
+            changed = true
+            rig.rules[0].event = .login
+            rig.coordinator.receive(.launched(.login(session: loginSession)))
+        }
+        #expect(rig.coordinator.beginApplicationObservations(generation: 1))
+        rig.coordinator.observeApplications(generation: 1, sequence: 1, counts: ["com.example.app": 0])
+        rig.coordinator.observeApplications(generation: 1, sequence: 2, counts: ["com.example.app": 1])
+        await rig.settleDown()
+        #expect(changed)
+        #expect(rig.handler.calls == ["popup:Work"])
+    }
+
     @Test func changingPresencePolicyDropsPendingApplicationActionOnly() async {
         let app = GroupTrigger.on(.applicationPresence(bundleIdentifier: "com.example.app", edge: .starts), group: work, action: .showPopup)
         let login = GroupTrigger.on(.login, group: design, action: .openAll, runMode: .immediately)
