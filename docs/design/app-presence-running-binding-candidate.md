@@ -147,6 +147,8 @@ accepting a verified running instance, fail closed on registration errors and un
 invalidate pending work on exec/exit or observation failure, and prevent stale event handlers from
 affecting a later generation. An explicit threat model must still address the registration race,
 selection-to-confirmation binding, and the final check-to-action window before any integration.
+The tentative end-to-end lifecycle and unresolved threat boundary are in
+`app-presence-watch-protocol-draft.md`.
 
 Consequently, retaining a successful `SecCode` object or an equal process instance is not enough
 to prove that the same code is still executing. A fresh lookup helps detect this observed case but
