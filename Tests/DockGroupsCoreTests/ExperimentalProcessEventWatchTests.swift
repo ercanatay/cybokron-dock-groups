@@ -5,6 +5,42 @@ import Testing
 
 @Suite("Experimental process-event watch", .serialized)
 struct ExperimentalProcessEventWatchTests {
+    @Test func malformedOrFailedPollPermanentlyInvalidatesWatch() throws {
+        let pid = getpid()
+        var valid = kevent()
+        valid.ident = UInt(pid)
+        valid.filter = Int16(EVFILT_PROC)
+        valid.fflags = UInt32(NOTE_EXEC)
+        var wrongPID = valid
+        wrongPID.ident = UInt(pid) + 1
+        var wrongFilter = valid
+        wrongFilter.filter = Int16(EVFILT_READ)
+        var errorFlag = valid
+        errorFlag.flags = UInt16(EV_ERROR)
+        var unsupportedEventFlag = valid
+        unsupportedEventFlag.flags = UInt16(EV_DELETE)
+        var unknownFlags = valid
+        unknownFlags.fflags = 1
+        var missingFlags = valid
+        missingFlags.fflags = 0
+        for (count, event) in [(-1, valid), (2, valid), (1, wrongPID), (1, wrongFilter), (1, errorFlag), (1, unsupportedEventFlag), (1, unknownFlags), (1, missingFlags)] {
+            let watch = try #require(ExperimentalProcessEventWatch(pid: pid))
+            #expect(watch.consumePollResult(count: Int32(count), event: event) == .unknown)
+            #expect(watch.poll() == .unknown)
+        }
+    }
+
+    @Test func combinedExecExitNotificationIsTerminal() throws {
+        let pid = getpid()
+        let watch = try #require(ExperimentalProcessEventWatch(pid: pid))
+        var event = kevent()
+        event.ident = UInt(pid)
+        event.filter = Int16(EVFILT_PROC)
+        event.fflags = UInt32(NOTE_EXEC) | UInt32(NOTE_EXIT)
+        #expect(watch.consumePollResult(count: 1, event: event) == .execAndExit)
+        #expect(watch.poll() == .unknown)
+    }
+
     @Test func rejectsInvalidPIDAndClosedWatchIsUnknown() throws {
         #expect(ExperimentalProcessEventWatch(pid: 0) == nil)
         #expect(ExperimentalProcessEventWatch(pid: -1) == nil)
@@ -13,6 +49,7 @@ struct ExperimentalProcessEventWatchTests {
         watch.close()
         watch.close()
         #expect(watch.poll() == .unknown)
+        #expect(watch.consumePollResult(count: 0, event: kevent()) == .unknown)
     }
 
     @Test func cannotWatchAnAlreadyReapedChild() throws {

@@ -111,6 +111,13 @@ final class ExperimentalProcessEventWatch {
         var event = kevent()
         var zero = timespec(tv_sec: 0, tv_nsec: 0)
         let count = kevent(descriptor, nil, 0, &event, 1, &zero)
+        return consumePollResult(count: count, event: event)
+    }
+
+    /// Interprets one kevent result. Internal seam so tests can feed deterministic simulated
+    /// results; not used by product code. Closed or latched watches always return `.unknown`.
+    func consumePollResult(count: Int32, event: kevent) -> PollResult {
+        guard descriptor >= 0, !isLatched else { return .unknown }
 
         if count == 0 { return .idle }
         // -1 (including EINTR) or an unexpected count.
