@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Supervisar solo las aplicaciones identificadas";
 "groupWindow.triggers.identifiedAppsWarning" = "Solo se supervisan las aplicaciones que macOS identifica. Es posible que se pasen por alto las instancias no identificadas y que un cierre se notifique incorrectamente. Esta configuración se aplica a todos los disparadores de aplicaciones y se restablece cuando Cybokron Dock Groups se cierra.";
+"core.trigger.skip.applicationNotVerified" = "la app no está verificada, así que solo puede ejecutarse Mostrar ventana emergente";
+"triggers.identity.badge.unverified" = "Sin verificar";
+"triggers.identity.badge.needsReapproval" = "Necesita nueva aprobación";
+"triggers.identity.badge.invalid" = "No válido";
+"triggers.identity.badge.verificationUnavailable" = "Verificación no disponible";
+"triggers.identity.status.needsReapproval" = "Necesita nueva aprobación: el código de la app cambió desde que se aprobó, así que este disparador no se ejecuta.";
+"triggers.identity.status.invalid" = "No válido: no se puede leer su aprobación de app, así que este disparador no se ejecuta.";
+"triggers.identity.status.verificationUnavailable" = "No se ejecuta: esta versión todavía no puede comprobar el código de la app en ejecución.";
+"triggers.identity.detail.unverified" = "Coincide solo por identificador de paquete, que otra app también podría usar. Solo se ejecuta Mostrar ventana emergente, y el disparador empieza desactivado.";
+"triggers.identity.detail.needsReapproval" = "La app se actualizó o se reemplazó desde que se aprobó este disparador para ella. Nada se ejecuta hasta que se apruebe su nuevo código.";
+"triggers.identity.detail.invalid" = "No se puede leer la aprobación guardada para la app de este disparador. Nada se ejecuta.";
+"triggers.identity.detail.verificationUnavailable" = "Este disparador se aprobó para una versión específica de la app, pero esta versión no puede comprobar qué código se está ejecutando, así que nada se ejecuta.";
+"triggers.identity.howToReapprove" = "Esta versión no puede comprobar el código de una app, así que no puede volver a aprobar un disparador. Para usarlo ahora, elimínalo y vuelve a añadirlo: el nuevo disparador no está verificado, empieza desactivado y solo muestra la ventana emergente.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (requiere una app verificada)";
+"triggers.identity.editor.onlyShowPopup" = "Esta app coincide solo por su identificador de paquete (sin verificar), así que solo puede ejecutarse Mostrar ventana emergente. Las demás acciones requieren una app verificada, y esta versión todavía no puede verificar apps.";
+"triggers.identity.editor.chooseShowPopup" = "Elige Mostrar ventana emergente para guardar: las demás acciones no se ejecutan en una app sin verificar.";
+"triggers.identity.sectionNote" = "En esta versión, los disparadores de apps coinciden con ellas solo por identificador de paquete: empiezan desactivados y solo pueden mostrar la ventana emergente. Comprobar el código de una app todavía no está disponible.";

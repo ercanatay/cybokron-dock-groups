@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Övervaka endast identifierade appar";
 "groupWindow.triggers.identifiedAppsWarning" = "Endast appar som identifieras av macOS övervakas. Oidentifierade instanser kan missas, och en avslutning kan rapporteras felaktigt. Denna inställning gäller för alla programutlösare och återställs när Cybokron Dock Groups avslutas.";
+"core.trigger.skip.applicationNotVerified" = "appen är inte verifierad, så endast Visa popup kan köras";
+"triggers.identity.badge.unverified" = "Overifierad";
+"triggers.identity.badge.needsReapproval" = "Behöver godkännas igen";
+"triggers.identity.badge.invalid" = "Ogiltig";
+"triggers.identity.badge.verificationUnavailable" = "Verifiering inte tillgänglig";
+"triggers.identity.status.needsReapproval" = "Behöver godkännas igen: appens kod har ändrats sedan den godkändes, så den här utlösaren körs inte.";
+"triggers.identity.status.invalid" = "Ogiltig: appens godkännande kan inte läsas, så den här utlösaren körs inte.";
+"triggers.identity.status.verificationUnavailable" = "Körs inte: den här versionen kan ännu inte kontrollera den körande appens kod.";
+"triggers.identity.detail.unverified" = "Matchas endast med paket-ID, vilket även en annan app kan använda. Endast Visa popup körs, och utlösaren startar avstängd.";
+"triggers.identity.detail.needsReapproval" = "Appen har uppdaterats eller ersatts sedan den här utlösaren godkändes för den. Ingenting körs förrän appens nya kod har godkänts.";
+"triggers.identity.detail.invalid" = "Det sparade godkännandet för den här utlösarens app kan inte läsas. Ingenting körs.";
+"triggers.identity.detail.verificationUnavailable" = "Den här utlösaren godkändes för en specifik version av appen, men den här versionen kan inte kontrollera vilken kod som körs, så ingenting körs.";
+"triggers.identity.howToReapprove" = "Den här versionen kan inte kontrollera en apps kod, så den kan inte godkänna en utlösare igen. För att använda den nu, ta bort den och lägg till den igen: den nya utlösaren är overifierad, startar avstängd och visar endast popupen.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (kräver en verifierad app)";
+"triggers.identity.editor.onlyShowPopup" = "Den här appen matchas endast med sitt paket-ID (overifierad), så endast Visa popup kan köras. Andra åtgärder kräver en verifierad app, och den här versionen kan ännu inte verifiera appar.";
+"triggers.identity.editor.chooseShowPopup" = "Välj Visa popup för att spara: andra åtgärder körs inte för en overifierad app.";
+"triggers.identity.sectionNote" = "I den här versionen matchar programutlösare appar endast med paket-ID: de startar avstängda och kan endast visa popupen. Kontroll av en apps kod är ännu inte tillgänglig.";

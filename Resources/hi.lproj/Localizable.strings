@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "केवल पहचाने गए एप्लिकेशन की निगरानी करें";
 "groupWindow.triggers.identifiedAppsWarning" = "केवल वे एप्लिकेशन निगरानी में लिए जाते हैं जिन्हें macOS ने पहचाना है। बिना पहचाने गए उदाहरण छूट सकते हैं, और बंद होने की घटना गलत तरीके से रिपोर्ट हो सकती है। यह सेटिंग सभी एप्लिकेशन ट्रिगर्स पर लागू होती है और Cybokron Dock Groups बंद होने पर रीसेट हो जाती है।";
+"core.trigger.skip.applicationNotVerified" = "ऐप सत्यापित नहीं है, इसलिए केवल Show Popup चल सकता है";
+"triggers.identity.badge.unverified" = "असत्यापित";
+"triggers.identity.badge.needsReapproval" = "पुनः स्वीकृति आवश्यक";
+"triggers.identity.badge.invalid" = "अमान्य";
+"triggers.identity.badge.verificationUnavailable" = "सत्यापन उपलब्ध नहीं";
+"triggers.identity.status.needsReapproval" = "पुनः स्वीकृति आवश्यक: स्वीकृत होने के बाद ऐप का कोड बदल गया है, इसलिए यह ट्रिगर नहीं चलता।";
+"triggers.identity.status.invalid" = "अमान्य: इसकी ऐप स्वीकृति पढ़ी नहीं जा सकती, इसलिए यह ट्रिगर नहीं चलता।";
+"triggers.identity.status.verificationUnavailable" = "नहीं चलता: यह संस्करण अभी चल रहे ऐप का कोड जाँच नहीं सकता।";
+"triggers.identity.detail.unverified" = "केवल बंडल आइडेंटिफ़ायर से मिलान किया गया है, जिसे कोई दूसरा ऐप भी उपयोग कर सकता है। केवल Show Popup चलता है, और ट्रिगर बंद होकर शुरू होता है।";
+"triggers.identity.detail.needsReapproval" = "इस ट्रिगर की स्वीकृति के बाद ऐप अपडेट या बदला गया है। नए कोड की स्वीकृति तक कुछ भी नहीं चलता।";
+"triggers.identity.detail.invalid" = "इस ट्रिगर के ऐप की सहेजी गई स्वीकृति पढ़ी नहीं जा सकती। कुछ भी नहीं चलता।";
+"triggers.identity.detail.verificationUnavailable" = "यह ट्रिगर ऐप के एक विशेष बिल्ड के लिए स्वीकृत किया गया था, लेकिन यह संस्करण जाँच नहीं सकता कि कौन सा कोड चल रहा है, इसलिए कुछ भी नहीं चलता।";
+"triggers.identity.howToReapprove" = "यह संस्करण ऐप का कोड जाँच नहीं सकता, इसलिए ट्रिगर को फिर से स्वीकृत नहीं कर सकता। अभी इसका उपयोग करने के लिए, इसे हटाकर फिर से जोड़ें: नया ट्रिगर असत्यापित होगा, बंद होकर शुरू होगा, और केवल पॉपअप दिखाएगा।";
+"triggers.identity.action.needsVerifiedApp" = "%@ (सत्यापित ऐप आवश्यक)";
+"triggers.identity.editor.onlyShowPopup" = "यह ऐप केवल अपने बंडल आइडेंटिफ़ायर से मेल खाता है (असत्यापित), इसलिए केवल Show Popup चल सकता है। अन्य क्रियाओं के लिए सत्यापित ऐप चाहिए, और यह संस्करण अभी ऐप सत्यापित नहीं कर सकता।";
+"triggers.identity.editor.chooseShowPopup" = "सहेजने के लिए Show Popup चुनें: असत्यापित ऐप के लिए अन्य क्रियाएँ नहीं चलतीं।";
+"triggers.identity.sectionNote" = "इस संस्करण में, ऐप ट्रिगर केवल बंडल आइडेंटिफ़ायर से ऐप का मिलान करते हैं: वे बंद होकर शुरू होते हैं और केवल पॉपअप दिखा सकते हैं। ऐप का कोड जाँचना अभी उपलब्ध नहीं है।";

@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "仅监控已识别的应用程序";
 "groupWindow.triggers.identifiedAppsWarning" = "仅监控 macOS 已识别的应用程序。未识别的实例可能会被遗漏,应用关闭时可能会被错误报告。该设置适用于所有应用触发器，并会在 Cybokron Dock Groups 退出时重置。";
+"core.trigger.skip.applicationNotVerified" = "应用未经验证，因此只能运行 Show Popup";
+"triggers.identity.badge.unverified" = "未验证";
+"triggers.identity.badge.needsReapproval" = "需要重新批准";
+"triggers.identity.badge.invalid" = "无效";
+"triggers.identity.badge.verificationUnavailable" = "无法验证";
+"triggers.identity.status.needsReapproval" = "需要重新批准：自批准以来应用的代码已更改，因此此触发器不会运行。";
+"triggers.identity.status.invalid" = "无效：无法读取其应用批准信息，因此此触发器不会运行。";
+"triggers.identity.status.verificationUnavailable" = "不会运行：此版本暂时无法检查正在运行的应用代码。";
+"triggers.identity.detail.unverified" = "仅通过 Bundle 标识符匹配，其他应用也可能使用该标识符。只会运行 Show Popup，且触发器初始为关闭状态。";
+"triggers.identity.detail.needsReapproval" = "自此触发器获得批准以来，应用已被更新或替换。在新代码获得批准之前，不会运行任何内容。";
+"triggers.identity.detail.invalid" = "无法读取此触发器所属应用的已保存批准信息。不会运行任何内容。";
+"triggers.identity.detail.verificationUnavailable" = "此触发器已针对应用的特定版本获得批准，但当前版本无法检查正在运行的是哪段代码，因此不会运行任何内容。";
+"triggers.identity.howToReapprove" = "此版本无法检查应用代码，因此无法重新批准触发器。若要立即使用，请先删除再重新添加：新触发器为未验证状态，初始关闭，且只会显示弹出窗口。";
+"triggers.identity.action.needsVerifiedApp" = "%@（需要已验证的应用）";
+"triggers.identity.editor.onlyShowPopup" = "此应用仅通过 Bundle 标识符匹配（未验证），因此只能运行 Show Popup。其他操作需要已验证的应用，而此版本暂时无法验证应用。";
+"triggers.identity.editor.chooseShowPopup" = "请选择 Show Popup 后再保存：未验证的应用不会运行其他操作。";
+"triggers.identity.sectionNote" = "在此版本中，应用触发器仅通过 Bundle 标识符匹配应用：它们初始为关闭状态，且只能显示弹出窗口。检查应用代码的功能暂不可用。";

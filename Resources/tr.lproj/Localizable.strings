@@ -1116,3 +1116,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Yalnızca tanımlanan uygulamaları izle";
 "groupWindow.triggers.identifiedAppsWarning" = "Yalnızca macOS tarafından tanımlanan uygulamalar izlenir. Tanımlanmamış örnekler kaçırılabilir ve bir uygulamanın kapanışı yanlış bildirilebilir. Bu ayar tüm uygulama tetikleyicilerini kapsar ve Cybokron Dock Groups kapatıldığında sıfırlanır.";
+"core.trigger.skip.applicationNotVerified" = "uygulama doğrulanmadı, bu nedenle yalnızca Açılır Pencereyi Göster çalışabilir";
+"triggers.identity.badge.unverified" = "Doğrulanmamış";
+"triggers.identity.badge.needsReapproval" = "Yeniden onay gerekiyor";
+"triggers.identity.badge.invalid" = "Geçersiz";
+"triggers.identity.badge.verificationUnavailable" = "Doğrulama kullanılamıyor";
+"triggers.identity.status.needsReapproval" = "Yeniden onay gerekiyor: uygulamanın kodu onaylandığından beri değiştiği için bu tetikleyici çalışmaz.";
+"triggers.identity.status.invalid" = "Geçersiz: uygulama onayı okunamadığı için bu tetikleyici çalışmaz.";
+"triggers.identity.status.verificationUnavailable" = "Çalışmaz: bu sürüm, çalışan uygulamanın kodunu henüz denetleyemiyor.";
+"triggers.identity.detail.unverified" = "Yalnızca paket tanımlayıcısıyla eşleştirildi; bunu başka bir uygulama da kullanabilir. Yalnızca Açılır Pencereyi Göster çalışır ve tetikleyici kapalı olarak başlar.";
+"triggers.identity.detail.needsReapproval" = "Bu tetikleyici için onaylandığından beri uygulama güncellendi veya değiştirildi. Yeni kodu onaylanana kadar hiçbir şey çalışmaz.";
+"triggers.identity.detail.invalid" = "Bu tetikleyicinin uygulaması için kaydedilmiş onay okunamıyor. Hiçbir şey çalışmaz.";
+"triggers.identity.detail.verificationUnavailable" = "Bu tetikleyici uygulamanın belirli bir derlemesi için onaylandı, ancak bu sürüm hangi kodun çalıştığını denetleyemediği için hiçbir şey çalışmaz.";
+"triggers.identity.howToReapprove" = "Bu sürüm bir uygulamanın kodunu denetleyemez, bu nedenle bir tetikleyiciyi yeniden onaylayamaz. Şimdi kullanmak için kaldırıp yeniden ekleyin: yeni tetikleyici doğrulanmamış olur, kapalı olarak başlar ve yalnızca açılır pencereyi gösterir.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (doğrulanmış bir uygulama gerektirir)";
+"triggers.identity.editor.onlyShowPopup" = "Bu uygulama yalnızca paket tanımlayıcısıyla eşleştirilmiş (doğrulanmamış), bu nedenle yalnızca Açılır Pencereyi Göster çalışabilir. Diğer eylemler doğrulanmış bir uygulama gerektirir ve bu sürüm henüz uygulamaları doğrulayamıyor.";
+"triggers.identity.editor.chooseShowPopup" = "Kaydetmek için Açılır Pencereyi Göster'i seçin: doğrulanmamış bir uygulama için diğer eylemler çalışmaz.";
+"triggers.identity.sectionNote" = "Bu sürümde uygulama tetikleyicileri uygulamaları yalnızca paket tanımlayıcısıyla eşleştirir: kapalı olarak başlarlar ve yalnızca açılır pencereyi gösterebilirler. Bir uygulamanın kodunu denetleme özelliği henüz kullanılamıyor.";

@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Nur identifizierte Anwendungen überwachen";
 "groupWindow.triggers.identifiedAppsWarning" = "Nur von macOS identifizierte Anwendungen werden überwacht. Nicht identifizierte Instanzen werden möglicherweise übersehen, und ein Beenden kann fälschlicherweise gemeldet werden. Diese Einstellung gilt für alle Anwendungstrigger und wird zurückgesetzt, wenn Cybokron Dock Groups beendet wird.";
+"core.trigger.skip.applicationNotVerified" = "die App ist nicht verifiziert, daher kann nur Popup anzeigen ausgeführt werden";
+"triggers.identity.badge.unverified" = "Nicht verifiziert";
+"triggers.identity.badge.needsReapproval" = "Erneute Genehmigung erforderlich";
+"triggers.identity.badge.invalid" = "Ungültig";
+"triggers.identity.badge.verificationUnavailable" = "Verifizierung nicht verfügbar";
+"triggers.identity.status.needsReapproval" = "Erneute Genehmigung erforderlich: Der Code der App hat sich seit der Genehmigung geändert, daher wird dieser Auslöser nicht ausgeführt.";
+"triggers.identity.status.invalid" = "Ungültig: Die App-Genehmigung kann nicht gelesen werden, daher wird dieser Auslöser nicht ausgeführt.";
+"triggers.identity.status.verificationUnavailable" = "Wird nicht ausgeführt: Diese Version kann den Code der laufenden App noch nicht prüfen.";
+"triggers.identity.detail.unverified" = "Nur anhand des Bundle-Identifiers zugeordnet, den auch eine andere App verwenden könnte. Nur Popup anzeigen wird ausgeführt, und der Auslöser startet deaktiviert.";
+"triggers.identity.detail.needsReapproval" = "Die App wurde seit der Genehmigung dieses Auslösers aktualisiert oder ersetzt. Nichts wird ausgeführt, bis der neue Code genehmigt ist.";
+"triggers.identity.detail.invalid" = "Die gespeicherte Genehmigung für die App dieses Auslösers kann nicht gelesen werden. Es wird nichts ausgeführt.";
+"triggers.identity.detail.verificationUnavailable" = "Dieser Auslöser wurde für eine bestimmte Build-Version der App genehmigt, aber diese Version kann nicht prüfen, welcher Code läuft, daher wird nichts ausgeführt.";
+"triggers.identity.howToReapprove" = "Diese Version kann den Code einer App nicht prüfen und daher einen Auslöser nicht erneut genehmigen. Um ihn jetzt zu verwenden, entfernen Sie ihn und fügen Sie ihn erneut hinzu: Der neue Auslöser ist nicht verifiziert, startet deaktiviert und zeigt nur das Popup an.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (erfordert eine verifizierte App)";
+"triggers.identity.editor.onlyShowPopup" = "Diese App wird nur anhand ihres Bundle-Identifiers zugeordnet (nicht verifiziert), daher kann nur Popup anzeigen ausgeführt werden. Andere Aktionen erfordern eine verifizierte App, und diese Version kann Apps noch nicht verifizieren.";
+"triggers.identity.editor.chooseShowPopup" = "Wählen Sie zum Speichern Popup anzeigen: Andere Aktionen werden für eine nicht verifizierte App nicht ausgeführt.";
+"triggers.identity.sectionNote" = "In dieser Version werden App-Auslöser nur anhand des Bundle-Identifiers zugeordnet: Sie starten deaktiviert und können nur das Popup anzeigen. Die Prüfung des Codes einer App ist noch nicht verfügbar.";

@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Chỉ giám sát các ứng dụng đã được nhận diện";
 "groupWindow.triggers.identifiedAppsWarning" = "Chỉ các ứng dụng được macOS nhận diện mới được giám sát. Các phiên bản chưa được nhận diện có thể bị bỏ sót, và việc đóng ứng dụng có thể được báo cáo không chính xác. Cài đặt này áp dụng cho tất cả các trình kích hoạt ứng dụng và sẽ được đặt lại khi Cybokron Dock Groups thoát.";
+"core.trigger.skip.applicationNotVerified" = "Ứng dụng chưa được xác minh, nên chỉ có thể chạy Hiện cửa sổ bật lên";
+"triggers.identity.badge.unverified" = "Chưa xác minh";
+"triggers.identity.badge.needsReapproval" = "Cần phê duyệt lại";
+"triggers.identity.badge.invalid" = "Không hợp lệ";
+"triggers.identity.badge.verificationUnavailable" = "Không thể xác minh";
+"triggers.identity.status.needsReapproval" = "Cần phê duyệt lại: mã của ứng dụng đã thay đổi kể từ khi được phê duyệt, nên trình kích hoạt này không chạy.";
+"triggers.identity.status.invalid" = "Không hợp lệ: không thể đọc phê duyệt ứng dụng của trình kích hoạt này, nên nó không chạy.";
+"triggers.identity.status.verificationUnavailable" = "Không chạy: phiên bản này chưa thể kiểm tra mã của ứng dụng đang chạy.";
+"triggers.identity.detail.unverified" = "Chỉ khớp theo bundle identifier, mà ứng dụng khác cũng có thể sử dụng. Chỉ Hiện cửa sổ bật lên được chạy, và trình kích hoạt bắt đầu ở trạng thái tắt.";
+"triggers.identity.detail.needsReapproval" = "Ứng dụng đã được cập nhật hoặc thay thế kể từ khi trình kích hoạt này được phê duyệt cho nó. Sẽ không có gì chạy cho đến khi mã mới của ứng dụng được phê duyệt.";
+"triggers.identity.detail.invalid" = "Không thể đọc phê duyệt đã lưu cho ứng dụng của trình kích hoạt này. Sẽ không có gì chạy.";
+"triggers.identity.detail.verificationUnavailable" = "Trình kích hoạt này được phê duyệt cho một bản dựng cụ thể của ứng dụng, nhưng phiên bản này không thể kiểm tra mã nào đang chạy, nên sẽ không có gì chạy.";
+"triggers.identity.howToReapprove" = "Phiên bản này không thể kiểm tra mã của ứng dụng, nên không thể phê duyệt lại trình kích hoạt. Để sử dụng ngay, hãy xóa và thêm lại: trình kích hoạt mới sẽ chưa được xác minh, bắt đầu ở trạng thái tắt và chỉ hiện cửa sổ bật lên.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (cần ứng dụng đã được xác minh)";
+"triggers.identity.editor.onlyShowPopup" = "Ứng dụng này chỉ được khớp theo bundle identifier (chưa xác minh), nên chỉ Hiện cửa sổ bật lên có thể chạy. Các hành động khác cần ứng dụng đã được xác minh, và phiên bản này chưa thể xác minh ứng dụng.";
+"triggers.identity.editor.chooseShowPopup" = "Chọn Hiện cửa sổ bật lên để lưu: các hành động khác không chạy với ứng dụng chưa được xác minh.";
+"triggers.identity.sectionNote" = "Trong phiên bản này, trình kích hoạt ứng dụng chỉ khớp ứng dụng theo bundle identifier: chúng bắt đầu ở trạng thái tắt và chỉ có thể hiện cửa sổ bật lên. Việc kiểm tra mã của ứng dụng hiện chưa khả dụng.";

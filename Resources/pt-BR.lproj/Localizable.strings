@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Monitorar apenas aplicativos identificados";
 "groupWindow.triggers.identifiedAppsWarning" = "Somente aplicativos identificados pelo macOS são monitorados. Instâncias não identificadas podem passar despercebidas, e o fechamento de um aplicativo pode ser informado incorretamente. Esta configuração se aplica a todos os gatilhos de aplicativos e é redefinida quando o Cybokron Dock Groups é encerrado.";
+"core.trigger.skip.applicationNotVerified" = "o app não está verificado, então apenas Mostrar pop-up pode ser executado";
+"triggers.identity.badge.unverified" = "Não verificado";
+"triggers.identity.badge.needsReapproval" = "Precisa de nova aprovação";
+"triggers.identity.badge.invalid" = "Inválido";
+"triggers.identity.badge.verificationUnavailable" = "Verificação indisponível";
+"triggers.identity.status.needsReapproval" = "Precisa de nova aprovação: o código do app mudou desde que foi aprovado, então este gatilho não é executado.";
+"triggers.identity.status.invalid" = "Inválido: a aprovação do app não pode ser lida, então este gatilho não é executado.";
+"triggers.identity.status.verificationUnavailable" = "Não é executado: esta versão ainda não consegue verificar o código do app em execução.";
+"triggers.identity.detail.unverified" = "Correspondido apenas pelo identificador de pacote (bundle identifier), que outro app também poderia usar. Apenas Mostrar pop-up é executado, e o gatilho começa desativado.";
+"triggers.identity.detail.needsReapproval" = "O app foi atualizado ou substituído desde que este gatilho foi aprovado para ele. Nada é executado até que o novo código seja aprovado.";
+"triggers.identity.detail.invalid" = "A aprovação salva para o app deste gatilho não pode ser lida. Nada é executado.";
+"triggers.identity.detail.verificationUnavailable" = "Este gatilho foi aprovado para uma build específica do app, mas esta versão não consegue verificar qual código está em execução, então nada é executado.";
+"triggers.identity.howToReapprove" = "Esta versão não consegue verificar o código de um app, então não pode aprovar um gatilho novamente. Para usá-lo agora, remova-o e adicione-o novamente: o novo gatilho não é verificado, começa desativado e apenas mostra o pop-up.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (requer um app verificado)";
+"triggers.identity.editor.onlyShowPopup" = "Este app é identificado apenas pelo identificador de pacote (não verificado), então apenas Mostrar pop-up pode ser executado. Outras ações exigem um app verificado, e esta versão ainda não consegue verificar apps.";
+"triggers.identity.editor.chooseShowPopup" = "Escolha Mostrar pop-up para salvar: outras ações não são executadas para um app não verificado.";
+"triggers.identity.sectionNote" = "Nesta versão, os gatilhos de aplicativo correspondem aos apps apenas pelo identificador de pacote: eles começam desativados e só podem mostrar o pop-up. A verificação do código de um app ainda não está disponível.";

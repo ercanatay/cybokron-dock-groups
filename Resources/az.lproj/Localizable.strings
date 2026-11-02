@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Yalnız müəyyən edilmiş tətbiqlər izlənilir";
 "groupWindow.triggers.identifiedAppsWarning" = "Yalnız macOS tərəfindən müəyyən edilmiş tətbiqlər izlənilir. Müəyyən edilməmiş nümunələr nəzərdən qaça bilər və tətbiqin bağlanması yanlış bildirilə bilər. Bu parametr bütün tətbiq tətikləyicilərinə tətbiq olunur və Cybokron Dock Groups bağlandıqda sıfırlanır.";
+"core.trigger.skip.applicationNotVerified" = "tətbiq təsdiqlənməyib, ona görə yalnız Açılan pəncərəni göstər işləyə bilər";
+"triggers.identity.badge.unverified" = "Təsdiqlənməyib";
+"triggers.identity.badge.needsReapproval" = "Yenidən təsdiq tələb olunur";
+"triggers.identity.badge.invalid" = "Etibarsız";
+"triggers.identity.badge.verificationUnavailable" = "Yoxlama əlçatan deyil";
+"triggers.identity.status.needsReapproval" = "Yenidən təsdiq tələb olunur: tətbiqin kodu təsdiqləndikdən sonra dəyişib, ona görə bu tətikləyici işləmir.";
+"triggers.identity.status.invalid" = "Etibarsız: onun tətbiq təsdiqi oxuna bilmir, ona görə bu tətikləyici işləmir.";
+"triggers.identity.status.verificationUnavailable" = "İşləmir: bu versiya işləyən tətbiqin kodunu hələ yoxlaya bilmir.";
+"triggers.identity.detail.unverified" = "Yalnız paket identifikatoru ilə uyğunlaşdırılıb, bunu başqa tətbiq də istifadə edə bilər. Yalnız Açılan pəncərəni göstər işləyir və tətikləyici söndürülmüş halda başlayır.";
+"triggers.identity.detail.needsReapproval" = "Bu tətbiq bu tətikləyici üçün təsdiqləndikdən sonra yenilənib və ya dəyişdirilib. Onun yeni kodu təsdiqlənənə qədər heç nə işləmir.";
+"triggers.identity.detail.invalid" = "Bu tətikləyicinin tətbiqi üçün saxlanılmış təsdiq oxuna bilmir. Heç nə işləmir.";
+"triggers.identity.detail.verificationUnavailable" = "Bu tətikləyici tətbiqin xüsusi versiyası üçün təsdiqlənib, lakin bu versiya hansı kodun işlədiyini yoxlaya bilmədiyi üçün heç nə işləmir.";
+"triggers.identity.howToReapprove" = "Bu versiya tətbiqin kodunu yoxlaya bilmədiyi üçün tətikləyici yenidən təsdiqlənə bilməz. İndi istifadə etmək üçün onu silin və yenidən əlavə edin: yeni tətikləyici təsdiqlənməyib, söndürülmüş halda başlayır və yalnız pəncərəni göstərir.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (təsdiqlənmiş tətbiq tələb olunur)";
+"triggers.identity.editor.onlyShowPopup" = "Bu tətbiq yalnız paket identifikatoru ilə uyğunlaşdırılır (təsdiqlənməyib), ona görə yalnız Açılan pəncərəni göstər işləyə bilər. Digər əməliyyatlar təsdiqlənmiş tətbiq tələb edir, bu versiya isə tətbiqləri hələ təsdiqləyə bilmir.";
+"triggers.identity.editor.chooseShowPopup" = "Saxlamaq üçün Açılan pəncərəni göstər seçin: digər əməliyyatlar təsdiqlənməmiş tətbiq üçün işləmir.";
+"triggers.identity.sectionNote" = "Bu versiyada tətbiq tətikləyiciləri yalnız paket identifikatoru ilə uyğunlaşır: onlar söndürülmüş halda başlayır və yalnız pəncərəni göstərə bilər. Tətbiqin kodunu yoxlamaq hələ əlçatan deyil.";

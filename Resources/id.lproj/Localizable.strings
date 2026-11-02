@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Pantau hanya aplikasi yang teridentifikasi";
 "groupWindow.triggers.identifiedAppsWarning" = "Hanya aplikasi yang teridentifikasi oleh macOS yang dipantau. Instans yang tidak teridentifikasi mungkin terlewat, dan penutupan dapat dilaporkan secara tidak akurat. Pengaturan ini berlaku untuk semua pemicu aplikasi dan akan kembali ke default saat Cybokron Dock Groups ditutup.";
+"core.trigger.skip.applicationNotVerified" = "aplikasinya belum terverifikasi, sehingga hanya Tampilkan Pop-up yang dapat dijalankan";
+"triggers.identity.badge.unverified" = "Belum Terverifikasi";
+"triggers.identity.badge.needsReapproval" = "Perlu persetujuan ulang";
+"triggers.identity.badge.invalid" = "Tidak Valid";
+"triggers.identity.badge.verificationUnavailable" = "Verifikasi tidak tersedia";
+"triggers.identity.status.needsReapproval" = "Perlu persetujuan ulang: kode aplikasi berubah sejak disetujui, sehingga pemicu ini tidak berjalan.";
+"triggers.identity.status.invalid" = "Tidak valid: persetujuan aplikasinya tidak dapat dibaca, sehingga pemicu ini tidak berjalan.";
+"triggers.identity.status.verificationUnavailable" = "Tidak berjalan: versi ini belum dapat memeriksa kode aplikasi yang sedang berjalan.";
+"triggers.identity.detail.unverified" = "Dicocokkan hanya berdasarkan bundle identifier, yang juga dapat digunakan aplikasi lain. Hanya Tampilkan Pop-up yang berjalan, dan pemicu dimulai dalam keadaan mati.";
+"triggers.identity.detail.needsReapproval" = "Aplikasi telah diperbarui atau diganti sejak pemicu ini disetujui untuknya. Tidak ada yang berjalan sampai kode barunya disetujui.";
+"triggers.identity.detail.invalid" = "Persetujuan tersimpan untuk aplikasi pemicu ini tidak dapat dibaca. Tidak ada yang berjalan.";
+"triggers.identity.detail.verificationUnavailable" = "Pemicu ini disetujui untuk build tertentu dari aplikasi, tetapi versi ini tidak dapat memeriksa kode mana yang sedang berjalan, sehingga tidak ada yang berjalan.";
+"triggers.identity.howToReapprove" = "Versi ini tidak dapat memeriksa kode aplikasi, sehingga tidak dapat menyetujui ulang pemicu. Untuk menggunakannya sekarang, hapus lalu tambahkan kembali: pemicu baru belum terverifikasi, dimulai dalam keadaan mati, dan hanya menampilkan pop-up.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (memerlukan aplikasi terverifikasi)";
+"triggers.identity.editor.onlyShowPopup" = "Aplikasi ini dicocokkan hanya berdasarkan bundle identifier-nya (belum terverifikasi), sehingga hanya Tampilkan Pop-up yang dapat dijalankan. Tindakan lain memerlukan aplikasi terverifikasi, dan versi ini belum dapat memverifikasi aplikasi.";
+"triggers.identity.editor.chooseShowPopup" = "Pilih Tampilkan Pop-up untuk menyimpan: tindakan lain tidak berjalan untuk aplikasi yang belum terverifikasi.";
+"triggers.identity.sectionNote" = "Dalam versi ini, pemicu aplikasi hanya mencocokkan aplikasi berdasarkan bundle identifier: pemicu dimulai dalam keadaan mati dan hanya dapat menampilkan pop-up. Pemeriksaan kode aplikasi belum tersedia.";
