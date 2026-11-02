@@ -1474,16 +1474,19 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 ## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes and approval, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.` (including `triggers.identity.approve.`), `core.trigger.skip.applicationNotVerified`, `core.trigger.skip.applicationNotConfirmed`)
 
 An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
-only Show Popup runs. *Needs re-approval*, *Invalid* and *Verification unavailable* run nothing. This
-version can't check an app's code, so the texts say so rather than offer a button that does nothing.
+only Show Popup runs until the user approves its app (Approve This App, while the app is open).
+An approved trigger runs every action while the approved version of the app runs. *Needs
+re-approval* (the app's code changed; Approve the New Version), *Invalid* (the approval can't be
+read; remove the trigger and add it again) and *Verification unavailable* (the running code couldn't
+be confirmed as the approved version) run nothing.
 `core.trigger.skip.applicationNotVerified` completes “Skipped today at 9:00: …”, so it starts in
 lowercase. So does `core.trigger.skip.applicationNotConfirmed`, recorded when an approved trigger's
 event came but the app's running code couldn't be confirmed in time (the check was still running,
 failed or timed out, or the app changed), so nothing ran.
 The `triggers.identity.approve.` keys are the editor's Approve This App / Approve the New Version
 button, its hint and the outcome of an approval; a failure says that nothing was approved.
-They are newer than the texts above that still say this version can't check an app's code; those
-are corrected in a separate change.
+The texts say *approve* for what the user does and *confirm* for the check of the running code
+against an approval; *unverified* is the state of a trigger whose app isn't approved.
 
 | Key | English |
 | --- | --- |
@@ -1495,16 +1498,16 @@ are corrected in a separate change.
 | `triggers.identity.badge.verificationUnavailable` | Verification unavailable |
 | `triggers.identity.status.needsReapproval` | Needs re-approval: the app's code changed since it was approved, so this trigger doesn't run. |
 | `triggers.identity.status.invalid` | Invalid: its app approval can't be read, so this trigger doesn't run. |
-| `triggers.identity.status.verificationUnavailable` | Doesn't run: this version can't check the running app's code yet. |
+| `triggers.identity.status.verificationUnavailable` | Doesn't run: the running app's code couldn't be confirmed as the approved version. |
 | `triggers.identity.detail.unverified` | Matched by bundle identifier only, which another app could also use. Only Show Popup runs, and the trigger starts turned off. |
 | `triggers.identity.detail.needsReapproval` | The app was updated or replaced since this trigger was approved for it. Nothing runs until its new code is approved. |
 | `triggers.identity.detail.invalid` | The saved approval for this trigger's app can't be read. Nothing runs. |
-| `triggers.identity.detail.verificationUnavailable` | This trigger was approved for a specific build of the app, but this version can't check which code is running, so nothing runs. |
-| `triggers.identity.howToReapprove` | This version can't check an app's code, so it can't approve a trigger again. To use it now, remove it and add it again: the new trigger is unverified, starts turned off, and only shows the popup. |
-| `triggers.identity.action.needsVerifiedApp` | %@ (needs a verified app) |
-| `triggers.identity.editor.onlyShowPopup` | This app is matched by its bundle identifier only (unverified), so only Show Popup can run. Other actions need a verified app, and this version can't verify apps yet. |
+| `triggers.identity.detail.verificationUnavailable` | This trigger is approved for a specific version of the app, but the code running now couldn't be confirmed as that version (the check failed or took too long), so nothing runs. |
+| `triggers.identity.howToReapprove` | To approve a trigger's app again, open the app, edit the trigger and click Approve the New Version. A trigger whose approval can't be read can't be approved: remove it and add it again. |
+| `triggers.identity.action.needsVerifiedApp` | %@ (needs an approved app) |
+| `triggers.identity.editor.onlyShowPopup` | This app is matched by its bundle identifier only (unverified), so only Show Popup can run. To use other actions, approve the app while it's open. |
 | `triggers.identity.editor.chooseShowPopup` | Choose Show Popup to save: other actions don't run for an unverified app. |
-| `triggers.identity.sectionNote` | In this version, application triggers match apps by bundle identifier only: they start turned off and can only show the popup. Checking an app's code isn't available yet. |
+| `triggers.identity.sectionNote` | Until you approve its app, an application trigger matches the app by bundle identifier only: it starts turned off and can only show the popup. Once approved, it runs every action while the approved version of the app runs. |
 | `triggers.identity.approve.button` | Approve This App |
 | `triggers.identity.approve.newVersionButton` | Approve the New Version |
 | `triggers.identity.approve.hint` | Approving checks the code of this app as it runs now. The trigger can then run every action, but only while that exact version runs; after an update it waits to be approved again. Approving doesn't turn the trigger on. |

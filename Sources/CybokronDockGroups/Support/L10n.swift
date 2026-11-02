@@ -1855,7 +1855,7 @@ extension L10n {
                 case .invalid:
                     return tr("triggers.identity.status.invalid", "Invalid: its app approval can't be read, so this trigger doesn't run.")
                 case .verificationUnavailable:
-                    return tr("triggers.identity.status.verificationUnavailable", "Doesn't run: this version can't check the running app's code yet.")
+                    return tr("triggers.identity.status.verificationUnavailable", "Doesn't run: the running app's code couldn't be confirmed as the approved version.")
                 }
             }
 
@@ -1869,22 +1869,22 @@ extension L10n {
                 case .invalid:
                     return tr("triggers.identity.detail.invalid", "The saved approval for this trigger's app can't be read. Nothing runs.")
                 case .verificationUnavailable:
-                    return tr("triggers.identity.detail.verificationUnavailable", "This trigger was approved for a specific build of the app, but this version can't check which code is running, so nothing runs.")
+                    return tr("triggers.identity.detail.verificationUnavailable", "This trigger is approved for a specific version of the app, but the code running now couldn't be confirmed as that version (the check failed or took too long), so nothing runs.")
                 }
             }
 
             /// How to use a trigger that waits for approval (or can't be checked) in this version.
             static var howToReapprove: String {
-                tr("triggers.identity.howToReapprove", "This version can't check an app's code, so it can't approve a trigger again. To use it now, remove it and add it again: the new trigger is unverified, starts turned off, and only shows the popup.")
+                tr("triggers.identity.howToReapprove", "To approve a trigger's app again, open the app, edit the trigger and click Approve the New Version. A trigger whose approval can't be read can't be approved: remove it and add it again.")
             }
 
             /// A disabled action in the editor's action pop-up.
             static func actionNeedsVerifiedApp(_ action: String) -> String {
-                tr("triggers.identity.action.needsVerifiedApp", "%@ (needs a verified app)", action)
+                tr("triggers.identity.action.needsVerifiedApp", "%@ (needs an approved app)", action)
             }
 
             static var editorOnlyShowPopup: String {
-                tr("triggers.identity.editor.onlyShowPopup", "This app is matched by its bundle identifier only (unverified), so only Show Popup can run. Other actions need a verified app, and this version can't verify apps yet.")
+                tr("triggers.identity.editor.onlyShowPopup", "This app is matched by its bundle identifier only (unverified), so only Show Popup can run. To use other actions, approve the app while it's open.")
             }
 
             static var editorChooseShowPopup: String {
@@ -1893,7 +1893,7 @@ extension L10n {
 
             /// Below the group's triggers when one of them waits for an application.
             static var sectionNote: String {
-                tr("triggers.identity.sectionNote", "In this version, application triggers match apps by bundle identifier only: they start turned off and can only show the popup. Checking an app's code isn't available yet.")
+                tr("triggers.identity.sectionNote", "Until you approve its app, an application trigger matches the app by bundle identifier only: it starts turned off and can only show the popup. Once approved, it runs every action while the approved version of the app runs.")
             }
 
             /// The editor's way to approve an application trigger's app (`TriggerApplicationApprover`).

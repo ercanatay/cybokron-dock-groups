@@ -38,7 +38,7 @@ struct TriggerIdentityStatusTests {
         #expect(controller.statusLine(of: invalid) == "Invalid: its app approval can't be read, so this trigger doesn't run.")
         #expect(invalid.problem == generic)
         let authorized = trigger(.authorize(try binding()))
-        #expect(controller.statusLine(of: authorized) == "Doesn't run: this version can't check the running app's code yet.")
+        #expect(controller.statusLine(of: authorized) == "Doesn't run: the running app's code couldn't be confirmed as the approved version.")
         // Unverified: it can show the popup, so its last run is what the line tells.
         let unverified = trigger(.unverified, action: .showPopup)
         #expect(controller.statusLine(of: unverified) == "Not run yet.")
@@ -57,6 +57,6 @@ struct TriggerIdentityStatusTests {
             #expect(help.contains(L10n.Triggers.Identity.howToReapprove) == state.blocksEveryAction)
             #expect((L10n.Triggers.Identity.statusLine(state) == nil) == !state.blocksEveryAction)
         }
-        #expect(L10n.Triggers.Identity.actionNeedsVerifiedApp("Start") == "Start (needs a verified app)")
+        #expect(L10n.Triggers.Identity.actionNeedsVerifiedApp("Start") == "Start (needs an approved app)")
     }
 }

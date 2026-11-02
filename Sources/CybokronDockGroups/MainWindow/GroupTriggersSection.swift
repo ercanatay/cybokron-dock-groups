@@ -198,7 +198,7 @@ struct TriggerRow: View {
 
 /// An application trigger's approval under its status line: Unverified, Needs re-approval, Invalid
 /// or Verification unavailable, with what it means (and, where nothing runs, how to use it now) as
-/// its tooltip. Information only: this version can't approve an app's code, so it offers no button.
+/// its tooltip. Information only: an app is approved in the trigger's editor, so it offers no button.
 struct TriggerIdentityLabel: View {
     let state: TriggerApplicationIdentityState
 

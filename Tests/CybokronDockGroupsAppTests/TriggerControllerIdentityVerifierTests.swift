@@ -72,7 +72,7 @@ struct TriggerControllerIdentityVerifierTests {
     @Test func aConfirmedTriggerShowsItsLastRun() async throws {
         let f = try fixture()
         defer { try? FileManager.default.removeItem(at: f.dir) }
-        let unavailable = "Doesn't run: this version can't check the running app's code yet."
+        let unavailable = "Doesn't run: the running app's code couldn't be confirmed as the approved version."
         // Not checked yet.
         #expect(f.controller.statusLine(of: f.trigger) == unavailable)
         // Nothing runs under the identifier: confirmed without a check.
