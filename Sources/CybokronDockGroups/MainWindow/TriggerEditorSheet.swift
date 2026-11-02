@@ -118,6 +118,10 @@ struct TriggerEditorSheet: View {
         .onChange(of: locationAccess.status) {
             currentNetwork = readNetworkName()
         }
+        // Why the last approval didn't approve was about the app chosen then.
+        .onChange(of: draft.applicationBundleIdentifier) {
+            approvalMessage = nil
+        }
     }
 
     // MARK: - When

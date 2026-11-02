@@ -10,8 +10,9 @@ public enum TriggerApplicationIdentityState: String, CaseIterable, Sendable {
     case needsReapproval
     /// The saved record can't be read: nothing runs.
     case invalid
-    /// Authorized for a code hash, but this version can't confirm the running code
-    /// (`UnavailableApplicationIdentityVerifier` is the app's verifier), so nothing runs.
+    /// Authorized for a code hash. It runs only while the coordinator's verifier confirms the
+    /// running code (`RunningApplicationIdentityVerifier` in the app); while it doesn't, nothing
+    /// runs. The trigger lists show it only then (`TriggerController.identityBadge(of:)`).
     case verificationUnavailable
 
     /// Whether a rule in this state may be given `action`: an unverified rule only Show the Popup.
@@ -26,9 +27,9 @@ public enum TriggerApplicationIdentityState: String, CaseIterable, Sendable {
 
 extension GroupTrigger {
     /// The application-presence rule's authorization as the interface tells it; `nil` for other
-    /// events. An authorized rule is `verificationUnavailable`: running-code verification isn't
-    /// integrated, so the coordinator's verifier never confirms it (fail closed). Once a verifier
-    /// is integrated, this has to follow its verdict.
+    /// events. An authorized rule is `verificationUnavailable` here, whatever the verifier last
+    /// said: this reads the record only. What the lists show follows the verifier's verdict
+    /// (`TriggerCoordinator.applicationIdentityIsUnconfirmed`).
     public var applicationIdentityState: TriggerApplicationIdentityState? {
         switch applicationIdentityStatus {
         case nil: return nil

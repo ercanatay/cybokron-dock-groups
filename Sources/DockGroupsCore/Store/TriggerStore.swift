@@ -214,7 +214,7 @@ public final class TriggerStore: ObservableObject {
             flushPendingSave()
         }
         let copyURL = try copyLabel.flatMap { try persistence.preserveCopy(label: $0) }
-        let sanitized = GroupTrigger.sanitized(newTriggers)
+        let sanitized = GroupTrigger.sanitized(admitted(newTriggers))
         try persistence.saveTriggers(sanitized)
         triggers = sanitized
         isSavingSuspended = false
@@ -228,11 +228,24 @@ public final class TriggerStore: ObservableObject {
     @discardableResult
     public func mergeTriggers(_ incoming: [GroupTrigger]) throws -> [GroupTrigger] {
         let currentIDs = Set(triggers.map(\.id))
-        let merged = GroupTrigger.sanitized(triggers + incoming)
+        let merged = GroupTrigger.sanitized(triggers + admitted(incoming))
         let added = merged.filter { !currentIDs.contains($0.id) }
         guard !added.isEmpty else { return [] }
         try replaceTriggers(with: merged, copyLabel: "pre-import")
         return added
+    }
+
+    /// `incoming` as the store takes it from a backup, whatever its caller already did: a rule
+    /// carrying an application authorization the store doesn't hold for that identifier (a new
+    /// one, or another record than the saved one) comes in unverified and turned off (`turnedOff`).
+    /// What a file says about an app's code never authorizes a rule here.
+    private func admitted(_ incoming: [GroupTrigger]) -> [GroupTrigger] {
+        let held = Dictionary(triggers.map { ($0.id, $0.applicationIdentity) }, uniquingKeysWith: { first, _ in first })
+        return incoming.map { trigger in
+            guard let identity = trigger.applicationIdentity, identity != .unverified,
+                  (held[trigger.id] ?? nil) != identity else { return trigger }
+            return trigger.turnedOff
+        }
     }
 
     /// Copies the saved file next to itself (`triggers.<label>-<timestamp>.json`), a pending change

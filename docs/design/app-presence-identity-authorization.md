@@ -2,9 +2,8 @@
 
 Status: implemented in `DockGroupsCore` on the unreleased branch `codex/app-presence-code-hash`; the
 running-code verifier is connected in the app (`codex/app-presence-identity-verifier`), and the
-editor's approval creates `authorized` records (`codex/app-presence-identity-approval`).
-Localization beyond English is pending, and several older UI texts still say this version can't
-check an app's code (a separate change). This document describes the model, the persisted format,
+editor's approval creates `authorized` records (`codex/app-presence-identity-approval`). The UI
+texts describe the approval as the app does it, and are translated. This document describes the model, the persisted format,
 the fail-closed gates, the verifier, the approval, migration and privacy, and what remains open. It implements decisions K1-K3 below against the release
 contract in `app-presence-threat-model.md` §7.
 
@@ -302,9 +301,11 @@ appears in diagnostics (which report trigger counts and kinds only).
   bundle identifier, or a legitimate update) is `codeChanged` and makes the rule wait for
   re-approval. A look-alike can therefore switch the rule off (availability, not a widening).
 - **Local file edits (A1).** Anyone who can write `triggers.json` can mark a rule `unverified` and
-  enabled (Show Popup only) or write an `authorized` record. The latter does nothing with the
-  production verifier; once a real verifier exists, a crafted record naming the genuine app's
-  `cdhash` would be accepted. This is outside the defendable scope (§2).
+  enabled (Show Popup only) or write an `authorized` record. The production verifier accepts a
+  crafted record naming the genuine app's `cdhash` while that code runs. This is outside the
+  defendable scope (§2); imports and restores still arrive `unverified` and off, and the store
+  itself drops an incoming authorization it doesn't hold (`TriggerStore.replaceTriggers` /
+  `mergeTriggers`).
 - **Re-approval keeps the switch.** A trigger that was on when it needed re-approval runs again
   after the user approves the new version; one that was off stays off. Approval never changes the
   switch.
@@ -313,12 +314,15 @@ appears in diagnostics (which report trigger counts and kinds only).
   coordinator's counts carry no instance identity, so completeness (T11) rests on both using the
   same match. A process without a bundle identifier is neither counted nor checked (strict mode
   makes such a snapshot unknown anyway).
-- **UI texts.** "Doesn't run: this version can't check the running app's code yet." is still the
-  line for an authorized rule that isn't confirmed, and `triggers.identity.detail.verificationUnavailable`,
-  `howToReapprove`, `editor.onlyShowPopup` and `sectionNote` still say apps can't be checked; they
-  are now inaccurate and belong to the UI/localization slice, as do the translations of
-  `core.trigger.skip.applicationNotConfirmed` and `triggers.identity.approve.*`. The editor shows
-  `howToReapprove` only where no approval is offered, and its own approved note for an authorized
-  trigger.
+- **UI texts.** An authorized rule whose running code isn't confirmed says "Doesn't run: the
+  running app's code couldn't be confirmed as the approved version." and shows the Verification
+  unavailable label; one whose code is confirmed (or being checked) shows no label and tells its
+  last run (`TriggerController.identityBadge(of:)`, following the verifier's
+  `displayedVerdict`). `howToReapprove` is in the label's tooltip only for Needs re-approval and
+  Invalid; the editor shows it only where no approval is offered, and its own approved note for
+  an authorized trigger. The approved version's signing kind isn't shown to the user (open, D1).
+  The editor's saved trigger (`current`) is read when the sheet opens and after an approval; a
+  change made elsewhere meanwhile isn't reflected until it reopens (D3, display only: Save reads
+  the saved trigger again, and the store and the coordinator decide what runs).
 - **Equality.** The F2 stamp compares whole rules, so even an equal re-approval of the same binding
   cancels pending firings. This is intended (fail closed), not a defect.

@@ -47,16 +47,61 @@ struct TriggerIdentityStatusTests {
         }
     }
 
+    @Test func anAuthorizedTriggerShowsItsLabelOnlyWhileItsCodeIsntConfirmed() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("dg-trigger-badge-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let groups = GroupStore(persistence: JSONFileGroupPersistence(fileURL: dir.appendingPathComponent("groups.json")), saveDelay: .zero)
+        let group = groups.addGroup(named: "Fixture")
+        let store = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        let state = TriggerStateStore(persistence: JSONFileTriggerStatePersistence(fileURL: dir.appendingPathComponent("state.json")), saveDelay: .zero)
+        let controller = TriggerController(groups: groups, store: store, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
+        let verifier = SetVerdictVerifier()
+        controller.coordinator.applicationIdentityVerifier = verifier
+
+        func trigger(_ identity: ApplicationIdentityAuthorization, action: TriggerAction = .openAll) -> GroupTrigger {
+            var trigger = GroupTrigger(groupID: group.id, event: .applicationPresence(bundleIdentifier: Self.bundle, edge: .starts), action: action, runMode: .immediately)
+            trigger.applicationIdentity = identity
+            return trigger
+        }
+
+        let authorized = trigger(.authorize(try binding()))
+        verifier.verdict = .verified
+        #expect(controller.identityBadge(of: authorized) == nil)
+        verifier.verdict = .pending
+        #expect(controller.identityBadge(of: authorized) == nil)
+        for verdict in [ApplicationIdentityVerdict.unavailable, .codeChanged, nil] {
+            verifier.verdict = verdict
+            #expect(controller.identityBadge(of: authorized) == .verificationUnavailable)
+        }
+        // The other states keep their label whatever the verifier says.
+        verifier.verdict = .verified
+        #expect(controller.identityBadge(of: trigger(.unverified, action: .showPopup)) == .unverified)
+        #expect(controller.identityBadge(of: trigger(.needsReapproval(try binding()))) == .needsReapproval)
+        #expect(controller.identityBadge(of: trigger(.invalid(.null))) == .invalid)
+        #expect(controller.identityBadge(of: GroupTrigger(groupID: group.id, event: .login, action: .start)) == nil)
+    }
+
     @Test func labelsAndTooltipsForEveryState() {
         let badges = TriggerApplicationIdentityState.allCases.map(L10n.Triggers.Identity.badge)
         #expect(badges == ["Unverified", "Needs re-approval", "Invalid", "Verification unavailable"])
         for state in TriggerApplicationIdentityState.allCases {
             let help = TriggerIdentityLabel.help(for: state)
             #expect(help.hasPrefix(L10n.Triggers.Identity.detail(state)))
-            // Only where nothing runs does it tell how to use the trigger now; never a button.
-            #expect(help.contains(L10n.Triggers.Identity.howToReapprove) == state.blocksEveryAction)
+            // Only where the trigger has to be approved again does it tell how; never a button. An
+            // authorized one whose code can't be confirmed has nothing to approve.
+            #expect(help.contains(L10n.Triggers.Identity.howToReapprove) == [.needsReapproval, .invalid].contains(state))
             #expect((L10n.Triggers.Identity.statusLine(state) == nil) == !state.blocksEveryAction)
         }
         #expect(L10n.Triggers.Identity.actionNeedsVerifiedApp("Start") == "Start (needs an approved app)")
     }
+}
+
+/// A verifier whose last answer a test sets (`nil`: never checked).
+@MainActor
+private final class SetVerdictVerifier: ApplicationIdentityVerifying {
+    var verdict: ApplicationIdentityVerdict?
+
+    func verdict(for binding: ApplicationIdentityBinding) -> ApplicationIdentityVerdict { verdict ?? .unavailable }
+    func displayedVerdict(for binding: ApplicationIdentityBinding) -> ApplicationIdentityVerdict? { verdict }
 }

@@ -309,6 +309,15 @@ final class TriggerController: ObservableObject {
         return TriggerDescriptions.lastRun(state.entry(for: trigger.id), groupName: name, now: Date(), calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
     }
 
+    /// The approval label under an application trigger's status line (`TriggerIdentityLabel`), or
+    /// `nil` for none: not for other events or a newer version's trigger, and not for an authorized
+    /// one whose running code is confirmed or being checked (its status line tells its last run).
+    func identityBadge(of trigger: GroupTrigger) -> TriggerApplicationIdentityState? {
+        guard !trigger.isFromNewerVersion, let state = trigger.applicationIdentityState else { return nil }
+        if state == .verificationUnavailable, !coordinator.applicationIdentityIsUnconfirmed(trigger) { return nil }
+        return state
+    }
+
     /// Whether an authorized application trigger's line says its code can't be checked: not when
     /// its code is confirmed or being checked, and not when its last outcome already tells that it
     /// was skipped for this reason.

@@ -220,8 +220,9 @@ Still open (unchanged unless noted):
   keeps running on its detached task until Security returns.
 - **A1 file edits:** a crafted `authorized` record for the genuine app's `cdhash` in the local
   `triggers.json` is still accepted while that code runs (out of scope, §2).
-- **UI texts:** several older texts still say this version can't check an app's code (separate
-  change); the approval's own texts are English only.
+- **No wake-up:** as for the verifier, watches are polled only when the coordinator asks.
+- **Signing kind:** the approved version's signing kind is recorded but not shown to the user
+  (D1); the UI texts otherwise describe the approval as the app does it, and are translated.
 
 ## 4. Review findings at `c7a9f57`
 

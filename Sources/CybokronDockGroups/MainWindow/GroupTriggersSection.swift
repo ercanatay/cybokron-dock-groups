@@ -132,7 +132,7 @@ struct TriggerRow: View {
     var body: some View {
         let summary = TriggerController.summary(of: trigger)
         let status = triggers.statusLine(of: trigger)
-        let identity = trigger.isFromNewerVersion ? nil : trigger.applicationIdentityState
+        let identity = triggers.identityBadge(of: trigger)
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Toggle(isOn: Binding(
                 get: { trigger.isEnabled && trigger.isRunnable },
@@ -197,8 +197,8 @@ struct TriggerRow: View {
 }
 
 /// An application trigger's approval under its status line: Unverified, Needs re-approval, Invalid
-/// or Verification unavailable, with what it means (and, where nothing runs, how to use it now) as
-/// its tooltip. Information only: an app is approved in the trigger's editor, so it offers no button.
+/// or Verification unavailable (none for an authorized one whose code is confirmed), with what it
+/// means (and, where it must be approved again, how) as its tooltip. Information only: an app is approved in the trigger's editor, so it offers no button.
 struct TriggerIdentityLabel: View {
     let state: TriggerApplicationIdentityState
 
@@ -212,8 +212,13 @@ struct TriggerIdentityLabel: View {
             .help(Self.help(for: state))
     }
 
+    /// What `state` means; for one waiting for approval or unreadable, also how to approve it
+    /// again (an authorized trigger whose code can't be confirmed has nothing to approve).
     static func help(for state: TriggerApplicationIdentityState) -> String {
-        state.blocksEveryAction ? "\(Texts.detail(state)) \(Texts.howToReapprove)" : Texts.detail(state)
+        switch state {
+        case .needsReapproval, .invalid: return "\(Texts.detail(state)) \(Texts.howToReapprove)"
+        case .unverified, .verificationUnavailable: return Texts.detail(state)
+        }
     }
 
     static func symbol(for state: TriggerApplicationIdentityState) -> String {
