@@ -1,10 +1,11 @@
 # Application presence triggers: local identity authorization
 
 Status: implemented in `DockGroupsCore` on the unreleased branch `codex/app-presence-code-hash`; the
-running-code verifier is connected in the app (`codex/app-presence-identity-verifier`). There is
-still no flow that creates an `authorized` record, and localization beyond English is pending. This
-document describes the model, the persisted format, the fail-closed gates, the verifier, migration
-and privacy, and what remains open. It implements decisions K1-K3 below against the release
+running-code verifier is connected in the app (`codex/app-presence-identity-verifier`), and the
+editor's approval creates `authorized` records (`codex/app-presence-identity-approval`).
+Localization beyond English is pending, and several older UI texts still say this version can't
+check an app's code (a separate change). This document describes the model, the persisted format,
+the fail-closed gates, the verifier, the approval, migration and privacy, and what remains open. It implements decisions K1-K3 below against the release
 contract in `app-presence-threat-model.md` §7.
 
 ## Decisions this implements
@@ -36,7 +37,8 @@ contract in `app-presence-threat-model.md` §7.
   | `invalid(raw)` | A record that can't be read | Nothing; the record is kept and written back unchanged |
 
 - Transitions: `authorize(_:)` is the only way to `authorized` and must be fed from a verified,
-  user-chosen running instance (no caller exists yet). `requiringReapproval()` moves `authorized` to
+  user-chosen running instance; its only caller is `TriggerStore.setApplicationIdentityAuthorization`
+  (see Approval). `requiringReapproval()` moves `authorized` to
   `needsReapproval` and leaves every other state alone. `reapproved(with:)` returns `authorized` only
   for a binding with the same identifier (another app is a new choice, not a re-approval).
 - `GroupTrigger.applicationIdentity` (internal, optional) holds the record for application-presence
@@ -176,6 +178,74 @@ code"; never a hash, path, app name or PID.
 | `authorized` | verifier never checked it / default verifier | no | none | — (status line: verification unavailable) |
 | `needsReapproval`, `invalid` | not asked | no | none | — |
 
+## Approval
+
+`TriggerApplicationApprover` (`Sources/DockGroupsCore/Triggers/ApplicationIdentityApproval.swift`)
+is the only producer of `authorized` records. The editor offers **Approve This App** for a saved,
+`unverified` application trigger and **Approve the New Version** for one that `needsReapproval`,
+as long as the app chosen in the editor is still the trigger's app (a new trigger, or one whose app
+was changed, says "save the trigger first"). The click is the user's explicit approval; nothing else
+starts an approval. `TriggerController.approveApplication(ofTrigger:)` runs it in a task the editor
+cancels with Cancel or when it closes.
+
+Steps, all on the main actor except the reading:
+
+1. The stored trigger must be an application trigger that is `unverified` or `needsReapproval`
+   (`GroupTrigger.canApproveApplication`); otherwise `notApprovable`.
+2. The instances under the identifier are listed (`RunningApplicationIdentityVerifier.runningInstances`,
+   the verifier's own match). None: `notRunning`, nothing is read or saved. The list can't be read:
+   `checkFailed`. More than 16: `tooManyInstances`.
+3. An exec/exit watch is registered on every instance **first** and polled once (anything pending:
+   `appChanged`; registration failure: `checkFailed`).
+4. Every instance is read off the main actor by `ApplicationRunningIdentityReader` (fresh `SecCode`
+   by PID, validity, signing information of its code: identifier, `cdhash`, signature kind from the
+   ad hoc flag and the Apple / App Store / Developer ID anchor requirements), and the reading is
+   then confirmed with `ApplicationRunningCodeVerifier.compare`, the requirement the verifier itself
+   uses. Each reading is bounded (2 s) and cancellable through `BoundedSecurityCall`, the same
+   bounded call the verifier's check now uses; the synchronous Security call itself can't be
+   interrupted.
+5. Back on the main actor, in this order: cancelled → `cancelled`; any time-out → `timedOut`; a
+   watch that reported anything, or a different instance list → `appChanged`; a confirmation that
+   disagreed with the reading → `appChanged`; a signing identifier that isn't exactly the trigger's
+   bundle identifier (case-sensitive) → `identifierMismatch`; unsigned or a signature without a
+   `SignatureKind` (e.g. a development signature) → `unsupportedSignature`; any Security failure →
+   `checkFailed`; instances with different code or signature kind → `differentVersionsRunning`.
+6. Only one exact identity for every instance, with the stored trigger still equal to the one the
+   approval started from (`triggerChanged` otherwise), becomes a binding (`authorizedAt` = now),
+   wrapped in `VerifiedApplicationApproval`, whose initializer is `fileprivate` to the approver's
+   file.
+7. `TriggerStore.setApplicationIdentityAuthorization(_:forTrigger:replacing:)` (internal) takes only
+   that value. It changes nothing unless the stored trigger is still exactly the expected one and
+   the binding names its bundle identifier; `unverified` becomes `authorize(binding)`,
+   `needsReapproval` becomes `reapproved(with:)` (same identifier only); `authorized`, `invalid` and
+   other events are refused. It writes the file **before** showing the change; a failed write (or
+   suspended saving) changes nothing (`notSaved`). It never touches `isEnabled`.
+
+Imports, restores and merges don't call it and still reset every record to `unverified`
+(`droppingImportedIdentity`, unchanged); `add`/`update` only carry the record they are given, and
+the editor builds it from the trigger as stored at the moment of saving, so an approval (or a
+re-approval saved by the verifier) made while the editor is open is kept.
+
+| Situation at approval | Outcome | Saved |
+|-----------------------|---------|-------|
+| App not running | `notRunning` ("open the app, then approve it") | nothing |
+| One or more instances, all the same exact code, Apple / App Store / Developer ID / ad hoc | `approved` | `authorized(binding)`; switch unchanged |
+| Same, trigger `needsReapproval` | `approved` | `authorized(new binding)`; old hash no longer accepted; switch unchanged |
+| Exec, exit, a new or a missing instance between the watch and the end of the reading | `appChanged` | nothing |
+| Reading and confirmation disagree | `appChanged` | nothing |
+| Signing identifier ≠ bundle identifier (exact) | `identifierMismatch` | nothing |
+| Unsigned / development signature | `unsupportedSignature` | nothing |
+| Different code among the instances | `differentVersionsRunning` | nothing |
+| Time-out (2 s) / Cancel / editor closed | `timedOut` / `cancelled` | nothing |
+| Security error, watch can't be registered, list unreadable | `checkFailed` | nothing |
+| Trigger edited, removed or re-saved meanwhile | `triggerChanged` | nothing |
+| File can't be written | `notSaved` | nothing |
+
+After approval the trigger is `authorized`: the editor offers every action, and the coordinator's
+gates (above) still require the verifier's `verified` verdict before anything runs. Verification
+alone authorizes nothing (the verifier never writes), and approval alone runs nothing (the
+verifier still has to confirm the running code). Nothing in the approval is logged.
+
 ## Migration and backward compatibility
 
 - Rules without a record (earlier builds of this branch) load as `unverified` and **disabled**. Nothing
@@ -189,21 +259,31 @@ code"; never a hash, path, app name or PID.
 - An earlier build of this branch ignores the key, would run the rule with bundle-ID matching and all
   actions, and drops the key when it saves; on the next launch of this version the rule loads as
   legacy, i.e. disabled. Released versions don't know application-presence events at all.
-- Public API: only `TriggerSkipReason.applicationNotVerified` is new. `GroupTrigger`'s public
+- Public API: `TriggerSkipReason.applicationNotVerified`, `TriggerApplicationApprover`,
+  `TriggerApplicationApprovalOutcome` / `Failure` and `GroupTrigger.canApproveApplication` are new. `GroupTrigger`'s public
   initializer and coding keys are unchanged apart from the optional key.
 
 ## Privacy
 
-The verifier logs an abstract failure code only. The coordinator's existing log lines name trigger and group identifiers and actions
+The verifier logs an abstract failure code only; the approval logs nothing, and its outcomes name
+no path, PID, app name or hash. The coordinator's existing log lines name trigger and group identifiers and actions
 only. The record stores the selected app's signing identifier, `cdhash`, signature kind and a time in
 the local `triggers.json`, which is the binding itself; it is never exported in backups and never
 appears in diagnostics (which report trigger counts and kinds only).
 
 ## Remaining risks and open work
 
-- **No binding can be created yet.** There is no verified-selection flow, so `authorized` records
-  exist only in tests or in a hand-edited local file. The release contract §7(a) items 1, 3 and 5
-  are still open; item 2 is implemented for the instances the verifier lists (see the threat model).
+- **Approval is PID based too.** The reading and its confirmation look the process up by PID, after
+  the watch is registered: a PID recycled or an exec before registration is read as if it were the
+  listed instance (T5, T6). The user approves "the code of this app running now", not a specific
+  window or the bundle shown in the picker; the editor shows the bundle identifier only, not the
+  version that was read (T9 partly).
+- **Release contract.** §7(a) item 1 is now implemented for the approval itself (local, explicit,
+  running, verified, unique code, outside every import path); items 3 and 5 are still open; item 2
+  is implemented for the instances the verifier lists (see the threat model).
+- **Architectures.** The binding records the `cdhash` of the running instance's code only; the
+  same app running under another architecture (or Rosetta) has another `cdhash` and makes the rule
+  wait for re-approval (T15, availability).
 - **PID reuse and exec before the watch.** Registration and the Security lookup are both PID based:
   a PID recycled before the watch was registered, or an exec before registration, is checked and
   watched as if it were the listed instance (T5, T6 partly).
@@ -225,16 +305,20 @@ appears in diagnostics (which report trigger counts and kinds only).
   enabled (Show Popup only) or write an `authorized` record. The latter does nothing with the
   production verifier; once a real verifier exists, a crafted record naming the genuine app's
   `cdhash` would be accepted. This is outside the defendable scope (§2).
-- **Re-approval flow.** `needsReapproval` is now saved automatically, but there is still no way to
-  approve the new code; the rule stays off until it is removed and added again.
+- **Re-approval keeps the switch.** A trigger that was on when it needed re-approval runs again
+  after the user approves the new version; one that was off stays off. Approval never changes the
+  switch.
 - **The verifier lists instances separately from the snapshot.** Within one main-actor turn the
   verifier and the presence source read the same `NSWorkspace.runningApplications`, but the
   coordinator's counts carry no instance identity, so completeness (T11) rests on both using the
   same match. A process without a bundle identifier is neither counted nor checked (strict mode
   makes such a snapshot unknown anyway).
 - **UI texts.** "Doesn't run: this version can't check the running app's code yet." is still the
-  line for an authorized rule that isn't confirmed; it is now inaccurate (this version checks) and
-  belongs to the UI/localization slice, as do the translations of
-  `core.trigger.skip.applicationNotConfirmed`.
+  line for an authorized rule that isn't confirmed, and `triggers.identity.detail.verificationUnavailable`,
+  `howToReapprove`, `editor.onlyShowPopup` and `sectionNote` still say apps can't be checked; they
+  are now inaccurate and belong to the UI/localization slice, as do the translations of
+  `core.trigger.skip.applicationNotConfirmed` and `triggers.identity.approve.*`. The editor shows
+  `howToReapprove` only where no approval is offered, and its own approved note for an authorized
+  trigger.
 - **Equality.** The F2 stamp compares whole rules, so even an equal re-approval of the same binding
   cancels pending firings. This is intended (fail closed), not a defect.

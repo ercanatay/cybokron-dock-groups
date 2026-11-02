@@ -1895,6 +1895,67 @@ extension L10n {
             static var sectionNote: String {
                 tr("triggers.identity.sectionNote", "In this version, application triggers match apps by bundle identifier only: they start turned off and can only show the popup. Checking an app's code isn't available yet.")
             }
+
+            /// The editor's way to approve an application trigger's app (`TriggerApplicationApprover`).
+            enum Approve {
+                static var button: String {
+                    tr("triggers.identity.approve.button", "Approve This App")
+                }
+
+                static var newVersionButton: String {
+                    tr("triggers.identity.approve.newVersionButton", "Approve the New Version")
+                }
+
+                static var hint: String {
+                    tr("triggers.identity.approve.hint", "Approving checks the code of this app as it runs now. The trigger can then run every action, but only while that exact version runs; after an update it waits to be approved again. Approving doesn't turn the trigger on.")
+                }
+
+                static var saveFirst: String {
+                    tr("triggers.identity.approve.saveFirst", "To approve this app, save the trigger first, then edit it.")
+                }
+
+                static var checking: String {
+                    tr("triggers.identity.approve.checking", "Checking the app's code…")
+                }
+
+                /// Under the action pop-up of an approved trigger.
+                static var approved: String {
+                    tr("triggers.identity.approve.approved", "Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again.")
+                }
+
+                static var notRunning: String {
+                    tr("triggers.identity.approve.notRunning", "Open the app, then approve it: only a running app can be checked. Nothing was approved.")
+                }
+
+                static func failure(_ failure: TriggerApplicationApprovalFailure) -> String {
+                    switch failure {
+                    case .notApprovable:
+                        return tr("triggers.identity.approve.failure.notApprovable", "This trigger can't be approved now. Nothing was approved.")
+                    case .alreadyApproving:
+                        return tr("triggers.identity.approve.failure.alreadyApproving", "An app is already being checked. Try again in a moment.")
+                    case .triggerChanged:
+                        return tr("triggers.identity.approve.failure.triggerChanged", "The trigger changed while its app was being checked. Nothing was approved.")
+                    case .identifierMismatch:
+                        return tr("triggers.identity.approve.failure.identifierMismatch", "The running app's code signature doesn't name this app's bundle identifier exactly, so it can't be approved. Nothing was approved.")
+                    case .unsupportedSignature:
+                        return tr("triggers.identity.approve.failure.unsupportedSignature", "This app isn't signed in a way that can be approved (it's unsigned or has a development signature). Nothing was approved.")
+                    case .differentVersionsRunning:
+                        return tr("triggers.identity.approve.failure.differentVersionsRunning", "Different versions of this app are running. Quit all but one, then try again. Nothing was approved.")
+                    case .tooManyInstances:
+                        return tr("triggers.identity.approve.failure.tooManyInstances", "Too many copies of this app are running. Quit some, then try again. Nothing was approved.")
+                    case .appChanged:
+                        return tr("triggers.identity.approve.failure.appChanged", "The app quit, opened again or changed while it was being checked. Nothing was approved; try again.")
+                    case .timedOut:
+                        return tr("triggers.identity.approve.failure.timedOut", "Checking the app's code took too long. Nothing was approved; try again.")
+                    case .cancelled:
+                        return tr("triggers.identity.approve.failure.cancelled", "Checking stopped. Nothing was approved.")
+                    case .checkFailed:
+                        return tr("triggers.identity.approve.failure.checkFailed", "The app's code couldn't be checked. Nothing was approved.")
+                    case .notSaved:
+                        return tr("triggers.identity.approve.failure.notSaved", "The approval couldn't be saved. Nothing was approved.")
+                    }
+                }
+            }
         }
 
         enum Notice {

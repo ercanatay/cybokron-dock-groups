@@ -70,25 +70,16 @@ struct ApplicationRunningCodeCheck: Sendable {
 
     func check(pid: Int32, identifier: String, codeHash: ApplicationCodeHash) async -> ApplicationCodeCheckResult {
         guard pid > 0, TriggerApplicationIdentifier(identifier) != nil, timeout > .zero else { return .unavailable(.invalidInput) }
-        guard !Task.isCancelled else { return .unavailable(.cancelled) }
-        let outcome = CheckOutcome()
         let compare = compare
-        // Not cancellable: the Security call runs to its end; only the first answer counts.
-        Task.detached(priority: .userInitiated) {
-            outcome.decide(Self.result(of: compare(pid, codeHash, identifier)))
+        return await BoundedSecurityCall.run(
+            timeout: timeout,
+            sleep: sleep,
+            timedOut: .unavailable(.timedOut),
+            cancelled: .unavailable(.cancelled),
+            misuse: .unavailable(.invalidInput)
+        ) {
+            Self.result(of: compare(pid, codeHash, identifier))
         }
-        let sleep = sleep, timeout = timeout
-        let timer = Task.detached {
-            do { try await sleep(timeout) } catch { return }
-            outcome.decide(.unavailable(.timedOut))
-        }
-        let result = await withTaskCancellationHandler {
-            await withCheckedContinuation { outcome.wait($0) }
-        } onCancel: {
-            outcome.decide(.unavailable(.cancelled))
-        }
-        timer.cancel()
-        return result
     }
 
     private static func result(of comparison: ApplicationRunningCodeVerifier.Comparison) -> ApplicationCodeCheckResult {
@@ -100,19 +91,59 @@ struct ApplicationRunningCodeCheck: Sendable {
     }
 }
 
-/// The first of the check's answer, its timeout and its cancellation; the others are ignored.
-private final class CheckOutcome: Sendable {
+/// A synchronous Security call run on a detached task, waited for at most `timeout` and
+/// cancellable. The call itself can't be interrupted: a timeout or a cancellation only stops
+/// waiting, the call runs to its end and its answer is ignored.
+enum BoundedSecurityCall {
+    typealias Sleep = @Sendable (Duration) async throws -> Void
+
+    static func run<Value: Sendable>(
+        timeout: Duration,
+        sleep: @escaping Sleep,
+        timedOut: Value,
+        cancelled: Value,
+        misuse: Value,
+        _ call: @escaping @Sendable () -> Value
+    ) async -> Value {
+        guard !Task.isCancelled else { return cancelled }
+        let outcome = FirstAnswer<Value>(misuse: misuse)
+        // Not cancellable: the Security call runs to its end; only the first answer counts.
+        Task.detached(priority: .userInitiated) {
+            outcome.decide(call())
+        }
+        let timer = Task.detached {
+            do { try await sleep(timeout) } catch { return }
+            outcome.decide(timedOut)
+        }
+        let result = await withTaskCancellationHandler {
+            await withCheckedContinuation { outcome.wait($0) }
+        } onCancel: {
+            outcome.decide(cancelled)
+        }
+        timer.cancel()
+        return result
+    }
+}
+
+/// The first of a call's answer, its timeout and its cancellation; the others are ignored.
+private final class FirstAnswer<Value: Sendable>: Sendable {
     private enum State: Sendable {
         case empty
-        case waiting(CheckedContinuation<ApplicationCodeCheckResult, Never>)
-        case decided(ApplicationCodeCheckResult)
+        case waiting(CheckedContinuation<Value, Never>)
+        case decided(Value)
         case done
     }
 
     private let state = OSAllocatedUnfairLock<State>(initialState: .empty)
+    private let misuse: Value
 
-    func wait(_ continuation: CheckedContinuation<ApplicationCodeCheckResult, Never>) {
-        let decided: ApplicationCodeCheckResult? = state.withLock { state in
+    init(misuse: Value) {
+        self.misuse = misuse
+    }
+
+    func wait(_ continuation: CheckedContinuation<Value, Never>) {
+        let misuse = misuse
+        let decided: Value? = state.withLock { state in
             switch state {
             case .empty:
                 state = .waiting(continuation)
@@ -122,14 +153,14 @@ private final class CheckOutcome: Sendable {
                 return result
             case .waiting, .done:
                 // Waited on once only.
-                return .unavailable(.invalidInput)
+                return misuse
             }
         }
         if let decided { continuation.resume(returning: decided) }
     }
 
-    func decide(_ result: ApplicationCodeCheckResult) {
-        let waiting: CheckedContinuation<ApplicationCodeCheckResult, Never>? = state.withLock { state in
+    func decide(_ result: Value) {
+        let waiting: CheckedContinuation<Value, Never>? = state.withLock { state in
             switch state {
             case .empty:
                 state = .decided(result)

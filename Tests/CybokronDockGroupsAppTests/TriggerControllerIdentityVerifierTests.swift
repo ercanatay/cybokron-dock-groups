@@ -85,4 +85,32 @@ struct TriggerControllerIdentityVerifierTests {
         #expect(f.controller.statusLine(of: f.trigger) == "Not run yet.")
         #expect(f.store.trigger(withID: f.trigger.id)?.applicationIdentityStatus == .authorized)
     }
+
+    @Test func approvingAnUnverifiedTriggerSavesItToTheFile() async throws {
+        let f = try fixture()
+        defer { try? FileManager.default.removeItem(at: f.dir) }
+        var unverified = GroupTrigger(groupID: f.trigger.groupID, event: .applicationPresence(bundleIdentifier: Self.bundle, edge: .starts), action: .showPopup, isEnabled: false)
+        unverified.applicationIdentity = .unverified
+        _ = f.store.add(unverified)
+        #expect(f.store.trigger(withID: unverified.id)?.canApproveApplication == true)
+        let hash = try #require(ApplicationCodeHash(hex: String(repeating: "cd", count: 20)))
+        var running: [Int32] = []
+        f.controller.applicationApprover = TriggerApplicationApprover(
+            store: f.store,
+            instances: { _ in running },
+            makeWatch: { _ in QuietProcessWatch() },
+            read: { _, _ in .identity(ApplicationRunningIdentity(codeHash: hash, signature: .appStore)) }
+        )
+        // Not running: nothing saved.
+        #expect(await f.controller.approveApplication(ofTrigger: unverified.id) == .notRunning)
+        #expect(try JSONFileTriggerPersistence(fileURL: f.triggersURL).loadTriggers().first { $0.id == unverified.id }?.applicationIdentity == .unverified)
+        running = [42]
+        #expect(await f.controller.approveApplication(ofTrigger: unverified.id) == .approved)
+        let saved = try #require(try JSONFileTriggerPersistence(fileURL: f.triggersURL).loadTriggers().first { $0.id == unverified.id })
+        #expect(saved.applicationIdentityStatus == .authorized)
+        #expect(saved.applicationIdentity?.binding?.codeHash == hash)
+        #expect(saved.applicationIdentity?.binding?.signature == .appStore)
+        #expect(!saved.isEnabled)
+        #expect(f.store.trigger(withID: unverified.id)?.canApproveApplication == false)
+    }
 }

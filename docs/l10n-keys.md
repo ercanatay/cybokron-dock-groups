@@ -1471,7 +1471,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
 | `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |
 
-## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.`, `core.trigger.skip.applicationNotVerified`, `core.trigger.skip.applicationNotConfirmed`)
+## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes and approval, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.` (including `triggers.identity.approve.`), `core.trigger.skip.applicationNotVerified`, `core.trigger.skip.applicationNotConfirmed`)
 
 An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
 only Show Popup runs. *Needs re-approval*, *Invalid* and *Verification unavailable* run nothing. This
@@ -1480,6 +1480,10 @@ version can't check an app's code, so the texts say so rather than offer a butto
 lowercase. So does `core.trigger.skip.applicationNotConfirmed`, recorded when an approved trigger's
 event came but the app's running code couldn't be confirmed in time (the check was still running,
 failed or timed out, or the app changed), so nothing ran.
+The `triggers.identity.approve.` keys are the editor's Approve This App / Approve the New Version
+button, its hint and the outcome of an approval; a failure says that nothing was approved.
+They are newer than the texts above that still say this version can't check an app's code; those
+are corrected in a separate change.
 
 | Key | English |
 | --- | --- |
@@ -1501,3 +1505,22 @@ failed or timed out, or the app changed), so nothing ran.
 | `triggers.identity.editor.onlyShowPopup` | This app is matched by its bundle identifier only (unverified), so only Show Popup can run. Other actions need a verified app, and this version can't verify apps yet. |
 | `triggers.identity.editor.chooseShowPopup` | Choose Show Popup to save: other actions don't run for an unverified app. |
 | `triggers.identity.sectionNote` | In this version, application triggers match apps by bundle identifier only: they start turned off and can only show the popup. Checking an app's code isn't available yet. |
+| `triggers.identity.approve.button` | Approve This App |
+| `triggers.identity.approve.newVersionButton` | Approve the New Version |
+| `triggers.identity.approve.hint` | Approving checks the code of this app as it runs now. The trigger can then run every action, but only while that exact version runs; after an update it waits to be approved again. Approving doesn't turn the trigger on. |
+| `triggers.identity.approve.saveFirst` | To approve this app, save the trigger first, then edit it. |
+| `triggers.identity.approve.checking` | Checking the app's code… |
+| `triggers.identity.approve.approved` | Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again. |
+| `triggers.identity.approve.notRunning` | Open the app, then approve it: only a running app can be checked. Nothing was approved. |
+| `triggers.identity.approve.failure.notApprovable` | This trigger can't be approved now. Nothing was approved. |
+| `triggers.identity.approve.failure.alreadyApproving` | An app is already being checked. Try again in a moment. |
+| `triggers.identity.approve.failure.triggerChanged` | The trigger changed while its app was being checked. Nothing was approved. |
+| `triggers.identity.approve.failure.identifierMismatch` | The running app's code signature doesn't name this app's bundle identifier exactly, so it can't be approved. Nothing was approved. |
+| `triggers.identity.approve.failure.unsupportedSignature` | This app isn't signed in a way that can be approved (it's unsigned or has a development signature). Nothing was approved. |
+| `triggers.identity.approve.failure.differentVersionsRunning` | Different versions of this app are running. Quit all but one, then try again. Nothing was approved. |
+| `triggers.identity.approve.failure.tooManyInstances` | Too many copies of this app are running. Quit some, then try again. Nothing was approved. |
+| `triggers.identity.approve.failure.appChanged` | The app quit, opened again or changed while it was being checked. Nothing was approved; try again. |
+| `triggers.identity.approve.failure.timedOut` | Checking the app's code took too long. Nothing was approved; try again. |
+| `triggers.identity.approve.failure.cancelled` | Checking stopped. Nothing was approved. |
+| `triggers.identity.approve.failure.checkFailed` | The app's code couldn't be checked. Nothing was approved. |
+| `triggers.identity.approve.failure.notSaved` | The approval couldn't be saved. Nothing was approved. |

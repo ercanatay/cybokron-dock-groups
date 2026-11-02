@@ -6,8 +6,9 @@ Evidence and experiments are in `app-presence-identity-security.md`,
 `app-presence-macho-slices.md`, `app-presence-running-binding-candidate.md` and
 `app-presence-watch-protocol-draft.md`; behavior is specified in `app-presence-trigger-spec.md`.
 File references are `path:line` at the reviewed commit. Later changes are marked *after review*;
-the local authorization model and the running-code verifier added afterwards are described in
-`app-presence-identity-authorization.md`, and their effect on each threat is listed in §3.1 and §3.2.
+the local authorization model, the running-code verifier and the user's approval added afterwards
+are described in `app-presence-identity-authorization.md`, and their effect on each threat is listed
+in §3.1, §3.2 and §3.3.
 
 ## 1. What actually runs today
 
@@ -174,6 +175,54 @@ Still open:
 - **Availability:** a look-alike (or a case variant of the bundle identifier, or a legitimate update)
   under the identifier makes the rule wait for re-approval; there is no re-approval flow yet.
 
+### 3.3 After the user's approval (after review)
+
+`TriggerApplicationApprover` (see `app-presence-identity-authorization.md`, "Approval") creates the
+binding. Remarks in §3.1 and §3.2 that no binding or re-approval flow exists describe the state
+before it. As above, "closed" means a gate in code and tests (fake instances, watches and readings,
+plus one real Security test reading two ad hoc fixtures); it is not a race-freedom or
+publisher-trust claim.
+
+Closed or narrowed:
+
+- **T1 (look-alike fires a rule):** closed for actions other than Show Popup in the sense the
+  contract asks: every `authorized` record now comes from an explicit click on this Mac, on a
+  saved trigger, after every running instance under the identifier was watched, read (identifier,
+  exact `cdhash`, signature kind) and confirmed with the verifier's own requirement, all instances
+  agreeing on one exact code, with no watch event and an unchanged instance list. A signing
+  identifier that isn't exactly the bundle identifier, unsigned or development-signed code, mixed
+  versions, a time-out, a cancellation or any Security failure saves nothing. The verifier still has
+  to answer `verified` before the approved rule acts, and A1 can still launch the genuine app.
+  An `unverified` rule stays Show Popup only until approved.
+- **T14 (updates):** closed as "detect, wait, re-approve explicitly": `needsReapproval` (saved by
+  the verifier) is left only by Approve the New Version, which binds the new exact `cdhash` through
+  `reapproved(with:)` (same identifier only); the old hash is no longer accepted, nothing widens to a
+  team or publisher, and the trigger's switch isn't changed.
+- **T2 (path replaced before binding):** narrowed by construction: the binding is read from the
+  running process, never from the picked bundle's path or a static hash.
+- **T9 (confirmation race):** narrowed: the approval is refused when the trigger changed, an
+  instance appeared, left, exec'd or changed code between registration and the end of the reading,
+  or the reading and its confirmation disagree. The user confirms an app, not the exact version that
+  was read (the editor doesn't show it).
+- **T16 (imports):** unchanged and re-tested: imports, restores and merges never reach the store's
+  approval API (`TriggerStore.setApplicationIdentityAuthorization` takes only a value whose
+  initializer is private to the approver) and still arrive `unverified` and off.
+- **§7(c) item 7:** the approval logs nothing and its outcomes are abstract.
+
+Still open (unchanged unless noted):
+
+- **T5 / T6:** the reading and confirmation are PID based after the watch is registered; a PID
+  recycled, or an exec, before registration is read as the listed instance.
+- **T10:** check to action stays non-atomic.
+- **T15:** only the running instance's `cdhash` is bound; another architecture or Rosetta waits for
+  re-approval. No slice set is recorded.
+- **The Security call can't be cancelled:** as for the verifier, a timed-out or cancelled reading
+  keeps running on its detached task until Security returns.
+- **A1 file edits:** a crafted `authorized` record for the genuine app's `cdhash` in the local
+  `triggers.json` is still accepted while that code runs (out of scope, §2).
+- **UI texts:** several older texts still say this version can't check an app's code (separate
+  change); the approval's own texts are English only.
+
 ## 4. Review findings at `c7a9f57`
 
 Production path:
@@ -276,6 +325,8 @@ Experimental helpers:
 
 1. Every rule has a binding established locally from an explicitly selected, running, uniquely
    verifiable instance, confirmed by the user, and stored outside any import path.
+   *After review:* the approval does this for the rules the user approves (§3.3); `unverified`
+   rules remain possible (K1).
 2. Every counted instance passes a fresh dynamic validity and `identifier` plus exact `cdhash` check
    against that binding, and has a successfully registered exec/exit watch.
 3. A close is emitted only from a complete, fully verified snapshot whose count is zero.
@@ -300,13 +351,14 @@ observed", not race freedom, not publisher trust and not protection from A1.
 
 1. No identity fact (bundle ID, path, PID, imported hash or requirement text) alone authorizes a rule.
    *After review:* enforced for actions other than Show Popup (an `authorized` record also needs a
-   `verified` verdict); the binding flow itself does not exist yet.
+   `verified` verdict); `authorized` records come only from the user's approval of a verified
+   running instance (§3.3).
 2. Unknown is never converted to zero: no close without a verified, complete count.
 3. Imported, restored and legacy application rules arrive disabled and unbound; re-selection is local.
    *After review:* implemented (authorization reset to `unverified`, rules off).
 4. Different code under the selected identifier makes the rule wait; it never re-binds or widens.
    *After review:* implemented: the verifier's `codeChanged` is saved as `needsReapproval` and the
-   rule stops; there is no re-approval flow yet.
+   rule stops until the user approves the new version (§3.3).
 5. Exec, exit, watch failure, uncertainty, rule or session change invalidates pending and notice-stage
    presence firings; already-started actions are not undone and nothing is replayed.
 6. Verification runs off the main thread with bounded work, cancellation and a timeout; timeout is

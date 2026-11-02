@@ -38,6 +38,9 @@ struct LocalizationTests {
     static let awaitingTranslation: [String] = [
         // An application trigger's approval (docs/l10n-keys.md, "an application trigger's approval").
         "triggers.identity.",
+        // The editor's approval of an application trigger's app (covered by the prefix above; listed
+        // so it isn't forgotten when that prefix is translated).
+        "triggers.identity.approve.",
         "core.trigger.skip.applicationNotVerified",
         // An authorized application trigger whose running code couldn't be confirmed.
         "core.trigger.skip.applicationNotConfirmed",

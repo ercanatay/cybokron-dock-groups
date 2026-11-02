@@ -82,7 +82,9 @@ enum ApplicationIdentityAuthorization: Hashable, Sendable {
     // MARK: - Transitions
 
     /// The only way to `authorized`: `binding` must come from a running instance the user explicitly
-    /// chose and whose code was verified on this Mac, never from a file, an import or a path.
+    /// chose and whose code was verified on this Mac, never from a file, an import or a path. Its
+    /// caller is `TriggerStore.setApplicationIdentityAuthorization`, fed by
+    /// `TriggerApplicationApprover`.
     static func authorize(_ binding: ApplicationIdentityBinding) -> ApplicationIdentityAuthorization {
         .authorized(binding)
     }

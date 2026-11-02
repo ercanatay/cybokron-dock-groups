@@ -416,6 +416,18 @@ final class TriggerController: ObservableObject {
         return network.name
     }
 
+    // MARK: - Approving an application trigger's app
+
+    /// Approves application triggers' apps for the editor; tests put in their own.
+    lazy var applicationApprover = TriggerApplicationApprover(store: store)
+
+    /// The editor's Approve button: checks the code of the trigger's app running now and, only when
+    /// it is verified, saves it as the trigger's approved code (`TriggerApplicationApprover`).
+    /// Cancelled with the calling task. Doesn't turn the trigger on.
+    func approveApplication(ofTrigger id: GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome {
+        await applicationApprover.approve(triggerID: id)
+    }
+
     /// Internal seam for tests to simulate application presence snapshots deterministically.
     internal func handleApplicationSnapshot(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
         guard generation == applicationObservationGeneration, applicationPresenceSource?.isObserving == true else { return }

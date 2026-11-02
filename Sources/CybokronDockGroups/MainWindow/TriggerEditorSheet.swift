@@ -22,9 +22,15 @@ import SwiftUI
 /// An application trigger matched by bundle identifier only (unverified: a new one, or one whose
 /// app was changed) can only Show the Popup: the other actions are shown disabled with the reason,
 /// choosing such an app switches to Show the Popup, and an older trigger with another action can't
-/// be saved until Show the Popup is chosen. A trigger waiting for re-approval, with an unreadable
-/// approval or one this version can't verify says so and how to use it now; there's no button to
-/// approve, since this version can't check an app's code.
+/// be saved until Show the Popup is chosen. A trigger waiting for re-approval or with an unreadable
+/// approval says so.
+///
+/// A saved application trigger that is unverified or waits for re-approval, with its app unchanged
+/// in the editor, offers Approve This App / Approve the New Version
+/// (`TriggerController.approveApplication`): the app's running code is checked (Cancel stops it)
+/// and, only when verified, saved as the trigger's approved code right away; the editor then
+/// offers every action. A new trigger, or one whose app was changed, is saved first. Approving
+/// doesn't turn the trigger on.
 struct TriggerEditorSheet: View {
     let group: DockGroup
     let existing: GroupTrigger?
@@ -36,12 +42,20 @@ struct TriggerEditorSheet: View {
     /// The Wi-Fi network the Mac is on, when macOS shows its name
     /// (`TriggerController.currentWiFiNetworkName`).
     let readNetworkName: () -> String?
+    /// Approves a saved application trigger's app (`TriggerController.approveApplication`).
+    let approveApplication: (GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome
     let dismiss: () -> Void
 
     @State private var draft: TriggerDraft
     @State private var problem: String?
     @State private var connected: [DisplayIdentity] = []
     @State private var currentNetwork: String?
+    /// The trigger being edited as saved now: `existing`, then as an approval saved it.
+    @State private var current: GroupTrigger?
+    @State private var approval: Task<Void, Never>?
+    @State private var isApproving = false
+    /// What the last approval said when it didn't approve.
+    @State private var approvalMessage: String?
 
     private typealias Texts = L10n.Triggers.Editor
     private let calendar = Calendar.autoupdatingCurrent
@@ -54,6 +68,7 @@ struct TriggerEditorSheet: View {
         locationAccess: LocationAccess,
         readDisplays: @escaping () -> [DisplayIdentity],
         readNetworkName: @escaping () -> String?,
+        approveApplication: @escaping (GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome,
         dismiss: @escaping () -> Void
     ) {
         self.group = group
@@ -63,7 +78,9 @@ struct TriggerEditorSheet: View {
         self.locationAccess = locationAccess
         self.readDisplays = readDisplays
         self.readNetworkName = readNetworkName
+        self.approveApplication = approveApplication
         self.dismiss = dismiss
+        _current = State(initialValue: existing)
         let calendar = Calendar.autoupdatingCurrent
         _draft = State(initialValue: existing.flatMap { TriggerDraft(editing: $0, calendar: calendar) } ?? TriggerDraft(calendar: calendar))
     }
@@ -84,7 +101,7 @@ struct TriggerEditorSheet: View {
                     .keyboardShortcut(.cancelAction)
                 Button(existing == nil ? Texts.add : Texts.save, action: save)
                     .keyboardShortcut(.defaultAction)
-                    .disabled(!draft.canBeSaved(replacing: existing))
+                    .disabled(isApproving || !draft.canBeSaved(replacing: current))
             }
         }
         .padding(20)
@@ -93,6 +110,7 @@ struct TriggerEditorSheet: View {
             connected = readDisplays()
             lookAtNetwork()
         }
+        .onDisappear { approval?.cancel() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
             connected = readDisplays()
         }
@@ -174,13 +192,13 @@ struct TriggerEditorSheet: View {
 
     /// What the saved trigger's application approval would be (`nil` for other events).
     private var identityState: TriggerApplicationIdentityState? {
-        draft.applicationIdentityState(replacing: existing)
+        draft.applicationIdentityState(replacing: current)
     }
 
     /// After a change the user made (another event or app): an unverified application trigger
     /// switches to Show the Popup, the only action it can run.
     private func keepActionPermitted() {
-        if !draft.permitsAction(draft.action, replacing: existing), draft.permitsAction(.showPopup, replacing: existing) {
+        if !draft.permitsAction(draft.action, replacing: current), draft.permitsAction(.showPopup, replacing: current) {
             draft.setAction(.showPopup)
         }
     }
@@ -255,6 +273,7 @@ struct TriggerEditorSheet: View {
                         }
                     }
                 }
+                .disabled(isApproving)
             }
         }
     }
@@ -370,10 +389,10 @@ struct TriggerEditorSheet: View {
             VStack(alignment: .leading, spacing: 6) {
                 Picker(Texts.action, selection: Binding(
                     get: { draft.action },
-                    set: { if draft.permitsAction($0, replacing: existing) { draft.setAction($0) } }
+                    set: { if draft.permitsAction($0, replacing: current) { draft.setAction($0) } }
                 )) {
                     ForEach(draft.allowedActions, id: \.self) { action in
-                        let permitted = draft.permitsAction(action, replacing: existing)
+                        let permitted = draft.permitsAction(action, replacing: current)
                         Text(permitted ? Self.title(of: action) : L10n.Triggers.Identity.actionNeedsVerifiedApp(Self.title(of: action)))
                             .tag(action)
                             .disabled(!permitted)
@@ -417,16 +436,98 @@ struct TriggerEditorSheet: View {
                         .foregroundStyle(.orange)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                approvalControls(for: state)
+            } else if state == .verificationUnavailable {
+                // Authorized: approved for an exact version, run while the verifier confirms it.
+                Label(L10n.Triggers.Identity.Approve.approved, systemImage: "checkmark.seal")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             } else {
                 VStack(alignment: .leading, spacing: 2) {
                     Label(L10n.Triggers.Identity.badge(state), systemImage: TriggerIdentityLabel.symbol(for: state))
                         .foregroundStyle(.orange)
                     Text(L10n.Triggers.Identity.detail(state))
-                    Text(L10n.Triggers.Identity.howToReapprove)
-                        .foregroundStyle(.secondary)
+                    if approvalTarget == nil {
+                        Text(L10n.Triggers.Identity.howToReapprove)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .font(.caption)
                 .fixedSize(horizontal: false, vertical: true)
+                approvalControls(for: state)
+            }
+        }
+    }
+
+    // MARK: - Approving the app
+
+    /// The saved trigger whose app the editor may approve: unverified or waiting for re-approval,
+    /// with the app chosen in the editor still its app. `nil` for a new trigger or a changed app.
+    private var approvalTarget: GroupTrigger? {
+        guard let current, current.canApproveApplication,
+              case .applicationPresence(let bundleIdentifier, _) = current.event,
+              case .application = draft.when, draft.applicationBundleIdentifier == bundleIdentifier
+        else { return nil }
+        return current
+    }
+
+    /// Approve This App (Approve the New Version for one waiting for re-approval), its hint, the
+    /// check under way with Cancel, and why the last approval didn't approve; "save first" for a
+    /// new trigger or a changed app.
+    @ViewBuilder
+    private func approvalControls(for state: TriggerApplicationIdentityState) -> some View {
+        if let target = approvalTarget {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Button(state == .needsReapproval ? L10n.Triggers.Identity.Approve.newVersionButton : L10n.Triggers.Identity.Approve.button) {
+                        startApproval(of: target)
+                    }
+                    .disabled(isApproving)
+                    if isApproving {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text(L10n.Triggers.Identity.Approve.checking)
+                            .foregroundStyle(.secondary)
+                        Button(L10n.Common.cancel) { approval?.cancel() }
+                    }
+                }
+                Text(L10n.Triggers.Identity.Approve.hint)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if let approvalMessage {
+                    Text(approvalMessage)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        } else if state == .unverified || state == .needsReapproval {
+            Text(L10n.Triggers.Identity.Approve.saveFirst)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    /// Checks the app's running code; only a verified one is saved (by the controller). Nothing is
+    /// saved when it fails, is cancelled or the app doesn't run.
+    private func startApproval(of trigger: GroupTrigger) {
+        approval?.cancel()
+        approvalMessage = nil
+        isApproving = true
+        approval = Task { @MainActor in
+            let outcome = await approveApplication(trigger.id)
+            isApproving = false
+            approval = nil
+            switch outcome {
+            case .approved:
+                current = store.trigger(withID: trigger.id) ?? current
+            case .notRunning:
+                approvalMessage = L10n.Triggers.Identity.Approve.notRunning
+            case .failed(let failure):
+                approvalMessage = L10n.Triggers.Identity.Approve.failure(failure)
             }
         }
     }
@@ -549,9 +650,12 @@ struct TriggerEditorSheet: View {
     // MARK: - Saving
 
     private func save() {
-        guard draft.canBeSaved(replacing: existing) else { return }
-        let trigger = draft.trigger(groupID: group.id, replacing: existing)
-        if existing != nil {
+        guard !isApproving else { return }
+        // As saved now: an approval or a re-approval the verifier saved meanwhile is kept as it is.
+        let saved = current.flatMap { store.trigger(withID: $0.id) } ?? current
+        guard draft.canBeSaved(replacing: saved) else { return }
+        let trigger = draft.trigger(groupID: group.id, replacing: saved)
+        if saved != nil {
             if store.update(trigger) {
                 dismiss()
             } else {

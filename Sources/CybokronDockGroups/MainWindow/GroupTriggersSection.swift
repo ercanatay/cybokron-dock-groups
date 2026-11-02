@@ -60,7 +60,8 @@ struct GroupTriggersSection: View {
                     loginItem: loginItem,
                     locationAccess: triggers.locationAccess,
                     readDisplays: triggers.connectedDisplays,
-                    readNetworkName: triggers.currentWiFiNetworkName
+                    readNetworkName: triggers.currentWiFiNetworkName,
+                    approveApplication: triggers.approveApplication(ofTrigger:)
                 ) { editing = nil }
             }
             if triggers.isPaused, !list.isEmpty {

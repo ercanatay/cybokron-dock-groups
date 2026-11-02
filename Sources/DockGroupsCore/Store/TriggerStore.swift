@@ -132,6 +132,46 @@ public final class TriggerStore: ObservableObject {
         return changed
     }
 
+    /// The user approved the app of the application trigger `id` and its running code was verified
+    /// (`TriggerApplicationApprover`, the only maker of a `VerifiedApplicationApproval`): an
+    /// unverified trigger becomes authorized for that exact code, one waiting for re-approval is
+    /// authorized for the new code (`reapproved(with:)`, same identifier only). The only way an
+    /// `authorized` record is created; imports, restores and merges never call it. Changes nothing
+    /// unless the stored trigger is still exactly `expected` (so an edit, a removal or a saved
+    /// re-approval meanwhile wins) and the binding names its bundle identifier. Doesn't turn the
+    /// trigger on or off. Written to disk before it is shown; when that fails (or saving is
+    /// suspended) nothing changes. Returns whether it changed.
+    @discardableResult
+    func setApplicationIdentityAuthorization(_ approval: VerifiedApplicationApproval, forTrigger id: GroupTrigger.ID, replacing expected: GroupTrigger) -> Bool {
+        guard !isSavingSuspended else { return false }
+        guard let index = triggers.firstIndex(where: { $0.id == id }), triggers[index] == expected else { return false }
+        guard case .applicationPresence(let bundleIdentifier, _) = expected.event, approval.binding.identifier == bundleIdentifier else { return false }
+        let authorization: ApplicationIdentityAuthorization
+        switch expected.applicationIdentityStatus {
+        case .unverified?:
+            authorization = .authorize(approval.binding)
+        case .needsReapproval?:
+            guard let reapproved = expected.applicationIdentity?.reapproved(with: approval.binding) else { return false }
+            authorization = reapproved
+        case .authorized?, .invalid?, nil:
+            return false
+        }
+        var updated = triggers
+        updated[index].applicationIdentity = authorization
+        pendingSave?.cancel()
+        pendingSave = nil
+        do {
+            // With any change still waiting to be written.
+            try persistence.saveTriggers(updated)
+        } catch {
+            // Not logged: the approval stays out of the logs. The pending change is written later.
+            scheduleSave()
+            return false
+        }
+        triggers = updated
+        return true
+    }
+
     public func delete(_ id: GroupTrigger.ID) {
         guard let index = triggers.firstIndex(where: { $0.id == id }) else { return }
         triggers.remove(at: index)

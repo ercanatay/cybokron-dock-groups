@@ -36,6 +36,39 @@ struct ApplicationRunningCodeVerifierTests {
         #expect(ApplicationRunningCodeVerifier.compare(pid: Int32.max, expected: expected, bundleIdentifier: "com.cybokron.fixture.running") == .unknown)
     }
 
+    @Test func readsTheRunningIdentityItCanThenConfirm() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("Cybokron-running-identity-fixture-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let selected = root.appendingPathComponent("Selected.app", isDirectory: true)
+        let other = root.appendingPathComponent("Other.app", isDirectory: true)
+        try makeSignedBundle(at: selected, name: "Selected")
+        try makeSignedBundle(at: other, name: "Other")
+        let expected = try #require(ApplicationStaticCodeVerifier.codeHashes(for: selected)?.first)
+        let different = try #require(ApplicationStaticCodeVerifier.codeHashes(for: other)?.first)
+        var children: [Process] = []
+        defer {
+            for process in children {
+                if process.isRunning { process.terminate() }
+                process.waitUntilExit()
+            }
+        }
+        let first = try runSleeper(in: selected); children.append(first)
+        let second = try runSleeper(in: other); children.append(second)
+        let identifier = "com.cybokron.fixture.running"
+        #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: identifier)
+            == .identity(ApplicationRunningIdentity(codeHash: expected, signature: .adHoc)))
+        #expect(ApplicationRunningIdentityReader.read(pid: second.processIdentifier, expectedIdentifier: identifier)
+            == .identity(ApplicationRunningIdentity(codeHash: different, signature: .adHoc)))
+        // The signing identifier is compared exactly.
+        #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: "com.cybokron.fixture.Running") == .identifierMismatch)
+        #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: "com.cybokron.fixture.other") == .identifierMismatch)
+        #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: "x\" or anchor apple") == .unknown)
+        #expect(ApplicationRunningIdentityReader.read(pid: 0, expectedIdentifier: identifier) == .unknown)
+        #expect(ApplicationRunningIdentityReader.read(pid: Int32.max, expectedIdentifier: identifier) == .unknown)
+        first.terminate(); first.waitUntilExit()
+        #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: identifier) == .unknown)
+    }
+
     private func makeSignedBundle(at url: URL, name: String) throws {
         let dir = url.appendingPathComponent("Contents/MacOS", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

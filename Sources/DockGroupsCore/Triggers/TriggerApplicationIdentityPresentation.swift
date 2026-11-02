@@ -39,6 +39,16 @@ extension GroupTrigger {
         }
     }
 
+    /// Whether the user can approve this application trigger's app (`TriggerApplicationApprover`):
+    /// one matched by bundle identifier only, or one waiting for its new code to be approved.
+    public var canApproveApplication: Bool {
+        guard !isFromNewerVersion else { return false }
+        switch applicationIdentityStatus {
+        case .unverified?, .needsReapproval?: return true
+        case .authorized?, .invalid?, nil: return false
+        }
+    }
+
     /// Made by a newer version (an event or an action this one doesn't know): its own message wins.
     public var isFromNewerVersion: Bool {
         event.isUnsupported || unrecognizedAction != nil
