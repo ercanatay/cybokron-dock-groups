@@ -169,11 +169,17 @@ enum ApplicationIdentityAuthorization: Hashable, Sendable {
 
 /// What the identity verifier says about the running code under an authorized rule's identifier.
 enum ApplicationIdentityVerdict: Hashable, Sendable {
-    /// Every running instance is the authorized code.
+    /// Every running instance is the authorized code (or none runs and none that ran unconfirmed
+    /// has left since), and none of their process watches has reported anything since it was
+    /// checked.
     case verified
+    /// A fresh check of the running instances is under way. The rule is still observed, so the
+    /// change that started the check isn't lost, but nothing acts until it says `verified`.
+    case pending
     /// Different code runs under the identifier (an update or a look-alike): the rule needs approval.
     case codeChanged
-    /// Can't tell (not checked yet, failed, timed out, or no verifier): nothing runs.
+    /// Can't tell (failed, timed out, cancelled, an instance changed or left before it was
+    /// confirmed, or no verifier): nothing runs and the rule isn't observed.
     case unavailable
 }
 
@@ -183,11 +189,30 @@ enum ApplicationIdentityVerdict: Hashable, Sendable {
 /// and cancellable) and must not log hashes, paths or other apps' identities.
 @MainActor
 protocol ApplicationIdentityVerifying: AnyObject {
+    /// May start a check (and then answers `pending`); never blocks.
     func verdict(for binding: ApplicationIdentityBinding) -> ApplicationIdentityVerdict
+    /// The last answer for `binding` without starting anything (for the trigger lists); `nil` when
+    /// it was never checked.
+    func displayedVerdict(for binding: ApplicationIdentityBinding) -> ApplicationIdentityVerdict?
+    /// Called whenever a check finished with another verdict than before.
+    func setVerdictsChangedHandler(_ handler: @escaping @MainActor () -> Void)
+    /// Forgets (and stops checking) every binding not in `bindings`.
+    func retainOnly(_ bindings: Set<ApplicationIdentityBinding>)
+    /// The presence snapshot just accepted counted `count` instances under `binding`'s identifier.
+    /// A verifier that lists instances itself must not confirm anything when its list disagrees.
+    func confirmObservedInstanceCount(_ count: Int, for binding: ApplicationIdentityBinding)
 }
 
-/// The production verifier until running-code verification is integrated: it never confirms
-/// anything, so authorized rules don't act (fail closed) and only unverified Show the Popup rules can.
+extension ApplicationIdentityVerifying {
+    func displayedVerdict(for binding: ApplicationIdentityBinding) -> ApplicationIdentityVerdict? { verdict(for: binding) }
+    func setVerdictsChangedHandler(_ handler: @escaping @MainActor () -> Void) {}
+    func retainOnly(_ bindings: Set<ApplicationIdentityBinding>) {}
+    func confirmObservedInstanceCount(_ count: Int, for binding: ApplicationIdentityBinding) {}
+}
+
+/// A verifier that never confirms anything, so authorized rules don't act (fail closed) and only
+/// unverified Show the Popup rules can. The coordinator's default; the app replaces it with
+/// `RunningApplicationIdentityVerifier` (`TriggerCoordinator.verifyRunningApplicationIdentities()`).
 @MainActor
 final class UnavailableApplicationIdentityVerifier: ApplicationIdentityVerifying {
     init() {}
@@ -200,18 +225,21 @@ final class UnavailableApplicationIdentityVerifier: ApplicationIdentityVerifying
 enum ApplicationIdentityClearance: Hashable, Sendable {
     case allActions
     case showPopupOnly
+    /// Authorized, and its running code is being checked: observed, but nothing may act yet.
+    case awaitingVerification
     case none
 
     func permits(_ action: TriggerAction) -> Bool {
         switch self {
         case .allActions: return true
         case .showPopupOnly: return action == .showPopup
-        case .none: return false
+        case .awaitingVerification, .none: return false
         }
     }
 
     /// Fail closed: only `authorized` with a `verified` verdict clears every action; `unverified`
-    /// clears Show the Popup; anything else clears nothing. Other events are not this gate's concern.
+    /// clears Show the Popup; `authorized` with a `pending` verdict is observed but clears nothing;
+    /// anything else clears nothing. Other events are not this gate's concern.
     @MainActor
     static func of(_ rule: GroupTrigger, verifier: any ApplicationIdentityVerifying) -> ApplicationIdentityClearance {
         guard let status = rule.applicationIdentityStatus else { return .allActions }
@@ -222,7 +250,11 @@ enum ApplicationIdentityClearance: Hashable, Sendable {
             return .none
         case .authorized:
             guard let binding = rule.applicationIdentity?.binding else { return .none }
-            return verifier.verdict(for: binding) == .verified ? .allActions : .none
+            switch verifier.verdict(for: binding) {
+            case .verified: return .allActions
+            case .pending: return .awaitingVerification
+            case .codeChanged, .unavailable: return .none
+            }
         }
     }
 }

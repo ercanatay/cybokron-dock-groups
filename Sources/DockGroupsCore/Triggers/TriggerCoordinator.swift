@@ -114,6 +114,12 @@ public final class TriggerCoordinator {
     private var current: TriggerFiring?
     private var isPresentingNotice = false
     private var currentInvalidated = false  // stays true until the next firing clears it
+    /// Why the current firing was invalidated, when that isn't "another trigger" (its record).
+    private var currentInvalidationReason: TriggerSkipReason?
+    /// Whether this settle was already put off once for a running identity check.
+    private var settleWaitedForIdentityCheck = false
+    /// A requested restart of the application observations, not yet passed on.
+    private var observationRestart: Task<Void, Never>?
     private var generation = 0
     private var settleTask: Task<Void, Never>?
     private var processing: Task<Void, Never>?
@@ -121,9 +127,23 @@ public final class TriggerCoordinator {
     private var startedBy: [DockGroup.ID: GroupTrigger.ID] = [:]
     private var applicationTracker = AppPresenceRuleTracker()
     /// Confirms that the code running under an authorized application rule's identifier is the
-    /// authorized code. Until running-code verification is integrated it never confirms anything, so
-    /// authorized rules don't act (fail closed); tests put in their own.
-    var applicationIdentityVerifier: any ApplicationIdentityVerifying = UnavailableApplicationIdentityVerifier()
+    /// authorized code. By default it never confirms anything, so authorized rules don't act (fail
+    /// closed); the app puts in `RunningApplicationIdentityVerifier`
+    /// (`verifyRunningApplicationIdentities()`), tests their own.
+    var applicationIdentityVerifier: any ApplicationIdentityVerifying = UnavailableApplicationIdentityVerifier() {
+        didSet {
+            applicationIdentityVerifier.setVerdictsChangedHandler { [weak self] in
+                self?.applicationIdentityVerdictsChanged()
+            }
+        }
+    }
+    /// The running code under these authorized application triggers' identifier isn't the code
+    /// they were approved for: the app saves each one as needing re-approval
+    /// (`TriggerStore.requireApplicationReapproval(for:)`). Trust is never widened.
+    public var onApplicationIdentityCodeChanged: (([GroupTrigger.ID]) -> Void)?
+    /// The application observations must start again under a new generation (the verifier's
+    /// verdicts changed which rules are observed); the app resets its presence source.
+    public var onApplicationObservationsNeedRestart: (() -> Void)?
 
     /// - Parameters:
     ///   - rules: The triggers, in Settings → Triggers' order.
@@ -189,6 +209,13 @@ public final class TriggerCoordinator {
             return .accepted(isUncertain: true)
         }
         let ids = observation.firedRuleIDs
+        // The verifier lists the instances itself: one that disagrees with this snapshot confirms
+        // nothing for the rules that fired.
+        for rule in rules() where ids.contains(rule.id) {
+            guard rule.applicationIdentityStatus == .authorized, let binding = rule.applicationIdentity?.binding else { continue }
+            guard case .applicationPresence(let bundleID, _) = rule.event, let count = counts[bundleID.lowercased()] else { continue }
+            applicationIdentityVerifier.confirmObservedInstanceCount(count, for: binding)
+        }
         let originalRules = rules()
         let observedRevision = applicationTracker.revision
         func currentRule(for id: UUID) -> GroupTrigger? {
@@ -233,14 +260,66 @@ public final class TriggerCoordinator {
         stopApplicationTracker()
     }
 
-    /// The verifier's verdicts may have changed (the hook for running-code verification): presence
-    /// firings that are no longer cleared are dropped at once, an awaiting notice of one is
-    /// dismissed (it's skipped). Carry-out checks the clearance again anyway.
+    /// Checks authorized application triggers' running code with `RunningApplicationIdentityVerifier`
+    /// (the app's production setting). Without this call no authorized trigger acts.
+    public func verifyRunningApplicationIdentities() {
+        applicationIdentityVerifier = RunningApplicationIdentityVerifier()
+    }
+
+    /// Whether an authorized application trigger's running code is, as last checked, not
+    /// confirmed (never checked, a failed check, or different code), for the trigger lists. Starts
+    /// no check. `false` for every other trigger, and while a check is under way.
+    public func applicationIdentityIsUnconfirmed(_ trigger: GroupTrigger) -> Bool {
+        guard trigger.applicationIdentityStatus == .authorized, let binding = trigger.applicationIdentity?.binding else { return false }
+        switch applicationIdentityVerifier.displayedVerdict(for: binding) {
+        case .verified?, .pending?: return false
+        case .codeChanged?, .unavailable?, nil: return true
+        }
+    }
+
+    /// The verifier's verdicts changed (it calls this when a check finishes with another answer):
+    ///
+    /// 1. Authorized rules whose code changed are saved as needing re-approval
+    ///    (`onApplicationIdentityCodeChanged`, K2).
+    /// 2. Presence firings that are no longer cleared are dropped (an authorized rule's whose code
+    ///    isn't confirmed is recorded as skipped), and an awaiting notice of one is dismissed.
+    /// 3. The tracker is configured with the rules the verdicts now let be observed; when it can't
+    ///    go on with them, observations are restarted under a new generation
+    ///    (`onApplicationObservationsNeedRestart`), so the old generation's observations are
+    ///    rejected and nothing from them is replayed.
     func applicationIdentityVerdictsChanged() {
+        let changed = rules().filter { rule in
+            guard rule.applicationIdentityStatus == .authorized, let binding = rule.applicationIdentity?.binding else { return false }
+            return applicationIdentityVerifier.displayedVerdict(for: binding) == .codeChanged
+        }.map(\.id)
+        if !changed.isEmpty {
+            logger.notice("\(changed.count, privacy: .public) application trigger(s) need re-approval: the running code changed")
+            onApplicationIdentityCodeChanged?(changed)
+        }
         dropStaleApplicationPresenceFirings()
-        if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence, !isApplicationPresenceFiringCurrent(currentFiring) {
-            currentInvalidated = true
-            noticePresenter?.dismiss()
+        if isPresentingNotice, !currentInvalidated, let currentFiring = current, currentFiring.isApplicationPresence {
+            let check = applicationPresenceCheck(currentFiring)
+            if check != .current {
+                currentInvalidated = true
+                currentInvalidationReason = check == .identityNotConfirmed ? .applicationNotConfirmed : nil
+                noticePresenter?.dismiss()
+            }
+        }
+        guard environment.canAct else { return }
+        if refresh(), !applicationTracker.isObserving {
+            requestObservationRestart()
+        }
+    }
+
+    /// Passes a restart on once the current main-actor turn is done (it re-enters the coordinator),
+    /// unless observations are running again by then.
+    private func requestObservationRestart() {
+        guard observationRestart == nil else { return }
+        observationRestart = Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.observationRestart = nil
+            guard self.environment.canAct, !self.applicationTracker.isObserving else { return }
+            self.onApplicationObservationsNeedRestart?()
         }
     }
 
@@ -264,20 +343,61 @@ public final class TriggerCoordinator {
     /// by the coordinator itself, so a stop path that forgot to invalidate can't let a stale firing
     /// run.
     private func isApplicationPresenceFiringCurrent(_ firing: TriggerFiring) -> Bool {
-        guard firing.isApplicationPresence else { return true }
-        guard let stamp = firing.presenceStamp else { return false }
-        guard environment.canAct else { return false }
-        guard applicationTracker.isActive(generation: stamp.generation),
-              applicationTracker.isCurrent(revision: stamp.revision) else { return false }
-        guard let rule = rules().first(where: { $0.id == firing.triggerID }), rule == stamp.rule, rule.canRun else { return false }
-        guard applicationIdentityClearance(of: rule).permits(firing.action) else { return false }
-        return activeGroups().contains(rule.groupID)
+        applicationPresenceCheck(firing) == .current
     }
 
-    /// Drops the presence firings that are pending or queued but no longer current.
+    private enum ApplicationPresenceCheck: Equatable {
+        case current
+        /// Outdated (generation, revision, rule, group, the Mac can't act) or not cleared: dropped
+        /// without a record, as before.
+        case stale
+        /// Everything else holds, but the rule is authorized and its running code isn't confirmed
+        /// (being checked, or the check failed): skipped and recorded
+        /// (`TriggerSkipReason.applicationNotConfirmed`), so it neither vanishes silently nor looks
+        /// as if it ran. Different code (`codeChanged`) isn't this: the rule then waits for
+        /// re-approval, which its status line says.
+        case identityNotConfirmed
+    }
+
+    private func applicationPresenceCheck(_ firing: TriggerFiring) -> ApplicationPresenceCheck {
+        guard firing.isApplicationPresence else { return .current }
+        guard let stamp = firing.presenceStamp else { return .stale }
+        guard environment.canAct else { return .stale }
+        guard applicationTracker.isActive(generation: stamp.generation),
+              applicationTracker.isCurrent(revision: stamp.revision) else { return .stale }
+        guard let rule = rules().first(where: { $0.id == firing.triggerID }), rule == stamp.rule, rule.canRun else { return .stale }
+        guard activeGroups().contains(rule.groupID) else { return .stale }
+        if applicationIdentityClearance(of: rule).permits(firing.action) { return .current }
+        guard rule.applicationIdentityStatus == .authorized, let binding = rule.applicationIdentity?.binding,
+              applicationIdentityVerifier.displayedVerdict(for: binding) != .codeChanged
+        else { return .stale }
+        return .identityNotConfirmed
+    }
+
+    /// Whether `firing` is an authorized rule's whose running code is being checked right now.
+    private func isAwaitingIdentityCheck(_ firing: TriggerFiring) -> Bool {
+        guard firing.isApplicationPresence, let rule = rules().first(where: { $0.id == firing.triggerID }) else { return false }
+        return applicationIdentityClearance(of: rule) == .awaitingVerification
+    }
+
+    /// Drops the presence firings that are pending or queued but no longer current; those of
+    /// authorized rules whose running code isn't confirmed are recorded as skipped.
     private func dropStaleApplicationPresenceFirings() {
-        pending.removeAll { !isApplicationPresenceFiringCurrent($0) }
-        queue.removeAll { !isApplicationPresenceFiringCurrent($0) }
+        var unconfirmed: [TriggerFiring] = []
+        func keeps(_ firing: TriggerFiring) -> Bool {
+            switch applicationPresenceCheck(firing) {
+            case .current: return true
+            case .stale: return false
+            case .identityNotConfirmed:
+                unconfirmed.append(firing)
+                return false
+            }
+        }
+        pending = pending.filter(keeps)
+        queue = queue.filter(keeps)
+        for firing in unconfirmed {
+            skip(firing, .applicationNotConfirmed)
+        }
     }
 
     /// Drops every application-presence firing that is pending, queued or awaiting its notice.
@@ -285,20 +405,35 @@ public final class TriggerCoordinator {
     private func invalidateApplicationPresenceFirings() {
         pending.removeAll { $0.isApplicationPresence }
         queue.removeAll { $0.isApplicationPresence }
-        if isPresentingNotice, let currentFiring = current, currentFiring.isApplicationPresence {
+        // Not twice for one notice (a verdict change may have dismissed it already).
+        if isPresentingNotice, !currentInvalidated, let currentFiring = current, currentFiring.isApplicationPresence {
             currentInvalidated = true
             noticePresenter?.dismiss()
         }
     }
 
+    /// Configures the tracker with the rules that can be observed now. When that changes the
+    /// tracked rules while a generation runs (a verdict changed during a check), the tracker stops
+    /// and observations are restarted under a new generation (`requestObservationRestart`).
     private func refresh() -> Bool {
+        let wasObserving = applicationTracker.isObserving
+        defer {
+            if wasObserving, !applicationTracker.isObserving, environment.canAct {
+                requestObservationRestart()
+            }
+        }
         let currentRules = rules()
         let active = activeGroups()
         var eligible: [AppPresenceRuleTracker.Rule] = []
+        var authorizedBindings: Set<ApplicationIdentityBinding> = []
+        defer { applicationIdentityVerifier.retainOnly(authorizedBindings) }
         for trigger in currentRules {
             guard trigger.canRun else { continue }
             guard case .applicationPresence(let bundleID, let edge) = trigger.event else { continue }
             guard active.contains(trigger.groupID) else { continue }
+            if trigger.applicationIdentityStatus == .authorized, let binding = trigger.applicationIdentity?.binding {
+                authorizedBindings.insert(binding)
+            }
             // A rule whose identity clears nothing (waiting for approval, unreadable, or authorized
             // but not confirmed by the verifier) isn't observed at all.
             guard applicationIdentityClearance(of: trigger) != .none else { continue }
@@ -478,6 +613,14 @@ public final class TriggerCoordinator {
     }
 
     private func settled() {
+        // An authorized rule's firing whose running code is still being checked waits one more
+        // settle (the check is bounded by its time-out); after that it's skipped and recorded.
+        if !settleWaitedForIdentityCheck, pending.contains(where: isAwaitingIdentityCheck) {
+            settleWaitedForIdentityCheck = true
+            restartSettle()
+            return
+        }
+        settleWaitedForIdentityCheck = false
         // A stale presence firing must not win the reduction over a firing that can still run.
         dropStaleApplicationPresenceFirings()
         let batch = pending
@@ -528,6 +671,7 @@ public final class TriggerCoordinator {
             let firing = queue.removeFirst()
             current = firing
             currentInvalidated = false
+            currentInvalidationReason = nil
             await carryOut(firing)
             current = nil
         }
@@ -542,8 +686,16 @@ public final class TriggerCoordinator {
             logger.notice("Trigger \(firing.triggerID, privacy: .public) is gone or off: nothing done")
             return
         }
-        // Like a push invalidation of a queued firing: dropped without a recorded outcome.
-        guard isApplicationPresenceFiringCurrent(firing) else {
+        // Like a push invalidation of a queued firing: dropped without a recorded outcome, unless
+        // only its rule's running code isn't confirmed.
+        switch applicationPresenceCheck(firing) {
+        case .current:
+            break
+        case .identityNotConfirmed:
+            dropStaleApplicationPresenceFirings()
+            skip(firing, .applicationNotConfirmed)
+            return
+        case .stale:
             logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated application observation: nothing done")
             dropStaleApplicationPresenceFirings()
             return
@@ -573,7 +725,14 @@ public final class TriggerCoordinator {
                 return
             }
             // No notice for a firing the checks above made stale.
-            guard isApplicationPresenceFiringCurrent(firing) else {
+            switch applicationPresenceCheck(firing) {
+            case .current:
+                break
+            case .identityNotConfirmed:
+                dropStaleApplicationPresenceFirings()
+                skip(firing, .applicationNotConfirmed)
+                return
+            case .stale:
                 logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated application observation: nothing done")
                 dropStaleApplicationPresenceFirings()
                 return
@@ -586,10 +745,10 @@ public final class TriggerCoordinator {
                 break
             case .notNow: skip(firing, .notNow); return
             case .timedOut: skip(firing, .noAnswer); return
-            case .replaced: skip(firing, .anotherTrigger); return
+            case .replaced: skip(firing, currentInvalidationReason ?? .anotherTrigger); return
             }
             guard !currentInvalidated else {
-                skip(firing, .anotherTrigger)
+                skip(firing, currentInvalidationReason ?? .anotherTrigger)
                 return
             }
             guard let currentRule = rules().first(where: { $0.id == firing.triggerID }), currentRule.canRun, currentRule == trigger else {
@@ -613,7 +772,14 @@ public final class TriggerCoordinator {
         // The last look before the handler is called (no suspension point until then): the checks
         // above may have called out (state changes, the handler), so the observation is looked at
         // again. An action that already started is not undone.
-        guard isApplicationPresenceFiringCurrent(firing) else {
+        switch applicationPresenceCheck(firing) {
+        case .current:
+            break
+        case .identityNotConfirmed:
+            dropStaleApplicationPresenceFirings()
+            skip(firing, .applicationNotConfirmed)
+            return
+        case .stale:
             logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated application observation: nothing done")
             dropStaleApplicationPresenceFirings()
             if runMode != .immediately { skip(firing, .anotherTrigger) }

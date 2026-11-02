@@ -39,6 +39,8 @@ struct LocalizationTests {
         // An application trigger's approval (docs/l10n-keys.md, "an application trigger's approval").
         "triggers.identity.",
         "core.trigger.skip.applicationNotVerified",
+        // An authorized application trigger whose running code couldn't be confirmed.
+        "core.trigger.skip.applicationNotConfirmed",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

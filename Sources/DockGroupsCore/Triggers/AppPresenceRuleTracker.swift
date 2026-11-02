@@ -93,6 +93,9 @@ internal struct AppPresenceRuleTracker {
         return true
     }
 
+    /// Whether a generation is running (not stopped, and begun since the last configuration change).
+    var isObserving: Bool { !isStopped && currentGeneration != nil }
+
     func isActive(generation: UInt64) -> Bool {
         !isStopped && currentGeneration == generation
     }

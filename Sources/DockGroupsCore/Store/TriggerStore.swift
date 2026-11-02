@@ -112,6 +112,26 @@ public final class TriggerStore: ObservableObject {
         return true
     }
 
+    /// The code running under these application triggers' approved identifier isn't the code they
+    /// were approved for (an update or a look-alike): each authorized one is saved as needing
+    /// re-approval, and runs nothing until the user approves the new code. Other states are left
+    /// alone; trust is never widened. Returns the triggers that changed.
+    @discardableResult
+    public func requireApplicationReapproval(for ids: [GroupTrigger.ID]) -> [GroupTrigger.ID] {
+        let wanted = Set(ids)
+        var updated = triggers
+        var changed: [GroupTrigger.ID] = []
+        for index in updated.indices where wanted.contains(updated[index].id) {
+            guard let identity = updated[index].applicationIdentity, identity.status == .authorized else { continue }
+            updated[index].applicationIdentity = identity.requiringReapproval()
+            changed.append(updated[index].id)
+        }
+        guard !changed.isEmpty else { return [] }
+        triggers = updated
+        scheduleSave()
+        return changed
+    }
+
     public func delete(_ id: GroupTrigger.ID) {
         guard let index = triggers.firstIndex(where: { $0.id == id }) else { return }
         triggers.remove(at: index)

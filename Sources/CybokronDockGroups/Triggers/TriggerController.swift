@@ -86,6 +86,17 @@ final class TriggerController: ObservableObject {
             rules: { [store] in store.triggers },
             activeGroups: { [groups] in Set(groups.groups.map(\.id)) }
         )
+        // Authorized application triggers act only while their running code is confirmed; code
+        // that isn't the approved code makes them wait for re-approval, saved at once.
+        coordinator.verifyRunningApplicationIdentities()
+        coordinator.onApplicationIdentityCodeChanged = { [weak self] ids in
+            self?.store.requireApplicationReapproval(for: ids)
+        }
+        coordinator.onApplicationObservationsNeedRestart = { [weak self] in
+            guard let self, self.applicationPresenceSource != nil else { return }
+            self.resetApplicationPresenceSource()
+            self.objectWillChange.send()
+        }
     }
 
     // MARK: - Starting
@@ -274,8 +285,11 @@ final class TriggerController: ObservableObject {
     func statusLine(of trigger: GroupTrigger) -> String {
         // An application trigger that runs nothing because of its approval says why, instead of
         // the generic "can't run" (a newer version's trigger keeps its own message).
+        // An authorized one whose running code is confirmed (or being checked), or that was just
+        // skipped because it couldn't be confirmed, tells its last run instead.
         if !trigger.isFromNewerVersion, let state = trigger.applicationIdentityState,
-           let line = L10n.Triggers.Identity.statusLine(state) {
+           let line = L10n.Triggers.Identity.statusLine(state),
+           state != .verificationUnavailable || showsIdentityUnavailable(trigger) {
             return line
         }
         if let problem = trigger.problem { return problem }
@@ -293,6 +307,14 @@ final class TriggerController: ObservableObject {
         }
         let name = groups.group(withID: trigger.groupID)?.name ?? ""
         return TriggerDescriptions.lastRun(state.entry(for: trigger.id), groupName: name, now: Date(), calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
+    }
+
+    /// Whether an authorized application trigger's line says its code can't be checked: not when
+    /// its code is confirmed or being checked, and not when its last outcome already tells that it
+    /// was skipped for this reason.
+    private func showsIdentityUnavailable(_ trigger: GroupTrigger) -> Bool {
+        guard coordinator.applicationIdentityIsUnconfirmed(trigger) else { return false }
+        return state.entry(for: trigger.id).lastOutcome != .skipped(.applicationNotConfirmed)
     }
 
     // MARK: - Changes

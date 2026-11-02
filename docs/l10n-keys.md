@@ -1471,17 +1471,20 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
 | `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |
 
-## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.`, `core.trigger.skip.applicationNotVerified`)
+## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.`, `core.trigger.skip.applicationNotVerified`, `core.trigger.skip.applicationNotConfirmed`)
 
 An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
 only Show Popup runs. *Needs re-approval*, *Invalid* and *Verification unavailable* run nothing. This
 version can't check an app's code, so the texts say so rather than offer a button that does nothing.
 `core.trigger.skip.applicationNotVerified` completes “Skipped today at 9:00: …”, so it starts in
-lowercase.
+lowercase. So does `core.trigger.skip.applicationNotConfirmed`, recorded when an approved trigger's
+event came but the app's running code couldn't be confirmed in time (the check was still running,
+failed or timed out, or the app changed), so nothing ran.
 
 | Key | English |
 | --- | --- |
 | `core.trigger.skip.applicationNotVerified` | the app isn't verified, so only Show Popup can run |
+| `core.trigger.skip.applicationNotConfirmed` | the app's running code couldn't be confirmed, so nothing ran |
 | `triggers.identity.badge.unverified` | Unverified |
 | `triggers.identity.badge.needsReapproval` | Needs re-approval |
 | `triggers.identity.badge.invalid` | Invalid |

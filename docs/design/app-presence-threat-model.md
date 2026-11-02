@@ -6,8 +6,8 @@ Evidence and experiments are in `app-presence-identity-security.md`,
 `app-presence-macho-slices.md`, `app-presence-running-binding-candidate.md` and
 `app-presence-watch-protocol-draft.md`; behavior is specified in `app-presence-trigger-spec.md`.
 File references are `path:line` at the reviewed commit. Later changes are marked *after review*;
-the local authorization model added afterwards is described in
-`app-presence-identity-authorization.md` and its effect on each threat is listed in §3.1.
+the local authorization model and the running-code verifier added afterwards are described in
+`app-presence-identity-authorization.md`, and their effect on each threat is listed in §3.1 and §3.2.
 
 ## 1. What actually runs today
 
@@ -39,6 +39,10 @@ Production path (reachable from the UI of a build of this branch; no feature fla
    session loss and stop (`Sources/DockGroupsCore/Triggers/TriggerCoordinator.swift:151-247, 354-373`).
    Execution reuses the existing pause, budget, echo, notice and no-quit gates
    (`TriggerCoordinator.swift:456-543`).
+
+*After review:* `RunningApplicationIdentityVerifier` now connects `ApplicationRunningCodeVerifier`
+and `ExperimentalProcessEventWatch` to the coordinator for authorized rules (§3.2). The list below is
+the state at review.
 
 Experimental helpers, referenced only by each other and by tests (verified with `grep` over
 `Sources/`): `ApplicationCodeHash`, `ApplicationCodeRequirement`, `ApplicationRunningCodeVerifier`,
@@ -93,7 +97,8 @@ means no public, proportionate API known to this review provides the guarantee.
 ### 3.1 After the local authorization model (after review)
 
 What `app-presence-identity-authorization.md` changes, per threat. "Partly closed" means a gate exists
-in code and tests; nothing below is a race-freedom or publisher-trust claim.
+in code and tests; nothing below is a race-freedom or publisher-trust claim. Remarks below that no verifier
+exists or that `needsReapproval` isn't persisted describe the model before §3.2.
 
 - **T1:** partly closed for actions. Bundle-ID-only rules are `unverified`: off by default, Show Popup
   only, other actions skipped (`applicationNotVerified`). Every action needs `authorized` plus a
@@ -112,6 +117,62 @@ in code and tests; nothing below is a race-freedom or publisher-trust claim.
 - **T16:** closed for imports, restores and merges (authorization reset to `unverified`, rules off,
   no hashes in exported backups) and for legacy rules (loaded `unverified` and off). Malformed records
   are `invalid` and never run. Direct edits by A1 remain out of scope.
+
+### 3.2 After the running-code verifier (after review)
+
+`RunningApplicationIdentityVerifier` (see `app-presence-identity-authorization.md`, "Verifier") is the
+app's verifier. "Closed" below means a gate exists in code and tests on one arm64 Mac with synthetic
+watches and Security answers plus one real two-fixture Security test; it is not a race-freedom
+claim and nothing below establishes publisher trust.
+
+Closed or narrowed:
+
+- **T1 / T11 (look-alike counted as the app):** an authorized rule acts only when every instance the
+  verifier lists under the identifier passed a fresh dynamic `identifier` + exact `cdhash` check
+  after its watch was registered. Any different code is `codeChanged`; any undecidable instance is
+  `unavailable`; a snapshot whose count disagrees with the verifier's own list confirms nothing.
+- **T3 / T14 (code changed after binding, updates):** detected for newly listed instances and for an
+  exec reported by a watch; `codeChanged` is saved as `needsReapproval` at once
+  (`TriggerStore.requireApplicationReapproval`), pending and notice-stage firings are dropped, the
+  rule is no longer observed. Nothing re-binds or widens.
+- **T6 (exec after registration):** an exec (or exit+exec, or a watch error) reported by the watch
+  of a verified instance makes the binding `unavailable` at the next question; every carry-out
+  check asks, so an exec processed before the final check stops the action.
+- **T8 (death during verification):** an instance that leaves before its check finished makes the
+  binding `unavailable` (never a confirmed close); a verified instance may leave.
+- **T12 (watch registration failure):** registration failure or a pending event at registration is
+  `unavailable`; the verifier limits itself to 16 instances per app and 64 watches.
+- **§7(c) item 6 (bounded, off-main, cancellable, timeout = unknown):** the Security comparison runs
+  on a detached task, the waiting is bounded (2 s) and cancellable, time-out and cancellation are
+  `unavailable`.
+- **Silent skips:** an authorized rule's firing that can't be confirmed is recorded as
+  `applicationNotConfirmed` rather than vanishing or looking as if it ran.
+- **Verdict changes and the tracker:** a verdict that changes the observed rules stops the tracker
+  and asks the app to restart observations under a new generation; observations of the old
+  generation are rejected and nothing is replayed.
+
+Still open:
+
+- **T5 / PID reuse before registration:** registration and the Security lookup are both PID based. A
+  PID recycled before the watch was registered is checked and watched as the listed instance. After
+  registration, the watch's exit report or the list change catches a reuse.
+- **T6 / exec before registration:** not reported (no replay); the fresh check after registration
+  sees only the code running at that moment.
+- **T10 / check to action:** the last verdict check and the handler call aren't atomic; an exec
+  after the final check, or during an action, isn't caught. An action already started isn't undone.
+- **The Security call can't be cancelled:** a time-out or cancellation stops waiting only; the
+  synchronous call keeps running on its detached task until Security returns, its answer ignored.
+  Under repeated time-outs such calls can accumulate (bounded by instances × retries every 10 s).
+- **No wake-up:** watches are polled only when the coordinator asks (observations, settle, notice,
+  carry-out, status line does not poll). An event between questions is seen at the next question.
+- **No global descriptor limit:** the 64-watch limit is per verifier; nothing limits descriptors
+  process-wide, and exhaustion is untested (it would read as `watchUnavailable`).
+- **T2 / T9 / T15 / T16 (A1 edits):** unchanged. There is still no selection flow that creates a
+  binding, so `authorized` records exist only in tests or a hand-edited file; a crafted record naming
+  the genuine app's `cdhash` is now accepted while that exact code runs (A1 edits remain out of
+  scope, §2). Architectures and slices are still not recorded.
+- **Availability:** a look-alike (or a case variant of the bundle identifier, or a legitimate update)
+  under the identifier makes the rule wait for re-approval; there is no re-approval flow yet.
 
 ## 4. Review findings at `c7a9f57`
 
@@ -244,11 +305,14 @@ observed", not race freedom, not publisher trust and not protection from A1.
 3. Imported, restored and legacy application rules arrive disabled and unbound; re-selection is local.
    *After review:* implemented (authorization reset to `unverified`, rules off).
 4. Different code under the selected identifier makes the rule wait; it never re-binds or widens.
-   *After review:* modelled (`needsReapproval`, `codeChanged` clears nothing); no verifier yet.
+   *After review:* implemented: the verifier's `codeChanged` is saved as `needsReapproval` and the
+   rule stops; there is no re-approval flow yet.
 5. Exec, exit, watch failure, uncertainty, rule or session change invalidates pending and notice-stage
    presence firings; already-started actions are not undone and nothing is replayed.
 6. Verification runs off the main thread with bounded work, cancellation and a timeout; timeout is
    unknown.
+   *After review:* implemented (`ApplicationRunningCodeCheck`); the Security call itself can't be
+   cancelled, only waiting for it.
 7. No paths, PIDs, names or signing data of other apps are logged or persisted.
 8. If the product decides to keep a bundle-ID-only mode, it is off by default, labelled as unverified
    at the point of choice, and subject to the open question on allowed actions below.

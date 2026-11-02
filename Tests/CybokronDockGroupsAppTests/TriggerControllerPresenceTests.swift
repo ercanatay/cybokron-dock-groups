@@ -167,9 +167,8 @@ struct TriggerControllerPresenceTests {
         #expect(controller.state.entry(for: closes.id).lastOutcome == .skipped(.applicationNotVerified))
     }
 
-    /// The app's own coordinator has no running-code verifier yet: a rule authorized for a code hash
-    /// (as only a future verified selection could make) runs nothing and isn't even observed, while
-    /// an unverified Show the Popup rule still runs.
+    /// The app's own coordinator checks running code: a rule authorized for a code hash (as only a
+    /// future verified selection could make) runs nothing for an instance it can't confirm.
     @Test func productionVerifierFailsClosedForAuthorizedRules() async throws {
         let dir = try makeTempDir()
         defer { try? FileManager.default.removeItem(at: dir) }
@@ -185,9 +184,10 @@ struct TriggerControllerPresenceTests {
         let handler = CountingPresenceHandler(groups: [group])
         let controller = TriggerController(groups: groups, store: triggers, stateStore: state, loginItem: LoginItem(), locationAccess: LocationAccess())
         controller.start(handler: handler, launchedAsLoginItem: false, launchedAt: Date())
-        #expect(!controller.isApplicationPresenceObserving)
+        #expect(controller.coordinator.applicationIdentityVerifier is RunningApplicationIdentityVerifier)
+        // The fixture app isn't running, so the rule is observed; the snapshots below count an
+        // instance that the production verifier can't find and confirm, so nothing runs.
         let generation = controller.applicationObservationGeneration
-        #expect(!controller.coordinator.beginApplicationObservations(generation: generation + 1))
         controller.handleApplicationSnapshot(generation: generation, sequence: 100, counts: ["com.cybokronfixture.normal": 0])
         controller.handleApplicationSnapshot(generation: generation, sequence: 101, counts: ["com.cybokronfixture.normal": 1])
         try await Task.sleep(for: .milliseconds(2300))

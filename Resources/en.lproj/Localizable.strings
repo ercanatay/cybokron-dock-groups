@@ -1162,6 +1162,7 @@
 "groupWindow.triggers.identifiedAppsWarning" = "Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits.";
 
 "core.trigger.skip.applicationNotVerified" = "the app isn't verified, so only Show Popup can run";
+"core.trigger.skip.applicationNotConfirmed" = "the app's running code couldn't be confirmed, so nothing ran";
 "triggers.identity.badge.unverified" = "Unverified";
 "triggers.identity.badge.needsReapproval" = "Needs re-approval";
 "triggers.identity.badge.invalid" = "Invalid";

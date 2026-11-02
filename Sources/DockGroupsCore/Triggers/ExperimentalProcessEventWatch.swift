@@ -17,8 +17,9 @@ enum ExperimentalProcessEventWatchPollResult: Equatable {
     case unknown
 }
 
-/// UNUSED, EXPERIMENTAL, macOS 14+ synchronous wrapper over kqueue `EVFILT_PROC`
-/// (`NOTE_EXEC | NOTE_EXIT`).
+/// Experimental macOS 14+ synchronous wrapper over kqueue `EVFILT_PROC` (`NOTE_EXEC | NOTE_EXIT`).
+/// Its only production caller is `RunningApplicationIdentityVerifier`, which registers it before a
+/// running-code check and polls it on the main actor; everything below still applies there.
 ///
 /// This is NOT a process identity, NOT authorization, and NOT race-free. Read the design draft
 /// `docs/design/app-presence-watch-protocol-draft.md` before touching it.
@@ -35,7 +36,8 @@ enum ExperimentalProcessEventWatchPollResult: Equatable {
 ///   discard this watch and establish a new binding; "no event" is never read as "alive".
 /// - Any liveness check, identity verification and subsequent action are not atomic with each
 ///   other or with the watch.
-/// - Do not use in production code paths.
+/// - Use only through `RunningApplicationIdentityVerifier`, which treats every non-idle poll as
+///   unknown.
 ///
 /// Not thread-safe: the caller must serialize every call including `close()` and release.
 /// No background queue, global state, logging or access to other processes beyond the

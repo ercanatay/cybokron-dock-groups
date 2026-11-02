@@ -24,6 +24,9 @@ public enum TriggerSkipReason: String, CaseIterable, Sendable {
     /// An application-presence rule that matches by bundle identifier only (unverified) asked for an
     /// action other than Show the Popup.
     case applicationNotVerified
+    /// An authorized application-presence rule's running code couldn't be confirmed in time (the
+    /// check was still running, failed or timed out, or an instance changed): nothing ran.
+    case applicationNotConfirmed
 
     public var explanation: String {
         switch self {
@@ -41,6 +44,8 @@ public enum TriggerSkipReason: String, CaseIterable, Sendable {
         case .groupMissing: return Localization.string("core.trigger.skip.groupMissing", "the group no longer exists")
         case .applicationNotVerified:
             return Localization.string("core.trigger.skip.applicationNotVerified", "the app isn't verified, so only Show Popup can run")
+        case .applicationNotConfirmed:
+            return Localization.string("core.trigger.skip.applicationNotConfirmed", "the app's running code couldn't be confirmed, so nothing ran")
         }
     }
 }
