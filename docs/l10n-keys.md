@@ -1220,7 +1220,7 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `capture.sheet.empty` | No other apps are open. |
 | `capture.sheet.allInGroup` | Every open app is already in “%@”. |
 
-## Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation (English only for now; `awaitingTranslation`: `core.trigger.`, `core.backup.triggers.`)
+## Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation
 
 The `core.trigger.skip.*` and `core.trigger.missed.*` texts complete a sentence ("Skipped today at 9:00: …", "Missed at 9:00: …"), so they start in lowercase.
 
@@ -1471,7 +1471,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
 | `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |
 
-## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes and approval, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.` (including `triggers.identity.approve.`), `core.trigger.skip.applicationNotVerified`, `core.trigger.skip.applicationNotConfirmed`)
+## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes and approval, and why an action was skipped
 
 An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
 only Show Popup runs until the user approves its app (Approve This App, while the app is open).

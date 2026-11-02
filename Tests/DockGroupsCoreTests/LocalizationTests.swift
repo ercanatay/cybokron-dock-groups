@@ -35,16 +35,7 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = [
-        // An application trigger's approval (docs/l10n-keys.md, "an application trigger's approval").
-        "triggers.identity.",
-        // The editor's approval of an application trigger's app (covered by the prefix above; listed
-        // so it isn't forgotten when that prefix is translated).
-        "triggers.identity.approve.",
-        "core.trigger.skip.applicationNotVerified",
-        // An authorized application trigger whose running code couldn't be confirmed.
-        "core.trigger.skip.applicationNotConfirmed",
-    ]
+    static let awaitingTranslation: [String] = []
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }
