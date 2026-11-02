@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Monitora solo le applicazioni identificate";
 "groupWindow.triggers.identifiedAppsWarning" = "Vengono monitorate solo le applicazioni identificate da macOS. Le istanze non identificate potrebbero non essere rilevate e una chiusura potrebbe essere segnalata in modo errato. Questa impostazione si applica a tutti i trigger delle applicazioni e viene ripristinata quando Cybokron Dock Groups viene chiuso.";
+"core.trigger.skip.applicationNotVerified" = "l'app non è verificata, quindi può essere eseguito solo Mostra popup";
+"triggers.identity.badge.unverified" = "Non verificato";
+"triggers.identity.badge.needsReapproval" = "Richiede una nuova approvazione";
+"triggers.identity.badge.invalid" = "Non valido";
+"triggers.identity.badge.verificationUnavailable" = "Verifica non disponibile";
+"triggers.identity.status.needsReapproval" = "Richiede una nuova approvazione: il codice dell'app è cambiato dopo l'approvazione, quindi questo trigger non viene eseguito.";
+"triggers.identity.status.invalid" = "Non valido: l'approvazione dell'app non può essere letta, quindi questo trigger non viene eseguito.";
+"triggers.identity.status.verificationUnavailable" = "Non viene eseguito: questa versione non può ancora verificare il codice dell'app in esecuzione.";
+"triggers.identity.detail.unverified" = "Associato solo tramite identificatore del bundle, che potrebbe essere usato anche da un'altra app. Viene eseguito solo Mostra popup e il trigger parte disattivato.";
+"triggers.identity.detail.needsReapproval" = "L'app è stata aggiornata o sostituita dopo l'approvazione di questo trigger per essa. Non viene eseguito nulla finché il nuovo codice non viene approvato.";
+"triggers.identity.detail.invalid" = "L'approvazione salvata per l'app di questo trigger non può essere letta. Non viene eseguito nulla.";
+"triggers.identity.detail.verificationUnavailable" = "Questo trigger è stato approvato per una specifica build dell'app, ma questa versione non può verificare quale codice è in esecuzione, quindi non viene eseguito nulla.";
+"triggers.identity.howToReapprove" = "Questa versione non può verificare il codice di un'app, quindi non può approvare di nuovo un trigger. Per usarlo ora, rimuovilo e aggiungilo di nuovo: il nuovo trigger non è verificato, parte disattivato e mostra solo il popup.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (richiede un'app verificata)";
+"triggers.identity.editor.onlyShowPopup" = "Questa app è associata solo tramite identificatore del bundle (non verificata), quindi può essere eseguito solo Mostra popup. Le altre azioni richiedono un'app verificata, e questa versione non può ancora verificare le app.";
+"triggers.identity.editor.chooseShowPopup" = "Scegli Mostra popup per salvare: le altre azioni non vengono eseguite per un'app non verificata.";
+"triggers.identity.sectionNote" = "In questa versione, i trigger delle app associano le app solo tramite identificatore del bundle: partono disattivati e possono solo mostrare il popup. La verifica del codice di un'app non è ancora disponibile.";

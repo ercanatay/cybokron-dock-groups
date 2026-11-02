@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Monitorizează doar aplicațiile identificate";
 "groupWindow.triggers.identifiedAppsWarning" = "Sunt monitorizate doar aplicațiile identificate de macOS. Instanțele neidentificate pot fi ratate, iar închiderea unei aplicații poate fi raportată incorect. Această setare se aplică tuturor declanșatoarelor aplicației și se resetează atunci când Cybokron Dock Groups se închide.";
+"core.trigger.skip.applicationNotVerified" = "aplicația nu este verificată, așa că poate rula doar Arată pop-up-ul";
+"triggers.identity.badge.unverified" = "Neverificat";
+"triggers.identity.badge.needsReapproval" = "Necesită reaprobare";
+"triggers.identity.badge.invalid" = "Invalid";
+"triggers.identity.badge.verificationUnavailable" = "Verificare indisponibilă";
+"triggers.identity.status.needsReapproval" = "Necesită reaprobare: codul aplicației s-a schimbat de la aprobare, așa că acest declanșator nu rulează.";
+"triggers.identity.status.invalid" = "Invalid: aprobarea aplicației nu poate fi citită, așa că acest declanșator nu rulează.";
+"triggers.identity.status.verificationUnavailable" = "Nu rulează: această versiune nu poate verifica încă codul aplicației în execuție.";
+"triggers.identity.detail.unverified" = "Potrivit doar după identificatorul de pachet, pe care l-ar putea folosi și o altă aplicație. Rulează doar Arată pop-up-ul, iar declanșatorul pornește dezactivat.";
+"triggers.identity.detail.needsReapproval" = "Aplicația a fost actualizată sau înlocuită de la aprobarea acestui declanșator pentru ea. Nimic nu rulează până când noul cod al aplicației nu este aprobat.";
+"triggers.identity.detail.invalid" = "Aprobarea salvată pentru aplicația acestui declanșator nu poate fi citită. Nu rulează nimic.";
+"triggers.identity.detail.verificationUnavailable" = "Acest declanșator a fost aprobat pentru o anumită versiune de compilare a aplicației, dar această versiune nu poate verifica ce cod rulează, așa că nu rulează nimic.";
+"triggers.identity.howToReapprove" = "Această versiune nu poate verifica codul unei aplicații, așa că nu poate aproba din nou un declanșator. Pentru a-l folosi acum, șterge-l și adaugă-l din nou: noul declanșator este neverificat, pornește dezactivat și afișează doar pop-up-ul.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (necesită o aplicație verificată)";
+"triggers.identity.editor.onlyShowPopup" = "Această aplicație este potrivită doar după identificatorul de pachet (neverificată), așa că poate rula doar Arată pop-up-ul. Celelalte acțiuni necesită o aplicație verificată, iar această versiune nu poate verifica încă aplicații.";
+"triggers.identity.editor.chooseShowPopup" = "Alege Arată pop-up-ul pentru a salva: celelalte acțiuni nu rulează pentru o aplicație neverificată.";
+"triggers.identity.sectionNote" = "În această versiune, declanșatoarele pentru aplicații potrivesc aplicațiile doar după identificatorul de pachet: pornesc dezactivate și pot afișa doar pop-up-ul. Verificarea codului unei aplicații nu este încă disponibilă.";

@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Alleen geïdentificeerde applicaties bewaken";
 "groupWindow.triggers.identifiedAppsWarning" = "Alleen applicaties die door macOS zijn geïdentificeerd, worden bewaakt. Niet-geïdentificeerde exemplaren kunnen worden gemist, en een afsluiting kan onjuist worden gemeld. Deze instelling geldt voor alle applicatietriggers en wordt teruggezet wanneer Cybokron Dock Groups wordt afgesloten.";
+"core.trigger.skip.applicationNotVerified" = "de app is niet geverifieerd, dus alleen Toon pop-up kan worden uitgevoerd";
+"triggers.identity.badge.unverified" = "Niet geverifieerd";
+"triggers.identity.badge.needsReapproval" = "Opnieuw goedkeuren vereist";
+"triggers.identity.badge.invalid" = "Ongeldig";
+"triggers.identity.badge.verificationUnavailable" = "Verificatie niet beschikbaar";
+"triggers.identity.status.needsReapproval" = "Opnieuw goedkeuren vereist: de code van de app is veranderd sinds de goedkeuring, dus deze trigger wordt niet uitgevoerd.";
+"triggers.identity.status.invalid" = "Ongeldig: de app-goedkeuring kan niet worden gelezen, dus deze trigger wordt niet uitgevoerd.";
+"triggers.identity.status.verificationUnavailable" = "Wordt niet uitgevoerd: deze versie kan de code van de actieve app nog niet controleren.";
+"triggers.identity.detail.unverified" = "Alleen gekoppeld op bundle-identifier, die ook door een andere app kan worden gebruikt. Alleen Toon pop-up wordt uitgevoerd en de trigger staat standaard uit.";
+"triggers.identity.detail.needsReapproval" = "De app is bijgewerkt of vervangen sinds deze trigger ervoor is goedgekeurd. Er wordt niets uitgevoerd totdat de nieuwe code is goedgekeurd.";
+"triggers.identity.detail.invalid" = "De opgeslagen goedkeuring voor de app van deze trigger kan niet worden gelezen. Er wordt niets uitgevoerd.";
+"triggers.identity.detail.verificationUnavailable" = "Deze trigger is goedgekeurd voor een specifieke build van de app, maar deze versie kan niet controleren welke code wordt uitgevoerd, dus er wordt niets uitgevoerd.";
+"triggers.identity.howToReapprove" = "Deze versie kan de code van een app niet controleren en kan een trigger dus niet opnieuw goedkeuren. Om hem nu te gebruiken, verwijder je hem en voeg je hem opnieuw toe: de nieuwe trigger is niet geverifieerd, staat standaard uit en toont alleen de pop-up.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (vereist een geverifieerde app)";
+"triggers.identity.editor.onlyShowPopup" = "Deze app wordt alleen op bundle-identifier gekoppeld (niet geverifieerd), dus alleen Toon pop-up kan worden uitgevoerd. Andere acties vereisen een geverifieerde app, en deze versie kan apps nog niet verifiëren.";
+"triggers.identity.editor.chooseShowPopup" = "Kies Toon pop-up om op te slaan: andere acties worden niet uitgevoerd voor een niet-geverifieerde app.";
+"triggers.identity.sectionNote" = "In deze versie koppelen app-triggers apps alleen op bundle-identifier: ze staan standaard uit en kunnen alleen de pop-up tonen. Het controleren van de code van een app is nog niet beschikbaar.";

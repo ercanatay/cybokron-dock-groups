@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "識別されたアプリケーションのみを監視";
 "groupWindow.triggers.identifiedAppsWarning" = "macOSによって識別されたアプリケーションのみが監視されます。識別されていないインスタンスは見逃される可能性があり、アプリの終了が誤って報告されることがあります。この設定はすべてのアプリケーショントリガーに適用され、Cybokron Dock Groups が終了するとリセットされます。";
+"core.trigger.skip.applicationNotVerified" = "アプリは検証されていないため、実行できるのはポップアップを表示のみです";
+"triggers.identity.badge.unverified" = "未検証";
+"triggers.identity.badge.needsReapproval" = "再承認が必要";
+"triggers.identity.badge.invalid" = "無効";
+"triggers.identity.badge.verificationUnavailable" = "検証できません";
+"triggers.identity.status.needsReapproval" = "再承認が必要: アプリのコードが承認後に変更されたため、このトリガーは実行されません。";
+"triggers.identity.status.invalid" = "無効: アプリの承認情報を読み取れないため、このトリガーは実行されません。";
+"triggers.identity.status.verificationUnavailable" = "実行されません: このバージョンでは、実行中のアプリのコードをまだ確認できません。";
+"triggers.identity.detail.unverified" = "バンドル識別子のみで照合されており、別のアプリでも同じ識別子を使用できます。実行されるのはポップアップを表示のみで、トリガーはオフの状態で開始されます。";
+"triggers.identity.detail.needsReapproval" = "このトリガーが承認された後に、アプリが更新または差し替えられました。新しいコードが承認されるまで、何も実行されません。";
+"triggers.identity.detail.invalid" = "このトリガーのアプリに保存された承認情報を読み取れません。何も実行されません。";
+"triggers.identity.detail.verificationUnavailable" = "このトリガーは特定のビルドのアプリ向けに承認されていますが、このバージョンでは実行中のコードを確認できないため、何も実行されません。";
+"triggers.identity.howToReapprove" = "このバージョンではアプリのコードを確認できないため、トリガーを再承認することはできません。今すぐ使用するには、いったん削除してから再度追加してください。新しいトリガーは未検証の状態で、オフの状態で開始し、ポップアップを表示のみを行います。";
+"triggers.identity.action.needsVerifiedApp" = "%@（検証済みのアプリが必要）";
+"triggers.identity.editor.onlyShowPopup" = "このアプリはバンドル識別子のみで照合されています（未検証）。そのため実行できるのはポップアップを表示のみです。その他のアクションには検証済みのアプリが必要ですが、このバージョンではまだアプリを検証できません。";
+"triggers.identity.editor.chooseShowPopup" = "保存するにはポップアップを表示を選択してください。未検証のアプリでは、その他のアクションは実行されません。";
+"triggers.identity.sectionNote" = "このバージョンでは、アプリのトリガーはバンドル識別子のみでアプリを照合します。トリガーはオフの状態で開始し、ポップアップを表示のみができます。アプリのコードの確認は、まだ利用できません。";

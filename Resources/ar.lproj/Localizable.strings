@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "مراقبة التطبيقات المحددة فقط";
 "groupWindow.triggers.identifiedAppsWarning" = "تُراقَب التطبيقات التي حدّدها macOS فقط. قد تفوتك النسخ غير المحددة، وقد يُبلَّغ عن إغلاق التطبيق بشكل غير صحيح. هذا الإعداد ينطبق على جميع مشغلات التطبيقات، ويُعاد ضبطه عند إغلاق Cybokron Dock Groups.";
+"core.trigger.skip.applicationNotVerified" = "التطبيق غير موثّق، لذا يمكن تشغيل عرض النافذة المنبثقة فقط";
+"triggers.identity.badge.unverified" = "غير موثّق";
+"triggers.identity.badge.needsReapproval" = "يتطلب إعادة الاعتماد";
+"triggers.identity.badge.invalid" = "غير صالح";
+"triggers.identity.badge.verificationUnavailable" = "التحقق غير متاح";
+"triggers.identity.status.needsReapproval" = "يتطلب إعادة الاعتماد: تغيّر كود التطبيق منذ اعتماده، لذا لا يعمل هذا المشغّل.";
+"triggers.identity.status.invalid" = "غير صالح: لا يمكن قراءة اعتماد التطبيق الخاص به، لذا لا يعمل هذا المشغّل.";
+"triggers.identity.status.verificationUnavailable" = "لا يعمل: هذا الإصدار لا يمكنه فحص كود التطبيق الجاري تشغيله بعد.";
+"triggers.identity.detail.unverified" = "مطابَق بمعرّف الحزمة وحده، وقد يستخدمه تطبيق آخر أيضًا. يعمل عرض النافذة المنبثقة فقط، ويبدأ المشغّل متوقفًا.";
+"triggers.identity.detail.needsReapproval" = "تم تحديث التطبيق أو استبداله منذ اعتماد هذا المشغّل له. لا يعمل أي شيء حتى يُعتمد كوده الجديد.";
+"triggers.identity.detail.invalid" = "لا يمكن قراءة الاعتماد المحفوظ لتطبيق هذا المشغّل. لا يعمل أي شيء.";
+"triggers.identity.detail.verificationUnavailable" = "اعتُمد هذا المشغّل لإصدار محدد من التطبيق، لكن هذا الإصدار لا يمكنه التحقق من الكود الجاري تشغيله، لذا لا يعمل أي شيء.";
+"triggers.identity.howToReapprove" = "لا يستطيع هذا الإصدار فحص كود التطبيق، لذلك لا يمكنه اعتماد المشغّل مرة أخرى. لاستخدامه الآن، احذفه وأضفه من جديد: المشغّل الجديد غير موثّق، ويبدأ متوقفًا، ولا يعرض إلا النافذة المنبثقة.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (يتطلب تطبيقًا موثّقًا)";
+"triggers.identity.editor.onlyShowPopup" = "هذا التطبيق مطابَق بمعرّف الحزمة وحده (غير موثّق)، لذا يمكن تشغيل عرض النافذة المنبثقة فقط. الإجراءات الأخرى تتطلب تطبيقًا موثّقًا، وهذا الإصدار لا يستطيع توثيق التطبيقات بعد.";
+"triggers.identity.editor.chooseShowPopup" = "اختر عرض النافذة المنبثقة للحفظ: الإجراءات الأخرى لا تعمل مع تطبيق غير موثّق.";
+"triggers.identity.sectionNote" = "في هذا الإصدار، تطابق مشغّلات التطبيقات التطبيقات بمعرّف الحزمة وحده: تبدأ متوقفة ولا يمكنها إلا عرض النافذة المنبثقة. فحص كود التطبيق غير متاح بعد.";

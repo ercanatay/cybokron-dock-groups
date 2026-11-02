@@ -1471,7 +1471,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
 | `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |
 
-## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes, and why an action was skipped (English only for now; `awaitingTranslation`: `triggers.identity.`, `core.trigger.skip.applicationNotVerified`)
+## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes, and why an action was skipped
 
 An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
 only Show Popup runs. *Needs re-approval*, *Invalid* and *Verification unavailable* run nothing. This

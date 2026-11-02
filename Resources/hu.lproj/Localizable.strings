@@ -1118,3 +1118,20 @@
 
 "groupWindow.triggers.identifiedAppsOnly" = "Csak azonosított alkalmazásokat figyelünk";
 "groupWindow.triggers.identifiedAppsWarning" = "Csak a macOS által azonosított alkalmazások vannak figyelés alatt. Az azonosítatlan példányok kimaradhatnak, az alkalmazás bezárása pedig tévesen jelenthető. Ez a beállítás minden alkalmazás-triggerre vonatkozik, és visszaáll alapértelmezettre, amikor a Cybokron Dock Groups kilép.";
+"core.trigger.skip.applicationNotVerified" = "az alkalmazás nincs ellenőrizve, ezért csak az Előugró ablak megjelenítése futtatható";
+"triggers.identity.badge.unverified" = "Nem ellenőrzött";
+"triggers.identity.badge.needsReapproval" = "Újbóli jóváhagyást igényel";
+"triggers.identity.badge.invalid" = "Érvénytelen";
+"triggers.identity.badge.verificationUnavailable" = "Ellenőrzés nem érhető el";
+"triggers.identity.status.needsReapproval" = "Újbóli jóváhagyást igényel: az alkalmazás kódja a jóváhagyás óta megváltozott, ezért ez az indító nem fut.";
+"triggers.identity.status.invalid" = "Érvénytelen: az alkalmazás jóváhagyása nem olvasható, ezért ez az indító nem fut.";
+"triggers.identity.status.verificationUnavailable" = "Nem fut: ez a verzió még nem tudja ellenőrizni a futó alkalmazás kódját.";
+"triggers.identity.detail.unverified" = "Csak a csomagazonosító alapján egyezik, amelyet más alkalmazás is használhat. Csak az Előugró ablak megjelenítése fut, és az indító kikapcsolt állapotban indul.";
+"triggers.identity.detail.needsReapproval" = "Az alkalmazás a jóváhagyás óta frissült vagy lecserélődött. Semmi sem fut, amíg az új kódja nincs jóváhagyva.";
+"triggers.identity.detail.invalid" = "A mentett jóváhagyás ehhez az indítóhoz tartozó alkalmazásra nem olvasható. Semmi sem fut.";
+"triggers.identity.detail.verificationUnavailable" = "Ez az indító az alkalmazás egy adott buildjéhez lett jóváhagyva, de ez a verzió nem tudja ellenőrizni, melyik kód fut, ezért semmi sem fut.";
+"triggers.identity.howToReapprove" = "Ez a verzió nem tudja ellenőrizni az alkalmazás kódját, ezért nem tud újra jóváhagyni egy indítót. Ha most szeretnéd használni, töröld, majd add hozzá újra: az új indító nem ellenőrzött, kikapcsolt állapotban indul, és csak az előugró ablakot jeleníti meg.";
+"triggers.identity.action.needsVerifiedApp" = "%@ (ellenőrzött alkalmazást igényel)";
+"triggers.identity.editor.onlyShowPopup" = "Ez az alkalmazás csak a csomagazonosítója alapján egyezik (nem ellenőrzött), ezért csak az Előugró ablak megjelenítése futtatható. A többi művelethez ellenőrzött alkalmazás szükséges, ez a verzió pedig még nem tud alkalmazásokat ellenőrizni.";
+"triggers.identity.editor.chooseShowPopup" = "A mentéshez válaszd az Előugró ablak megjelenítése lehetőséget: a többi művelet nem fut nem ellenőrzött alkalmazás esetén.";
+"triggers.identity.sectionNote" = "Ebben a verzióban az alkalmazás-indítók csak a csomagazonosító alapján illesztik az alkalmazásokat: kikapcsolt állapotban indulnak, és csak az előugró ablakot jeleníthetik meg. Az alkalmazás kódjának ellenőrzése még nem érhető el.";
