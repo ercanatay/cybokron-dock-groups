@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "بررسی متوقف شد. هیچ‌چیزی تأیید نشد.";
 "triggers.identity.approve.failure.checkFailed" = "کد برنامه نتوانست بررسی شود. هیچ‌چیزی تأیید نشد.";
 "triggers.identity.approve.failure.notSaved" = "تأیید نتوانست ذخیره شود. هیچ‌چیزی تأیید نشد.";
+"triggers.identity.approved.signature" = "امضای %@ تأیید شد.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "امضای Ad-hoc: این امضا مشخص نمی‌کند که برنامه را چه کسی ساخته، پس این تأیید ضعیف‌تر است. فقط برای همین کد دقیق معتبر است.";

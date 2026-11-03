@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Controleren gestopt. Er is niets goedgekeurd.";
 "triggers.identity.approve.failure.checkFailed" = "De code van de app kon niet worden gecontroleerd. Er is niets goedgekeurd.";
 "triggers.identity.approve.failure.notSaved" = "De goedkeuring kon niet worden opgeslagen. Er is niets goedgekeurd.";
+"triggers.identity.approved.signature" = "Goedgekeurd: %@-handtekening.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hochandtekening: deze verifieert niet wie de app heeft gemaakt, dus deze goedkeuring is zwakker. Ze geldt alleen voor deze exacte code.";

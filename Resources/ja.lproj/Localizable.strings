@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "確認が中止されました。何も承認されませんでした。";
 "triggers.identity.approve.failure.checkFailed" = "アプリのコードを確認できませんでした。何も承認されませんでした。";
 "triggers.identity.approve.failure.notSaved" = "承認を保存できませんでした。何も承認されませんでした。";
+"triggers.identity.approved.signature" = "承認済み: %@ 署名。";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "アドホック署名: アプリを作成した者を検証しないため、この承認の信頼性は低くなります。承認は、このコードそのものに対してのみ有効です。";

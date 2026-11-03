@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Kontrollen avbröts. Inget godkändes.";
 "triggers.identity.approve.failure.checkFailed" = "Appens kod kunde inte kontrolleras. Inget godkändes.";
 "triggers.identity.approve.failure.notSaved" = "Godkännandet kunde inte sparas. Inget godkändes.";
+"triggers.identity.approved.signature" = "Godkänd: %@-signatur.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad hoc-signatur: den verifierar inte vem som skapade appen, så godkännandet är svagare. Det gäller endast för exakt denna kod.";

@@ -1153,3 +1153,8 @@
 "triggers.identity.approve.failure.cancelled" = "확인이 중지되었습니다. 아무것도 승인되지 않았습니다.";
 "triggers.identity.approve.failure.checkFailed" = "앱 코드를 확인할 수 없었습니다. 아무것도 승인되지 않았습니다.";
 "triggers.identity.approve.failure.notSaved" = "승인을 저장할 수 없었습니다. 아무것도 승인되지 않았습니다.";
+"triggers.identity.approved.signature" = "승인됨: %@ 서명.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "애드혹 서명: 앱을 만든 주체를 확인하지 않으므로 이 승인은 신뢰도가 낮습니다. 이 정확한 코드에 대해서만 유효합니다.";

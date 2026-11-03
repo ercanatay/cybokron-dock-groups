@@ -1153,3 +1153,8 @@
 "triggers.identity.approve.failure.cancelled" = "Denetleme durduruldu. Hiçbir şey onaylanmadı.";
 "triggers.identity.approve.failure.checkFailed" = "Uygulamanın kodu denetlenemedi. Hiçbir şey onaylanmadı.";
 "triggers.identity.approve.failure.notSaved" = "Onay kaydedilemedi. Hiçbir şey onaylanmadı.";
+"triggers.identity.approved.signature" = "%@ imzası onaylandı.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc imza: uygulamayı kimin oluşturduğunu doğrulamaz, bu nedenle bu onay daha zayıftır. Yalnızca bu tam kod için geçerlidir.";

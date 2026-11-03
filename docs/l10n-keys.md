@@ -1489,8 +1489,7 @@ button, its hint and the outcome of an approval; a failure says that nothing was
 trigger and names how the approved code was signed: its `%@` is one of the
 `triggers.identity.signature.` names (Apple, Mac App Store, Developer ID). An ad-hoc signature
 gets `triggers.identity.signature.adHoc` instead, a whole sentence that says the approval is weaker
-because the signature doesn't verify who made the app (English only for now; `awaitingTranslation`:
-`triggers.identity.approved.`, `triggers.identity.signature.`).
+because the signature doesn't verify who made the app.
 The texts say *approve* for what the user does and *confirm* for the check of the running code
 against an approval; *unverified* is the state of a trigger whose app isn't approved.
 

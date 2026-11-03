@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Đã dừng kiểm tra. Chưa phê duyệt gì cả.";
 "triggers.identity.approve.failure.checkFailed" = "Không thể kiểm tra mã của ứng dụng. Chưa phê duyệt gì cả.";
 "triggers.identity.approve.failure.notSaved" = "Không thể lưu việc phê duyệt. Chưa phê duyệt gì cả.";
+"triggers.identity.approved.signature" = "Đã phê duyệt: chữ ký %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Chữ ký ad-hoc: chữ ký này không xác minh được ai đã tạo ứng dụng, nên việc phê duyệt này yếu hơn. Nó chỉ có hiệu lực với đúng mã này.";

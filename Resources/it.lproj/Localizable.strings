@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Controllo interrotto. Nulla è stato approvato.";
 "triggers.identity.approve.failure.checkFailed" = "Non è stato possibile controllare il codice dell'app. Nulla è stato approvato.";
 "triggers.identity.approve.failure.notSaved" = "Non è stato possibile salvare l'approvazione. Nulla è stato approvato.";
+"triggers.identity.approved.signature" = "Approvato: firma %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Firma ad hoc: non verifica chi ha creato l'app, quindi questa approvazione è più debole. Vale solo per questo esatto codice.";

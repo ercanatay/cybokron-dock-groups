@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Kontrola byla zastavena. Nic nebylo schváleno.";
 "triggers.identity.approve.failure.checkFailed" = "Kód aplikace nebylo možné zkontrolovat. Nic nebylo schváleno.";
 "triggers.identity.approve.failure.notSaved" = "Schválení nebylo možné uložit. Nic nebylo schváleno.";
+"triggers.identity.approved.signature" = "Schváleno: podpis %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc podpis: neověřuje, kdo aplikaci vytvořil, takže toto schválení je slabší. Platí pouze pro tento přesný kód.";

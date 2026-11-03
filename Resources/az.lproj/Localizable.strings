@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Yoxlama dayandırıldı. Heç nə təsdiqlənmədi.";
 "triggers.identity.approve.failure.checkFailed" = "Tətbiqin kodu yoxlanıla bilmədi. Heç nə təsdiqlənmədi.";
 "triggers.identity.approve.failure.notSaved" = "Təsdiq saxlanıla bilmədi. Heç nə təsdiqlənmədi.";
+"triggers.identity.approved.signature" = "Təsdiqlənib: %@ imzası.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc imza: o, tətbiqi kimin yaratdığını təsdiqləmir, ona görə bu təsdiq daha zəifdir. Yalnız bu dəqiq kod üçün keçərlidir.";

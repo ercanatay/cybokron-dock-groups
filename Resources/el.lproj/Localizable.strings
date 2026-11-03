@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Ο έλεγχος σταμάτησε. Δεν εγκρίθηκε τίποτα.";
 "triggers.identity.approve.failure.checkFailed" = "Δεν ήταν δυνατός ο έλεγχος του κώδικα της εφαρμογής. Δεν εγκρίθηκε τίποτα.";
 "triggers.identity.approve.failure.notSaved" = "Η έγκριση δεν μπόρεσε να αποθηκευτεί. Δεν εγκρίθηκε τίποτα.";
+"triggers.identity.approved.signature" = "Εγκρίθηκε: υπογραφή %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc υπογραφή: δεν επαληθεύει ποιος δημιούργησε την εφαρμογή, οπότε αυτή η έγκριση είναι ασθενέστερη. Ισχύει μόνο για αυτόν ακριβώς τον κώδικα.";

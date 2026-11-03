@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "检查已停止。未批准任何内容。";
 "triggers.identity.approve.failure.checkFailed" = "无法检查应用的代码。未批准任何内容。";
 "triggers.identity.approve.failure.notSaved" = "无法保存批准。未批准任何内容。";
+"triggers.identity.approved.signature" = "已批准：%@ 签名。";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc 签名：它无法验证应用的开发者身份，因此此批准的效力较弱。该批准仅对这一完全相同的代码有效。";

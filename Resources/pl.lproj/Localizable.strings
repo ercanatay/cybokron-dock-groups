@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Sprawdzanie zostało przerwane. Nic nie zostało zatwierdzone.";
 "triggers.identity.approve.failure.checkFailed" = "Nie udało się sprawdzić kodu aplikacji. Nic nie zostało zatwierdzone.";
 "triggers.identity.approve.failure.notSaved" = "Nie udało się zapisać zatwierdzenia. Nic nie zostało zatwierdzone.";
+"triggers.identity.approved.signature" = "Zatwierdzono: podpis %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Podpis ad-hoc: nie weryfikuje, kto utworzył aplikację, więc to zatwierdzenie jest słabsze. Obowiązuje wyłącznie dla tego konkretnego kodu.";

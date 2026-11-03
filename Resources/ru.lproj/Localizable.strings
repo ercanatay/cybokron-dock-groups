@@ -1154,3 +1154,8 @@
 "triggers.identity.approve.failure.cancelled" = "Проверка остановлена. Ничего не одобрено.";
 "triggers.identity.approve.failure.checkFailed" = "Не удалось проверить код приложения. Ничего не одобрено.";
 "triggers.identity.approve.failure.notSaved" = "Не удалось сохранить одобрение. Ничего не одобрено.";
+"triggers.identity.approved.signature" = "Одобрено: подпись %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc подпись: она не подтверждает, кто создал приложение, поэтому это одобрение менее надёжно. Оно действительно только для этого точного кода.";

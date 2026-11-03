@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "La comprobación se detuvo. No se aprobó nada.";
 "triggers.identity.approve.failure.checkFailed" = "No se pudo comprobar el código de la app. No se aprobó nada.";
 "triggers.identity.approve.failure.notSaved" = "No se pudo guardar la aprobación. No se aprobó nada.";
+"triggers.identity.approved.signature" = "Aprobado: firma %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Firma ad hoc: no verifica quién creó la app, por lo que esta aprobación es más débil. Solo es válida para este código exacto.";

@@ -1155,3 +1155,8 @@
 "triggers.identity.approve.failure.cancelled" = "Проверката спря. Нищо не беше одобрено.";
 "triggers.identity.approve.failure.checkFailed" = "Кодът на приложението не можа да бъде проверен. Нищо не беше одобрено.";
 "triggers.identity.approve.failure.notSaved" = "Одобрението не можа да бъде запазено. Нищо не беше одобрено.";
+"triggers.identity.approved.signature" = "Одобрено: подпис %@.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc подпис: той не проверява кой е направил приложението, затова това одобрение е по-слабо. Важи само за точно този код.";
