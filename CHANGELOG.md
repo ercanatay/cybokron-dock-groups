@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Application triggers: **When an App Opens** (its first instance) and **When an App Closes** (its last instance) can start a group, open all of its items, show its popup or finish it. The current state is a baseline when observation starts, so short-lived changes can be missed
-- An app is chosen by its identity and must be approved once: the editor shows who signed it, and the trigger waits until you approve. If the app's code signature changes (for example after an update by a different developer), the trigger stops and asks for approval again
+- An app is chosen by its identity and must be approved once: the editor shows who signed it, and the trigger waits until you approve. If the app's code changes (for example after an app update), the trigger stops and asks for approval again
 - Matching by bundle ID alone is off by default. If macOS cannot identify a running app, observation waits. An optional, clearly warned setting monitors only identifiable apps for this session and resets when Cybokron Dock Groups quits; it applies to every application trigger
 - The new trigger text is translated into all 26 languages
 
