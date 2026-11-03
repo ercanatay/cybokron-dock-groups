@@ -296,7 +296,7 @@ struct ApplicationRunningCodeCheckTests {
         defer {
             for process in children {
                 if process.isRunning { process.terminate() }
-                process.waitUntilExit()
+                process.waitForExit()
             }
         }
         let genuine = try SignedFixture.run(selected); children.append(genuine)
@@ -324,7 +324,7 @@ enum SignedFixture {
         #endif
         thin.arguments = ["-thin", architecture, "/bin/sleep", "-output", dir.appendingPathComponent("Fixture").path]
         thin.standardOutput = Pipe(); thin.standardError = Pipe()
-        try thin.run(); thin.waitUntilExit()
+        try thin.run(); thin.waitForExit()
         try #require(thin.terminationStatus == 0)
         let plist: [String: Any] = ["CFBundleIdentifier": identifier, "CFBundleName": name, "CFBundleExecutable": "Fixture", "CFBundlePackageType": "APPL"]
         try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: url.appendingPathComponent("Contents/Info.plist"))
@@ -332,7 +332,7 @@ enum SignedFixture {
         signing.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
         signing.arguments = ["--force", "--sign", "-", "-r", "=designated => identifier \"\(identifier)\"", url.path]
         signing.standardOutput = Pipe(); signing.standardError = Pipe()
-        try signing.run(); signing.waitUntilExit()
+        try signing.run(); signing.waitForExit()
         try #require(signing.terminationStatus == 0)
     }
 

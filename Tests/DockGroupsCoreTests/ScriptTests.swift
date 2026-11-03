@@ -32,7 +32,7 @@ struct RepositoryScript {
         try process.run()
         let outputData = output.fileHandleForReading.readDataToEndOfFile()
         let errorData = errors.fileHandleForReading.readDataToEndOfFile()
-        process.waitUntilExit()
+        process.waitForExit()
         return Result(
             status: process.terminationStatus,
             output: String(decoding: outputData, as: UTF8.self),
@@ -362,7 +362,7 @@ struct WorkflowTests {
             process.standardOutput = FileHandle.nullDevice
             process.standardError = FileHandle.nullDevice
             try process.run()
-            process.waitUntilExit()
+            process.waitForExit()
             #expect((process.terminationStatus == 0) == (state == "present"), "\(job): \(state) metadata")
         }
     }
@@ -425,7 +425,7 @@ struct AppIntentsPackagingTests {
             process.standardOutput = outputHandle
             process.standardError = errorHandle
             try process.run()
-            process.waitUntilExit()
+            process.waitForExit()
             return RepositoryScript.Result(status: process.terminationStatus,
                 output: try String(contentsOf: output, encoding: .utf8),
                 errors: try String(contentsOf: errors, encoding: .utf8))

@@ -18,7 +18,7 @@ struct ApplicationRunningCodeVerifierTests {
         defer {
             for process in children {
                 if process.isRunning { process.terminate() }
-                process.waitUntilExit()
+                process.waitForExit()
             }
         }
         let first = try runSleeper(in: selected); children.append(first)
@@ -49,7 +49,7 @@ struct ApplicationRunningCodeVerifierTests {
         defer {
             for process in children {
                 if process.isRunning { process.terminate() }
-                process.waitUntilExit()
+                process.waitForExit()
             }
         }
         let first = try runSleeper(in: selected); children.append(first)
@@ -65,7 +65,7 @@ struct ApplicationRunningCodeVerifierTests {
         #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: "x\" or anchor apple") == .unknown)
         #expect(ApplicationRunningIdentityReader.read(pid: 0, expectedIdentifier: identifier) == .unknown)
         #expect(ApplicationRunningIdentityReader.read(pid: Int32.max, expectedIdentifier: identifier) == .unknown)
-        first.terminate(); first.waitUntilExit()
+        first.terminate(); first.waitForExit()
         #expect(ApplicationRunningIdentityReader.read(pid: first.processIdentifier, expectedIdentifier: identifier) == .unknown)
     }
 
@@ -83,7 +83,7 @@ struct ApplicationRunningCodeVerifierTests {
         #endif
         thin.arguments = ["-thin", architecture, "/bin/sleep", "-output", dir.appendingPathComponent("Fixture").path]
         thin.standardOutput = Pipe(); thin.standardError = Pipe()
-        try thin.run(); thin.waitUntilExit()
+        try thin.run(); thin.waitForExit()
         try #require(thin.terminationStatus == 0)
         let plist: [String: Any] = ["CFBundleIdentifier": "com.cybokron.fixture.running", "CFBundleName": name, "CFBundleExecutable": "Fixture", "CFBundlePackageType": "APPL"]
         try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: url.appendingPathComponent("Contents/Info.plist"))
@@ -91,7 +91,7 @@ struct ApplicationRunningCodeVerifierTests {
         signing.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
         signing.arguments = ["--force", "--sign", "-", "-r", "=designated => identifier \"com.cybokron.fixture.running\"", url.path]
         signing.standardOutput = Pipe(); signing.standardError = Pipe()
-        try signing.run(); signing.waitUntilExit()
+        try signing.run(); signing.waitForExit()
         try #require(signing.terminationStatus == 0)
     }
 

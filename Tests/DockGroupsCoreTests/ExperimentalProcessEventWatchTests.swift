@@ -57,7 +57,7 @@ struct ExperimentalProcessEventWatchTests {
         child.executableURL = URL(fileURLWithPath: "/usr/bin/true")
         try child.run()
         let pid = child.processIdentifier
-        child.waitUntilExit()
+        child.waitForExit()
         #expect(child.terminationStatus == 0)
         #expect(ExperimentalProcessEventWatch(pid: pid) == nil)
     }
@@ -69,7 +69,7 @@ struct ExperimentalProcessEventWatchTests {
         try child.run()
         defer {
             if child.isRunning { child.terminate() }
-            child.waitUntilExit()
+            child.waitForExit()
         }
         let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
         #expect(watch.poll() == .idle)
@@ -93,7 +93,7 @@ struct ExperimentalProcessEventWatchTests {
         defer {
             try? input.fileHandleForWriting.close()
             if child.isRunning { child.terminate() }
-            child.waitUntilExit()
+            child.waitForExit()
         }
         let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
         #expect(watch.poll() == .idle)

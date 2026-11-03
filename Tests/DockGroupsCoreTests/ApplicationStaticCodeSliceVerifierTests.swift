@@ -27,7 +27,7 @@ struct ApplicationStaticCodeSliceVerifierTests {
         process.executableURL = selected.appendingPathComponent("Contents/MacOS/Fixture")
         process.arguments = ["20"]
         try process.run()
-        defer { if process.isRunning { process.terminate() }; process.waitUntilExit() }
+        defer { if process.isRunning { process.terminate() }; process.waitForExit() }
         let comparisons = hashes.map { ApplicationRunningCodeVerifier.compare(pid: process.processIdentifier, expected: $0, bundleIdentifier: "com.cybokron.fixture.slices") }
         #expect(comparisons.contains(.matching))
         try FileManager.default.copyItem(at: selected, to: tampered)
@@ -57,7 +57,7 @@ struct ApplicationStaticCodeSliceVerifierTests {
         sign.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
         sign.arguments = ["--force", "--sign", "-", url.path]
         sign.standardOutput = Pipe(); sign.standardError = Pipe()
-        try sign.run(); sign.waitUntilExit()
+        try sign.run(); sign.waitForExit()
         try #require(sign.terminationStatus == 0)
     }
 }
