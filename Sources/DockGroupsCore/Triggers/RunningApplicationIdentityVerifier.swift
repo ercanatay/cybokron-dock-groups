@@ -220,7 +220,7 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     static let maximumInstancesPerApplication = 16
     /// Open watches (one descriptor each) across every binding of this verifier.
     static let maximumWatches = 64
-    static let defaultRetryInterval: Duration = .seconds(10)
+    nonisolated static let defaultRetryInterval: Duration = .seconds(10)
 
     private enum Phase {
         /// Checking; answers `reportAs` meanwhile (`pending` for a new set, `unavailable` for a retry).
