@@ -95,6 +95,33 @@ struct TriggerIdentityStatusTests {
         }
         #expect(L10n.Triggers.Identity.actionNeedsVerifiedApp("Start") == "Start (needs an approved app)")
     }
+
+    @Test func theApprovedSignatureIsToldAndAnAdHocOneIsCalledWeaker() throws {
+        let signature = L10n.Triggers.Identity.Approve.signature
+        #expect(signature(.apple) == "Approved: Apple signature.")
+        #expect(signature(.appStore) == "Approved: Mac App Store signature.")
+        #expect(signature(.developerID) == "Approved: Developer ID signature.")
+        let adHoc = try #require(signature(.adHoc))
+        #expect(adHoc.hasPrefix("Ad-hoc signature"))
+        #expect(adHoc.contains("doesn't verify who made the app"))
+        #expect(adHoc.contains("weaker"))
+        #expect(!adHoc.hasPrefix("Approved:"))
+        // No approval, no label (never a made-up kind).
+        #expect(signature(nil) == nil)
+        let texts = TriggerApplicationSignature.allCases.compactMap(signature)
+        #expect(Set(texts).count == TriggerApplicationSignature.allCases.count)
+
+        // From the trigger: only an authorized one has a label.
+        func trigger(_ identity: ApplicationIdentityAuthorization) -> GroupTrigger {
+            var trigger = GroupTrigger(groupID: UUID(), event: .applicationPresence(bundleIdentifier: Self.bundle, edge: .starts), action: .openAll, runMode: .immediately)
+            trigger.applicationIdentity = identity
+            return trigger
+        }
+        #expect(signature(trigger(.authorize(try binding())).approvedApplicationSignature) == "Approved: Developer ID signature.")
+        #expect(signature(trigger(.needsReapproval(try binding())).approvedApplicationSignature) == nil)
+        #expect(signature(trigger(.unverified).approvedApplicationSignature) == nil)
+        #expect(signature(trigger(.invalid(.null)).approvedApplicationSignature) == nil)
+    }
 }
 
 /// A verifier whose last answer a test sets (`nil`: never checked).

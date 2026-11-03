@@ -447,6 +447,14 @@ struct TriggerEditorSheet: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+                // How the approved code was signed; an ad-hoc signature is a weaker approval.
+                let signature = current?.approvedApplicationSignature
+                if let text = L10n.Triggers.Identity.Approve.signature(signature) {
+                    Text(text)
+                        .font(.caption)
+                        .foregroundStyle(signature?.verifiesDeveloper == false ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             } else {
                 VStack(alignment: .leading, spacing: 2) {
                     Label(L10n.Triggers.Identity.badge(state), systemImage: TriggerIdentityLabel.symbol(for: state))

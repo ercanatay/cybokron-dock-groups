@@ -39,6 +39,54 @@ struct TriggerApplicationIdentityPresentationTests {
         #expect(UnavailableApplicationIdentityVerifier().verdict(for: .fixture(Self.bundle)) == .unavailable)
     }
 
+    // MARK: - Signature
+
+    @Test func anAuthorizedTriggerTellsHowItsCodeWasSigned() {
+        let kinds: [(ApplicationIdentityBinding.SignatureKind, TriggerApplicationSignature)] = [
+            (.apple, .apple), (.appStore, .appStore), (.developerID, .developerID), (.adHoc, .adHoc),
+        ]
+        #expect(kinds.count == ApplicationIdentityBinding.SignatureKind.allCases.count)
+        for (kind, expected) in kinds {
+            let trigger = appTrigger(.openAll, identity: .authorize(.fixture(Self.bundle, signature: kind)))
+            #expect(trigger.approvedApplicationSignature == expected)
+        }
+        // Only a certificate-backed signature verifies who made the app.
+        #expect(TriggerApplicationSignature.allCases.filter { !$0.verifiesDeveloper } == [.adHoc])
+    }
+
+    @Test func onlyAnAuthorizedTriggerHasASignature() {
+        #expect(appTrigger(identity: .unverified).approvedApplicationSignature == nil)
+        #expect(appTrigger(identity: nil).approvedApplicationSignature == nil)
+        #expect(appTrigger(identity: .needsReapproval(.fixture(Self.bundle, signature: .apple))).approvedApplicationSignature == nil)
+        #expect(appTrigger(identity: .invalid(.null)).approvedApplicationSignature == nil)
+        // Authorized for another identifier: invalid, so nothing is told.
+        #expect(appTrigger(identity: .authorize(.fixture("com.example.Other", signature: .apple))).approvedApplicationSignature == nil)
+        #expect(GroupTrigger(groupID: Self.group, event: .login, action: .start).approvedApplicationSignature == nil)
+    }
+
+    @Test func anUnknownSignatureTypeTellsNothing() {
+        let record = ApplicationIdentityAuthorization(json: .object([
+            "status": .string("authorized"),
+            "identifier": .string(Self.bundle),
+            "cdhash": .string(String(repeating: "ab", count: 20)),
+            "signature": .string("enterprise"),
+            "authorizedAt": .integer(1_793_000_000),
+        ]))
+        #expect(record.status == .invalid)
+        let trigger = appTrigger(.openAll, identity: record)
+        #expect(trigger.applicationIdentityState == .invalid)
+        #expect(trigger.approvedApplicationSignature == nil)
+        // The same record with a known type is authorized and tells it.
+        let known = ApplicationIdentityAuthorization(json: .object([
+            "status": .string("authorized"),
+            "identifier": .string(Self.bundle),
+            "cdhash": .string(String(repeating: "ab", count: 20)),
+            "signature": .string("adHoc"),
+            "authorizedAt": .integer(1_793_000_000),
+        ]))
+        #expect(appTrigger(.openAll, identity: known).approvedApplicationSignature == .adHoc)
+    }
+
     @Test func otherEventsHaveNoState() {
         #expect(GroupTrigger(groupID: Self.group, event: .login, action: .start).applicationIdentityState == nil)
         #expect(GroupTrigger(groupID: Self.group, event: .screensSleep, action: .finish).applicationIdentityState == nil)

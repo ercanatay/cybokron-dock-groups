@@ -320,7 +320,9 @@ appears in diagnostics (which report trigger counts and kinds only).
   last run (`TriggerController.identityBadge(of:)`, following the verifier's
   `displayedVerdict`). `howToReapprove` is in the label's tooltip only for Needs re-approval and
   Invalid; the editor shows it only where no approval is offered, and its own approved note for
-  an authorized trigger. The approved version's signing kind isn't shown to the user (open, D1).
+  an authorized trigger. The editor of an authorized trigger also names the approved version's signing kind
+  (Apple, Mac App Store, Developer ID; D1); an ad-hoc signature is called a weaker approval, since
+  it doesn't verify who made the app. A record with an unknown kind is invalid and names none.
   The editor's saved trigger (`current`) is read when the sheet opens and after an approval; a
   change made elsewhere meanwhile isn't reflected until it reopens (D3, display only: Save reads
   the saved trigger again, and the store and the coordinator decide what runs).

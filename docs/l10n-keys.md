@@ -1485,6 +1485,12 @@ event came but the app's running code couldn't be confirmed in time (the check w
 failed or timed out, or the app changed), so nothing ran.
 The `triggers.identity.approve.` keys are the editor's Approve This App / Approve the New Version
 button, its hint and the outcome of an approval; a failure says that nothing was approved.
+`triggers.identity.approved.signature` follows Approved for the version… in the editor of an approved
+trigger and names how the approved code was signed: its `%@` is one of the
+`triggers.identity.signature.` names (Apple, Mac App Store, Developer ID). An ad-hoc signature
+gets `triggers.identity.signature.adHoc` instead, a whole sentence that says the approval is weaker
+because the signature doesn't verify who made the app (English only for now; `awaitingTranslation`:
+`triggers.identity.approved.`, `triggers.identity.signature.`).
 The texts say *approve* for what the user does and *confirm* for the check of the running code
 against an approval; *unverified* is the state of a trigger whose app isn't approved.
 
@@ -1514,6 +1520,11 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `triggers.identity.approve.saveFirst` | To approve this app, save the trigger first, then edit it. |
 | `triggers.identity.approve.checking` | Checking the app's code… |
 | `triggers.identity.approve.approved` | Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again. |
+| `triggers.identity.approved.signature` | Approved: %@ signature. |
+| `triggers.identity.signature.apple` | Apple |
+| `triggers.identity.signature.appStore` | Mac App Store |
+| `triggers.identity.signature.developerID` | Developer ID |
+| `triggers.identity.signature.adHoc` | Ad-hoc signature: it doesn't verify who made the app, so this approval is weaker. It holds only for this exact code. |
 | `triggers.identity.approve.notRunning` | Open the app, then approve it: only a running app can be checked. Nothing was approved. |
 | `triggers.identity.approve.failure.notApprovable` | This trigger can't be approved now. Nothing was approved. |
 | `triggers.identity.approve.failure.alreadyApproving` | An app is already being checked. Try again in a moment. |

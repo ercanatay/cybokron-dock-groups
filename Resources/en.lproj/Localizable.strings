@@ -1185,6 +1185,11 @@
 "triggers.identity.approve.saveFirst" = "To approve this app, save the trigger first, then edit it.";
 "triggers.identity.approve.checking" = "Checking the app's code…";
 "triggers.identity.approve.approved" = "Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again.";
+"triggers.identity.approved.signature" = "Approved: %@ signature.";
+"triggers.identity.signature.apple" = "Apple";
+"triggers.identity.signature.appStore" = "Mac App Store";
+"triggers.identity.signature.developerID" = "Developer ID";
+"triggers.identity.signature.adHoc" = "Ad-hoc signature: it doesn't verify who made the app, so this approval is weaker. It holds only for this exact code.";
 "triggers.identity.approve.notRunning" = "Open the app, then approve it: only a running app can be checked. Nothing was approved.";
 "triggers.identity.approve.failure.notApprovable" = "This trigger can't be approved now. Nothing was approved.";
 "triggers.identity.approve.failure.alreadyApproving" = "An app is already being checked. Try again in a moment.";

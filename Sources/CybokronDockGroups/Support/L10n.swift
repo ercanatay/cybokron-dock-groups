@@ -1923,6 +1923,21 @@ extension L10n {
                     tr("triggers.identity.approve.approved", "Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again.")
                 }
 
+                /// Under `approved`: how the approved code was signed; `nil` without an approval.
+                /// An ad-hoc signature says plainly that it doesn't verify who made the app.
+                static func signature(_ signature: TriggerApplicationSignature?) -> String? {
+                    let kind: String
+                    switch signature {
+                    case nil: return nil
+                    case .adHoc?:
+                        return tr("triggers.identity.signature.adHoc", "Ad-hoc signature: it doesn't verify who made the app, so this approval is weaker. It holds only for this exact code.")
+                    case .apple?: kind = tr("triggers.identity.signature.apple", "Apple")
+                    case .appStore?: kind = tr("triggers.identity.signature.appStore", "Mac App Store")
+                    case .developerID?: kind = tr("triggers.identity.signature.developerID", "Developer ID")
+                    }
+                    return tr("triggers.identity.approved.signature", "Approved: %@ signature.", kind)
+                }
+
                 static var notRunning: String {
                     tr("triggers.identity.approve.notRunning", "Open the app, then approve it: only a running app can be checked. Nothing was approved.")
                 }

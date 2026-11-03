@@ -25,7 +25,39 @@ public enum TriggerApplicationIdentityState: String, CaseIterable, Sendable {
     public var blocksEveryAction: Bool { self != .unverified }
 }
 
+/// How the code an application trigger was approved for was signed
+/// (`ApplicationIdentityBinding.SignatureKind`), for the editor to tell. An ad-hoc signature names
+/// no developer: the approval holds the exact code only, not who made it.
+public enum TriggerApplicationSignature: String, CaseIterable, Sendable {
+    case apple
+    case appStore
+    case developerID
+    case adHoc
+
+    init(_ kind: ApplicationIdentityBinding.SignatureKind) {
+        switch kind {
+        case .apple: self = .apple
+        case .appStore: self = .appStore
+        case .developerID: self = .developerID
+        case .adHoc: self = .adHoc
+        }
+    }
+
+    /// Whether the signature verifies who made the app (a certificate chain to Apple).
+    public var verifiesDeveloper: Bool { self != .adHoc }
+}
+
 extension GroupTrigger {
+    /// How the approved code was signed; `nil` unless the trigger is authorized (unverified, waiting
+    /// for re-approval, an unreadable record or one for another identifier, other events, a newer
+    /// version's trigger). A record with an unknown signature type reads as invalid, so it has none.
+    public var approvedApplicationSignature: TriggerApplicationSignature? {
+        guard !isFromNewerVersion, applicationIdentityStatus == .authorized,
+              let binding = applicationIdentity?.binding
+        else { return nil }
+        return TriggerApplicationSignature(binding.signature)
+    }
+
     /// The application-presence rule's authorization as the interface tells it; `nil` for other
     /// events. An authorized rule is `verificationUnavailable` here, whatever the verifier last
     /// said: this reads the record only. What the lists show follows the verifier's verdict

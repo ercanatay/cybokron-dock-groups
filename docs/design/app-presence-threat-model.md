@@ -221,8 +221,11 @@ Still open (unchanged unless noted):
 - **A1 file edits:** a crafted `authorized` record for the genuine app's `cdhash` in the local
   `triggers.json` is still accepted while that code runs (out of scope, §2).
 - **No wake-up:** as for the verifier, watches are polled only when the coordinator asks.
-- **Signing kind:** the approved version's signing kind is recorded but not shown to the user
-  (D1); the UI texts otherwise describe the approval as the app does it, and are translated.
+- **Signing kind:** the editor of an authorized trigger names the approved version's signing kind
+  (D1, `GroupTrigger.approvedApplicationSignature`); an ad-hoc one is called a weaker approval,
+  because its signature doesn't verify who made the app (T9 partly). Its texts are English only
+  until the next translation pass; the other UI texts describe the approval as the app does it, and
+  are translated.
 
 ## 4. Review findings at `c7a9f57`
 
