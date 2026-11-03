@@ -52,13 +52,22 @@ struct MachOSliceTableTests {
     }
 
     @Test func acceptsMaximumFat64TableAndAllRecognizedThinHeaders() throws {
-        let records = (0..<16).map { i in
-            Record(cpu: UInt32(i + 1), subtype: 0, offset: UInt64(1024 + i * 256), size: 128, align: 8)
+        var records: [Record] = []
+        for i in 0..<16 {
+            let index = UInt64(i)
+            let offset: UInt64 = 1024 + index * 256
+            records.append(Record(cpu: UInt32(i + 1), subtype: 0, offset: offset, size: 128, align: 8))
         }
         let prefix = fat64(records)
         #expect(prefix.count == 520)
         #expect(MachOSliceTable.parse(prefix: prefix, fileSize: 4992)?.count == 16)
-        for (magic, length) in [([UInt8(0xce), 0xfa, 0xed, 0xfe], 28), ([UInt8(0xfe), 0xed, 0xfa, 0xce], 28), ([UInt8(0xcf), 0xfa, 0xed, 0xfe], 32), ([UInt8(0xfe), 0xed, 0xfa, 0xcf], 32)] {
+        let thinHeaders: [([UInt8], Int)] = [
+            ([0xce, 0xfa, 0xed, 0xfe], 28),
+            ([0xfe, 0xed, 0xfa, 0xce], 28),
+            ([0xcf, 0xfa, 0xed, 0xfe], 32),
+            ([0xfe, 0xed, 0xfa, 0xcf], 32),
+        ]
+        for (magic, length) in thinHeaders {
             let header = Data(magic + Array(repeating: 0, count: length - magic.count))
             let slices = try #require(MachOSliceTable.parse(prefix: header, fileSize: UInt64(length)))
             #expect(slices.count == 1)
