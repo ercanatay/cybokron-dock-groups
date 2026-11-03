@@ -65,8 +65,14 @@ final class FakeProcessWatch: ApplicationProcessWatching {
 }
 
 /// Waits (in real time, the checks run on other threads) until `condition` holds.
+///
+/// The ceiling only catches a check that never finishes; it is no performance bound. The checks
+/// run on the cooperative pool (one thread per core, 3 on CI), and in a full parallel run
+/// synchronous tests that wait on child processes hold those threads for seconds at a time, so a
+/// check that takes milliseconds alone can wait 10–15 s for a thread there. Generous for the
+/// same reason as `Process.testExitTimeout`.
 @MainActor
-func eventually(within timeout: Duration = .seconds(10), _ condition: () -> Bool) async -> Bool {
+func eventually(within timeout: Duration = .seconds(60), _ condition: () -> Bool) async -> Bool {
     let clock = ContinuousClock()
     let deadline = clock.now + timeout
     while !condition() {
