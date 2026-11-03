@@ -143,10 +143,10 @@ per binding it is asked about:
    PID **first**, polls each once (anything pending is `unavailable`), then checks every PID with
    `ApplicationRunningCodeCheck` and answers `pending` meanwhile. The check calls
    `ApplicationRunningCodeVerifier.compare` (fresh `SecCode` by PID, validity, then `identifier` +
-   exact `cdhash`) on a detached task, bounded by a 2 s timeout and cancellable through
-   `withTaskCancellationHandler`. **The synchronous Security call itself can't be interrupted:** a
-   timeout or cancellation only stops waiting, the call runs to its end and its answer is ignored.
-   Timeout and cancellation are `unavailable`, never `verified`.
+   exact `cdhash`) on a Dispatch global queue (outside the cooperative pool), bounded by a 2 s
+   timeout and cancellable through `withTaskCancellationHandler`. **The synchronous Security call
+   itself can't be interrupted:** a timeout or cancellation only stops waiting, the call runs to
+   its end and its answer is ignored. Timeout and cancellation are `unavailable`, never `verified`.
 3. When the checks finish (back on the main actor, only for the latest token): any different code
    is `codeChanged`; otherwise a watch that reported anything, or any failure, is `unavailable`;
    only all instances matching with idle watches is `verified`. It then calls the change handler if
@@ -288,9 +288,9 @@ appears in diagnostics (which report trigger counts and kinds only).
   watched as if it were the listed instance (T5, T6 partly).
 - **Check to action.** The last verdict check and the handler call are not atomic: an exec right
   after the final check, or while an action runs, isn't caught (T10).
-- **The Security call can't be cancelled.** A timed-out or cancelled check leaves its detached call
-  running until Security returns; repeated time-outs can pile up such calls (one per instance per
-  retry, at most every 10 s).
+- **The Security call can't be cancelled.** A timed-out or cancelled check leaves its call
+  running on its own thread until Security returns; repeated time-outs can pile up such calls
+  (one per instance per retry, at most every 10 s).
 - **No wake-up.** Watches are polled when the coordinator asks; nothing wakes it on an event. An
   `unavailable` rule recovers only through its retry; a rule whose only source of questions is its
   own observation is asked again on the retry's change notification.

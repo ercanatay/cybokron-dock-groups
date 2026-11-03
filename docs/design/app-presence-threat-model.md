@@ -144,8 +144,8 @@ Closed or narrowed:
 - **T12 (watch registration failure):** registration failure or a pending event at registration is
   `unavailable`; the verifier limits itself to 16 instances per app and 64 watches.
 - **§7(c) item 6 (bounded, off-main, cancellable, timeout = unknown):** the Security comparison runs
-  on a detached task, the waiting is bounded (2 s) and cancellable, time-out and cancellation are
-  `unavailable`.
+  on a Dispatch global queue (outside the cooperative pool), the waiting is bounded (2 s) and
+  cancellable, time-out and cancellation are `unavailable`.
 - **Silent skips:** an authorized rule's firing that can't be confirmed is recorded as
   `applicationNotConfirmed` rather than vanishing or looking as if it ran.
 - **Verdict changes and the tracker:** a verdict that changes the observed rules stops the tracker
@@ -162,7 +162,7 @@ Still open:
 - **T10 / check to action:** the last verdict check and the handler call aren't atomic; an exec
   after the final check, or during an action, isn't caught. An action already started isn't undone.
 - **The Security call can't be cancelled:** a time-out or cancellation stops waiting only; the
-  synchronous call keeps running on its detached task until Security returns, its answer ignored.
+  synchronous call keeps running on its own thread until Security returns, its answer ignored.
   Under repeated time-outs such calls can accumulate (bounded by instances × retries every 10 s).
 - **No wake-up:** watches are polled only when the coordinator asks (observations, settle, notice,
   carry-out, status line does not poll). An event between questions is seen at the next question.
@@ -217,7 +217,7 @@ Still open (unchanged unless noted):
 - **T15:** only the running instance's `cdhash` is bound; another architecture or Rosetta waits for
   re-approval. No slice set is recorded.
 - **The Security call can't be cancelled:** as for the verifier, a timed-out or cancelled reading
-  keeps running on its detached task until Security returns.
+  keeps running on its own thread until Security returns.
 - **A1 file edits:** a crafted `authorized` record for the genuine app's `cdhash` in the local
   `triggers.json` is still accepted while that code runs (out of scope, §2).
 - **No wake-up:** as for the verifier, watches are polled only when the coordinator asks.

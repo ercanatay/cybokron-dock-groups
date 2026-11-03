@@ -46,7 +46,7 @@ enum ApplicationCodeCheckResult: Hashable, Sendable {
 /// (`ApplicationRunningCodeVerifier`), off the main actor and bounded in time.
 ///
 /// The Security calls are synchronous and can't be interrupted. A timeout or a cancellation only
-/// stops *waiting*: the call keeps running on a detached task until Security returns, and its
+/// stops *waiting*: the call keeps running on its own thread until Security returns, and its
 /// answer is then ignored. Timeout and cancellation are `unavailable`, never `verified`.
 struct ApplicationRunningCodeCheck: Sendable {
     typealias Compare = @Sendable (_ pid: Int32, _ expected: ApplicationCodeHash, _ identifier: String) -> ApplicationRunningCodeVerifier.Comparison
@@ -91,9 +91,12 @@ struct ApplicationRunningCodeCheck: Sendable {
     }
 }
 
-/// A synchronous Security call run on a detached task, waited for at most `timeout` and
+/// A synchronous Security call run on a Dispatch global queue, waited for at most `timeout` and
 /// cancellable. The call itself can't be interrupted: a timeout or a cancellation only stops
 /// waiting, the call runs to its end and its answer is ignored.
+///
+/// The call runs outside Swift concurrency's cooperative pool, so a call that hangs never holds a
+/// pool thread (the pool has only one per core, and blocking it stalls every task).
 enum BoundedSecurityCall {
     typealias Sleep = @Sendable (Duration) async throws -> Void
 
@@ -108,7 +111,7 @@ enum BoundedSecurityCall {
         guard !Task.isCancelled else { return cancelled }
         let outcome = FirstAnswer<Value>(misuse: misuse)
         // Not cancellable: the Security call runs to its end; only the first answer counts.
-        Task.detached(priority: .userInitiated) {
+        DispatchQueue.global(qos: .userInitiated).async {
             outcome.decide(call())
         }
         let timer = Task.detached {

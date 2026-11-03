@@ -6,7 +6,7 @@ import Testing
 // MARK: - Fakes
 
 /// What the fake Security comparison answers for each PID (`.unknown` when not set). Thread-safe:
-/// the comparison runs on a detached task.
+/// the comparison runs on another thread.
 final class FakeComparisons: Sendable {
     private let table = OSAllocatedUnfairLock<[Int32: ApplicationRunningCodeVerifier.Comparison]>(initialState: [:])
     private let calls = OSAllocatedUnfairLock<Int>(initialState: 0)

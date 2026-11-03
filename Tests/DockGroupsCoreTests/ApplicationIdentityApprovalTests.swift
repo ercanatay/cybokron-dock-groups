@@ -6,7 +6,7 @@ import Testing
 // MARK: - Fakes
 
 /// What the fake identity reading answers for each PID (`.unknown` when not set). Thread-safe: the
-/// reading runs on a detached task. With `holding`, every reading waits until `gate` opens.
+/// reading runs on another thread. With `holding`, every reading waits until `gate` opens.
 final class FakeIdentityReads: Sendable {
     private let table = OSAllocatedUnfairLock<[Int32: ApplicationRunningIdentityReading]>(initialState: [:])
     private let started = OSAllocatedUnfairLock<Int>(initialState: 0)
@@ -461,5 +461,29 @@ struct BoundedSecurityCallTests {
             return await BoundedSecurityCall.run(timeout: .seconds(30), sleep: { try await Task.sleep(for: $0) }, timedOut: 1, cancelled: 2, misuse: 3) { 0 }
         }
         #expect(await task.value == 2)
+    }
+
+    /// Calls that hang must not hold Swift concurrency's cooperative pool (one thread per core):
+    /// with more hung calls than cores, they time out and other calls still answer.
+    @Test(.timeLimit(.minutes(1))) func hungCallsDontStarveOtherTasks() async {
+        let gate = FakeGate()
+        defer { gate.open() }
+        let hung = ProcessInfo.processInfo.activeProcessorCount + 2
+        let timedOut = await withTaskGroup(of: Int.self) { group in
+            for _ in 0..<hung {
+                group.addTask {
+                    await BoundedSecurityCall.run(timeout: .milliseconds(200), sleep: { try await Task.sleep(for: $0) }, timedOut: 1, cancelled: 2, misuse: 3) {
+                        gate.block()
+                        return 0
+                    }
+                }
+            }
+            var answers: [Int] = []
+            for await answer in group { answers.append(answer) }
+            return answers
+        }
+        #expect(timedOut == Array(repeating: 1, count: hung))
+        let value = await BoundedSecurityCall.run(timeout: .seconds(30), sleep: { try await Task.sleep(for: $0) }, timedOut: 1, cancelled: 2, misuse: 3) { 0 }
+        #expect(value == 0)
     }
 }
