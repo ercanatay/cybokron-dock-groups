@@ -115,6 +115,13 @@ struct TriggerEditorSheet: View {
             connected = readDisplays()
         }
         // Allowed (or taken back) meanwhile: Use Current Network follows.
+        // The verifier (or an approval) can change the rule while the editor is open: the approval
+        // shown follows the stored rule, not the copy the editor opened with. `$triggers` emits
+        // before the change lands, so the emitted array (not `store.triggers`) is read.
+        .onReceive(store.$triggers) { triggers in
+            let refreshed = Self.refreshed(current, from: triggers)
+            if refreshed != current { current = refreshed }
+        }
         .onChange(of: locationAccess.status) {
             currentNetwork = readNetworkName()
         }
@@ -470,6 +477,13 @@ struct TriggerEditorSheet: View {
                 approvalControls(for: state)
             }
         }
+    }
+
+    /// `current` as the stored triggers now have it; kept as it is when the trigger isn't stored
+    /// (a new one, or one removed meanwhile).
+    static func refreshed(_ current: GroupTrigger?, from triggers: [GroupTrigger]) -> GroupTrigger? {
+        guard let current else { return nil }
+        return triggers.first { $0.id == current.id } ?? current
     }
 
     // MARK: - Approving the app
