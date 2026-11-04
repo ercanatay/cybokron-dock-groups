@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hoc aláírás: nem ellenőrzi, hogy ki készítette az alkalmazást, ezért ez a jóváhagyás gyengébb. Csak erre a pontos kódra érvényes.";
+"triggers.identity.approve.adHocTitle" = "Ezt az alkalmazást gyenge aláírással hagyod jóvá?";
+"triggers.identity.approve.adHocMessage" = "Ennek az alkalmazásnak ad-hoc aláírása van, amely nem igazolja, ki készítette. A jóváhagyás csak ezt a pontos kódot bízza meg, és frissítés után az alkalmazást újra jóvá kell hagynod.";
+"triggers.identity.approve.adHocConfirm" = "Jóváhagyás";

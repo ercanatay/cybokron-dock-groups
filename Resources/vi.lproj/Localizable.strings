@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Chữ ký ad-hoc: chữ ký này không xác minh được ai đã tạo ứng dụng, nên việc phê duyệt này yếu hơn. Nó chỉ có hiệu lực với đúng mã này.";
+"triggers.identity.approve.adHocTitle" = "Phê duyệt ứng dụng này với chữ ký yếu?";
+"triggers.identity.approve.adHocMessage" = "Ứng dụng này có chữ ký ad-hoc, không xác minh được ai đã tạo ra nó. Phê duyệt chỉ tin cậy đúng đoạn mã này, và ứng dụng sẽ cần bạn phê duyệt lại sau khi được cập nhật.";
+"triggers.identity.approve.adHocConfirm" = "Phê duyệt";

@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Tanda tangan ad-hoc: tanda tangan ini tidak memverifikasi siapa pembuat aplikasi, sehingga persetujuan ini kurang kuat. Persetujuan hanya berlaku untuk kode yang persis sama ini.";
+"triggers.identity.approve.adHocTitle" = "Setujui aplikasi ini dengan tanda tangan lemah?";
+"triggers.identity.approve.adHocMessage" = "Aplikasi ini memiliki tanda tangan ad-hoc, yang tidak memverifikasi siapa pembuatnya. Persetujuan hanya memercayai kode yang persis sama ini, dan aplikasi memerlukan persetujuan Anda lagi setelah diperbarui.";
+"triggers.identity.approve.adHocConfirm" = "Setujui";

@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hoc-Signatur: Sie überprüft nicht, wer die App erstellt hat, daher ist diese Genehmigung schwächer. Sie gilt nur für genau diesen Code.";
+"triggers.identity.approve.adHocTitle" = "Diese App mit einer schwachen Signatur genehmigen?";
+"triggers.identity.approve.adHocMessage" = "Diese App hat eine Ad-hoc-Signatur, die nicht überprüft, wer sie erstellt hat. Die Genehmigung vertraut nur genau diesem Code, und die App benötigt nach einer Aktualisierung erneut Ihre Genehmigung.";
+"triggers.identity.approve.adHocConfirm" = "Genehmigen";

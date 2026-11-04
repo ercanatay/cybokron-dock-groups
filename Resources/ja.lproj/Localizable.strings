@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "アドホック署名: アプリを作成した者を検証しないため、この承認の信頼性は低くなります。承認は、このコードそのものに対してのみ有効です。";
+"triggers.identity.approve.adHocTitle" = "このアプリを弱い署名のまま承認しますか？";
+"triggers.identity.approve.adHocMessage" = "このアプリはアドホック署名です。これは作成者を検証するものではありません。承認すると、このまったく同じコードのみを信頼することになり、アプリは更新後に再度承認が必要になります。";
+"triggers.identity.approve.adHocConfirm" = "承認";

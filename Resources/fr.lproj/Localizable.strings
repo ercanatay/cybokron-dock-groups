@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Signature ad hoc : elle ne vérifie pas qui a créé l'app, donc cette approbation est moins fiable. Elle ne vaut que pour ce code exact.";
+"triggers.identity.approve.adHocTitle" = "Approuver cette app avec une signature faible ?";
+"triggers.identity.approve.adHocMessage" = "Cette app possède une signature ad hoc, qui ne vérifie pas l'identité de son auteur. L'approuver ne fait confiance qu'à ce code exact, et l'app devra être de nouveau approuvée après chaque mise à jour.";
+"triggers.identity.approve.adHocConfirm" = "Approuver";

@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "توقيع Ad-hoc: لا يتحقق من هوية من أنشأ التطبيق، لذا فهذه الموافقة أضعف. تنطبق فقط على هذا الكود بالذات.";
+"triggers.identity.approve.adHocTitle" = "هل تريد الموافقة على هذا التطبيق بتوقيع ضعيف؟";
+"triggers.identity.approve.adHocMessage" = "لهذا التطبيق توقيع ad-hoc، وهو توقيع لا يتحقق من هوية من أنشأه. الموافقة تعني الثقة بهذا الكود تحديدًا فقط، ويحتاج التطبيق إلى موافقتك مجددًا بعد كل تحديث.";
+"triggers.identity.approve.adHocConfirm" = "موافقة";

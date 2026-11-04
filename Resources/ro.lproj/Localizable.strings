@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Semnătură ad-hoc: nu verifică cine a creat aplicația, deci această aprobare este mai slabă. Se aplică doar acestui cod exact.";
+"triggers.identity.approve.adHocTitle" = "Aprobați această aplicație cu o semnătură slabă?";
+"triggers.identity.approve.adHocMessage" = "Această aplicație are o semnătură ad-hoc, care nu verifică cine a creat-o. Aprobarea are încredere doar în acest cod exact, iar aplicația necesită din nou aprobarea ta după ce este actualizată.";
+"triggers.identity.approve.adHocConfirm" = "Aprobă";
