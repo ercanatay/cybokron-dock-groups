@@ -141,4 +141,123 @@ struct TriggerDraftTests {
         }
         #expect(Set(TriggerDraft.Kind.allCases) == Set(events.keys).union([.time]))
     }
+
+    @Test func applicationEventsUseExactIdentifier() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = "My.Custom-App-123"
+        draft.setWhen(.application(.starts))
+        #expect(draft.event == .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .starts))
+        draft.setWhen(.application(.ends))
+        #expect(draft.event == .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .ends))
+    }
+
+    @Test func invalidOrEmptyApplicationIdentifierMakesDraftInvalid() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = ""
+        draft.setWhen(.application(.starts))
+        #expect(!draft.isValid)
+        draft.applicationBundleIdentifier = "bad id!"
+        #expect(!draft.isValid)
+    }
+
+    @Test func applicationActionsNormalizeCorrectly() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = "com.example.App"
+        draft.setWhen(.application(.starts))
+        draft.setAction(.finish)
+        #expect(draft.action == .finish)
+        draft.setAction(.start)
+        #expect(draft.action == .start)
+        draft.setAction(.showPopup)
+        #expect(draft.action == .showPopup)
+    }
+
+    @Test func applicationOpeningAndClosingAreOfferedExactlyOnce() {
+        let offered = TriggerDraft.When.offered
+        #expect(offered.filter { $0 == .application(.starts) }.count == 1)
+        #expect(offered.filter { $0 == .application(.ends) }.count == 1)
+    }
+
+    @Test func editingApplicationPresencePreservesRule() throws {
+        for edge in [TriggerEdge.starts, .ends] {
+            let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "com.Example.App", edge: edge), action: .start, runMode: .askFirst, isEnabled: false, oncePerDay: true)
+            let draft = try #require(TriggerDraft(editing: trigger, calendar: Self.calendar))
+            #expect(draft.when == .application(edge))
+            #expect(draft.applicationBundleIdentifier == "com.Example.App")
+            #expect(draft.trigger(groupID: UUID(), replacing: trigger) == trigger)
+        }
+    }
+
+    @Test func editingInvalidApplicationIdentifierCannotBeSaved() throws {
+        let trigger = GroupTrigger(groupID: Self.group.id, event: .applicationPresence(bundleIdentifier: "bad id", edge: .starts), action: .start)
+        let draft = try #require(TriggerDraft(editing: trigger, calendar: Self.calendar))
+        #expect(draft.applicationBundleIdentifier == "bad id")
+        #expect(!draft.isValid)
+    }
+
+    @Test func selectApplicationKeepsTheExactOriginalIdentifierAndReturnsTrue() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let app = AppReference(bundleIdentifier: "My.Custom-App-123", name: "Custom")
+        let result = draft.selectApplication(app)
+        #expect(result)
+        #expect(draft.applicationBundleIdentifier == "My.Custom-App-123")
+        draft.setWhen(.application(.starts))
+        #expect(draft.event == .applicationPresence(bundleIdentifier: "My.Custom-App-123", edge: .starts))
+    }
+
+    @Test func selectApplicationAcceptsMixedCaseExactId() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let app = AppReference(bundleIdentifier: "MY.APP", name: "Upper")
+        let resultMixed = draft.selectApplication(app)
+        #expect(resultMixed)
+        #expect(draft.applicationBundleIdentifier == "MY.APP")
+    }
+
+    @Test func selectApplicationRejectsNonAppsAndPaths() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let file = AppReference(bundleIdentifier: "/Users/me/notes.txt", name: "notes", path: "/Users/me/notes.txt")
+        let folder = AppReference(fileURL: URL(fileURLWithPath: "/Users/me/Pictures/"), kind: .folder, name: "Pictures")
+        let fileResult = draft.selectApplication(file)
+        #expect(!fileResult)
+        let folderResult = draft.selectApplication(folder)
+        #expect(!folderResult)
+        // Non-path identifiers the validator rejects.
+        let badURL = AppReference(bundleIdentifier: "http://example.com", name: "url")
+        let spaces = AppReference(bundleIdentifier: "foo bar", name: "space")
+        let newline = AppReference(bundleIdentifier: "foo\nbar", name: "nl")
+        let tab = AppReference(bundleIdentifier: "\tfoo", name: "tab")
+        let badURLResult = draft.selectApplication(badURL)
+        #expect(!badURLResult)
+        let spacesResult = draft.selectApplication(spaces)
+        #expect(!spacesResult)
+        let newlineResult = draft.selectApplication(newline)
+        #expect(!newlineResult)
+        let tabResult = draft.selectApplication(tab)
+        #expect(!tabResult)
+        #expect(draft.applicationBundleIdentifier == "")
+    }
+
+    @Test func selectApplicationLeavesAPreviousSelectionOnFailure() {
+        var draft = TriggerDraft(calendar: Self.calendar)
+        draft.applicationBundleIdentifier = "com.existing.App"
+        let rejected = AppReference(websiteURL: URL(string: "http://bad")!, name: "bad")
+        let rejectedResult = draft.selectApplication(rejected)
+        #expect(!rejectedResult)
+        #expect(draft.applicationBundleIdentifier == "com.existing.App")
+    }
+
+    @Test func choosingTestBundlesAcceptsOnlyReportedIdentifier() throws {
+        let directory = try TemporaryDirectory()
+        defer { directory.remove() }
+        let validURL = try directory.makeAppBundle(named: "Valid", info: ["CFBundleIdentifier": "com.Example.Fixture"])
+        let noIDURL = try directory.makeAppBundle(named: "NoID", info: ["CFBundleName": "No ID"])
+        let validApp = try AppReference(applicationURL: validURL)
+        let noIDApp = try AppReference(applicationURL: noIDURL)
+        var draft = TriggerDraft(calendar: Self.calendar)
+        let accepted = draft.selectApplication(validApp)
+        let rejected = draft.selectApplication(noIDApp)
+        #expect(accepted)
+        #expect(!rejected)
+        #expect(draft.applicationBundleIdentifier == "com.Example.Fixture")
+    }
 }

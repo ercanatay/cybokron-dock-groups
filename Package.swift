@@ -29,6 +29,11 @@ let package = Package(
             dependencies: ["DockGroupsCore"],
             path: "Tests/DockGroupsCoreTests"
         ),
+        .testTarget(
+            name: "CybokronDockGroupsAppTests",
+            dependencies: ["CybokronDockGroups"],
+            path: "Tests/CybokronDockGroupsAppTests"
+        ),
         .executableTarget(
             name: "CybokronDockGroupsCLI",
             dependencies: ["DockGroupsCore"],

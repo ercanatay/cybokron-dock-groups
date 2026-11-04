@@ -1823,6 +1823,154 @@ extension L10n {
             static var turnOnLoginItem: String { tr("triggers.editor.login.turnOn", "Turn On Open at Login") }
             static var add: String { tr("triggers.editor.add", "Add Trigger") }
             static var save: String { tr("triggers.editor.save", "Save") }
+            static var applicationLabel: String { tr("triggers.editor.application.label", "Application") }
+            static var applicationNone: String { tr("triggers.editor.application.none", "No app selected") }
+            static var applicationChoose: String { tr("triggers.editor.application.choose", "Choose…") }
+            static var applicationTitle: String { tr("triggers.editor.application.title", "Choose Application") }
+            static var applicationMessage: String { tr("triggers.editor.application.message", "Select an application for the trigger.") }
+            static var applicationInvalid: String { tr("triggers.editor.application.invalid", "Choose an app with a valid bundle identifier and executable file.") }
+            static var applicationOpens: String { tr("triggers.editor.application.opens", "An application opens") }
+            static var applicationCloses: String { tr("triggers.editor.application.closes", "An application closes") }
+        }
+
+        /// An application trigger's authorization (`TriggerApplicationIdentityState`): its label in
+        /// the trigger lists, its status line, what it means, and the editor's action notes.
+        enum Identity {
+            static func badge(_ state: TriggerApplicationIdentityState) -> String {
+                switch state {
+                case .unverified: return tr("triggers.identity.badge.unverified", "Unverified")
+                case .needsReapproval: return tr("triggers.identity.badge.needsReapproval", "Needs re-approval")
+                case .invalid: return tr("triggers.identity.badge.invalid", "Invalid")
+                case .verificationUnavailable: return tr("triggers.identity.badge.verificationUnavailable", "Verification unavailable")
+                }
+            }
+
+            /// The list's status line for a state in which nothing runs; `nil` for an unverified
+            /// trigger, whose last run is shown instead.
+            static func statusLine(_ state: TriggerApplicationIdentityState) -> String? {
+                switch state {
+                case .unverified: return nil
+                case .needsReapproval:
+                    return tr("triggers.identity.status.needsReapproval", "Needs re-approval: the app's code changed since it was approved, so this trigger doesn't run.")
+                case .invalid:
+                    return tr("triggers.identity.status.invalid", "Invalid: its app approval can't be read, so this trigger doesn't run.")
+                case .verificationUnavailable:
+                    return tr("triggers.identity.status.verificationUnavailable", "Doesn't run: the running app's code couldn't be confirmed as the approved version.")
+                }
+            }
+
+            /// What the state means: the label's tooltip and the editor's note.
+            static func detail(_ state: TriggerApplicationIdentityState) -> String {
+                switch state {
+                case .unverified:
+                    return tr("triggers.identity.detail.unverified", "Matched by bundle identifier only, which another app could also use. Only Show Popup runs, and the trigger starts turned off.")
+                case .needsReapproval:
+                    return tr("triggers.identity.detail.needsReapproval", "The app was updated or replaced since this trigger was approved for it. Nothing runs until its new code is approved.")
+                case .invalid:
+                    return tr("triggers.identity.detail.invalid", "The saved approval for this trigger's app can't be read. Nothing runs.")
+                case .verificationUnavailable:
+                    return tr("triggers.identity.detail.verificationUnavailable", "This trigger is approved for a specific version of the app, but the code running now couldn't be confirmed as that version (the check failed or took too long), so nothing runs.")
+                }
+            }
+
+            /// How to use a trigger that waits for approval (or can't be checked) in this version.
+            static var howToReapprove: String {
+                tr("triggers.identity.howToReapprove", "To approve a trigger's app again, open the app, edit the trigger and click Approve the New Version. A trigger whose approval can't be read can't be approved: remove it and add it again.")
+            }
+
+            /// A disabled action in the editor's action pop-up.
+            static func actionNeedsVerifiedApp(_ action: String) -> String {
+                tr("triggers.identity.action.needsVerifiedApp", "%@ (needs an approved app)", action)
+            }
+
+            static var editorOnlyShowPopup: String {
+                tr("triggers.identity.editor.onlyShowPopup", "This app is matched by its bundle identifier only (unverified), so only Show Popup can run. To use other actions, approve the app while it's open.")
+            }
+
+            static var editorChooseShowPopup: String {
+                tr("triggers.identity.editor.chooseShowPopup", "Choose Show Popup to save: other actions don't run for an unverified app.")
+            }
+
+            /// Below the group's triggers when one of them waits for an application.
+            static var sectionNote: String {
+                tr("triggers.identity.sectionNote", "Until you approve its app, an application trigger matches the app by bundle identifier only: it starts turned off and can only show the popup. Once approved, it runs every action while the approved version of the app runs.")
+            }
+
+            /// The editor's way to approve an application trigger's app (`TriggerApplicationApprover`).
+            enum Approve {
+                static var button: String {
+                    tr("triggers.identity.approve.button", "Approve This App")
+                }
+
+                static var newVersionButton: String {
+                    tr("triggers.identity.approve.newVersionButton", "Approve the New Version")
+                }
+
+                static var hint: String {
+                    tr("triggers.identity.approve.hint", "Approving checks the code of this app as it runs now. The trigger can then run every action, but only while that exact version runs; after an update it waits to be approved again. Approving doesn't turn the trigger on.")
+                }
+
+                static var saveFirst: String {
+                    tr("triggers.identity.approve.saveFirst", "To approve this app, save the trigger first, then edit it.")
+                }
+
+                static var checking: String {
+                    tr("triggers.identity.approve.checking", "Checking the app's code…")
+                }
+
+                /// Under the action pop-up of an approved trigger.
+                static var approved: String {
+                    tr("triggers.identity.approve.approved", "Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again.")
+                }
+
+                /// Under `approved`: how the approved code was signed; `nil` without an approval.
+                /// An ad-hoc signature says plainly that it doesn't verify who made the app.
+                static func signature(_ signature: TriggerApplicationSignature?) -> String? {
+                    let kind: String
+                    switch signature {
+                    case nil: return nil
+                    case .adHoc?:
+                        return tr("triggers.identity.signature.adHoc", "Ad-hoc signature: it doesn't verify who made the app, so this approval is weaker. It holds only for this exact code.")
+                    case .apple?: kind = tr("triggers.identity.signature.apple", "Apple")
+                    case .appStore?: kind = tr("triggers.identity.signature.appStore", "Mac App Store")
+                    case .developerID?: kind = tr("triggers.identity.signature.developerID", "Developer ID")
+                    }
+                    return tr("triggers.identity.approved.signature", "Approved: %@ signature.", kind)
+                }
+
+                static var notRunning: String {
+                    tr("triggers.identity.approve.notRunning", "Open the app, then approve it: only a running app can be checked. Nothing was approved.")
+                }
+
+                static func failure(_ failure: TriggerApplicationApprovalFailure) -> String {
+                    switch failure {
+                    case .notApprovable:
+                        return tr("triggers.identity.approve.failure.notApprovable", "This trigger can't be approved now. Nothing was approved.")
+                    case .alreadyApproving:
+                        return tr("triggers.identity.approve.failure.alreadyApproving", "An app is already being checked. Try again in a moment.")
+                    case .triggerChanged:
+                        return tr("triggers.identity.approve.failure.triggerChanged", "The trigger changed while its app was being checked. Nothing was approved.")
+                    case .identifierMismatch:
+                        return tr("triggers.identity.approve.failure.identifierMismatch", "The running app's code signature doesn't name this app's bundle identifier exactly, so it can't be approved. Nothing was approved.")
+                    case .unsupportedSignature:
+                        return tr("triggers.identity.approve.failure.unsupportedSignature", "This app isn't signed in a way that can be approved (it's unsigned or has a development signature). Nothing was approved.")
+                    case .differentVersionsRunning:
+                        return tr("triggers.identity.approve.failure.differentVersionsRunning", "Different versions of this app are running. Quit all but one, then try again. Nothing was approved.")
+                    case .tooManyInstances:
+                        return tr("triggers.identity.approve.failure.tooManyInstances", "Too many copies of this app are running. Quit some, then try again. Nothing was approved.")
+                    case .appChanged:
+                        return tr("triggers.identity.approve.failure.appChanged", "The app quit, opened again or changed while it was being checked. Nothing was approved; try again.")
+                    case .timedOut:
+                        return tr("triggers.identity.approve.failure.timedOut", "Checking the app's code took too long. Nothing was approved; try again.")
+                    case .cancelled:
+                        return tr("triggers.identity.approve.failure.cancelled", "Checking stopped. Nothing was approved.")
+                    case .checkFailed:
+                        return tr("triggers.identity.approve.failure.checkFailed", "The app's code couldn't be checked. Nothing was approved.")
+                    case .notSaved:
+                        return tr("triggers.identity.approve.failure.notSaved", "The approval couldn't be saved. Nothing was approved.")
+                    }
+                }
+            }
         }
 
         enum Notice {
@@ -1869,6 +2017,7 @@ extension L10n {
             static var paused: String { tr("groupWindow.triggers.paused", "Triggers are paused: none of them runs now.") }
             static var archived: String { tr("groupWindow.triggers.archived", "Doesn't run while the group is archived.") }
             static var waitingForLocation: String { tr("groupWindow.triggers.waitingForLocation", "Waiting for Location access.") }
+            static var waitingForApplicationIdentity: String { tr("groupWindow.triggers.waitingForApplicationIdentity", "Waiting: macOS cannot identify every running app.") }
             static var vpnNotWatched: String {
                 tr("groupWindow.triggers.vpnNotWatched", "Doesn't run in this version: macOS doesn't tell reliably when a VPN connects.")
             }
@@ -1878,6 +2027,8 @@ extension L10n {
                     ? tr("groupWindow.triggers.archivedCount.one", "1 trigger (it doesn't run while the group is archived)")
                     : tr("groupWindow.triggers.archivedCount.other", "%ld triggers (they don't run while the group is archived)", count)
             }
+            static var identifiedAppsOnly: String { tr("groupWindow.triggers.identifiedAppsOnly", "Monitor identified applications only") }
+            static var identifiedAppsWarning: String { tr("groupWindow.triggers.identifiedAppsWarning", "Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits.") }
         }
 
         enum Settings {

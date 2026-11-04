@@ -45,6 +45,12 @@ final class TriggerController: ObservableObject {
     private var workspace: WorkspaceSource?
     private var displaySource: DisplaySource?
     private var networkSource: NetworkSource?
+    private var applicationPresenceSource: ApplicationPresenceSource?
+    private(set) var applicationObservationGeneration: UInt64 = 0
+    /// In-memory; resets on app restart.
+    @Published private(set) var monitorIdentifiedAppsOnlyForSession = false
+    /// macOS cannot currently identify all running apps for the presence trigger.
+    @Published private var applicationPresenceUncertain = false
     private var rules: [GroupTrigger]
     private var subscriptions: Set<AnyCancellable> = []
     private var launchSettle: Task<Void, Never>?
@@ -80,6 +86,17 @@ final class TriggerController: ObservableObject {
             rules: { [store] in store.triggers },
             activeGroups: { [groups] in Set(groups.groups.map(\.id)) }
         )
+        // Authorized application triggers act only while their running code is confirmed; code
+        // that isn't the approved code makes them wait for re-approval, saved at once.
+        coordinator.verifyRunningApplicationIdentities()
+        coordinator.onApplicationIdentityCodeChanged = { [weak self] ids in
+            self?.store.requireApplicationReapproval(for: ids)
+        }
+        coordinator.onApplicationObservationsNeedRestart = { [weak self] in
+            guard let self, self.applicationPresenceSource != nil else { return }
+            self.resetApplicationPresenceSource()
+            self.objectWillChange.send()
+        }
     }
 
     // MARK: - Starting
@@ -135,7 +152,9 @@ final class TriggerController: ObservableObject {
             onTick: { [weak self] in self?.coordinator.receive(.clock) }
         )
         self.clock = clock
-        let workspace = WorkspaceSource { [weak self] signal in self?.coordinator.receive(signal) }
+        let workspace = WorkspaceSource { [weak self] signal in
+            self?.handleWorkspaceSignal(signal)
+        }
         self.workspace = workspace
         workspace.start()
         clock.start()
@@ -144,7 +163,12 @@ final class TriggerController: ObservableObject {
             send: { [weak self] signal in self?.coordinator.receive(signal) },
             authorization: { [weak self] in self?.locationAccess.status ?? .notDetermined }
         )
+        let presenceSource = ApplicationPresenceSource { [weak self] generation, sequence, counts in
+            self?.handleApplicationSnapshot(generation: generation, sequence: sequence, counts: counts)
+        }
+        self.applicationPresenceSource = presenceSource
         updateSources()
+        resetApplicationPresenceSource()
 
         launchSettle = Task { @MainActor [weak self] in
             try? await Task.sleep(for: Self.launchSettle)
@@ -256,12 +280,24 @@ final class TriggerController: ObservableObject {
         TriggerDescriptions.summary(trigger, appName: AppInfo.name, calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
     }
 
-    /// The last-run line of `trigger`, or why it can't run: a VPN isn't watched (TS-8), a Wi-Fi
-    /// network waits for Location access.
+    /// The last-run line of `trigger`, or why it can't run: an application trigger's approval, a VPN
+    /// isn't watched (TS-8), a Wi-Fi network waits for Location access.
     func statusLine(of trigger: GroupTrigger) -> String {
+        // An application trigger that runs nothing because of its approval says why, instead of
+        // the generic "can't run" (a newer version's trigger keeps its own message).
+        // An authorized one whose running code is confirmed (or being checked), or that was just
+        // skipped because it couldn't be confirmed, tells its last run instead.
+        if !trigger.isFromNewerVersion, let state = trigger.applicationIdentityState,
+           let line = L10n.Triggers.Identity.statusLine(state),
+           state != .verificationUnavailable || showsIdentityUnavailable(trigger) {
+            return line
+        }
         if let problem = trigger.problem { return problem }
         if groups.archivedGroup(withID: trigger.groupID) != nil {
             return L10n.Triggers.GroupWindow.archived
+        }
+        if case .applicationPresence = trigger.event, trigger.canRun, applicationPresenceUncertain {
+            return L10n.Triggers.GroupWindow.waitingForApplicationIdentity
         }
         if case .condition(.vpn, _) = trigger.event {
             return L10n.Triggers.GroupWindow.vpnNotWatched
@@ -273,12 +309,30 @@ final class TriggerController: ObservableObject {
         return TriggerDescriptions.lastRun(state.entry(for: trigger.id), groupName: name, now: Date(), calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
     }
 
+    /// The approval label under an application trigger's status line (`TriggerIdentityLabel`), or
+    /// `nil` for none: not for other events or a newer version's trigger, and not for an authorized
+    /// one whose running code is confirmed or being checked (its status line tells its last run).
+    func identityBadge(of trigger: GroupTrigger) -> TriggerApplicationIdentityState? {
+        guard !trigger.isFromNewerVersion, let state = trigger.applicationIdentityState else { return nil }
+        if state == .verificationUnavailable, !coordinator.applicationIdentityIsUnconfirmed(trigger) { return nil }
+        return state
+    }
+
+    /// Whether an authorized application trigger's line says its code can't be checked: not when
+    /// its code is confirmed or being checked, and not when its last outcome already tells that it
+    /// was skipped for this reason.
+    private func showsIdentityUnavailable(_ trigger: GroupTrigger) -> Bool {
+        guard coordinator.applicationIdentityIsUnconfirmed(trigger) else { return false }
+        return state.entry(for: trigger.id).lastOutcome != .skipped(.applicationNotConfirmed)
+    }
+
     // MARK: - Changes
 
     private func triggersChanged() {
         let previous = rules
         rules = store.triggers
         coordinator.rulesChanged(previous: previous)
+        resetApplicationPresenceSource()
         clock?.reschedule()
         updateSources()
         objectWillChange.send()
@@ -287,9 +341,10 @@ final class TriggerController: ObservableObject {
     /// Triggers of deleted groups go. A restored group's triggers start from a fresh baseline, as
     /// turned-on ones do: what came while it was archived never runs.
     private func groupsChanged() {
-        let active = Set(groups.groups.map(\.id))
-        let restored = active.subtracting(activeGroupIDs)
-        activeGroupIDs = active
+        let newActive = Set(groups.groups.map(\.id))
+        let oldActive = activeGroupIDs
+        let restored = newActive.subtracting(oldActive)
+        activeGroupIDs = newActive
         store.pruneTriggers(for: groups)
         if store.triggers.contains(where: { restored.contains($0.groupID) }) {
             let asBefore = store.triggers.map { trigger -> GroupTrigger in
@@ -302,6 +357,9 @@ final class TriggerController: ObservableObject {
         }
         clock?.reschedule()
         updateSources()
+        if oldActive != newActive {
+            resetApplicationPresenceSource()
+        }
         objectWillChange.send()
     }
 
@@ -326,6 +384,33 @@ final class TriggerController: ObservableObject {
         objectWillChange.send()
     }
 
+    /// The lowercased bundle identifiers of every enabled runnable `applicationPresence` trigger in an
+    /// active group, as keys for the presence source.
+    private func applicationPresenceKeys() -> Set<String> {
+        let activeGroupIDs = Set(groups.groups.map(\.id))
+        return Set(store.triggers.compactMap { trigger -> String? in
+            guard trigger.canRun else { return nil }
+            guard case .applicationPresence(let bundleIdentifier, _) = trigger.event else { return nil }
+            guard activeGroupIDs.contains(trigger.groupID) else { return nil }
+            return bundleIdentifier.lowercased()
+        })
+    }
+
+    /// Stops the presence source and its observations, bumps the generation monotonically, then restarts
+    /// them under the current rules if a runnable `applicationPresence` rule exists in an active group.
+    private func resetApplicationPresenceSource() {
+        applicationPresenceUncertain = false
+        applicationPresenceSource?.stop()
+        coordinator.stopApplicationObservations()
+        guard applicationObservationGeneration < UInt64.max else { return }
+        applicationObservationGeneration += 1
+        let generation = applicationObservationGeneration
+        let keys = applicationPresenceKeys()
+        if !keys.isEmpty, coordinator.beginApplicationObservations(generation: generation) {
+            applicationPresenceSource?.start(keys: keys, generation: generation, ignoreUnidentified: monitorIdentifiedAppsOnlyForSession)
+        }
+    }
+
     // MARK: - What the editor reads
 
     /// The displays connected now, for the editor's chooser and Use Current Displays.
@@ -338,6 +423,65 @@ final class TriggerController: ObservableObject {
     func currentWiFiNetworkName() -> String? {
         guard case .connected(let network) = WiFiSource.reading(authorization: locationAccess.status), network.isValid else { return nil }
         return network.name
+    }
+
+    // MARK: - Approving an application trigger's app
+
+    /// Approves application triggers' apps for the editor; tests put in their own.
+    lazy var applicationApprover = TriggerApplicationApprover(store: store)
+
+    /// The editor's Approve button: checks the code of the trigger's app running now and, only when
+    /// it is verified, saves it as the trigger's approved code (`TriggerApplicationApprover`).
+    /// Cancelled with the calling task. Doesn't turn the trigger on.
+    func approveApplication(ofTrigger id: GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome {
+        await applicationApprover.approve(triggerID: id)
+    }
+
+    /// Internal seam for tests to simulate application presence snapshots deterministically.
+    internal func handleApplicationSnapshot(generation: UInt64, sequence: UInt64, counts: [String: Int]) {
+        guard generation == applicationObservationGeneration, applicationPresenceSource?.isObserving == true else { return }
+        // The status follows the coordinator's verdict: a rejected (stale) snapshot leaves it alone,
+        // and a stopped tracker (refresh failed, can't act) is shown as unknown, not left stale.
+        switch coordinator.observeApplications(generation: generation, sequence: sequence, counts: counts) {
+        case .rejected: break
+        case .stopped: applicationPresenceUncertain = true
+        case .accepted(let isUncertain): applicationPresenceUncertain = isUncertain
+        }
+    }
+
+    /// Internal seam for tests to simulate workspace sleep/wake / session changes without
+    /// relying on real NSWorkspace notifications.
+    internal func handleWorkspaceSignal(_ signal: TriggerSignal) {
+        let couldActBefore = coordinator.environment.canAct
+        coordinator.receive(signal)
+        let canActAfter = coordinator.environment.canAct
+        switch signal {
+        case .screens, .session:
+            if couldActBefore != canActAfter {
+                if canActAfter {
+                    resetApplicationPresenceSource()
+                } else {
+                    applicationPresenceUncertain = false
+                    applicationPresenceSource?.stop()
+                    coordinator.stopApplicationObservations()
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    internal func setMonitorIdentifiedAppsOnlyForSession(_ enabled: Bool) {
+        guard enabled != monitorIdentifiedAppsOnlyForSession else { return }
+        applicationPresenceSource?.stop()
+        coordinator.cancelApplicationPresenceForPolicyChange()
+        monitorIdentifiedAppsOnlyForSession = enabled
+        resetApplicationPresenceSource()
+    }
+
+    /// Minimal read-only observation state for test assertions.
+    var isApplicationPresenceObserving: Bool {
+        applicationPresenceSource?.isObserving ?? false
     }
 }
 

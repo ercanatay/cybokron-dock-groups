@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1026 keys.
+1076 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1220,7 +1220,7 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `capture.sheet.empty` | No other apps are open. |
 | `capture.sheet.allInGroup` | Every open app is already in “%@”. |
 
-## Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation (English only for now; `awaitingTranslation`: `core.trigger.`, `core.backup.triggers.`)
+## Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation
 
 The `core.trigger.skip.*` and `core.trigger.missed.*` texts complete a sentence ("Skipped today at 9:00: …", "Missed at 9:00: …"), so they start in lowercase.
 
@@ -1271,6 +1271,8 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `core.trigger.summary.time.days` | At %1$@ on %2$@ |
 | `core.trigger.summary.login` | At login |
 | `core.trigger.summary.appOpens` | When %@ opens |
+| `core.trigger.summary.application.opens` | When %@ opens |
+| `core.trigger.summary.application.closes` | When %@ closes |
 | `core.trigger.summary.screensWake` | When the screens wake |
 | `core.trigger.summary.screensSleep` | When the screens sleep |
 | `core.trigger.summary.unsupported` | A trigger made by a newer version |
@@ -1310,6 +1312,14 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.title.new` | New Trigger for “%@” |
 | `triggers.editor.title.edit` | Edit Trigger |
 | `triggers.editor.when` | When |
+| `triggers.editor.application.label` | Application |
+| `triggers.editor.application.none` | No app selected |
+| `triggers.editor.application.choose` | Choose… |
+| `triggers.editor.application.title` | Choose Application |
+| `triggers.editor.application.message` | Select an application for the trigger. |
+| `triggers.editor.application.invalid` | Choose an app with a valid bundle identifier and executable file. |
+| `triggers.editor.application.opens` | An application opens |
+| `triggers.editor.application.closes` | An application closes |
 | `triggers.editor.do` | Do |
 | `triggers.editor.how` | How |
 | `triggers.editor.event.time` | At a Time |
@@ -1414,6 +1424,9 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `groupWindow.triggers.archivedCount.one` | 1 trigger (it doesn't run while the group is archived) |
 | `groupWindow.triggers.archivedCount.other` | %ld triggers (they don't run while the group is archived) |
 | `groupWindow.triggers.waitingForLocation` | Waiting for Location access. |
+| `groupWindow.triggers.waitingForApplicationIdentity` | Waiting: macOS cannot identify every running app. |
+| `groupWindow.triggers.identifiedAppsOnly` | Monitor identified applications only |
+| `groupWindow.triggers.identifiedAppsWarning` | Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits. |
 | `groupWindow.triggers.vpnNotWatched` | Doesn't run in this version: macOS doesn't tell reliably when a VPN connects. |
 
 ## Triggers: Settings → Triggers (English only for now; `awaitingTranslation`: `settings.triggers.`)
@@ -1457,3 +1470,70 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `menuBar.triggers.pausedUntil` | Triggers paused until %@ |
 | `menuBar.triggers.pausedIndefinitely` | Triggers paused until you resume them |
 | `menuBar.triggers.quitTooltip` | Triggers don't run while %@ is quit. |
+
+## Triggers: an application trigger's approval — its label, status line and tooltip in the trigger lists, the editor's action notes and approval, and why an action was skipped
+
+An application trigger matched by bundle identifier only is *unverified*: it starts turned off and
+only Show Popup runs until the user approves its app (Approve This App, while the app is open).
+An approved trigger runs every action while the approved version of the app runs. *Needs
+re-approval* (the app's code changed; Approve the New Version), *Invalid* (the approval can't be
+read; remove the trigger and add it again) and *Verification unavailable* (the running code couldn't
+be confirmed as the approved version) run nothing.
+`core.trigger.skip.applicationNotVerified` completes “Skipped today at 9:00: …”, so it starts in
+lowercase. So does `core.trigger.skip.applicationNotConfirmed`, recorded when an approved trigger's
+event came but the app's running code couldn't be confirmed in time (the check was still running,
+failed or timed out, or the app changed), so nothing ran.
+The `triggers.identity.approve.` keys are the editor's Approve This App / Approve the New Version
+button, its hint and the outcome of an approval; a failure says that nothing was approved.
+`triggers.identity.approved.signature` follows Approved for the version… in the editor of an approved
+trigger and names how the approved code was signed: its `%@` is one of the
+`triggers.identity.signature.` names (Apple, Mac App Store, Developer ID). An ad-hoc signature
+gets `triggers.identity.signature.adHoc` instead, a whole sentence that says the approval is weaker
+because the signature doesn't verify who made the app.
+The texts say *approve* for what the user does and *confirm* for the check of the running code
+against an approval; *unverified* is the state of a trigger whose app isn't approved.
+
+| Key | English |
+| --- | --- |
+| `core.trigger.skip.applicationNotVerified` | the app isn't verified, so only Show Popup can run |
+| `core.trigger.skip.applicationNotConfirmed` | the app's running code couldn't be confirmed, so nothing ran |
+| `triggers.identity.badge.unverified` | Unverified |
+| `triggers.identity.badge.needsReapproval` | Needs re-approval |
+| `triggers.identity.badge.invalid` | Invalid |
+| `triggers.identity.badge.verificationUnavailable` | Verification unavailable |
+| `triggers.identity.status.needsReapproval` | Needs re-approval: the app's code changed since it was approved, so this trigger doesn't run. |
+| `triggers.identity.status.invalid` | Invalid: its app approval can't be read, so this trigger doesn't run. |
+| `triggers.identity.status.verificationUnavailable` | Doesn't run: the running app's code couldn't be confirmed as the approved version. |
+| `triggers.identity.detail.unverified` | Matched by bundle identifier only, which another app could also use. Only Show Popup runs, and the trigger starts turned off. |
+| `triggers.identity.detail.needsReapproval` | The app was updated or replaced since this trigger was approved for it. Nothing runs until its new code is approved. |
+| `triggers.identity.detail.invalid` | The saved approval for this trigger's app can't be read. Nothing runs. |
+| `triggers.identity.detail.verificationUnavailable` | This trigger is approved for a specific version of the app, but the code running now couldn't be confirmed as that version (the check failed or took too long), so nothing runs. |
+| `triggers.identity.howToReapprove` | To approve a trigger's app again, open the app, edit the trigger and click Approve the New Version. A trigger whose approval can't be read can't be approved: remove it and add it again. |
+| `triggers.identity.action.needsVerifiedApp` | %@ (needs an approved app) |
+| `triggers.identity.editor.onlyShowPopup` | This app is matched by its bundle identifier only (unverified), so only Show Popup can run. To use other actions, approve the app while it's open. |
+| `triggers.identity.editor.chooseShowPopup` | Choose Show Popup to save: other actions don't run for an unverified app. |
+| `triggers.identity.sectionNote` | Until you approve its app, an application trigger matches the app by bundle identifier only: it starts turned off and can only show the popup. Once approved, it runs every action while the approved version of the app runs. |
+| `triggers.identity.approve.button` | Approve This App |
+| `triggers.identity.approve.newVersionButton` | Approve the New Version |
+| `triggers.identity.approve.hint` | Approving checks the code of this app as it runs now. The trigger can then run every action, but only while that exact version runs; after an update it waits to be approved again. Approving doesn't turn the trigger on. |
+| `triggers.identity.approve.saveFirst` | To approve this app, save the trigger first, then edit it. |
+| `triggers.identity.approve.checking` | Checking the app's code… |
+| `triggers.identity.approve.approved` | Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again. |
+| `triggers.identity.approved.signature` | Approved: %@ signature. |
+| `triggers.identity.signature.apple` | Apple |
+| `triggers.identity.signature.appStore` | Mac App Store |
+| `triggers.identity.signature.developerID` | Developer ID |
+| `triggers.identity.signature.adHoc` | Ad-hoc signature: it doesn't verify who made the app, so this approval is weaker. It holds only for this exact code. |
+| `triggers.identity.approve.notRunning` | Open the app, then approve it: only a running app can be checked. Nothing was approved. |
+| `triggers.identity.approve.failure.notApprovable` | This trigger can't be approved now. Nothing was approved. |
+| `triggers.identity.approve.failure.alreadyApproving` | An app is already being checked. Try again in a moment. |
+| `triggers.identity.approve.failure.triggerChanged` | The trigger changed while its app was being checked. Nothing was approved. |
+| `triggers.identity.approve.failure.identifierMismatch` | The running app's code signature doesn't name this app's bundle identifier exactly, so it can't be approved. Nothing was approved. |
+| `triggers.identity.approve.failure.unsupportedSignature` | This app isn't signed in a way that can be approved (it's unsigned or has a development signature). Nothing was approved. |
+| `triggers.identity.approve.failure.differentVersionsRunning` | Different versions of this app are running. Quit all but one, then try again. Nothing was approved. |
+| `triggers.identity.approve.failure.tooManyInstances` | Too many copies of this app are running. Quit some, then try again. Nothing was approved. |
+| `triggers.identity.approve.failure.appChanged` | The app quit, opened again or changed while it was being checked. Nothing was approved; try again. |
+| `triggers.identity.approve.failure.timedOut` | Checking the app's code took too long. Nothing was approved; try again. |
+| `triggers.identity.approve.failure.cancelled` | Checking stopped. Nothing was approved. |
+| `triggers.identity.approve.failure.checkFailed` | The app's code couldn't be checked. Nothing was approved. |
+| `triggers.identity.approve.failure.notSaved` | The approval couldn't be saved. Nothing was approved. |

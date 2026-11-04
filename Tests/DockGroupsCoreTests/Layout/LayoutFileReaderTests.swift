@@ -141,7 +141,7 @@ struct LayoutFileReaderTests {
         task.executableURL = URL(fileURLWithPath: "/usr/bin/mkfifo")
         task.arguments = [fifo.path]
         try task.run()
-        task.waitUntilExit()
+        task.waitForExit()
         #expect(task.terminationStatus == 0)
         do {
             _ = try LayoutFileReader.readLayout(from: fifo)

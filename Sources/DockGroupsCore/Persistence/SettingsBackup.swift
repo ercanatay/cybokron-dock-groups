@@ -433,7 +433,8 @@ private struct BackupDocument: Codable {
         groups = GroupEntry.entries(of: StoredGroups(active: backup.groups, archived: backup.archivedGroups))
         preferences = PreferencesDocument(preferences: backup.preferences)
         templates = backup.templates.isEmpty ? nil : backup.templates
-        triggers = backup.triggers.isEmpty ? nil : LenientTriggers(backup.triggers)
+        // No application's code hash or signing data leaves this Mac in a backup.
+        triggers = backup.triggers.isEmpty ? nil : LenientTriggers(backup.triggers.map(\.droppingImportedIdentity))
     }
 
     private enum CodingKeys: String, CodingKey {

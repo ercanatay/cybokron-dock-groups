@@ -1,0 +1,170 @@
+# Application trigger: running-code binding candidate
+
+Status: a conservative design to evaluate, not implemented or approved. It addresses the observed
+bundle-identifier spoofing and selected-path replacement gaps. It does not claim a race-free
+identity protocol or change the released app. See `app-presence-identity-security.md` and
+`app-presence-macho-slices.md` for evidence and unresolved constraints.
+
+## Proposed user flow
+
+1. The user chooses an application bundle. If a matching app is not already running, explain that
+   the user must open it themselves and retry. Never launch an app just to establish identity.
+2. If exactly one stable, verifiable running identity can be associated with the selection, show
+   the selected app and a plain-language explanation that its current code is being bound. An
+   invalid, unsigned, unavailable, ambiguous or changing identity leaves the rule unbound and
+   cannot run. Multiple instances with differing code for the same bundle identifier are
+   ambiguous; do not guess which one the user intended.
+3. Require an explicit confirmation after the binding is established. A valid code signature is
+   not a promise that an app is benign or that its publisher is trustworthy. An ad hoc signed app
+   may be bound only if its exact code can be verified; the user must understand that an update can
+   require reselection. A code hash is an identity pin, not a reputation score.
+4. A legitimate update or a different architecture may change the code hash. Do not silently
+   replace or expand a binding. Keep the rule waiting and offer explicit reselection. Establishing
+   a new binding must invalidate pending actions and start a new baseline without replay.
+5. Imported or legacy rules have no locally authorized binding. Keep them disabled or waiting;
+   never treat an imported hash, requirement expression, path, signer field or enabled flag as
+   proof of local consent. Re-selection must establish a new binding locally. Decide storage,
+   migration and downgrade behavior before implementation.
+
+## Candidate verification sequence
+
+- Treat `NSWorkspace` observations as incomplete until checked. A missing or invalid identifier,
+  process lookup error, different code under the target identifier, or an unverifiable process is
+  unknown for that rule, never zero. Existing identified-app-only mode, if retained, can skip
+  unrelated unidentified apps only; it must not skip an unverifiable candidate for the target.
+- Hold the `NSRunningApplication` instance and use Apple's instance-equality guidance rather than
+  comparing PIDs alone. Capture and recheck its liveness and current rule/source generation before
+  and after the Security calls. Its launch date may be unavailable and must not be required or
+  treated as a universal unique token. These checks are supplementary and not atomic.
+- Obtain a dynamic `SecCode` for the candidate and validate it. Generate any Security requirement
+  from bounded, validated values, not arbitrary imported requirement text. Ensure the candidate
+  code's verified identifier and exact code hash satisfy the binding; a designated requirement
+  supplied by an app may be too weak. Recheck current rule, group, pause, observation generation,
+  and cancellation before publishing a result or executing an action.
+- In local tests, a dynamic requirement rejected the replacement fixture's hash after the selected
+  path was swapped. The original hash's result varied across two runs. This is promising fail-closed
+  behavior, not proof that a PID lookup or user selection is race-free. Determine whether public OS
+  APIs expose a sufficiently strong process-lifetime token for this use; if not, do not claim
+  cryptographic binding to the selected process. Avoid undocumented or private APIs.
+- Do not automatically authorize every static slice of the selected path. A path can be replaced
+  between parsing and Security checks. At most, a verified running slice is an experimental
+  candidate; obtaining and authorizing other slices requires its own evidence and user semantics.
+  An absent, replaced or different slice remains unknown, not a close.
+
+## Release gates
+
+A production design must resolve process/PID reuse and selection-to-confirmation races, bounded
+background execution and cancellation, signed-identifier verification, local binding persistence,
+update and universal-binary UX, privacy, backup/import/downgrade, disabled-rule migration, and all
+existing trigger gates. Tests must include conflicting processes sharing an identifier, ad hoc and
+invalid signatures, selected-path replacement, process exit/restart during verification, and
+actual packaged-app UI. Supported macOS versions and user-visible Accessibility/TCC behavior need
+separate verification. No requirement, hash or identity helper in the experimental branch should
+be interpreted as completing these gates.
+
+## Audit-token investigation (2026-11-01)
+
+Apple's published Security source explicitly marks its PID-only convenience lookup as raceable
+and implements an audit-token lookup through `kSecGuestAttributeAudit`. This is evidence of a
+possible stronger input to Security, not a public recipe for acquiring a trustworthy audit token
+for an arbitrary application chosen through `NSWorkspace`. Apple's `NSRunningApplication`
+interface documents a PID and instance comparison, but does not document an audit-token property.
+Do not manufacture an audit token from a PID, depend on private APIs, or infer that a token is
+bound to the user's selection merely because a Security lookup accepts it.
+
+Endpoint Security events expose an audit token, but creating a client requires an entitlement
+requested from Apple and user approval for Full Disk Access; Apple's client sample also handles a
+not-privileged failure. This is not a drop-in replacement for existing application observation.
+Do not add Endpoint Security, a privileged helper, or additional permissions as part of this
+experiment. Even if obtained, an event token would need a separately specified association with
+the selected app, initial running state, event loss, confirmation, and process exit handling.
+
+The current release gate therefore remains open: identify a supported, proportionate way to bind
+the locally confirmed app selection to an actual process instance, or keep this trigger unavailable
+when that association cannot be established. Failed or unavailable checks must remain unknown and
+must never be translated into an application-close event.
+
+## Same-PID exec experiment (2026-11-01)
+
+A locally compiled, ad-hoc-signed command-line fixture waited for input and then called `exec` to
+replace itself with `/bin/sleep`, retaining its PID. In four runs on one Mac, a fresh `SecCode`
+lookup after the replacement rejected the fixture's original cdhash requirement; a `SecCode`
+object retained from before the replacement still accepted that requirement. The running process
+remained alive during those checks. The test distinguished the executables using signing
+information obtained through `SecCodeCopyStaticCode`; that disk association itself is not a
+race-free identity proof. The experiment did not test an AppKit app, PID reuse, or supported OS
+versions beyond this Mac.
+
+A second fixture packaged the executable in an ad-hoc-signed `.app` but launched its executable
+directly with `Process`. In that run AppKit did not expose the original fixture as a running app,
+so no `NSRunningApplication` equality or termination conclusion can be drawn from it; the Security
+lookup observations repeated.
+
+A separate, windowless AppKit fixture launched via `NSWorkspace.openApplication` then executed
+`/bin/sleep` in its own process. In four local runs, a fresh Security lookup observed code that no
+longer matched the original requirement, while the retained pre-exec `SecCode` still matched. The
+original `NSRunningApplication` reported not terminated, and a fresh lookup by the same PID returned
+an object equal to the original. These results demonstrate that instance equality alone did not
+detect this fixture's in-place code replacement on the tested OS. They do not prove behavior on
+other macOS versions or make fresh PID-based lookups race-free. The fixture was launched without
+activation, exits on its own, and never touches user groups or applications.
+
+The same LaunchServices fixture was tested with a `runningApplications` KVO observer, with
+callbacks delivered on the main queue as in the app's source. In three controlled runs, the
+observer recorded one callback before exec (the fixture's launch), and none during a 0.7-second
+window after a fresh Security lookup detected changed code. The fixture remained in the running
+applications snapshot under its old bundle ID. Another initial run had the same post-exec result
+but did not log the positive-control count. This is evidence from one machine and short observation
+windows, not a guarantee of all AppKit behavior. It rules out relying on a list-change callback
+as the sole detector for this demonstrated transition. A design must account for code changes
+without a list change and must still address the race between any recheck and action.
+
+## Process-event probe (2026-11-01)
+
+Apple's documented `kqueue` `EVFILT_PROC` supports `NOTE_EXEC` and `NOTE_EXIT` for an observable
+process. In four local LaunchServices-fixture runs, a watch registered before exec received
+`NOTE_EXEC` while the process was still alive. Three controlled runs recorded one app-list KVO
+callback before exec and zero in the subsequent short observation window; an earlier run received
+one callback in that window, whose cause was not established. Both outcomes reinforce that list
+callbacks cannot be used as proof of whether exec occurred. A separate owned child fixture produced
+`NOTE_EXIT` without `NOTE_EXEC` when its input closed and it exited.
+
+In one negative-control run, registering the watch only after Security had observed the changed
+code produced no historical exec notification. Registration is PID-based and can fail; a process
+may exit, exec, or be replaced around registration and verification. Events can be queued or
+delivered after a decision; subscribing does not make selection, signature checking, notification
+handling, and group actions atomic. Event coalescing, resource limits, sandboxes, privilege and
+supported macOS versions require separate testing. No real user app was monitored and no elevated
+permission was requested in these probes.
+
+In another local negative control, a test-owned `/usr/bin/true` child was reaped before the
+registration attempt; the attempt failed with `ESRCH`. This does not exclude PID reuse or establish
+what happens when the process exits concurrently with registration.
+
+This makes process events a promising **detection and invalidation** component, not an identity
+token or an authorization mechanism. A candidate design would need to register a watch before
+accepting a verified running instance, fail closed on registration errors and uncertain ordering,
+invalidate pending work on exec/exit or observation failure, and prevent stale event handlers from
+affecting a later generation. An explicit threat model must still address the registration race,
+selection-to-confirmation binding, and the final check-to-action window before any integration.
+The tentative end-to-end lifecycle and unresolved threat boundary are in
+`app-presence-watch-protocol-draft.md`.
+
+Consequently, retaining a successful `SecCode` object or an equal process instance is not enough
+to prove that the same code is still executing. A fresh lookup helps detect this observed case but
+does not close the race between lookup and action. Treat code replacement during verification as
+unknown, discard stale work, and keep the release gate open until a supported binding and execution
+protocol has been established. Test artifacts are local-only and contain no user application data.
+
+## Primary references
+
+- [NSRunningApplication process-identity guidance](https://developer.apple.com/documentation/appkit/nsrunningapplication/processidentifier)
+- [NSRunningApplication launch-date limitation](https://developer.apple.com/documentation/appkit/nsrunningapplication/launchdate)
+- [Dynamic signed-code validation](https://developer.apple.com/documentation/security/seccodecheckvalidity%28_%3A_%3A_%3A%29)
+- [Guest-code attributes](https://developer.apple.com/documentation/security/guest-attribute-dictionary-keys)
+- [Apple Security source: PID and audit-token lookups](https://github.com/apple-oss-distributions/Security/blob/main/OSX/libsecurity_codesigning/lib/SecCode.cpp)
+- [NSRunningApplication interface](https://developer.apple.com/documentation/appkit/nsrunningapplication)
+- [Endpoint Security process audit token](https://developer.apple.com/documentation/endpointsecurity/es_process_t/audit_token)
+- [Endpoint Security client requirements](https://developer.apple.com/documentation/endpointsecurity/es_new_client%28_%3A_%3A%29)
+- [Endpoint Security entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.endpoint-security.client)
+- [kqueue process-event filter](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/kqueue.2.html)

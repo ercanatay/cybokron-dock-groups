@@ -4,6 +4,27 @@ import Testing
 
 @Suite("App presence tracker")
 struct AppPresenceTrackerTests {
+    @Test func identifiedOnlyModeCountsKnownAppsDespiteUnidentifiedInstances() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.example.app"], identifiers: [nil, "", "COM.EXAMPLE.APP", "com.other.app"], ignoreUnidentified: true)
+        #expect(result == ["com.example.app": 1])
+    }
+
+    @Test func identifiedOnlyModeStillRejectsInvalidTarget() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.exampKe.app"], identifiers: [nil, "com.exampke.app"], ignoreUnidentified: true)
+        #expect(result.isEmpty)
+    }
+    @Test func invalidTargetIdentityCannotBeNormalizedIntoAValidKey() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.exampKe.app"], identifiers: ["com.exampke.app"])
+        #expect(result.isEmpty)
+    }
+    @Test func nonASCIIIdentityCannotMatchASCIIApplicationKey() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.exampke.app"], identifiers: ["com.exampKe.app"])
+        #expect(result["com.exampke.app"] == 0)
+    }
+    @Test func snapshotCountsEmptyIdentifierReturnsUnknown() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["com.example.app"], identifiers: ["com.example.app", ""])
+        #expect(result.isEmpty)
+    }
     @Test func initialValidCountSetsBaselineWithNoEdge() {
         var tracker = AppPresenceTracker()
         #expect(tracker.observe(count: 1, generation: tracker.generation) == nil)
@@ -99,5 +120,28 @@ struct AppPresenceTrackerTests {
         #expect(tracker.beginGeneration() == nil)
         #expect(tracker.observe(count: 1, generation: generation) == nil)
         #expect(tracker.observe(count: 0, generation: generation) == nil)
+    }
+
+    @Test func snapshotCountsNilAnywhereReturnsEmpty() {
+        #expect(ApplicationSnapshotCounter.counts(keys: ["a"], identifiers: ["b", nil, "c"]) == [:])
+    }
+
+    @Test func snapshotCountsEmptyKeysReturnsEmpty() {
+        #expect(ApplicationSnapshotCounter.counts(keys: [], identifiers: ["a", "b"]) == [:])
+    }
+
+    @Test func snapshotCountsCaseInsensitiveDuplicates() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["A"], identifiers: ["a", "A", "a", "A"])
+        #expect(result == ["a": 4])
+    }
+
+    @Test func snapshotCountsUnrelatedIdReturnsZero() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["x"], identifiers: ["y", "z"])
+        #expect(result == ["x": 0])
+    }
+
+    @Test func snapshotCountsNoSelectedIdsReturnsZero() {
+        let result = ApplicationSnapshotCounter.counts(keys: ["x", "y"], identifiers: [])
+        #expect(result == ["x": 0, "y": 0])
     }
 }

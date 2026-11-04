@@ -109,6 +109,15 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   started it. Display triggers need no permission: they read what macOS tells every app about its
   displays (their maker's and model's numbers, the serial number when there's a real one, the name).
   With no display connected at all, nothing can be read, and nothing changes.
+- **Application triggers** (unreleased): choose an app and run a trigger when its first instance opens
+  or its last instance closes. The current state is a baseline when monitoring starts, so an app
+  already open does not count as a new opening. Matching uses the bundle identifier, not a verified
+  app signature or publisher, and macOS observations can miss short-lived changes.
+  If macOS cannot identify a running app, these triggers wait by default. You may choose **Monitor
+  identified applications only** in a group's Triggers section: unidentified instances can be missed
+  and a close can be reported incorrectly. The choice affects all application triggers, lasts only
+  until Cybokron Dock Groups quits, and is not included in backups. Existing trigger pause, rate,
+  notice, and automatic-action protections still apply.
 - **Network triggers**: **When Ethernet Connects** or **Disconnects** (a wired connection — built in,
   an adapter or a dock — has a network, even when Wi-Fi is used first; no permission) and **When the
   Mac Joins** or **Leaves a Wi-Fi Network**, by the network's name (matched exactly; **Use Current
@@ -372,6 +381,8 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   has comes in without it. The question says how many of each. A backup has the triggers too; they
   come in turned off (Replace All replaces yours only when the backup has some, Merge adds those of
   the groups it adds), so nothing runs until you turn them on.
+  Keep the original backup when using an older version: in a test with versions 0.11.0 and 0.10.0,
+  0.10.0 read the groups but did not include triggers in a newly exported backup.
   Most Used launch counts aren't part of a backup. Files over 5 MB aren't read, and an app location
   in a backup that isn't an absolute path to a `.app` bundle is dropped (an app known only by such a
   location is left out). Backups can also carry file and folder items and each item's alias, tags
@@ -721,6 +732,13 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - Pause Triggers → For 1 Hour in the menu bar menu: a due trigger is *Skipped …: triggers were
      paused.*; Resume Triggers. Archive the group: its triggers don't run, and the archived summary
      counts them; restore it after the time: the time passed while archived doesn't run.
+   - **Application opens / closes** (unreleased): choose a test app, verify the Add button stays
+     disabled until a valid app is selected, and check that one opening and the last close are
+     detected with multiple instances. Allow for the existing 15-second protection after an
+     automatic action. Check the waiting message when macOS cannot identify a running process;
+     explicitly enable identifiable-app-only monitoring, review its warning, then restart and
+     confirm the setting is off again. Test sleep and wake, pause, and editing or disabling a rule
+     while its notice is visible. A brief app launch may be missed by macOS observation.
    - Quit's tooltip in the menu bar menu says triggers don't run while the app is quit. No prompt of
      any kind appears in any of these steps.
 8. **Display triggers** — with an external monitor and a MacBook's built-in display or a second

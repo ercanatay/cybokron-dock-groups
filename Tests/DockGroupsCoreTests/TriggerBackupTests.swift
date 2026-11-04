@@ -33,6 +33,20 @@ struct TriggerBackupTests {
         #expect(restored.triggers[0] == expected)
     }
 
+    @Test func importedApplicationTriggersAreDisabledAndCannotCarrySessionPolicy() throws {
+        let trigger = GroupTrigger(groupID: Self.work.id, event: .applicationPresence(bundleIdentifier: "com.example.Fixture", edge: .ends), action: .openAll)
+        let original = backup(triggers: [trigger])
+        var object = try #require(try JSONSerialization.jsonObject(with: original.encoded()) as? [String: Any])
+        object["monitorIdentifiedAppsOnlyForSession"] = true
+        let imported = try SettingsBackup.decode(from: JSONSerialization.data(withJSONObject: object))
+        let restored = try #require(imported.triggers.first)
+        #expect(imported.triggers.count == 1)
+        #expect(restored.event == trigger.event)
+        #expect(!restored.isEnabled)
+        let exported = String(decoding: try imported.encoded(), as: UTF8.self)
+        #expect(!exported.contains("monitorIdentifiedAppsOnlyForSession"))
+    }
+
     @Test func aBackupWithoutTriggersIsAsBefore() throws {
         let text = String(decoding: try backup(triggers: []).encoded(), as: UTF8.self)
         #expect(!text.contains("triggers"))

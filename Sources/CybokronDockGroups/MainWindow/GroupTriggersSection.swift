@@ -40,6 +40,11 @@ struct GroupTriggersSection: View {
             ForEach(list) { trigger in
                 TriggerRow(trigger: trigger, triggers: triggers, store: store, onEdit: { editing = TriggerEditing(existing: trigger) })
             }
+            if list.contains(where: { if case .applicationPresence = $0.event { return true }; return false }) {
+                Toggle(Texts.identifiedAppsOnly, isOn: Binding(get: { triggers.monitorIdentifiedAppsOnlyForSession }, set: { triggers.setMonitorIdentifiedAppsOnlyForSession($0) }))
+                Text(Texts.identifiedAppsWarning).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                Text(L10n.Triggers.Identity.sectionNote).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            }
             HStack {
                 Button(Texts.add) { editing = TriggerEditing(existing: nil) }
                     .disabled(limitMessage != nil)
@@ -55,7 +60,8 @@ struct GroupTriggersSection: View {
                     loginItem: loginItem,
                     locationAccess: triggers.locationAccess,
                     readDisplays: triggers.connectedDisplays,
-                    readNetworkName: triggers.currentWiFiNetworkName
+                    readNetworkName: triggers.currentWiFiNetworkName,
+                    approveApplication: triggers.approveApplication(ofTrigger:)
                 ) { editing = nil }
             }
             if triggers.isPaused, !list.isEmpty {
@@ -97,6 +103,7 @@ struct GroupTriggersSection: View {
         case .screensSleep: return 4
         case .condition: return 5
         case .unsupported: return 6
+        case .applicationPresence: return 6
         }
     }
 
@@ -112,7 +119,8 @@ struct TriggerEditing: Identifiable {
     let id = UUID()
 }
 
-/// One trigger: its switch, its rule, its last run (or why it can't run), Edit… and Remove.
+/// One trigger: its switch, its rule, its last run (or why it can't run), an application trigger's
+/// approval, Edit… and Remove.
 struct TriggerRow: View {
     let trigger: GroupTrigger
     @ObservedObject var triggers: TriggerController
@@ -124,6 +132,7 @@ struct TriggerRow: View {
     var body: some View {
         let summary = TriggerController.summary(of: trigger)
         let status = triggers.statusLine(of: trigger)
+        let identity = triggers.identityBadge(of: trigger)
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Toggle(isOn: Binding(
                 get: { trigger.isEnabled && trigger.isRunnable },
@@ -146,6 +155,9 @@ struct TriggerRow: View {
                     .font(.caption)
                     .foregroundStyle(trigger.isRunnable ? Color.secondary : Color.orange)
                     .fixedSize(horizontal: false, vertical: true)
+                if let identity {
+                    TriggerIdentityLabel(state: identity)
+                }
             }
             Spacer(minLength: 8)
             if let onEdit {
@@ -164,7 +176,7 @@ struct TriggerRow: View {
             .accessibilityLabel(Texts.remove)
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(summary). \(status)")
+        .accessibilityLabel(identity.map { "\(summary). \(L10n.Triggers.Identity.badge($0)). \(status)" } ?? "\(summary). \(status)")
     }
 
     static func symbol(for event: TriggerEvent) -> String {
@@ -179,6 +191,42 @@ struct TriggerRow: View {
         case .condition(.ethernet, _): return "cable.connector"
         case .condition(.vpn, _): return "lock.shield"
         case .unsupported: return "questionmark.circle"
+        case .applicationPresence: return "app"
+        }
+    }
+}
+
+/// An application trigger's approval under its status line: Unverified, Needs re-approval, Invalid
+/// or Verification unavailable (none for an authorized one whose code is confirmed), with what it
+/// means (and, where it must be approved again, how) as its tooltip. Information only: an app is approved in the trigger's editor, so it offers no button.
+struct TriggerIdentityLabel: View {
+    let state: TriggerApplicationIdentityState
+
+    private typealias Texts = L10n.Triggers.Identity
+
+    var body: some View {
+        Label(Texts.badge(state), systemImage: Self.symbol(for: state))
+            .font(.caption)
+            .foregroundStyle(state.blocksEveryAction ? Color.orange : Color.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+            .help(Self.help(for: state))
+    }
+
+    /// What `state` means; for one waiting for approval or unreadable, also how to approve it
+    /// again (an authorized trigger whose code can't be confirmed has nothing to approve).
+    static func help(for state: TriggerApplicationIdentityState) -> String {
+        switch state {
+        case .needsReapproval, .invalid: return "\(Texts.detail(state)) \(Texts.howToReapprove)"
+        case .unverified, .verificationUnavailable: return Texts.detail(state)
+        }
+    }
+
+    static func symbol(for state: TriggerApplicationIdentityState) -> String {
+        switch state {
+        case .unverified: return "shield"
+        case .needsReapproval: return "arrow.clockwise.circle"
+        case .invalid: return "exclamationmark.triangle"
+        case .verificationUnavailable: return "shield.slash"
         }
     }
 }

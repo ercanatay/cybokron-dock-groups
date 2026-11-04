@@ -112,6 +112,66 @@ public final class TriggerStore: ObservableObject {
         return true
     }
 
+    /// The code running under these application triggers' approved identifier isn't the code they
+    /// were approved for (an update or a look-alike): each authorized one is saved as needing
+    /// re-approval, and runs nothing until the user approves the new code. Other states are left
+    /// alone; trust is never widened. Returns the triggers that changed.
+    @discardableResult
+    public func requireApplicationReapproval(for ids: [GroupTrigger.ID]) -> [GroupTrigger.ID] {
+        let wanted = Set(ids)
+        var updated = triggers
+        var changed: [GroupTrigger.ID] = []
+        for index in updated.indices where wanted.contains(updated[index].id) {
+            guard let identity = updated[index].applicationIdentity, identity.status == .authorized else { continue }
+            updated[index].applicationIdentity = identity.requiringReapproval()
+            changed.append(updated[index].id)
+        }
+        guard !changed.isEmpty else { return [] }
+        triggers = updated
+        scheduleSave()
+        return changed
+    }
+
+    /// The user approved the app of the application trigger `id` and its running code was verified
+    /// (`TriggerApplicationApprover`, the only maker of a `VerifiedApplicationApproval`): an
+    /// unverified trigger becomes authorized for that exact code, one waiting for re-approval is
+    /// authorized for the new code (`reapproved(with:)`, same identifier only). The only way an
+    /// `authorized` record is created; imports, restores and merges never call it. Changes nothing
+    /// unless the stored trigger is still exactly `expected` (so an edit, a removal or a saved
+    /// re-approval meanwhile wins) and the binding names its bundle identifier. Doesn't turn the
+    /// trigger on or off. Written to disk before it is shown; when that fails (or saving is
+    /// suspended) nothing changes. Returns whether it changed.
+    @discardableResult
+    func setApplicationIdentityAuthorization(_ approval: VerifiedApplicationApproval, forTrigger id: GroupTrigger.ID, replacing expected: GroupTrigger) -> Bool {
+        guard !isSavingSuspended else { return false }
+        guard let index = triggers.firstIndex(where: { $0.id == id }), triggers[index] == expected else { return false }
+        guard case .applicationPresence(let bundleIdentifier, _) = expected.event, approval.binding.identifier == bundleIdentifier else { return false }
+        let authorization: ApplicationIdentityAuthorization
+        switch expected.applicationIdentityStatus {
+        case .unverified?:
+            authorization = .authorize(approval.binding)
+        case .needsReapproval?:
+            guard let reapproved = expected.applicationIdentity?.reapproved(with: approval.binding) else { return false }
+            authorization = reapproved
+        case .authorized?, .invalid?, nil:
+            return false
+        }
+        var updated = triggers
+        updated[index].applicationIdentity = authorization
+        pendingSave?.cancel()
+        pendingSave = nil
+        do {
+            // With any change still waiting to be written.
+            try persistence.saveTriggers(updated)
+        } catch {
+            // Not logged: the approval stays out of the logs. The pending change is written later.
+            scheduleSave()
+            return false
+        }
+        triggers = updated
+        return true
+    }
+
     public func delete(_ id: GroupTrigger.ID) {
         guard let index = triggers.firstIndex(where: { $0.id == id }) else { return }
         triggers.remove(at: index)
@@ -154,7 +214,7 @@ public final class TriggerStore: ObservableObject {
             flushPendingSave()
         }
         let copyURL = try copyLabel.flatMap { try persistence.preserveCopy(label: $0) }
-        let sanitized = GroupTrigger.sanitized(newTriggers)
+        let sanitized = GroupTrigger.sanitized(admitted(newTriggers))
         try persistence.saveTriggers(sanitized)
         triggers = sanitized
         isSavingSuspended = false
@@ -168,11 +228,24 @@ public final class TriggerStore: ObservableObject {
     @discardableResult
     public func mergeTriggers(_ incoming: [GroupTrigger]) throws -> [GroupTrigger] {
         let currentIDs = Set(triggers.map(\.id))
-        let merged = GroupTrigger.sanitized(triggers + incoming)
+        let merged = GroupTrigger.sanitized(triggers + admitted(incoming))
         let added = merged.filter { !currentIDs.contains($0.id) }
         guard !added.isEmpty else { return [] }
         try replaceTriggers(with: merged, copyLabel: "pre-import")
         return added
+    }
+
+    /// `incoming` as the store takes it from a backup, whatever its caller already did: a rule
+    /// carrying an application authorization the store doesn't hold for that identifier (a new
+    /// one, or another record than the saved one) comes in unverified and turned off (`turnedOff`).
+    /// What a file says about an app's code never authorizes a rule here.
+    private func admitted(_ incoming: [GroupTrigger]) -> [GroupTrigger] {
+        let held = Dictionary(triggers.map { ($0.id, $0.applicationIdentity) }, uniquingKeysWith: { first, _ in first })
+        return incoming.map { trigger in
+            guard let identity = trigger.applicationIdentity, identity != .unverified,
+                  (held[trigger.id] ?? nil) != identity else { return trigger }
+            return trigger.turnedOff
+        }
     }
 
     /// Copies the saved file next to itself (`triggers.<label>-<timestamp>.json`), a pending change

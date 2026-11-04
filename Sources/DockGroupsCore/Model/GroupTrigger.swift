@@ -123,6 +123,7 @@ public enum TriggerEvent: Hashable, Sendable {
     case screensWake
     case screensSleep
     case condition(TriggerCondition, edge: TriggerEdge)
+    case applicationPresence(bundleIdentifier: String, edge: TriggerEdge)
     /// An event this version doesn't understand — a newer version's kind, or a known kind it can't
     /// read: kept as read and written back unchanged; it never runs.
     case unsupported(JSONValue)
@@ -133,6 +134,7 @@ public enum TriggerEvent: Hashable, Sendable {
         case .schedule, .condition: return TriggerAction.allCases
         case .login, .appOpens, .screensWake: return [.showPopup, .openAll, .start]
         case .screensSleep: return [.finish]
+        case .applicationPresence: return TriggerAction.allCases
         case .unsupported: return []
         }
     }
@@ -143,6 +145,7 @@ public enum TriggerEvent: Hashable, Sendable {
         case .schedule(let schedule): return schedule.isValid
         case .condition(let condition, _): return condition.isValid
         case .login, .appOpens, .screensWake, .screensSleep: return true
+        case .applicationPresence(let bundleIdentifier, _): return TriggerApplicationIdentifier(bundleIdentifier) != nil
         case .unsupported: return false
         }
     }
@@ -150,6 +153,7 @@ public enum TriggerEvent: Hashable, Sendable {
     /// Whether it's a change that settles (a display or a network), which the echo window holds back.
     public var isEdge: Bool {
         if case .condition = self { return true }
+        if case .applicationPresence = self { return true }
         return false
     }
 
@@ -181,6 +185,7 @@ public enum TriggerEvent: Hashable, Sendable {
             case .ethernet: return "ethernet"
             case .vpn: return "vpn"
             }
+        case .applicationPresence: return "applicationPresence"
         case .unsupported: return "unsupported"
         }
     }
@@ -225,6 +230,10 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     }
     /// An action a newer version wrote that this one doesn't know; then the trigger doesn't run.
     private(set) var unrecognizedAction: String?
+    /// Application-presence rules only (`nil` for every other event): which code the rule was
+    /// authorized for, or that it matches by bundle identifier only (`ApplicationIdentityAuthorization`).
+    /// Never trusted from an import or a restore (`droppingImportedIdentity`).
+    var applicationIdentity: ApplicationIdentityAuthorization?
 
     public init(
         id: UUID = UUID(),
@@ -251,6 +260,17 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     /// action that event allows.
     public var isRunnable: Bool {
         unrecognizedAction == nil && event.isValid && event.allowedActions.contains(action)
+            && applicationIdentityStatus != .invalid && applicationIdentityStatus != .needsReapproval
+    }
+
+    /// The application-presence rule's authorization as it stands: `unverified` without a record, and
+    /// `invalid` when an authorized (or waiting) record names another identifier than the event's.
+    /// `nil` for other events.
+    var applicationIdentityStatus: ApplicationIdentityAuthorization.Status? {
+        guard case .applicationPresence(let bundleIdentifier, _) = event else { return nil }
+        guard let identity = applicationIdentity else { return .unverified }
+        if let binding = identity.binding, binding.identifier != bundleIdentifier { return .invalid }
+        return identity.status
     }
 
     /// Whether it runs when its event comes: turned on and runnable.
@@ -273,11 +293,32 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         return true
     }
 
-    /// Show the Popup always runs right away; "Finish when it ends" only where it applies.
+    /// Show the Popup always runs right away; "Finish when it ends" only where it applies. An
+    /// application-presence rule always has an authorization record (`unverified` when it has none,
+    /// or when its application changed from the one authorized); other events have none.
     private mutating func normalize() {
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            if applicationIdentity == nil {
+                applicationIdentity = .unverified
+            } else if let binding = applicationIdentity?.binding, binding.identifier != bundleIdentifier {
+                applicationIdentity = .unverified
+            }
+        } else if applicationIdentity != nil {
+            applicationIdentity = nil
+        }
         guard unrecognizedAction == nil else { return }
         if action == .showPopup, runMode != .immediately { runMode = .immediately }
         if finishesWhenEventEnds, !canFinishWhenEventEnds { finishesWhenEventEnds = false }
+    }
+
+    /// The rule with its application authorization reset to `unverified`: how a rule leaves this Mac
+    /// (a backup) and how one comes in (an import or a restore). A code hash, signing data or status
+    /// from a file is never trusted; authorizing again is a choice on this Mac.
+    var droppingImportedIdentity: GroupTrigger {
+        guard applicationIdentity != nil else { return self }
+        var trigger = self
+        trigger.applicationIdentity = .unverified
+        return trigger
     }
 
     /// `triggers` as a store keeps them: each identifier once (the first), at most `maximumPerGroup`
@@ -300,7 +341,7 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
 
 extension GroupTrigger: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds
+        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds, applicationIdentity
     }
 
     /// The identifier and the group are required (an entry without them is left out by the file);
@@ -324,6 +365,23 @@ extension GroupTrigger: Codable {
         isEnabled = container.decodeLeniently(Bool.self, forKey: .enabled) ?? false
         oncePerDay = container.decodeLeniently(Bool.self, forKey: .oncePerDay) ?? false
         finishesWhenEventEnds = container.decodeLeniently(Bool.self, forKey: .finishesWhenEventEnds) ?? false
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            let rawIdentity = container.decodeLeniently(JSONValue.self, forKey: .applicationIdentity) ?? .null
+            if rawIdentity == .null {
+                // Saved before authorization records existed (or with the record removed): matched by
+                // bundle identifier only, and turned off, so it never starts running again by itself.
+                applicationIdentity = .unverified
+                isEnabled = false
+            } else {
+                let identity = ApplicationIdentityAuthorization(json: rawIdentity)
+                // A record for another identifier is never moved over to this rule.
+                if let binding = identity.binding, binding.identifier != bundleIdentifier {
+                    applicationIdentity = .invalid(rawIdentity)
+                } else {
+                    applicationIdentity = identity
+                }
+            }
+        }
         normalize()
     }
 
@@ -342,6 +400,7 @@ extension GroupTrigger: Codable {
         if finishesWhenEventEnds {
             try container.encode(true, forKey: .finishesWhenEventEnds)
         }
+        try container.encodeIfPresent(applicationIdentity?.json, forKey: .applicationIdentity)
     }
 }
 
@@ -375,6 +434,20 @@ extension TriggerEvent {
                 return
             }
             self = .condition(condition, edge: edge)
+        case "applicationPresence":
+            guard let obj = json.objectValue,
+                  Set(obj.keys) == Set(["kind", "bundleIdentifier", "edge"]),
+                  obj["kind"] == .string("applicationPresence"),
+                  let bundleValue = obj["bundleIdentifier"]?.stringValue,
+                  TriggerApplicationIdentifier(bundleValue) != nil,
+                  let edgeValue = obj["edge"]?.stringValue,
+                  let edge = TriggerEdge(rawValue: edgeValue),
+                  (edge == .starts || edge == .ends)
+            else {
+                self = .unsupported(json)
+                return
+            }
+            self = .applicationPresence(bundleIdentifier: bundleValue, edge: edge)
         default:
             self = .unsupported(json)
         }
@@ -395,6 +468,8 @@ extension TriggerEvent {
         case .screensSleep: return .object(["kind": .string("screensSleep")])
         case .condition(let condition, let edge):
             return .object(["kind": .string("condition"), "condition": condition.json, "edge": .string(edge.rawValue)])
+        case .applicationPresence(let bundleIdentifier, let edge):
+            return .object(["kind": .string("applicationPresence"), "bundleIdentifier": .string(bundleIdentifier), "edge": .string(edge.rawValue)])
         case .unsupported(let raw):
             return raw
         }

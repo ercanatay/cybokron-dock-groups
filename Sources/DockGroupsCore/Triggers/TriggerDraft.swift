@@ -57,11 +57,12 @@ public struct TriggerDraft: Equatable, Sendable {
     public enum When: Hashable, Sendable {
         case moment(Kind)
         case change(Change)
+        case application(TriggerEdge)
 
-        /// Every event the editor offers, in the pop-up's order: the moments, the displays' changes,
-        /// the network's changes.
+        /// Every event the editor offers, in the pop-up's order: the moments, the application's
+        /// starts/ends, the displays' changes, the network's changes.
         public static var offered: [When] {
-            Kind.allCases.map(When.moment) + Change.allCases.map(When.change)
+            Kind.allCases.map(When.moment) + [.application(.starts), .application(.ends)] + Change.allCases.map(When.change)
         }
 
         /// The change, when it's one.
@@ -83,6 +84,7 @@ public struct TriggerDraft: Equatable, Sendable {
     /// The Wi-Fi network a Wi-Fi trigger waits for, as typed or as Use Current Network filled it
     /// in: matched exactly, so it's kept as it is (`isWiFiNameValid`).
     public var wifiName: String
+    public var applicationBundleIdentifier: String = ""
     public private(set) var action: TriggerAction
     public private(set) var runMode: TriggerRunMode
     public var oncePerDay: Bool
@@ -129,9 +131,12 @@ public struct TriggerDraft: Equatable, Sendable {
             wifiName = network.name
         case .condition(.ethernet, let edge):
             when = .change(edge == .starts ? .ethernetConnects : .ethernetDisconnects)
-        // VPNs aren't offered (TS-8).
+        // VPN and unsupported events are not offered by this editor.
         case .condition(.vpn, _), .unsupported:
             return nil
+        case .applicationPresence(let bundleIdentifier, let edge):
+            when = .application(edge)
+            applicationBundleIdentifier = bundleIdentifier
         }
         action = trigger.action
         runMode = trigger.runMode
@@ -161,6 +166,7 @@ public struct TriggerDraft: Equatable, Sendable {
         case .moment(.screensWake): return .screensWake
         case .moment(.screensSleep): return .screensSleep
         case .change(let change): return .condition(condition(of: change), edge: change.edge)
+        case .application(let edge): return .applicationPresence(bundleIdentifier: applicationBundleIdentifier, edge: edge)
         }
     }
 
@@ -225,23 +231,51 @@ public struct TriggerDraft: Equatable, Sendable {
         self.runMode = runMode
     }
 
+    /// Select an application for the application-presence event. Only `.application` kinds,
+    /// with non-path bundle identifiers accepted by `TriggerApplicationIdentifier`, are taken;
+    /// the exact original identifier is kept.
+    public mutating func selectApplication(_ app: AppReference) -> Bool {
+        guard app.kind == .application, !app.isIdentifiedByPath, TriggerApplicationIdentifier(app.bundleIdentifier) != nil else {
+            return false
+        }
+        applicationBundleIdentifier = app.bundleIdentifier
+        return true
+    }
+
     /// Use Current Displays: the displays connected now, at most `DisplayArrangement.maximumCount`.
     public mutating func useDisplays(_ connected: [DisplayIdentity]) {
         displays = Array(connected.prefix(DisplayArrangement.maximumCount))
     }
 
-    /// The trigger: a new one, or `existing` changed (its identifier and switch kept).
+    /// The trigger: a new one, or `existing` changed (its identifier and switch kept). An application
+    /// trigger keeps `existing`'s authorization only for the same application; a new one, or one
+    /// whose application changed, matches by bundle identifier only (unverified) and starts turned
+    /// off: that weak mode is never on by default.
     public func trigger(groupID: DockGroup.ID, replacing existing: GroupTrigger? = nil) -> GroupTrigger {
-        GroupTrigger(
+        var isEnabled = existing?.isEnabled ?? true
+        var identity: ApplicationIdentityAuthorization?
+        if case .applicationPresence(let bundleIdentifier, _) = event {
+            if let existing, case .applicationPresence(let existingIdentifier, _) = existing.event, existingIdentifier == bundleIdentifier {
+                identity = existing.applicationIdentity
+            } else {
+                identity = .unverified
+                isEnabled = false
+            }
+        }
+        var trigger = GroupTrigger(
             id: existing?.id ?? UUID(),
             groupID: existing?.groupID ?? groupID,
             event: event,
             action: action,
             runMode: runMode,
-            isEnabled: existing?.isEnabled ?? true,
+            isEnabled: isEnabled,
             oncePerDay: oncePerDay,
             finishesWhenEventEnds: finishesWhenEventEnds && canFinishWhenEventEnds
         )
+        if let identity {
+            trigger.applicationIdentity = identity
+        }
+        return trigger
     }
 
     private mutating func normalize() {

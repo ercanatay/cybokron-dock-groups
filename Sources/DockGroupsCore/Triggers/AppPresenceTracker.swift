@@ -1,3 +1,30 @@
+/// Nil or empty identifiers return unknown by default; explicit ignoreUnidentified skips them.
+public enum ApplicationSnapshotCounter {
+    public static func counts(keys: Set<String>, identifiers: [String?], ignoreUnidentified: Bool = false) -> [String: Int] {
+        if !ignoreUnidentified {
+            guard identifiers.allSatisfy({ ($0 ?? "").isEmpty == false }) else { return [:] }
+        }
+        guard !keys.isEmpty else { return [:] }
+        for key in keys {
+            guard TriggerApplicationIdentifier(key) != nil else { return [:] }
+        }
+        var result: [String: Int] = [:]
+        for key in keys {
+            result[key.lowercased()] = 0
+        }
+        for id in identifiers {
+            guard let id, !id.isEmpty else { if ignoreUnidentified { continue }; return [:] }
+            // Unicode case folding must not match ASCII-only valid target IDs
+            guard id.utf8.allSatisfy({ $0 < 128 }) else { continue }
+            let lower = id.lowercased()
+            if result.keys.contains(lower) {
+                result[lower, default: 0] += 1
+            }
+        }
+        return result
+    }
+}
+
 internal struct AppPresenceTracker {
     private(set) var generation: UInt64
     private var baseline: Int?

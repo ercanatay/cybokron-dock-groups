@@ -127,6 +127,39 @@ struct TriggerStoreTests {
         #expect(persistence.copies == ["pre-import", "pre-import"])
     }
 
+    /// Defense in depth: even when a caller hands the store a record that says it's authorized, a
+    /// rule the store doesn't hold that way comes in unverified and turned off.
+    @Test func replacingAndMergingNeverTrustAnIncomingAuthorization() throws {
+        let event = TriggerEvent.applicationPresence(bundleIdentifier: "com.cybokronfixture.normal", edge: .starts)
+        let saved = GroupTrigger.on(event, group: Self.work, action: .openAll)
+        #expect(saved.applicationIdentityStatus == .authorized)
+        let (store, persistence) = store([saved])
+
+        let crafted = GroupTrigger.on(event, group: Self.design, action: .openAll)
+        #expect(crafted.applicationIdentityStatus == .authorized && crafted.isEnabled)
+        let added = try store.mergeTriggers([crafted])
+        #expect(added.map(\.id) == [crafted.id])
+        #expect(added.first?.applicationIdentityStatus == .unverified)
+        #expect(added.first?.isEnabled == false)
+        // The rule the store already held keeps its approval.
+        #expect(store.trigger(withID: saved.id) == saved)
+
+        // Replacing: the held rule stays as it is; a new one, or the held one with another record,
+        // comes in unverified and off.
+        let other = GroupTrigger.on(event, group: Self.design, action: .start)
+        var altered = saved
+        altered.applicationIdentity = .authorize(.fixture("com.cybokronfixture.normal", hash: ApplicationCodeHash(hex: String(repeating: "ab", count: 20))!))
+        try store.replaceTriggers(with: [saved, other])
+        #expect(store.trigger(withID: saved.id) == saved)
+        #expect(store.trigger(withID: other.id)?.applicationIdentityStatus == .unverified)
+        #expect(store.trigger(withID: other.id)?.isEnabled == false)
+        try store.replaceTriggers(with: [altered])
+        #expect(store.trigger(withID: saved.id)?.applicationIdentityStatus == .unverified)
+        #expect(store.trigger(withID: saved.id)?.isEnabled == false)
+        // What was written is what is shown.
+        #expect(persistence.saved == store.triggers)
+    }
+
     // MARK: - Files
 
     @Test func theFileRoundTripsAndKeepsWhatItCantRead() throws {

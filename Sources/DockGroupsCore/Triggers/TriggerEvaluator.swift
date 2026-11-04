@@ -35,15 +35,30 @@ public struct TriggerFiring: Hashable, Sendable {
     public let isFinishWhenEnded: Bool
     /// Where the trigger is in the list (Settings → Triggers' order): the first wins a tie.
     public let order: Int
+    /// Whether this firing was created by an applicationPresence event (recorded at creation).
+    public let isApplicationPresence: Bool
+    /// The observation an application-presence firing came from, set by the coordinator when it
+    /// enqueues one. A presence firing without it never runs.
+    var presenceStamp: ApplicationPresenceStamp?
 
-    public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0) {
+    public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0, isApplicationPresence: Bool = false) {
         self.triggerID = triggerID
         self.groupID = groupID
         self.action = action
         self.occurrence = occurrence
         self.isFinishWhenEnded = isFinishWhenEnded
         self.order = order
+        self.isApplicationPresence = isApplicationPresence
     }
+}
+
+/// Where an application-presence firing came from: the tracker generation and revision of its
+/// observation and the rule as it was then. The coordinator re-checks all three right before it
+/// carries the firing out.
+struct ApplicationPresenceStamp: Hashable, Sendable {
+    let generation: UInt64
+    let revision: UInt64
+    let rule: GroupTrigger
 }
 
 /// What one signal led to: the firings to settle, and the state and environment after it.
@@ -96,11 +111,16 @@ public enum TriggerEvaluator {
             let live = trigger.canRun && activeGroups.contains(trigger.groupID)
             var entry = state.entry(for: trigger.id)
             func fire(_ action: TriggerAction, at occurrence: Date, edge: Bool, finishWhenEnded: Bool = false) {
-                if let reason = gate(trigger, entry: entry, isEdge: edge, isFinishWhenEnded: finishWhenEnded, state: state, environment: environment, now: now, calendar: calendar) {
+                if let reason = identityGate(trigger, action: action)
+                    ?? gate(trigger, entry: entry, isEdge: edge, isFinishWhenEnded: finishWhenEnded, state: state, environment: environment, now: now, calendar: calendar) {
                     entry.lastOutcome = .skipped(reason)
                     entry.lastOutcomeAt = occurrence
                 } else {
-                    firings.append(TriggerFiring(triggerID: trigger.id, groupID: trigger.groupID, action: action, occurrence: occurrence, isFinishWhenEnded: finishWhenEnded, order: order))
+                    let isAppPresence: Bool = {
+                        if case .applicationPresence = trigger.event { return true }
+                        return false
+                    }()
+                    firings.append(TriggerFiring(triggerID: trigger.id, groupID: trigger.groupID, action: action, occurrence: occurrence, isFinishWhenEnded: finishWhenEnded, order: order, isApplicationPresence: isAppPresence))
                 }
             }
             switch trigger.event {
@@ -149,6 +169,9 @@ public enum TriggerEvaluator {
                 }
             case .unsupported:
                 break
+            case .applicationPresence(_, let edge):
+                guard case .applicationEdge(let signalID, let signalEdge) = signal, trigger.id == signalID, edge == signalEdge, live, environment.canAct else { break }
+                fire(trigger.action, at: now, edge: true)
             }
             state.entries[trigger.id] = entry
         }
@@ -212,7 +235,7 @@ public enum TriggerEvaluator {
     private static func evaluatesSchedules(_ signal: TriggerSignal) -> Bool {
         switch signal {
         case .clock, .launched, .screens(asleep: false), .session(active: true): return true
-        case .screens, .session, .displays, .network: return false
+        case .screens, .session, .displays, .network, .applicationEdge(_, _): return false
         }
     }
 
@@ -221,6 +244,19 @@ public enum TriggerEvaluator {
         case .launched: return .appNotOpen
         case .session: return .sessionInactive
         default: return .macAsleep
+        }
+    }
+
+    /// An application-presence rule's saved authorization: an unverified rule (bundle identifier
+    /// only) runs nothing but Show the Popup; the rest is skipped and recorded. Rules waiting for
+    /// approval or with an unreadable record can't run at all (`GroupTrigger.isRunnable`), and an
+    /// authorized rule is checked against the verifier by the coordinator.
+    private static func identityGate(_ trigger: GroupTrigger, action: TriggerAction) -> TriggerSkipReason? {
+        guard let status = trigger.applicationIdentityStatus else { return nil }
+        switch status {
+        case .authorized: return nil
+        case .unverified: return action == .showPopup ? nil : .applicationNotVerified
+        case .needsReapproval, .invalid: return .applicationNotVerified
         }
     }
 
