@@ -4,12 +4,12 @@ import Testing
 
 @Suite("Application static code slices")
 struct ApplicationStaticCodeSliceVerifierTests {
-    @Test func selectedUniversalBundleIncludesRunningSliceAndRejectsTampering() throws {
+    @Test func selectedUniversalBundleIncludesRunningSliceAndRejectsTampering() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("Cybokron-slice-code-fixture-\(UUID().uuidString)", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let selected = root.appendingPathComponent("Selected.app", isDirectory: true)
         let tampered = root.appendingPathComponent("Tampered.app", isDirectory: true)
-        try createSignedBundle(at: selected)
+        try await createSignedBundle(at: selected)
         let hashes = try #require(ApplicationStaticCodeVerifier.codeHashes(for: selected))
         #expect(!hashes.isEmpty)
         #expect(hashes.count <= 16)
@@ -23,13 +23,15 @@ struct ApplicationStaticCodeSliceVerifierTests {
         let prefix = try #require(prefixData)
         let slices = try #require(MachOSliceTable.parse(prefix: prefix, fileSize: fileSize))
         #expect(hashes.count == slices.count)
-        let process = Process()
-        process.executableURL = selected.appendingPathComponent("Contents/MacOS/Fixture")
-        process.arguments = ["20"]
-        try process.run()
-        defer { if process.isRunning { process.terminate() }; process.waitForExit() }
-        let comparisons = hashes.map { ApplicationRunningCodeVerifier.compare(pid: process.processIdentifier, expected: $0, bundleIdentifier: "com.cybokron.fixture.slices") }
-        #expect(comparisons.contains(.matching))
+        try await withChildProcesses { children in
+            let process = Process()
+            process.executableURL = selected.appendingPathComponent("Contents/MacOS/Fixture")
+            process.arguments = ["20"]
+            try process.run()
+            children.adopt(process)
+            let comparisons = hashes.map { ApplicationRunningCodeVerifier.compare(pid: process.processIdentifier, expected: $0, bundleIdentifier: "com.cybokron.fixture.slices") }
+            #expect(comparisons.contains(.matching))
+        }
         try FileManager.default.copyItem(at: selected, to: tampered)
         let infoURL = tampered.appendingPathComponent("Contents/Info.plist")
         var info = try #require(try PropertyListSerialization.propertyList(from: Data(contentsOf: infoURL), format: nil) as? [String: Any])
@@ -47,7 +49,7 @@ struct ApplicationStaticCodeSliceVerifierTests {
         #expect(ApplicationStaticCodeVerifier.codeHashes(for: escaped) == nil)
     }
 
-    private func createSignedBundle(at url: URL) throws {
+    private func createSignedBundle(at url: URL) async throws {
         let dir = url.appendingPathComponent("Contents/MacOS", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try FileManager.default.copyItem(at: URL(fileURLWithPath: "/bin/sleep"), to: dir.appendingPathComponent("Fixture"))
@@ -57,7 +59,7 @@ struct ApplicationStaticCodeSliceVerifierTests {
         sign.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
         sign.arguments = ["--force", "--sign", "-", url.path]
         sign.standardOutput = Pipe(); sign.standardError = Pipe()
-        try sign.run(); sign.waitForExit()
+        try await sign.runToExit()
         try #require(sign.terminationStatus == 0)
     }
 }

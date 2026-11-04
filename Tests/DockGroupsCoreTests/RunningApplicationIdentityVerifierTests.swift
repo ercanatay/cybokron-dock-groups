@@ -67,12 +67,12 @@ final class FakeProcessWatch: ApplicationProcessWatching {
 /// Waits (in real time, the checks run on other threads) until `condition` holds.
 ///
 /// The ceiling only catches a check that never finishes; it is no performance bound. The checks
-/// run on the cooperative pool (one thread per core, 3 on CI), and in a full parallel run
-/// synchronous tests that wait on child processes hold those threads for seconds at a time, so a
-/// check that takes milliseconds alone can wait 10–15 s for a thread there. Generous for the
-/// same reason as `Process.testExitTimeout`.
+/// run on the cooperative pool (one thread per core, 3 on CI). Tests no longer hold those threads
+/// while they wait on child processes (`Process.waitForExit(timeout:)` suspends), so a check
+/// only queues behind other tests' short synchronous work; 30 s leaves a wide margin over that
+/// on a loaded CI runner without letting a real hang take a minute to report.
 @MainActor
-func eventually(within timeout: Duration = .seconds(60), _ condition: () -> Bool) async -> Bool {
+func eventually(within timeout: Duration = .seconds(30), _ condition: () -> Bool) async -> Bool {
     let clock = ContinuousClock()
     let deadline = clock.now + timeout
     while !condition() {
@@ -295,22 +295,17 @@ struct ApplicationRunningCodeCheckTests {
         defer { try? FileManager.default.removeItem(at: root) }
         let selected = root.appendingPathComponent("Selected.app", isDirectory: true)
         let other = root.appendingPathComponent("Other.app", isDirectory: true)
-        try SignedFixture.make(at: selected, name: "Selected")
-        try SignedFixture.make(at: other, name: "Other")
+        try await SignedFixture.make(at: selected, name: "Selected")
+        try await SignedFixture.make(at: other, name: "Other")
         let expected = try #require(ApplicationStaticCodeVerifier.codeHashes(for: selected)?.first)
-        var children: [Process] = []
-        defer {
-            for process in children {
-                if process.isRunning { process.terminate() }
-                process.waitForExit()
-            }
+        try await withChildProcesses { children in
+            let genuine = try SignedFixture.run(selected); children.adopt(genuine)
+            let lookAlike = try SignedFixture.run(other); children.adopt(lookAlike)
+            let check = ApplicationRunningCodeCheck()
+            #expect(await check.check(pid: genuine.processIdentifier, identifier: SignedFixture.identifier, codeHash: expected) == .verified)
+            #expect(await check.check(pid: lookAlike.processIdentifier, identifier: SignedFixture.identifier, codeHash: expected) == .codeChanged)
+            #expect(await check.check(pid: Int32.max, identifier: SignedFixture.identifier, codeHash: expected) == .unavailable(.securityUnavailable))
         }
-        let genuine = try SignedFixture.run(selected); children.append(genuine)
-        let lookAlike = try SignedFixture.run(other); children.append(lookAlike)
-        let check = ApplicationRunningCodeCheck()
-        #expect(await check.check(pid: genuine.processIdentifier, identifier: SignedFixture.identifier, codeHash: expected) == .verified)
-        #expect(await check.check(pid: lookAlike.processIdentifier, identifier: SignedFixture.identifier, codeHash: expected) == .codeChanged)
-        #expect(await check.check(pid: Int32.max, identifier: SignedFixture.identifier, codeHash: expected) == .unavailable(.securityUnavailable))
     }
 }
 
@@ -318,7 +313,7 @@ struct ApplicationRunningCodeCheckTests {
 enum SignedFixture {
     static let identifier = "com.cybokron.fixture.running"
 
-    static func make(at url: URL, name: String) throws {
+    static func make(at url: URL, name: String) async throws {
         let dir = url.appendingPathComponent("Contents/MacOS", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let thin = Process()
@@ -330,7 +325,7 @@ enum SignedFixture {
         #endif
         thin.arguments = ["-thin", architecture, "/bin/sleep", "-output", dir.appendingPathComponent("Fixture").path]
         thin.standardOutput = Pipe(); thin.standardError = Pipe()
-        try thin.run(); thin.waitForExit()
+        try await thin.runToExit()
         try #require(thin.terminationStatus == 0)
         let plist: [String: Any] = ["CFBundleIdentifier": identifier, "CFBundleName": name, "CFBundleExecutable": "Fixture", "CFBundlePackageType": "APPL"]
         try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0).write(to: url.appendingPathComponent("Contents/Info.plist"))
@@ -338,7 +333,7 @@ enum SignedFixture {
         signing.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
         signing.arguments = ["--force", "--sign", "-", "-r", "=designated => identifier \"\(identifier)\"", url.path]
         signing.standardOutput = Pipe(); signing.standardError = Pipe()
-        try signing.run(); signing.waitForExit()
+        try await signing.runToExit()
         try #require(signing.terminationStatus == 0)
     }
 
