@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hoc υπογραφή: δεν επαληθεύει ποιος δημιούργησε την εφαρμογή, οπότε αυτή η έγκριση είναι ασθενέστερη. Ισχύει μόνο για αυτόν ακριβώς τον κώδικα.";
+"triggers.identity.approve.adHocTitle" = "Έγκριση αυτής της εφαρμογής με αδύναμη υπογραφή;";
+"triggers.identity.approve.adHocMessage" = "Αυτή η εφαρμογή έχει ad-hoc υπογραφή, η οποία δεν επαληθεύει ποιος την δημιούργησε. Η έγκριση εμπιστεύεται μόνο αυτόν τον ακριβή κώδικα, και η εφαρμογή χρειάζεται ξανά την έγκρισή σας μετά από κάθε ενημέρωση.";
+"triggers.identity.approve.adHocConfirm" = "Έγκριση";

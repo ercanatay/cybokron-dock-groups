@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hoc हस्ताक्षर: यह सत्यापित नहीं करता कि ऐप किसने बनाया है, इसलिए यह स्वीकृति कमज़ोर है। यह केवल इसी सटीक कोड के लिए मान्य है।";
+"triggers.identity.approve.adHocTitle" = "इस ऐप को कमज़ोर हस्ताक्षर के साथ मंज़ूरी दें?";
+"triggers.identity.approve.adHocMessage" = "इस ऐप पर एड-हॉक हस्ताक्षर है, जो यह सत्यापित नहीं करता कि इसे किसने बनाया है। मंज़ूरी देने पर केवल यही सटीक कोड भरोसेमंद माना जाएगा, और ऐप के अपडेट होने के बाद इसे फिर से आपकी मंज़ूरी चाहिए होगी।";
+"triggers.identity.approve.adHocConfirm" = "मंज़ूरी दें";

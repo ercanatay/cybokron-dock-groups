@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Podpis ad-hoc: nie weryfikuje, kto utworzył aplikację, więc to zatwierdzenie jest słabsze. Obowiązuje wyłącznie dla tego konkretnego kodu.";
+"triggers.identity.approve.adHocTitle" = "Zatwierdzić tę aplikację ze słabym podpisem?";
+"triggers.identity.approve.adHocMessage" = "Ta aplikacja ma podpis ad-hoc, który nie weryfikuje, kto ją utworzył. Zatwierdzenie ufa wyłącznie temu dokładnemu kodowi, a po każdej aktualizacji aplikacja będzie wymagała ponownego zatwierdzenia.";
+"triggers.identity.approve.adHocConfirm" = "Zatwierdź";

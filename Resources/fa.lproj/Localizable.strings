@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "امضای Ad-hoc: این امضا مشخص نمی‌کند که برنامه را چه کسی ساخته، پس این تأیید ضعیف‌تر است. فقط برای همین کد دقیق معتبر است.";
+"triggers.identity.approve.adHocTitle" = "این برنامه را با امضای ضعیف تأیید می‌کنید؟";
+"triggers.identity.approve.adHocMessage" = "این برنامه امضای ad-hoc دارد که هویت سازنده‌اش را تأیید نمی‌کند. با تأیید، فقط همین کد دقیق مورد اعتماد قرار می‌گیرد و پس از هر به‌روزرسانی، برنامه دوباره به تأیید شما نیاز خواهد داشت.";
+"triggers.identity.approve.adHocConfirm" = "تأیید";

@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hochandtekening: deze verifieert niet wie de app heeft gemaakt, dus deze goedkeuring is zwakker. Ze geldt alleen voor deze exacte code.";
+"triggers.identity.approve.adHocTitle" = "Deze app met een zwakke handtekening goedkeuren?";
+"triggers.identity.approve.adHocMessage" = "Deze app heeft een ad-hoc-handtekening, waarmee niet wordt geverifieerd wie hem heeft gemaakt. Goedkeuren vertrouwt alleen deze exacte code, en de app moet opnieuw worden goedgekeurd nadat hij is bijgewerkt.";
+"triggers.identity.approve.adHocConfirm" = "Goedkeuren";

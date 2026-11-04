@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hoc podpis: neověřuje, kdo aplikaci vytvořil, takže toto schválení je slabší. Platí pouze pro tento přesný kód.";
+"triggers.identity.approve.adHocTitle" = "Schválit tuto aplikaci s &slabým podpisem?";
+"triggers.identity.approve.adHocMessage" = "Tato aplikace má ad-hoc podpis, který neověřuje, kdo ji vytvořil. Schválení důvěřuje pouze tomuto přesnému kódu a aplikace bude po každé aktualizaci vyžadovat schválení znovu.";
+"triggers.identity.approve.adHocConfirm" = "Schválit";

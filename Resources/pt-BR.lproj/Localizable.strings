@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Assinatura ad-hoc: ela não verifica quem fez o app, por isso esta aprovação é mais fraca. Ela vale apenas para este código exato.";
+"triggers.identity.approve.adHocTitle" = "Aprovar este app com assinatura fraca?";
+"triggers.identity.approve.adHocMessage" = "Este app tem uma assinatura ad-hoc, que não verifica quem o criou. Aprovar confia apenas neste código exato, e o app precisará da sua aprovação novamente após ser atualizado.";
+"triggers.identity.approve.adHocConfirm" = "Aprovar";

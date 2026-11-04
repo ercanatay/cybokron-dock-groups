@@ -61,7 +61,7 @@ struct GroupTriggersSection: View {
                     locationAccess: triggers.locationAccess,
                     readDisplays: triggers.connectedDisplays,
                     readNetworkName: triggers.currentWiFiNetworkName,
-                    approveApplication: triggers.approveApplication(ofTrigger:)
+                    approveApplication: { await triggers.approveApplication(ofTrigger: $0, confirmAdHoc: $1) }
                 ) { editing = nil }
             }
             if triggers.isPaused, !list.isEmpty {
@@ -151,12 +151,13 @@ struct TriggerRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: summary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .help(TriggerIdentityLabel.signatureHelp(of: trigger) ?? "")
                 Text(verbatim: status)
                     .font(.caption)
                     .foregroundStyle(trigger.isRunnable ? Color.secondary : Color.orange)
                     .fixedSize(horizontal: false, vertical: true)
                 if let identity {
-                    TriggerIdentityLabel(state: identity)
+                    TriggerIdentityLabel(state: identity, signature: trigger.approvedApplicationSignature)
                 }
             }
             Spacer(minLength: 8)
@@ -201,6 +202,8 @@ struct TriggerRow: View {
 /// means (and, where it must be approved again, how) as its tooltip. Information only: an app is approved in the trigger's editor, so it offers no button.
 struct TriggerIdentityLabel: View {
     let state: TriggerApplicationIdentityState
+    /// How the approved code was signed (an authorized trigger only), told in the tooltip.
+    var signature: TriggerApplicationSignature?
 
     private typealias Texts = L10n.Triggers.Identity
 
@@ -209,16 +212,25 @@ struct TriggerIdentityLabel: View {
             .font(.caption)
             .foregroundStyle(state.blocksEveryAction ? Color.orange : Color.secondary)
             .fixedSize(horizontal: false, vertical: true)
-            .help(Self.help(for: state))
+            .help(Self.help(for: state, signature: signature))
     }
 
     /// What `state` means; for one waiting for approval or unreadable, also how to approve it
     /// again (an authorized trigger whose code can't be confirmed has nothing to approve).
-    static func help(for state: TriggerApplicationIdentityState) -> String {
+    static func help(for state: TriggerApplicationIdentityState, signature: TriggerApplicationSignature? = nil) -> String {
         switch state {
         case .needsReapproval, .invalid: return "\(Texts.detail(state)) \(Texts.howToReapprove)"
-        case .unverified, .verificationUnavailable: return Texts.detail(state)
+        case .unverified: return Texts.detail(state)
+        case .verificationUnavailable:
+            // The approved signature, an ad-hoc one called weaker (the editor's wording).
+            return [Texts.detail(state), Texts.Approve.signature(signature)].compactMap { $0 }.joined(separator: " ")
         }
+    }
+
+    /// The tooltip of an authorized rule's summary: how its approved code was signed (an ad-hoc
+    /// signature called weaker); `nil` for a rule that isn't authorized.
+    static func signatureHelp(of trigger: GroupTrigger) -> String? {
+        Texts.Approve.signature(trigger.approvedApplicationSignature)
     }
 
     static func symbol(for state: TriggerApplicationIdentityState) -> String {

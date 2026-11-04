@@ -1160,3 +1160,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Firma ad hoc: no verifica quién creó la app, por lo que esta aprobación es más débil. Solo es válida para este código exacto.";
+"triggers.identity.approve.adHocTitle" = "¿Aprobar esta app con una firma débil?";
+"triggers.identity.approve.adHocMessage" = "Esta app tiene una firma ad hoc, que no verifica quién la creó. Aprobarla solo confía en este código exacto, y la app necesitará tu aprobación de nuevo después de actualizarse.";
+"triggers.identity.approve.adHocConfirm" = "Aprobar";

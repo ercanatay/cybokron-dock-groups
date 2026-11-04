@@ -122,6 +122,54 @@ struct TriggerIdentityStatusTests {
         #expect(signature(trigger(.unverified).approvedApplicationSignature) == nil)
         #expect(signature(trigger(.invalid(.null)).approvedApplicationSignature) == nil)
     }
+
+    @Test func anOpenEditorFollowsTheStoredRulesApproval() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("dg-trigger-editor-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let store = TriggerStore(persistence: JSONFileTriggerPersistence(fileURL: dir.appendingPathComponent("triggers.json")), saveDelay: .zero)
+        var trigger = GroupTrigger(groupID: UUID(), event: .applicationPresence(bundleIdentifier: Self.bundle, edge: .starts), action: .openAll, runMode: .immediately)
+        trigger.applicationIdentity = .authorize(try binding())
+        #expect(store.add(trigger).message == nil)
+        let opened = try #require(store.trigger(withID: trigger.id))
+        #expect(opened.approvedApplicationSignature == .developerID)
+
+        // The verifier saves a changed code: the editor's copy loses its approval label.
+        store.requireApplicationReapproval(for: [trigger.id])
+        let waiting = try #require(TriggerEditorSheet.refreshed(opened, from: store.triggers))
+        #expect(waiting.applicationIdentityState == .needsReapproval)
+        #expect(waiting.approvedApplicationSignature == nil)
+        #expect(waiting.canApproveApplication)
+
+        // Approved again (the approver is the only maker of an authorization, so the stored list is
+        // given as it would then be): the label is back.
+        var reapproved = waiting
+        reapproved.applicationIdentity = .authorize(try binding())
+        let approved = try #require(TriggerEditorSheet.refreshed(waiting, from: [reapproved]))
+        #expect(approved.applicationIdentityState == .verificationUnavailable)
+        #expect(approved.approvedApplicationSignature == .developerID)
+
+        // Not stored (new or removed): kept; no trigger: none.
+        #expect(TriggerEditorSheet.refreshed(approved, from: []) == approved)
+        #expect(TriggerEditorSheet.refreshed(nil, from: store.triggers) == nil)
+    }
+
+    @Test func theListTooltipsTellTheApprovedSignature() throws {
+        var trigger = GroupTrigger(groupID: UUID(), event: .applicationPresence(bundleIdentifier: Self.bundle, edge: .starts), action: .openAll, runMode: .immediately)
+        #expect(TriggerIdentityLabel.signatureHelp(of: trigger) == nil)
+        trigger.applicationIdentity = .authorize(try binding())
+        #expect(TriggerIdentityLabel.signatureHelp(of: trigger) == "Approved: Developer ID signature.")
+        let adHocHash = try #require(ApplicationCodeHash(hex: String(repeating: "cd", count: 20)))
+        let adHocBinding = try #require(ApplicationIdentityBinding(identifier: Self.bundle, codeHash: adHocHash, signature: .adHoc, authorizedAt: Date(timeIntervalSince1970: 1_793_000_000)))
+        trigger.applicationIdentity = .authorize(adHocBinding)
+        let adHoc = try #require(TriggerIdentityLabel.signatureHelp(of: trigger))
+        #expect(adHoc.contains("weaker"))
+        let help = TriggerIdentityLabel.help(for: .verificationUnavailable, signature: trigger.approvedApplicationSignature)
+        #expect(help.hasPrefix(L10n.Triggers.Identity.detail(.verificationUnavailable)))
+        #expect(help.hasSuffix(adHoc))
+        // No signature, as before.
+        #expect(TriggerIdentityLabel.help(for: .verificationUnavailable) == L10n.Triggers.Identity.detail(.verificationUnavailable))
+    }
 }
 
 /// A verifier whose last answer a test sets (`nil`: never checked).

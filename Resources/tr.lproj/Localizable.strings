@@ -1158,3 +1158,6 @@
 "triggers.identity.signature.appStore" = "Mac App Store";
 "triggers.identity.signature.developerID" = "Developer ID";
 "triggers.identity.signature.adHoc" = "Ad-hoc imza: uygulamayı kimin oluşturduğunu doğrulamaz, bu nedenle bu onay daha zayıftır. Yalnızca bu tam kod için geçerlidir.";
+"triggers.identity.approve.adHocTitle" = "Bu uygulama zayıf imzayla onaylansın mı?";
+"triggers.identity.approve.adHocMessage" = "Bu uygulamanın ad-hoc imzası var; bu imza, uygulamayı kimin oluşturduğunu doğrulamaz. Onaylamak yalnızca bu tam koda güvenmek anlamına gelir ve uygulama güncellendikten sonra yeniden onayınız gerekir.";
+"triggers.identity.approve.adHocConfirm" = "Onayla";

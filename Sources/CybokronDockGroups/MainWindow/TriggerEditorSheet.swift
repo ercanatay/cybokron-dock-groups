@@ -43,7 +43,8 @@ struct TriggerEditorSheet: View {
     /// (`TriggerController.currentWiFiNetworkName`).
     let readNetworkName: () -> String?
     /// Approves a saved application trigger's app (`TriggerController.approveApplication`).
-    let approveApplication: (GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome
+    /// An ad-hoc signed app is approved only when the second confirmation it is given answers `true`.
+    let approveApplication: (GroupTrigger.ID, @escaping TriggerApplicationApprover.AdHocConfirmation) async -> TriggerApplicationApprovalOutcome
     let dismiss: () -> Void
 
     @State private var draft: TriggerDraft
@@ -54,6 +55,8 @@ struct TriggerEditorSheet: View {
     @State private var current: GroupTrigger?
     @State private var approval: Task<Void, Never>?
     @State private var isApproving = false
+    /// The answer the ad-hoc confirmation waits for; `nil` when none is asked.
+    @State private var adHocAnswer: CheckedContinuation<Bool, Never>?
     /// What the last approval said when it didn't approve.
     @State private var approvalMessage: String?
 
@@ -68,7 +71,7 @@ struct TriggerEditorSheet: View {
         locationAccess: LocationAccess,
         readDisplays: @escaping () -> [DisplayIdentity],
         readNetworkName: @escaping () -> String?,
-        approveApplication: @escaping (GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome,
+        approveApplication: @escaping (GroupTrigger.ID, @escaping TriggerApplicationApprover.AdHocConfirmation) async -> TriggerApplicationApprovalOutcome,
         dismiss: @escaping () -> Void
     ) {
         self.group = group
@@ -110,11 +113,21 @@ struct TriggerEditorSheet: View {
             connected = readDisplays()
             lookAtNetwork()
         }
-        .onDisappear { approval?.cancel() }
+        .onDisappear {
+            approval?.cancel()
+            answerAdHoc(false)
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
             connected = readDisplays()
         }
         // Allowed (or taken back) meanwhile: Use Current Network follows.
+        // The verifier (or an approval) can change the rule while the editor is open: the approval
+        // shown follows the stored rule, not the copy the editor opened with. `$triggers` emits
+        // before the change lands, so the emitted array (not `store.triggers`) is read.
+        .onReceive(store.$triggers) { triggers in
+            let refreshed = Self.refreshed(current, from: triggers)
+            if refreshed != current { current = refreshed }
+        }
         .onChange(of: locationAccess.status) {
             currentNetwork = readNetworkName()
         }
@@ -472,6 +485,13 @@ struct TriggerEditorSheet: View {
         }
     }
 
+    /// `current` as the stored triggers now have it; kept as it is when the trigger isn't stored
+    /// (a new one, or one removed meanwhile).
+    static func refreshed(_ current: GroupTrigger?, from triggers: [GroupTrigger]) -> GroupTrigger? {
+        guard let current else { return nil }
+        return triggers.first { $0.id == current.id } ?? current
+    }
+
     // MARK: - Approving the app
 
     /// The saved trigger whose app the editor may approve: unverified or waiting for re-approval,
@@ -505,6 +525,12 @@ struct TriggerEditorSheet: View {
                     }
                 }
                 Text(L10n.Triggers.Identity.Approve.hint)
+                    .alert(L10n.Triggers.Identity.Approve.adHocTitle, isPresented: adHocPresented) {
+                        Button(L10n.Triggers.Identity.Approve.adHocConfirm) { answerAdHoc(true) }
+                        Button(L10n.Common.cancel, role: .cancel) { answerAdHoc(false) }
+                    } message: {
+                        Text(L10n.Triggers.Identity.Approve.adHocMessage)
+                    }
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -530,18 +556,36 @@ struct TriggerEditorSheet: View {
         approvalMessage = nil
         isApproving = true
         approval = Task { @MainActor in
-            let outcome = await approveApplication(trigger.id)
+            let outcome = await approveApplication(trigger.id) { await askAdHoc() }
             isApproving = false
             approval = nil
             switch outcome {
             case .approved:
                 current = store.trigger(withID: trigger.id) ?? current
+            case .declined:
+                break // The user declined the second confirmation: nothing saved, nothing to explain.
             case .notRunning:
                 approvalMessage = L10n.Triggers.Identity.Approve.notRunning
             case .failed(let failure):
                 approvalMessage = L10n.Triggers.Identity.Approve.failure(failure)
             }
         }
+    }
+
+    private var adHocPresented: Binding<Bool> {
+        Binding(get: { adHocAnswer != nil }, set: { if !$0 { answerAdHoc(false) } })
+    }
+
+    /// Shows the ad-hoc confirmation and waits for the user's answer.
+    private func askAdHoc() async -> Bool {
+        answerAdHoc(false)
+        return await withCheckedContinuation { adHocAnswer = $0 }
+    }
+
+    private func answerAdHoc(_ approved: Bool) {
+        let waiting = adHocAnswer
+        adHocAnswer = nil
+        waiting?.resume(returning: approved)
     }
 
     private var howRow: some View {

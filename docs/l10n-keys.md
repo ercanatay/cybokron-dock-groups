@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1076 keys.
+1079 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1518,6 +1518,9 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `triggers.identity.approve.hint` | Approving checks the code of this app as it runs now. The trigger can then run every action, but only while that exact version runs; after an update it waits to be approved again. Approving doesn't turn the trigger on. |
 | `triggers.identity.approve.saveFirst` | To approve this app, save the trigger first, then edit it. |
 | `triggers.identity.approve.checking` | Checking the app's code… |
+| `triggers.identity.approve.adHocTitle` | Approve this app with a weak signature? |
+| `triggers.identity.approve.adHocMessage` | This app has an ad-hoc signature, which doesn't verify who made it. Approving trusts only this exact code, and the app needs your approval again after it is updated. |
+| `triggers.identity.approve.adHocConfirm` | Approve |
 | `triggers.identity.approve.approved` | Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again. |
 | `triggers.identity.approved.signature` | Approved: %@ signature. |
 | `triggers.identity.signature.apple` | Apple |

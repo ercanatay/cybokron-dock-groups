@@ -1918,6 +1918,19 @@ extension L10n {
                     tr("triggers.identity.approve.checking", "Checking the app's code…")
                 }
 
+                /// The second confirmation before approving ad-hoc signed code.
+                static var adHocTitle: String {
+                    tr("triggers.identity.approve.adHocTitle", "Approve this app with a weak signature?")
+                }
+
+                static var adHocMessage: String {
+                    tr("triggers.identity.approve.adHocMessage", "This app has an ad-hoc signature, which doesn't verify who made it. Approving trusts only this exact code, and the app needs your approval again after it is updated.")
+                }
+
+                static var adHocConfirm: String {
+                    tr("triggers.identity.approve.adHocConfirm", "Approve")
+                }
+
                 /// Under the action pop-up of an approved trigger.
                 static var approved: String {
                     tr("triggers.identity.approve.approved", "Approved for the version of this app that was running. Every action can run while that exact version runs; after an update, approve it again.")
