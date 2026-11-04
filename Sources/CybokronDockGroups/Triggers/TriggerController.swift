@@ -433,8 +433,9 @@ final class TriggerController: ObservableObject {
     /// The editor's Approve button: checks the code of the trigger's app running now and, only when
     /// it is verified, saves it as the trigger's approved code (`TriggerApplicationApprover`).
     /// Cancelled with the calling task. Doesn't turn the trigger on.
-    func approveApplication(ofTrigger id: GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome {
-        await applicationApprover.approve(triggerID: id)
+    /// An ad-hoc signed app is approved only after `confirmAdHoc` answers `true`.
+    func approveApplication(ofTrigger id: GroupTrigger.ID, confirmAdHoc: TriggerApplicationApprover.AdHocConfirmation? = nil) async -> TriggerApplicationApprovalOutcome {
+        await applicationApprover.approve(triggerID: id, confirmAdHoc: confirmAdHoc)
     }
 
     /// Internal seam for tests to simulate application presence snapshots deterministically.

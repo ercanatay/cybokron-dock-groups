@@ -61,7 +61,7 @@ struct GroupTriggersSection: View {
                     locationAccess: triggers.locationAccess,
                     readDisplays: triggers.connectedDisplays,
                     readNetworkName: triggers.currentWiFiNetworkName,
-                    approveApplication: triggers.approveApplication(ofTrigger:)
+                    approveApplication: { await triggers.approveApplication(ofTrigger: $0, confirmAdHoc: $1) }
                 ) { editing = nil }
             }
             if triggers.isPaused, !list.isEmpty {

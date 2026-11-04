@@ -134,6 +134,71 @@ struct ApplicationIdentityApprovalTests {
         #expect(!rig.approver.isApproving)
     }
 
+    // MARK: Ad-hoc signatures need a second confirmation
+
+    @Test func anAdHocAppIsApprovedOnlyAfterTheSecondConfirmation() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity(ApprovalRig.newHash, .adHoc)
+        var asked = 0
+        #expect(await rig.approver.approve(triggerID: trigger.id, confirmAdHoc: { asked += 1; return true }) == .approved)
+        #expect(asked == 1)
+        #expect(rig.stored(trigger)?.applicationIdentity == .authorized(ApprovalRig.binding(ApprovalRig.newHash, .adHoc)))
+        #expect(rig.persistence.saved.first?.applicationIdentity == .authorized(ApprovalRig.binding(ApprovalRig.newHash, .adHoc)))
+        #expect(rig.allWatchesClosed)
+    }
+
+    @Test func decliningTheAdHocConfirmationSavesNothing() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity(ApprovalRig.newHash, .adHoc)
+        #expect(await rig.approver.approve(triggerID: trigger.id, confirmAdHoc: { false }) == .declined)
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        // Without a confirmation to ask, an ad-hoc app is never approved.
+        #expect(await rig.approver.approve(triggerID: trigger.id) == .declined)
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        #expect(rig.allWatchesClosed && !rig.approver.isApproving)
+    }
+
+    @Test func otherSignaturesAreNeverAskedForASecondConfirmation() async {
+        for signature in [ApplicationIdentityBinding.SignatureKind.apple, .appStore, .developerID] {
+            let trigger = ApprovalRig.trigger()
+            let rig = ApprovalRig([trigger])
+            rig.reads[42] = rig.identity(ApprovalRig.newHash, signature)
+            var asked = 0
+            #expect(await rig.approver.approve(triggerID: trigger.id, confirmAdHoc: { asked += 1; return false }) == .approved)
+            #expect(asked == 0)
+            #expect(rig.stored(trigger)?.applicationIdentity == .authorized(ApprovalRig.binding(ApprovalRig.newHash, signature)))
+            rig.tearDown()
+        }
+    }
+
+    @Test func reapprovalOfAnAdHocAppAsksTheSameConfirmation() async {
+        let old = ApplicationIdentityBinding.fixture(ApprovalRig.bundle)
+        let waiting = ApprovalRig.trigger(.needsReapproval(old), action: .openAll)
+        let rig = ApprovalRig([waiting])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity(ApprovalRig.newHash, .adHoc)
+        #expect(await rig.approver.approve(triggerID: waiting.id, confirmAdHoc: { false }) == .declined)
+        #expect(rig.stored(waiting) == waiting && rig.persistence.saveCount == 0)
+        var asked = 0
+        #expect(await rig.approver.approve(triggerID: waiting.id, confirmAdHoc: { asked += 1; return true }) == .approved)
+        #expect(asked == 1)
+        #expect(rig.stored(waiting)?.applicationIdentity == .authorized(ApprovalRig.binding(ApprovalRig.newHash, .adHoc)))
+    }
+
+    @Test func anAdHocAppThatChangesWhileTheUserDecidesIsNotApproved() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity(ApprovalRig.newHash, .adHoc)
+        let outcome = await rig.approver.approve(triggerID: trigger.id, confirmAdHoc: { rig.instances = [42, 43]; return true })
+        #expect(outcome == .failed(.appChanged))
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+    }
+
     @Test func aFailedReadingSavesNothing() async {
         let cases: [(ApplicationRunningIdentityReading, TriggerApplicationApprovalFailure)] = [
             (.unknown, .checkFailed),

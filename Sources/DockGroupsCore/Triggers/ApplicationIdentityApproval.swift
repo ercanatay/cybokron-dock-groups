@@ -89,6 +89,9 @@ enum ApplicationRunningIdentityReader {
 public enum TriggerApplicationApprovalOutcome: Hashable, Sendable {
     /// The running app's code is saved as the trigger's approved code.
     case approved
+    /// The app is ad-hoc signed and the user declined the second confirmation. Nothing was saved,
+    /// and it isn't an error.
+    case declined
     /// The app doesn't run, so there is nothing to check. Nothing was saved.
     case notRunning
     /// Nothing was saved.
@@ -197,7 +200,13 @@ public final class TriggerApplicationApprover {
         case cancelled
     }
 
-    public func approve(triggerID: GroupTrigger.ID) async -> TriggerApplicationApprovalOutcome {
+    /// Asks the user to confirm approving ad-hoc signed code; `true` approves.
+    public typealias AdHocConfirmation = @MainActor () async -> Bool
+
+    /// `confirmAdHoc` is asked once the running code is verified and only when it is ad-hoc signed
+    /// (a signature that doesn't verify who made the app). Without it, or when it answers `false`,
+    /// an ad-hoc app isn't approved: `declined`, nothing saved. Other signatures never ask.
+    public func approve(triggerID: GroupTrigger.ID, confirmAdHoc: AdHocConfirmation? = nil) async -> TriggerApplicationApprovalOutcome {
         guard !isApproving else { return .failed(.alreadyApproving) }
         isApproving = true
         defer { isApproving = false }
@@ -261,6 +270,15 @@ public final class TriggerApplicationApprover {
             return nil
         })
         guard identities.count == 1, let identity = identities.first else { return .failed(.differentVersionsRunning) }
+
+        // A signature that verifies nobody needs a second, explicit confirmation. The watches stay
+        // open meanwhile, so the code is re-checked after the user answers.
+        if identity.signature == .adHoc {
+            guard let confirmAdHoc, await confirmAdHoc() else { return .declined }
+            if Task.isCancelled { return .failed(.cancelled) }
+            guard watches.allSatisfy({ $0.poll() == .idle }) else { return .failed(.appChanged) }
+            guard let confirmed = instances(identifier), Set(confirmed) == pids else { return .failed(.appChanged) }
+        }
 
         // The trigger the user approved, unchanged meanwhile.
         guard store.trigger(withID: triggerID) == rule else { return .failed(.triggerChanged) }
