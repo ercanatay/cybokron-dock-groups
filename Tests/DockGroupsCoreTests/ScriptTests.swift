@@ -15,7 +15,7 @@ struct RepositoryScript {
 
     let name: String
 
-    func run(_ arguments: [String] = [], environment: [String: String] = [:]) throws -> Result {
+    func run(_ arguments: [String] = [], environment: [String: String] = [:]) async throws -> Result {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/bash")
         process.arguments = [Self.root.appending(components: "scripts", name).path] + arguments
@@ -24,20 +24,42 @@ struct RepositoryScript {
             variables.removeValue(forKey: key)
         }
         process.environment = variables.merging(environment) { $1 }
-        let output = Pipe()
-        let errors = Pipe()
-        process.standardOutput = output
-        process.standardError = errors
         process.standardInput = FileHandle.nullDevice
-        try process.run()
-        let outputData = output.fileHandleForReading.readDataToEndOfFile()
-        let errorData = errors.fileHandleForReading.readDataToEndOfFile()
-        process.waitForExit()
-        return Result(
-            status: process.terminationStatus,
-            output: String(decoding: outputData, as: UTF8.self),
-            errors: String(decoding: errorData, as: UTF8.self)
-        )
+        let capture = try OutputCapture()
+        defer { capture.remove() }
+        process.standardOutput = capture.output
+        process.standardError = capture.errors
+        try await process.runToExit()
+        return try capture.result(status: process.terminationStatus)
+    }
+}
+
+/// A child's standard output and error, captured in files rather than pipes: reading a file never
+/// waits for an end of file a grandchild still holding the pipe could withhold, and a chatty
+/// child can't fill a pipe buffer and block.
+struct OutputCapture {
+    let directory: TemporaryDirectory
+    let output: FileHandle
+    let errors: FileHandle
+
+    init(in base: URL = FileManager.default.temporaryDirectory) throws {
+        directory = try TemporaryDirectory(base: base)
+        for name in ["stdout", "stderr"] { try Data().write(to: directory.url.appending(path: name)) }
+        output = try FileHandle(forWritingTo: directory.url.appending(path: "stdout"))
+        errors = try FileHandle(forWritingTo: directory.url.appending(path: "stderr"))
+    }
+
+    /// The captured text, read once the child has exited.
+    func result(status: Int32) throws -> RepositoryScript.Result {
+        RepositoryScript.Result(status: status,
+            output: String(decoding: try Data(contentsOf: directory.url.appending(path: "stdout")), as: UTF8.self),
+            errors: String(decoding: try Data(contentsOf: directory.url.appending(path: "stderr")), as: UTF8.self))
+    }
+
+    func remove() {
+        try? output.close()
+        try? errors.close()
+        directory.remove()
     }
 }
 
@@ -74,44 +96,44 @@ struct CheckVersionScriptTests {
         return temporary
     }
 
-    @Test func theRepositoryIsConsistent() throws {
-        let result = try script.run()
+    @Test func theRepositoryIsConsistent() async throws {
+        let result = try await script.run()
         #expect(result.status == 0, "\(result.errors)")
         #expect(result.output.contains("agree"))
     }
 
-    @Test func matchingVersionsAndTagPass() throws {
+    @Test func matchingVersionsAndTagPass() async throws {
         let temporary = try checkout()
         defer { temporary.remove() }
 
-        let plain = try script.run([temporary.url.path])
-        let tagged = try script.run([temporary.url.path], environment: ["GITHUB_REF_NAME": "v0.7.0", "GITHUB_REF_TYPE": "tag"])
+        let plain = try await script.run([temporary.url.path])
+        let tagged = try await script.run([temporary.url.path], environment: ["GITHUB_REF_NAME": "v0.7.0", "GITHUB_REF_TYPE": "tag"])
         // Branch and pull request builds have no tag to compare.
-        let branch = try script.run([temporary.url.path], environment: ["GITHUB_REF_NAME": "main", "GITHUB_REF_TYPE": "branch"])
+        let branch = try await script.run([temporary.url.path], environment: ["GITHUB_REF_NAME": "main", "GITHUB_REF_TYPE": "branch"])
 
         #expect(plain.status == 0 && plain.output.contains("Version 0.7.0"))
         #expect(tagged.status == 0 && tagged.output.contains("Tag v0.7.0 matches"))
         #expect(branch.status == 0)
     }
 
-    @Test func aDifferentProjectYMLVersionFails() throws {
+    @Test func aDifferentProjectYMLVersionFails() async throws {
         let temporary = try checkout(projectYML: "0.6.9")
         defer { temporary.remove() }
 
-        let result = try script.run([temporary.url.path])
+        let result = try await script.run([temporary.url.path])
 
         #expect(result.status == 1)
         #expect(result.errors.contains("project.yml: MARKETING_VERSION is 0.6.9, scripts/build-app.sh has 0.7.0"))
     }
 
-    @Test func eachBuildConfigurationIsChecked() throws {
+    @Test func eachBuildConfigurationIsChecked() async throws {
         let stale = try checkout(pbxproj: ["0.7.0", "0.6.9"])
         defer { stale.remove() }
         let missing = try checkout(pbxproj: ["0.7.0"])
         defer { missing.remove() }
 
-        let staleResult = try script.run([stale.url.path])
-        let missingResult = try script.run([missing.url.path])
+        let staleResult = try await script.run([stale.url.path])
+        let missingResult = try await script.run([missing.url.path])
 
         #expect(staleResult.status == 1)
         #expect(staleResult.errors.contains("project.pbxproj: MARKETING_VERSION is 0.6.9"))
@@ -119,7 +141,7 @@ struct CheckVersionScriptTests {
         #expect(missingResult.errors.contains("expected MARKETING_VERSION in 2 build configurations, found 1"))
     }
 
-    @Test func theBuildNumberIsDerivedFromTheVersion() throws {
+    @Test func theBuildNumberIsDerivedFromTheVersion() async throws {
         let stale = try checkout(buildNumber: "1", projectYMLBuild: "1", pbxprojBuilds: ["1", "1"])
         defer { stale.remove() }
         let oneConfiguration = try checkout(pbxprojBuilds: ["700", "699"])
@@ -129,10 +151,10 @@ struct CheckVersionScriptTests {
         let tooBig = try checkout(buildScript: "0.100.0", projectYML: "0.100.0", pbxproj: ["0.100.0", "0.100.0"])
         defer { tooBig.remove() }
 
-        let staleResult = try script.run([stale.url.path])
-        let oneResult = try script.run([oneConfiguration.url.path])
-        let laterResult = try script.run([later.url.path])
-        let tooBigResult = try script.run([tooBig.url.path])
+        let staleResult = try await script.run([stale.url.path])
+        let oneResult = try await script.run([oneConfiguration.url.path])
+        let laterResult = try await script.run([later.url.path])
+        let tooBigResult = try await script.run([tooBig.url.path])
 
         #expect(staleResult.status == 1)
         #expect(staleResult.errors.contains("scripts/build-app.sh: BUILD_NUMBER is 1, version 0.7.0 needs 700"))
@@ -146,14 +168,14 @@ struct CheckVersionScriptTests {
         #expect(tooBigResult.errors.contains("minor and patch must be below 100"))
     }
 
-    @Test func theRepositorysBuildNumberFollowsItsVersion() throws {
-        let result = try script.run()
+    @Test func theRepositorysBuildNumberFollowsItsVersion() async throws {
+        let result = try await script.run()
         #expect(result.status == 0, "\(result.errors)")
         #expect(result.output.contains("(build "))
         #expect(!result.output.contains("(build 1)"))
     }
 
-    @Test func aBuiltAppMustCarryTheVersionAndBuildNumber() throws {
+    @Test func aBuiltAppMustCarryTheVersionAndBuildNumber() async throws {
         let temporary = try checkout()
         defer { temporary.remove() }
         func app(version: String, build: String) throws -> URL {
@@ -165,8 +187,8 @@ struct CheckVersionScriptTests {
             return bundle
         }
 
-        let good = try script.run([temporary.url.path], environment: ["APP_PATH": try app(version: "0.7.0", build: "700").path])
-        let oldBuild = try script.run([temporary.url.path], environment: ["APP_PATH": try app(version: "0.7.0", build: "1").path])
+        let good = try await script.run([temporary.url.path], environment: ["APP_PATH": try app(version: "0.7.0", build: "700").path])
+        let oldBuild = try await script.run([temporary.url.path], environment: ["APP_PATH": try app(version: "0.7.0", build: "1").path])
 
         #expect(good.status == 0, "\(good.errors)")
         #expect(good.output.contains("CFBundleVersion: 700"))
@@ -174,11 +196,11 @@ struct CheckVersionScriptTests {
         #expect(oldBuild.errors.contains("CFBundleVersion is 1, expected 700"))
     }
 
-    @Test func aTagForAnotherVersionFails() throws {
+    @Test func aTagForAnotherVersionFails() async throws {
         let temporary = try checkout()
         defer { temporary.remove() }
 
-        let result = try script.run([temporary.url.path], environment: ["GITHUB_REF_NAME": "v0.7.1"])
+        let result = try await script.run([temporary.url.path], environment: ["GITHUB_REF_NAME": "v0.7.1"])
 
         #expect(result.status == 1)
         #expect(result.errors.contains("tag v0.7.1 doesn't match version 0.7.0"))
@@ -223,16 +245,16 @@ struct ReleaseNotesScriptTests {
 
         """
 
-    private func notes(_ version: String) throws -> RepositoryScript.Result {
+    private func notes(_ version: String) async throws -> RepositoryScript.Result {
         let temporary = try TemporaryDirectory()
         defer { temporary.remove() }
         let file = temporary.url.appending(path: "CHANGELOG.md")
         try Data(Self.changelog.utf8).write(to: file)
-        return try script.run([version], environment: ["CHANGELOG_PATH": file.path])
+        return try await script.run([version], environment: ["CHANGELOG_PATH": file.path])
     }
 
-    @Test func codeBlocksDontEndTheSection() throws {
-        let result = try notes("v0.7.0")
+    @Test func codeBlocksDontEndTheSection() async throws {
+        let result = try await notes("v0.7.0")
 
         #expect(result.status == 0, "\(result.errors)")
         #expect(result.output == """
@@ -258,8 +280,8 @@ struct ReleaseNotesScriptTests {
             """)
     }
 
-    @Test func aHeadingInACodeBlockIsntTheSection() throws {
-        let result = try notes("0.6.9")
+    @Test func aHeadingInACodeBlockIsntTheSection() async throws {
+        let result = try await notes("0.6.9")
 
         #expect(result.status == 0, "\(result.errors)")
         #expect(result.output == """
@@ -272,15 +294,15 @@ struct ReleaseNotesScriptTests {
             """)
     }
 
-    @Test func aMissingSectionFails() throws {
-        let result = try notes("0.5.0")
+    @Test func aMissingSectionFails() async throws {
+        let result = try await notes("0.5.0")
 
         #expect(result.status != 0)
         #expect(result.errors.contains("no '## [0.5.0]' section"))
     }
 
-    @Test func theRepositoryChangelogHasTheCurrentVersion() throws {
-        let result = try script.run(["v0.6.1"])
+    @Test func theRepositoryChangelogHasTheCurrentVersion() async throws {
+        let result = try await script.run(["v0.6.1"])
         #expect(result.status == 0, "\(result.errors)")
         #expect(result.output.hasPrefix("## [0.6.1]"))
         #expect(result.output.contains("**Full Changelog**: https://github.com/ercanatay/cybokron-dock-groups/compare/"))
@@ -339,7 +361,7 @@ struct WorkflowTests {
     }
 
     @Test(arguments: ["swiftpm", "release"])
-    func distributedAppsRequireNonemptyAppIntentsMetadata(job: String) throws {
+    func distributedAppsRequireNonemptyAppIntentsMetadata(job: String) async throws {
         let workflow = try String(contentsOf: Self.workflows.appending(path: "swift.yml"), encoding: .utf8)
         let remainder = try #require(workflow.components(separatedBy: "\n  \(job):").dropFirst().first)
         let jobText = remainder.components(separatedBy: .newlines).prefix { line in
@@ -361,8 +383,7 @@ struct WorkflowTests {
             process.currentDirectoryURL = temporary.url
             process.standardOutput = FileHandle.nullDevice
             process.standardError = FileHandle.nullDevice
-            try process.run()
-            process.waitForExit()
+            try await process.runToExit()
             #expect((process.terminationStatus == 0) == (state == "present"), "\(job): \(state) metadata")
         }
     }
@@ -400,7 +421,7 @@ struct AppIntentsPackagingTests {
             }
         }
 
-        func run(_ configuration: String = "release", mode: String = "supported", metadata: String = "present") throws -> RepositoryScript.Result {
+        func run(_ configuration: String = "release", mode: String = "supported", metadata: String = "present") async throws -> RepositoryScript.Result {
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/bin/bash")
             process.arguments = [root.appending(path: "scripts/build-app.sh").path, configuration]
@@ -415,20 +436,12 @@ struct AppIntentsPackagingTests {
             process.environment = environment
             process.standardInput = FileHandle.nullDevice
             // Files keep a failed stub's diagnostics from filling a pipe and blocking the test.
-            let output = root.appending(path: "stdout")
-            let errors = root.appending(path: "stderr")
-            try Data().write(to: output)
-            try Data().write(to: errors)
-            let outputHandle = try FileHandle(forWritingTo: output)
-            let errorHandle = try FileHandle(forWritingTo: errors)
-            defer { try? outputHandle.close(); try? errorHandle.close() }
-            process.standardOutput = outputHandle
-            process.standardError = errorHandle
-            try process.run()
-            process.waitForExit()
-            return RepositoryScript.Result(status: process.terminationStatus,
-                output: try String(contentsOf: output, encoding: .utf8),
-                errors: try String(contentsOf: errors, encoding: .utf8))
+            let capture = try OutputCapture(in: temporary.url)
+            defer { capture.remove() }
+            process.standardOutput = capture.output
+            process.standardError = capture.errors
+            try await process.runToExit()
+            return try capture.result(status: process.terminationStatus)
         }
 
         func text(_ path: String) throws -> String {
@@ -534,10 +547,10 @@ struct AppIntentsPackagingTests {
     }
 
     @Test(arguments: ["debug", "release"])
-    func xcode26FrontendFlagsProducePackagedMetadata(configuration: String) throws {
+    func xcode26FrontendFlagsProducePackagedMetadata(configuration: String) async throws {
         let fixture = try Toolchain()
         defer { fixture.temporary.remove() }
-        let result = try fixture.run(configuration)
+        let result = try await fixture.run(configuration)
 
         #expect(result.status == 0, "\(result.output)\n\(result.errors)")
         #expect(try fixture.text("build/\(configuration)/Cybokron Dock Groups.app/Contents/Resources/Metadata.appintents/extract.actionsdata") == "actions")
@@ -547,10 +560,10 @@ struct AppIntentsPackagingTests {
         #expect(try fixture.text("calls").contains("codesign\ncodesign\n"))
     }
 
-    @Test func anAvailableProcessorWithAnUnsupportedCompilerFailsBeforeBuilding() throws {
+    @Test func anAvailableProcessorWithAnUnsupportedCompilerFailsBeforeBuilding() async throws {
         let fixture = try Toolchain()
         defer { fixture.temporary.remove() }
-        let result = try fixture.run(mode: "unsupported")
+        let result = try await fixture.run(mode: "unsupported")
 
         #expect(result.status != 0)
         #expect(result.errors.contains("compiler does not support App Intents constant gathering"))
@@ -558,20 +571,20 @@ struct AppIntentsPackagingTests {
     }
 
     @Test(arguments: ["missing", "empty"])
-    func extractionMustProduceNonemptyMetadata(metadata: String) throws {
+    func extractionMustProduceNonemptyMetadata(metadata: String) async throws {
         let fixture = try Toolchain()
         defer { fixture.temporary.remove() }
-        let result = try fixture.run(metadata: metadata)
+        let result = try await fixture.run(metadata: metadata)
 
         #expect(result.status != 0)
         #expect(result.errors.contains("App Intents metadata extraction produced no nonempty"))
         #expect(try !fixture.text("calls").contains("codesign"))
     }
 
-    @Test func commandLineToolsMayBuildWithoutShortcutsActions() throws {
+    @Test func commandLineToolsMayBuildWithoutShortcutsActions() async throws {
         let fixture = try Toolchain()
         defer { fixture.temporary.remove() }
-        let result = try fixture.run(mode: "clt")
+        let result = try await fixture.run(mode: "clt")
 
         #expect(result.status == 0, "\(result.errors)")
         #expect(result.errors.contains("Siri and Shortcuts won't list this build's actions"))
@@ -582,10 +595,10 @@ struct AppIntentsPackagingTests {
     }
 
     @Test(arguments: ["debug", "release"])
-    func theCLIIsPackagedAndSignedBeforeTheApp(configuration: String) throws {
+    func theCLIIsPackagedAndSignedBeforeTheApp(configuration: String) async throws {
         let fixture = try Toolchain()
         defer { fixture.temporary.remove() }
-        let result = try fixture.run(configuration)
+        let result = try await fixture.run(configuration)
         #expect(result.status == 0, "\(result.errors)")
         let app = fixture.root.appending(path: "build/\(configuration)/Cybokron Dock Groups.app")
         let cli = app.appending(path: "Contents/MacOS/cybokrondockgroups")

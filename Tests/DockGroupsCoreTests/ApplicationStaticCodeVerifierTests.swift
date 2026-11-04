@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Application static-code verification")
 struct ApplicationStaticCodeVerifierTests {
-    @Test func acceptsValidSignedBundleAndRejectsUnsignedOrTamperedCopies() throws {
+    @Test func acceptsValidSignedBundleAndRejectsUnsignedOrTamperedCopies() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("Cybokron-signature-fixture-\(UUID().uuidString)", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let signed = root.appendingPathComponent("Signed.app", isDirectory: true)
@@ -19,16 +19,14 @@ struct ApplicationStaticCodeVerifierTests {
         strip.arguments = ["--remove-signature", unsigned.path]
         strip.standardOutput = Pipe()
         strip.standardError = Pipe()
-        try strip.run()
-        strip.waitForExit()
+        try await strip.runToExit()
         try #require(strip.terminationStatus == 0)
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/codesign")
         process.arguments = ["--force", "--sign", "-", signed.path]
         process.standardOutput = Pipe()
         process.standardError = Pipe()
-        try process.run()
-        process.waitForExit()
+        try await process.runToExit()
         try #require(process.terminationStatus == 0)
         let valid = try #require(ApplicationStaticCodeVerifier.codeHashes(for: signed))
         #expect(!valid.isEmpty)
