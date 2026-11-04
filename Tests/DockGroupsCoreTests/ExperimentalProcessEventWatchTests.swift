@@ -52,59 +52,58 @@ struct ExperimentalProcessEventWatchTests {
         #expect(watch.consumePollResult(count: 0, event: kevent()) == .unknown)
     }
 
-    @Test func cannotWatchAnAlreadyReapedChild() throws {
+    @Test func cannotWatchAnAlreadyReapedChild() async throws {
         let child = Process()
         child.executableURL = URL(fileURLWithPath: "/usr/bin/true")
         try child.run()
         let pid = child.processIdentifier
-        child.waitForExit()
+        await child.waitForExit()
         #expect(child.terminationStatus == 0)
         #expect(ExperimentalProcessEventWatch(pid: pid) == nil)
     }
 
-    @Test func reportsExitOfOwnedChild() throws {
-        let child = Process()
-        child.executableURL = URL(fileURLWithPath: "/bin/sleep")
-        child.arguments = ["10"]
-        try child.run()
-        defer {
-            if child.isRunning { child.terminate() }
-            child.waitForExit()
+    @Test func reportsExitOfOwnedChild() async throws {
+        try await withChildProcesses { children in
+            let child = Process()
+            child.executableURL = URL(fileURLWithPath: "/bin/sleep")
+            child.arguments = ["10"]
+            try child.run()
+            children.adopt(child)
+            let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
+            #expect(watch.poll() == .idle)
+            child.terminate()
+            #expect(await Self.firstEvent(of: watch) == .exit)
+            #expect(watch.poll() == .unknown)
         }
-        let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
-        #expect(watch.poll() == .idle)
-        child.terminate()
-        let deadline = Date().addingTimeInterval(3)
-        var result: ExperimentalProcessEventWatch.PollResult = .idle
-        while result == .idle && Date() < deadline {
-            usleep(10_000)
-            result = watch.poll()
-        }
-        #expect(result == .exit)
-        #expect(watch.poll() == .unknown)
     }
 
-    @Test func reportsExecOfOwnedChild() throws {
-        let child = Process()
+    @Test func reportsExecOfOwnedChild() async throws {
         let input = Pipe()
-        child.executableURL = URL(fileURLWithPath: "/bin/sh")
-        child.standardInput = input
-        try child.run()
-        defer {
-            try? input.fileHandleForWriting.close()
-            if child.isRunning { child.terminate() }
-            child.waitForExit()
+        defer { try? input.fileHandleForWriting.close() }
+        try await withChildProcesses { children in
+            let child = Process()
+            child.executableURL = URL(fileURLWithPath: "/bin/sh")
+            child.standardInput = input
+            try child.run()
+            children.adopt(child)
+            let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
+            #expect(watch.poll() == .idle)
+            try input.fileHandleForWriting.write(contentsOf: Data("exec /bin/sleep 10\n".utf8))
+            #expect(await Self.firstEvent(of: watch) == .exec)
+            #expect(watch.poll() == .unknown)
         }
-        let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
-        #expect(watch.poll() == .idle)
-        try input.fileHandleForWriting.write(contentsOf: Data("exec /bin/sleep 10\n".utf8))
-        let deadline = Date().addingTimeInterval(3)
+    }
+
+    /// Polls `watch` every 10 ms, sleeping in between without holding a thread, until it reports
+    /// something other than `.idle` or 3 s have passed.
+    private static func firstEvent(of watch: ExperimentalProcessEventWatch) async -> ExperimentalProcessEventWatch.PollResult {
+        let clock = ContinuousClock()
+        let deadline = clock.now + .seconds(3)
         var result: ExperimentalProcessEventWatch.PollResult = .idle
-        while result == .idle && Date() < deadline {
-            usleep(10_000)
+        while result == .idle && clock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(10))
             result = watch.poll()
         }
-        #expect(result == .exec)
-        #expect(watch.poll() == .unknown)
+        return result
     }
 }

@@ -43,11 +43,16 @@ struct TriggerControllerIdentityVerifierTests {
         return Fixture(dir: dir, triggersURL: triggersURL, store: store, controller: controller, trigger: trigger, binding: binding)
     }
 
-    private func eventually(_ condition: () -> Bool) async -> Bool {
-        for _ in 0..<1_000 where !condition() {
+    /// Waits until `condition` holds. The ceiling is real time, as in the core tests'
+    /// `eventually`, rather than a count of sleeps that a loaded runner stretches unpredictably.
+    private func eventually(within timeout: Duration = .seconds(30), _ condition: () -> Bool) async -> Bool {
+        let clock = ContinuousClock()
+        let deadline = clock.now + timeout
+        while !condition() {
+            guard clock.now < deadline else { return false }
             try? await Task.sleep(for: .milliseconds(5))
         }
-        return condition()
+        return true
     }
 
     @Test func aCodeChangeIsSavedAsNeedingReapproval() async throws {

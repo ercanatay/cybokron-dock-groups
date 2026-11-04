@@ -132,7 +132,7 @@ struct LayoutFileReaderTests {
     }
 
     // FIFO should be rejected (not regular).
-    @Test func fifoNotRegular() throws {
+    @Test func fifoNotRegular() async throws {
         let dir = try tempDir()
         defer { cleanup(dir) }
         let fifo = dir.appendingPathComponent("fifo")
@@ -140,8 +140,7 @@ struct LayoutFileReaderTests {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/mkfifo")
         task.arguments = [fifo.path]
-        try task.run()
-        task.waitForExit()
+        try await task.runToExit()
         #expect(task.terminationStatus == 0)
         do {
             _ = try LayoutFileReader.readLayout(from: fifo)
