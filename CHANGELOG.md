@@ -7,10 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-11-05
+
+### Changed
+
+- Approving an app with an ad-hoc signature now asks a second, explicit confirmation, also when approving it again; declining saves nothing. Approvals of Apple, App Store and Developer ID signed apps are unchanged
+- In the trigger list, the tooltip of an approved application trigger says how the app's code is signed, calling an ad-hoc signature weaker
+
 ### Fixed
 
 - Application trigger identity checks now confirm the process is the same one they began with, using the process start time, so a reused process identifier can't be mistaken for the approved app
 - Identity approval is reset when the Mac wakes or the session changes, so no trigger acts on a verification that predates the sleep
+- An open trigger editor now shows the trigger's current approval, so a verification or approval that changes while it's open is reflected
+- The test suite waits for child processes without holding shared concurrency threads, so slow codesign, lipo or script runs no longer delay other tests
 
 ## [0.12.0] - 2026-11-03
 
@@ -523,7 +532,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.10.0...v0.11.0
