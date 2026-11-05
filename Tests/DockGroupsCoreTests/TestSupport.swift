@@ -209,7 +209,9 @@ struct ChildProcessWaitTests {
         #expect(!child.isRunning)
         #expect(child.terminationReason == .uncaughtSignal)
         #expect(child.terminationStatus == SIGTERM)
-        #expect(clock.now - start < .seconds(10))
+        // The child sleeps 30 s, so a kill (not a natural exit) is proven by finishing well short of that.
+        // The margin is wide because a loaded CI runner can stretch the 200 ms ceiling by many seconds.
+        #expect(clock.now - start < .seconds(25))
     }
 
     @Test func aChildIgnoringSIGTERMIsKilled() async throws {
