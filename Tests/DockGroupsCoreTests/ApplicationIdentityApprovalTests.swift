@@ -273,6 +273,7 @@ struct ApplicationIdentityApprovalTests {
         let verifier = RunningApplicationIdentityVerifier(
             instances: { _ in [42] },
             makeWatch: { _ in FakeProcessWatch() },
+            readIncarnation: { FakeIncarnations.of($0) },
             check: ApplicationRunningCodeCheck(compare: { _, expected, _ in expected == newHash ? .matching : .different })
         )
         defer { verifier.retainOnly([]) }

@@ -260,6 +260,16 @@ public final class TriggerCoordinator {
         stopApplicationTracker()
     }
 
+    /// The Mac stopped or started being able to act (sleep, wake, a session change): the verifier
+    /// forgets everything it confirmed (`ApplicationIdentityVerifying.reset()`), so no verified
+    /// state outlives the gap, and every presence firing is dropped. Authorized rules then clear
+    /// nothing until a fresh check confirms them. Call it before observations start again, so
+    /// the new generation's `refresh()` asks a verifier that starts from nothing.
+    public func resetApplicationIdentityVerification() {
+        applicationIdentityVerifier.reset()
+        invalidateApplicationPresenceFirings()
+    }
+
     /// Checks authorized application triggers' running code with `RunningApplicationIdentityVerifier`
     /// (the app's production setting). Without this call no authorized trigger acts.
     public func verifyRunningApplicationIdentities() {

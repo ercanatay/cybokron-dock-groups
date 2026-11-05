@@ -203,6 +203,10 @@ protocol ApplicationIdentityVerifying: AnyObject {
     /// The presence snapshot just accepted counted `count` instances under `binding`'s identifier.
     /// A verifier that lists instances itself must not confirm anything when its list disagrees.
     func confirmObservedInstanceCount(_ count: Int, for binding: ApplicationIdentityBinding)
+    /// Forgets every verdict and stops every check (the Mac went to sleep or left the session, or
+    /// can act again): nothing confirmed before is confirmed after it until checked again. Calls
+    /// no change handler.
+    func reset()
 }
 
 extension ApplicationIdentityVerifying {
@@ -210,6 +214,7 @@ extension ApplicationIdentityVerifying {
     func setVerdictsChangedHandler(_ handler: @escaping @MainActor () -> Void) {}
     func retainOnly(_ bindings: Set<ApplicationIdentityBinding>) {}
     func confirmObservedInstanceCount(_ count: Int, for binding: ApplicationIdentityBinding) {}
+    func reset() {}
 }
 
 /// A verifier that never confirms anything, so authorized rules don't act (fail closed) and only
