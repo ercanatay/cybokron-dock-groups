@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Application trigger identity checks now confirm the process is the same one they began with, using the process start time, so a reused process identifier can't be mistaken for the approved app
+- Identity approval is reset when the Mac wakes or the session changes, so no trigger acts on a verification that predates the sleep
+
 ## [0.12.0] - 2026-11-03
 
 ### Added
