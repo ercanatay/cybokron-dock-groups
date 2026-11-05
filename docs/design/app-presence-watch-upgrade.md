@@ -1,6 +1,7 @@
 # Application presence: watch upgrade feasibility
 
-Status: design and feasibility record. It changes no code and approves nothing. It evaluates the
+Status: design and feasibility record; items 3 and 5 have since been implemented (see
+"Implementation status (2026-11-05)"). The record itself approves nothing. It evaluates the
 residual risks listed as "still open" in `app-presence-threat-model.md` §3.2/§3.3 (T5, T6, T10, no
 wake-up, sleep/session) and in `app-presence-identity-authorization.md` ("Remaining risks"), and
 proposes what to do about each one. Nothing below claims that any protocol is race-free.
@@ -33,6 +34,17 @@ product decision; **won't do** = needs a restricted entitlement or is disproport
 Highest benefit per cost: **(3) the start-time bracket** and **(5) the verifier reset on
 wake/session**, both S, both 0.12.x-compatible, both removing a reliance on an assumption that is
 currently untested in code. Doc correction (2) is cheaper still but changes no behaviour.
+
+## Implementation status (2026-11-05)
+
+| # | Item | Status |
+|---|------|--------|
+| 3 | (PID, kernel start time) bracket | **Implemented** in `RunningApplicationIdentityVerifier` (`ProcessIncarnation`): read at listing, after registration, right before and after the Security call (same thread), when the check finishes, and at every later question. Changed → `unavailable(processChanged)`, unreadable → `unavailable(processUnreadable)` (new abstract code 9); a check whose bracket failed is never `verified` or `codeChanged`. Tests: injected reader per position, real children (reaped child unreadable, start time kept across exec, real reader keeps an unchanged child verified). Not applied to `TriggerApplicationApprover` |
+| 5 | Verifier reset on sleep/session | **Implemented**: `ApplicationIdentityVerifying.reset()` (default no-op for fakes), `TriggerCoordinator.resetApplicationIdentityVerification()`, called by `TriggerController.handleWorkspaceSignal` on both `canAct` transitions (before observations restart on the way back). Option 1 of §4.5: entries are forgotten, so the next question re-lists and re-checks (`pending`); no `unavailable` + 10 s retry. Tests: verifier, coordinator and controller seams; real sleep and fast user switching not tested |
+| 2 | Exec-before-registration fixture test and doc rewording | Open |
+| 4 | T10 doc wording | Open (unchanged; the bracket only adds a read to the final check) |
+| 1, 1b, 2b, 3b, 4b | Wake-up, shared kqueue, pidversion, stale entry, action cancellation | Open / deferred as recommended |
+| §7 | `proc_pidinfo` inside the signed, hardened app on every supported macOS | Not done (manual); a failure there reads as `processUnreadable` for every authorized rule |
 
 ## 1. Evidence gathered for this document
 

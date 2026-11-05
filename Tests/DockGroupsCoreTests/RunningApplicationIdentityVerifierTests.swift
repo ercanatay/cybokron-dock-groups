@@ -24,6 +24,40 @@ final class FakeComparisons: Sendable {
     }
 }
 
+/// What the fake start-time reader answers for each PID. A script is consumed one reading at a
+/// time and its last entry repeats; without a script every reading is `FakeIncarnations.of(pid)`.
+/// Counts readings per PID. Thread-safe: the bracket around a Security call reads on another thread.
+final class FakeIncarnations: Sendable {
+    private struct State {
+        var scripts: [Int32: [ProcessIncarnation?]] = [:]
+        var reads: [Int32: Int] = [:]
+    }
+
+    private let state = OSAllocatedUnfairLock(initialState: State())
+
+    /// The incarnation a PID has unless a test says otherwise; `start` picks another one.
+    static func of(_ pid: Int32, start: UInt64 = 1_793_000_000) -> ProcessIncarnation {
+        ProcessIncarnation(pid: pid, startSeconds: start, startMicroseconds: 250_000)
+    }
+
+    /// The next readings of `pid`, in order; the last one repeats.
+    func script(_ pid: Int32, _ readings: [ProcessIncarnation?]) {
+        state.withLock { $0.scripts[pid] = readings }
+    }
+
+    func reads(of pid: Int32) -> Int { state.withLock { $0.reads[pid] ?? 0 } }
+
+    func read(_ pid: Int32) -> ProcessIncarnation? {
+        state.withLock { state in
+            state.reads[pid, default: 0] += 1
+            guard var script = state.scripts[pid], let next = script.first else { return Self.of(pid) }
+            if script.count > 1 { script.removeFirst() }
+            state.scripts[pid] = script
+            return next
+        }
+    }
+}
+
 /// Holds whatever waits on it until `open()`.
 final class FakeGate: Sendable {
     private let isOpen = OSAllocatedUnfairLock(initialState: false)
@@ -96,6 +130,7 @@ final class VerifierRig {
     var watchFor: [Int32: FakeProcessWatch] = [:]
     var failsToWatch: Set<Int32> = []
     let comparisons = FakeComparisons()
+    let incarnations = FakeIncarnations()
     let blocker = FakeGate()
     let retryGate = FakeGate()
     let persistence: MemoryTriggerPersistence
@@ -119,10 +154,11 @@ final class VerifierRig {
         persistence = MemoryTriggerPersistence(triggers)
         store = TriggerStore(persistence: persistence, saveDelay: .zero)
         weak var box: VerifierRig?
-        let comparisons = comparisons, blocker = blocker, retryGate = retryGate
+        let comparisons = comparisons, blocker = blocker, retryGate = retryGate, incarnations = incarnations
         verifier = RunningApplicationIdentityVerifier(
             instances: { _ in box?.readInstances() },
             makeWatch: { pid in box?.makeWatch(pid) },
+            readIncarnation: { incarnations.read($0) },
             check: ApplicationRunningCodeCheck(timeout: checkTimeout, compare: { pid, _, _ in
                 if blocksSecurity { blocker.block() }
                 return comparisons.compare(pid)

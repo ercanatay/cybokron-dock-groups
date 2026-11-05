@@ -139,20 +139,27 @@ per binding it is asked about:
 1. Lists the PIDs of the running applications counted under the identifier (the same ASCII,
    case-insensitive match as `ApplicationSnapshotCounter`). No instance, and no unconfirmed instance
    having left: `verified` without a check.
-2. For a new instance set: registers an `ExperimentalProcessEventWatch` (kqueue exec/exit) on every
-   PID **first**, polls each once (anything pending is `unavailable`), then checks every PID with
+2. For a new instance set: reads every PID's kernel start time (`ProcessIncarnation`, in the turn
+   that listed it), registers an `ExperimentalProcessEventWatch` (kqueue exec/exit) on every PID
+   **first**, polls each once (anything pending is `unavailable`) and reads the start time again
+   (a different one is `unavailable(processChanged)`, an unreadable one
+   `unavailable(processUnreadable)`), then checks every PID with
    `ApplicationRunningCodeCheck` and answers `pending` meanwhile. The check calls
    `ApplicationRunningCodeVerifier.compare` (fresh `SecCode` by PID, validity, then `identifier` +
    exact `cdhash`) on a Dispatch global queue (outside the cooperative pool), bounded by a 2 s
    timeout and cancellable through `withTaskCancellationHandler`. **The synchronous Security call
    itself can't be interrupted:** a timeout or cancellation only stops waiting, the call runs to
    its end and its answer is ignored. Timeout and cancellation are `unavailable`, never `verified`.
+   On the same thread, right before and right after the comparison, the start time is read again;
+   if either reading differs or fails, that check is `unavailable`, never `verified` or
+   `codeChanged`.
 3. When the checks finish (back on the main actor, only for the latest token): any different code
-   is `codeChanged`; otherwise a watch that reported anything, or any failure, is `unavailable`;
-   only all instances matching with idle watches is `verified`. It then calls the change handler if
-   the verdict changed.
-4. While the set is unchanged it answers from that result, polling the watches on every question:
-   exec, an error or a coalesced exec+exit is `unavailable`. A verified instance may leave (exit),
+   is `codeChanged`; otherwise a watch that reported anything, a start time that changed or can't
+   be read, or any failure, is `unavailable`; only all instances matching with idle watches and
+   unchanged start times is `verified`. It then calls the change handler if the verdict changed.
+4. While the set is unchanged it answers from that result, polling the watches and reading the
+   start times on every question: exec, an error, a coalesced exec+exit or a changed or unreadable
+   start time is `unavailable`. A verified instance may leave (exit),
    but an instance that leaves before its check finished makes the binding `unavailable` (it was
    never confirmed). An `unavailable` binding is checked again every 10 s while it keeps answering
    `unavailable`; only a successful retry changes it (and then the coordinator restarts
@@ -160,6 +167,10 @@ per binding it is asked about:
 5. Limits: 16 instances per application, 64 open watches per verifier; more is `unavailable`.
    Bindings no runnable rule uses any more are forgotten (`retainOnly`), closing their watches and
    cancelling their checks.
+6. `reset()` forgets every binding the same way; the coordinator calls it
+   (`resetApplicationIdentityVerification()`, which also drops presence firings) whenever the Mac
+   stops or starts being able to act (sleep, wake, session changes). The next question starts from
+   step 1, so an authorized rule is `pending` after a wake until a fresh check confirms it.
 
 It logs only an abstract failure code (`ApplicationCodeCheckFailure.diagnosticCode`) and "different
 code"; never a hash, path, app name or PID.
@@ -172,7 +183,7 @@ code"; never a hash, path, app name or PID.
 | `unverified` | not asked | yes | Show Popup only | others `applicationNotVerified` |
 | `authorized` | `verified` | yes | every allowed action | ran |
 | `authorized` | `pending` (check running) | yes | none until `verified` | `applicationNotConfirmed` if still pending after one extra settle |
-| `authorized` | `unavailable` (error, timeout, cancel, exec, unconfirmed exit, limits, no list) | no | none | `applicationNotConfirmed` for a firing already waiting |
+| `authorized` | `unavailable` (error, timeout, cancel, exec, unconfirmed exit, changed or unreadable start time, limits, no list) | no | none | `applicationNotConfirmed` for a firing already waiting |
 | `authorized` | `codeChanged` | no | none | saved as `needsReapproval`; pending and notice-stage work cancelled |
 | `authorized` | verifier never checked it / default verifier | no | none | — (status line: verification unavailable) |
 | `needsReapproval`, `invalid` | not asked | no | none | — |
@@ -283,9 +294,16 @@ appears in diagnostics (which report trigger counts and kinds only).
 - **Architectures.** The binding records the `cdhash` of the running instance's code only; the
   same app running under another architecture (or Rosetta) has another `cdhash` and makes the rule
   wait for re-approval (T15, availability).
-- **PID reuse and exec before the watch.** Registration and the Security lookup are both PID based:
-  a PID recycled before the watch was registered, or an exec before registration, is checked and
-  watched as if it were the listed instance (T5, T6 partly).
+- **PID reuse and exec before the watch.** Since 2026-11-05 the verifier brackets every instance
+  with its (PID, kernel start time) from listing through the check and at every later question
+  (threat model §3.4): a PID recycled after listing is `unavailable`, never `verified` or
+  `codeChanged`. Still open: a PID reused before the instances were listed (a stale workspace entry)
+  reads as the new process; the approval reading isn't bracketed; the start time is kept across
+  exec, so an exec before registration is still not reported by the watch (T5 partly, T6 partly).
+- **Sleep and session changes.** Since 2026-11-05 the verifier is reset whenever the Mac stops or
+  starts being able to act: no confirmed identity outlives sleep or a session change, and authorized
+  rules answer `pending` until a fresh check confirms them. Real sleep, dark wake and fast user
+  switching are tested manually only.
 - **Check to action.** The last verdict check and the handler call are not atomic: an exec right
   after the final check, or while an action runs, isn't caught (T10).
 - **The Security call can't be cancelled.** A timed-out or cancelled check leaves its call

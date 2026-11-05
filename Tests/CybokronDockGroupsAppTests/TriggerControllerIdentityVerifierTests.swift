@@ -16,6 +16,8 @@ private final class QuietProcessWatch: ApplicationProcessWatching {
 @MainActor
 struct TriggerControllerIdentityVerifierTests {
     private static let bundle = "com.cybokronfixture.normal"
+    /// A start time that never changes, for the fake PIDs below.
+    static let fixedIncarnation: ProcessIncarnation.Read = { ProcessIncarnation(pid: $0, startSeconds: 1_793_000_000, startMicroseconds: 1) }
 
     private struct Fixture {
         let dir: URL
@@ -62,6 +64,7 @@ struct TriggerControllerIdentityVerifierTests {
         let verifier = RunningApplicationIdentityVerifier(
             instances: { _ in [42] },
             makeWatch: { _ in QuietProcessWatch() },
+            readIncarnation: Self.fixedIncarnation,
             check: ApplicationRunningCodeCheck(compare: { _, _, _ in .different })
         )
         f.controller.coordinator.applicationIdentityVerifier = verifier

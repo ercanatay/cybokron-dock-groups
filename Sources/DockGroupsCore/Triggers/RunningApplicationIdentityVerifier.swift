@@ -28,9 +28,13 @@ enum ApplicationCodeCheckFailure: UInt8, CaseIterable, Sendable {
     case tooManyInstances = 6
     /// A process watch couldn't be registered (the process may already be gone).
     case watchUnavailable = 7
-    /// A watch reported exec, exit or an error around a check, or an instance left before its
-    /// check finished: the answer might describe code that no longer runs.
+    /// A watch reported exec, exit or an error around a check, an instance left before its check
+    /// finished, or its kernel start time changed between two readings (the PID now names another
+    /// process): the answer might describe code that no longer runs.
     case processChanged = 8
+    /// An instance's kernel start time couldn't be read (`ProcessIncarnation`; the process may be
+    /// gone, or reading isn't permitted).
+    case processUnreadable = 9
 
     var diagnosticCode: UInt8 { rawValue }
 }
@@ -80,6 +84,35 @@ struct ApplicationRunningCodeCheck: Sendable {
         ) {
             Self.result(of: compare(pid, codeHash, identifier))
         }
+    }
+
+    /// The same check, bracketed by `incarnation` on the thread that makes the Security call: the
+    /// PID's kernel start time is read right before and right after the comparison and must equal
+    /// `incarnation` both times. Otherwise the answer may describe another process that got the
+    /// PID, so it is `unavailable(.processChanged)` (or `.processUnreadable` when a reading fails),
+    /// never `verified` and never `codeChanged`. Timeout and cancellation are as above.
+    func check(pid: Int32, identifier: String, codeHash: ApplicationCodeHash, incarnation: ProcessIncarnation, readIncarnation: @escaping ProcessIncarnation.Read) async -> ApplicationCodeCheckResult {
+        guard pid > 0, incarnation.pid == pid, TriggerApplicationIdentifier(identifier) != nil, timeout > .zero else { return .unavailable(.invalidInput) }
+        let compare = compare
+        return await BoundedSecurityCall.run(
+            timeout: timeout,
+            sleep: sleep,
+            timedOut: .unavailable(.timedOut),
+            cancelled: .unavailable(.cancelled),
+            misuse: .unavailable(.invalidInput)
+        ) {
+            if let problem = Self.incarnationProblem(pid: pid, expected: incarnation, read: readIncarnation) { return .unavailable(problem) }
+            let result = Self.result(of: compare(pid, codeHash, identifier))
+            if let problem = Self.incarnationProblem(pid: pid, expected: incarnation, read: readIncarnation) { return .unavailable(problem) }
+            return result
+        }
+    }
+
+    /// `nil` when `pid` still runs `expected`.
+    static func incarnationProblem(pid: Int32, expected: ProcessIncarnation?, read: ProcessIncarnation.Read) -> ApplicationCodeCheckFailure? {
+        guard let now = read(pid) else { return .processUnreadable }
+        guard let expected, now == expected else { return .processChanged }
+        return nil
     }
 
     private static func result(of comparison: ApplicationRunningCodeVerifier.Comparison) -> ApplicationCodeCheckResult {
@@ -195,23 +228,33 @@ extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}
 // MARK: - The verifier
 
 /// The app's `ApplicationIdentityVerifying`: for every authorized binding it is asked about, it
-/// lists the running instances under the identifier, registers an exec/exit watch on each FIRST,
-/// then checks each one freshly (`ApplicationRunningCodeCheck`, off the main actor, 2 s by
-/// default), then polls the watches again. It answers from that result:
+/// lists the running instances under the identifier, reads each one's kernel start time
+/// (`ProcessIncarnation`) and registers an exec/exit watch on it FIRST, reads the start time
+/// again, then checks each one freshly (`ApplicationRunningCodeCheck`, off the main actor, 2 s by
+/// default, bracketed by the start time right before and after the Security call), then polls the
+/// watches and reads the start times again. Every reading must equal the one taken at listing. It
+/// answers from that result:
 ///
-/// - `verified` while the instance set is unchanged (instances that were verified may leave) and
-///   every watch stays idle; with no instance running and none unconfirmed having left, too.
+/// - `verified` while the instance set is unchanged (instances that were verified may leave),
+///   every watch stays idle and every start time is unchanged; with no instance running and none
+///   unconfirmed having left, too.
 /// - `pending` while the check of a new instance set runs (nothing acts meanwhile).
 /// - `codeChanged` when any instance is different code; the coordinator then saves the rule as
 ///   needing re-approval (K2). Never retried, never widened.
 /// - `unavailable` for every failure: time-out, cancellation, a Security error, a watch that
 ///   couldn't be registered or reported exec, exit or an error, an instance that left before it
-///   was confirmed, too many instances. A failed binding is checked again after `retryInterval`
-///   while it keeps answering `unavailable`, so a retry can't make the rule flap.
+///   was confirmed, a start time that changed or couldn't be read, too many instances. A failed
+///   binding is checked again after `retryInterval` while it keeps answering `unavailable`, so a
+///   retry can't make the rule flap.
 ///
-/// Known gaps (see the threat model): PID reuse and exec before a watch is registered are not
-/// detected; nothing wakes the verifier on a watch event (it polls when asked); check and action
-/// aren't atomic; the per-verifier watch limit is no process-wide descriptor limit. Logs only
+/// `reset()` forgets everything (the Mac can act again after sleep or a session change): no
+/// verified state outlives the gap, and every binding is listed, watched and checked again.
+///
+/// Known gaps (see the threat model): a PID reused before the instances were listed (a stale
+/// workspace entry) reads as the new process; an exec before a watch is registered isn't reported
+/// by the watch (the fresh check sees the post-exec code); nothing wakes the verifier on a watch
+/// event (it polls when asked); check and action aren't atomic; a Security call can't be
+/// interrupted; the per-verifier watch limit is no process-wide descriptor limit. Logs only
 /// `ApplicationCodeCheckFailure.diagnosticCode`.
 @MainActor
 final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
@@ -245,6 +288,8 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     private struct Entry {
         var instances: Set<Int32>
         var watches: [Int32: any ApplicationProcessWatching]
+        /// The incarnation each watched instance had when it was listed.
+        var incarnations: [Int32: ProcessIncarnation] = [:]
         var phase: Phase
         /// Never reused: a finished check or retry for an older token changes nothing.
         var token: UInt64
@@ -254,6 +299,7 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
 
     private let instances: Instances
     private let makeWatch: MakeWatch
+    private let readIncarnation: ProcessIncarnation.Read
     private let check: ApplicationRunningCodeCheck
     private let retryInterval: Duration
     private let sleep: Sleep
@@ -264,16 +310,20 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
 
     /// The latest failure, for tests (never logged with anything identifying).
     private(set) var lastFailure: ApplicationCodeCheckFailure?
+    /// How often `reset()` ran, for tests.
+    private(set) var resetCount = 0
 
     init(
         instances: @escaping Instances = RunningApplicationIdentityVerifier.runningInstances(of:),
         makeWatch: @escaping MakeWatch = { ExperimentalProcessEventWatch(pid: $0) },
+        readIncarnation: @escaping ProcessIncarnation.Read = { ProcessIncarnation.read(pid: $0) },
         check: ApplicationRunningCodeCheck = ApplicationRunningCodeCheck(),
         retryInterval: Duration = RunningApplicationIdentityVerifier.defaultRetryInterval,
         sleep: @escaping Sleep = { try await Task.sleep(for: $0) }
     ) {
         self.instances = instances
         self.makeWatch = makeWatch
+        self.readIncarnation = readIncarnation
         self.check = check
         self.retryInterval = retryInterval
         self.sleep = sleep
@@ -327,16 +377,24 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
                 case .exec, .execAndExit, .unknown: return false
                 }
             }
-            let stayedIdle = current.intersection(entry.instances).allSatisfy { pid in
+            let stayed = current.intersection(entry.instances)
+            let stayedIdle = stayed.allSatisfy { pid in
                 entry.watches[pid]?.poll() == .idle
             }
             guard leftCleanly, stayedIdle else {
                 fail(binding, .processChanged, instances: current)
                 return .unavailable
             }
+            // A second line behind the watches: the instances still listed are still the
+            // incarnations that were checked.
+            if let problem = incarnationProblem(of: entry, pids: stayed) {
+                fail(binding, problem, instances: current)
+                return .unavailable
+            }
             if current.isSubset(of: entry.instances) {
                 for pid in left {
                     entry.watches.removeValue(forKey: pid)?.close()
+                    entry.incarnations[pid] = nil
                 }
                 entry.instances = current
                 entries[binding] = entry
@@ -363,6 +421,21 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
         }
     }
 
+    /// Forgets every binding: checks and retries are cancelled (a Security call already running
+    /// isn't interrupted, its answer is ignored), watches are closed and verdicts dropped, so the
+    /// next question lists, watches and checks again (`pending` while instances run). No change
+    /// notification: the caller restarts its observations itself.
+    func reset() {
+        resetCount += 1
+        let forgotten = entries
+        entries = [:]
+        for var entry in forgotten.values {
+            entry.work?.cancel()
+            closeWatches(of: &entry)
+        }
+        logger.notice("Application identity checks reset")
+    }
+
     /// The snapshot and this verifier's own list read the same workspace list in the same
     /// main-actor turn, so they agree; when they don't, nothing under the identifier is confirmed
     /// (an empty list must never confirm an instance the snapshot counted).
@@ -382,7 +455,13 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
         return lastToken
     }
 
-    /// Watch first, then check, then poll again (in `finish`). Any failure here is `unavailable`.
+    /// Start time and watch first, then the bracketed check, then poll and read again (in
+    /// `finish`). Any failure here is `unavailable`, and nothing is checked.
+    ///
+    /// The bracket for each instance: its start time read when it is listed (in the main-actor
+    /// turn that listed it), again after its watch is registered, right before and right after
+    /// the Security call (`ApplicationRunningCodeCheck`), in `finish`, and at every later question
+    /// (`verdict(for:)`). All must equal the first.
     private func startCheck(_ binding: ApplicationIdentityBinding, identifier: TriggerApplicationIdentifier, instances current: Set<Int32>, reportAs: ApplicationIdentityVerdict) {
         if var old = entries[binding] {
             old.work?.cancel()
@@ -396,29 +475,45 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
             return
         }
         var watches: [Int32: any ApplicationProcessWatching] = [:]
+        var incarnations: [Int32: ProcessIncarnation] = [:]
+        func abandon(_ failure: ApplicationCodeCheckFailure) {
+            watches.values.forEach { $0.close() }
+            fail(binding, failure, instances: current)
+        }
         for pid in current {
+            guard let listed = readIncarnation(pid) else {
+                abandon(.processUnreadable)
+                return
+            }
             guard let watch = makeWatch(pid) else {
-                watches.values.forEach { $0.close() }
-                fail(binding, .watchUnavailable, instances: current)
+                abandon(.watchUnavailable)
                 return
             }
             watches[pid] = watch
             // Anything already pending: the process changed around registration.
             guard watch.poll() == .idle else {
-                watches.values.forEach { $0.close() }
-                fail(binding, .processChanged, instances: current)
+                abandon(.processChanged)
                 return
             }
+            // The watch is on the incarnation that was listed, not on a process that got its PID.
+            if let problem = ApplicationRunningCodeCheck.incarnationProblem(pid: pid, expected: listed, read: readIncarnation) {
+                abandon(problem)
+                return
+            }
+            incarnations[pid] = listed
         }
         let token = nextToken()
-        var entry = Entry(instances: current, watches: watches, phase: .checking(reportAs: reportAs), token: token)
+        var entry = Entry(instances: current, watches: watches, incarnations: incarnations, phase: .checking(reportAs: reportAs), token: token)
         let check = check
-        let pids = Array(current)
+        let readIncarnation = readIncarnation
+        let pids = incarnations.map { ($0.key, $0.value) }
         entry.work = Task { @MainActor [weak self] in
             var results: [ApplicationCodeCheckResult] = []
             await withTaskGroup(of: ApplicationCodeCheckResult.self) { group in
-                for pid in pids {
-                    group.addTask { await check.check(pid: pid, identifier: binding.identifier, codeHash: binding.codeHash) }
+                for (pid, incarnation) in pids {
+                    group.addTask {
+                        await check.check(pid: pid, identifier: binding.identifier, codeHash: binding.codeHash, incarnation: incarnation, readIncarnation: readIncarnation)
+                    }
                 }
                 for await result in group {
                     results.append(result)
@@ -435,11 +530,13 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
         let before = entry.phase.verdict
         entry.work = nil
         let watchesIdle = entry.watches.values.allSatisfy { $0.poll() == .idle }
+        let bracketProblem = incarnationProblem(of: entry, pids: entry.instances)
         let failure = results.lazy.compactMap { result -> ApplicationCodeCheckFailure? in
             if case .unavailable(let failure) = result { return failure }
             return nil
         }.first
         if results.contains(.codeChanged) {
+            // Only a check whose own bracket held answers `codeChanged`.
             closeWatches(of: &entry)
             entry.phase = .codeChanged
             entries[binding] = entry
@@ -447,6 +544,9 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
         } else if !watchesIdle {
             entries[binding] = entry
             fail(binding, .processChanged, instances: entry.instances)
+        } else if let bracketProblem {
+            entries[binding] = entry
+            fail(binding, bracketProblem, instances: entry.instances)
         } else if let failure {
             entries[binding] = entry
             fail(binding, failure, instances: entry.instances)
@@ -504,6 +604,18 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     private func closeWatches(of entry: inout Entry) {
         for watch in entry.watches.values { watch.close() }
         entry.watches = [:]
+        entry.incarnations = [:]
+    }
+
+    /// `nil` when each of `pids` still runs the incarnation `entry` recorded for it (a PID
+    /// without a record is a change).
+    private func incarnationProblem(of entry: Entry, pids: Set<Int32>) -> ApplicationCodeCheckFailure? {
+        for pid in pids {
+            if let problem = ApplicationRunningCodeCheck.incarnationProblem(pid: pid, expected: entry.incarnations[pid], read: readIncarnation) {
+                return problem
+            }
+        }
+        return nil
     }
 
     // MARK: Instances

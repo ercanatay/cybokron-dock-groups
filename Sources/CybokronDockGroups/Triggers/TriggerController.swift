@@ -460,11 +460,17 @@ final class TriggerController: ObservableObject {
         case .screens, .session:
             if couldActBefore != canActAfter {
                 if canActAfter {
+                    // Woke or came back to the session: no identity confirmed before the gap
+                    // counts; the new generation's first snapshot is a baseline and its refresh
+                    // starts fresh checks.
+                    coordinator.resetApplicationIdentityVerification()
                     resetApplicationPresenceSource()
                 } else {
                     applicationPresenceUncertain = false
                     applicationPresenceSource?.stop()
                     coordinator.stopApplicationObservations()
+                    // Nothing checked or watched while the Mac can't act.
+                    coordinator.resetApplicationIdentityVerification()
                 }
             }
         default:

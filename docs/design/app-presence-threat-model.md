@@ -82,15 +82,15 @@ means no public, proportionate API known to this review provides the guarantee.
 | T2 | Selected bundle path replaced or modified before verification (selection to binding) | Not achievable for path-based static checks; observed concretely (`app-presence-macho-slices.md` unresolved gates) | Candidate: bind from a running instance, not from the path; static parse is advisory only | A replacement made before the user's selection is bound as if chosen; the user confirms what was displayed, not what was hashed | Static failure, mismatch or changing results leave the rule unbound |
 | T3 | Bundle modified or replaced after binding | Detectable for newly launched processes (their hash differs); a process already validated keeps its in-memory identity | Fresh dynamic lookup per candidate; static recheck cannot prove the file was never swapped | On-disk changes to resources not covered by the dynamic check, and changes between check and use | New code yields unknown; the rule waits for explicit reselection |
 | T4 | Taken (spoofed) bundle ID, including case variants | Today: case-insensitive ASCII match broadens matching to case variants (`AppPresenceTracker.swift:19-21`); non-ASCII look-alikes cannot match. Candidate: signing identifier compared case-sensitively | Unit tests on the counter; requirement syntax tests | An app whose signing identifier differs from its bundle ID can never be bound (availability, not safety) | Unknown, never zero |
-| T5 | PID reuse between observation, Security lookup and watch registration | **Not achievable** with public PID-based APIs: Apple's Security source marks PID lookup raceable; audit tokens for arbitrary `NSWorkspace` apps are not public without Endpoint Security | None in code; `kqueue` registration of a reaped child failed with `ESRCH` in one test (`ExperimentalProcessEventWatchTests.swift:55-63`), which does not exclude reuse | A recycled PID can be verified and watched as if it were the selected instance; the window is small but adversary-steerable by A1 | Liveness and instance equality are rechecked before and after; any disagreement is unknown. No claim of instance binding |
-| T6 | `exec` inside a verified process (same PID, same `NSRunningApplication`, no list change) | Detectable only for exec events after a watch is registered; **not achievable** for exec before registration | `EVFILT_PROC NOTE_EXEC` (`ExperimentalProcessEventWatch.swift:63-149`), real exec tested only on an owned `/bin/sh` child; AppKit fixture showed no KVO change and equal instance after exec | Exec between lookup and registration; a retained `SecCode` still matches after exec | Exec, exit or any malformed/unknown event latches the watch terminal; the binding is discarded and the rule becomes unknown |
+| T5 | PID reuse between observation, Security lookup and watch registration | Achievable for the verifier from listing on: a (PID, kernel start time) bracket (§3.4). **Not achievable** before listing with public PID-based APIs: Apple's Security source marks PID lookup raceable; audit tokens or start times for arbitrary `NSWorkspace` entries are not public without Endpoint Security | Since 2026-11-05: `ProcessIncarnation` (`proc_pidinfo(PROC_PIDTBSDINFO)`) read at listing, after registration, right before and after the Security call, when the check finishes and at every later question (`RunningApplicationIdentityVerifier`), with injected-reader tests per position and real-process tests (reaped child unreadable, start time kept across exec). `kqueue` registration of a reaped child fails with `ESRCH` (`ExperimentalProcessEventWatchTests`) | A stale `NSWorkspace` entry whose PID was reused before it was listed reads as the new process (it can make the rule wait for re-approval); the approval reading is not bracketed; a real PID reuse is not exercised in CI | Any changed or unreadable start time is `unavailable(processChanged/processUnreadable)`, never `verified` or `codeChanged`; liveness and instance equality are rechecked before and after. No claim of instance binding |
+| T6 | `exec` inside a verified process (same PID, same `NSRunningApplication`, no list change) | Detectable only for exec events after a watch is registered; **not achievable** for exec before registration | `EVFILT_PROC NOTE_EXEC` (`ExperimentalProcessEventWatch.swift:63-149`), real exec tested only on an owned `/bin/sh` child; AppKit fixture showed no KVO change and equal instance after exec | Exec between lookup and registration (the kernel start time doesn't change on exec, so the §3.4 bracket doesn't see it); a retained `SecCode` still matches after exec | Exec, exit or any malformed/unknown event latches the watch terminal; the binding is discarded and the rule becomes unknown |
 | T7 | Observation delivery delay or coalescing (KVO, main queue, kqueue) | Completeness **not achievable**: short-lived instances can be missed; ordering of deliveries is enforced by sequence numbers assigned on the main queue | Tracker rejects stale/duplicate sequences and treats gaps as uncertain (`AppPresenceRuleTracker.swift:129-158`); synthetic tests only | A missed open/close; an edge acted on after the process already changed; coalesced kqueue events | Gaps and unknown snapshots reset all baselines and drop queued, pending and notice-stage presence firings (`TriggerCoordinator.swift:166-172`) |
 | T8 | Process death during verification or before action | Death can be observed after the fact; not prevented | Watch `NOTE_EXIT`; liveness recheck | An opened edge whose process died within the settle/notice window still runs unless a later snapshot invalidates it | An exit during verification is unknown; a close requires an established, verified remaining-instance count of zero |
 | T9 | User confirmation race (sheet shows one candidate, binding applies to another) | Achievable only as "the binding is the exact candidate displayed", invalidated on any change; not atomic | Generation plus candidate identity on the confirmation (draft lifecycle step 4); not implemented | A1 can exec or swap between display and confirm; T5/T6 apply | Changed candidate, exec, exit, watch failure or stale generation invalidates the confirmation |
 | T10 | Check-to-action race (state changes after the last check, before or during the group action) | **Not achievable**: checks and `AutomationHandling` calls are not atomic. Achievable: no action starts after an invalidation that the main actor has already processed | Main-actor serialization; `currentInvalidated` checked after notices (`TriggerCoordinator.swift:499-516`); push invalidation | An action already started is not undone. Since the F2 fix, carry-out also re-checks each presence firing's stamp (tracker generation, revision, rule), so a forgotten push invalidation no longer lets it run | Invalidated firings are skipped; the spec forbids replay after rebaseline |
 | T11 | Multiple instances or the same identifier with different code | Achievable: count only when every candidate for that identifier verifies | `ApplicationIdentityCount.count` returns nil on any `.different`/`.unknown` (`ApplicationIdentityCount.swift:17-24`) | An empty input returns 0, which is a valid close only if the caller proved snapshot completeness | Any mismatch or unknown makes the rule unknown; ambiguity at selection leaves the rule unbound |
 | T12 | Watch registration failure or capacity exhaustion | Achievable: failure is reported, never treated as "no event" | Registration succeeds only with zero returned events (`ExperimentalProcessEventWatch.swift:88-96`) | One `kqueue` descriptor per watch (`ExperimentalProcessEventWatch.swift:65`) with no global limit; descriptor exhaustion is untested | Registration failure, `EINTR`, `EV_ERROR` or descriptor limits are unknown for the affected rule; partial coverage is not continued |
-| T13 | Sleep, wake, fast user switching, session change | Achievable: no edge across a sleep or session gap | `willSleep`/`screensDidSleep`/session notifications stop observation and drop presence firings; wake starts a new generation (`TriggerCoordinator.swift:354-366`, `TriggerController.swift:400-417`) | Changes during sleep are lost by design; no replay | First post-wake snapshot is a baseline only |
+| T13 | Sleep, wake, fast user switching, session change | Achievable: no edge across a sleep or session gap | `willSleep`/`screensDidSleep`/session notifications stop observation and drop presence firings; wake starts a new generation (`TriggerCoordinator.swift:354-366`, `TriggerController.swift:400-417`) | Changes during sleep are lost by design; no replay. Since 2026-11-05 the verifier is reset on both sides of the gap (§3.4), so no confirmed identity outlives it | First post-wake snapshot is a baseline only; authorized rules clear nothing until a fresh check |
 | T14 | Legitimate app update (code hash changes) | Achievable: detection; not automatic continuity | Exact `cdhash` pin | Exact pins break on every update; a looser publisher requirement would accept other code by the same signer | Rule waits for explicit reselection; never silently re-binds or widens |
 | T15 | Different architecture (universal binary, Rosetta, `arm64` vs `arm64e`) | Partially achievable: per-slice hashes via explicit file offsets on one tested OS | `MachOSliceTable` (bounded parser) plus `kSecCodeAttributeUniversalFileOffset` (`ApplicationStaticCodeVerifier.swift:50-78`) | Default static lookup can return the wrong slice; an invalid architecture name returned success in one run; Rosetta-translated processes are untested; offset honoring is not verified in code | A running slice not in the authorized set is unknown, never a close |
 | T16 | Identity data from import, restore, legacy rules or edited JSON | Achievable for imports and restores: they arrive disabled (`TriggerBackupTests.swift:36-48`) and, after review, with any authorization reset to `unverified`. Not achievable against direct edits of the local trigger file by A1 | Backup tests; strict event and authorization decoders (`ApplicationIdentityAuthorizationTests`) | At review an enabled, hand-edited `applicationPresence` rule in the local file ran with every action. After review a rule without a record loads disabled, and an edited `unverified` record runs Show Popup only. A1 can still add rules or write records | Candidate: imported, restored and legacy rules stay disabled or unbound; imported hashes or requirement text never authorize; unknown fields keep the rule `.unsupported` |
@@ -226,6 +226,54 @@ Still open (unchanged unless noted):
   because its signature doesn't verify who made the app (T9 partly). Its texts are English only
   until the next translation pass; the other UI texts describe the approval as the app does it, and
   are translated.
+
+### 3.4 After the start-time bracket and the wake reset (2026-11-05)
+
+`app-presence-watch-upgrade.md` items 3 and 5 are implemented in the verifier and the controller.
+As above, "closed" means a gate in code and tests (an injected start-time reader and fake watches,
+plus real child processes for the reader itself); it is not a race-freedom claim.
+
+Closed or narrowed:
+
+- **T5 / PID reuse from listing on (verifier):** each listed instance's (PID, kernel start time)
+  (`ProcessIncarnation`, `proc_pidinfo(PROC_PIDTBSDINFO)`) is read in the main-actor turn that
+  listed it, again after its watch is registered, right before and right after the Security call
+  on the thread that makes it, when the check finishes, and at every later question. Every reading
+  must equal the first; a different one is `unavailable(processChanged)`, a failed one (`ESRCH`,
+  `EPERM`, a short answer, a zero start time) is `unavailable(processUnreadable)`. A check whose own
+  bracket failed answers neither `verified` nor `codeChanged`, so a PID recycled by other code
+  between listing and the check no longer saves the rule as needing re-approval. Because a PID is
+  reused only after its incarnation exited and a later incarnation starts later, equal readings
+  mean the listed incarnation lived through the check (argued; microsecond resolution).
+- **Sleep and session changes (verifier):** whenever the Mac stops or starts being able to act
+  (`TriggerController.handleWorkspaceSignal`, the same `canAct` transition that restarts the
+  presence source), `TriggerCoordinator.resetApplicationIdentityVerification()` makes the verifier
+  forget everything (checks and retries cancelled, watches closed, verdicts dropped) and drops every
+  presence firing. On the way back the new generation's `refresh()` starts fresh checks: authorized
+  rules answer `pending` (nothing acts) until confirmed, and the first snapshot is a baseline. This
+  removes the reliance on kqueue registrations surviving sleep.
+
+Still open:
+
+- **T5 before listing:** an `NSWorkspace` entry whose PID was reused before the verifier listed it
+  reads as the new process (no public per-instance start time or audit token). Effect: other code
+  there is `codeChanged` (a false "needs re-approval", steerable by A1, who can force that anyway).
+- **T5 for the approval:** `TriggerApplicationApprover` still reads by PID without the bracket
+  (its watch and instance-list checks are unchanged).
+- **T6 / exec before registration:** unchanged; the start time is kept across exec. The fresh check
+  after registration sees the post-exec code (argued; the fixture test of
+  `app-presence-watch-upgrade.md` §4.2 is not written yet).
+- **T10:** unchanged; the bracket adds a start-time read to every question, including the final
+  one before the handler, but the window from that poll to the action's effect stays.
+- **The Security call can't be cancelled:** unchanged; a reset or time-out only stops waiting, a
+  late answer is ignored (tested).
+- **No wake-up:** unchanged; the reset happens on the workspace signal, watch events are still
+  read only when the coordinator asks.
+- **Platform:** `proc_pidinfo` for same-user processes was exercised by unsigned test binaries
+  only; the signed, hardened app on every supported macOS needs the manual check of
+  `app-presence-watch-upgrade.md` §7. If it fails there, every authorized rule reads
+  `unavailable(processUnreadable)` (fail closed, not silent). A real PID reuse, a real sleep and
+  fast user switching are manual only.
 
 ## 4. Review findings at `c7a9f57`
 
