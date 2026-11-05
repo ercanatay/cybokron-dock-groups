@@ -75,6 +75,244 @@ struct DiskImageAttachRetryingRunner: ToolRunning {
     }
 }
 
+/// Lets one task at a time through; the others wait in order.
+actor TestAsyncLock {
+    private var held = false
+    private var waiters: [CheckedContinuation<Void, Never>] = []
+
+    func lock() async {
+        guard held else {
+            held = true
+            return
+        }
+        await withCheckedContinuation { waiters.append($0) }
+    }
+
+    func unlock() {
+        if waiters.isEmpty {
+            held = false
+        } else {
+            waiters.removeFirst().resume()
+        }
+    }
+}
+
+/// Real disk images for the tests that use the real hdiutil.
+///
+/// `hdiutil create -srcfolder` attaches a scratch image of its own while it copies. Run side by
+/// side (Swift Testing runs suites in parallel), creates were seen to leave that scratch image
+/// attached, and on CI one failed outright after ~10 s. So every test that makes or mounts a real
+/// disk image runs inside `exclusively`, one at a time across all suites, and leaves nothing
+/// attached. Images are made without `-quiet`: it also silences hdiutil's error message.
+enum RealDiskImages {
+    private static let lock = TestAsyncLock()
+
+    /// Waits after a failed create that looked transient; at most two retries.
+    static let createRetryDelays: [Duration] = [.seconds(1), .seconds(3)]
+
+    /// hdiutil failures that come from a busy machine rather than from the request.
+    static let transientFailureMarkers = [
+        "Resource busy",
+        "Resource temporarily unavailable",
+        "Device not configured",
+        "Operation timed out",
+    ]
+
+    static func isTransient(_ result: ToolResult) -> Bool {
+        !result.succeeded && transientFailureMarkers.contains { result.output.localizedCaseInsensitiveContains($0) }
+    }
+
+    struct Creation {
+        /// Every attempt in order; the last one is the result.
+        let attempts: [ToolResult]
+
+        var succeeded: Bool { attempts.last?.succeeded ?? false }
+
+        /// Status and full output of every attempt, for the failure message.
+        var report: String {
+            attempts.enumerated().map { index, result in
+                "attempt \(index + 1): status \(result.status), output: \(result.output.isEmpty ? "(none)" : result.output)"
+            }.joined(separator: "\n")
+        }
+    }
+
+    /// Runs `body` while no other test uses a real disk image; afterwards detaches whatever is
+    /// still attached from under `cleaning`.
+    static func exclusively<T>(cleaning directory: URL, _ body: () async throws -> T) async throws -> T {
+        await lock.lock()
+        do {
+            let value = try await body()
+            await detachImages(under: directory)
+            await lock.unlock()
+            return value
+        } catch {
+            await detachImages(under: directory)
+            await lock.unlock()
+            throw error
+        }
+    }
+
+    /// `hdiutil create` of a UDZO image of `folder` at `image`, tried again after each of `delays`
+    /// while the failure looks transient. Each failed attempt is logged; the caller decides.
+    static func create(
+        volumeName: String,
+        from folder: URL,
+        at image: URL,
+        runner: ToolRunning = SystemToolRunner(),
+        delays: [Duration] = RealDiskImages.createRetryDelays,
+        sleep: @Sendable (Duration) async -> Void = { try? await Task.sleep(for: $0) }
+    ) async throws -> Creation {
+        let arguments = ["create", "-volname", volumeName, "-srcfolder", folder.path, "-format", "UDZO", "-ov", image.path]
+        var attempts = [try await runner.run(UpdateInstaller.hdiutil, arguments: arguments)]
+        var remaining = delays[...]
+        while let last = attempts.last, isTransient(last), let delay = remaining.popFirst() {
+            log("hdiutil create attempt \(attempts.count) failed (status \(last.status)): \(last.output); retrying in \(delay)")
+            await sleep(delay)
+            attempts.append(try await runner.run(UpdateInstaller.hdiutil, arguments: arguments))
+        }
+        if let last = attempts.last, !last.succeeded {
+            log("hdiutil create attempt \(attempts.count) failed (status \(last.status)): \(last.output.isEmpty ? "(no output)" : last.output)")
+        }
+        return Creation(attempts: attempts)
+    }
+
+    /// Detaches every disk image whose file is under `directory`.
+    static func detachImages(under directory: URL, runner: ToolRunning = SystemToolRunner()) async {
+        guard let info = try? await runner.run(UpdateInstaller.hdiutil, arguments: ["info", "-plist"]), info.succeeded,
+              let plist = try? PropertyListSerialization.propertyList(from: Data(info.output.utf8), format: nil) as? [String: Any],
+              let images = plist["images"] as? [[String: Any]]
+        else { return }
+        let prefix = comparablePath(directory.path) + "/"
+        for image in images {
+            guard let path = image["image-path"] as? String, comparablePath(path).hasPrefix(prefix),
+                  let device = wholeDisk(of: image)
+            else { continue }
+            let detached = try? await runner.run(UpdateInstaller.hdiutil, arguments: ["detach", device, "-force"])
+            log("detached leftover \(path) (\(device)): status \(detached.map { "\($0.status)" } ?? "not run")")
+        }
+    }
+
+    private static func wholeDisk(of image: [String: Any]) -> String? {
+        let entities = (image["system-entities"] as? [[String: Any]]) ?? []
+        let devices = entities.compactMap { $0["dev-entry"] as? String }
+        return devices.first { $0.range(of: #"^/dev/disk\d+$"#, options: .regularExpression) != nil }
+    }
+
+    /// `/private/var/…` and `/var/…` name the same file.
+    private static func comparablePath(_ path: String) -> String {
+        let standardized = URL(fileURLWithPath: path).standardizedFileURL.path
+        return standardized.hasPrefix("/private/") ? String(standardized.dropFirst("/private".count)) : standardized
+    }
+
+    private static func log(_ message: String) {
+        FileHandle.standardError.write(Data("[RealDiskImages] \(message)\n".utf8))
+    }
+}
+
+/// Answers each call with the next of `results` (the last one repeats); records every call.
+final class ScriptedTools: ToolRunning, @unchecked Sendable {
+    private let lock = NSLock()
+    private var results: [ToolResult]
+    private var _calls: [[String]] = []
+
+    init(_ results: [ToolResult]) {
+        self.results = results
+    }
+
+    var calls: [[String]] { lock.withLock { _calls } }
+
+    func run(_ tool: URL, arguments: [String]) async throws -> ToolResult {
+        lock.withLock {
+            _calls.append([tool.lastPathComponent] + arguments)
+            return results.count > 1 ? results.removeFirst() : results[0]
+        }
+    }
+}
+
+@Suite("Real disk image creation (test support)")
+struct RealDiskImageCreationTests {
+    private let folder = URL(fileURLWithPath: "/tmp/source", isDirectory: true)
+    private let image = URL(fileURLWithPath: "/tmp/x.dmg")
+    private static let busy = ToolResult(status: 1, output: "hdiutil: create failed - Resource busy")
+
+    @Test func errorsAreNotSilenced() async throws {
+        let tools = ScriptedTools([ToolResult(status: 0, output: "created: /tmp/x.dmg")])
+
+        _ = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: tools, sleep: { _ in })
+
+        let call = try #require(tools.calls.first)
+        #expect(Array(call.prefix(2)) == ["hdiutil", "create"])
+        #expect(!call.contains("-quiet"))
+    }
+
+    @Test func aTransientFailureIsRetriedAtMostTwice() async throws {
+        let sleeps = RecordedSleeps()
+        let recovers = ScriptedTools([Self.busy, ToolResult(status: 0, output: "created")])
+        let recovered = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: recovers, sleep: sleeps.sleep)
+        #expect(recovered.succeeded)
+        #expect(recovers.calls.count == 2)
+
+        let stuck = ScriptedTools([Self.busy])
+        let failed = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: stuck, sleep: sleeps.sleep)
+        #expect(!failed.succeeded)
+        #expect(stuck.calls.count == 3)
+        #expect(sleeps.delays == [.seconds(1), .seconds(1), .seconds(3)])
+        #expect(failed.report.components(separatedBy: "Resource busy").count == 4)
+        #expect(failed.report.contains("attempt 3: status 1"))
+    }
+
+    @Test func otherFailuresAreNotRetried() async throws {
+        let sleeps = RecordedSleeps()
+        let tools = ScriptedTools([ToolResult(status: 1, output: "hdiutil: create failed - No such file or directory"), ToolResult(status: 0, output: "")])
+
+        let creation = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: tools, sleep: sleeps.sleep)
+
+        #expect(!creation.succeeded)
+        #expect(tools.calls.count == 1)
+        #expect(sleeps.delays.isEmpty)
+        #expect(creation.report == "attempt 1: status 1, output: hdiutil: create failed - No such file or directory")
+        #expect(!RealDiskImages.isTransient(ToolResult(status: 0, output: "Resource busy")))
+    }
+
+    @Test func exclusiveSectionsDoNotOverlap() async throws {
+        let directory = URL(fileURLWithPath: "/nonexistent-\(UUID().uuidString)", isDirectory: true)
+        let counter = OverlapCounter()
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for _ in 0..<8 {
+                group.addTask {
+                    try await RealDiskImages.exclusively(cleaning: directory) {
+                        counter.enter()
+                        try await Task.sleep(for: .milliseconds(5))
+                        counter.leave()
+                    }
+                }
+            }
+            try await group.waitForAll()
+        }
+        #expect(counter.maximum == 1)
+    }
+}
+
+/// Counts how many callers are between `enter` and `leave` at once.
+final class OverlapCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var current = 0
+    private var _maximum = 0
+
+    var maximum: Int { lock.withLock { _maximum } }
+
+    func enter() {
+        lock.withLock {
+            current += 1
+            _maximum = max(_maximum, current)
+        }
+    }
+
+    func leave() {
+        lock.withLock { current -= 1 }
+    }
+}
+
 /// Fails `hdiutil attach` the first `failures` times, then succeeds; records every call.
 final class FlakyAttachTools: ToolRunning, @unchecked Sendable {
     private let lock = NSLock()
@@ -342,28 +580,28 @@ struct UpdateInstallerTests {
     @Test func realDiskImageIsMountedCopiedAndDetached() async throws {
         let temporary = try TemporaryDirectory()
         defer { temporary.remove() }
-        let source = try folder("dmg-source", in: temporary)
-        _ = try makeApp(in: source, version: "0.6.0")
-        try FileManager.default.createSymbolicLink(at: source.appending(path: "Applications"), withDestinationURL: URL(fileURLWithPath: "/Applications"))
-        let image = temporary.url.appending(path: "test-universal.dmg")
-        let created = try await SystemToolRunner().run(UpdateInstaller.hdiutil, arguments: [
-            "create", "-quiet", "-volname", "Cybokron Update Test", "-srcfolder", source.path, "-format", "UDZO", "-ov", image.path,
-        ])
-        try #require(created.succeeded, "hdiutil create: \(created.output)")
-        // Attaching can fail transiently on a busy machine ("Resource temporarily unavailable").
-        let installer = UpdateInstaller(
-            directories: UpdateDirectories(root: temporary.url.appending(path: "updates")),
-            tools: DiskImageAttachRetryingRunner()
-        )
+        try await RealDiskImages.exclusively(cleaning: temporary.url) {
+            let source = try folder("dmg-source", in: temporary)
+            _ = try makeApp(in: source, version: "0.6.0")
+            try FileManager.default.createSymbolicLink(at: source.appending(path: "Applications"), withDestinationURL: URL(fileURLWithPath: "/Applications"))
+            let image = temporary.url.appending(path: "test-universal.dmg")
+            let created = try await RealDiskImages.create(volumeName: "Cybokron Update Test", from: source, at: image)
+            try #require(created.succeeded, "hdiutil create:\n\(created.report)")
+            // Attaching can fail transiently on a busy machine ("Resource temporarily unavailable").
+            let installer = UpdateInstaller(
+                directories: UpdateDirectories(root: temporary.url.appending(path: "updates")),
+                tools: DiskImageAttachRetryingRunner()
+            )
 
-        let staged = try await installer.stageApp(fromDiskImage: image, appName: Self.appName, expectedTeamIdentifier: nil)
+            let staged = try await installer.stageApp(fromDiskImage: image, appName: Self.appName, expectedTeamIdentifier: nil)
 
-        #expect(version(ofAppAt: staged) == "0.6.0")
-        #expect(throws: Never.self) {
-            try UpdateInstaller.validateStagedApp(staged, bundleIdentifier: Self.bundleIdentifier, version: SemanticVersion(major: 0, minor: 6, patch: 0))
+            #expect(version(ofAppAt: staged) == "0.6.0")
+            #expect(throws: Never.self) {
+                try UpdateInstaller.validateStagedApp(staged, bundleIdentifier: Self.bundleIdentifier, version: SemanticVersion(major: 0, minor: 6, patch: 0))
+            }
+            let mounts = (try? FileManager.default.contentsOfDirectory(atPath: installer.directories.mounts.path)) ?? []
+            #expect(mounts.isEmpty)
         }
-        let mounts = (try? FileManager.default.contentsOfDirectory(atPath: installer.directories.mounts.path)) ?? []
-        #expect(mounts.isEmpty)
     }
 
     // MARK: - Relaunch and cleanup
