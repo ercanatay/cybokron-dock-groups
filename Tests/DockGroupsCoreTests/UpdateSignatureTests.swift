@@ -313,10 +313,8 @@ struct UpdateSignatureTests {
     /// A disk image holding `folder`, signed ad hoc when `signed`.
     private func diskImage(of folder: URL, in temporary: TemporaryDirectory, signed: Bool) async throws -> URL {
         let image = temporary.url.appending(path: "update-\(UUID().uuidString).dmg")
-        let created = try await SystemToolRunner().run(UpdateInstaller.hdiutil, arguments: [
-            "create", "-quiet", "-volname", "Cybokron Signature Test", "-srcfolder", folder.path, "-format", "UDZO", "-ov", image.path,
-        ])
-        try #require(created.succeeded, "hdiutil create: \(created.output)")
+        let created = try await RealDiskImages.create(volumeName: "Cybokron Signature Test", from: folder, at: image)
+        try #require(created.succeeded, "hdiutil create:\n\(created.report)")
         if signed {
             let signing = try await SystemToolRunner().run(SystemTools.codesign, arguments: ["--force", "--sign", "-", image.path])
             try #require(signing.succeeded, "\(signing.output)")
@@ -347,23 +345,25 @@ struct UpdateSignatureTests {
     @Test func realCodesignRefusesAnAdHocOrUnsignedDiskImageBeforeMounting() async throws {
         let temporary = try TemporaryDirectory()
         defer { temporary.remove() }
-        let source = try TemporaryDirectory(base: temporary.url)
-        _ = try await signedApp(in: source)
-        let adHocImage = try await diskImage(of: source.url, in: temporary, signed: true)
-        let unsignedImage = try await diskImage(of: source.url, in: temporary, signed: false)
-        let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")), tools: SystemToolRunner())
+        try await RealDiskImages.exclusively(cleaning: temporary.url) {
+            let source = try TemporaryDirectory(base: temporary.url)
+            _ = try await signedApp(in: source)
+            let adHocImage = try await diskImage(of: source.url, in: temporary, signed: true)
+            let unsignedImage = try await diskImage(of: source.url, in: temporary, signed: false)
+            let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")), tools: SystemToolRunner())
 
-        await #expect(throws: UpdateInstallError.wrongSigner(found: "none", expected: "AAAAA11111")) {
-            try await installer.stageApp(fromDiskImage: adHocImage, appName: "Cybokron Dock Groups", expectedTeamIdentifier: "AAAAA11111")
+            await #expect(throws: UpdateInstallError.wrongSigner(found: "none", expected: "AAAAA11111")) {
+                try await installer.stageApp(fromDiskImage: adHocImage, appName: "Cybokron Dock Groups", expectedTeamIdentifier: "AAAAA11111")
+            }
+            do {
+                _ = try await installer.stageApp(fromDiskImage: unsignedImage, appName: "Cybokron Dock Groups", expectedTeamIdentifier: "AAAAA11111")
+                Issue.record("an unsigned disk image was mounted")
+            } catch let UpdateInstallError.invalidSignature(reason) {
+                #expect(reason.contains("not signed"))
+            }
+            // Nothing was mounted: no mount point was ever made.
+            #expect(!FileManager.default.fileExists(atPath: installer.directories.mounts.path))
         }
-        do {
-            _ = try await installer.stageApp(fromDiskImage: unsignedImage, appName: "Cybokron Dock Groups", expectedTeamIdentifier: "AAAAA11111")
-            Issue.record("an unsigned disk image was mounted")
-        } catch let UpdateInstallError.invalidSignature(reason) {
-            #expect(reason.contains("not signed"))
-        }
-        // Nothing was mounted: no mount point was ever made.
-        #expect(!FileManager.default.fileExists(atPath: installer.directories.mounts.path))
     }
 
     @Test func aModifiedAppIsRefused() async throws {
