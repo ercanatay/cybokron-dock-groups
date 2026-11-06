@@ -130,6 +130,7 @@
 		51F56235AEF7702B88963E58 /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F96706B977C84150E57515 /* MainWindowController.swift */; };
 		525BA16A665AC9EE2F470229 /* NetworkSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1671122467375A4D72559922 /* NetworkSource.swift */; };
 		52A4E5A4C5F3D0AC8D846B11 /* MaintenanceFixesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BE38322DF8AD7DF8ECBCAE /* MaintenanceFixesTests.swift */; };
+		52CF364BA4E4BC80FE138C91 /* ApplicationIdentityApprovalWakeUpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D93F556C16565114EE5866A /* ApplicationIdentityApprovalWakeUpTests.swift */; };
 		53414CA9D15F3E4390F84A6A /* TriggerReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45017E4752F90AF1C01C2C /* TriggerReducer.swift */; };
 		53841CCEB93676B137B051DF /* LocationAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E94FBAB1460FAEA91940A8 /* LocationAccess.swift */; };
 		53BEE0DDC31220E825B94763 /* InstanceHandoffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30FFA0365D0830EFFB829133 /* InstanceHandoffTests.swift */; };
@@ -174,6 +175,7 @@
 		6E9CE0EFEDF1A7964620CFED /* ItemLaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0842C1AE08A9FA6595C82765 /* ItemLaunchOptions.swift */; };
 		6EA1902143CABA315701031A /* TriggerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B39AF2B71D9CA7E08F7DCC8 /* TriggerController.swift */; };
 		6EFA3BA1981725E7D59F3362 /* ItemLaunchOptionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C66007059C9A6FBDB17DC9 /* ItemLaunchOptionsTests.swift */; };
+		6F7ADFA3AD54650EE31AB427 /* ApplicationProcessWatchBudget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB20FB1B4A9AD976209206B /* ApplicationProcessWatchBudget.swift */; };
 		6F7BC3D5439C12E975C0AEED /* GroupShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD00B8920D9002314BAFE6C /* GroupShortcuts.swift */; };
 		72620C71872560BF765E73CB /* UpdatesSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A22FD8F9E1099E382CFD66D /* UpdatesSettingsView.swift */; };
 		72F0A8ADAC1EED44436A36EB /* ApplicationCodeHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62E855B178CA7F09DF5E2831 /* ApplicationCodeHash.swift */; };
@@ -489,6 +491,7 @@
 		0988F41D4809E15C8C20AD9D /* GroupTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTemplate.swift; sourceTree = "<group>"; };
 		0B466AF13877FEB706CC4EF1 /* CaptureSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSheet.swift; sourceTree = "<group>"; };
 		0CFCFC3A5EDF56C15598F857 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
+		0D93F556C16565114EE5866A /* ApplicationIdentityApprovalWakeUpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationIdentityApprovalWakeUpTests.swift; sourceTree = "<group>"; };
 		0E1734687049FA11B8A5F55C /* LoginItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItem.swift; sourceTree = "<group>"; };
 		0E70CA1E9CE072269957EA67 /* ActivationHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationHistory.swift; sourceTree = "<group>"; };
 		0EA0505FFDB78ECC58BA1352 /* TriggersSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggersSettingsView.swift; sourceTree = "<group>"; };
@@ -818,6 +821,7 @@
 		C99B40BE3A70AC4CD7A958B4 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9B3D27BE7A878A0F37D4629 /* WebsiteIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteIcon.swift; sourceTree = "<group>"; };
 		CAAAB59FD1068F3EB439D51B /* SwitchingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingModelTests.swift; sourceTree = "<group>"; };
+		CAB20FB1B4A9AD976209206B /* ApplicationProcessWatchBudget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationProcessWatchBudget.swift; sourceTree = "<group>"; };
 		CAD0FDAC7C6E829A4C9BC786 /* ProcessIncarnationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessIncarnationTests.swift; sourceTree = "<group>"; };
 		CBC3759E0527D0F36B02E970 /* URLCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCommand.swift; sourceTree = "<group>"; };
 		CBEA0855DEB088258D896ECD /* ApplicationRunningCodeVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationRunningCodeVerifier.swift; sourceTree = "<group>"; };
@@ -1000,6 +1004,7 @@
 				98DAB4E261498671076A4942 /* ApplicationIdentityApproval.swift */,
 				78E5A59FEDEF953C430DB23E /* ApplicationIdentityAuthorization.swift */,
 				87DA8C48DDF9E954677F819A /* ApplicationIdentityCount.swift */,
+				CAB20FB1B4A9AD976209206B /* ApplicationProcessWatchBudget.swift */,
 				CBEA0855DEB088258D896ECD /* ApplicationRunningCodeVerifier.swift */,
 				08F43CF502642F9C675DCADE /* ApplicationStaticCodeVerifier.swift */,
 				61ECBBA474FF916EF94D7431 /* AppPresenceRuleTracker.swift */,
@@ -1379,6 +1384,7 @@
 				072B1C3F536D49E555273DC0 /* ApplicationCodeHashTests.swift */,
 				E8965A76C4527637115472B7 /* ApplicationCodeRequirementTests.swift */,
 				9392F2FA3E805B4F3D69ADD9 /* ApplicationIdentityApprovalTests.swift */,
+				0D93F556C16565114EE5866A /* ApplicationIdentityApprovalWakeUpTests.swift */,
 				2D07D76027A450FCD6E1177F /* ApplicationIdentityAuthorizationTests.swift */,
 				41676CE635E1EDD7DD6AD40D /* ApplicationIdentityCountTests.swift */,
 				D3FB966E5CCCB76057B07D55 /* ApplicationIdentityWatchWakeUpTests.swift */,
@@ -1975,6 +1981,7 @@
 				A7CA87B81040310DCEAB23E0 /* ApplicationIdentityApproval.swift in Sources */,
 				EA8B054BFB2F6DE625FFB6E6 /* ApplicationIdentityAuthorization.swift in Sources */,
 				E1C73BAF08C745EF408248AD /* ApplicationIdentityCount.swift in Sources */,
+				6F7ADFA3AD54650EE31AB427 /* ApplicationProcessWatchBudget.swift in Sources */,
 				B3275FE0AA1F0E4ADB785354 /* ApplicationRunningCodeVerifier.swift in Sources */,
 				A46AB3A1689E8B90C0167849 /* ApplicationStaticCodeVerifier.swift in Sources */,
 				F7435C36FF7B525F3315610C /* ApplicationWorkspace.swift in Sources */,
@@ -2145,6 +2152,7 @@
 				BF12830A4D38BAEA90316EB9 /* ApplicationCodeHashTests.swift in Sources */,
 				66FE4ACF9B3B9D48CE72F69F /* ApplicationCodeRequirementTests.swift in Sources */,
 				FB42D112EA4C6AE79CCEE8FD /* ApplicationIdentityApprovalTests.swift in Sources */,
+				52CF364BA4E4BC80FE138C91 /* ApplicationIdentityApprovalWakeUpTests.swift in Sources */,
 				20A3C8C9B01758EE29EBB6D5 /* ApplicationIdentityAuthorizationTests.swift in Sources */,
 				1F77F0ADE80198063181E4B6 /* ApplicationIdentityCountTests.swift in Sources */,
 				9090151B5C841E9707480217 /* ApplicationIdentityWatchWakeUpTests.swift in Sources */,

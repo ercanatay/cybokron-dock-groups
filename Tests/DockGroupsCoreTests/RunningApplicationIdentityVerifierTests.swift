@@ -176,7 +176,9 @@ final class VerifierRig {
     ///   - checkTimeout: The check's time bound.
     ///   - coordinated: Whether the coordinator uses the verifier (it then forgets bindings no rule
     ///     has); `false` tests the verifier alone.
-    init(_ triggers: [GroupTrigger], blocksSecurity: Bool = false, checkTimeout: Duration = .seconds(30), coordinated: Bool = true) {
+    ///   - budget: The verifier's watch bound; its own by default, so other tests' watches don't count
+    ///     against it.
+    init(_ triggers: [GroupTrigger], blocksSecurity: Bool = false, checkTimeout: Duration = .seconds(30), coordinated: Bool = true, budget: ApplicationProcessWatchBudget = ApplicationProcessWatchBudget(limit: ApplicationProcessWatchBudget.processLimit)) {
         persistence = MemoryTriggerPersistence(triggers)
         store = TriggerStore(persistence: persistence, saveDelay: .zero)
         weak var box: VerifierRig?
@@ -184,6 +186,7 @@ final class VerifierRig {
         verifier = RunningApplicationIdentityVerifier(
             instances: { _ in box?.readInstances() },
             makeWatch: { pid in box?.makeWatch(pid) },
+            budget: budget,
             readIncarnation: { incarnations.read($0) },
             check: ApplicationRunningCodeCheck(timeout: checkTimeout, compare: { pid, _, _ in
                 if blocksSecurity { blocker.block() }

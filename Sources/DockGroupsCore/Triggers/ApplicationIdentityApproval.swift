@@ -120,8 +120,8 @@ public enum TriggerApplicationApprovalFailure: String, CaseIterable, Hashable, S
     case timedOut
     /// The check was cancelled.
     case cancelled
-    /// The code couldn't be checked (Security error, a watch that couldn't be registered, the
-    /// running apps couldn't be listed).
+    /// The code couldn't be checked (Security error, a watch or its wake-up that couldn't be
+    /// started, no room left in the process-wide watch bound, the running apps couldn't be listed).
     case checkFailed
     /// The approval couldn't be written to the triggers file.
     case notSaved
@@ -143,12 +143,22 @@ struct VerifiedApplicationApproval: Sendable {
 ///
 /// 1. The trigger must be a saved application trigger that is `unverified` or `needsReapproval`.
 /// 2. No instance runs: `notRunning`, nothing is saved.
-/// 3. An exec/exit watch is registered on every instance first, then each is read and confirmed
-///    off the main actor (`ApplicationRunningIdentityReader`), each bounded by `timeout` and
-///    cancellable with the calling task.
-/// 4. Saved only when every instance read the same identifier (exactly the trigger's), the same
+/// 3. An exec/exit watch with its wake-up (`ApplicationProcessWatching.startSignalling`) is
+///    registered on every instance first, each taking a slot of the process-wide
+///    `ApplicationProcessWatchBudget` (shared with the verifier); then each instance is read and
+///    confirmed off the main actor (`ApplicationRunningIdentityReader`), each bounded by `timeout`
+///    and cancellable with the calling task. A watch that can't be registered, whose wake-up can't
+///    be started, or that finds no room in the bound saves nothing (`checkFailed`).
+/// 4. A watch that reports exec, exit or an error while the approval runs ends it at once
+///    (`appChanged`): the watch is closed and the reading cancelled, so no Security answer is
+///    waited for. During the ad-hoc confirmation the event is recorded the same way and the
+///    user's answer can no longer approve.
+/// 5. Saved only when every instance read the same identifier (exactly the trigger's), the same
 ///    exact `cdhash` and an approvable signature, every watch stayed idle, the instance list is
 ///    unchanged and the trigger is as it was. Anything else saves nothing.
+///
+/// Every watch is closed when `approve` returns, whatever it answers (a cancellation included);
+/// closing cancels its wake-up, and a late wake-up changes nothing.
 ///
 /// Saving doesn't turn the trigger on or off. Verification alone never authorizes: the coordinator
 /// keeps asking `RunningApplicationIdentityVerifier` before the approved trigger acts.
@@ -164,6 +174,8 @@ public final class TriggerApplicationApprover {
     private let store: TriggerStore
     private let instances: Instances
     private let makeWatch: MakeWatch
+    /// Where every watch takes its slot (`ApplicationProcessWatchBudget.shared` in the app).
+    let budget: ApplicationProcessWatchBudget
     private let read: Read
     private let timeout: Duration
     private let sleep: Sleep
@@ -180,6 +192,7 @@ public final class TriggerApplicationApprover {
         store: TriggerStore,
         instances: @escaping Instances,
         makeWatch: @escaping MakeWatch = { ExperimentalProcessEventWatch(pid: $0) },
+        budget: ApplicationProcessWatchBudget = .shared,
         read: @escaping Read = { ApplicationRunningIdentityReader.read(pid: $0, expectedIdentifier: $1) },
         timeout: Duration = TriggerApplicationApprover.defaultTimeout,
         sleep: @escaping Sleep = { try await Task.sleep(for: $0) },
@@ -188,6 +201,7 @@ public final class TriggerApplicationApprover {
         self.store = store
         self.instances = instances
         self.makeWatch = makeWatch
+        self.budget = budget
         self.read = read
         self.timeout = timeout
         self.sleep = sleep
@@ -198,6 +212,60 @@ public final class TriggerApplicationApprover {
         case read(ApplicationRunningIdentityReading)
         case timedOut
         case cancelled
+    }
+
+    /// One approval's watches and their wake-ups. A wake-up polls its watch (the same poll the
+    /// approval makes) and, when the poll isn't `.idle`, marks the approval changed, closes that
+    /// watch (a latched watch would keep its source firing) and cancels the reading. Its handlers
+    /// hold neither this object nor the watch, and a wake-up after `close()` only closes its watch
+    /// again.
+    @MainActor
+    private final class ApprovalWatches {
+        private(set) var watches: [any ApplicationProcessWatching] = []
+        /// A watch reported exec, exit or an error since it was registered.
+        private(set) var changed = false
+        private var isClosed = false
+        /// The reading under way; a wake-up that reports something cancels it.
+        var reading: Task<[InstanceResult], Never>?
+
+        func add(_ watch: any ApplicationProcessWatching) {
+            watches.append(watch)
+        }
+
+        func handler(for watch: any ApplicationProcessWatching) -> @MainActor () -> Void {
+            { [weak self, weak watch] in
+                guard let watch else { return }
+                guard let self else {
+                    watch.close()
+                    return
+                }
+                self.signalled(watch)
+            }
+        }
+
+        /// Every watch still idle and none reported anything before.
+        var allIdle: Bool {
+            !changed && watches.allSatisfy { $0.poll() == .idle }
+        }
+
+        /// Closes every watch (cancelling its wake-up) and the reading. Idempotent.
+        func close() {
+            isClosed = true
+            reading?.cancel()
+            reading = nil
+            for watch in watches { watch.close() }
+        }
+
+        private func signalled(_ watch: any ApplicationProcessWatching) {
+            guard !isClosed, watches.contains(where: { $0 === watch }) else {
+                watch.close()
+                return
+            }
+            guard watch.poll() != .idle else { return }
+            changed = true
+            watch.close()
+            reading?.cancel()
+        }
     }
 
     /// Asks the user to confirm approving ad-hoc signed code; `true` approves.
@@ -220,38 +288,54 @@ public final class TriggerApplicationApprover {
         if pids.isEmpty { return .notRunning }
         guard pids.count <= RunningApplicationIdentityVerifier.maximumInstancesPerApplication else { return .failed(.tooManyInstances) }
 
-        // Watch first, so an exec or exit around the reading is seen.
-        var watches: [any ApplicationProcessWatching] = []
-        defer { watches.forEach { $0.close() } }
+        // Every watch fits in the process-wide bound, or none is registered.
+        guard budget.available >= pids.count else { return .failed(.checkFailed) }
+
+        // Watch first, so an exec or exit around the reading is seen; the wake-up makes one seen
+        // at once. Fail closed: a watch that can't wake the approval counts as not registered.
+        let watches = ApprovalWatches()
+        defer { watches.close() }
         for pid in pids {
-            guard let watch = makeWatch(pid) else { return .failed(.checkFailed) }
-            watches.append(watch)
+            guard case .opened(let watch) = budget.open(pid: pid, with: makeWatch) else { return .failed(.checkFailed) }
+            watches.add(watch)
+            guard watch.startSignalling(watches.handler(for: watch)) else { return .failed(.checkFailed) }
             guard watch.poll() == .idle else { return .failed(.appChanged) }
         }
 
         let read = read, timeout = timeout, sleep = sleep
-        let results = await withTaskGroup(of: InstanceResult.self) { group -> [InstanceResult] in
-            for pid in pids {
-                group.addTask {
-                    await BoundedSecurityCall.run(timeout: timeout, sleep: sleep, timedOut: .timedOut, cancelled: .cancelled, misuse: .read(.unknown)) {
-                        .read(read(pid, bundleIdentifier))
+        let reading = Task { () -> [InstanceResult] in
+            await withTaskGroup(of: InstanceResult.self) { group -> [InstanceResult] in
+                for pid in pids {
+                    group.addTask {
+                        await BoundedSecurityCall.run(timeout: timeout, sleep: sleep, timedOut: .timedOut, cancelled: .cancelled, misuse: .read(.unknown)) {
+                            .read(read(pid, bundleIdentifier))
+                        }
                     }
                 }
+                var results: [InstanceResult] = []
+                for await result in group {
+                    results.append(result)
+                }
+                return results
             }
-            var results: [InstanceResult] = []
-            for await result in group {
-                results.append(result)
-            }
-            return results
         }
+        watches.reading = reading
+        let results = await withTaskCancellationHandler {
+            await reading.value
+        } onCancel: {
+            reading.cancel()
+        }
+        watches.reading = nil
 
+        // A watch reported something: the reading was cancelled, its answers don't count.
+        if watches.changed { return .failed(.appChanged) }
         if Task.isCancelled || results.contains(where: { if case .cancelled = $0 { return true }; return false }) {
             return .failed(.cancelled)
         }
         if results.contains(where: { if case .timedOut = $0 { return true }; return false }) {
             return .failed(.timedOut)
         }
-        guard watches.allSatisfy({ $0.poll() == .idle }) else { return .failed(.appChanged) }
+        guard watches.allIdle else { return .failed(.appChanged) }
         guard let relisted = instances(identifier) else { return .failed(.checkFailed) }
         guard Set(relisted) == pids else { return .failed(.appChanged) }
 
@@ -276,7 +360,7 @@ public final class TriggerApplicationApprover {
         if identity.signature == .adHoc {
             guard let confirmAdHoc, await confirmAdHoc() else { return .declined }
             if Task.isCancelled { return .failed(.cancelled) }
-            guard watches.allSatisfy({ $0.poll() == .idle }) else { return .failed(.appChanged) }
+            guard watches.allIdle else { return .failed(.appChanged) }
             guard let confirmed = instances(identifier), Set(confirmed) == pids else { return .failed(.appChanged) }
         }
 

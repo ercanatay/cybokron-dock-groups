@@ -24,7 +24,7 @@ enum ApplicationCodeCheckFailure: UInt8, CaseIterable, Sendable {
     case cancelled = 4
     /// The running instances couldn't be listed.
     case instancesUnknown = 5
-    /// More instances or watches than the verifier takes on.
+    /// More instances of one app than the verifier takes on.
     case tooManyInstances = 6
     /// A process watch couldn't be registered (the process may already be gone).
     case watchUnavailable = 7
@@ -35,6 +35,9 @@ enum ApplicationCodeCheckFailure: UInt8, CaseIterable, Sendable {
     /// An instance's kernel start time couldn't be read (`ProcessIncarnation`; the process may be
     /// gone, or reading isn't permitted).
     case processUnreadable = 9
+    /// The process-wide watch bound (`ApplicationProcessWatchBudget`) has no room for the
+    /// instances' watches; nothing was registered.
+    case atCapacity = 10
 
     var diagnosticCode: UInt8 { rawValue }
 }
@@ -248,7 +251,8 @@ extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}
 ///   needing re-approval (K2). Never retried, never widened.
 /// - `unavailable` for every failure: time-out, cancellation, a Security error, a watch that
 ///   couldn't be registered or reported exec, exit or an error, an instance that left before it
-///   was confirmed, a start time that changed or couldn't be read, too many instances. A failed
+///   was confirmed, a start time that changed or couldn't be read, too many instances, no room
+///   left in the process-wide watch bound. A failed
 ///   binding is checked again after `retryInterval` while it keeps answering `unavailable`, so a
 ///   retry can't make the rule flap.
 ///
@@ -267,8 +271,10 @@ extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}
 /// workspace entry) reads as the new process; an exec before a watch is registered isn't reported
 /// by the watch (the fresh check sees the post-exec code, so it affects attribution only); check
 /// and action aren't atomic (a wake-up after the final poll doesn't stop an action already
-/// started); a Security call can't be interrupted; the per-verifier watch limit is no process-wide
-/// descriptor limit. Logs only `ApplicationCodeCheckFailure.diagnosticCode`.
+/// started); a Security call can't be interrupted. Every watch takes a slot of the process-wide
+/// `ApplicationProcessWatchBudget` (shared with `TriggerApplicationApprover`); an instance set whose
+/// watches don't fit is `unavailable(.atCapacity)` and the watches already open stay as they are.
+/// Logs only `ApplicationCodeCheckFailure.diagnosticCode`.
 @MainActor
 final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     typealias Instances = @MainActor (TriggerApplicationIdentifier) -> [Int32]?
@@ -277,8 +283,6 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
 
     /// More instances of one app than this are `unavailable(.tooManyInstances)`.
     static let maximumInstancesPerApplication = 16
-    /// Open watches (one descriptor each) across every binding of this verifier.
-    static let maximumWatches = 64
     nonisolated static let defaultRetryInterval: Duration = .seconds(10)
 
     private enum Phase {
@@ -312,6 +316,8 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
 
     private let instances: Instances
     private let makeWatch: MakeWatch
+    /// Where every watch takes its slot (`ApplicationProcessWatchBudget.shared` in the app).
+    let budget: ApplicationProcessWatchBudget
     private let readIncarnation: ProcessIncarnation.Read
     private let check: ApplicationRunningCodeCheck
     private let retryInterval: Duration
@@ -331,6 +337,7 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     init(
         instances: @escaping Instances = RunningApplicationIdentityVerifier.runningInstances(of:),
         makeWatch: @escaping MakeWatch = { ExperimentalProcessEventWatch(pid: $0) },
+        budget: ApplicationProcessWatchBudget = .shared,
         readIncarnation: @escaping ProcessIncarnation.Read = { ProcessIncarnation.read(pid: $0) },
         check: ApplicationRunningCodeCheck = ApplicationRunningCodeCheck(),
         retryInterval: Duration = RunningApplicationIdentityVerifier.defaultRetryInterval,
@@ -338,6 +345,7 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     ) {
         self.instances = instances
         self.makeWatch = makeWatch
+        self.budget = budget
         self.readIncarnation = readIncarnation
         self.check = check
         self.retryInterval = retryInterval
@@ -486,10 +494,14 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
             closeWatches(of: &old)
             entries[binding] = old
         }
-        guard current.count <= Self.maximumInstancesPerApplication,
-              watchCount + current.count <= Self.maximumWatches
-        else {
+        guard current.count <= Self.maximumInstancesPerApplication else {
             fail(binding, .tooManyInstances, instances: current)
+            return
+        }
+        // The whole set fits in the process-wide bound, or nothing is registered (the old watches
+        // of this binding were closed above, so their slots count as free).
+        guard budget.available >= current.count else {
+            fail(binding, .atCapacity, instances: current)
             return
         }
         var watches: [Int32: any ApplicationProcessWatching] = [:]
@@ -505,7 +517,14 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
                 abandon(.processUnreadable)
                 return
             }
-            guard let watch = makeWatch(pid) else {
+            let watch: any ApplicationProcessWatching
+            switch budget.open(pid: pid, with: makeWatch) {
+            case .opened(let opened): watch = opened
+            case .atCapacity:
+                // Another owner took the room between the bound check and here.
+                abandon(.atCapacity)
+                return
+            case .unavailable:
                 abandon(.watchUnavailable)
                 return
             }

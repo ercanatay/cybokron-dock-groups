@@ -45,15 +45,20 @@ final class ApprovalRig {
     private(set) var listings = 0
     private(set) var watches: [FakeProcessWatch] = []
     var failsToWatch: Set<Int32> = []
+    /// PIDs whose watch's wake-up can't be started.
+    var failsToSignal: Set<Int32> = []
     /// What a newly registered watch reports at its first poll.
     var initialWatchEvent: ExperimentalProcessEventWatchPollResult = .idle
     let reads: FakeIdentityReads
+    /// The approver's own watch bound, so other tests' watches don't count against it.
+    let budget: ApplicationProcessWatchBudget
     let persistence: MemoryTriggerPersistence
     let store: TriggerStore
     var approver: TriggerApplicationApprover!
 
-    init(_ triggers: [GroupTrigger], holding: Bool = false, timeout: Duration = .seconds(30)) {
+    init(_ triggers: [GroupTrigger], holding: Bool = false, timeout: Duration = .seconds(30), budget: ApplicationProcessWatchBudget = ApplicationProcessWatchBudget(limit: ApplicationProcessWatchBudget.processLimit)) {
         reads = FakeIdentityReads(holding: holding)
+        self.budget = budget
         persistence = MemoryTriggerPersistence(triggers)
         store = TriggerStore(persistence: persistence, saveDelay: .zero)
         let reads = reads
@@ -62,6 +67,7 @@ final class ApprovalRig {
             store: store,
             instances: { _ in box?.list() },
             makeWatch: { pid in box?.makeWatch(pid) },
+            budget: budget,
             read: { pid, identifier in reads.read(pid, identifier) },
             timeout: timeout,
             clock: { ApprovalRig.approvedAt }
@@ -82,11 +88,14 @@ final class ApprovalRig {
         guard !failsToWatch.contains(pid) else { return nil }
         let watch = FakeProcessWatch()
         watch.event = initialWatchEvent
+        watch.signallingFails = failsToSignal.contains(pid)
         watches.append(watch)
         return watch
     }
 
     var allWatchesClosed: Bool { watches.allSatisfy(\.isClosed) }
+    /// Every watch closed, none still signalling, and every slot of the bound free again.
+    var nothingLeftOpen: Bool { allWatchesClosed && !watches.contains(where: \.isSignalling) && budget.openCount == 0 }
 
     func identity(_ hash: ApplicationCodeHash = newHash, _ signature: ApplicationIdentityBinding.SignatureKind = .developerID) -> ApplicationRunningIdentityReading {
         .identity(ApplicationRunningIdentity(codeHash: hash, signature: signature))

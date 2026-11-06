@@ -89,7 +89,7 @@ means no public, proportionate API known to this review provides the guarantee.
 | T9 | User confirmation race (sheet shows one candidate, binding applies to another) | Achievable only as "the binding is the exact candidate displayed", invalidated on any change; not atomic | Generation plus candidate identity on the confirmation (draft lifecycle step 4); not implemented | A1 can exec or swap between display and confirm; T5/T6 apply | Changed candidate, exec, exit, watch failure or stale generation invalidates the confirmation |
 | T10 | Check-to-action race (state changes after the last check, before or during the group action) | **Not achievable**: checks and `AutomationHandling` calls are not atomic. Achievable: no action starts after an invalidation that the main actor has already processed | Main-actor serialization; `currentInvalidated` checked after notices (`TriggerCoordinator.swift:499-516`); push invalidation | An action already started is not undone. Since the F2 fix, carry-out also re-checks each presence firing's stamp (tracker generation, revision, rule), so a forgotten push invalidation no longer lets it run | Invalidated firings are skipped; the spec forbids replay after rebaseline |
 | T11 | Multiple instances or the same identifier with different code | Achievable: count only when every candidate for that identifier verifies | `ApplicationIdentityCount.count` returns nil on any `.different`/`.unknown` (`ApplicationIdentityCount.swift:17-24`) | An empty input returns 0, which is a valid close only if the caller proved snapshot completeness | Any mismatch or unknown makes the rule unknown; ambiguity at selection leaves the rule unbound |
-| T12 | Watch registration failure or capacity exhaustion | Achievable: failure is reported, never treated as "no event" | Registration succeeds only with zero returned events (`ExperimentalProcessEventWatch.swift:88-96`) | One `kqueue` descriptor per watch (`ExperimentalProcessEventWatch.swift:65`) with no global limit; descriptor exhaustion is untested | Registration failure, `EINTR`, `EV_ERROR` or descriptor limits are unknown for the affected rule; partial coverage is not continued |
+| T12 | Watch registration failure or capacity exhaustion | Achievable: failure is reported, never treated as "no event" | Registration succeeds only with zero returned events (`ExperimentalProcessEventWatch.swift:88-96`) | One `kqueue` descriptor per watch (`ExperimentalProcessEventWatch.swift:65`); since 2026-11-06 at most 64 watches process-wide (`ApplicationProcessWatchBudget`, verifier and approval together, §3.6); exhaustion of `RLIMIT_NOFILE` by other code is untested | Registration failure, `EINTR`, `EV_ERROR` or descriptor limits are unknown for the affected rule; partial coverage is not continued |
 | T13 | Sleep, wake, fast user switching, session change | Achievable: no edge across a sleep or session gap | `willSleep`/`screensDidSleep`/session notifications stop observation and drop presence firings; wake starts a new generation (`TriggerCoordinator.swift:354-366`, `TriggerController.swift:400-417`) | Changes during sleep are lost by design; no replay. Since 2026-11-05 the verifier is reset on both sides of the gap (§3.4), so no confirmed identity outlives it | First post-wake snapshot is a baseline only; authorized rules clear nothing until a fresh check |
 | T14 | Legitimate app update (code hash changes) | Achievable: detection; not automatic continuity | Exact `cdhash` pin | Exact pins break on every update; a looser publisher requirement would accept other code by the same signer | Rule waits for explicit reselection; never silently re-binds or widens |
 | T15 | Different architecture (universal binary, Rosetta, `arm64` vs `arm64e`) | Partially achievable: per-slice hashes via explicit file offsets on one tested OS | `MachOSliceTable` (bounded parser) plus `kSecCodeAttributeUniversalFileOffset` (`ApplicationStaticCodeVerifier.swift:50-78`) | Default static lookup can return the wrong slice; an invalid architecture name returned success in one run; Rosetta-translated processes are untested; offset honoring is not verified in code | A running slice not in the authorized set is unknown, never a close |
@@ -142,7 +142,8 @@ Closed or narrowed:
 - **T8 (death during verification):** an instance that leaves before its check finished makes the
   binding `unavailable` (never a confirmed close); a verified instance may leave.
 - **T12 (watch registration failure):** registration failure or a pending event at registration is
-  `unavailable`; the verifier limits itself to 16 instances per app and 64 watches.
+  `unavailable`; the verifier limits itself to 16 instances per app and 64 watches (since
+  2026-11-06 a process-wide bound shared with the approval, §3.6).
 - **§7(c) item 6 (bounded, off-main, cancellable, timeout = unknown):** the Security comparison runs
   on a Dispatch global queue (outside the cooperative pool), the waiting is bounded (2 s) and
   cancellable, time-out and cancellation are `unavailable`.
@@ -168,7 +169,8 @@ Still open:
   carry-out, status line does not poll). An event between questions is seen at the next question.
   *Since 2026-11-06 (§3.5):* a read source wakes the verifier on every watch event.
 - **No global descriptor limit:** the 64-watch limit is per verifier; nothing limits descriptors
-  process-wide, and exhaustion is untested (it would read as `watchUnavailable`).
+  process-wide, and exhaustion is untested (it would read as `watchUnavailable`). *Since
+  2026-11-06 (§3.6):* one process-wide bound of 64 watches for the verifier and the approval.
 - **T2 / T9 / T15 / T16 (A1 edits):** unchanged. There is still no selection flow that creates a
   binding, so `authorized` records exist only in tests or a hand-edited file; a crafted record naming
   the genuine app's `cdhash` is now accepted while that exact code runs (A1 edits remain out of
@@ -222,7 +224,8 @@ Still open (unchanged unless noted):
 - **A1 file edits:** a crafted `authorized` record for the genuine app's `cdhash` in the local
   `triggers.json` is still accepted while that code runs (out of scope, §2).
 - **No wake-up:** as for the verifier, watches are polled only when the coordinator asks. *Since
-  2026-11-06 the verifier's watches wake it (§3.5); the approval's watches still only poll.*
+  2026-11-06 the verifier's watches wake it (§3.5); since the same day the approval's watches wake
+  the approval too (§3.6).*
 - **Signing kind:** the editor of an authorized trigger names the approved version's signing kind
   (D1, `GroupTrigger.approvedApplicationSignature`); an ad-hoc one is called a weaker approval,
   because its signature doesn't verify who made the app (T9 partly). Its texts are English only
@@ -316,11 +319,50 @@ Still open:
 - **T5 before listing:** unchanged (stale `NSWorkspace` entry whose PID was reused before listing).
 - **The Security call can't be cancelled:** unchanged; a wake-up cancels the waiting task only.
 - **Approval:** `TriggerApplicationApprover`'s watches still only poll, and its reading isn't
-  bracketed.
+  bracketed. *Wake-up done, see §3.6; the bracket is still open.*
 - **Descriptor limit:** unchanged (one descriptor per watch, 64 per verifier, nothing process-wide).
+  *Done, see §3.6.*
 - **Platform:** the read source on a kqueue descriptor was exercised by unsigned test binaries on
   one Mac (macOS 27.2) only; the signed, hardened app needs the manual check of
   `app-presence-watch-upgrade.md` §7. If it never fires there, behaviour is that of the poll alone.
+
+### 3.6 After the approval's wake-up and the process-wide watch bound (2026-11-06)
+
+See `app-presence-watch-upgrade.md`, "Implementation status (2026-11-06, approval)" for the
+fail-closed matrix. As above, "closed" means a gate in code and tests (synthetic wake-ups through
+fake watches, plus real child processes and real read sources); it is not a race-freedom claim.
+
+Closed or narrowed:
+
+- **No wake-up (approval):** every watch `TriggerApplicationApprover` registers starts its wake-up
+  (`startSignalling`) before its first poll; one that can't be started is `checkFailed` and nothing
+  is read. A wake-up whose poll isn't `idle` (exec, exit, exec and exit, an error) closes that watch
+  and cancels the reading at once: the approval answers `appChanged` without waiting for the
+  Security answers (they keep running on their own threads and are ignored), and nothing is saved.
+  During the ad-hoc confirmation the event is recorded the same way and the user's answer can no
+  longer approve. Every watch is closed when the approval returns, on every path including the
+  user's cancellation; a late wake-up reaches nothing (the handlers hold the approval and the watch
+  weakly, and a wake-up after the close only closes its watch again).
+- **T12 / descriptor bound:** one process-wide bound of 64 open watches
+  (`ApplicationProcessWatchBudget.processLimit`, `.shared`), shared by the verifier and the
+  approval. A watch takes its slot before it is registered and frees it when it is closed or
+  released. When the instances' watches don't all fit, none is registered: the verifier answers
+  `unavailable(atCapacity)` (abstract code 10, retried like every failure), the approval
+  `checkFailed`; watches already open, of either owner, keep working. A real watch with a started
+  wake-up closes its descriptor in its source's cancel handler, so for one main-queue turn after a
+  close the process may hold a few more descriptors than open slots.
+
+Still open:
+
+- **T6 before registration:** attribution only, unchanged (§3.5).
+- **T10:** unchanged.
+- **T5 before listing:** unchanged (stale `NSWorkspace` entry whose PID was reused before listing).
+- **T5 for the approval:** the approval's reading still isn't bracketed by the start time.
+- **The Security call can't be cancelled:** unchanged; a wake-up or a cancellation of the approval
+  only stops waiting.
+- **Descriptor exhaustion by other code:** the bound counts only these watches; `RLIMIT_NOFILE`
+  exhaustion by the rest of the process is untested (a failing `kqueue()` reads as
+  `watchUnavailable` / `checkFailed`).
 
 ## 4. Review findings at `c7a9f57`
 
