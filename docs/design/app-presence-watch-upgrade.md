@@ -1,8 +1,9 @@
 # Application presence: watch upgrade feasibility
 
 Status: design and feasibility record; items 3 and 5 (see "Implementation status (2026-11-05)"),
-item 1 and the item 2 fixture test (see "Implementation status (2026-11-06)") have since been
-implemented. The record itself approves nothing. It evaluates the
+item 1 and the item 2 fixture test (see "Implementation status (2026-11-06)"), and the approval's
+wake-up with a process-wide watch bound (see "Implementation status (2026-11-06, approval)") have
+since been implemented. The record itself approves nothing. It evaluates the
 residual risks listed as "still open" in `app-presence-threat-model.md` §3.2/§3.3 (T5, T6, T10, no
 wake-up, sleep/session) and in `app-presence-identity-authorization.md` ("Remaining risks"), and
 proposes what to do about each one. Nothing below claims that any protocol is race-free.
@@ -95,9 +96,50 @@ any question, bounded at 60 s).
 Still open, unchanged: **T6 before registration** (accepted limit, attribution only, see above);
 **T10** (a wake-up after the final poll doesn't stop an action already started; the window from
 that poll to the action's effect stays); **PID reuse before listing** (§4.3 option 3); the
-**uncancellable Security call**; no process-wide descriptor limit (1b); kqueue across a real sleep
+**uncancellable Security call**; no process-wide descriptor limit (1b; a bound is in place since
+the next section); kqueue across a real sleep
 (now irrelevant for verified state, which the reset drops, but not tested); the read source and
 `proc_pidinfo` inside the signed, hardened app (§7, manual).
+
+## Implementation status (2026-11-06, approval)
+
+| # | Item | Status |
+|---|------|--------|
+| 1 (approval) | Wake-up of `TriggerApplicationApprover` | **Implemented** with the verifier's pattern. Every watch starts its wake-up right after registration, before its first poll; a wake-up that can't be started is `checkFailed` (nothing read). The handler holds the approval's watch list and the watch weakly and polls once; anything but `.idle` marks the approval changed, closes that watch and cancels the reading task, so `approve` answers `appChanged` at once without waiting for the Security answers. Every watch is closed by `approve`'s `defer` on every path (user cancellation included), which cancels its source; its cancel handler closes the descriptor once |
+| 1b (bound) | Process-wide descriptor bound | **Implemented as a bound, not a shared kqueue**: `ApplicationProcessWatchBudget` (`Sources/DockGroupsCore/Triggers/ApplicationProcessWatchBudget.swift`), `processLimit = 64`, one `.shared` instance used by default by both the verifier and the approver (tests inject their own). A watch takes its slot before it is registered and frees it once when closed or released. The verifier's former per-verifier `maximumWatches` is gone. One descriptor per watch is unchanged |
+
+Fail-closed matrix (approval):
+
+| Situation | Outcome | Saved? |
+|-----------|---------|--------|
+| Wake-up can't be started | `failed(checkFailed)`, no reading, every watch closed | no |
+| Exec, exit, exec+exit or an error reported by a wake-up during the reading | `failed(appChanged)` at once, the reading cancelled (Security answers ignored), every watch closed | no |
+| The same during the ad-hoc confirmation | watch closed at once; after the user answers `failed(appChanged)` (or `declined`) | no |
+| Spurious wake-up (`.idle`) | nothing | — |
+| Wake-up never fires | the polls after the reading and after the confirmation decide, as before | as before |
+| User cancels | `failed(cancelled)`, every watch closed, sources cancelled, slots freed | no |
+| Late wake-up after `approve` returned | ignored (weak references; the watch is closed again) | no |
+| No room in the process-wide bound for every instance's watch | `failed(checkFailed)`, nothing registered, other watches untouched | no |
+
+Fail-closed matrix (bound, verifier):
+
+| Situation | Verdict |
+|-----------|---------|
+| The new instance set's watches don't fit (other bindings' or the approval's watches hold the room) | `unavailable(atCapacity)` (abstract code 10), nothing registered or checked, retried after 10 s; the watches already open keep working |
+| `kqueue()` or registration fails (descriptor exhaustion by other code included) | `unavailable(watchUnavailable)`, the slot freed again |
+
+Tests: `ApplicationIdentityApprovalWakeUpTests.swift` (synthetic exec, exit, exec+exit and error
+wake-ups during a held reading answer before the reading returns; one of several instances; a
+spurious wake-up; a wake-up that can't be started; an event during the ad-hoc confirmation;
+cancellation with late wake-ups; real exec and exit of children reaching the approval through the
+read source; a real source cancelled and its descriptor closed once on cancellation; the bound
+itself; the verifier at the bound; the verifier and the approver sharing one bound). Existing tests
+unchanged except that the verifier and approval rigs get their own bound.
+
+Still open after this: **T6 before registration** (attribution only); **T10**; **PID reuse before
+listing**; the **uncancellable Security call** (a wake-up or cancellation only stops waiting); the
+approval's reading isn't bracketed by the start time; descriptor exhaustion by other code in the
+process isn't tested; the read source inside the signed, hardened app (§7, manual).
 
 ## 1. Evidence gathered for this document
 

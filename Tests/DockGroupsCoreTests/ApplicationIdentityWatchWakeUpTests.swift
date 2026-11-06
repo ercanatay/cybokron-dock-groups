@@ -40,7 +40,7 @@ final class ListedPIDs {
 /// A `/bin/bash` child (or `executable`, a shell) that prints `ready`, waits for a line on its
 /// input, then runs `then`. Returned once it printed `ready`, so whatever the launch itself did is
 /// over before a test registers anything.
-private func startShell(_ children: ChildProcesses, executable: URL = URL(fileURLWithPath: "/bin/bash"), then script: String, arguments: [String] = []) async throws -> (Process, FileHandle) {
+func startShell(_ children: ChildProcesses, executable: URL = URL(fileURLWithPath: "/bin/bash"), then script: String, arguments: [String] = []) async throws -> (Process, FileHandle) {
     let input = Pipe()
     let output = Pipe()
     let child = Process()

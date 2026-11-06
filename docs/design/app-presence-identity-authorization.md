@@ -164,7 +164,10 @@ per binding it is asked about:
    never confirmed). An `unavailable` binding is checked again every 10 s while it keeps answering
    `unavailable`; only a successful retry changes it (and then the coordinator restarts
    observations under a new generation). `codeChanged` is never retried.
-5. Limits: 16 instances per application, 64 open watches per verifier; more is `unavailable`.
+5. Limits: 16 instances per application; every watch takes a slot of the process-wide bound of
+   64 open watches (`ApplicationProcessWatchBudget`, shared with the approval since 2026-11-06).
+   More instances is `unavailable(tooManyInstances)`, a set that doesn't fit in the bound is
+   `unavailable(atCapacity)` (abstract code 10) and the watches already open stay.
    Bindings no runnable rule uses any more are forgotten (`retainOnly`), closing their watches and
    cancelling their checks.
 6. `reset()` forgets every binding the same way; the coordinator calls it
@@ -315,10 +318,14 @@ appears in diagnostics (which report trigger counts and kinds only).
   source on its kqueue descriptor, threat model §3.5): exec, an error or an unconfirmed exit is
   `unavailable` at once and the coordinator is told; nothing is confirmed by a wake-up. An
   `unavailable` rule still recovers only through its retry; a rule whose only source of questions
-  is its own observation is asked again on the retry's change notification. The approval's watches
-  still only poll.
-- **Descriptor limit.** The 64-watch limit is per verifier; there is no process-wide descriptor limit
-  and descriptor exhaustion is untested (it would be `watchUnavailable`).
+  is its own observation is asked again on the retry's change notification. Since 2026-11-06 the
+  approval's watches wake the approval too: an exec, exit or error while it runs ends it at once
+  (`appChanged`, the reading cancelled without waiting for Security, nothing saved).
+- **Descriptor limit.** Since 2026-11-06 one process-wide bound of 64 open watches
+  (`ApplicationProcessWatchBudget.processLimit`) covers the verifier and the approval together;
+  a watch that finds no room is never registered (`unavailable(atCapacity)` / `checkFailed`).
+  Real descriptor exhaustion by other code in the process (`RLIMIT_NOFILE`) is still untested (it
+  would be `watchUnavailable`).
 - **Different signing identifier, same bundle identifier.** Any listed instance whose code doesn't
   satisfy the authorized `identifier` + `cdhash` (including a look-alike, a case variant of the
   bundle identifier, or a legitimate update) is `codeChanged` and makes the rule wait for
