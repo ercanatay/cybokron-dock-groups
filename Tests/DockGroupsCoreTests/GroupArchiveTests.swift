@@ -95,7 +95,7 @@ struct GroupArchiveStoreTests {
         let archived = store.archivedGroups
 
         store.updateGroup(work.id) { $0.name = "Changed" }
-        #expect(!store.renameGroup(work.id, to: "Changed"))
+        #expect(store.renameGroup(work.id, to: "Changed") == .unknownGroup)
         #expect(store.addItems([Self.mail], toGroup: work.id) == 0)
         #expect(store.setShortcut(makeShortcut(kVK_ANSI_K, [.control, .option]), forGroup: work.id) == .unknownGroup)
         #expect(store.duplicateGroup(work.id) == nil)
@@ -526,14 +526,21 @@ struct GroupDuplicateTests {
         #expect(store.duplicateGroup(coding.id)?.name == "Coding copy 2")
     }
 
-    @Test func namesTheUserTypesAreKept() throws {
+    /// A name given is kept, even an archived group's; but renaming refuses an active group's name
+    /// (ignoring case), so links naming a group by name don't become ambiguous.
+    @Test func namesTheUserTypesAreKeptUnlessAnActiveGroupHasThem() throws {
         let (store, _) = GroupStore.archiving()
         let work = store.addGroup(named: "Work")
         store.archiveGroup(work.id)
         let other = store.addGroup(named: "Work")
         #expect(other.name == "Work", "a name given is kept")
         let home = store.addGroup(named: "Home")
-        #expect(store.renameGroup(home.id, to: "Work"))
+        #expect(store.renameGroup(home.id, to: "Work") == .nameTaken(by: other.id))
+        #expect(store.renameGroup(home.id, to: " work ") == .nameTaken(by: other.id))
+        #expect(store.group(withID: home.id)?.name == "Home")
+        // An archived group's name is free to take: links never see archived groups.
+        store.archiveGroup(other.id)
+        #expect(store.renameGroup(home.id, to: "Work") == .renamed)
         #expect(store.group(withID: home.id)?.name == "Work")
         // A restored group keeps its name, too.
         #expect(store.restoreGroup(work.id)?.group.name == "Work")

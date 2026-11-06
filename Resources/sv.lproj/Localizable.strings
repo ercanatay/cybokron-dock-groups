@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri och Genvägar";
 "settings.shortcuts.siri.footer" = "Be Siri med dessa ord, med röst eller genom att skriva. De använder gruppens aktuella namn; genvägar du bygger fortsätter att fungera efter ett namnbyte.";
 "settings.shortcuts.links.noGroups" = "Lägg till en grupp för att se dess länkar.";
-"settings.shortcuts.links.footer" = "Öppna en länk från ett skript eller en annan app, t.ex. med `open` i Terminal. En grupp anges med sitt namn (versaler, accenter och skiljetecken spelar ingen roll) eller, om namnet är tvetydigt, med dess ID. Lägg till ?mode=force på en avslutslänk för att tvinga avslut.";
 "settings.shortcuts.copy.help" = "Kopiera „%@“ till Urklipp.";
 
 /* Settings → Most Used */

@@ -80,11 +80,12 @@ struct GroupStoreTests {
         let store = makeStore()
         let group = store.addGroup(named: "Work")
 
-        #expect(store.renameGroup(group.id, to: "  Office  "))
+        #expect(store.renameGroup(group.id, to: "  Office  ") == .renamed)
         #expect(store.group(withID: group.id)?.name == "Office")
-        #expect(!store.renameGroup(group.id, to: "  "))
+        #expect(store.renameGroup(group.id, to: "Office") == .unchanged)
+        #expect(store.renameGroup(group.id, to: "  ") == .blankName)
         #expect(store.group(withID: group.id)?.name == "Office")
-        #expect(!store.renameGroup(UUID(), to: "Ghost"))
+        #expect(store.renameGroup(UUID(), to: "Ghost") == .unknownGroup)
         #expect(makeStore().group(withID: group.id)?.name == "Office")
     }
 

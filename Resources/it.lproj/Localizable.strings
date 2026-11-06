@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri e Comandi rapidi";
 "settings.shortcuts.siri.footer" = "Chiedi a Siri con queste parole, a voce o scrivendole. Usano il nome attuale del gruppo; i comandi rapidi che crei continuano a funzionare dopo una rinomina.";
 "settings.shortcuts.links.noGroups" = "Aggiungi un gruppo per vederne i link.";
-"settings.shortcuts.links.footer" = "Apri un link da uno script o da un'altra app, per esempio con `open` nel Terminale. Un gruppo si indica con il suo nome (maiuscole, accenti e punteggiatura non contano) oppure, se il nome è ambiguo, con il suo ID. Aggiungi ?mode=force a un link di uscita per forzarla.";
 "settings.shortcuts.copy.help" = "Copia “%@” negli appunti.";
 
 /* Settings → Most Used */

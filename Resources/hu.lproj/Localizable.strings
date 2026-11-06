@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri és Parancsok";
 "settings.shortcuts.siri.footer" = "Ezekkel a szavakkal kérje Sirit, hangon vagy gépelve. A csoport aktuális nevét használják; az Ön által készített parancsok átnevezés után is működnek.";
 "settings.shortcuts.links.noGroups" = "Adjon hozzá egy csoportot, hogy lássa a hivatkozásait.";
-"settings.shortcuts.links.footer" = "Hivatkozást szkriptből vagy másik alkalmazásból nyithat meg, pl. a Terminál `open` parancsával. A csoportot a nevével azonosítja (a kis- és nagybetű, az ékezetek és az írásjelek nem számítanak), vagy ha a név egyértelmű, az azonosítójával. Kényszerített kilépéshez adja hozzá a ?mode=force paramétert a kilépési hivatkozáshoz.";
 "settings.shortcuts.copy.help" = "A(z) „%@” másolása a vágólapra.";
 
 /* Settings → Most Used */

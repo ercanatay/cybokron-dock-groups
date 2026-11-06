@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri والاختصارات";
 "settings.shortcuts.siri.footer" = "اطلب من Siri بهذه العبارات، بالصوت أو بالكتابة. تستخدم الاسم الحالي للمجموعة، والاختصارات التي تبنيها تستمر في العمل بعد إعادة التسمية.";
 "settings.shortcuts.links.noGroups" = "أضف مجموعة لترى روابطها.";
-"settings.shortcuts.links.footer" = "افتح رابطًا من سكربت أو تطبيق آخر، مثلًا بالأمر `open` في Terminal. تُسمّى المجموعة باسمها (لا فرق للأحرف والتشكيل وعلامات الترقيم)، أو بمعرّفها إذا كان الاسم ملتبسًا. أضِف ?mode=force إلى رابط الإنهاء لفرض الإنهاء.";
 "settings.shortcuts.copy.help" = "نسخ “%@” إلى الحافظة.";
 
 /* Settings → Most Used */

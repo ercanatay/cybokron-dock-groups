@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri とショートカット";
 "settings.shortcuts.siri.footer" = "次の言葉を音声または入力で Siri に伝えてください。グループの現在の名前が使われます。作成したショートカットは、名前を変更しても引き続き動作します。";
 "settings.shortcuts.links.noGroups" = "グループを追加すると、そのリンクが表示されます。";
-"settings.shortcuts.links.footer" = "スクリプトや別のアプリから、たとえばターミナルの `open` を使ってリンクを開けます。グループは名前（大文字小文字、アクセント、句読点は区別されません）で指定します。名前が重複する場合は ID を使います。終了リンクに ?mode=force を付けると強制終了します。";
 "settings.shortcuts.copy.help" = "“%@” をクリップボードにコピーします。";
 
 /* 設定 → よく使うアプリ */

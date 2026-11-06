@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri und Kurzbefehle";
 "settings.shortcuts.siri.footer" = "Fragen Sie Siri mit diesen Worten, per Sprache oder durch Tippen. Sie verwenden den aktuellen Namen der Gruppe; selbst erstellte Kurzbefehle funktionieren nach einer Umbenennung weiter.";
 "settings.shortcuts.links.noGroups" = "Fügen Sie eine Gruppe hinzu, um ihre Links zu sehen.";
-"settings.shortcuts.links.footer" = "Öffnen Sie einen Link aus einem Skript oder einer anderen App, z. B. mit `open` im Terminal. Eine Gruppe wird über ihren Namen angesprochen (Groß-/Kleinschreibung, Akzente und Satzzeichen spielen keine Rolle) oder, wenn der Name nicht eindeutig ist, über ihre ID. Fügen Sie ?mode=force an einen Beenden-Link an, um zu erzwingen.";
 "settings.shortcuts.copy.help" = "„%@“ in die Zwischenablage kopieren.";
 
 /* Settings → Most Used */

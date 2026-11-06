@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri dan Pintasan";
 "settings.shortcuts.siri.footer" = "Minta Siri dengan kata-kata ini, dengan suara atau mengetik. Kata-kata itu memakai nama grup yang terkini; pintasan yang Anda buat tetap berfungsi setelah diganti nama.";
 "settings.shortcuts.links.noGroups" = "Tambahkan grup untuk melihat tautannya.";
-"settings.shortcuts.links.footer" = "Buka tautan dari skrip atau app lain, misalnya dengan `open` di Terminal. Grup dinamai dengan namanya (huruf besar/kecil, aksen dan tanda baca diabaikan) atau, jika namanya ambigu, dengan ID-nya. Tambahkan ?mode=force pada tautan keluar untuk memaksa berhenti.";
 "settings.shortcuts.copy.help" = "Salin “%@” ke papan klip.";
 
 /* Settings → Most Used */

@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri et Raccourcis";
 "settings.shortcuts.siri.footer" = "Demandez à Siri avec ces mots, à la voix ou en tapant. Ils utilisent le nom actuel du groupe ; les raccourcis que vous créez continuent de fonctionner après un renommage.";
 "settings.shortcuts.links.noGroups" = "Ajoutez un groupe pour voir ses liens.";
-"settings.shortcuts.links.footer" = "Ouvrez un lien depuis un script ou une autre app, par exemple avec `open` dans Terminal. Un groupe est désigné par son nom (la casse, les accents et la ponctuation ne comptent pas) ou, si le nom est ambigu, par son ID. Ajoutez ?mode=force à un lien de fermeture pour forcer la fermeture.";
 "settings.shortcuts.copy.help" = "Copier « %@ » dans le presse-papiers.";
 
 /* Settings → Most Used */

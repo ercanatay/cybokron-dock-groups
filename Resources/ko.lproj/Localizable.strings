@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri 및 단축어";
 "settings.shortcuts.siri.footer" = "아래 문구를 음성 또는 입력으로 Siri에 말하세요. 그룹의 현재 이름을 사용하며, 직접 만든 단축어는 이름을 바꾼 뒤에도 계속 작동합니다.";
 "settings.shortcuts.links.noGroups" = "그룹을 추가하면 그룹의 링크를 볼 수 있습니다.";
-"settings.shortcuts.links.footer" = "스크립트나 다른 앱에서, 예를 들어 터미널의 `open`으로 링크를 열 수 있습니다. 그룹은 이름(대소문자, 악센트, 문장 부호는 무시됨)으로 지정하며, 이름이 모호하면 ID를 사용합니다. 종료 링크에 ?mode=force를 붙이면 강제 종료합니다.";
 "settings.shortcuts.copy.help" = "“%@”을(를) 클립보드에 복사합니다.";
 
 /* 설정 → 자주 사용하는 항목 */

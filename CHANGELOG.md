@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Group links copied from Settings → Shortcuts & Siri name the group by its ID, followed by its name only to make them readable (`cybokrondockgroups://open/<ID>/work`), so they keep working after the group is renamed. Older links by name or ID still work, and `?mode=force` is kept
+- Renaming a group to the name of another group (ignoring case) is refused; the group window says which group has the name
+
+### Fixed
+
+- A link whose group doesn't exist anymore, or whose name more than one group has, now shows an alert instead of only beeping; it never opens the first of several groups with that name, and an ID no group has is never tried as a name
+
 ## [0.12.1] - 2026-11-05
 
 ### Changed

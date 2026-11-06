@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri en Snelkoppelingen";
 "settings.shortcuts.siri.footer" = "Vraag Siri met deze woorden, met je stem of door te typen. Ze gebruiken de huidige naam van de groep; snelkoppelingen die je maakt blijven werken na een hernoeming.";
 "settings.shortcuts.links.noGroups" = "Voeg een groep toe om de links ervan te zien.";
-"settings.shortcuts.links.footer" = "Open een link vanuit een script of een andere app, bijvoorbeeld met `open` in Terminal. Een groep wordt aangeduid met haar naam (hoofdletters, accenten en leestekens doen er niet toe) of, als de naam dubbelzinnig is, met haar ID. Voeg ?mode=force toe aan een stoplink om te forceren.";
 "settings.shortcuts.copy.help" = "Kopieer „%@“ naar het klembord.";
 
 /* Settings → Most Used */

@@ -159,7 +159,7 @@ struct CaptureSurfaceTests {
         #expect(app.contains("case .captureNewGroup:\n            // Only the sheet: the user's click makes the group (capture spec Decision 5).\n            beginCapture(.newGroup)"))
         #expect(app.contains("case .captureOpenApps(let name):\n            if let group = group(named: name) { beginCapture(.group(group.id)) }"))
         // Links find active groups only (`store.groups`), so an archived group is never a target.
-        #expect(app.contains("guard let group = GroupLookup.group(matching: name, in: store.groups) else {"))
+        #expect(app.contains("let resolution = GroupLookup.resolve(name, in: store.groups)"))
         #expect(app.contains("if case .group(let id) = target, store.group(withID: id) == nil {"))
 
         let window = try Self.source("MainWindow/MainWindowView.swift")
@@ -173,7 +173,7 @@ struct CaptureSurfaceTests {
         let menu = try Self.source("MenuBar/StatusBarController.swift")
         #expect(menu.contains("NSMenuItem(title: L10n.Capture.menuBarItem, action: #selector(captureNewGroup(_:)), keyEquivalent: \"\")"))
         let settings = try Self.source("Settings/ShortcutsSettingsView.swift")
-        #expect(settings.contains("+ [GroupInvocations.captureLink(for: group, in: store.groups)]"))
+        #expect(settings.contains("+ [GroupInvocations.captureLink(for: group)]"))
     }
 
     /// The popup offers Add Open Apps… only where the group can be edited: never for Most Used, and

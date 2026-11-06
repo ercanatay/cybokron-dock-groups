@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri và Lối tắt";
 "settings.shortcuts.siri.footer" = "Yêu cầu Siri bằng các từ này, bằng giọng nói hoặc gõ chữ. Chúng dùng tên hiện tại của nhóm; lối tắt bạn tạo vẫn hoạt động sau khi đổi tên.";
 "settings.shortcuts.links.noGroups" = "Thêm một nhóm để xem liên kết của nhóm.";
-"settings.shortcuts.links.footer" = "Mở liên kết từ một tập lệnh hoặc ứng dụng khác, ví dụ bằng `open` trong Terminal. Nhóm được gọi bằng tên (không phân biệt chữ hoa, dấu và dấu câu) hoặc, khi tên bị trùng, bằng ID của nhóm. Thêm ?mode=force vào liên kết thoát để buộc thoát.";
 "settings.shortcuts.copy.help" = "Sao chép “%@” vào bộ nhớ tạm.";
 
 /* Settings → Most Used */

@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri və Qısayollar";
 "settings.shortcuts.siri.footer" = "Siri-yə bu sözlərlə səslə və ya yazaraq müraciət edin. Onlar qrupun cari adından istifadə edir; yaratdığınız qısayollar adı dəyişdikdən sonra da işləməyə davam edir.";
 "settings.shortcuts.links.noGroups" = "Keçidlərini görmək üçün qrup əlavə edin.";
-"settings.shortcuts.links.footer" = "Keçidi skriptdən və ya başqa tətbiqdən açın, məsələn Terminal-da `open` ilə. Qrup adı ilə (böyük-kiçik hərf, diakritik və durğu işarələri fərq etmir) və ya ad qeyri-müəyyən olduqda ID ilə göstərilir. Məcburi çıxmaq üçün çıxış keçidinə ?mode=force əlavə edin.";
 "settings.shortcuts.copy.help" = "“%@” mətnini buferə kopyala.";
 
 /* Settings → Most Used */

@@ -273,8 +273,13 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   | `cybokrondockgroups://capture/<group>` | Shows Add Open Apps for the group; nothing is added until you click Add |
   | `cybokrondockgroups://close` · `settings` · `groups` | Closes the popup · opens Settings · the group window |
 
-  `<group>` is the group's name — case, accents, spaces and punctuation don't matter
-  (`Çalışma Alanı` → `calisma-alani`) — or its ID. The same link is ignored when it comes again
+  `<group>` is the group's ID followed by its name as a slug, as Settings → Shortcuts & Siri lists
+  and copies the links (`<ID>/calisma-alani`): the ID decides, so a link keeps working after the
+  group is renamed, and the slug is only there to read. A link you write yourself can use the
+  group's name instead — case, accents, spaces and punctuation don't matter
+  (`Çalışma Alanı` → `calisma-alani`) — or the ID alone. An ID no group has never falls back to a
+  name, and a name more than one group answers to opens none of them; either way an alert says why.
+  Renaming a group to another group's name is refused. The same link is ignored when it comes again
   within 5 seconds, and `launch` / `hide` / `start` / `finish` links share one more 5-second limit:
   one group's apps are opened, hidden, started or finished per 5 seconds, whichever group the links
   name (menus, shortcuts, Siri and Shortcuts aren't limited). A quit link always asks first, in a

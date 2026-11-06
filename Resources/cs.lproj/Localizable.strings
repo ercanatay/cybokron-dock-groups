@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri a Zástupci";
 "settings.shortcuts.siri.footer" = "Požádejte Siri těmito slovy, hlasem nebo psaním. Používají aktuální název skupiny; zástupci, které vytvoříte, fungují i po přejmenování.";
 "settings.shortcuts.links.noGroups" = "Přidejte skupinu, abyste viděli její odkazy.";
-"settings.shortcuts.links.footer" = "Otevřete odkaz ze skriptu nebo jiné aplikace, např. příkazem `open` v Terminálu. Skupina se určuje podle názvu (velikost písmen, diakritika a interpunkce nehrají roli), nebo, je-li název nejednoznačný, podle ID. Chcete-li vynutit ukončení, přidejte k odkazu pro ukončení ?mode=force.";
 "settings.shortcuts.copy.help" = "Zkopírovat „%@“ do schránky.";
 
 /* Settings → Most Used */

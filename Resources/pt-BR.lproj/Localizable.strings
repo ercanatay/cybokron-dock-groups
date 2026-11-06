@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri e Atalhos";
 "settings.shortcuts.siri.footer" = "Peça à Siri com estas palavras, por voz ou digitando. Elas usam o nome atual do grupo; os atalhos que você criar continuam funcionando depois de uma renomeação.";
 "settings.shortcuts.links.noGroups" = "Adicione um grupo para ver os links dele.";
-"settings.shortcuts.links.footer" = "Abra um link a partir de um script ou de outro app, por exemplo com `open` no Terminal. Um grupo é indicado pelo nome (maiúsculas, acentos e pontuação não importam) ou, quando o nome é ambíguo, pelo ID. Adicione ?mode=force a um link de saída para forçar a saída.";
 "settings.shortcuts.copy.help" = "Copiar “%@” para a área de transferência.";
 
 /* Settings → Most Used */

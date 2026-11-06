@@ -113,8 +113,9 @@ struct GroupDetailView: View {
             popupSection
         }
         .formStyle(.grouped)
-        // Edits apply as you type, so the sidebar and the menu update immediately. A blank name is
-        // ignored by the store, and the field shows the stored values again once it loses focus.
+        // Edits apply as you type, so the sidebar and the menu update immediately. A blank name, or
+        // one another group has, is ignored by the store, and the field shows the stored values
+        // again once it loses focus.
         .onChange(of: nameDraft) { _, newValue in
             store.renameGroup(group.id, to: newValue)
         }
@@ -175,6 +176,12 @@ struct GroupDetailView: View {
             TextField(L10n.GroupWindow.name, text: $nameDraft)
                 .focused($focusedField, equals: .name)
                 .onSubmit { nameDraft = storedGroup.name }
+            // The store keeps the old name while the typed one is another group's (`renameGroup`).
+            if let owner = store.nameOwner(of: nameDraft, except: group.id) {
+                Text(GroupRename.nameTakenMessage(otherGroupName: owner.name))
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
             LabeledContent(L10n.GroupWindow.emoji) {
                 HStack {
                     TextField(L10n.GroupWindow.emoji, text: $emojiDraft)

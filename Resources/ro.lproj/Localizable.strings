@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri și Comenzi rapide";
 "settings.shortcuts.siri.footer" = "Cere-i lui Siri cu aceste cuvinte, vocal sau scris. Ele folosesc numele actual al grupului; comenzile rapide create continuă să funcționeze după o redenumire.";
 "settings.shortcuts.links.noGroups" = "Adaugă un grup pentru a-i vedea linkurile.";
-"settings.shortcuts.links.footer" = "Deschide un link dintr-un script sau dintr-o altă aplicație, de exemplu cu `open` în Terminal. Un grup se indică prin nume (majusculele, diacriticele și semnele de punctuație nu contează) sau, când numele este ambiguu, prin ID. Adaugă ?mode=force la un link de închidere pentru a forța închiderea.";
 "settings.shortcuts.copy.help" = "Copiază „%@” în clipboard.";
 
 /* Settings → Most Used */

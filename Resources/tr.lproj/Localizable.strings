@@ -276,7 +276,6 @@
 "settings.shortcuts.siri.header" = "Siri ve Kısayollar";
 "settings.shortcuts.siri.footer" = "Bu sözlerle Siri'ye sesli ya da yazarak sorun. Grubun güncel adını kullanırlar; kurduğunuz kısayollar, yeniden adlandırmadan sonra da çalışmaya devam eder.";
 "settings.shortcuts.links.noGroups" = "Bağlantılarını görmek için bir grup ekleyin.";
-"settings.shortcuts.links.footer" = "Bir bağlantıyı bir betikten ya da başka bir uygulamadan açın, örn. Terminal'de `open` ile. Grup, adıyla (büyük/küçük harf, aksan ve noktalama fark etmez) ya da ad belirsizse kimliğiyle adlandırılır. Çıkış bağlantısını zorla kapatmak için ?mode=force ekleyin.";
 "settings.shortcuts.copy.help" = "“%@” panoya kopyalanır.";
 
 /* Settings → Most Used */
