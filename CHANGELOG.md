@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-11-06
+
+### Changed
+
+- Approving an app now stops as soon as the app's process changes, instead of waiting for the check to finish
+
+### Fixed
+
+- App triggers share one process-wide limit on how many processes they watch, so a busy Mac can't exhaust the app's file descriptors
+
 ## [0.13.0] - 2026-11-06
 
 ### Changed
@@ -544,7 +554,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.1...HEAD
+[0.13.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.11.1...v0.12.0
