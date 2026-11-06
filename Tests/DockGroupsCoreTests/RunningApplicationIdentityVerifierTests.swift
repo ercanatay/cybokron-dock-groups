@@ -371,11 +371,12 @@ struct ApplicationRunningCodeCheckTests {
     }
 }
 
-/// Two thin, ad hoc signed copies of `/bin/sleep` with the same identifier and different code.
+/// Thin, ad hoc signed copies of `/bin/sleep` (or of `executable`) with the same identifier and
+/// different code.
 enum SignedFixture {
     static let identifier = "com.cybokron.fixture.running"
 
-    static func make(at url: URL, name: String) async throws {
+    static func make(at url: URL, name: String, executable: String = "/bin/sleep") async throws {
         let dir = url.appendingPathComponent("Contents/MacOS", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let thin = Process()
@@ -385,7 +386,7 @@ enum SignedFixture {
         #else
         let architecture = "x86_64"
         #endif
-        thin.arguments = ["-thin", architecture, "/bin/sleep", "-output", dir.appendingPathComponent("Fixture").path]
+        thin.arguments = ["-thin", architecture, executable, "-output", dir.appendingPathComponent("Fixture").path]
         thin.standardOutput = Pipe(); thin.standardError = Pipe()
         try await thin.runToExit()
         try #require(thin.terminationStatus == 0)
