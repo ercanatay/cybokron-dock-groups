@@ -59,8 +59,9 @@ struct MainWindowView: View {
         let showTriggerSettings: () -> Void
     }
 
-    /// The note that a restored group came back without its keyboard shortcut.
-    private struct RestoreNote {
+    /// A note the window shows: that a restored group came back without its keyboard shortcut, or
+    /// that a group can't be renamed to another group's name.
+    private struct Note {
         let title: String
         let message: String
     }
@@ -92,7 +93,7 @@ struct MainWindowView: View {
 
     @State private var isConfirmingArchive = false
     @State private var archiveCandidate: DockGroup?
-    @State private var restoreNote: RestoreNote?
+    @State private var note: Note?
 
     /// The group Save as Template… shows its sheet for.
     @State private var templateSource: DockGroup?
@@ -181,7 +182,8 @@ struct MainWindowView: View {
         }
     }
 
-    /// Rename, Delete…, Archive (a standalone group asks) and the note after a restore.
+    /// Rename, Delete…, Archive (a standalone group asks) and the notes after a restore or a refused
+    /// rename.
     private func questions<Content: View>(_ content: Content) -> some View {
         content
             .alert(L10n.GroupWindow.renameTitle, isPresented: $isRenaming) {
@@ -214,12 +216,12 @@ struct MainWindowView: View {
                 Text(L10n.GroupWindow.Archive.confirmMessage)
             }
             .alert(
-                restoreNote?.title ?? "",
+                note?.title ?? "",
                 isPresented: Binding(
-                    get: { restoreNote != nil },
-                    set: { isPresented in if !isPresented { restoreNote = nil } }
+                    get: { note != nil },
+                    set: { isPresented in if !isPresented { note = nil } }
                 ),
-                presenting: restoreNote
+                presenting: note
             ) { _ in
                 Button(L10n.Common.ok) {}
             } message: { note in
@@ -358,7 +360,7 @@ struct MainWindowView: View {
         selection.groupID = result.group.id
         if let removed = result.removedShortcut {
             let owner = result.shortcutOwner.flatMap(store.group(withID:))?.name ?? ""
-            restoreNote = RestoreNote(
+            note = Note(
                 title: result.removedShortcutTitle,
                 message: result.removedShortcutMessage(ownerName: owner, keyTitle: KeyNames.title(for: removed.keys))
             )
@@ -371,9 +373,16 @@ struct MainWindowView: View {
         isRenaming = true
     }
 
+    /// Renames the group; says so when another group has the name, and the group keeps its own.
     private func commitRename() {
         guard let id = renameTargetID else { return }
-        store.renameGroup(id, to: renameText)
+        if case .nameTaken(let ownerID) = store.renameGroup(id, to: renameText) {
+            let owner = store.group(withID: ownerID)?.name ?? renameText
+            // Once the Rename alert is gone: one alert can't show while another closes.
+            DispatchQueue.main.async {
+                note = Note(title: GroupRename.nameTakenMessage(otherGroupName: owner), message: "")
+            }
+        }
         renameTargetID = nil
     }
 

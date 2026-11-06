@@ -36,10 +36,43 @@ struct GroupLookupTests {
         #expect(GroupLookup.group(matching: "  ", in: groups) == nil)
     }
 
-    @Test func firstGroupWinsWhenSlugsCollide() {
+    /// Two groups answering to one name: neither is chosen — no "first one wins".
+    @Test func noGroupIsChosenWhenSlugsCollide() {
         let first = DockGroup(name: "Dev Ops")
         let second = DockGroup(name: "dev-ops")
-        #expect(GroupLookup.group(matching: "dev-ops", in: [first, second])?.id == first.id)
+        let other = DockGroup(name: "Work")
+        let groups = [first, other, second]
+        #expect(GroupLookup.resolve("dev-ops", in: groups) == .ambiguous(name: "dev-ops", matches: [first.id, second.id]))
+        #expect(GroupLookup.group(matching: "dev-ops", in: groups) == nil)
+        #expect(GroupLookup.group(matching: "Dev Ops", in: groups) == nil)
+        // Their identifiers still tell them apart, and other names aren't affected.
+        #expect(GroupLookup.resolve(second.id.uuidString, in: groups) == .found(second))
+        #expect(GroupLookup.resolve("work", in: groups) == .found(other))
+        // Exact names without letters or digits collide the same way.
+        let games = DockGroup(name: "🎮")
+        let more = DockGroup(name: "🎮")
+        #expect(GroupLookup.resolve("🎮", in: [games, more]) == .ambiguous(name: "🎮", matches: [games.id, more.id]))
+    }
+
+    /// An identifier no group has finds nothing: it isn't tried as a name, even when a group's
+    /// slug would be the identifier's.
+    @Test func anUnknownIdentifierNeverFallsBackToAName() {
+        let id = UUID()
+        let lookalike = DockGroup(name: id.uuidString)
+        #expect(GroupLookup.slug(for: lookalike.name) == GroupLookup.slug(for: id.uuidString))
+        #expect(GroupLookup.resolve(id.uuidString, in: [lookalike]) == .notFound)
+        #expect(GroupLookup.resolve(id.uuidString.lowercased(), in: [lookalike]) == .notFound)
+        #expect(GroupLookup.resolve(lookalike.id.uuidString, in: [lookalike]) == .found(lookalike))
+    }
+
+    @Test func problemsSayWhyTheLinkOpenedNothing() {
+        let work = DockGroup(name: "Work")
+        #expect(GroupLookup.resolve("work", in: [work]).problemMessage == nil)
+        #expect(GroupLookup.resolve("play", in: [work]).problemMessage
+            == "The group this link opens doesn't exist anymore. It may have been deleted or archived, or renamed if the link names it by name.")
+        #expect(GroupLookup.resolve(UUID().uuidString, in: [work]).problemMessage == GroupResolution.notFound.problemMessage)
+        #expect(GroupLookup.resolve("WORK", in: [work, DockGroup(name: "work")]).problemMessage
+            == "More than one group is named “WORK”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri.")
     }
 
     @Test func searchIgnoresCaseAccentsAndPunctuation() {
@@ -87,6 +120,69 @@ struct URLCommandTests {
         }
         #expect(GroupLookup.group(matching: token, in: [work, play])?.id == play.id)
         #expect(command("cybokrondockgroups://launch/\(work.id.uuidString.lowercased())") == .launchGroup(work.id.uuidString.lowercased()))
+    }
+
+    /// The links the app writes: `<uuid>/<slug>`. The command carries the identifier alone, so
+    /// the slug — the name when the link was copied — never decides which group it opens.
+    @Test func parsesIdentifierLinksAndIgnoresTheirSlug() {
+        let id = UUID()
+        let upper = id.uuidString
+        let lower = upper.lowercased()
+        #expect(command("cybokrondockgroups://open/\(upper)/work") == .showGroup(upper))
+        #expect(command("cybokrondockgroups://show/\(upper)/anything-at-all") == .showGroup(upper))
+        #expect(command("cybokrondockgroups://launch/\(lower)/work") == .launchGroup(lower))
+        #expect(command("cybokrondockgroups://hide/\(upper)/work/") == .hideGroup(upper))
+        #expect(command("cybokrondockgroups://quit/\(upper)/work") == .quitGroup(upper, .graceful))
+        #expect(command("cybokrondockgroups://quit/\(upper)/work?mode=force") == .quitGroup(upper, .force))
+        #expect(command("cybokrondockgroups://quit/\(upper)?mode=FORCE") == .quitGroup(upper, .force))
+        #expect(command("cybokrondockgroups:open/\(upper)/work") == .showGroup(upper))
+        #expect(command("cybokrondockgroups://settings/group/\(upper)/work") == .showGroupSettings(upper))
+        #expect(command("cybokrondockgroups://capture/\(upper)/work") == .captureOpenApps(upper))
+        #expect(LinkCommand(url: URL(string: "cybokrondockgroups://start/\(upper)/work")!) == .switching(.start(upper)))
+        #expect(LinkCommand(url: URL(string: "cybokrondockgroups://switch/\(upper)/work")!) == .switching(.start(upper)))
+        #expect(LinkCommand(url: URL(string: "cybokrondockgroups://finish/\(upper)/work")!) == .switching(.finish(upper)))
+        // With or without the slug, it's the same request for the cooldown.
+        #expect(command("cybokrondockgroups://open/\(upper)/work")?.throttleKey == command("cybokrondockgroups://open/\(upper)")?.throttleKey)
+        #expect(command("cybokrondockgroups://open/\(upper)/work")?.throttleKey == command("cybokrondockgroups://open/\(upper)/play")?.throttleKey)
+        // A name whose first part merely looks like something else is still a name.
+        #expect(command("cybokrondockgroups://open/Dev/Ops") == .showGroup("Dev/Ops"))
+    }
+
+    /// Links are written in the identifier form and read back to the same group; older links,
+    /// by name or identifier alone, are still read as they were. `?mode=force` is kept.
+    @Test func linksRoundTripAndOlderLinksStillParse() throws {
+        let deep = DockGroup(name: "Deep Work")
+        let games = DockGroup(name: "🎮")
+        let groups = [deep, games]
+        for group in groups {
+            let invocations = GroupInvocations.links(for: group) + GroupInvocations.switchingLinks(for: group) + [GroupInvocations.captureLink(for: group)]
+            for invocation in invocations {
+                let url = try #require(URL(string: invocation.text))
+                let link = try #require(LinkCommand(url: url), "\(invocation.text)")
+                let token: String
+                switch link {
+                case .command(.showGroup(let t)), .command(.launchGroup(let t)), .command(.hideGroup(let t)),
+                     .command(.quitGroup(let t, _)), .command(.captureOpenApps(let t)):
+                    token = t
+                case .switching(let switching):
+                    token = switching.group
+                default:
+                    Issue.record("unexpected \(link)")
+                    continue
+                }
+                #expect(token == group.id.uuidString, "\(invocation.text)")
+                #expect(GroupLookup.resolve(token, in: groups) == .found(group))
+            }
+        }
+        let quit = try #require(GroupInvocations.links(for: deep).last?.text)
+        #expect(command(quit + "?mode=force") == .quitGroup(deep.id.uuidString, .force))
+
+        // Older links.
+        #expect(command("cybokrondockgroups://open/deep-work") == .showGroup("deep-work"))
+        #expect(command("cybokrondockgroups://quit/Deep%20Work?mode=force") == .quitGroup("Deep Work", .force))
+        #expect(command("cybokrondockgroups://open/\(games.id.uuidString)") == .showGroup(games.id.uuidString))
+        #expect(GroupLookup.resolve("deep-work", in: groups) == .found(deep))
+        #expect(GroupLookup.resolve(games.id.uuidString, in: groups) == .found(games))
     }
 
     @Test func parsesAppCommands() {

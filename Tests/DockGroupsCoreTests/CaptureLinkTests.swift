@@ -48,10 +48,10 @@ struct CaptureLinkTests {
         let games = DockGroup(name: "🎮")
         let groups = [work, games]
 
-        let link = GroupInvocations.captureLink(for: work, in: groups)
+        let link = GroupInvocations.captureLink(for: work)
         #expect(link.title == "Add Open Apps")
-        #expect(link.text == "cybokrondockgroups://capture/deep-work")
-        #expect(GroupInvocations.captureLink(for: games, in: groups).text == "cybokrondockgroups://capture/\(games.id.uuidString)")
+        #expect(link.text == "cybokrondockgroups://capture/\(work.id.uuidString)/deep-work")
+        #expect(GroupInvocations.captureLink(for: games).text == "cybokrondockgroups://capture/\(games.id.uuidString)")
 
         // The link finds its group again.
         let parsed = try #require(URL(string: link.text).flatMap(URLCommand.init(url:)))

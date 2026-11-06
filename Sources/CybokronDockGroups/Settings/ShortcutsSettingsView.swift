@@ -233,9 +233,9 @@ struct ShortcutsSettingsView: View {
         Section {
             if let group = invocationGroup {
                 ForEach(
-                    GroupInvocations.links(for: group, in: store.groups)
-                        + GroupInvocations.switchingLinks(for: group, in: store.groups)
-                        + [GroupInvocations.captureLink(for: group, in: store.groups)]
+                    GroupInvocations.links(for: group)
+                        + GroupInvocations.switchingLinks(for: group)
+                        + [GroupInvocations.captureLink(for: group)]
                 ) { link in
                     copyRow(link, text: Text(link.text).font(.system(.body, design: .monospaced)))
                 }

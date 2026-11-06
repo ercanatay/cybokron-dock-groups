@@ -1,7 +1,10 @@
 import Foundation
 
-/// A request made through the app's URL scheme. Groups are named by their name — any spelling
-/// with the same slug, see `GroupLookup` — or by their identifier:
+/// A request made through the app's URL scheme. `<group>` is the group's identifier followed by its
+/// slug, `<uuid>/<slug>` — as the links the app lists are written (`GroupInvocations`); the slug is
+/// only there to read, so the link keeps working after a rename — or, as older and hand-written
+/// links do, its identifier alone or its name: any spelling with the same slug, see `GroupLookup`.
+/// An identifier never falls back to a name, and a name more than one group answers to opens none:
 ///
 /// | URL | Command |
 /// | --- | --- |
@@ -49,12 +52,23 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
     /// The key of the links that open, hide, start or finish a group's apps (`groupActionKey`).
     public static let groupAppsKey = "group-apps"
 
-    /// A link split up: the command ("open"), what follows it, and the `mode` query value.
+    /// A link split up: the command ("open") and what follows it, all decoded, and the `mode`
+    /// query value.
     struct Parts {
         let verb: String
         let segments: [String]
-        let argument: String
         let mode: String?
+
+        /// The group named by the segments from `start` on: the identifier alone when the first of
+        /// them is one (`<uuid>/<slug>`, where the slug is only there to read and is ignored),
+        /// otherwise the rest of the link as a name, which may contain "/".
+        func groupToken(from start: Int) -> String {
+            let rest = segments.dropFirst(start)
+            if let first = rest.first, UUID(uuidString: first) != nil {
+                return first
+            }
+            return rest.joined(separator: "/")
+        }
     }
 
     /// `url`'s parts, or `nil` for other schemes and links without a command.
@@ -69,17 +83,18 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
             .filter { !$0.isEmpty }
             .map { $0.removingPercentEncoding ?? $0 }
         guard let verb = segments.first?.lowercased() else { return nil }
-        let argument = segments.dropFirst().joined(separator: "/")
         let mode = components.queryItems?.first { $0.name.lowercased() == "mode" }?.value?.lowercased()
-        return Parts(verb: verb, segments: segments, argument: argument, mode: mode)
+        return Parts(verb: verb, segments: segments, mode: mode)
     }
 
     /// Parses `url`; `nil` for other schemes, unknown commands and missing or extra arguments.
+    /// A group is the `GroupLookup` token the link names: `<uuid>/<slug>` gives the identifier
+    /// alone (`Parts.groupToken`).
     public init?(url: URL) {
         guard let parts = Self.parts(of: url) else { return nil }
         let verb = parts.verb
         let segments = parts.segments
-        let argument = parts.argument
+        let argument = parts.groupToken(from: 1)
         let mode = parts.mode
 
         switch verb {
@@ -107,7 +122,7 @@ public enum URLCommand: Hashable, Sendable, GatedCommand {
                 return
             }
             // "settings/group/<group>"; the group's name may itself contain a slash ("Dev%2FOps").
-            let group = segments.dropFirst(2).joined(separator: "/")
+            let group = parts.groupToken(from: 2)
             guard segments.count > 2, segments[1].lowercased() == "group", !group.isEmpty else { return nil }
             self = .showGroupSettings(group)
         case "groups":
@@ -167,10 +182,12 @@ public enum SwitchingURLCommand: Hashable, Sendable, GatedCommand {
 
     /// Parses `url`; `nil` for other schemes, other commands and a missing group.
     public init?(url: URL) {
-        guard let parts = URLCommand.parts(of: url), !parts.argument.isEmpty else { return nil }
+        guard let parts = URLCommand.parts(of: url) else { return nil }
+        let group = parts.groupToken(from: 1)
+        guard !group.isEmpty else { return nil }
         switch parts.verb {
-        case "start", "switch": self = .start(parts.argument)
-        case "finish": self = .finish(parts.argument)
+        case "start", "switch": self = .start(group)
+        case "finish": self = .finish(group)
         default: return nil
         }
     }

@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri și Comenzi rapide";
 "settings.shortcuts.siri.footer" = "Cere-i lui Siri cu aceste cuvinte, vocal sau scris. Ele folosesc numele actual al grupului; comenzile rapide create continuă să funcționeze după o redenumire.";
 "settings.shortcuts.links.noGroups" = "Adaugă un grup pentru a-i vedea linkurile.";
-"settings.shortcuts.links.footer" = "Deschide un link dintr-un script sau dintr-o altă aplicație, de exemplu cu `open` în Terminal. Un grup se indică prin nume (majusculele, diacriticele și semnele de punctuație nu contează) sau, când numele este ambiguu, prin ID. Adaugă ?mode=force la un link de închidere pentru a forța închiderea.";
 "settings.shortcuts.copy.help" = "Copiază „%@” în clipboard.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Aprobați această aplicație cu o semnătură slabă?";
 "triggers.identity.approve.adHocMessage" = "Această aplicație are o semnătură ad-hoc, care nu verifică cine a creat-o. Aprobarea are încredere doar în acest cod exact, iar aplicația necesită din nou aprobarea ta după ce este actualizată.";
 "triggers.identity.approve.adHocConfirm" = "Aprobă";
+"core.link.groupNotFound" = "Grupul pe care îl deschide acest link nu mai există. Poate fi fost șters sau arhivat ori redenumit, dacă link-ul îl numește după nume.";
+"core.link.groupAmbiguous" = "Mai multe grupuri se numesc “%@”, așa că link-ul nu a deschis niciunul. Copiază din nou link-ul grupului din Setări → Comenzi rapide și Siri.";
+"core.rename.nameTaken" = "Un alt grup se numește deja “%@”. Alege un alt nume.";
+"settings.shortcuts.identityLinks.footer" = "Deschide un link dintr-un script sau dintr-o altă aplicație, de exemplu cu `open` în Terminal. Un link identifică grupul după ID, așa că funcționează în continuare după o redenumire; numele de după ID există doar pentru a fi citit. Un link pe care îl scrii tu poate folosi în schimb numele grupului (majusculele, diacriticele și semnele de punctuație nu contează). Adaugă ?mode=force la un link de închidere pentru a forța închiderea.";

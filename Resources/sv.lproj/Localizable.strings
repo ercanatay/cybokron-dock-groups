@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri och Genvägar";
 "settings.shortcuts.siri.footer" = "Be Siri med dessa ord, med röst eller genom att skriva. De använder gruppens aktuella namn; genvägar du bygger fortsätter att fungera efter ett namnbyte.";
 "settings.shortcuts.links.noGroups" = "Lägg till en grupp för att se dess länkar.";
-"settings.shortcuts.links.footer" = "Öppna en länk från ett skript eller en annan app, t.ex. med `open` i Terminal. En grupp anges med sitt namn (versaler, accenter och skiljetecken spelar ingen roll) eller, om namnet är tvetydigt, med dess ID. Lägg till ?mode=force på en avslutslänk för att tvinga avslut.";
 "settings.shortcuts.copy.help" = "Kopiera „%@“ till Urklipp.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Godkänn den här appen med en svag signatur?";
 "triggers.identity.approve.adHocMessage" = "Appen har en ad hoc-signatur, som inte verifierar vem som skapade den. Att godkänna litar bara på just den här exakta koden, och appen behöver ditt godkännande igen efter att den uppdaterats.";
 "triggers.identity.approve.adHocConfirm" = "Godkänn";
+"core.link.groupNotFound" = "Gruppen som den här länken öppnar finns inte längre. Den kan ha raderats eller arkiverats, eller bytt namn om länken anger den med namn.";
+"core.link.groupAmbiguous" = "Mer än en grupp heter “%@”, så länken öppnade ingen av dem. Kopiera gruppens länk igen från Inställningar → Genvägar och Siri.";
+"core.rename.nameTaken" = "En annan grupp heter redan “%@”. Välj ett annat namn.";
+"settings.shortcuts.identityLinks.footer" = "Öppna en länk från ett skript eller en annan app, t.ex. med `open` i Terminal. En länk anger sin grupp med ID, så den fungerar även efter ett namnbyte; namnet efter ID:t finns bara för läsbarhetens skull. En länk du skriver själv kan i stället använda gruppens namn (versaler, accenter och skiljetecken spelar ingen roll). Lägg till ?mode=force i en avslutslänk för att tvinga avslut.";

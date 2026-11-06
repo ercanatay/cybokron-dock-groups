@@ -15,7 +15,7 @@ every language.
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1079 keys.
+1087 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -338,7 +338,6 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.shortcuts.siri.header` | Siri and Shortcuts |
 | `settings.shortcuts.siri.footer` | Ask Siri with these words, by voice or by typing. They use the group's current name; shortcuts you build keep working after a rename. |
 | `settings.shortcuts.links.noGroups` | Add a group to see its links. |
-| `settings.shortcuts.links.footer` | Open a link from a script or another app, e.g. with `open` in Terminal. A group is named by its name (case, accents and punctuation don't matter) or, when the name is ambiguous, its ID. Add ?mode=force to a quit link to force quit. |
 | `settings.shortcuts.copy.help` | Copy “%@” to the clipboard. |
 
 ## Settings → Most Used
@@ -930,7 +929,7 @@ Add Apps… reuses `common.addApps`, the problem alert `groupWindow.addApps.prob
 
 ## Settings → Shortcuts & Siri: Start Group and Finish Group, their phrases and links (English only for now; `awaitingTranslation`: `settings.shortcuts.switching.`, `core.invocation.startGroup`, `core.invocation.finishGroup`)
 
-Keep `core.invocation.startGroup.phrase` and `core.invocation.finishGroup.phrase` identical to the first App Shortcuts phrase of Start Group and Finish Group in the same language. The two `settings.shortcuts.switching.` texts follow `settings.shortcuts.shortcutsApp.detail` and `settings.shortcuts.links.footer`.
+Keep `core.invocation.startGroup.phrase` and `core.invocation.finishGroup.phrase` identical to the first App Shortcuts phrase of Start Group and Finish Group in the same language. The two `settings.shortcuts.switching.` texts follow `settings.shortcuts.shortcutsApp.detail` and `settings.shortcuts.identityLinks.footer`.
 
 | Key | English |
 | --- | --- |
@@ -1540,3 +1539,12 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `triggers.identity.approve.failure.cancelled` | Checking stopped. Nothing was approved. |
 | `triggers.identity.approve.failure.checkFailed` | The app's code couldn't be checked. Nothing was approved. |
 | `triggers.identity.approve.failure.notSaved` | The approval couldn't be saved. Nothing was approved. |
+
+## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri
+
+| Key | English |
+| --- | --- |
+| `core.link.groupNotFound` | The group this link opens doesn't exist anymore. It may have been deleted or archived, or renamed if the link names it by name. |
+| `core.link.groupAmbiguous` | More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri. |
+| `core.rename.nameTaken` | Another group is already named “%@”. Choose a different name. |
+| `settings.shortcuts.identityLinks.footer` | Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit. |

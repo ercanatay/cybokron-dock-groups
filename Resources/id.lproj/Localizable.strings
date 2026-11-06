@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri dan Pintasan";
 "settings.shortcuts.siri.footer" = "Minta Siri dengan kata-kata ini, dengan suara atau mengetik. Kata-kata itu memakai nama grup yang terkini; pintasan yang Anda buat tetap berfungsi setelah diganti nama.";
 "settings.shortcuts.links.noGroups" = "Tambahkan grup untuk melihat tautannya.";
-"settings.shortcuts.links.footer" = "Buka tautan dari skrip atau app lain, misalnya dengan `open` di Terminal. Grup dinamai dengan namanya (huruf besar/kecil, aksen dan tanda baca diabaikan) atau, jika namanya ambigu, dengan ID-nya. Tambahkan ?mode=force pada tautan keluar untuk memaksa berhenti.";
 "settings.shortcuts.copy.help" = "Salin “%@” ke papan klip.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Setujui aplikasi ini dengan tanda tangan lemah?";
 "triggers.identity.approve.adHocMessage" = "Aplikasi ini memiliki tanda tangan ad-hoc, yang tidak memverifikasi siapa pembuatnya. Persetujuan hanya memercayai kode yang persis sama ini, dan aplikasi memerlukan persetujuan Anda lagi setelah diperbarui.";
 "triggers.identity.approve.adHocConfirm" = "Setujui";
+"core.link.groupNotFound" = "Grup yang dibuka tautan ini sudah tidak ada. Grup mungkin telah dihapus atau diarsipkan, atau namanya berubah jika tautan merujuknya dengan nama.";
+"core.link.groupAmbiguous" = "Ada lebih dari satu grup bernama “%@”, sehingga tautan tidak membuka salah satunya. Salin ulang tautan grup dari Pengaturan → Pintasan & Siri.";
+"core.rename.nameTaken" = "Grup lain sudah bernama “%@”. Pilih nama yang berbeda.";
+"settings.shortcuts.identityLinks.footer" = "Buka tautan dari skrip atau aplikasi lain, misalnya dengan `open` di Terminal. Tautan menyebut grupnya dengan ID, jadi tetap berfungsi setelah diganti nama; nama setelah ID hanya untuk dibaca. Tautan yang Anda tulis sendiri dapat menggunakan nama grup sebagai gantinya (huruf besar/kecil, aksen, dan tanda baca tidak berpengaruh). Tambahkan ?mode=force pada tautan berhenti untuk memaksa berhenti.";

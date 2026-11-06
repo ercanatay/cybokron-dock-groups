@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri 与快捷指令";
 "settings.shortcuts.siri.footer" = "用这些词语通过语音或输入向 Siri 发出指令。它们使用分组的当前名称；重命名后，你创建的快捷指令仍然有效。";
 "settings.shortcuts.links.noGroups" = "添加一个分组，即可查看其链接。";
-"settings.shortcuts.links.footer" = "可从脚本或其他App打开链接，例如在“终端”中使用 `open`。分组通过其名称来指定（大小写、重音符号和标点均不影响匹配）；如果名称有歧义，则使用其 ID。若要强制退出，请在退出链接后添加 ?mode=force。";
 "settings.shortcuts.copy.help" = "将“%@”拷贝到剪贴板。";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "使用弱签名批准此应用？";
 "triggers.identity.approve.adHocMessage" = "此应用使用临时签名，无法验证其开发者身份。批准仅信任这一份确切的代码，应用更新后需要再次获得您的批准。";
 "triggers.identity.approve.adHocConfirm" = "批准";
+"core.link.groupNotFound" = "此链接打开的群组已不存在。它可能已被删除或归档；如果链接是按名称指定群组的，也可能已被重命名。";
+"core.link.groupAmbiguous" = "有多个群组名为“%@”，因此该链接未打开其中任何一个。请从 Settings → Shortcuts & Siri 中重新复制群组的链接。";
+"core.rename.nameTaken" = "已有另一个群组名为“%@”。请选择其他名称。";
+"settings.shortcuts.identityLinks.footer" = "从脚本或其他应用中打开链接，例如在 Terminal 中使用 `open`。链接通过 ID 指定群组，因此重命名后仍可使用；ID 后面的名称仅供阅读。你自己编写的链接可以改用群组名称（不区分大小写、重音符号和标点）。若要强制退出，请在退出链接后添加 ?mode=force。";

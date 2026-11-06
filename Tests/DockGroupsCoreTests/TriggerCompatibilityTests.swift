@@ -62,8 +62,8 @@ struct TriggerCompatibilityTests {
         triggers.pruneTriggers(for: groups)
         // A change saves the files (renaming back and forth ends where it began).
         let coding = Version0100Fixtures.stored.active[0]
-        #expect(groups.renameGroup(coding.id, to: "Renamed"))
-        #expect(groups.renameGroup(coding.id, to: coding.name))
+        #expect(groups.renameGroup(coding.id, to: "Renamed") == .renamed)
+        #expect(groups.renameGroup(coding.id, to: coding.name) == .renamed)
         preferences.update { $0.showsTitles.toggle() }
         preferences.update { $0.showsTitles.toggle() }
         groups.flushPendingSave()

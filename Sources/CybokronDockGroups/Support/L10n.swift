@@ -755,8 +755,8 @@ enum L10n {
             /// Markdown: `open` shows as code.
             static var linksFooter: String {
                 tr(
-                    "settings.shortcuts.links.footer",
-                    "Open a link from a script or another app, e.g. with `open` in Terminal. A group is named by its name (case, accents and punctuation don't matter) or, when the name is ambiguous, its ID. Add ?mode=force to a quit link to force quit."
+                    "settings.shortcuts.identityLinks.footer",
+                    "Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit."
                 )
             }
             static func copyHelp(_ text: String) -> String { tr("settings.shortcuts.copy.help", "Copy “%@” to the clipboard.", text) }

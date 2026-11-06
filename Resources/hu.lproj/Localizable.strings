@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri és Parancsok";
 "settings.shortcuts.siri.footer" = "Ezekkel a szavakkal kérje Sirit, hangon vagy gépelve. A csoport aktuális nevét használják; az Ön által készített parancsok átnevezés után is működnek.";
 "settings.shortcuts.links.noGroups" = "Adjon hozzá egy csoportot, hogy lássa a hivatkozásait.";
-"settings.shortcuts.links.footer" = "Hivatkozást szkriptből vagy másik alkalmazásból nyithat meg, pl. a Terminál `open` parancsával. A csoportot a nevével azonosítja (a kis- és nagybetű, az ékezetek és az írásjelek nem számítanak), vagy ha a név egyértelmű, az azonosítójával. Kényszerített kilépéshez adja hozzá a ?mode=force paramétert a kilépési hivatkozáshoz.";
 "settings.shortcuts.copy.help" = "A(z) „%@” másolása a vágólapra.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Ezt az alkalmazást gyenge aláírással hagyod jóvá?";
 "triggers.identity.approve.adHocMessage" = "Ennek az alkalmazásnak ad-hoc aláírása van, amely nem igazolja, ki készítette. A jóváhagyás csak ezt a pontos kódot bízza meg, és frissítés után az alkalmazást újra jóvá kell hagynod.";
 "triggers.identity.approve.adHocConfirm" = "Jóváhagyás";
+"core.link.groupNotFound" = "A link által megnyitott csoport már nem létezik. Lehet, hogy törölték vagy archiválták, vagy átnevezték, ha a link a nevével hivatkozik rá.";
+"core.link.groupAmbiguous" = "Több csoport is “%@” nevű, ezért a link egyiket sem nyitotta meg. Másold ki újra a csoport linkjét a Beállítások → Parancsikonok és Siri menüpontból.";
+"core.rename.nameTaken" = "Másik csoport már “%@” néven szerepel. Válassz másik nevet.";
+"settings.shortcuts.identityLinks.footer" = "Hivatkozást szkriptből vagy másik alkalmazásból is megnyithatsz, például a Terminal alkalmazásban a `open` paranccsal. A hivatkozás azonosítóval nevezi meg a csoportot, ezért átnevezés után is működik; az azonosító utáni név csak olvasás céljából van ott. Saját készítésű hivatkozásban a csoport nevét is használhatod (a kis- és nagybetű, az ékezetek és az írásjelek nem számítanak). Kényszerített kilépéshez adj a kilépési hivatkozáshoz ?mode=force részt.";

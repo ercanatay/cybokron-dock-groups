@@ -67,8 +67,8 @@ public enum GroupInvocations {
 
     /// The links that start and finish `group` (see `SwitchingURLCommand`), named as `links`
     /// names it; Settings lists them after those.
-    public static func switchingLinks(for group: DockGroup, in groups: [DockGroup]) -> [GroupInvocation] {
-        let token = linkToken(for: group, in: groups)
+    public static func switchingLinks(for group: DockGroup) -> [GroupInvocation] {
+        let token = linkToken(for: group)
         let base = "\(URLCommand.scheme)://"
         return [
             GroupInvocation(title: Localization.string("core.invocation.startGroup.link", "Start"), text: "\(base)start/\(token)"),
@@ -79,18 +79,17 @@ public enum GroupInvocations {
     /// The link that shows Add Open Apps for `group` (`URLCommand.captureOpenApps`), named as
     /// `links` names it; Settings lists it after the switching links. The link only shows the
     /// sheet: nothing is added until the user says so.
-    public static func captureLink(for group: DockGroup, in groups: [DockGroup]) -> GroupInvocation {
+    public static func captureLink(for group: DockGroup) -> GroupInvocation {
         GroupInvocation(
             title: Localization.string("core.invocation.capture.link", "Add Open Apps"),
-            text: "\(URLCommand.scheme)://capture/\(linkToken(for: group, in: groups))"
+            text: "\(URLCommand.scheme)://capture/\(linkToken(for: group))"
         )
     }
 
     /// The URL scheme's links for `group` (see `URLCommand`): show its popup, Open All, Hide All
     /// and Close All.
-    /// - Parameter groups: All groups, in order: a name another group answers to first isn't used.
-    public static func links(for group: DockGroup, in groups: [DockGroup]) -> [GroupInvocation] {
-        let token = linkToken(for: group, in: groups)
+    public static func links(for group: DockGroup) -> [GroupInvocation] {
+        let token = linkToken(for: group)
         let base = "\(URLCommand.scheme)://"
         return [
             GroupInvocation(title: Localization.string("core.invocation.showPopup", "Show Popup"), text: "\(base)open/\(token)"),
@@ -100,14 +99,13 @@ public enum GroupInvocations {
         ]
     }
 
-    /// How the group's links name it: its slug ("calisma-alani") when that finds this very group,
-    /// otherwise — a name without letters or digits, or one an earlier group shares — its
-    /// identifier.
-    public static func linkToken(for group: DockGroup, in groups: [DockGroup]) -> String {
+    /// How the group's links name it: by its identifier, which stays the same when the group is
+    /// renamed, followed by its slug only to make the link readable ("<uuid>/calisma-alani"); the
+    /// identifier alone for a name without letters or digits. The slug is ignored when the link is
+    /// opened (`URLCommand`), so a link copied before a rename still opens this group, and one of a
+    /// deleted group never opens another.
+    public static func linkToken(for group: DockGroup) -> String {
         let slug = GroupLookup.slug(for: group.name)
-        guard !slug.isEmpty, GroupLookup.group(matching: slug, in: groups)?.id == group.id else {
-            return group.id.uuidString
-        }
-        return slug
+        return slug.isEmpty ? group.id.uuidString : "\(group.id.uuidString)/\(slug)"
     }
 }

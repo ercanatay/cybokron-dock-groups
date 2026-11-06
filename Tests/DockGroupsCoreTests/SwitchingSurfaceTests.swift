@@ -188,16 +188,19 @@ struct SwitchingInvocationsTests {
 
     @Test func linksUseTheGroupsTokenAndParse() throws {
         let group = DockGroup(name: "Çalışma Alanı")
-        let links = GroupInvocations.switchingLinks(for: group, in: [group])
+        let id = group.id.uuidString
+        let links = GroupInvocations.switchingLinks(for: group)
         #expect(links.map(\.title) == ["Start", "Finish"])
-        #expect(links.map(\.text) == ["cybokrondockgroups://start/calisma-alani", "cybokrondockgroups://finish/calisma-alani"])
+        #expect(links.map(\.text) == ["cybokrondockgroups://start/\(id)/calisma-alani", "cybokrondockgroups://finish/\(id)/calisma-alani"])
         let commands = try links.map { try #require(URL(string: $0.text).flatMap(LinkCommand.init(url:))) }
-        #expect(commands == [.switching(.start("calisma-alani")), .switching(.finish("calisma-alani"))])
-        #expect(GroupLookup.group(matching: "calisma-alani", in: [group])?.id == group.id)
+        #expect(commands == [.switching(.start(id)), .switching(.finish(id))])
+        #expect(GroupLookup.group(matching: id, in: [group])?.id == group.id)
+        // Older links name the group by slug, and still parse that way.
+        #expect(LinkCommand(url: URL(string: "cybokrondockgroups://start/calisma-alani")!) == .switching(.start("calisma-alani")))
 
-        // A name the slug doesn't find on its own is linked by identifier, as the other links are.
+        // A name without letters or digits: the identifier alone, as the other links do.
         let emoji = DockGroup(name: "🎮")
-        #expect(GroupInvocations.switchingLinks(for: emoji, in: [emoji]).map(\.text) == ["cybokrondockgroups://start/\(emoji.id.uuidString)", "cybokrondockgroups://finish/\(emoji.id.uuidString)"])
+        #expect(GroupInvocations.switchingLinks(for: emoji).map(\.text) == ["cybokrondockgroups://start/\(emoji.id.uuidString)", "cybokrondockgroups://finish/\(emoji.id.uuidString)"])
     }
 }
 

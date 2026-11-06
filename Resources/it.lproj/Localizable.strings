@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri e Comandi rapidi";
 "settings.shortcuts.siri.footer" = "Chiedi a Siri con queste parole, a voce o scrivendole. Usano il nome attuale del gruppo; i comandi rapidi che crei continuano a funzionare dopo una rinomina.";
 "settings.shortcuts.links.noGroups" = "Aggiungi un gruppo per vederne i link.";
-"settings.shortcuts.links.footer" = "Apri un link da uno script o da un'altra app, per esempio con `open` nel Terminale. Un gruppo si indica con il suo nome (maiuscole, accenti e punteggiatura non contano) oppure, se il nome è ambiguo, con il suo ID. Aggiungi ?mode=force a un link di uscita per forzarla.";
 "settings.shortcuts.copy.help" = "Copia “%@” negli appunti.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Approvare questa app con una firma debole?";
 "triggers.identity.approve.adHocMessage" = "Questa app ha una firma ad-hoc, che non verifica chi l'ha creata. Approvandola si considera attendibile solo questo specifico codice, e l'app dovrà essere approvata di nuovo dopo ogni aggiornamento.";
 "triggers.identity.approve.adHocConfirm" = "Approva";
+"core.link.groupNotFound" = "Il gruppo che questo link apre non esiste più. Potrebbe essere stato eliminato o archiviato, oppure rinominato, se il link lo indica per nome.";
+"core.link.groupAmbiguous" = "Più di un gruppo si chiama “%@”, quindi il link non ne ha aperto nessuno. Copia di nuovo il link del gruppo da Impostazioni → Scorciatoie e Siri.";
+"core.rename.nameTaken" = "Un altro gruppo si chiama già “%@”. Scegli un nome diverso.";
+"settings.shortcuts.identityLinks.footer" = "Apri un link da uno script o da un'altra app, ad esempio con `open` nel Terminale. Un link identifica il suo gruppo tramite ID, quindi continua a funzionare dopo una rinomina; il nome dopo l'ID serve solo per la lettura. Un link che scrivi tu può usare invece il nome del gruppo (maiuscole, accenti e punteggiatura non contano). Aggiungi ?mode=force a un link di chiusura per forzare la chiusura.";

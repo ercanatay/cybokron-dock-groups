@@ -691,9 +691,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .showGroupSettings(let name):
             popupController.close()
             if case .unmatched = mainWindowController.showSettings(ofGroup: name) {
-                // The window still opens, on the group it showed before.
+                // The window still opens, on the group it showed before, and says why.
                 urlLogger.error("No group matches “\(name, privacy: .public)”\(self.archivedMatch(for: name), privacy: .public): showing the group window as it was")
-                NSSound.beep()
+                GroupLinkProblemAlert.present(GroupLookup.resolve(name, in: store.groups))
             }
         case .manageGroups:
             popupController.close()
@@ -706,21 +706,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    /// Links act on active groups only: an archived group is never found (spec §2.11).
+    /// Links act on active groups only: an archived group is never found (spec §2.11). A link whose
+    /// identifier no group has, or whose name no group or more than one has, does nothing and says
+    /// so in an alert (`GroupLinkProblemAlert`): never another group, never silently.
     private func group(named name: String) -> DockGroup? {
-        guard let group = GroupLookup.group(matching: name, in: store.groups) else {
+        let resolution = GroupLookup.resolve(name, in: store.groups)
+        switch resolution {
+        case .found(let group):
+            return group
+        case .notFound:
             urlLogger.error("No group matches “\(name, privacy: .public)”\(self.archivedMatch(for: name), privacy: .public)")
-            NSSound.beep()
-            return nil
+        case .ambiguous(_, let matches):
+            urlLogger.error("\(matches.count) groups match “\(name, privacy: .public)”: opening none of them")
         }
-        return group
+        GroupLinkProblemAlert.present(resolution)
+        return nil
     }
 
     /// For the log of a link no active group matches: ", but archived group <id> does" when an
     /// archived one does (by identifier; archived groups aren't named in the log).
     private func archivedMatch(for name: String) -> String {
-        guard let archived = GroupLookup.group(matching: name, in: store.archivedGroups.map(\.group)) else { return "" }
-        return ", but archived group \(archived.id.uuidString) does"
+        switch GroupLookup.resolve(name, in: store.archivedGroups.map(\.group)) {
+        case .found(let archived): return ", but archived group \(archived.id.uuidString) does"
+        case .ambiguous(_, let ids): return ", but archived groups \(ids.map(\.uuidString).joined(separator: ", ")) do"
+        case .notFound: return ""
+        }
     }
 }
 

@@ -281,7 +281,6 @@
 "settings.shortcuts.siri.header" = "Siri and Shortcuts";
 "settings.shortcuts.siri.footer" = "Ask Siri with these words, by voice or by typing. They use the group's current name; shortcuts you build keep working after a rename.";
 "settings.shortcuts.links.noGroups" = "Add a group to see its links.";
-"settings.shortcuts.links.footer" = "Open a link from a script or another app, e.g. with `open` in Terminal. A group is named by its name (case, accents and punctuation don't matter) or, when the name is ambiguous, its ID. Add ?mode=force to a quit link to force quit.";
 "settings.shortcuts.copy.help" = "Copy “%@” to the clipboard.";
 
 /* Settings → Most Used */
@@ -1206,3 +1205,9 @@
 "triggers.identity.approve.failure.cancelled" = "Checking stopped. Nothing was approved.";
 "triggers.identity.approve.failure.checkFailed" = "The app's code couldn't be checked. Nothing was approved.";
 "triggers.identity.approve.failure.notSaved" = "The approval couldn't be saved. Nothing was approved.";
+
+/* Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri (English only for now) */
+"core.link.groupNotFound" = "The group this link opens doesn't exist anymore. It may have been deleted or archived, or renamed if the link names it by name.";
+"core.link.groupAmbiguous" = "More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri.";
+"core.rename.nameTaken" = "Another group is already named “%@”. Choose a different name.";
+"settings.shortcuts.identityLinks.footer" = "Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit.";

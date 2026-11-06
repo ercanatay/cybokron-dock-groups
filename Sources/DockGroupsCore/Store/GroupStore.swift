@@ -88,6 +88,31 @@ public enum GroupShortcutAssignment: Equatable, Sendable {
     case unknownGroup
 }
 
+/// What renaming a group did (`GroupStore.renameGroup`).
+public enum GroupRename: Equatable, Sendable {
+    /// The group has the new name.
+    case renamed
+    /// The group already had exactly this name; nothing was saved.
+    case unchanged
+    /// The name is blank; nothing changed.
+    case blankName
+    /// Another active group has this name (ignoring case); nothing changed, so no two active groups
+    /// are renamed to the same name.
+    case nameTaken(by: DockGroup.ID)
+    /// No active group has this identifier.
+    case unknownGroup
+
+    /// The group has the name asked for.
+    public var succeeded: Bool {
+        self == .renamed || self == .unchanged
+    }
+
+    /// Why a group can't be renamed to a name another group has; `otherGroupName` is that group's.
+    public static func nameTakenMessage(otherGroupName: String) -> String {
+        Localization.format("core.rename.nameTaken", "Another group is already named “%@”. Choose a different name.", otherGroupName)
+    }
+}
+
 /// The single source of truth for the user's groups.
 ///
 /// Every change is written to disk shortly after it happens (changes arriving in quick succession,
@@ -185,15 +210,32 @@ public final class GroupStore: ObservableObject {
         return group
     }
 
-    /// Renames a group. Returns `false` (and changes nothing) for a blank name or an unknown group.
+    /// Renames an active group, keeping its identifier — and so its shortcuts, triggers and links.
+    /// Changes nothing for an unknown group, a blank name, or a name another active group has
+    /// (`nameOwner`): two groups never get the same name by a rename. The group itself may change
+    /// the case of its own name.
     @discardableResult
-    public func renameGroup(_ id: DockGroup.ID, to newName: String) -> Bool {
-        guard let name = DockGroup.sanitizedName(newName), let index = index(of: id) else { return false }
-        if groups[index].name != name {
-            groups[index].name = name
-            scheduleSave()
+    public func renameGroup(_ id: DockGroup.ID, to newName: String) -> GroupRename {
+        guard let index = index(of: id) else { return .unknownGroup }
+        guard let name = DockGroup.sanitizedName(newName) else { return .blankName }
+        guard groups[index].name != name else { return .unchanged }
+        if let owner = nameOwner(of: name, except: id) {
+            return .nameTaken(by: owner.id)
         }
-        return true
+        groups[index].name = name
+        scheduleSave()
+        return .renamed
+    }
+
+    /// The active group other than `id` already named `name`, ignoring case and the spaces around
+    /// it; `nil` when there's none (or the name is blank). Archived groups don't count: links,
+    /// menus and Siri never see them.
+    public func nameOwner(of name: String, except id: DockGroup.ID) -> DockGroup? {
+        guard let wanted = DockGroup.sanitizedName(name) else { return nil }
+        return groups.first { group in
+            group.id != id && group.name.trimmingCharacters(in: .whitespacesAndNewlines)
+                .compare(wanted, options: .caseInsensitive) == .orderedSame
+        }
     }
 
     /// Removes the group and its app list, active or archived. The apps themselves aren't touched.
@@ -289,14 +331,19 @@ public final class GroupStore: ObservableObject {
     }
 
     /// Applies `change` to a group. Blank names or emoji are rejected (the previous value is kept),
-    /// duplicate apps are dropped, and keys another group's shortcut has aren't taken (the previous
-    /// shortcut is kept), so the group's invariants always hold.
+    /// as is another active group's name (`nameOwner`), duplicate apps are dropped, and keys another
+    /// group's shortcut has aren't taken (the previous shortcut is kept), so the group's invariants
+    /// always hold.
     public func updateGroup(_ id: DockGroup.ID, _ change: (inout DockGroup) -> Void) {
         guard let index = index(of: id) else { return }
         let original = groups[index]
         var edited = original
         change(&edited)
         edited.name = DockGroup.sanitizedName(edited.name) ?? original.name
+        // As `renameGroup`: never another active group's name.
+        if edited.name != original.name, nameOwner(of: edited.name, except: id) != nil {
+            edited.name = original.name
+        }
         edited.emoji = DockGroup.sanitizedEmoji(edited.emoji) ?? original.emoji
         edited.apps = Self.removingDuplicates(edited.apps)
         edited.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(edited.freeLayoutSlots, apps: edited.apps)

@@ -125,40 +125,42 @@ struct GroupInvocationsTests {
         ])
     }
 
-    @Test func linksUseTheSlugAndWorkAsURLCommands() throws {
+    @Test func linksNameTheGroupByIdentifierAndWorkAsURLCommands() throws {
         let group = DockGroup(name: "Çalışma Alanı")
-        let links = GroupInvocations.links(for: group, in: [group])
+        let links = GroupInvocations.links(for: group)
+        let id = group.id.uuidString
 
         #expect(links.map(\.title) == ["Show Popup", "Open All", "Hide All", "Close All"])
         #expect(links.map(\.text) == [
-            "cybokrondockgroups://open/calisma-alani",
-            "cybokrondockgroups://launch/calisma-alani",
-            "cybokrondockgroups://hide/calisma-alani",
-            "cybokrondockgroups://quit/calisma-alani",
+            "cybokrondockgroups://open/\(id)/calisma-alani",
+            "cybokrondockgroups://launch/\(id)/calisma-alani",
+            "cybokrondockgroups://hide/\(id)/calisma-alani",
+            "cybokrondockgroups://quit/\(id)/calisma-alani",
         ])
+        // The slug is only there to read: the commands carry the identifier.
         let commands = try links.map { try #require(URL(string: $0.text).flatMap(URLCommand.init(url:))) }
-        #expect(commands == [
-            .showGroup("calisma-alani"),
-            .launchGroup("calisma-alani"),
-            .hideGroup("calisma-alani"),
-            .quitGroup("calisma-alani", .graceful),
-        ])
+        #expect(commands == [.showGroup(id), .launchGroup(id), .hideGroup(id), .quitGroup(id, .graceful)])
     }
 
-    @Test func groupsTheSlugDoesNotFindAreLinkedByIdentifier() {
+    /// Every group's link token is its identifier (with the slug, when it has one), whatever the
+    /// other groups are named: two groups with the same slug get links of their own.
+    @Test func everyGroupIsLinkedByIdentifier() {
         let first = DockGroup(name: "Work")
         let second = DockGroup(name: "work!")
         let emoji = DockGroup(name: "🎮")
         let groups = [first, second, emoji]
 
-        #expect(GroupInvocations.linkToken(for: first, in: groups) == "work")
-        // "work" already finds the first group.
-        #expect(GroupInvocations.linkToken(for: second, in: groups) == second.id.uuidString)
-        #expect(GroupInvocations.linkToken(for: emoji, in: groups) == emoji.id.uuidString)
+        #expect(GroupInvocations.linkToken(for: first) == "\(first.id.uuidString)/work")
+        #expect(GroupInvocations.linkToken(for: second) == "\(second.id.uuidString)/work")
+        #expect(GroupInvocations.linkToken(for: emoji) == emoji.id.uuidString)
 
         for group in groups {
-            let token = GroupInvocations.linkToken(for: group, in: groups)
-            #expect(GroupLookup.group(matching: token, in: groups)?.id == group.id)
+            let link = GroupInvocations.links(for: group)[0].text
+            guard case .showGroup(let token) = URL(string: link).flatMap(URLCommand.init(url:)) else {
+                Issue.record("\(link) isn't a show link")
+                continue
+            }
+            #expect(GroupLookup.resolve(token, in: groups) == .found(group))
         }
     }
 }

@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri y Atajos";
 "settings.shortcuts.siri.footer" = "Pide a Siri con estas palabras, por voz o escribiendo. Usan el nombre actual del grupo; los atajos que crees siguen funcionando tras un cambio de nombre.";
 "settings.shortcuts.links.noGroups" = "Añade un grupo para ver sus enlaces.";
-"settings.shortcuts.links.footer" = "Abre un enlace desde un script u otra app, por ejemplo con `open` en Terminal. Un grupo se designa por su nombre (no importan mayúsculas, acentos ni signos de puntuación) o, si el nombre es ambiguo, por su ID. Añade ?mode=force a un enlace de salida para forzarla.";
 "settings.shortcuts.copy.help" = "Copiar «%@» al portapapeles.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "¿Aprobar esta app con una firma débil?";
 "triggers.identity.approve.adHocMessage" = "Esta app tiene una firma ad hoc, que no verifica quién la creó. Aprobarla solo confía en este código exacto, y la app necesitará tu aprobación de nuevo después de actualizarse.";
 "triggers.identity.approve.adHocConfirm" = "Aprobar";
+"core.link.groupNotFound" = "El grupo que abre este enlace ya no existe. Puede que se haya eliminado o archivado, o renombrado si el enlace lo nombra por su nombre.";
+"core.link.groupAmbiguous" = "Hay más de un grupo llamado “%@”, así que el enlace no abrió ninguno. Copia de nuevo el enlace del grupo desde Ajustes → Accesos directos y Siri.";
+"core.rename.nameTaken" = "Ya existe otro grupo llamado “%@”. Elige un nombre diferente.";
+"settings.shortcuts.identityLinks.footer" = "Abre un enlace desde un script u otra app, por ejemplo con `open` en Terminal. Un enlace identifica su grupo por ID, así que sigue funcionando tras un cambio de nombre; el nombre que aparece después del ID solo sirve para leerlo. Un enlace que escribas tú mismo puede usar el nombre del grupo (no importan mayúsculas, acentos ni signos de puntuación). Añade ?mode=force a un enlace de cierre para forzar el cierre.";

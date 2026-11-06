@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri a Zástupci";
 "settings.shortcuts.siri.footer" = "Požádejte Siri těmito slovy, hlasem nebo psaním. Používají aktuální název skupiny; zástupci, které vytvoříte, fungují i po přejmenování.";
 "settings.shortcuts.links.noGroups" = "Přidejte skupinu, abyste viděli její odkazy.";
-"settings.shortcuts.links.footer" = "Otevřete odkaz ze skriptu nebo jiné aplikace, např. příkazem `open` v Terminálu. Skupina se určuje podle názvu (velikost písmen, diakritika a interpunkce nehrají roli), nebo, je-li název nejednoznačný, podle ID. Chcete-li vynutit ukončení, přidejte k odkazu pro ukončení ?mode=force.";
 "settings.shortcuts.copy.help" = "Zkopírovat „%@“ do schránky.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Schválit tuto aplikaci s &slabým podpisem?";
 "triggers.identity.approve.adHocMessage" = "Tato aplikace má ad-hoc podpis, který neověřuje, kdo ji vytvořil. Schválení důvěřuje pouze tomuto přesnému kódu a aplikace bude po každé aktualizaci vyžadovat schválení znovu.";
 "triggers.identity.approve.adHocConfirm" = "Schválit";
+"core.link.groupNotFound" = "Skupina, kterou tento odkaz otevírá, už neexistuje. Mohla být smazána nebo archivována, nebo přejmenována, pokud odkaz uvádí její název.";
+"core.link.groupAmbiguous" = "Více skupin se jmenuje “%@”, proto odkaz neotevřel žádnou z nich. Zkopírujte odkaz skupiny znovu z Nastavení → Zkratky a Siri.";
+"core.rename.nameTaken" = "Jiná skupina už se jmenuje “%@”. Zvolte jiný název.";
+"settings.shortcuts.identityLinks.footer" = "Otevřete odkaz ze skriptu nebo jiné aplikace, např. příkazem `open` v Terminal. Odkaz určuje skupinu podle ID, takže po přejmenování dál funguje; název za ID slouží jen ke čtení. Odkaz, který napíšete sami, může místo toho použít název skupiny (velikost písmen, diakritika ani interpunkce nehrají roli). Chcete-li u odkazu na ukončení vynutit ukončení, přidejte ?mode=force.";

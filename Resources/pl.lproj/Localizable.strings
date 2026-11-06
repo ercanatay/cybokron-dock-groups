@@ -278,7 +278,6 @@
 "settings.shortcuts.siri.header" = "Siri i Skróty";
 "settings.shortcuts.siri.footer" = "Poproś Siri tymi słowami, głosem lub wpisując. Używają bieżącej nazwy grupy; skróty, które zbudujesz, działają nadal po zmianie nazwy.";
 "settings.shortcuts.links.noGroups" = "Dodaj grupę, aby zobaczyć jej linki.";
-"settings.shortcuts.links.footer" = "Otwórz link ze skryptu lub z innej aplikacji, np. poleceniem `open` w Terminalu. Grupa jest wskazywana przez nazwę (wielkość liter, akcenty i interpunkcja nie mają znaczenia) lub, gdy nazwa jest niejednoznaczna, przez ID. Dodaj ?mode=force do linku zakończenia, aby wymusić zakończenie.";
 "settings.shortcuts.copy.help" = "Skopiuj „%@” do schowka.";
 
 /* Settings → Most Used */
@@ -1163,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Zatwierdzić tę aplikację ze słabym podpisem?";
 "triggers.identity.approve.adHocMessage" = "Ta aplikacja ma podpis ad-hoc, który nie weryfikuje, kto ją utworzył. Zatwierdzenie ufa wyłącznie temu dokładnemu kodowi, a po każdej aktualizacji aplikacja będzie wymagała ponownego zatwierdzenia.";
 "triggers.identity.approve.adHocConfirm" = "Zatwierdź";
+"core.link.groupNotFound" = "Grupa, którą otwiera ten link, już nie istnieje. Mogła zostać usunięta lub zarchiwizowana albo zmieniono jej nazwę, jeśli link podaje ją po nazwie.";
+"core.link.groupAmbiguous" = "Więcej niż jedna grupa nosi nazwę „%@”, więc link nie otworzył żadnej z nich. Skopiuj link grupy ponownie w Ustawienia → Skróty i Siri.";
+"core.rename.nameTaken" = "Inna grupa ma już nazwę „%@”. Wybierz inną nazwę.";
+"settings.shortcuts.identityLinks.footer" = "Otwórz link ze skryptu lub innej aplikacji, np. poleceniem `open` w Terminal. Link wskazuje grupę po ID, więc działa także po zmianie nazwy; nazwa po ID służy tylko do odczytu. Samodzielnie napisany link może zamiast tego używać nazwy grupy (wielkość liter, akcenty i interpunkcja nie mają znaczenia). Dodaj ?mode=force do linku zamykającego, aby wymusić zamknięcie.";
