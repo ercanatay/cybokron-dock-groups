@@ -8,6 +8,8 @@ private final class CountedProcessWatch: ApplicationProcessWatching {
     private(set) var isClosed = false
     func poll() -> ExperimentalProcessEventWatchPollResult { isClosed ? .unknown : .idle }
     func close() { isClosed = true }
+    /// Its wake-up never fires.
+    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool { !isClosed }
 }
 
 @MainActor

@@ -83,10 +83,18 @@ final class FakeGate: Sendable {
 }
 
 /// A process watch whose next poll a test sets; terminal events latch, and a closed watch only
-/// answers `.unknown`, like the real one.
+/// answers `.unknown`, like the real one. Its wake-up is synthetic: `signal()` delivers what the
+/// real read source would when the kqueue has an event.
 final class FakeProcessWatch: ApplicationProcessWatching {
     var event: ExperimentalProcessEventWatchPollResult = .idle
+    /// Whether the wake-up can't be started.
+    var signallingFails = false
     private(set) var isClosed = false
+    /// Started and not yet stopped by `close()`.
+    private(set) var isSignalling = false
+    /// The handler the wake-up was started with, kept after `close()` so a test can deliver a
+    /// late callback.
+    private var handler: (@MainActor () -> Void)?
     private var latched = false
 
     func poll() -> ExperimentalProcessEventWatchPollResult {
@@ -95,7 +103,25 @@ final class FakeProcessWatch: ApplicationProcessWatching {
         return event
     }
 
-    func close() { isClosed = true }
+    func close() {
+        isClosed = true
+        isSignalling = false
+    }
+
+    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {
+        guard !signallingFails, !isClosed, !isSignalling else { return false }
+        isSignalling = true
+        self.handler = handler
+        return true
+    }
+
+    /// Delivers a wake-up; nothing after `close()` (a cancelled source delivers nothing) unless
+    /// `late`, which stands for a callback already on its way.
+    @MainActor
+    func signal(late: Bool = false) {
+        guard isSignalling || late else { return }
+        handler?()
+    }
 }
 
 /// Waits (in real time, the checks run on other threads) until `condition` holds.

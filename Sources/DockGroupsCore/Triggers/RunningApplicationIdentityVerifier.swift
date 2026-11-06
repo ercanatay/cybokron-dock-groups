@@ -219,8 +219,12 @@ private final class FirstAnswer<Value: Sendable>: Sendable {
 protocol ApplicationProcessWatching: AnyObject {
     /// Non-blocking.
     func poll() -> ExperimentalProcessEventWatchPollResult
-    /// Idempotent.
+    /// Idempotent. Stops a started wake-up; nothing is delivered after it returns.
     func close()
+    /// Calls `handler` on the main actor whenever the watch may have something to report, until
+    /// `close()`. A hint, never evidence: the handler must `poll()` and decide from that. `false`
+    /// when it can't be started; the caller then treats the watch as not registered.
+    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool
 }
 
 extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}
@@ -232,8 +236,9 @@ extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}
 /// (`ProcessIncarnation`) and registers an exec/exit watch on it FIRST, reads the start time
 /// again, then checks each one freshly (`ApplicationRunningCodeCheck`, off the main actor, 2 s by
 /// default, bracketed by the start time right before and after the Security call), then polls the
-/// watches and reads the start times again. Every reading must equal the one taken at listing. It
-/// answers from that result:
+/// watches and reads the start times again. Every reading must equal the one taken at listing. A
+/// watch whose wake-up (`ApplicationProcessWatching.startSignalling`) can't be started counts as
+/// not registered (`unavailable(.watchUnavailable)`). It answers from that result:
 ///
 /// - `verified` while the instance set is unchanged (instances that were verified may leave),
 ///   every watch stays idle and every start time is unchanged; with no instance running and none
@@ -250,12 +255,20 @@ extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}
 /// `reset()` forgets everything (the Mac can act again after sleep or a session change): no
 /// verified state outlives the gap, and every binding is listed, watched and checked again.
 ///
+/// Wake-up (docs/design/app-presence-watch-upgrade.md §4.1): a watch that reports something
+/// between questions wakes the verifier (`watchSignalled`), which polls it at once, the same poll a
+/// question makes. It only ever narrows: exec, an error, or exit before the instance was confirmed
+/// is `unavailable(.processChanged)` at once, with the change handler called and the usual retry
+/// scheduled; an exit of a verified instance closes its watch and changes no verdict (whether the
+/// instance left is the workspace list's business at the next question). Nothing is confirmed by
+/// a wake-up, and a wake-up that never comes leaves the poll at every question as it was.
+///
 /// Known gaps (see the threat model): a PID reused before the instances were listed (a stale
 /// workspace entry) reads as the new process; an exec before a watch is registered isn't reported
-/// by the watch (the fresh check sees the post-exec code); nothing wakes the verifier on a watch
-/// event (it polls when asked); check and action aren't atomic; a Security call can't be
-/// interrupted; the per-verifier watch limit is no process-wide descriptor limit. Logs only
-/// `ApplicationCodeCheckFailure.diagnosticCode`.
+/// by the watch (the fresh check sees the post-exec code, so it affects attribution only); check
+/// and action aren't atomic (a wake-up after the final poll doesn't stop an action already
+/// started); a Security call can't be interrupted; the per-verifier watch limit is no process-wide
+/// descriptor limit. Logs only `ApplicationCodeCheckFailure.diagnosticCode`.
 @MainActor
 final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     typealias Instances = @MainActor (TriggerApplicationIdentifier) -> [Int32]?
@@ -312,6 +325,8 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     private(set) var lastFailure: ApplicationCodeCheckFailure?
     /// How often `reset()` ran, for tests.
     private(set) var resetCount = 0
+    /// How many wake-ups reached a current watch, for tests.
+    private(set) var watchSignalCount = 0
 
     init(
         instances: @escaping Instances = RunningApplicationIdentityVerifier.runningInstances(of:),
@@ -367,8 +382,9 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
             startCheck(binding, identifier: identifier, instances: current, reportAs: reportAs)
             return entries[binding]?.phase.verdict ?? .unavailable
         case .verified:
-            // A verified instance may leave (its watch may already say exit); anything else a
-            // watch reports — exec, an error — means the confirmed code may no longer run.
+            // A verified instance may leave (its watch may already say exit, or have been closed
+            // by an exit wake-up); anything else a watch reports — exec, an error — means the
+            // confirmed code may no longer run. A listed instance without a watch fails below.
             let left = entry.instances.subtracting(current)
             let leftCleanly = left.allSatisfy { pid in
                 guard let watch = entry.watches[pid] else { return true }
@@ -413,6 +429,7 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
         onChange = handler
     }
 
+    /// Forgotten bindings' watches are closed, which cancels their wake-ups.
     func retainOnly(_ bindings: Set<ApplicationIdentityBinding>) {
         for binding in entries.keys where !bindings.contains(binding) {
             guard var entry = entries.removeValue(forKey: binding) else { continue }
@@ -422,9 +439,10 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     }
 
     /// Forgets every binding: checks and retries are cancelled (a Security call already running
-    /// isn't interrupted, its answer is ignored), watches are closed and verdicts dropped, so the
-    /// next question lists, watches and checks again (`pending` while instances run). No change
-    /// notification: the caller restarts its observations itself.
+    /// isn't interrupted, its answer is ignored), watches are closed (their wake-ups cancelled, a
+    /// late one is ignored) and verdicts dropped, so the next question lists, watches and checks
+    /// again (`pending` while instances run). No change notification: the caller restarts its
+    /// observations itself.
     func reset() {
         resetCount += 1
         let forgotten = entries
@@ -455,8 +473,8 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
         return lastToken
     }
 
-    /// Start time and watch first, then the bracketed check, then poll and read again (in
-    /// `finish`). Any failure here is `unavailable`, and nothing is checked.
+    /// Start time and watch (with its wake-up) first, then the bracketed check, then poll and read
+    /// again (in `finish`). Any failure here is `unavailable`, and nothing is checked.
     ///
     /// The bracket for each instance: its start time read when it is listed (in the main-actor
     /// turn that listed it), again after its watch is registered, right before and right after
@@ -480,6 +498,8 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
             watches.values.forEach { $0.close() }
             fail(binding, failure, instances: current)
         }
+        // The wake-ups name this token: one for a check that's gone changes nothing.
+        let token = nextToken()
         for pid in current {
             guard let listed = readIncarnation(pid) else {
                 abandon(.processUnreadable)
@@ -490,6 +510,12 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
                 return
             }
             watches[pid] = watch
+            // Fail closed: a watch that can't wake the verifier counts as not registered, never as
+            // a poll-only watch.
+            guard watch.startSignalling(signalHandler(binding, token: token, pid: pid, watch: watch)) else {
+                abandon(.watchUnavailable)
+                return
+            }
             // Anything already pending: the process changed around registration.
             guard watch.poll() == .idle else {
                 abandon(.processChanged)
@@ -502,7 +528,6 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
             }
             incarnations[pid] = listed
         }
-        let token = nextToken()
         var entry = Entry(instances: current, watches: watches, incarnations: incarnations, phase: .checking(reportAs: reportAs), token: token)
         let check = check
         let readIncarnation = readIncarnation
@@ -599,6 +624,56 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
             return
         }
         startCheck(binding, identifier: identifier, instances: current, reportAs: .unavailable)
+    }
+
+    // MARK: Wake-up
+
+    /// What a watch's wake-up calls. Holds neither the verifier nor the watch.
+    private func signalHandler(_ binding: ApplicationIdentityBinding, token: UInt64, pid: Int32, watch: any ApplicationProcessWatching) -> @MainActor () -> Void {
+        { [weak self, weak watch] in
+            guard let watch else { return }
+            guard let self else {
+                watch.close()
+                return
+            }
+            self.watchSignalled(binding, token: token, pid: pid, watch: watch)
+        }
+    }
+
+    /// A watch woke the verifier: poll it now, the same poll a question makes, and narrow the
+    /// verdict at once. Never confirms anything and starts no check; a retry does that after
+    /// `retryInterval`, with a new watch.
+    ///
+    /// - `.idle`: nothing (a spurious wake-up).
+    /// - `.exit` of a verified instance: its watch is closed (the descriptor doesn't outlive the
+    ///   process), the verdict stays. The exit isn't a close: listed at the next question, the
+    ///   instance is `processChanged`; gone from the list, it left cleanly.
+    /// - Anything else (exec, exec and exit, an error, or an exit before the instance was
+    ///   confirmed): `unavailable(.processChanged)`, watches closed, the running check cancelled,
+    ///   and the change handler called when the verdict changed (the coordinator then drops the
+    ///   firings that are no longer cleared and dismisses their notice).
+    ///
+    /// A wake-up of a replaced or forgotten watch (another token, another watch) changes nothing;
+    /// that watch is closed again, which stops a source that would otherwise keep firing.
+    private func watchSignalled(_ binding: ApplicationIdentityBinding, token: UInt64, pid: Int32, watch: any ApplicationProcessWatching) {
+        guard var entry = entries[binding], entry.token == token, let current = entry.watches[pid], current === watch else {
+            watch.close()
+            return
+        }
+        watchSignalCount += 1
+        let event = watch.poll()
+        if event == .idle { return }
+        if case .verified = entry.phase, event == .exit {
+            entry.watches.removeValue(forKey: pid)?.close()
+            entries[binding] = entry
+            logger.debug("Application identity watch: a verified instance exited")
+            return
+        }
+        let before = entry.phase.verdict
+        fail(binding, .processChanged, instances: entry.instances)
+        if entries[binding]?.phase.verdict != before {
+            onChange?()
+        }
     }
 
     private func closeWatches(of entry: inout Entry) {
