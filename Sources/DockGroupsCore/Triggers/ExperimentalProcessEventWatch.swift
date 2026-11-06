@@ -1,4 +1,5 @@
 import Darwin
+import Dispatch
 
 /// Result of one non-blocking `ExperimentalProcessEventWatch.poll()`.
 enum ExperimentalProcessEventWatchPollResult: Equatable {
@@ -18,8 +19,9 @@ enum ExperimentalProcessEventWatchPollResult: Equatable {
 }
 
 /// Experimental macOS 14+ synchronous wrapper over kqueue `EVFILT_PROC` (`NOTE_EXEC | NOTE_EXIT`).
-/// Its only production caller is `RunningApplicationIdentityVerifier`, which registers it before a
-/// running-code check and polls it on the main actor; everything below still applies there.
+/// Its production callers are `RunningApplicationIdentityVerifier`, which registers it before a
+/// running-code check, polls it on the main actor and lets it wake it (`startSignalling`), and
+/// `TriggerApplicationApprover`, which only polls; everything below still applies there.
 ///
 /// This is NOT a process identity, NOT authorization, and NOT race-free. Read the design draft
 /// `docs/design/app-presence-watch-protocol-draft.md` before touching it.
@@ -39,14 +41,21 @@ enum ExperimentalProcessEventWatchPollResult: Equatable {
 /// - Use only through `RunningApplicationIdentityVerifier`, which treats every non-idle poll as
 ///   unknown.
 ///
-/// Not thread-safe: the caller must serialize every call including `close()` and release.
-/// No background queue, global state, logging or access to other processes beyond the
-/// kqueue registration for the given PID.
+/// Not thread-safe: the caller must serialize every call including `close()` and release; with
+/// `startSignalling` that is the main actor. No global state, logging or access to other processes
+/// beyond the kqueue registration for the given PID; the only queue is the main queue a started
+/// wake-up delivers on.
 final class ExperimentalProcessEventWatch {
     typealias PollResult = ExperimentalProcessEventWatchPollResult
+    /// Closes the kqueue descriptor (`Darwin.close`); a seam so tests can see when and how often.
+    typealias CloseDescriptor = @Sendable (Int32) -> Void
 
     private let watchedPID: Int32
     private var descriptor: Int32
+    private let closeDescriptor: CloseDescriptor
+    /// The started wake-up (`startSignalling`): a read source on `descriptor`. While it exists,
+    /// only its cancel handler closes the descriptor. `nil` before it starts and after `close()`.
+    private(set) var signalSource: (any DispatchSourceRead)?
     /// Latched once exec, exit, or any fail-closed condition is observed. Never cleared.
     private var isLatched = false
 
@@ -62,7 +71,7 @@ final class ExperimentalProcessEventWatch {
     /// Registers for exec/exit notifications of `pid`. Fails (returns nil) for `pid <= 0` or any
     /// kqueue, close-on-exec, or registration failure. Registration succeeds only when the kevent
     /// call returns zero events; an owned descriptor is closed on every failure path.
-    init?(pid: Int32) {
+    init?(pid: Int32, closeDescriptor: @escaping CloseDescriptor = { _ = Darwin.close($0) }) {
         guard pid > 0 else { return nil }
         let fd = kqueue()
         guard fd >= 0 else { return nil }
@@ -70,11 +79,11 @@ final class ExperimentalProcessEventWatch {
         // Close-on-exec is mandatory: read existing FD flags, then add FD_CLOEXEC to them.
         let existingFlags = fcntl(fd, F_GETFD)
         guard existingFlags >= 0 else {
-            Darwin.close(fd)
+            closeDescriptor(fd)
             return nil
         }
         guard fcntl(fd, F_SETFD, existingFlags | FD_CLOEXEC) >= 0 else {
-            Darwin.close(fd)
+            closeDescriptor(fd)
             return nil
         }
 
@@ -93,12 +102,13 @@ final class ExperimentalProcessEventWatch {
         var zero = timespec(tv_sec: 0, tv_nsec: 0)
         let count = kevent(fd, &change, 1, &result, 1, &zero)
         guard count == 0 else {
-            Darwin.close(fd)
+            closeDescriptor(fd)
             return nil
         }
 
         watchedPID = pid
         descriptor = fd
+        self.closeDescriptor = closeDescriptor
     }
 
     deinit {
@@ -150,12 +160,45 @@ final class ExperimentalProcessEventWatch {
         }
     }
 
-    /// Closes the kqueue descriptor. Idempotent.
+    /// Wakes `handler` on the main queue whenever the kqueue has an event pending, through a
+    /// `DispatchSourceRead` on the descriptor, until `close()`. The wake-up only says "look now": it
+    /// reads nothing, so the handler must `poll()` (which reads the event) and must close the watch
+    /// once a poll isn't `.idle`, because a latched watch no longer reads its kqueue, which then
+    /// stays readable. It proves nothing about the process either; a wake-up that never comes changes
+    /// nothing a poll would see.
+    ///
+    /// `false`, and nothing started, for a closed or latched watch or one that already signals.
+    /// Once started, `close()` cancels the source and the source's cancel handler closes the
+    /// descriptor (libdispatch requires the descriptor to outlive the source), exactly once.
+    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {
+        guard descriptor >= 0, !isLatched, signalSource == nil else { return false }
+        let fd = descriptor
+        let closeDescriptor = closeDescriptor
+        let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: .main)
+        source.setEventHandler {
+            MainActor.assumeIsolated { handler() }
+        }
+        source.setCancelHandler {
+            closeDescriptor(fd)
+        }
+        signalSource = source
+        source.activate()
+        return true
+    }
+
+    /// Closes the kqueue descriptor; with a started wake-up, cancels its source first and leaves
+    /// the closing to the source's cancel handler (on the main queue, after this returns).
+    /// Idempotent.
     func close() {
         guard descriptor >= 0 else { return }
         let fd = descriptor
         descriptor = -1
-        Darwin.close(fd)
+        if let source = signalSource {
+            signalSource = nil
+            source.cancel()
+        } else {
+            closeDescriptor(fd)
+        }
     }
 
     private func latchUnknown() -> PollResult {

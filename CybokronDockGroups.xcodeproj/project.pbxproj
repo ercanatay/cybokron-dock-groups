@@ -224,6 +224,7 @@
 		8F9D2D97160AA2F384DCCB09 /* GroupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AAAF01792CF3ED5DEA7A3E /* GroupStoreTests.swift */; };
 		8FFA43BC30695F050EC6664D /* CapturePlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A923B7782FB29001CA615D /* CapturePlanner.swift */; };
 		907407557E833182F238B446 /* ChangelogFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADC8A114A6247DF2709F519 /* ChangelogFeed.swift */; };
+		9090151B5C841E9707480217 /* ApplicationIdentityWatchWakeUpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FB966E5CCCB76057B07D55 /* ApplicationIdentityWatchWakeUpTests.swift */; };
 		90BF1289352A073D5EDAC7D4 /* LinkPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3B95CEB613F25C30D39E537 /* LinkPolicy.swift */; };
 		9195ECC4133EC1E52AD89FDC /* RunningAppsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9098CAAF2A8F38CA3A8A99 /* RunningAppsMonitor.swift */; };
 		91DFC9ED0E2C5556D567D81F /* WiFiNetworkName.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35D7CE90569E79BF41FA324 /* WiFiNetworkName.swift */; };
@@ -834,6 +835,7 @@
 		D39DBAF7BB8FE859A7ABE953 /* TriggerPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerPersistence.swift; sourceTree = "<group>"; };
 		D3B95CEB613F25C30D39E537 /* LinkPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPolicy.swift; sourceTree = "<group>"; };
 		D3C7177EECB13EF4E5027F57 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D3FB966E5CCCB76057B07D55 /* ApplicationIdentityWatchWakeUpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationIdentityWatchWakeUpTests.swift; sourceTree = "<group>"; };
 		D4E478C075119883B336D2FF /* ContextSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextSession.swift; sourceTree = "<group>"; };
 		D53A62391E013234E28E34EF /* az */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = az; path = az.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D64B3E6E4AE605786B9BAF60 /* ContextSwitcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextSwitcherTests.swift; sourceTree = "<group>"; };
@@ -1374,6 +1376,7 @@
 				9392F2FA3E805B4F3D69ADD9 /* ApplicationIdentityApprovalTests.swift */,
 				2D07D76027A450FCD6E1177F /* ApplicationIdentityAuthorizationTests.swift */,
 				41676CE635E1EDD7DD6AD40D /* ApplicationIdentityCountTests.swift */,
+				D3FB966E5CCCB76057B07D55 /* ApplicationIdentityWatchWakeUpTests.swift */,
 				E0BC2D729A8CEFAB4742D705 /* ApplicationRunningCodeVerifierTests.swift */,
 				F1791AE5EB3B2F586397B3BC /* ApplicationStaticCodeSliceVerifierTests.swift */,
 				773386E9EC7D8FB2E1DBFCCB /* ApplicationStaticCodeVerifierTests.swift */,
@@ -2137,6 +2140,7 @@
 				FB42D112EA4C6AE79CCEE8FD /* ApplicationIdentityApprovalTests.swift in Sources */,
 				20A3C8C9B01758EE29EBB6D5 /* ApplicationIdentityAuthorizationTests.swift in Sources */,
 				1F77F0ADE80198063181E4B6 /* ApplicationIdentityCountTests.swift in Sources */,
+				9090151B5C841E9707480217 /* ApplicationIdentityWatchWakeUpTests.swift in Sources */,
 				93BE3504A461647587B37A46 /* ApplicationRunningCodeVerifierTests.swift in Sources */,
 				8E7AC686043274E7006922EF /* ApplicationStaticCodeSliceVerifierTests.swift in Sources */,
 				FC5F86027E211A1CB720855C /* ApplicationStaticCodeVerifierTests.swift in Sources */,

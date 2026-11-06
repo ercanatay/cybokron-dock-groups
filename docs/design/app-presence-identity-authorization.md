@@ -300,6 +300,8 @@ appears in diagnostics (which report trigger counts and kinds only).
   `codeChanged`. Still open: a PID reused before the instances were listed (a stale workspace entry)
   reads as the new process; the approval reading isn't bracketed; the start time is kept across
   exec, so an exec before registration is still not reported by the watch (T5 partly, T6 partly).
+  Since 2026-11-06 a fixture test shows the fresh check after registration sees the post-exec code,
+  so that exec affects attribution only (an accepted limit, threat model §3.5).
 - **Sleep and session changes.** Since 2026-11-05 the verifier is reset whenever the Mac stops or
   starts being able to act: no confirmed identity outlives sleep or a session change, and authorized
   rules answer `pending` until a fresh check confirms them. Real sleep, dark wake and fast user
@@ -309,9 +311,12 @@ appears in diagnostics (which report trigger counts and kinds only).
 - **The Security call can't be cancelled.** A timed-out or cancelled check leaves its call
   running on its own thread until Security returns; repeated time-outs can pile up such calls
   (one per instance per retry, at most every 10 s).
-- **No wake-up.** Watches are polled when the coordinator asks; nothing wakes it on an event. An
-  `unavailable` rule recovers only through its retry; a rule whose only source of questions is its
-  own observation is asked again on the retry's change notification.
+- **Wake-up.** Since 2026-11-06 every verifier watch wakes the verifier on an event (a read
+  source on its kqueue descriptor, threat model §3.5): exec, an error or an unconfirmed exit is
+  `unavailable` at once and the coordinator is told; nothing is confirmed by a wake-up. An
+  `unavailable` rule still recovers only through its retry; a rule whose only source of questions
+  is its own observation is asked again on the retry's change notification. The approval's watches
+  still only poll.
 - **Descriptor limit.** The 64-watch limit is per verifier; there is no process-wide descriptor limit
   and descriptor exhaustion is untested (it would be `watchUnavailable`).
 - **Different signing identifier, same bundle identifier.** Any listed instance whose code doesn't

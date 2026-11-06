@@ -83,7 +83,7 @@ means no public, proportionate API known to this review provides the guarantee.
 | T3 | Bundle modified or replaced after binding | Detectable for newly launched processes (their hash differs); a process already validated keeps its in-memory identity | Fresh dynamic lookup per candidate; static recheck cannot prove the file was never swapped | On-disk changes to resources not covered by the dynamic check, and changes between check and use | New code yields unknown; the rule waits for explicit reselection |
 | T4 | Taken (spoofed) bundle ID, including case variants | Today: case-insensitive ASCII match broadens matching to case variants (`AppPresenceTracker.swift:19-21`); non-ASCII look-alikes cannot match. Candidate: signing identifier compared case-sensitively | Unit tests on the counter; requirement syntax tests | An app whose signing identifier differs from its bundle ID can never be bound (availability, not safety) | Unknown, never zero |
 | T5 | PID reuse between observation, Security lookup and watch registration | Achievable for the verifier from listing on: a (PID, kernel start time) bracket (§3.4). **Not achievable** before listing with public PID-based APIs: Apple's Security source marks PID lookup raceable; audit tokens or start times for arbitrary `NSWorkspace` entries are not public without Endpoint Security | Since 2026-11-05: `ProcessIncarnation` (`proc_pidinfo(PROC_PIDTBSDINFO)`) read at listing, after registration, right before and after the Security call, when the check finishes and at every later question (`RunningApplicationIdentityVerifier`), with injected-reader tests per position and real-process tests (reaped child unreadable, start time kept across exec). `kqueue` registration of a reaped child fails with `ESRCH` (`ExperimentalProcessEventWatchTests`) | A stale `NSWorkspace` entry whose PID was reused before it was listed reads as the new process (it can make the rule wait for re-approval); the approval reading is not bracketed; a real PID reuse is not exercised in CI | Any changed or unreadable start time is `unavailable(processChanged/processUnreadable)`, never `verified` or `codeChanged`; liveness and instance equality are rechecked before and after. No claim of instance binding |
-| T6 | `exec` inside a verified process (same PID, same `NSRunningApplication`, no list change) | Detectable only for exec events after a watch is registered; **not achievable** for exec before registration | `EVFILT_PROC NOTE_EXEC` (`ExperimentalProcessEventWatch.swift:63-149`), real exec tested only on an owned `/bin/sh` child; AppKit fixture showed no KVO change and equal instance after exec | Exec between lookup and registration (the kernel start time doesn't change on exec, so the §3.4 bracket doesn't see it); a retained `SecCode` still matches after exec | Exec, exit or any malformed/unknown event latches the watch terminal; the binding is discarded and the rule becomes unknown |
+| T6 | `exec` inside a verified process (same PID, same `NSRunningApplication`, no list change) | Detectable only for exec events after a watch is registered; exec before registration is **not detectable**, and since the 2026-11-06 fixture test it is shown to affect attribution only (§3.5) | `EVFILT_PROC NOTE_EXEC` (`ExperimentalProcessEventWatch.swift`), with a main-queue read source waking the verifier (§3.5); real exec tested on owned shell children and on an ad hoc signed launcher → target fixture; AppKit fixture showed no KVO change and equal instance after exec | Exec between lookup and registration (the kernel start time doesn't change on exec, so the §3.4 bracket doesn't see it): the fresh check after registration sees the post-exec code (tested), so only "which program was this instance launched as" is unknown; a retained `SecCode` still matches after exec | Exec, exit or any malformed/unknown event latches the watch terminal; the binding is discarded and the rule becomes unknown, at once through the wake-up or at the next question |
 | T7 | Observation delivery delay or coalescing (KVO, main queue, kqueue) | Completeness **not achievable**: short-lived instances can be missed; ordering of deliveries is enforced by sequence numbers assigned on the main queue | Tracker rejects stale/duplicate sequences and treats gaps as uncertain (`AppPresenceRuleTracker.swift:129-158`); synthetic tests only | A missed open/close; an edge acted on after the process already changed; coalesced kqueue events | Gaps and unknown snapshots reset all baselines and drop queued, pending and notice-stage presence firings (`TriggerCoordinator.swift:166-172`) |
 | T8 | Process death during verification or before action | Death can be observed after the fact; not prevented | Watch `NOTE_EXIT`; liveness recheck | An opened edge whose process died within the settle/notice window still runs unless a later snapshot invalidates it | An exit during verification is unknown; a close requires an established, verified remaining-instance count of zero |
 | T9 | User confirmation race (sheet shows one candidate, binding applies to another) | Achievable only as "the binding is the exact candidate displayed", invalidated on any change; not atomic | Generation plus candidate identity on the confirmation (draft lifecycle step 4); not implemented | A1 can exec or swap between display and confirm; T5/T6 apply | Changed candidate, exec, exit, watch failure or stale generation invalidates the confirmation |
@@ -166,6 +166,7 @@ Still open:
   Under repeated time-outs such calls can accumulate (bounded by instances × retries every 10 s).
 - **No wake-up:** watches are polled only when the coordinator asks (observations, settle, notice,
   carry-out, status line does not poll). An event between questions is seen at the next question.
+  *Since 2026-11-06 (§3.5):* a read source wakes the verifier on every watch event.
 - **No global descriptor limit:** the 64-watch limit is per verifier; nothing limits descriptors
   process-wide, and exhaustion is untested (it would read as `watchUnavailable`).
 - **T2 / T9 / T15 / T16 (A1 edits):** unchanged. There is still no selection flow that creates a
@@ -220,7 +221,8 @@ Still open (unchanged unless noted):
   keeps running on its own thread until Security returns.
 - **A1 file edits:** a crafted `authorized` record for the genuine app's `cdhash` in the local
   `triggers.json` is still accepted while that code runs (out of scope, §2).
-- **No wake-up:** as for the verifier, watches are polled only when the coordinator asks.
+- **No wake-up:** as for the verifier, watches are polled only when the coordinator asks. *Since
+  2026-11-06 the verifier's watches wake it (§3.5); the approval's watches still only poll.*
 - **Signing kind:** the editor of an authorized trigger names the approved version's signing kind
   (D1, `GroupTrigger.approvedApplicationSignature`); an ad-hoc one is called a weaker approval,
   because its signature doesn't verify who made the app (T9 partly). Its texts are English only
@@ -274,6 +276,51 @@ Still open:
   `app-presence-watch-upgrade.md` §7. If it fails there, every authorized rule reads
   `unavailable(processUnreadable)` (fail closed, not silent). A real PID reuse, a real sleep and
   fast user switching are manual only.
+
+### 3.5 After the watch wake-up and the exec-before-registration fixture (2026-11-06)
+
+`app-presence-watch-upgrade.md` item 1 (option 1 of §4.1) and the item 2 fixture test are
+implemented; see its "Implementation status (2026-11-06)" for the event table and the fail-closed
+matrix. As above, "closed" means a gate in code and tests (synthetic wake-ups through fake watches,
+plus real child processes, real read sources and one real two-fixture Security test); it is not a
+race-freedom claim.
+
+Closed or narrowed:
+
+- **No wake-up (verifier):** every verifier watch carries a `DispatchSourceRead` on its kqueue
+  descriptor (main queue). An exec, an error, or an exit before the instance was confirmed makes
+  the binding `unavailable(processChanged)` within one main-queue turn of the kernel event, calls
+  the change handler (`applicationIdentityVerdictsChanged()`: firings no longer cleared are dropped
+  and recorded, a notice is dismissed, observations restart) and schedules the usual retry, which
+  registers a new watch and checks freshly. An exit of a verified instance closes its watch and
+  changes no verdict (it is no close; the workspace list decides at the next question). A wake-up
+  never confirms anything; a watch whose wake-up can't be started counts as not registered
+  (`unavailable(watchUnavailable)`, nothing checked); a wake-up that never fires leaves the poll at
+  every question as before. Sources are cancelled before their descriptor is closed, and the
+  descriptor is closed once, by the cancel handler, on every path (`retainOnly`, `reset`, failure,
+  replacement, release; tested with real descriptors).
+- **T6 / exec before registration:** re-classified as an **accepted limit that affects attribution
+  only**. Tested with real ad hoc signed fixtures: an instance that exec'd from the launcher's code
+  into the target's before its watch was registered has an idle watch and an unchanged start time
+  (nothing reports the exec), but a fresh `SecCode` by PID and the verifier's check describe the
+  target's code: an approval of the launcher's code answers `codeChanged`, one of the target's
+  `verified`. What stays unknown is which program the `NSRunningApplication` entry was launched as.
+
+Still open:
+
+- **T6 before registration:** attribution, as above (no public API replays the exec; Endpoint
+  Security would be needed). Also still: an exec *before the listing*.
+- **T10:** unchanged. A wake-up after the final poll before the handler doesn't stop an action
+  already started, and the window from that poll to the action's effect (including the action's
+  own duration) stays; zero is not achievable.
+- **T5 before listing:** unchanged (stale `NSWorkspace` entry whose PID was reused before listing).
+- **The Security call can't be cancelled:** unchanged; a wake-up cancels the waiting task only.
+- **Approval:** `TriggerApplicationApprover`'s watches still only poll, and its reading isn't
+  bracketed.
+- **Descriptor limit:** unchanged (one descriptor per watch, 64 per verifier, nothing process-wide).
+- **Platform:** the read source on a kqueue descriptor was exercised by unsigned test binaries on
+  one Mac (macOS 27.2) only; the signed, hardened app needs the manual check of
+  `app-presence-watch-upgrade.md` §7. If it never fires there, behaviour is that of the poll alone.
 
 ## 4. Review findings at `c7a9f57`
 
@@ -336,6 +383,8 @@ Experimental helpers:
 - **F11:** `ExperimentalProcessEventWatch` has no generation or instance identity of its own (the draft
   requires one on every callback), uses one descriptor per PID with no limit, exposes the internal
   `consumePollResult` seam, is not thread-safe, and has no wake-up mechanism (poll only).
+  *Since 2026-11-06:* it has an optional main-queue wake-up (`startSignalling`, §3.5); it is still
+  not thread-safe (main actor only) and still has no identity of its own beyond the PID.
 
 ## 5. What the tests prove
 

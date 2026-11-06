@@ -1,7 +1,8 @@
 # Application presence: watch upgrade feasibility
 
-Status: design and feasibility record; items 3 and 5 have since been implemented (see
-"Implementation status (2026-11-05)"). The record itself approves nothing. It evaluates the
+Status: design and feasibility record; items 3 and 5 (see "Implementation status (2026-11-05)"),
+item 1 and the item 2 fixture test (see "Implementation status (2026-11-06)") have since been
+implemented. The record itself approves nothing. It evaluates the
 residual risks listed as "still open" in `app-presence-threat-model.md` §3.2/§3.3 (T5, T6, T10, no
 wake-up, sleep/session) and in `app-presence-identity-authorization.md` ("Remaining risks"), and
 proposes what to do about each one. Nothing below claims that any protocol is race-free.
@@ -41,10 +42,62 @@ currently untested in code. Doc correction (2) is cheaper still but changes no b
 |---|------|--------|
 | 3 | (PID, kernel start time) bracket | **Implemented** in `RunningApplicationIdentityVerifier` (`ProcessIncarnation`): read at listing, after registration, right before and after the Security call (same thread), when the check finishes, and at every later question. Changed → `unavailable(processChanged)`, unreadable → `unavailable(processUnreadable)` (new abstract code 9); a check whose bracket failed is never `verified` or `codeChanged`. Tests: injected reader per position, real children (reaped child unreadable, start time kept across exec, real reader keeps an unchanged child verified). Not applied to `TriggerApplicationApprover` |
 | 5 | Verifier reset on sleep/session | **Implemented**: `ApplicationIdentityVerifying.reset()` (default no-op for fakes), `TriggerCoordinator.resetApplicationIdentityVerification()`, called by `TriggerController.handleWorkspaceSignal` on both `canAct` transitions (before observations restart on the way back). Option 1 of §4.5: entries are forgotten, so the next question re-lists and re-checks (`pending`); no `unavailable` + 10 s retry. Tests: verifier, coordinator and controller seams; real sleep and fast user switching not tested |
-| 2 | Exec-before-registration fixture test and doc rewording | Open |
+| 2 | Exec-before-registration fixture test and doc rewording | Open (done 2026-11-06, below) |
 | 4 | T10 doc wording | Open (unchanged; the bracket only adds a read to the final check) |
-| 1, 1b, 2b, 3b, 4b | Wake-up, shared kqueue, pidversion, stale entry, action cancellation | Open / deferred as recommended |
+| 1, 1b, 2b, 3b, 4b | Wake-up, shared kqueue, pidversion, stale entry, action cancellation | Open / deferred as recommended (1 done 2026-11-06, below) |
 | §7 | `proc_pidinfo` inside the signed, hardened app on every supported macOS | Not done (manual); a failure there reads as `processUnreadable` for every authorized rule |
+
+## Implementation status (2026-11-06)
+
+| # | Item | Status |
+|---|------|--------|
+| 1 | Wake-up | **Implemented** as option 1 of §4.1. `ExperimentalProcessEventWatch.startSignalling` puts a `DispatchSourceRead` (main queue) on the watch's own kqueue descriptor; `ApplicationProcessWatching` gained `startSignalling(_:)`. The verifier starts it for every watch right after registration, before the first poll; a watch whose wake-up can't be started counts as not registered (`unavailable(watchUnavailable)`, nothing checked). The handler reads nothing itself: it calls the verifier's `watchSignalled`, which checks the check's token and the watch's identity, polls once (the same poll a question makes) and only ever narrows (table below). Each source is cancelled by `close()`, and its cancel handler closes the descriptor exactly once; `retainOnly`, `reset`, `fail`, a replaced check, `codeChanged` and the release of the verifier all go through `close()` |
+| 2 | Exec-before-registration fixture test | **Done; the premise holds on this Mac.** `ApplicationIdentityExecBeforeRegistrationTests`: an ad hoc signed copy of `/bin/bash` (launcher) and of `/bin/sleep` (target) under one identifier; the launcher matches its own `cdhash` before the exec, then exec's into the target; a watch registered afterwards polls `idle` and the start time is unchanged (**the accepted limit**: nothing reports the exec), while a fresh `SecCode` by PID and the real verifier see the target's code (target binding `verified`, launcher binding `codeChanged`). Doc rewording applied to the threat model (T6 row, §3.5) |
+| 1b, 2b, 3b, 4, 4b | Shared kqueue, pidversion, stale entry, T10 wording, action cancellation | Open / deferred as recommended |
+
+What a wake-up does (`RunningApplicationIdentityVerifier.watchSignalled`):
+
+| Phase of the binding | Poll after the wake-up | Result |
+|----------------------|------------------------|--------|
+| any | `.idle` (spurious) | nothing |
+| `verified` | `.exit` | that watch is closed; no verdict change, no notification. The exit is no close: listed at the next question the instance is `unavailable(processChanged)` (as a poll there would have said), gone from the list it left cleanly |
+| `verified` | `.exec`, `.execAndExit`, `.unknown` | `unavailable(processChanged)` at once, every watch of the binding closed, retry after 10 s with a new watch and a fresh check; change handler → `applicationIdentityVerdictsChanged()` drops the firings no longer cleared (recorded `applicationNotConfirmed`), dismisses their notice and restarts observations |
+| `checking` (first check or retry) | anything but `.idle` | the same, and the running check is cancelled (its late answer is ignored); notified only when the verdict changed (`pending` → `unavailable`) |
+| `codeChanged`, `unavailable`, forgotten, replaced (other token or watch) | — | nothing; the stale watch is closed again (idempotent), which stops its source |
+
+Fail-closed matrix:
+
+| Situation | Verdict | Acts? |
+|-----------|---------|-------|
+| Wake-up can't be started (closed or latched watch, an injected failure) | `unavailable(watchUnavailable)`, no Security call | no |
+| Wake-up started but never fires (lost or late event) | unchanged from before: every question still polls every watch | as before (the final poll before the handler decides) |
+| Wake-up fires | narrows only; nothing is `verified` without a fresh check after a new registration | no, until that check |
+| Wake-up of a replaced or forgotten watch | ignored | — |
+
+Guarantee gained: an exec, error, or unconfirmed exit reported by a watch reaches the verifier,
+the coordinator and the notice within one main-queue turn of the kernel event, instead of at the
+next question; descriptors of exited instances close then too. Still no security gain over the
+final poll (§4.1, "Guarantee"): carry-out already polled right before the handler.
+
+Behaviour change: an exec while a check is running is now `unavailable` (then retried) instead of
+the check's own `codeChanged`, because the check is cancelled; a different code is then reported by
+the retry. Nothing becomes wider.
+
+Tests (`ApplicationIdentityWatchWakeUpTests.swift`): synthetic wake-ups through the fake watch
+(exec, exec+exit, error, verified exit listed and gone, exit during a check, a wake-up that can't be
+started, alone and with the coordinator, a late wake-up of a replaced or forgotten watch; with the
+coordinator: settling firing dropped and recorded, notice dismissed, nothing runs until a retry's
+fresh check and a new edge); the real watch (cancel before close, close once, release, latched,
+real exec and exit of children); the real verifier with real watches (sweep, reset and release
+cancel every source and close every descriptor once; a real exec and a real exit reach it without
+any question, bounded at 60 s).
+
+Still open, unchanged: **T6 before registration** (accepted limit, attribution only, see above);
+**T10** (a wake-up after the final poll doesn't stop an action already started; the window from
+that poll to the action's effect stays); **PID reuse before listing** (§4.3 option 3); the
+**uncancellable Security call**; no process-wide descriptor limit (1b); kqueue across a real sleep
+(now irrelevant for verified state, which the reset drops, but not tested); the read source and
+`proc_pidinfo` inside the signed, hardened app (§7, manual).
 
 ## 1. Evidence gathered for this document
 

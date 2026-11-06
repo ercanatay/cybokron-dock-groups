@@ -8,6 +8,8 @@ private final class QuietProcessWatch: ApplicationProcessWatching {
     private var isClosed = false
     func poll() -> ExperimentalProcessEventWatchPollResult { isClosed ? .unknown : .idle }
     func close() { isClosed = true }
+    /// Its wake-up never fires.
+    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool { !isClosed }
 }
 
 /// The app's controller with the running-code verifier: it is the production setting, a code

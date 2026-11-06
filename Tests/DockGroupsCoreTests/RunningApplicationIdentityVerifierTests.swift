@@ -83,10 +83,18 @@ final class FakeGate: Sendable {
 }
 
 /// A process watch whose next poll a test sets; terminal events latch, and a closed watch only
-/// answers `.unknown`, like the real one.
+/// answers `.unknown`, like the real one. Its wake-up is synthetic: `signal()` delivers what the
+/// real read source would when the kqueue has an event.
 final class FakeProcessWatch: ApplicationProcessWatching {
     var event: ExperimentalProcessEventWatchPollResult = .idle
+    /// Whether the wake-up can't be started.
+    var signallingFails = false
     private(set) var isClosed = false
+    /// Started and not yet stopped by `close()`.
+    private(set) var isSignalling = false
+    /// The handler the wake-up was started with, kept after `close()` so a test can deliver a
+    /// late callback.
+    private var handler: (@MainActor () -> Void)?
     private var latched = false
 
     func poll() -> ExperimentalProcessEventWatchPollResult {
@@ -95,7 +103,25 @@ final class FakeProcessWatch: ApplicationProcessWatching {
         return event
     }
 
-    func close() { isClosed = true }
+    func close() {
+        isClosed = true
+        isSignalling = false
+    }
+
+    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {
+        guard !signallingFails, !isClosed, !isSignalling else { return false }
+        isSignalling = true
+        self.handler = handler
+        return true
+    }
+
+    /// Delivers a wake-up; nothing after `close()` (a cancelled source delivers nothing) unless
+    /// `late`, which stands for a callback already on its way.
+    @MainActor
+    func signal(late: Bool = false) {
+        guard isSignalling || late else { return }
+        handler?()
+    }
 }
 
 /// Waits (in real time, the checks run on other threads) until `condition` holds.
@@ -345,11 +371,12 @@ struct ApplicationRunningCodeCheckTests {
     }
 }
 
-/// Two thin, ad hoc signed copies of `/bin/sleep` with the same identifier and different code.
+/// Thin, ad hoc signed copies of `/bin/sleep` (or of `executable`) with the same identifier and
+/// different code.
 enum SignedFixture {
     static let identifier = "com.cybokron.fixture.running"
 
-    static func make(at url: URL, name: String) async throws {
+    static func make(at url: URL, name: String, executable: String = "/bin/sleep") async throws {
         let dir = url.appendingPathComponent("Contents/MacOS", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let thin = Process()
@@ -359,7 +386,7 @@ enum SignedFixture {
         #else
         let architecture = "x86_64"
         #endif
-        thin.arguments = ["-thin", architecture, "/bin/sleep", "-output", dir.appendingPathComponent("Fixture").path]
+        thin.arguments = ["-thin", architecture, executable, "-output", dir.appendingPathComponent("Fixture").path]
         thin.standardOutput = Pipe(); thin.standardError = Pipe()
         try await thin.runToExit()
         try #require(thin.terminationStatus == 0)
