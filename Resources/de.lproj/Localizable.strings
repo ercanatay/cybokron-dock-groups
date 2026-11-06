@@ -1162,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Diese App mit einer schwachen Signatur genehmigen?";
 "triggers.identity.approve.adHocMessage" = "Diese App hat eine Ad-hoc-Signatur, die nicht überprüft, wer sie erstellt hat. Die Genehmigung vertraut nur genau diesem Code, und die App benötigt nach einer Aktualisierung erneut Ihre Genehmigung.";
 "triggers.identity.approve.adHocConfirm" = "Genehmigen";
+"core.link.groupNotFound" = "Die Gruppe, die dieser Link öffnet, existiert nicht mehr. Sie wurde möglicherweise gelöscht oder archiviert oder umbenannt, falls der Link sie über ihren Namen angibt.";
+"core.link.groupAmbiguous" = "Mehr als eine Gruppe heißt „%@“, daher hat der Link keine davon geöffnet. Kopiere den Link der Gruppe erneut aus Einstellungen → Kurzbefehle & Siri.";
+"core.rename.nameTaken" = "Eine andere Gruppe heißt bereits „%@“. Wähle einen anderen Namen.";
+"settings.shortcuts.identityLinks.footer" = "Öffne einen Link aus einem Skript oder einer anderen App, z. B. mit `open` im Terminal. Ein Link benennt seine Gruppe über die ID, daher funktioniert er auch nach einer Umbenennung weiter; der Name nach der ID dient nur zur Lesbarkeit. Einen selbst geschriebenen Link kannst du stattdessen mit dem Namen der Gruppe verwenden (Groß-/Kleinschreibung, Akzente und Satzzeichen spielen keine Rolle). Füge ?mode=force an einen Beenden-Link an, um zwangsweise zu beenden.";

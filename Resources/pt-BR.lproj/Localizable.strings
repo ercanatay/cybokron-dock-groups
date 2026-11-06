@@ -1162,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Aprovar este app com assinatura fraca?";
 "triggers.identity.approve.adHocMessage" = "Este app tem uma assinatura ad-hoc, que não verifica quem o criou. Aprovar confia apenas neste código exato, e o app precisará da sua aprovação novamente após ser atualizado.";
 "triggers.identity.approve.adHocConfirm" = "Aprovar";
+"core.link.groupNotFound" = "O grupo que este link abre não existe mais. Ele pode ter sido excluído ou arquivado ou, se o link o identifica pelo nome, renomeado.";
+"core.link.groupAmbiguous" = "Mais de um grupo se chama “%@”, então o link não abriu nenhum deles. Copie novamente o link do grupo em Ajustes → Atalhos e Siri.";
+"core.rename.nameTaken" = "Outro grupo já se chama “%@”. Escolha um nome diferente.";
+"settings.shortcuts.identityLinks.footer" = "Abra um link a partir de um script ou de outro app, por exemplo com `open` no Terminal. Um link identifica seu grupo pelo ID, então continua funcionando após uma renomeação; o nome depois do ID serve apenas para leitura. Um link que você mesmo escrever pode usar o nome do grupo (maiúsculas, acentos e pontuação não fazem diferença). Adicione ?mode=force a um link de encerrar para forçar o encerramento.";

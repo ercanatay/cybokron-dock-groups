@@ -1162,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Deze app met een zwakke handtekening goedkeuren?";
 "triggers.identity.approve.adHocMessage" = "Deze app heeft een ad-hoc-handtekening, waarmee niet wordt geverifieerd wie hem heeft gemaakt. Goedkeuren vertrouwt alleen deze exacte code, en de app moet opnieuw worden goedgekeurd nadat hij is bijgewerkt.";
 "triggers.identity.approve.adHocConfirm" = "Goedkeuren";
+"core.link.groupNotFound" = "De groep die deze link opent bestaat niet meer. Ze is mogelijk verwijderd of gearchiveerd, of hernoemd als de link haar bij naam aanduidt.";
+"core.link.groupAmbiguous" = "Er zijn meerdere groepen met de naam “%@”, dus de link heeft er geen geopend. Kopieer de link van de groep opnieuw via Instellingen → Opdrachten en Siri.";
+"core.rename.nameTaken" = "Er bestaat al een andere groep met de naam “%@”. Kies een andere naam.";
+"settings.shortcuts.identityLinks.footer" = "Open een link vanuit een script of een andere app, bijv. met `open` in Terminal. Een link noemt zijn groep met ID, dus hij blijft werken na een hernoeming; de naam na het ID is alleen om te lezen. Een link die je zelf schrijft, kan in plaats daarvan de naam van de groep gebruiken (hoofdletters, accenten en leestekens doen er niet toe). Voeg ?mode=force toe aan een afsluitlink om geforceerd af te sluiten.";

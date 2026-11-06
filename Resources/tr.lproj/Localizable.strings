@@ -1160,3 +1160,7 @@
 "triggers.identity.approve.adHocTitle" = "Bu uygulama zayıf imzayla onaylansın mı?";
 "triggers.identity.approve.adHocMessage" = "Bu uygulamanın ad-hoc imzası var; bu imza, uygulamayı kimin oluşturduğunu doğrulamaz. Onaylamak yalnızca bu tam koda güvenmek anlamına gelir ve uygulama güncellendikten sonra yeniden onayınız gerekir.";
 "triggers.identity.approve.adHocConfirm" = "Onayla";
+"core.link.groupNotFound" = "Bu bağlantının açtığı grup artık yok. Silinmiş veya arşivlenmiş olabilir ya da bağlantı grubu adıyla belirtiyorsa yeniden adlandırılmış olabilir.";
+"core.link.groupAmbiguous" = "“%@” adlı birden fazla grup var, bu yüzden bağlantı bunlardan hiçbirini açmadı. Grubun bağlantısını Ayarlar → Kısayollar ve Siri bölümünden yeniden kopyalayın.";
+"core.rename.nameTaken" = "“%@” adında başka bir grup zaten var. Farklı bir ad seçin.";
+"settings.shortcuts.identityLinks.footer" = "Bağlantıyı bir betikten veya başka bir uygulamadan açın; örneğin Terminal'de `open` ile. Bağlantı grubunu kimliğiyle belirtir, bu yüzden yeniden adlandırıldıktan sonra da çalışmaya devam eder; kimlikten sonraki ad yalnızca okunabilirlik içindir. Kendiniz yazdığınız bir bağlantı bunun yerine grubun adını kullanabilir (büyük/küçük harf, aksan ve noktalama önemsizdir). Zorla kapatmak için çıkış bağlantısına ?mode=force ekleyin.";

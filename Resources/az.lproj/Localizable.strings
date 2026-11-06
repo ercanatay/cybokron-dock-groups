@@ -1162,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Bu tətbiqi zəif imza ilə təsdiqləyirsiniz?";
 "triggers.identity.approve.adHocMessage" = "Bu tətbiqin ad-hoc imzası var və kimin tərəfindən yaradıldığını yoxlamır. Təsdiq yalnız bu dəqiq kodu etibarlı hesab edir və tətbiq yeniləndikdən sonra yenidən təsdiqinizə ehtiyac duyacaq.";
 "triggers.identity.approve.adHocConfirm" = "Təsdiq et";
+"core.link.groupNotFound" = "Bu linkin açdığı qrup artıq mövcud deyil. Qrup silinmiş və ya arxivləşdirilmiş ola bilər, ya da link onu adla göstərirsə, adı dəyişdirilmiş ola bilər.";
+"core.link.groupAmbiguous" = "“%@” adlı birdən çox qrup var, buna görə link heç birini açmadı. Qrupun linkini Parametrlər → Shortcuts & Siri bölməsindən yenidən kopyalayın.";
+"core.rename.nameTaken" = "Başqa qrup artıq “%@” adını daşıyır. Fərqli ad seçin.";
+"settings.shortcuts.identityLinks.footer" = "Linki skriptdən və ya başqa tətbiqdən açın, məsələn, Terminal-da `open` ilə. Link qrupu ID ilə müəyyən edir, buna görə adı dəyişdikdən sonra da işləyir; ID-dən sonrakı ad yalnız oxunması üçündür. Özünüz yazdığınız link qrupun adından da istifadə edə bilər (böyük-kiçik hərflər, diakritik işarələr və durğu işarələri fərq etmir). Quit linkinə məcburi çıxış üçün ?mode=force əlavə edin.";

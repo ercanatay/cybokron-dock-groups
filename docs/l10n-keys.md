@@ -1540,7 +1540,7 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `triggers.identity.approve.failure.checkFailed` | The app's code couldn't be checked. Nothing was approved. |
 | `triggers.identity.approve.failure.notSaved` | The approval couldn't be saved. Nothing was approved. |
 
-## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri (English only for now; `awaitingTranslation`: `core.link.`, `core.rename.`, `settings.shortcuts.identityLinks.`)
+## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri
 
 | Key | English |
 | --- | --- |

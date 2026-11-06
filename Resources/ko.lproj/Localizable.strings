@@ -1160,3 +1160,7 @@
 "triggers.identity.approve.adHocTitle" = "이 앱을 약한 서명으로 승인하시겠습니까?";
 "triggers.identity.approve.adHocMessage" = "이 앱은 제작자를 확인할 수 없는 ad-hoc 서명을 사용합니다. 승인하면 이 정확한 코드만 신뢰하게 되며, 앱이 업데이트된 후에는 다시 승인해야 합니다.";
 "triggers.identity.approve.adHocConfirm" = "승인";
+"core.link.groupNotFound" = "이 링크가 여는 그룹이 더 이상 존재하지 않습니다. 삭제되었거나 보관되었을 수 있으며, 링크가 이름으로 그룹을 지정한 경우에는 이름이 변경되었을 수도 있습니다.";
+"core.link.groupAmbiguous" = "“%@”이라는 이름의 그룹이 둘 이상 있어서 링크가 어느 그룹도 열지 않았습니다. 설정 → 단축어 및 Siri에서 그룹 링크를 다시 복사하세요.";
+"core.rename.nameTaken" = "다른 그룹이 이미 “%@”이라는 이름을 사용하고 있습니다. 다른 이름을 선택하세요.";
+"settings.shortcuts.identityLinks.footer" = "스크립트나 다른 앱에서 링크를 여세요(예: Terminal에서 `open` 사용). 링크는 그룹을 ID로 지정하므로 이름을 바꿔도 계속 작동합니다. ID 뒤의 이름은 읽기 용도로만 표시됩니다. 직접 작성하는 링크에서는 그룹 이름을 대신 사용할 수 있습니다(대소문자, 악센트, 문장 부호는 무시됨). 종료 링크에 ?mode=force를 추가하면 강제 종료됩니다.";

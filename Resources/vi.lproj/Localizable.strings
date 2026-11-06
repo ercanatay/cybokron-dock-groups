@@ -1162,3 +1162,7 @@
 "triggers.identity.approve.adHocTitle" = "Phê duyệt ứng dụng này với chữ ký yếu?";
 "triggers.identity.approve.adHocMessage" = "Ứng dụng này có chữ ký ad-hoc, không xác minh được ai đã tạo ra nó. Phê duyệt chỉ tin cậy đúng đoạn mã này, và ứng dụng sẽ cần bạn phê duyệt lại sau khi được cập nhật.";
 "triggers.identity.approve.adHocConfirm" = "Phê duyệt";
+"core.link.groupNotFound" = "Nhóm mà liên kết này mở không còn tồn tại nữa. Nhóm có thể đã bị xóa hoặc lưu trữ, hoặc đã đổi tên nếu liên kết tham chiếu đến nhóm bằng tên.";
+"core.link.groupAmbiguous" = "Có nhiều hơn một nhóm tên là “%@”, nên liên kết không mở được nhóm nào. Hãy sao chép lại liên kết của nhóm từ Cài đặt → Phím tắt & Siri.";
+"core.rename.nameTaken" = "Một nhóm khác đã có tên “%@”. Hãy chọn tên khác.";
+"settings.shortcuts.identityLinks.footer" = "Mở liên kết từ một tập lệnh hoặc ứng dụng khác, ví dụ bằng lệnh `open` trong Terminal. Liên kết xác định nhóm bằng ID nên vẫn hoạt động sau khi đổi tên; phần tên đi sau ID chỉ để người đọc dễ hiểu. Liên kết do bạn tự viết có thể dùng tên nhóm thay thế (không phân biệt chữ hoa, dấu thanh và dấu câu). Thêm ?mode=force vào liên kết thoát để buộc thoát.";
