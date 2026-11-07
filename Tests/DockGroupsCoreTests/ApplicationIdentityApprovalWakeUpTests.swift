@@ -494,3 +494,108 @@ struct ApplicationProcessWatchBudgetTests {
         #expect(budget.openCount == 1)
     }
 }
+
+// MARK: - Descriptor exhaustion
+
+/// The process runs out of file descriptors (`RLIMIT_NOFILE`): no watch can be registered, and
+/// nothing is read as "verified". The limit is lowered in a child run of this very test (the
+/// parent re-runs the test binary filtered to it with `DOCKGROUPS_NOFILE_CHILD` set), so no other
+/// test ever sees a low limit. The child lowers the limit to the first free descriptor number,
+/// which makes the next `kqueue()` fail with `EMFILE`, and restores it before it ends.
+@Suite("Application identity: descriptor exhaustion", .serialized)
+@MainActor
+struct ApplicationIdentityDescriptorExhaustionTests {
+    nonisolated private static let childMarker = "DOCKGROUPS_NOFILE_CHILD"
+    nonisolated private static let testName = "exhaustedDescriptorsFailClosedInsteadOfVerifying"
+
+    /// The command line of the test runner re-run for this test alone, or `nil` when the runner
+    /// isn't SwiftPM's (`swiftpm-testing-helper … --filter …`).
+    nonisolated static var childArguments: [String]? {
+        var arguments = CommandLine.arguments
+        guard let bundle = arguments.firstIndex(of: "--test-bundle-path"), bundle + 1 < arguments.count else { return nil }
+        if let filter = arguments.firstIndex(of: "--filter"), filter + 1 < arguments.count {
+            arguments[filter + 1] = Self.testName
+        } else {
+            // The helper ignores a filter placed before its own `--test-bundle-path` option.
+            arguments.insert(contentsOf: ["--filter", Self.testName], at: bundle + 2)
+        }
+        return Array(arguments.dropFirst())
+    }
+
+    @Test(.enabled(if: ApplicationIdentityDescriptorExhaustionTests.childArguments != nil))
+    func exhaustedDescriptorsFailClosedInsteadOfVerifying() async throws {
+        if ProcessInfo.processInfo.environment[Self.childMarker] != nil {
+            try await Self.runExhausted()
+            return
+        }
+        let arguments = try #require(Self.childArguments)
+        let child = Process()
+        child.executableURL = URL(fileURLWithPath: CommandLine.arguments[0])
+        child.arguments = arguments
+        child.environment = ProcessInfo.processInfo.environment.merging([Self.childMarker: "1"]) { $1 }
+        child.standardInput = FileHandle.nullDevice
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let logURL = temporary.url.appending(path: "child.log")
+        FileManager.default.createFile(atPath: logURL.path, contents: nil)
+        let log = try FileHandle(forWritingTo: logURL)
+        defer { try? log.close() }
+        child.standardOutput = log
+        child.standardError = log
+        #expect(try await child.runToExit(timeout: .seconds(60)))
+        let text = (try? String(contentsOf: logURL, encoding: .utf8)) ?? ""
+        #expect(child.terminationStatus == 0, "\(text)")
+        #expect(text.contains("Test run with 1 test") && text.contains("passed"), "\(text.prefix(2000))")
+    }
+
+    /// Runs in the child: lowers the limit, then checks every layer fails closed.
+    private static func runExhausted() async throws {
+        var original = rlimit()
+        try #require(getrlimit(RLIMIT_NOFILE, &original) == 0)
+        // The first descriptor number not in use: any new descriptor would be numbered at or past it.
+        var firstFree: Int32 = 0
+        while fcntl(firstFree, F_GETFD) != -1 { firstFree += 1 }
+        var lowered = original
+        lowered.rlim_cur = rlim_t(firstFree)
+        try #require(setrlimit(RLIMIT_NOFILE, &lowered) == 0)
+        var restored = false
+        func restore() {
+            guard !restored else { return }
+            restored = true
+            var limit = original
+            _ = setrlimit(RLIMIT_NOFILE, &limit)
+        }
+        defer { restore() }
+
+        let pid = getpid()
+        // The watch itself: no descriptor, no watch.
+        #expect(ExperimentalProcessEventWatch(pid: pid) == nil)
+
+        // The bound: the failed registration frees its slot and reports "unavailable".
+        let budget = ApplicationProcessWatchBudget(limit: 4)
+        let opening = budget.open(pid: pid) { ExperimentalProcessEventWatch(pid: $0) }
+        guard case .unavailable = opening else {
+            Issue.record("expected .unavailable, got \(opening)")
+            return
+        }
+        #expect(budget.openCount == 0)
+
+        // The verifier: a running instance whose watch can't be registered is never `verified`.
+        let verifier = RunningApplicationIdentityVerifier(
+            instances: { _ in [pid] },
+            budget: budget,
+            check: ApplicationRunningCodeCheck(compare: { _, _, _ in .matching })
+        )
+        let binding = ApplicationIdentityBinding.fixture("com.example.app")
+        #expect(verifier.verdict(for: binding) == .unavailable)
+        #expect([.watchUnavailable, .atCapacity].contains(verifier.lastFailure))
+        #expect(verifier.watchCount == 0)
+        #expect(verifier.verdict(for: binding) != .verified)
+        #expect(budget.openCount == 0)
+
+        // With the limit back, the same registration works: the failures above were the limit.
+        restore()
+        let watch = try #require(ExperimentalProcessEventWatch(pid: pid))
+        watch.close()
+    }
+}
