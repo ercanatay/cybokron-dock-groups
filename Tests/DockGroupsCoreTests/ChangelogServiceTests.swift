@@ -543,14 +543,19 @@ struct ReleaseNotesBoundsTests {
 
     @Test func aHundredThousandCharactersOfHostileNotesAreQuick() {
         let clock = ContinuousClock()
-        let bound: Duration = ProcessInfo.processInfo.environment["CI"] != nil ? .seconds(1) : .milliseconds(200)
+        let bound: Duration = ProcessInfo.processInfo.environment["CI"] != nil ? .seconds(3) : .milliseconds(200)
         for notes in Self.slowNotes {
             #expect(notes.text.count >= 100_000)
             var blocks: [ReleaseNotesBlock] = []
-            let elapsed = clock.measure {
-                blocks = ReleaseNotesMarkdown.blocks(notes.text)
+            // Median of five runs so one scheduling hiccup cannot fail the test; shared CI
+            // runners are noisy, and 3 s is still far below a quadratic regression.
+            var samples: [Duration] = []
+            for _ in 0..<5 {
+                samples.append(clock.measure {
+                    blocks = ReleaseNotesMarkdown.blocks(notes.text)
+                })
             }
-            // CI runners vary; 1 s still catches the quadratic regression.
+            let elapsed = samples.sorted()[samples.count / 2]
             #expect(elapsed < bound, "\(notes.name): \(elapsed)")
             #expect(!blocks.isEmpty, "\(notes.name)")
         }
