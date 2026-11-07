@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "En annan grupp heter redan “%@”. Välj ett annat namn.";
 "settings.shortcuts.identityLinks.footer" = "Öppna en länk från ett skript eller en annan app, t.ex. med `open` i Terminal. En länk anger sin grupp med ID, så den fungerar även efter ett namnbyte; namnet efter ID:t finns bara för läsbarhetens skull. En länk du skriver själv kan i stället använda gruppens namn (versaler, accenter och skiljetecken spelar ingen roll). Lägg till ?mode=force i en avslutslänk för att tvinga avslut.";
 "about.project.limitGuard" = "Codex-användningsgränser i menyraden";
+"core.trigger.summary.screenLocks" = "När skärmen låses";
+"core.trigger.summary.screenUnlocks" = "När skärmen låses upp";
+"triggers.editor.event.screenLocks" = "När skärmen låses";
+"triggers.editor.event.screenUnlocks" = "När skärmen låses upp";
+"triggers.editor.hint.screenLocks" = "Ingen kan svara på ett meddelande när skärmen är låst, så den här utlösaren avslutar gruppen direkt.";
+"triggers.editor.screenLock.note" = "macOS dokumenterar inte när skärmen låses, så en låsning eller upplåsning kan missas, till exempel direkt efter att Mac:en gått i viloläge eller när en annan användare byter in. Inget körs när det inte kan avgöras.";

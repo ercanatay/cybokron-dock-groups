@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Er bestaat al een andere groep met de naam “%@”. Kies een andere naam.";
 "settings.shortcuts.identityLinks.footer" = "Open een link vanuit een script of een andere app, bijv. met `open` in Terminal. Een link noemt zijn groep met ID, dus hij blijft werken na een hernoeming; de naam na het ID is alleen om te lezen. Een link die je zelf schrijft, kan in plaats daarvan de naam van de groep gebruiken (hoofdletters, accenten en leestekens doen er niet toe). Voeg ?mode=force toe aan een afsluitlink om geforceerd af te sluiten.";
 "about.project.limitGuard" = "Codexgebruikslimieten in de menubalk";
+"core.trigger.summary.screenLocks" = "Wanneer het scherm vergrendelt";
+"core.trigger.summary.screenUnlocks" = "Wanneer het scherm ontgrendelt";
+"triggers.editor.event.screenLocks" = "Wanneer het scherm vergrendelt";
+"triggers.editor.event.screenUnlocks" = "Wanneer het scherm ontgrendelt";
+"triggers.editor.hint.screenLocks" = "Niemand kan op een melding reageren terwijl het scherm vergrendeld is, dus deze trigger rondt de groep meteen af.";
+"triggers.editor.screenLock.note" = "macOS documenteert niet wanneer het scherm vergrendelt, dus een vergrendeling of ontgrendeling kan gemist worden, bijvoorbeeld direct nadat de Mac in slaap is gegaan of wanneer een andere gebruiker wisselt. Er wordt niets uitgevoerd wanneer dat niet vastgesteld kan worden.";

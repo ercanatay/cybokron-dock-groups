@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Ya existe otro grupo llamado “%@”. Elige un nombre diferente.";
 "settings.shortcuts.identityLinks.footer" = "Abre un enlace desde un script u otra app, por ejemplo con `open` en Terminal. Un enlace identifica su grupo por ID, así que sigue funcionando tras un cambio de nombre; el nombre que aparece después del ID solo sirve para leerlo. Un enlace que escribas tú mismo puede usar el nombre del grupo (no importan mayúsculas, acentos ni signos de puntuación). Añade ?mode=force a un enlace de cierre para forzar el cierre.";
 "about.project.limitGuard" = "Límites de uso de Codex en la barra de menús";
+"core.trigger.summary.screenLocks" = "Cuando se bloquea la pantalla";
+"core.trigger.summary.screenUnlocks" = "Cuando se desbloquea la pantalla";
+"triggers.editor.event.screenLocks" = "Cuando se bloquea la pantalla";
+"triggers.editor.event.screenUnlocks" = "Cuando se desbloquea la pantalla";
+"triggers.editor.hint.screenLocks" = "Nadie puede responder a un aviso mientras la pantalla está bloqueada, así que este disparador finaliza el grupo de inmediato.";
+"triggers.editor.screenLock.note" = "macOS no documenta cuándo se bloquea la pantalla, por lo que un bloqueo o un desbloqueo puede pasarse por alto, por ejemplo justo después de que el Mac entre en reposo o cuando otro usuario cambia de sesión. Si no es posible detectarlo, no se ejecuta nada.";

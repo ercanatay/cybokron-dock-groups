@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Un alt grup se numește deja “%@”. Alege un alt nume.";
 "settings.shortcuts.identityLinks.footer" = "Deschide un link dintr-un script sau dintr-o altă aplicație, de exemplu cu `open` în Terminal. Un link identifică grupul după ID, așa că funcționează în continuare după o redenumire; numele de după ID există doar pentru a fi citit. Un link pe care îl scrii tu poate folosi în schimb numele grupului (majusculele, diacriticele și semnele de punctuație nu contează). Adaugă ?mode=force la un link de închidere pentru a forța închiderea.";
 "about.project.limitGuard" = "Limitele de utilizare Codex în bara de meniu";
+"core.trigger.summary.screenLocks" = "Când ecranul se blochează";
+"core.trigger.summary.screenUnlocks" = "Când ecranul se deblochează";
+"triggers.editor.event.screenLocks" = "Când ecranul se blochează";
+"triggers.editor.event.screenUnlocks" = "Când ecranul se deblochează";
+"triggers.editor.hint.screenLocks" = "Nimeni nu poate răspunde unei notificări cât timp ecranul este blocat, deci acest declanșator încheie grupul imediat.";
+"triggers.editor.screenLock.note" = "macOS nu documentează momentul în care ecranul se blochează, așa că un blocaj sau un deblocaj poate fi ratat, de exemplu imediat după ce Mac-ul intră în repaus sau când un alt utilizator comută sesiunea. Nimic nu se execută când acest lucru nu poate fi detectat.";

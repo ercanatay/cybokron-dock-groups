@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Un altro gruppo si chiama già “%@”. Scegli un nome diverso.";
 "settings.shortcuts.identityLinks.footer" = "Apri un link da uno script o da un'altra app, ad esempio con `open` nel Terminale. Un link identifica il suo gruppo tramite ID, quindi continua a funzionare dopo una rinomina; il nome dopo l'ID serve solo per la lettura. Un link che scrivi tu può usare invece il nome del gruppo (maiuscole, accenti e punteggiatura non contano). Aggiungi ?mode=force a un link di chiusura per forzare la chiusura.";
 "about.project.limitGuard" = "Limiti di utilizzo di Codex nella barra dei menu";
+"core.trigger.summary.screenLocks" = "Quando lo schermo si blocca";
+"core.trigger.summary.screenUnlocks" = "Quando lo schermo si sblocca";
+"triggers.editor.event.screenLocks" = "Quando lo schermo si blocca";
+"triggers.editor.event.screenUnlocks" = "Quando lo schermo si sblocca";
+"triggers.editor.hint.screenLocks" = "Nessuno può rispondere a un avviso mentre lo schermo è bloccato, quindi questo trigger completa subito il gruppo.";
+"triggers.editor.screenLock.note" = "macOS non documenta quando lo schermo si blocca, quindi un blocco o uno sblocco può non essere rilevato, ad esempio subito dopo che il Mac è andato in stop o quando un altro utente cambia sessione. Quando non è possibile rilevarlo, non viene eseguito nulla.";
