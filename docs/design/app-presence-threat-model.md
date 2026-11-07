@@ -547,3 +547,21 @@ limit consequences but do not establish identity.
 7. **Keep the session-only identified-apps option?** It weakens closes for every application rule.
    Recommended default: keep strict as the default and decide after measuring how often unidentified
    apps occur on real Macs (F5).
+
+## Accepted risk: locally edited trigger file
+
+**Decision.** The authorization record is not signed with a device-bound secret (Keychain item or
+HMAC). A local edit of the trigger file is an accepted risk.
+
+**Why.**
+- Whoever can write the file already runs code as the same user. At that point `groups.json`, the
+  app's data and the user's documents are exposed as well.
+- The record alone grants nothing: a running process must still pass a fresh `cdhash` verification
+  before a trigger acts on it.
+- Losing the key or moving to another device would invalidate every approval, which breaks the
+  backup and restore flow.
+- Lightweight alternatives such as a file fingerprint or an mtime check were rejected because they
+  can be bypassed.
+
+**Limit.** This gives no protection against an attacker in the same user session. What is protected
+is which running code was approved.
