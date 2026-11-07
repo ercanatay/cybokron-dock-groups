@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.3] - 2026-11-08
+
+### Added
+
+- About now lists "Marketing in Health Tourism / Sağlık Turizminde Pazarlama" with its Turkish, English, German and Arabic editions, and links the cybokron-limit-guard project
+
+### Changed
+
+- The release DMG is now built with `diskutil image create` where available, falling back to `hdiutil`, and is an APFS image instead of HFS+
+
 ## [0.13.2] - 2026-11-07
 
 ### Fixed
@@ -562,7 +572,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...HEAD
+[0.13.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...v0.13.3
 [0.13.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.1...v0.13.0
