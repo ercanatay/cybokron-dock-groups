@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Více skupin se jmenuje “%@”, proto odkaz neotevřel žádnou z nich. Zkopírujte odkaz skupiny znovu z Nastavení → Zkratky a Siri.";
 "core.rename.nameTaken" = "Jiná skupina už se jmenuje “%@”. Zvolte jiný název.";
 "settings.shortcuts.identityLinks.footer" = "Otevřete odkaz ze skriptu nebo jiné aplikace, např. příkazem `open` v Terminal. Odkaz určuje skupinu podle ID, takže po přejmenování dál funguje; název za ID slouží jen ke čtení. Odkaz, který napíšete sami, může místo toho použít název skupiny (velikost písmen, diakritika ani interpunkce nehrají roli). Chcete-li u odkazu na ukončení vynutit ukončení, přidejte ?mode=force.";
+"about.project.limitGuard" = "Limity využití Codexu v liště nabídek";

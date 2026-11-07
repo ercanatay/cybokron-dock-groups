@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Więcej niż jedna grupa nosi nazwę „%@”, więc link nie otworzył żadnej z nich. Skopiuj link grupy ponownie w Ustawienia → Skróty i Siri.";
 "core.rename.nameTaken" = "Inna grupa ma już nazwę „%@”. Wybierz inną nazwę.";
 "settings.shortcuts.identityLinks.footer" = "Otwórz link ze skryptu lub innej aplikacji, np. poleceniem `open` w Terminal. Link wskazuje grupę po ID, więc działa także po zmianie nazwy; nazwa po ID służy tylko do odczytu. Samodzielnie napisany link może zamiast tego używać nazwy grupy (wielkość liter, akcenty i interpunkcja nie mają znaczenia). Dodaj ?mode=force do linku zamykającego, aby wymusić zamknięcie.";
+"about.project.limitGuard" = "Limity użycia Codex na pasku menu";

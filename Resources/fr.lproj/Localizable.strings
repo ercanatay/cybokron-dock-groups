@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Plusieurs groupes portent le nom “%@”, donc le lien n'en a ouvert aucun. Copiez à nouveau le lien du groupe depuis Réglages → Raccourcis et Siri.";
 "core.rename.nameTaken" = "Un autre groupe porte déjà le nom “%@”. Choisissez un autre nom.";
 "settings.shortcuts.identityLinks.footer" = "Ouvrez un lien depuis un script ou une autre app, par exemple avec `open` dans Terminal. Un lien désigne son groupe par son ID, il continue donc de fonctionner après un renommage ; le nom après l'ID sert uniquement à la lecture. Un lien que vous écrivez vous-même peut utiliser le nom du groupe à la place (la casse, les accents et la ponctuation n'ont pas d'importance). Ajoutez ?mode=force à un lien de fermeture pour forcer la fermeture.";
+"about.project.limitGuard" = "Limites d'utilisation de Codex dans la barre de menus";
