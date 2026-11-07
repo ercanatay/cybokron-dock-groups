@@ -106,7 +106,7 @@ the office Wi-Fi, finish Work". Three decisions carry most of the weight:
 | Time: a time + days (weekdays, weekends, any set), catch-up up to 30 minutes (TR-1, TR-5) | Dates, intervals ("every 2 hours"), sunrise/sunset |
 | At login; when Cybokron Dock Groups opens (not after an update or language restart) | When another app opens or quits (0.12.0, §9 Q7) |
 | A display connects / disconnects (any external or one display); a set of displays is connected | Display positions or resolutions; mirroring; Sidecar/AirPlay as their own kind |
-| The screens wake / sleep | Lock and unlock (no documented signal, TS-11) |
+| The screens wake / sleep | Lock and unlock (no documented signal, TS-11; added later as best effort, `app-presence-session-lock-trigger.md`) |
 | Wi-Fi network joined / left (Location permission, opt-in); Ethernet connects / disconnects; VPN connects / disconnects if TS-8 passes | Router address, gateway hardware address or other ways around macOS's network name protection (§4.2 T-S9) |
 | Show the Popup, Open All, Start, Finish (hiding only) | Hide All, Close All, quitting of any kind |
 | Notice with Not Now, Ask First, Run Right Away; Pause Triggers; last run per trigger | System notifications (need a permission prompt) |
@@ -598,7 +598,7 @@ That's why Wi-Fi names are their own PR (PR 4) and a decision of their own (§9 
 | TS-8 | Primary interface for WireGuard, IKEv2 (built-in), Tailscale, a corporate client; system `utun`s | 4 | VPN events not offered |
 | TS-9 | Ethernet through USB, Thunderbolt and dock adapters in `NWPath` | 4 | Ethernet = a wired interface in `availableInterfaces` with status satisfied |
 | TS-10 | macOS 26+: does a Shortcuts automation with Start Group open the quit app and run without a dialog (hide-only group)? | 2 (manual) | the README recipe says "keep the app open" |
-| TS-11 | Any documented lock signal? | — | none used; screens sleep + session active only |
+| TS-11 | Any documented lock signal? | — | none documented; best-effort lock/unlock triggers on the undocumented `com.apple.screenIsLocked` / `…Unlocked` notifications, fail-closed (`app-presence-session-lock-trigger.md`) |
 
 ### 2.4 Evaluation (pure, Core)
 
