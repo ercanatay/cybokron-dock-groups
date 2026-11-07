@@ -279,8 +279,10 @@ jobs:
           spctl --assess --type open --context context:primary-signature --verbose=2 "$DMG"
           # The app inside must pass Gatekeeper too, with its own stapled ticket.
           MOUNT="$(mktemp -d)"
-          hdiutil attach "$DMG" -readonly -nobrowse -mountpoint "$MOUNT" > /dev/null
-          trap 'hdiutil detach "$MOUNT" -quiet || true' EXIT
+          # shellcheck source=scripts/lib/diskimage.sh
+          source scripts/lib/diskimage.sh
+          attach_disk_image "$DMG" "$MOUNT" readonly
+          trap 'detach_disk_image "$MOUNT" || true' EXIT
           MOUNTED_APP="$MOUNT/Cybokron Dock Groups.app"
           codesign --verify --deep --strict --verbose=2 "$MOUNTED_APP"
           SIGNATURE="$(codesign -dv --verbose=2 "$MOUNTED_APP" 2>&1)"

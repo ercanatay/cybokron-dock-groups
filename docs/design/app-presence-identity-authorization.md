@@ -359,3 +359,21 @@ appears in diagnostics (which report trigger counts and kinds only).
   the saved trigger again, and the store and the coordinator decide what runs).
 - **Equality.** The F2 stamp compares whole rules, so even an equal re-approval of the same binding
   cancels pending firings. This is intended (fail closed), not a defect.
+
+## Accepted risk: locally edited trigger file
+
+**Decision.** The authorization record is not signed with a device-bound secret (Keychain item or
+HMAC). A local edit of the trigger file is an accepted risk.
+
+**Why.**
+- Whoever can write the file already runs code as the same user. At that point `groups.json`, the
+  app's data and the user's documents are exposed as well.
+- The record alone grants nothing: a running process must still pass a fresh `cdhash` verification
+  before a trigger acts on it.
+- Losing the key or moving to another device would invalidate every approval, which breaks the
+  backup and restore flow.
+- Lightweight alternatives such as a file fingerprint or an mtime check were rejected because they
+  can be bypassed.
+
+**Limit.** This gives no protection against an attacker in the same user session. What is protected
+is which running code was approved.
