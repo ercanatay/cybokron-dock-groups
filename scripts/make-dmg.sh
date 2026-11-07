@@ -13,6 +13,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+source "$ROOT/scripts/lib/diskimage.sh"
 
 APP_NAME="Cybokron Dock Groups"
 APP="$ROOT/build/release/$APP_NAME.app"
@@ -32,7 +33,7 @@ ditto "$APP" "$STAGING/$APP_NAME.app"
 ln -s /Applications "$STAGING/Applications"
 
 rm -f "$DMG"
-hdiutil create -volname "$APP_NAME" -srcfolder "$STAGING" -format UDZO -ov "$DMG"
+create_disk_image "$STAGING" "$APP_NAME" "$DMG"
 
 if [[ -n "${CODESIGN_IDENTITY:-}" ]]; then
     codesign --force --sign "$CODESIGN_IDENTITY" --timestamp "$DMG"

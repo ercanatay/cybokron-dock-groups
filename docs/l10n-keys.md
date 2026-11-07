@@ -3,10 +3,10 @@
 Every user-facing string of the app, by key, with its English text — the content of
 [`Resources/en.lproj/Localizable.strings`](../Resources/en.lproj/Localizable.strings). Translations
 live in `Resources/<language>.lproj/Localizable.strings` and must have exactly these keys, with the
-same placeholders (`LocalizationTests` check both). Sections still marked *English
-only for now* are exempt until translated (the app shows the English text instead), and
-`LocalizationTests.awaitingTranslation` lists their key prefixes; every other key is translated in
-every language.
+same placeholders (`LocalizationTests` check both). Every key is translated in every language;
+a section not yet translated would be marked *English only for now* (exempt until translated, the
+app shows the English text instead) and its key prefixes listed in
+`LocalizationTests.awaitingTranslation`, which is empty now.
 
 - `%@` is text and `%ld` a number; `%1$@`, `%2$ld` … are numbered so a translation can reorder them.
 - Keys ending in `.one` / `.other` are the singular (count 1) and plural text of a count.
@@ -691,7 +691,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | --- | --- |
 | `shortcuts.hotkey.unavailable` | macOS couldn't reserve these keys for the shortcuts, so they're watched for instead: that needs Accessibility access, and the app in front receives the key press too. |
 
-## Group items: files and folders, and why one can't be added, located or opened (English only for now; `awaitingTranslation`: `core.item.`)
+## Group items: files and folders, and why one can't be added, located or opened
 
 | Key | English |
 | --- | --- |
@@ -703,7 +703,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `core.item.unchecked` | macOS didn't let the app check “%@”. |
 | `core.item.locate.wrongKind` | “%@” isn't the same kind of item. |
 
-## Group items in the app: the Items section and its Add menu, Add Files or Folders…, files and folders in the popup and the rows, missing items and Locate…, Quick Look, items that couldn't be opened, backup items left out (English only for now; `awaitingTranslation`: `groupWindow.items.`, `addItems.`, `item.`, `popup.item.`, `settings.backup.leftOut.`)
+## Group items in the app: the Items section and its Add menu, Add Files or Folders…, files and folders in the popup and the rows, missing items and Locate…, Quick Look, items that couldn't be opened, backup items left out
 
 The group window's section was called “Apps”: `groupWindow.items.section`, `.empty` and `.moveHint`
 replace `groupWindow.section.apps`, `groupWindow.apps.empty` and `groupWindow.apps.moveHint`, and
@@ -745,7 +745,7 @@ replace `groupWindow.section.apps`, `groupWindow.apps.empty` and `groupWindow.ap
 | `settings.backup.leftOut.one` | 1 item in the backup was left out: it can't be opened safely. |
 | `settings.backup.leftOut.other` | %ld items in the backup were left out: they can't be opened safely. |
 
-## Settings → Updates → Other Versions…, going back to a version without files, folders and item details (English only for now; `awaitingTranslation`: `updates.otherVersions.items.`)
+## Settings → Updates → Other Versions…, going back to a version without files, folders and item details
 
 Added to the install question when the groups hold files, folders or items with an alias, tags or
 task notes; the groups file is copied aside as `groups.pre-downgrade-<time>.json` either way.
@@ -754,7 +754,7 @@ task notes; the groups file is copied aside as `groups.pre-downgrade-<time>.json
 | --- | --- |
 | `updates.otherVersions.items.warning` | Version %@ can't show files, folders, aliases, tags or task notes. A copy of your groups is kept before it's installed; editing groups in that version drops these items' details. |
 
-## Settings → Updates → Other Versions…, going back to a version without Start and Finish (English only for now; `awaitingTranslation`: `updates.otherVersions.switching.`)
+## Settings → Updates → Other Versions…, going back to a version without Start and Finish
 
 Added to the install question when a group has Start or Finish settings other than the default, an
 item has a launch delay or opener, or protected apps are set; the groups and preferences files are
@@ -764,7 +764,7 @@ copied aside as `groups.pre-downgrade-<time>.json` and `preferences.pre-downgrad
 | --- | --- |
 | `updates.otherVersions.switching.warning` | Version %@ doesn't know Start and Finish, launch options or protected apps. Copies of your groups and settings are kept before it's installed; Close All there quits protected apps, and saving there drops these settings. |
 
-## Settings → Updates → Other Versions…, going back to a version without group shortcuts (English only for now; `awaitingTranslation`: `updates.otherVersions.library.`)
+## Settings → Updates → Other Versions…, going back to a version without group shortcuts
 
 Added to the install question when going back to a version older than 0.9.0 while a group has a
 keyboard shortcut, a group is archived, or a template exists; the groups and preferences files are
@@ -775,7 +775,7 @@ way (`templates.json` is never opened by that version and needs no copy).
 | --- | --- |
 | `updates.otherVersions.library.warning` | Version %@ doesn't know archived groups, group shortcuts or templates. Archived groups show there as ordinary groups, and editing groups there drops their shortcuts and which groups are archived. Copies of your groups and settings are kept before it's installed; templates stay for when you come back. |
 
-## An item's alias, tags and task notes: the details editor, Edit Details…, the rows and the popup's tooltips (English only for now; `awaitingTranslation`: `item.details.`, `popup.search.`)
+## An item's alias, tags and task notes: the details editor, Edit Details…, the rows and the popup's tooltips
 
 The group window's details editor opens from a row's ⓘ button and from **Edit Details…** in the
 row's and the popup's context menus. A row shows an item's alias instead of its name, with
@@ -801,7 +801,7 @@ start of the notes (`popup.search.help.*`, joined with “ · ”).
 | `popup.search.help.tags` | Tags: %@ |
 | `popup.search.help.notes` | Notes: %@ |
 
-## The popup's filter by name, alias, tags and task notes, and an empty group (English only for now; `awaitingTranslation`: `popup.search.`, `item.`)
+## The popup's filter by name, alias, tags and task notes, and an empty group
 
 The popup finds items by name and alias first, then by tags and task notes; the footer says when
 the selected item (the best match by default) was found by a tag or its notes. An empty group's
@@ -818,7 +818,7 @@ gone from every table).
 | `popup.search.noMatch` | No items match “%@” |
 | `item.group.empty` | No items in this group yet |
 
-## Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first; an item not opened with the app chosen for it (English only for now; `awaitingTranslation`: `core.switching.`)
+## Starting or finishing a group from a link, Siri or Shortcuts when it would quit apps: the question asked first; an item not opened with the app chosen for it
 
 The buttons reuse `core.quitConfirmation.quit` (Quit Apps) and `core.quitConfirmation.cancel`
 (Cancel). Siri and Shortcuts show the title and the detail.
@@ -838,7 +838,7 @@ The buttons reuse `core.quitConfirmation.quit` (Quit Apps) and `core.quitConfirm
 | `core.switching.confirmation.hideInstead` | Hide Instead |
 | `core.switching.opener.refused` | wasn't opened with “%@”, because that app can't open it safely. |
 
-## Start and Finish in the popup: the button, its tooltip (also of the menu bar menu's Start and Finish items and the group window's buttons), VoiceOver's label, the current group's marker (English only for now; `awaitingTranslation`: `popup.switching.`)
+## Start and Finish in the popup: the button, its tooltip (also of the menu bar menu's Start and Finish items and the group window's buttons), VoiceOver's label, the current group's marker
 
 The button shows only its symbol (▶ / ■) in popups narrower than the standard width; its tooltip and VoiceOver label stay.
 
@@ -861,7 +861,7 @@ The button shows only its symbol (▶ / ■) in popups narrower than the standar
 | `popup.switching.help.finish.leave` | Finish: leave this group's apps open; it's no longer the current group. |
 | `popup.switching.help.finish.leaveAndShow` | Finish: leave this group's apps open and show “%@” again. |
 
-## Start and Finish in the menu bar menu: the current group and Finish above the groups, the ⌃⌥ alternate of each group (English only for now; `awaitingTranslation`: `menuBar.switching.`)
+## Start and Finish in the menu bar menu: the current group and Finish above the groups, the ⌃⌥ alternate of each group
 
 `menuBar.switching.startHint` is added after `menuBar.group.tooltip` (or `.shortcut`).
 
@@ -873,7 +873,7 @@ The button shows only its symbol (▶ / ■) in popups narrower than the standar
 | `menuBar.switching.finish` | Finish “%@” |
 | `menuBar.switching.startHint` | Hold ⌃⌥ to start it. |
 
-## Group window → Start and Finish (English only for now; `awaitingTranslation`: `groupWindow.switching.`)
+## Group window → Start and Finish
 
 | Key | English |
 | --- | --- |
@@ -897,7 +897,7 @@ The button shows only its symbol (▶ / ■) in popups narrower than the standar
 | `groupWindow.switching.notCurrent` | Start makes this the current group. |
 | `groupWindow.switching.footer` | Start opens the group's items as Open All does and puts the group started before it away; Finish puts this group away. Protected apps, and apps both groups use, are never hidden or quit. |
 
-## Settings → Switching: protected apps, what Start and Finish do, the current group; the alert about apps a transition left as they were (English only for now; `awaitingTranslation`: `settings.tab.switching`, `switching.`)
+## Settings → Switching: protected apps, what Start and Finish do, the current group; the alert about apps a transition left as they were
 
 Add Apps… reuses `common.addApps`, the problem alert `groupWindow.addApps.problem.title`.
 
@@ -927,7 +927,7 @@ Add Apps… reuses `common.addApps`, the problem alert `groupWindow.addApps.prob
 | `switching.problem.notQuit` | • %@: couldn't be asked to quit. |
 | `switching.problem.notShown` | • %@: couldn't be shown again. |
 
-## Settings → Shortcuts & Siri: Start Group and Finish Group, their phrases and links (English only for now; `awaitingTranslation`: `settings.shortcuts.switching.`, `core.invocation.startGroup`, `core.invocation.finishGroup`)
+## Settings → Shortcuts & Siri: Start Group and Finish Group, their phrases and links
 
 Keep `core.invocation.startGroup.phrase` and `core.invocation.finishGroup.phrase` identical to the first App Shortcuts phrase of Start Group and Finish Group in the same language. The two `settings.shortcuts.switching.` texts follow `settings.shortcuts.shortcutsApp.detail` and `settings.shortcuts.identityLinks.footer`.
 
@@ -942,7 +942,7 @@ Keep `core.invocation.startGroup.phrase` and `core.invocation.finishGroup.phrase
 | `core.invocation.startGroup.link` | Start |
 | `core.invocation.finishGroup.link` | Finish |
 
-## An item's launch options: the details editor's Opening part, Other…'s open panel and why an app isn't taken, the rows' captions and the popup's tooltips (English only for now; `awaitingTranslation`: `item.launch.`)
+## An item's launch options: the details editor's Opening part, Other…'s open panel and why an app isn't taken, the rows' captions and the popup's tooltips
 
 `item.launch.delay.one` / `.other` are the delay menu's choices (`.none` is 0); `item.launch.help.delay.*` the popup's tooltip sentence. The rows' captions join their parts with “ · ” (`item.launch.row.delayAfterOpener` follows an app's name).
 
@@ -978,7 +978,7 @@ Keep `core.invocation.startGroup.phrase` and `core.invocation.finishGroup.phrase
 | `item.launch.row.delay` | After %ld s |
 | `item.launch.row.delayAfterOpener` | after %ld s |
 
-## Import Settings…: items whose chosen app was dropped because it runs what it opens (English only for now; `awaitingTranslation`: `settings.backup.launchReset.`)
+## Import Settings…: items whose chosen app was dropped because it runs what it opens
 
 Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`).
 
@@ -987,7 +987,7 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `settings.backup.launchReset.one` | The launch settings of 1 item were reset: they named an app that runs files. |
 | `settings.backup.launchReset.other` | The launch settings of %ld items were reset: they named apps that run files. |
 
-## Settings → Switching → Focus: where a Focus filter is set up, and what the current Focus asks of the app (English only for now; `awaitingTranslation`: `switching.focus.`)
+## Settings → Switching → Focus: where a Focus filter is set up, and what the current Focus asks of the app
 
 `switching.focus.status.*` is the “Now” line (`FocusFilterStatus`); `.finishes` follows `.start` when the filter finishes the group. The Focus filter's own texts in System Settings (its title, parameters and choices) are App Intents literals, in English, as the other intents' are.
 
@@ -1005,7 +1005,7 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `switching.focus.status.showPopup` | The current Focus shows the popup of “%@”. |
 | `switching.focus.status.finishes` | When it turns off, the group is finished: its apps are hidden. |
 
-## A group's own keyboard shortcut: what pressing it does, why keys can't be its shortcut, whether it works now, key names; the source line of a keyboard shortcut's question before Start or Finish quits apps (English only for now; `awaitingTranslation`: `core.shortcut.`, `core.switching.confirmation.shortcut`)
+## A group's own keyboard shortcut: what pressing it does, why keys can't be its shortcut, whether it works now, key names; the source line of a keyboard shortcut's question before Start or Finish quits apps
 
 `%@` in the refusal and status texts is the shortcut as macOS writes it (“⌃⌥C”); keep the key symbols. `core.shortcut.key.*` name keys that print nothing; the app shows other keys with the keyboard layout's character.
 
@@ -1034,7 +1034,7 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `core.shortcut.key.code` | Key %ld |
 | `core.switching.confirmation.shortcut` | A keyboard shortcut asked for this. |
 
-## Duplicating, archiving and restoring groups: a duplicate's name, an archived group restored without its keyboard shortcut, archived groups and shortcuts in Import Settings…'s confirmation (English only for now; `awaitingTranslation`: `core.group.copyName`, `core.archive.`, `core.backup.library.`, `core.persistence.groups.archivedUnsupported`)
+## Duplicating, archiving and restoring groups: a duplicate's name, an archived group restored without its keyboard shortcut, archived groups and shortcuts in Import Settings…'s confirmation
 
 `core.group.copyName*` name a duplicate (“Coding copy”, “Coding copy 2”); a duplicate of a duplicate counts on from the original's name, so keep `%1$@` the original name and `%2$ld` the number. `core.backup.library.*` are sentences added to the lines of Import Settings…'s confirmation.
 
@@ -1052,7 +1052,7 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `core.backup.library.clearedShortcuts.other` | %ld groups come in without their keyboard shortcut: other groups use those keys. |
 | `core.persistence.groups.archivedUnsupported` | The archived groups can't be saved here. |
 
-## Templates: a templates file that couldn't be loaded or saved, templates in Import Settings…'s confirmation (English only for now; `awaitingTranslation`: `core.templates.`, `core.persistence.templates.`, `core.backup.library.`)
+## Templates: a templates file that couldn't be loaded or saved, templates in Import Settings…'s confirmation
 
 `core.templates.loadFailed.*` follow the title in the same alert; their first `%@` is why the file couldn't be read.
 
@@ -1072,7 +1072,7 @@ Added after `settings.backup.confirm.contents` (and `settings.backup.leftOut.*`)
 | `core.backup.library.mergesTemplates.one` | It adds 1 template. |
 | `core.backup.library.mergesTemplates.other` | It adds %ld templates. |
 
-## A group's own keyboard shortcut in the app: the group window's Keyboard Shortcut section with its recorder, and Settings → Shortcuts & Siri → Group Shortcuts (English only for now; `awaitingTranslation`: `groupWindow.shortcut.`, `settings.shortcuts.groups.`)
+## A group's own keyboard shortcut in the app: the group window's Keyboard Shortcut section with its recorder, and Settings → Shortcuts & Siri → Group Shortcuts
 
 Why keys can't be a shortcut, and whether a shortcut works, are `core.shortcut.*` texts. `settings.shortcuts.groups.renumber` follows the number shortcuts' footer.
 
@@ -1097,7 +1097,7 @@ Why keys can't be a shortcut, and whether a shortcut works, are `core.shortcut.*
 | `settings.shortcuts.groups.footer` | Each group can have its own shortcut, set in its settings. These keys work in every app while %@ is running, and the app in front doesn't receive them. |
 | `settings.shortcuts.groups.renumber` | Archiving, deleting or moving a group renumbers the groups after it; a group's own keyboard shortcut stays the same. |
 
-## Duplicate, archive and restore in the group window: the sidebar's menu items and Archived section, the standalone group's question, the archived group's summary, and Settings → Switching's Focus line for an archived group (English only for now; `awaitingTranslation`: `groupWindow.archive.`)
+## Duplicate, archive and restore in the group window: the sidebar's menu items and Archived section, the standalone group's question, the archived group's summary, and Settings → Switching's Focus line for an archived group
 
 The restore note (“… is back without its keyboard shortcut”) is `core.archive.restore.noShortcut.*`; Delete… reuses `groupWindow.delete.*`.
 
@@ -1122,7 +1122,7 @@ The restore note (“… is back without its keyboard shortcut”) is `core.arch
 | `groupWindow.archive.detail.restoreHelp` | Put the group back at the end of the list, with all its settings. |
 | `groupWindow.archive.focusStatus` | The current Focus names “%@”, which is archived: it does nothing until you restore the group. |
 
-## Templates in the group window: the + menu, Save as Template and Manage Templates (English only for now; `awaitingTranslation`: `templates.`)
+## Templates in the group window: the + menu, Save as Template and Manage Templates
 
 Rename…, Delete…, Cancel and Done reuse `groupWindow.sidebar.*` and `common.*`.
 
@@ -1154,7 +1154,7 @@ Rename…, Delete…, Cancel and Done reuse `groupWindow.sidebar.*` and `common.
 | `templates.delete.message` | Groups made from it aren't affected. |
 | `templates.delete.confirm` | Delete Template |
 
-## Settings → Backup: the import question's and status's lines about archived groups and templates (English only for now; `awaitingTranslation`: `settings.backup.library.`)
+## Settings → Backup: the import question's and status's lines about archived groups and templates
 
 The backup's archived groups and templates themselves are counted by `core.backup.library.*` texts.
 
@@ -1168,7 +1168,7 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `settings.backup.library.status.templates.one` | Added 1 template |
 | `settings.backup.library.status.templates.other` | Added %ld templates |
 
-## Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, the "Add Open Apps" link's title in Settings → Shortcuts & Siri → Links, and the New Group from Open Apps Siri phrase in Settings → Shortcuts & Siri (English only for now; `awaitingTranslation`: `core.capture.`, `core.invocation.capture.`)
+## Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, the "Add Open Apps" link's title in Settings → Shortcuts & Siri → Links, and the New Group from Open Apps Siri phrase in Settings → Shortcuts & Siri
 
 `core.capture.name.more` is the name offered for a new group: the first app's name and how many other apps it has (“Xcode +3”). Keep the “+” form: it needs no plural forms in any language.
 
@@ -1185,7 +1185,7 @@ The backup's archived groups and templates themselves are counted by `core.backu
 | `core.invocation.capture.newGroup` | New Group from Open Apps |
 | `core.invocation.capture.newGroup.phrase` | Capture my open apps in %@ |
 
-## Capturing the open apps in the app: the menu bar menu's New Group from Open Apps…, the group window's + menu and Add menu, an empty group's popup, and the review sheet (English only for now; `awaitingTranslation`: `capture.sheet.`, `menuBar.capture.`, `groupWindow.capture.`, `popup.capture.`)
+## Capturing the open apps in the app: the menu bar menu's New Group from Open Apps…, the group window's + menu and Add menu, an empty group's popup, and the review sheet
 
 `%@` in `capture.sheet.title.add` and `capture.sheet.allInGroup` is the group's name; in `capture.sheet.footer`, the app's name. The captions (`capture.sheet.note.*`) stand next to an app's name in the list, joined with “ · ” when there are several. “Name” is the group's name field (`capture.sheet.name`) and the A-to-Z order (`capture.sheet.order.name`): translate each for its place.
 
@@ -1258,7 +1258,7 @@ The `core.trigger.skip.*` and `core.trigger.missed.*` texts complete a sentence 
 | `core.backup.triggers.merges.one` | It adds 1 trigger, turned off. |
 | `core.backup.triggers.merges.other` | It adds %ld triggers, turned off. |
 
-## Triggers (Core): a trigger's rule as its row and the notice show it, and what happened the last time it came (English only for now; `awaitingTranslation`: `core.trigger.`)
+## Triggers (Core): a trigger's rule as its row and the notice show it, and what happened the last time it came
 
 A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the `core.trigger.summary.action.*` texts start in lowercase; the `core.trigger.lastRun.todayAt` / `yesterdayAt` texts fill the `%1$@` of the last-run lines ("Last ran today at 9:00: …"). Times come from the locale's own format, weekday names from the calendar.
 
@@ -1304,7 +1304,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `core.trigger.lastRun.skipped` | Skipped %1$@: %2$@. |
 | `core.trigger.lastRun.missed` | Missed %1$@: %2$@. |
 
-## Triggers: the New Trigger / Edit Trigger sheet (English only for now; `awaitingTranslation`: `triggers.editor.`)
+## Triggers: the New Trigger / Edit Trigger sheet
 
 | Key | English |
 | --- | --- |
@@ -1383,7 +1383,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.wifi.restricted` | Location access isn't available on this Mac: it's restricted by a profile or Screen Time. |
 | `triggers.editor.ethernet.hint` | Ethernet counts as connected while a wired connection — built in, an adapter or a dock — has a network, even when Wi-Fi is used first. It needs no permission. |
 
-## Triggers: the notice before a trigger runs (English only for now; `awaitingTranslation`: `triggers.notice.`)
+## Triggers: the notice before a trigger runs
 
 | Key | English |
 | --- | --- |
@@ -1404,7 +1404,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.notice.seconds.other` | %ld seconds |
 | `triggers.notice.announcement` | %1$@. %2$@. |
 
-## Triggers: the group window's Triggers section and the archived group's summary (English only for now; `awaitingTranslation`: `groupWindow.triggers.`)
+## Triggers: the group window's Triggers section and the archived group's summary
 
 | Key | English |
 | --- | --- |
@@ -1428,7 +1428,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `groupWindow.triggers.identifiedAppsWarning` | Only applications identified by macOS are monitored. Unidentified instances may be missed, and a close may be reported incorrectly. This setting applies to all application triggers and resets when Cybokron Dock Groups quits. |
 | `groupWindow.triggers.vpnNotWatched` | Doesn't run in this version: macOS doesn't tell reliably when a VPN connects. |
 
-## Triggers: Settings → Triggers (English only for now; `awaitingTranslation`: `settings.triggers.`)
+## Triggers: Settings → Triggers
 
 | Key | English |
 | --- | --- |
@@ -1457,7 +1457,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `settings.triggers.location.hint` | Only triggers that wait for a Wi-Fi network need it: macOS shows network names only to apps allowed to use Location Services. You're asked only when you click Allow… in such a trigger, and the app reads the network's name, never your location. |
 | `settings.triggers.location.openSettings` | Open Privacy Settings… |
 
-## Triggers: the menu bar menu's Pause Triggers and Quit's tooltip (English only for now; `awaitingTranslation`: `menuBar.triggers.`)
+## Triggers: the menu bar menu's Pause Triggers and Quit's tooltip
 
 | Key | English |
 | --- | --- |

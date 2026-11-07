@@ -2,8 +2,9 @@
 #
 #   attach_disk_image <image> <mountpoint|-> [readonly]
 #   detach_disk_image <mountpoint>   (diskutil eject, falling back to hdiutil detach)
+#   create_disk_image <folder> <volume-name> <output.dmg>   (compressed UDZO image from a folder)
 #
-# `hdiutil attach` is deprecated in favor of `diskutil image attach` (macOS 15.2+). The helper
+# `hdiutil attach`/`create` are deprecated in favor of `diskutil image attach`/`create` (macOS 15.2+). The helper
 # prefers diskutil when this macOS supports the subcommand and falls back to hdiutil otherwise
 # (older runners). Both paths show their own error output; nothing is silenced. Which path ran is
 # logged to stderr.
@@ -34,4 +35,21 @@ attach_disk_image() {
 # is deprecated too) ejects the whole image; on failure it falls back to `hdiutil detach`.
 detach_disk_image() {
   diskutil eject "$1" || hdiutil detach "$1"
+}
+
+_diskimage_has_diskutil_create() {
+  diskutil image create from --help > /dev/null 2>&1
+}
+
+# Creates a compressed (UDZO) disk image from a folder. Prefers `diskutil image create from`,
+# falls back to `hdiutil create -srcfolder`. The caller removes any existing output first.
+create_disk_image() {
+  local src="$1" volname="$2" out="$3"
+  if _diskimage_has_diskutil_create; then
+    echo "diskimage: using 'diskutil image create from'" >&2
+    diskutil image create from --format UDZO --volumeName "$volname" "$src" "$out" >&2
+  else
+    echo "diskimage: 'diskutil image create' unavailable, falling back to 'hdiutil create'" >&2
+    hdiutil create -volname "$volname" -srcfolder "$src" -format UDZO -ov "$out" >&2
+  fi
 }
