@@ -1,5 +1,6 @@
 import Darwin
 import Dispatch
+import os
 
 /// Result of one non-blocking `ExperimentalProcessEventWatch.poll()`.
 enum ExperimentalProcessEventWatchPollResult: Equatable {
@@ -55,6 +56,8 @@ final class ExperimentalProcessEventWatch {
     private let watchedPID: Int32
     private var descriptor: Int32
     private let closeDescriptor: CloseDescriptor
+    /// Runs `whenDescriptorClosed`'s action once, right after `closeDescriptor` returned.
+    private let descriptorClosed = DescriptorClosedNotice()
     /// The started wake-up (`startSignalling`): a read source on `descriptor`. While it exists,
     /// only its cancel handler closes the descriptor. `nil` before it starts and after `close()`.
     private(set) var signalSource: (any DispatchSourceRead)?
@@ -176,12 +179,14 @@ final class ExperimentalProcessEventWatch {
         guard descriptor >= 0, !isLatched, signalSource == nil else { return false }
         let fd = descriptor
         let closeDescriptor = closeDescriptor
+        let descriptorClosed = descriptorClosed
         let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: .main)
         source.setEventHandler {
             MainActor.assumeIsolated { handler() }
         }
         source.setCancelHandler {
             closeDescriptor(fd)
+            descriptorClosed.fire()
         }
         signalSource = source
         source.activate()
@@ -200,11 +205,51 @@ final class ExperimentalProcessEventWatch {
             source.cancel()
         } else {
             closeDescriptor(fd)
+            descriptorClosed.fire()
         }
+    }
+
+    /// Calls `action` once, right after the kqueue descriptor is really closed: inside `close()`
+    /// without a started wake-up, in the source's cancel handler (on the main queue, after
+    /// `close()` returned) with one. At once when it is already closed. A later call replaces an
+    /// action that hasn't run yet; every action runs at most once.
+    func whenDescriptorClosed(_ action: @escaping @Sendable () -> Void) {
+        descriptorClosed.set(action)
     }
 
     private func latchUnknown() -> PollResult {
         isLatched = true
         return .unknown
+    }
+}
+
+/// An action run once, when a descriptor is closed (`ExperimentalProcessEventWatch`, the budget's
+/// watch). Thread-safe: the closing may happen in a dispatch source's cancel handler.
+final class DescriptorClosedNotice: Sendable {
+    private enum State: Sendable {
+        case open((@Sendable () -> Void)?)
+        case closed
+    }
+
+    private let state = OSAllocatedUnfairLock<State>(initialState: .open(nil))
+
+    /// Keeps `action` for the close, or runs it now when the descriptor is already closed.
+    func set(_ action: @escaping @Sendable () -> Void) {
+        let runNow: Bool = state.withLock { state in
+            guard case .open = state else { return true }
+            state = .open(action)
+            return false
+        }
+        if runNow { action() }
+    }
+
+    /// The descriptor is closed: runs the kept action, the first time only.
+    func fire() {
+        let action: (@Sendable () -> Void)? = state.withLock { state in
+            guard case .open(let action) = state else { return nil }
+            state = .closed
+            return action
+        }
+        action?()
     }
 }

@@ -96,6 +96,13 @@ final class FakeProcessWatch: ApplicationProcessWatching {
     /// late callback.
     private var handler: (@MainActor () -> Void)?
     private var latched = false
+    /// Whether `close()` leaves the descriptor open until `closeDescriptor()`, like a real watch
+    /// with a started wake-up whose source closes it a main-queue turn later.
+    var defersDescriptorClose = false
+    private(set) var isDescriptorClosed = false
+    /// Not guarded on purpose: `reportDescriptorClosed()` calls it as often as it is called, so a
+    /// test can check the budget frees a slot once however often a close is reported.
+    private var descriptorClosedAction: (@Sendable () -> Void)?
 
     func poll() -> ExperimentalProcessEventWatchPollResult {
         guard !isClosed, !latched else { return .unknown }
@@ -104,8 +111,26 @@ final class FakeProcessWatch: ApplicationProcessWatching {
     }
 
     func close() {
+        guard !isClosed else { return }
         isClosed = true
         isSignalling = false
+        if !defersDescriptorClose { closeDescriptor() }
+    }
+
+    /// The descriptor is closed now (a deferred close finishing); reported every time it's called.
+    func closeDescriptor() {
+        isDescriptorClosed = true
+        reportDescriptorClosed()
+    }
+
+    /// Calls the descriptor-closed action again, as a misbehaving watch might.
+    func reportDescriptorClosed() {
+        descriptorClosedAction?()
+    }
+
+    func whenDescriptorClosed(_ action: @escaping @Sendable () -> Void) {
+        descriptorClosedAction = action
+        if isDescriptorClosed { action() }
     }
 
     func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {

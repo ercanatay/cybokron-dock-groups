@@ -9,11 +9,12 @@ import os
 /// never registered (fail closed: the verifier answers `unavailable(.atCapacity)`, the approval
 /// `checkFailed`), and the watches already open are left alone.
 ///
-/// A slot is freed when its watch is closed (`ApplicationProcessWatching.close()`) or released.
-/// A real watch with a started wake-up closes its descriptor in the read source's cancel handler,
-/// on the main queue right after `close()` returns, so for that one main-queue turn the process
-/// may hold a few more descriptors than open slots; never more than the bound plus the watches
-/// closed in that turn.
+/// A slot is taken before the watch's descriptor is opened and freed only once that descriptor is
+/// really closed (`ApplicationProcessWatching.whenDescriptorClosed`), not when `close()` returns: a
+/// real watch with a started wake-up closes its descriptor in the read source's cancel handler, on
+/// the main queue after `close()`, and its slot stays taken until then. So the process never holds
+/// more watch descriptors than `limit`; a slot freed late only makes the bound fail closed
+/// (`atCapacity`) a main-queue turn longer.
 ///
 /// Thread-safe (the count is behind a lock), so a slot can be freed from a `deinit`.
 final class ApplicationProcessWatchBudget: Sendable {
@@ -46,7 +47,8 @@ final class ApplicationProcessWatchBudget: Sendable {
     }
 
     /// Takes a slot, then registers a watch on `pid` with `make`. The watch handed back closes the
-    /// one `make` made and frees the slot (once) when it is closed or released.
+    /// one `make` made when it is closed or released, and frees the slot once, when that watch's
+    /// descriptor is closed.
     @MainActor
     func open(pid: Int32, with make: @MainActor (Int32) -> (any ApplicationProcessWatching)?) -> Opening {
         guard take() else { return .atCapacity }
@@ -54,7 +56,7 @@ final class ApplicationProcessWatchBudget: Sendable {
             free()
             return .unavailable
         }
-        return .opened(BudgetedProcessWatch(watch, budget: self))
+        return .opened(BudgetedProcessWatch(watch, slot: Slot(budget: self)))
     }
 
     private func take() -> Bool {
@@ -73,20 +75,44 @@ final class ApplicationProcessWatchBudget: Sendable {
     }
 }
 
-/// A watch that holds one slot of an `ApplicationProcessWatchBudget`: it forwards every call and
-/// frees the slot the first time it is closed, or when it is released unclosed.
-private final class BudgetedProcessWatch: ApplicationProcessWatching {
-    private let watch: any ApplicationProcessWatching
+/// One taken slot of an `ApplicationProcessWatchBudget`, freed the first time `free()` is called;
+/// later calls do nothing. Thread-safe: it is freed where the descriptor is closed.
+private final class Slot: Sendable {
     private let budget: ApplicationProcessWatchBudget
-    private var holdsSlot = true
+    private let held = OSAllocatedUnfairLock(initialState: true)
 
-    init(_ watch: any ApplicationProcessWatching, budget: ApplicationProcessWatchBudget) {
-        self.watch = watch
+    init(budget: ApplicationProcessWatchBudget) {
         self.budget = budget
     }
 
+    func free() {
+        let wasHeld = held.withLock { held in
+            defer { held = false }
+            return held
+        }
+        if wasHeld { budget.free() }
+    }
+}
+
+/// A watch that holds one slot of an `ApplicationProcessWatchBudget`: it forwards every call,
+/// closes the watch it wraps when closed or released, and frees the slot when that watch reports
+/// its descriptor closed (once, however often that is reported).
+private final class BudgetedProcessWatch: ApplicationProcessWatching {
+    private let watch: any ApplicationProcessWatching
+    /// The caller's own `whenDescriptorClosed` action, run after the slot is freed.
+    private let descriptorClosed = DescriptorClosedNotice()
+
+    init(_ watch: any ApplicationProcessWatching, slot: Slot) {
+        self.watch = watch
+        let descriptorClosed = descriptorClosed
+        watch.whenDescriptorClosed {
+            slot.free()
+            descriptorClosed.fire()
+        }
+    }
+
     deinit {
-        close()
+        watch.close()
     }
 
     func poll() -> ExperimentalProcessEventWatchPollResult {
@@ -95,12 +121,14 @@ private final class BudgetedProcessWatch: ApplicationProcessWatching {
 
     func close() {
         watch.close()
-        guard holdsSlot else { return }
-        holdsSlot = false
-        budget.free()
     }
 
     func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {
         watch.startSignalling(handler)
+    }
+
+    /// The slot is freed whatever is set here.
+    func whenDescriptorClosed(_ action: @escaping @Sendable () -> Void) {
+        descriptorClosed.set(action)
     }
 }

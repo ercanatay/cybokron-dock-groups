@@ -114,14 +114,16 @@ public enum TriggerApplicationApprovalFailure: String, CaseIterable, Hashable, S
     case differentVersionsRunning
     /// More instances than are checked.
     case tooManyInstances
-    /// An instance quit, started, exec'd or changed code while it was being checked.
+    /// An instance quit, started, exec'd or changed code while it was being checked, or its PID's
+    /// kernel start time changed (the PID may name another process now).
     case appChanged
     /// The check took longer than its time bound.
     case timedOut
     /// The check was cancelled.
     case cancelled
     /// The code couldn't be checked (Security error, a watch or its wake-up that couldn't be
-    /// started, no room left in the process-wide watch bound, the running apps couldn't be listed).
+    /// started, no room left in the process-wide watch bound, the running apps couldn't be listed,
+    /// an instance's kernel start time couldn't be read).
     case checkFailed
     /// The approval couldn't be written to the triggers file.
     case notSaved
@@ -143,19 +145,25 @@ struct VerifiedApplicationApproval: Sendable {
 ///
 /// 1. The trigger must be a saved application trigger that is `unverified` or `needsReapproval`.
 /// 2. No instance runs: `notRunning`, nothing is saved.
-/// 3. An exec/exit watch with its wake-up (`ApplicationProcessWatching.startSignalling`) is
+/// 3. Every instance's kernel start time (`ProcessIncarnation`) is read when it is listed. An
+///    exec/exit watch with its wake-up (`ApplicationProcessWatching.startSignalling`) is
 ///    registered on every instance first, each taking a slot of the process-wide
 ///    `ApplicationProcessWatchBudget` (shared with the verifier); then each instance is read and
 ///    confirmed off the main actor (`ApplicationRunningIdentityReader`), each bounded by `timeout`
 ///    and cancellable with the calling task. A watch that can't be registered, whose wake-up can't
 ///    be started, or that finds no room in the bound saves nothing (`checkFailed`).
+///    The start time brackets the approval as it brackets the verifier's check: it is read again
+///    after the watch is registered, right before and right after each reading (on the thread
+///    that makes the Security call), after the reading and after the ad-hoc confirmation, and
+///    must equal the first reading every time. A different one means the PID may now name another
+///    process (`appChanged`); one that can't be read is `checkFailed`. Neither saves anything.
 /// 4. A watch that reports exec, exit or an error while the approval runs ends it at once
 ///    (`appChanged`): the watch is closed and the reading cancelled, so no Security answer is
 ///    waited for. During the ad-hoc confirmation the event is recorded the same way and the
 ///    user's answer can no longer approve.
 /// 5. Saved only when every instance read the same identifier (exactly the trigger's), the same
-///    exact `cdhash` and an approvable signature, every watch stayed idle, the instance list is
-///    unchanged and the trigger is as it was. Anything else saves nothing.
+///    exact `cdhash` and an approvable signature, every watch stayed idle, the instance list and
+///    every start time are unchanged and the trigger is as it was. Anything else saves nothing.
 ///
 /// Every watch is closed when `approve` returns, whatever it answers (a cancellation included);
 /// closing cancels its wake-up, and a late wake-up changes nothing.
@@ -177,6 +185,7 @@ public final class TriggerApplicationApprover {
     /// Where every watch takes its slot (`ApplicationProcessWatchBudget.shared` in the app).
     let budget: ApplicationProcessWatchBudget
     private let read: Read
+    private let readIncarnation: ProcessIncarnation.Read
     private let timeout: Duration
     private let sleep: Sleep
     private let clock: () -> Date
@@ -194,6 +203,7 @@ public final class TriggerApplicationApprover {
         makeWatch: @escaping MakeWatch = { ExperimentalProcessEventWatch(pid: $0) },
         budget: ApplicationProcessWatchBudget = .shared,
         read: @escaping Read = { ApplicationRunningIdentityReader.read(pid: $0, expectedIdentifier: $1) },
+        readIncarnation: @escaping ProcessIncarnation.Read = { ProcessIncarnation.read(pid: $0) },
         timeout: Duration = TriggerApplicationApprover.defaultTimeout,
         sleep: @escaping Sleep = { try await Task.sleep(for: $0) },
         clock: @escaping () -> Date = Date.init
@@ -203,6 +213,7 @@ public final class TriggerApplicationApprover {
         self.makeWatch = makeWatch
         self.budget = budget
         self.read = read
+        self.readIncarnation = readIncarnation
         self.timeout = timeout
         self.sleep = sleep
         self.clock = clock
@@ -210,8 +221,28 @@ public final class TriggerApplicationApprover {
 
     private enum InstanceResult: Sendable {
         case read(ApplicationRunningIdentityReading)
+        /// The start time right before or right after the reading wasn't the listed one (or
+        /// couldn't be read): the reading doesn't count.
+        case incarnation(TriggerApplicationApprovalFailure)
         case timedOut
         case cancelled
+    }
+
+    /// `nil` when `pid` still runs `expected`; `appChanged` for another start time, `checkFailed`
+    /// for one that can't be read.
+    nonisolated private static func incarnationFailure(pid: Int32, expected: ProcessIncarnation?, read: ProcessIncarnation.Read) -> TriggerApplicationApprovalFailure? {
+        switch ApplicationRunningCodeCheck.incarnationProblem(pid: pid, expected: expected, read: read) {
+        case nil: return nil
+        case .processChanged?: return .appChanged
+        default: return .checkFailed
+        }
+    }
+
+    /// The first failure among `pids` (`incarnationFailure`), `appChanged` before `checkFailed`.
+    private func incarnationFailure(of pids: Set<Int32>, expected: [Int32: ProcessIncarnation]) -> TriggerApplicationApprovalFailure? {
+        let failures = pids.compactMap { Self.incarnationFailure(pid: $0, expected: expected[$0], read: readIncarnation) }
+        if failures.contains(.appChanged) { return .appChanged }
+        return failures.first
     }
 
     /// One approval's watches and their wake-ups. A wake-up polls its watch (the same poll the
@@ -288,6 +319,14 @@ public final class TriggerApplicationApprover {
         if pids.isEmpty { return .notRunning }
         guard pids.count <= RunningApplicationIdentityVerifier.maximumInstancesPerApplication else { return .failed(.tooManyInstances) }
 
+        // The incarnations listed, read in the turn that listed them; every later reading must
+        // equal these.
+        var incarnations: [Int32: ProcessIncarnation] = [:]
+        for pid in pids {
+            guard let listedIncarnation = readIncarnation(pid) else { return .failed(.checkFailed) }
+            incarnations[pid] = listedIncarnation
+        }
+
         // Every watch fits in the process-wide bound, or none is registered.
         guard budget.available >= pids.count else { return .failed(.checkFailed) }
 
@@ -300,15 +339,23 @@ public final class TriggerApplicationApprover {
             watches.add(watch)
             guard watch.startSignalling(watches.handler(for: watch)) else { return .failed(.checkFailed) }
             guard watch.poll() == .idle else { return .failed(.appChanged) }
+            // The watch is on the incarnation that was listed, not on a process that got its PID.
+            if let failure = Self.incarnationFailure(pid: pid, expected: incarnations[pid], read: readIncarnation) { return .failed(failure) }
         }
 
-        let read = read, timeout = timeout, sleep = sleep
+        let read = read, readIncarnation = readIncarnation, timeout = timeout, sleep = sleep
+        let expected = incarnations
         let reading = Task { () -> [InstanceResult] in
             await withTaskGroup(of: InstanceResult.self) { group -> [InstanceResult] in
                 for pid in pids {
+                    let incarnation = expected[pid]
                     group.addTask {
                         await BoundedSecurityCall.run(timeout: timeout, sleep: sleep, timedOut: .timedOut, cancelled: .cancelled, misuse: .read(.unknown)) {
-                            .read(read(pid, bundleIdentifier))
+                            // Bracketed on the thread of the Security call, like the verifier's check.
+                            if let failure = Self.incarnationFailure(pid: pid, expected: incarnation, read: readIncarnation) { return .incarnation(failure) }
+                            let reading = read(pid, bundleIdentifier)
+                            if let failure = Self.incarnationFailure(pid: pid, expected: incarnation, read: readIncarnation) { return .incarnation(failure) }
+                            return .read(reading)
                         }
                     }
                 }
@@ -335,9 +382,16 @@ public final class TriggerApplicationApprover {
         if results.contains(where: { if case .timedOut = $0 { return true }; return false }) {
             return .failed(.timedOut)
         }
+        let bracketFailures = results.compactMap { result -> TriggerApplicationApprovalFailure? in
+            if case .incarnation(let failure) = result { return failure }
+            return nil
+        }
+        if bracketFailures.contains(.appChanged) { return .failed(.appChanged) }
+        if let failure = bracketFailures.first { return .failed(failure) }
         guard watches.allIdle else { return .failed(.appChanged) }
         guard let relisted = instances(identifier) else { return .failed(.checkFailed) }
         guard Set(relisted) == pids else { return .failed(.appChanged) }
+        if let failure = incarnationFailure(of: pids, expected: incarnations) { return .failed(failure) }
 
         let readings = results.compactMap { result -> ApplicationRunningIdentityReading? in
             if case .read(let reading) = result { return reading }
@@ -362,6 +416,7 @@ public final class TriggerApplicationApprover {
             if Task.isCancelled { return .failed(.cancelled) }
             guard watches.allIdle else { return .failed(.appChanged) }
             guard let confirmed = instances(identifier), Set(confirmed) == pids else { return .failed(.appChanged) }
+            if let failure = incarnationFailure(of: pids, expected: incarnations) { return .failed(failure) }
         }
 
         // The trigger the user approved, unchanged meanwhile.

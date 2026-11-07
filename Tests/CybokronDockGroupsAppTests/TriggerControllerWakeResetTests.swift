@@ -7,9 +7,18 @@ import Testing
 private final class CountedProcessWatch: ApplicationProcessWatching {
     private(set) var isClosed = false
     func poll() -> ExperimentalProcessEventWatchPollResult { isClosed ? .unknown : .idle }
-    func close() { isClosed = true }
+    private var descriptorClosed: (@Sendable () -> Void)?
+    func close() {
+        guard !isClosed else { return }
+        isClosed = true
+        descriptorClosed?()
+    }
     /// Its wake-up never fires.
     func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool { !isClosed }
+    /// Its descriptor closes in `close()`.
+    func whenDescriptorClosed(_ action: @escaping @Sendable () -> Void) {
+        if isClosed { action() } else { descriptorClosed = action }
+    }
 }
 
 @MainActor

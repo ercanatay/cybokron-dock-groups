@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import os
 import Testing
 @testable import DockGroupsCore
 
@@ -326,6 +327,94 @@ struct ApplicationProcessWatchBudgetTests {
         }
         #expect(budget.openCount == 0)
         #expect(inner.isClosed)
+    }
+
+    @Test func aSlotStaysTakenUntilTheDescriptorIsReallyClosedAndIsFreedOnce() throws {
+        let budget = ApplicationProcessWatchBudget(limit: 2)
+        let deferred = FakeProcessWatch()
+        deferred.defersDescriptorClose = true
+        guard case .opened(let first) = budget.open(pid: 1, with: { _ in deferred }) else { Issue.record("first"); return }
+        guard case .opened(let second) = budget.open(pid: 2, with: { _ in FakeProcessWatch() }) else { Issue.record("second"); return }
+        #expect(budget.openCount == 2)
+        // Closed, but its descriptor is still open: the slot stays taken, so the bound stays full.
+        first.close()
+        first.close()
+        #expect(deferred.isClosed && !deferred.isDescriptorClosed)
+        #expect(budget.openCount == 2)
+        guard case .atCapacity = budget.open(pid: 3, with: { _ in FakeProcessWatch() }) else { Issue.record("not at capacity"); return }
+        // The descriptor closes: the slot is free, once.
+        deferred.closeDescriptor()
+        #expect(budget.openCount == 1)
+        // A close reported again (or a close again) frees nothing more: the other watch's slot stays.
+        deferred.closeDescriptor()
+        deferred.reportDescriptorClosed()
+        first.close()
+        #expect(budget.openCount == 1)
+        #expect(second.poll() == .idle)
+        second.close()
+        #expect(budget.openCount == 0)
+    }
+
+    @Test func aWatchReleasedUnclosedHoldsItsSlotUntilItsDescriptorCloses() throws {
+        let budget = ApplicationProcessWatchBudget(limit: 1)
+        let inner = FakeProcessWatch()
+        inner.defersDescriptorClose = true
+        do {
+            guard case .opened(let wrapped) = budget.open(pid: 1, with: { _ in inner }) else { Issue.record("wrap"); return }
+            withExtendedLifetime(wrapped) { #expect(budget.openCount == 1) }
+        }
+        // Released: the inner watch is closed, its descriptor not yet.
+        #expect(inner.isClosed && budget.openCount == 1)
+        inner.closeDescriptor()
+        #expect(budget.openCount == 0)
+        inner.reportDescriptorClosed()
+        #expect(budget.openCount == 0)
+    }
+
+    @Test func aCallersDescriptorClosedActionRunsAfterTheSlotIsFreed() throws {
+        let budget = ApplicationProcessWatchBudget(limit: 1)
+        let inner = FakeProcessWatch()
+        inner.defersDescriptorClose = true
+        guard case .opened(let wrapped) = budget.open(pid: 1, with: { _ in inner }) else { Issue.record("wrap"); return }
+        let runs = OSAllocatedUnfairLock(initialState: [Int]())
+        wrapped.whenDescriptorClosed { [budget] in
+            // Runs once, with the slot already free.
+            runs.withLock { $0.append(budget.openCount) }
+        }
+        wrapped.close()
+        #expect(runs.withLock { $0 }.isEmpty)
+        inner.closeDescriptor()
+        inner.closeDescriptor()
+        #expect(runs.withLock { $0 } == [0])
+    }
+
+    @Test func aRealWatchsSlotIsFreedWhenItsSourceClosesTheDescriptor() async throws {
+        let budget = ApplicationProcessWatchBudget(limit: 1)
+        let closes = DescriptorCloses()
+        guard case .opened(let watch) = budget.open(pid: getpid(), with: { ExperimentalProcessEventWatch(pid: $0, closeDescriptor: closes.closer) }) else {
+            Issue.record("no watch on this process")
+            return
+        }
+        #expect(watch.startSignalling {})
+        watch.close()
+        // The source's cancel handler closes the descriptor on a later main-queue turn; until then
+        // it is open and its slot taken.
+        #expect(closes.all.isEmpty)
+        #expect(budget.openCount == 1)
+        #expect(await eventually { closes.all.count == 1 })
+        #expect(closes.all.first?.result == 0)
+        #expect(budget.openCount == 0)
+        // Nothing more later: one close, one slot freed.
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(closes.all.count == 1 && budget.openCount == 0)
+        // Without a wake-up the descriptor closes inside `close()`, and the slot with it.
+        guard case .opened(let plain) = budget.open(pid: getpid(), with: { ExperimentalProcessEventWatch(pid: $0, closeDescriptor: closes.closer) }) else {
+            Issue.record("no second watch")
+            return
+        }
+        #expect(budget.openCount == 1)
+        plain.close()
+        #expect(closes.all.count == 2 && budget.openCount == 0)
     }
 
     @Test func theVerifierAtTheBoundIsUnavailableAndKeepsItsOtherWatches() async {
