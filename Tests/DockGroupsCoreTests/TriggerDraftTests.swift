@@ -133,6 +133,7 @@ struct TriggerDraftTests {
         var draft = TriggerDraft(calendar: Self.calendar)
         let events: [TriggerDraft.Kind: TriggerEvent] = [
             .login: .login, .appOpens: .appOpens, .screensWake: .screensWake, .screensSleep: .screensSleep,
+            .screenLocks: .screenLocks, .screenUnlocks: .screenUnlocks,
         ]
         for (kind, event) in events {
             draft.setKind(kind)

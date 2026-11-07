@@ -555,6 +555,7 @@ public final class TriggerCoordinator {
     ///   application-presence firings of this delivery are dropped. Without it, application-presence
     ///   firings are never enqueued.
     private func receive(_ signal: TriggerSignal, presence: (stamp: ApplicationPresenceStamp, isValid: () -> Bool)?) {
+        let lockRevision = environment.screenLockRevision
         let evaluation = TriggerEvaluator.evaluate(
             signal,
             rules: rules(),
@@ -565,6 +566,11 @@ public final class TriggerCoordinator {
             calendar: calendar()
         )
         environment = evaluation.environment
+        if environment.screenLockRevision != lockRevision {
+            // The screen locked or unlocked again, or the lock can't be told: what the earlier lock
+            // or unlock asked for is stale.
+            invalidateStaleScreenLockFirings()
+        }
         if case .launched = signal, state.quietLaunchUntil != nil {
             var settled = evaluation.state
             settled.quietLaunchUntil = nil
@@ -631,8 +637,9 @@ public final class TriggerCoordinator {
             return
         }
         settleWaitedForIdentityCheck = false
-        // A stale presence firing must not win the reduction over a firing that can still run.
+        // A stale presence or lock firing must not win the reduction over a firing that can still run.
         dropStaleApplicationPresenceFirings()
+        invalidateStaleScreenLockFirings()
         let batch = pending
         pending = []
         let reduction = TriggerReducer.reduce(queue + batch)
@@ -653,17 +660,42 @@ public final class TriggerCoordinator {
 
     // MARK: - Carrying out
 
-    /// Whether `firing` can be carried out now. A trigger on the screens going to sleep runs while
-    /// they sleep — after they wake it would be too late for what it's for; everything else waits
-    /// for the screens to wake and the session to be active.
+    /// Whether `firing` can be carried out now. A trigger on the screens going to sleep or the
+    /// screen locking runs while they sleep — after they wake it would be too late for what it's
+    /// for; everything else waits for the screens to wake and the session to be active.
     private func canCarryOut(_ firing: TriggerFiring) -> Bool {
         if environment.canAct { return true }
-        return environment.sessionActive && runsWhileScreensSleep(firing)
+        return environment.sessionActive && runsWithoutAnyone(firing)
     }
 
-    private func runsWhileScreensSleep(_ firing: TriggerFiring) -> Bool {
-        guard let trigger = rules().first(where: { $0.id == firing.triggerID }), case .screensSleep = trigger.event else { return false }
-        return true
+    /// Whether `firing` is a trigger's on the screens going to sleep or the screen locking: nobody
+    /// is there to answer a notice, so it runs right away.
+    private func runsWithoutAnyone(_ firing: TriggerFiring) -> Bool {
+        guard let trigger = rules().first(where: { $0.id == firing.triggerID }) else { return false }
+        return trigger.event == .screensSleep || trigger.event == .screenLocks
+    }
+
+    // MARK: - Screen lock
+
+    /// Whether a lock or unlock firing still stands for the lock as it is: the lock hasn't changed
+    /// (nor become unknown) since it came. Other firings always do.
+    private func isScreenLockFiringCurrent(_ firing: TriggerFiring) -> Bool {
+        guard let revision = firing.screenLockRevision else {
+            // A lock or unlock trigger's firing without its revision never runs.
+            return rules().first(where: { $0.id == firing.triggerID })?.event.isScreenLock != true
+        }
+        return revision == environment.screenLockRevision
+    }
+
+    /// Drops the lock and unlock firings that are pending or queued but stale, without a record (the
+    /// lock changed again before they ran), and dismisses the notice of a stale one.
+    private func invalidateStaleScreenLockFirings() {
+        pending.removeAll { !isScreenLockFiringCurrent($0) }
+        queue.removeAll { !isScreenLockFiringCurrent($0) }
+        if isPresentingNotice, !currentInvalidated, let currentFiring = current, !isScreenLockFiringCurrent(currentFiring) {
+            currentInvalidated = true
+            noticePresenter?.dismiss()
+        }
     }
 
     private func processIfNeeded() {
@@ -696,6 +728,10 @@ public final class TriggerCoordinator {
             logger.notice("Trigger \(firing.triggerID, privacy: .public) is gone or off: nothing done")
             return
         }
+        guard isScreenLockFiringCurrent(firing) else {
+            logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated lock change: nothing done")
+            return
+        }
         // Like a push invalidation of a queued firing: dropped without a recorded outcome, unless
         // only its rule's running code isn't confirmed.
         switch applicationPresenceCheck(firing) {
@@ -724,7 +760,7 @@ public final class TriggerCoordinator {
 
         // Nobody can answer a notice while the screens sleep: a trigger on them going to sleep runs
         // right away (it can only finish — hide — the current group).
-        let runMode: TriggerRunMode = runsWhileScreensSleep(firing) ? .immediately : trigger.runMode
+        let runMode: TriggerRunMode = runsWithoutAnyone(firing) ? .immediately : trigger.runMode
         switch runMode {
         case .immediately:
             break
@@ -750,6 +786,12 @@ public final class TriggerCoordinator {
             isPresentingNotice = true
             let answer = await presenter.present(TriggerNotice(triggerID: trigger.id, groupID: group.id, groupName: group.name, action: firing.action, runMode: runMode))
             isPresentingNotice = false
+            // The screen locked or unlocked again while the notice showed: dropped, like a stale
+            // firing that never reached its notice.
+            guard isScreenLockFiringCurrent(firing) else {
+                logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated lock change: nothing done")
+                return
+            }
             switch answer {
             case .run:
                 break
@@ -780,8 +822,12 @@ public final class TriggerCoordinator {
             return
         }
         // The last look before the handler is called (no suspension point until then): the checks
-        // above may have called out (state changes, the handler), so the observation is looked at
-        // again. An action that already started is not undone.
+        // above may have called out (state changes, the handler), so the observation and the lock
+        // are looked at again. An action that already started is not undone.
+        guard isScreenLockFiringCurrent(firing) else {
+            logger.notice("Trigger \(firing.triggerID, privacy: .public) came from an outdated lock change: nothing done")
+            return
+        }
         switch applicationPresenceCheck(firing) {
         case .current:
             break

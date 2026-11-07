@@ -32,7 +32,7 @@ struct TriggerDisplayDraftTests {
 
     @Test func theWhenPopUpOffersMomentsThenChanges() {
         let offered = TriggerDraft.When.offered
-        #expect(Array(offered.prefix(5)) == TriggerDraft.Kind.allCases.map(TriggerDraft.When.moment))
+        #expect(Array(offered.prefix(TriggerDraft.Kind.allCases.count)) == TriggerDraft.Kind.allCases.map(TriggerDraft.When.moment))
         for change in [TriggerDraft.Change.displayConnects, .displayDisconnects, .displaysConnected, .displaysDisconnected] {
             #expect(offered.contains(.change(change)))
         }

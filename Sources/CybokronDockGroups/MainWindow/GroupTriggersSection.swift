@@ -100,7 +100,7 @@ struct GroupTriggersSection: View {
         case .login: return 1
         case .appOpens: return 2
         case .screensWake: return 3
-        case .screensSleep: return 4
+        case .screensSleep, .screenLocks, .screenUnlocks: return 4
         case .condition: return 5
         case .unsupported: return 6
         case .applicationPresence: return 6
@@ -187,6 +187,8 @@ struct TriggerRow: View {
         case .appOpens: return "power"
         case .screensWake: return "sun.max"
         case .screensSleep: return "moon"
+        case .screenLocks: return "lock"
+        case .screenUnlocks: return "lock.open"
         case .condition(.display, _), .condition(.displays, _): return "display"
         case .condition(.wifi, _): return "wifi"
         case .condition(.ethernet, _): return "cable.connector"

@@ -35,7 +35,15 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = []
+    static let awaitingTranslation: [String] = [
+        // The screen lock and unlock triggers (TS-11).
+        "core.trigger.summary.screenLocks",
+        "core.trigger.summary.screenUnlocks",
+        "triggers.editor.event.screenLocks",
+        "triggers.editor.event.screenUnlocks",
+        "triggers.editor.hint.screenLocks",
+        "triggers.editor.screenLock.",
+    ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }

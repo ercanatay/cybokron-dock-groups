@@ -3,7 +3,8 @@ import DockGroupsCore
 import SwiftUI
 
 /// New Trigger / Edit Trigger (triggers spec §3.2): when — a time on chosen days, at login, when
-/// the app opens, when the screens wake or sleep, when a display (any external one, or a chosen
+/// the app opens, when the screens wake or sleep, when the screen locks or unlocks (best effort:
+/// macOS doesn't document its lock signal, TS-11), when a display (any external one, or a chosen
 /// one) connects or disconnects, when these displays are connected or no longer, when the Mac joins
 /// or leaves a Wi-Fi network, when Ethernet connects or disconnects —, what to do — only the
 /// actions that event allows, with Finish when it ends for a Start on a change's start —, how — a
@@ -633,6 +634,12 @@ struct TriggerEditorSheet: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        if draft.kind == .screenLocks || draft.kind == .screenUnlocks {
+            Text(Texts.screenLockNote)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
         if let problem {
             Text(problem)
                 .foregroundStyle(.red)
@@ -696,6 +703,7 @@ struct TriggerEditorSheet: View {
 
     private var hint: String? {
         if draft.kind == .screensSleep { return Texts.sleepHint }
+        if draft.kind == .screenLocks { return Texts.lockHint }
         switch draft.action {
         case .start: return Texts.startHint(group.name)
         case .finish: return Texts.finishHint(group.name)
@@ -752,6 +760,8 @@ struct TriggerEditorSheet: View {
         case .appOpens: return Texts.whenAppOpens(AppInfo.name)
         case .screensWake: return Texts.whenScreensWake
         case .screensSleep: return Texts.whenScreensSleep
+        case .screenLocks: return Texts.whenScreenLocks
+        case .screenUnlocks: return Texts.whenScreenUnlocks
         }
     }
 

@@ -8,11 +8,25 @@ public struct TriggerEnvironment: Equatable, Sendable {
     /// Display and network changes before this moment run nothing: an automatic action is under
     /// way or just finished (the echo window, triggers spec §1.9).
     public var echoUntil: Date?
+    /// Whether the screen is locked, as the lock source last told; `nil` while it can't tell (at
+    /// launch, and after the session stopped being the active one). Only `TriggerSignal.screenLock`
+    /// makes it known.
+    public private(set) var screenLocked: Bool?
+    /// Counts every change of `screenLocked`, to unknown too: a lock or unlock firing is carried out
+    /// only while it's still the one it came with (`TriggerFiring.screenLockRevision`).
+    public private(set) var screenLockRevision: UInt64 = 0
 
     public init(screensAsleep: Bool = false, sessionActive: Bool = true, echoUntil: Date? = nil) {
         self.screensAsleep = screensAsleep
         self.sessionActive = sessionActive
         self.echoUntil = echoUntil
+    }
+
+    /// Sets `screenLocked`; a change starts a new revision.
+    mutating func setScreenLocked(_ locked: Bool?) {
+        guard locked != screenLocked else { return }
+        screenLocked = locked
+        screenLockRevision &+= 1
     }
 
     /// Whether an action can run now: the screens are awake and the user's session is the active one.
@@ -40,6 +54,10 @@ public struct TriggerFiring: Hashable, Sendable {
     /// The observation an application-presence firing came from, set by the coordinator when it
     /// enqueues one. A presence firing without it never runs.
     var presenceStamp: ApplicationPresenceStamp?
+    /// For a lock or unlock firing: the lock revision it came with
+    /// (`TriggerEnvironment.screenLockRevision`). Once the screen locks or unlocks again, or the
+    /// lock can't be told, the firing is stale and dropped; one without it never runs.
+    var screenLockRevision: UInt64?
 
     public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0, isApplicationPresence: Bool = false) {
         self.triggerID = triggerID
@@ -99,9 +117,20 @@ public enum TriggerEvaluator {
     ) -> TriggerEvaluation {
         var environment = environment
         let wasAsleep = environment.screensAsleep
+        // `true` when the screen just locked, `false` when it just unlocked: a change between two
+        // known readings. Unknown readings, repeats and the first reading after unknown are none.
+        var lockEdge: Bool?
         switch signal {
         case .screens(let asleep): environment.screensAsleep = asleep
-        case .session(let active): environment.sessionActive = active
+        case .session(let active):
+            environment.sessionActive = active
+            // Another session's lock screen isn't this one's: the lock is unknown until the source
+            // reads it again.
+            if !active { environment.setScreenLocked(nil) }
+        case .screenLock(let locked):
+            let previous = environment.screenLocked
+            environment.setScreenLocked(locked)
+            if let previous, let locked, previous != locked { lockEdge = locked }
         default: break
         }
         var state = baseline(rules: rules, state: state, now: now, calendar: calendar)
@@ -120,7 +149,11 @@ public enum TriggerEvaluator {
                         if case .applicationPresence = trigger.event { return true }
                         return false
                     }()
-                    firings.append(TriggerFiring(triggerID: trigger.id, groupID: trigger.groupID, action: action, occurrence: occurrence, isFinishWhenEnded: finishWhenEnded, order: order, isApplicationPresence: isAppPresence))
+                    var firing = TriggerFiring(triggerID: trigger.id, groupID: trigger.groupID, action: action, occurrence: occurrence, isFinishWhenEnded: finishWhenEnded, order: order, isApplicationPresence: isAppPresence)
+                    if trigger.event.isScreenLock {
+                        firing.screenLockRevision = environment.screenLockRevision
+                    }
+                    firings.append(firing)
                 }
             }
             switch trigger.event {
@@ -154,6 +187,12 @@ public enum TriggerEvaluator {
                 fire(trigger.action, at: now, edge: false)
             case .screensSleep:
                 guard live, case .screens(asleep: true) = signal, !wasAsleep else { break }
+                fire(trigger.action, at: now, edge: false)
+            case .screenLocks:
+                guard live, lockEdge == true else { break }
+                fire(trigger.action, at: now, edge: false)
+            case .screenUnlocks:
+                guard live, lockEdge == false else { break }
                 fire(trigger.action, at: now, edge: false)
             case .condition(let condition, let edge):
                 guard case .value(let value) = condition.reading(in: signal) else { break }
@@ -235,7 +274,7 @@ public enum TriggerEvaluator {
     private static func evaluatesSchedules(_ signal: TriggerSignal) -> Bool {
         switch signal {
         case .clock, .launched, .screens(asleep: false), .session(active: true): return true
-        case .screens, .session, .displays, .network, .applicationEdge(_, _): return false
+        case .screens, .session, .displays, .network, .applicationEdge(_, _), .screenLock: return false
         }
     }
 

@@ -122,6 +122,11 @@ public enum TriggerEvent: Hashable, Sendable {
     case appOpens
     case screensWake
     case screensSleep
+    /// The screen locks (`docs/design/app-presence-session-lock-trigger.md`): macOS posts no
+    /// documented signal for it, so it's best effort and can be missed (TS-11).
+    case screenLocks
+    /// The screen unlocks; best effort as `screenLocks`.
+    case screenUnlocks
     case condition(TriggerCondition, edge: TriggerEdge)
     case applicationPresence(bundleIdentifier: String, edge: TriggerEdge)
     /// An event this version doesn't understand — a newer version's kind, or a known kind it can't
@@ -132,8 +137,9 @@ public enum TriggerEvent: Hashable, Sendable {
     public var allowedActions: [TriggerAction] {
         switch self {
         case .schedule, .condition: return TriggerAction.allCases
-        case .login, .appOpens, .screensWake: return [.showPopup, .openAll, .start]
-        case .screensSleep: return [.finish]
+        case .login, .appOpens, .screensWake, .screenUnlocks: return [.showPopup, .openAll, .start]
+        // Nobody can answer a notice on the lock screen: only Finish (hiding), right away.
+        case .screensSleep, .screenLocks: return [.finish]
         case .applicationPresence: return TriggerAction.allCases
         case .unsupported: return []
         }
@@ -144,7 +150,7 @@ public enum TriggerEvent: Hashable, Sendable {
         switch self {
         case .schedule(let schedule): return schedule.isValid
         case .condition(let condition, _): return condition.isValid
-        case .login, .appOpens, .screensWake, .screensSleep: return true
+        case .login, .appOpens, .screensWake, .screensSleep, .screenLocks, .screenUnlocks: return true
         case .applicationPresence(let bundleIdentifier, _): return TriggerApplicationIdentifier(bundleIdentifier) != nil
         case .unsupported: return false
         }
@@ -162,6 +168,9 @@ public enum TriggerEvent: Hashable, Sendable {
         return false
     }
 
+    /// Whether it waits for the screen to lock or unlock.
+    public var isScreenLock: Bool { self == .screenLocks || self == .screenUnlocks }
+
     /// Whether it waits for a Wi-Fi network's name, which macOS shows only to apps allowed to use
     /// Location Services (spec §1.5).
     public var needsLocation: Bool {
@@ -177,6 +186,8 @@ public enum TriggerEvent: Hashable, Sendable {
         case .appOpens: return "appOpens"
         case .screensWake: return "screensWake"
         case .screensSleep: return "screensSleep"
+        case .screenLocks: return "screenLocks"
+        case .screenUnlocks: return "screenUnlocks"
         case .condition(let condition, _):
             switch condition {
             case .display: return "display"
@@ -425,6 +436,14 @@ extension TriggerEvent {
         case "appOpens": self = .appOpens
         case "screensWake": self = .screensWake
         case "screensSleep": self = .screensSleep
+        case "screenLocks", "screenUnlocks":
+            // Only the kind: a field a newer version adds keeps the event as it was (unsupported),
+            // so it's never run without what it says.
+            guard let object = json.objectValue, object.keys.count == 1 else {
+                self = .unsupported(json)
+                return
+            }
+            self = kind == "screenLocks" ? .screenLocks : .screenUnlocks
         case "condition":
             guard let conditionJSON = json["condition"],
                   let condition = TriggerCondition(json: conditionJSON),
@@ -466,6 +485,8 @@ extension TriggerEvent {
         case .appOpens: return .object(["kind": .string("appOpens")])
         case .screensWake: return .object(["kind": .string("screensWake")])
         case .screensSleep: return .object(["kind": .string("screensSleep")])
+        case .screenLocks: return .object(["kind": .string("screenLocks")])
+        case .screenUnlocks: return .object(["kind": .string("screenUnlocks")])
         case .condition(let condition, let edge):
             return .object(["kind": .string("condition"), "condition": condition.json, "edge": .string(edge.rawValue)])
         case .applicationPresence(let bundleIdentifier, let edge):

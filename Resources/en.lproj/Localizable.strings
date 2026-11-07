@@ -985,6 +985,8 @@
 "core.trigger.summary.appOpens" = "When %@ opens";
 "core.trigger.summary.screensWake" = "When the screens wake";
 "core.trigger.summary.screensSleep" = "When the screens sleep";
+"core.trigger.summary.screenLocks" = "When the screen locks";
+"core.trigger.summary.screenUnlocks" = "When the screen unlocks";
 "core.trigger.summary.unsupported" = "A trigger made by a newer version";
 "core.trigger.summary.display.anyConnects" = "When a display connects";
 "core.trigger.summary.display.anyDisconnects" = "When a display disconnects";
@@ -1026,6 +1028,8 @@
 "triggers.editor.event.appOpens" = "When %@ Opens";
 "triggers.editor.event.screensWake" = "When the Screens Wake";
 "triggers.editor.event.screensSleep" = "When the Screens Sleep";
+"triggers.editor.event.screenLocks" = "When the Screen Locks";
+"triggers.editor.event.screenUnlocks" = "When the Screen Unlocks";
 "triggers.editor.time" = "Time";
 "triggers.editor.days" = "Days";
 "triggers.editor.weekdays" = "Weekdays";
@@ -1045,6 +1049,8 @@
 "triggers.editor.hint.start" = "Starting hides the apps of the group started before, as “%@” is set to. A trigger never quits apps.";
 "triggers.editor.hint.finish" = "Finish runs only while “%@” is the current group, and hides its apps; it never quits them.";
 "triggers.editor.hint.screensSleep" = "Nobody can answer a notice while the screens sleep, so this trigger finishes the group right away.";
+"triggers.editor.hint.screenLocks" = "Nobody can answer a notice while the screen is locked, so this trigger finishes the group right away.";
+"triggers.editor.screenLock.note" = "macOS doesn't document when the screen locks, so a lock or an unlock can be missed, for example right after the Mac sleeps or when another user switches in. Nothing runs when it can't be told.";
 "triggers.editor.catchUp" = "If the Mac is asleep at %@, the trigger runs when it wakes, up to 30 minutes late.";
 "triggers.editor.login.needsLoginItem" = "At Login triggers need %@ to open at login.";
 "triggers.editor.login.turnOn" = "Turn On Open at Login";

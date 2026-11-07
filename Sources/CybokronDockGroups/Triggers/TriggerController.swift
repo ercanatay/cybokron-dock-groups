@@ -18,7 +18,8 @@ import OSLog
 ///   a Siri or Shortcuts request meanwhile makes it quiet, and so does the marker an update's or a
 ///   language change's relaunch leaves (`markQuietRelaunch`).
 /// - The display source runs only while a display trigger can run, the network source only while
-///   an Ethernet or Wi-Fi trigger can — its Wi-Fi part only with Location access (`TriggerSourceNeeds`).
+///   an Ethernet or Wi-Fi trigger can — its Wi-Fi part only with Location access — and the lock
+///   source only while a lock or unlock trigger can (`TriggerSourceNeeds`).
 /// - Location access (`LocationAccess`) is looked at only once a Wi-Fi trigger exists, and asked for
 ///   only by the editor's Allow…: no other trigger ever needs or asks for a permission.
 /// - Only the main app creates one (`AppDelegate`): a standalone group's agent never evaluates,
@@ -45,6 +46,7 @@ final class TriggerController: ObservableObject {
     private var workspace: WorkspaceSource?
     private var displaySource: DisplaySource?
     private var networkSource: NetworkSource?
+    private var screenLockSource: ScreenLockSource?
     private var applicationPresenceSource: ApplicationPresenceSource?
     private(set) var applicationObservationGeneration: UInt64 = 0
     /// In-memory; resets on app restart.
@@ -159,6 +161,7 @@ final class TriggerController: ObservableObject {
         workspace.start()
         clock.start()
         displaySource = DisplaySource { [weak self] signal in self?.coordinator.receive(signal) }
+        screenLockSource = ScreenLockSource { [weak self] signal in self?.coordinator.receive(signal) }
         networkSource = NetworkSource(
             send: { [weak self] signal in self?.coordinator.receive(signal) },
             authorization: { [weak self] in self?.locationAccess.status ?? .notDetermined }
@@ -369,6 +372,9 @@ final class TriggerController: ObservableObject {
         let needs = TriggerSourceNeeds.of(rules: store.triggers, activeGroups: Set(groups.groups.map(\.id)))
         if let displaySource {
             if needs.contains(.displays) { displaySource.start() } else { displaySource.stop() }
+        }
+        if let screenLockSource {
+            if needs.contains(.screenLock) { screenLockSource.start() } else { screenLockSource.stop() }
         }
         if store.triggers.contains(where: { $0.event.needsLocation }) {
             locationAccess.lookIfNeeded()

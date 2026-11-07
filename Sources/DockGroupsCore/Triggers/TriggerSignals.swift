@@ -117,6 +117,11 @@ public enum TriggerSignal: Hashable, Sendable {
     case screens(asleep: Bool)
     /// The user's session became the active one, or stopped being it (fast user switching).
     case session(active: Bool)
+    /// The screen locked (`true`) or unlocked (`false`), or the lock source can't tell (`nil`): it
+    /// started, stopped, the Mac is going to sleep, or the session isn't the active one. Only a
+    /// change between two known values is a lock or an unlock; `nil` and the first known value
+    /// after it are a baseline (`docs/design/app-presence-session-lock-trigger.md`).
+    case screenLock(locked: Bool?)
     /// The displays connected, once they settled; `nil` when they couldn't be read.
     case displays([DisplayIdentity]?)
     /// The network, once it settled.

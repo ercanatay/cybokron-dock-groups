@@ -17,10 +17,16 @@ public struct TriggerSourceNeeds: OptionSet, Hashable, Sendable {
     public static let ethernet = TriggerSourceNeeds(rawValue: 1 << 1)
     /// The Wi-Fi network's name (`WiFiSource`), which macOS shows only with Location access.
     public static let wifi = TriggerSourceNeeds(rawValue: 1 << 2)
+    /// Whether the screen is locked (`ScreenLockSource`).
+    public static let screenLock = TriggerSourceNeeds(rawValue: 1 << 3)
 
     public static func of(rules: [GroupTrigger], activeGroups: Set<DockGroup.ID>) -> TriggerSourceNeeds {
         var needs: TriggerSourceNeeds = []
         for trigger in rules where trigger.canRun && activeGroups.contains(trigger.groupID) {
+            if trigger.event.isScreenLock {
+                needs.insert(.screenLock)
+                continue
+            }
             guard case .condition(let condition, _) = trigger.event else { continue }
             switch condition {
             case .display, .displays: needs.insert(.displays)
