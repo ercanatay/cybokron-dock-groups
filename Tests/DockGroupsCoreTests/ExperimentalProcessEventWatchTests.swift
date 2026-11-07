@@ -79,16 +79,23 @@ struct ExperimentalProcessEventWatchTests {
 
     @Test func reportsExecOfOwnedChild() async throws {
         let input = Pipe()
+        let output = Pipe()
         defer { try? input.fileHandleForWriting.close() }
         try await withChildProcesses { children in
             let child = Process()
             child.executableURL = URL(fileURLWithPath: "/bin/sh")
+            // The shell announces readiness before blocking on stdin, so the spawn's own initial
+            // exec (which a kqueue registered too early would still report) is already behind us.
+            child.arguments = ["-c", "echo ready; read line; exec /bin/sleep 10"]
             child.standardInput = input
+            child.standardOutput = output
             try child.run()
             children.adopt(child)
+            let ready = try output.fileHandleForReading.read(upToCount: 6)
+            #expect(ready == Data("ready\n".utf8))
             let watch = try #require(ExperimentalProcessEventWatch(pid: child.processIdentifier))
             #expect(watch.poll() == .idle)
-            try input.fileHandleForWriting.write(contentsOf: Data("exec /bin/sleep 10\n".utf8))
+            try input.fileHandleForWriting.write(contentsOf: Data("go\n".utf8))
             #expect(await Self.firstEvent(of: watch) == .exec)
             #expect(watch.poll() == .unknown)
         }
