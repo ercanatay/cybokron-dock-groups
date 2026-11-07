@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-11-08
+
 ### Added
 
-- Triggers: **When the Screen Locks** (Finish only, right away) and **When the Screen Unlocks** (Show the Popup, Open All, Start). macOS documents no lock signal, so they're best effort: a lock or an unlock can be missed (around a sleep or a user switch), and nothing runs when the lock can't be told
+- Screen lock and unlock are new trigger events: "When the Screen Locks" can only finish a group (it runs immediately, without a notice), and "When the Screen Unlocks" can run the group's actions like other events. Changing lock state invalidates work that is still pending. macOS doesn't document these notifications, so a lock or unlock can be missed; nothing runs when the state can't be told.
 
 ## [0.13.3] - 2026-11-08
 
@@ -576,7 +578,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...v0.14.0
 [0.13.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...v0.13.3
 [0.13.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.0...v0.13.1
