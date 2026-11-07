@@ -75,6 +75,10 @@ public enum TriggerDescriptions {
             return Localization.string("core.trigger.summary.screensWake", "When the screens wake")
         case .screensSleep:
             return Localization.string("core.trigger.summary.screensSleep", "When the screens sleep")
+        case .screenLocks:
+            return Localization.string("core.trigger.summary.screenLocks", "When the screen locks")
+        case .screenUnlocks:
+            return Localization.string("core.trigger.summary.screenUnlocks", "When the screen unlocks")
         case .condition(let condition, let edge):
             return Self.condition(condition, edge: edge)
         case .unsupported:

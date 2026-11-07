@@ -6,7 +6,7 @@ live in `Resources/<language>.lproj/Localizable.strings` and must have exactly t
 same placeholders (`LocalizationTests` check both). Every key is translated in every language;
 a section not yet translated would be marked *English only for now* (exempt until translated, the
 app shows the English text instead) and its key prefixes listed in
-`LocalizationTests.awaitingTranslation`, which is empty now.
+`LocalizationTests.awaitingTranslation`.
 
 - `%@` is text and `%ld` a number; `%1$@`, `%2$ld` … are numbered so a translation can reorder them.
 - Keys ending in `.one` / `.other` are the singular (count 1) and plural text of a count.
@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1087 keys.
+1094 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1383,6 +1383,17 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.wifi.servicesOff` | Location Services is off on this Mac: turn it on in System Settings → Privacy & Security → Location Services. |
 | `triggers.editor.wifi.restricted` | Location access isn't available on this Mac: it's restricted by a profile or Screen Time. |
 | `triggers.editor.ethernet.hint` | Ethernet counts as connected while a wired connection — built in, an adapter or a dock — has a network, even when Wi-Fi is used first. It needs no permission. |
+
+## Triggers: the screen locking or unlocking — the rule, the editor's events, hint and note (English only for now; `awaitingTranslation`: `core.trigger.summary.screenLocks`, `core.trigger.summary.screenUnlocks`, `triggers.editor.event.screenLocks`, `triggers.editor.event.screenUnlocks`, `triggers.editor.hint.screenLocks`, `triggers.editor.screenLock.`)
+
+| Key | English |
+| --- | --- |
+| `core.trigger.summary.screenLocks` | When the screen locks |
+| `core.trigger.summary.screenUnlocks` | When the screen unlocks |
+| `triggers.editor.event.screenLocks` | When the Screen Locks |
+| `triggers.editor.event.screenUnlocks` | When the Screen Unlocks |
+| `triggers.editor.hint.screenLocks` | Nobody can answer a notice while the screen is locked, so this trigger finishes the group right away. |
+| `triggers.editor.screenLock.note` | macOS doesn't document when the screen locks, so a lock or an unlock can be missed, for example right after the Mac sleeps or when another user switches in. Nothing runs when it can't be told. |
 
 ## Triggers: the notice before a trigger runs
 

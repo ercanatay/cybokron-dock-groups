@@ -118,6 +118,94 @@ final class WorkspaceSource {
     }
 }
 
+/// Whether the screen is locked (TS-11, `docs/design/app-presence-session-lock-trigger.md`). macOS
+/// documents no lock signal; this listens to the distributed notifications loginwindow posts,
+/// `com.apple.screenIsLocked` and `com.apple.screenIsUnlocked`, which carry no data and need no
+/// permission. Each one is a reading, not an event: only a change between two known readings makes
+/// a lock or an unlock (`TriggerEvaluator`).
+///
+/// The lock is unknown (`nil`) while the source doesn't run, when the Mac is going to sleep and
+/// while the session isn't the active one. When the source starts, after a wake and when the
+/// session becomes active again, it reads a baseline from the session dictionary
+/// (`CGSessionCopyCurrentDictionary`): the `CGSSessionScreenIsLocked` key is undocumented, so it's
+/// only a baseline — it decides whether the next notification is a change, never runs anything by
+/// itself — and a dictionary that can't be read, or a session that isn't on the console, is unknown.
+/// Runs only while a lock or unlock trigger can run (`TriggerSourceNeeds.screenLock`); nothing is
+/// polled.
+@MainActor
+final class ScreenLockSource {
+    static let lockedNotification = Notification.Name("com.apple.screenIsLocked")
+    static let unlockedNotification = Notification.Name("com.apple.screenIsUnlocked")
+
+    private let send: (TriggerSignal) -> Void
+    private let readBaseline: () -> Bool?
+    private var observers: [(NotificationCenter, NSObjectProtocol)] = []
+
+    var isRunning: Bool { !observers.isEmpty }
+
+    /// - Parameters:
+    ///   - readBaseline: Whether the screen is locked now, `nil` when that can't be told; tests put in
+    ///     their own.
+    init(send: @escaping (TriggerSignal) -> Void, readBaseline: @escaping () -> Bool? = ScreenLockSource.sessionDictionaryReading) {
+        self.send = send
+        self.readBaseline = readBaseline
+    }
+
+    func start() {
+        guard observers.isEmpty else { return }
+        let distributed = DistributedNotificationCenter.default()
+        observe(distributed, Self.lockedNotification) { [weak self] in self?.send(.screenLock(locked: true)) }
+        observe(distributed, Self.unlockedNotification) { [weak self] in self?.send(.screenLock(locked: false)) }
+        let workspace = NSWorkspace.shared.notificationCenter
+        observe(workspace, NSWorkspace.willSleepNotification) { [weak self] in self?.send(.screenLock(locked: nil)) }
+        observe(workspace, NSWorkspace.didWakeNotification) { [weak self] in self?.rebaseline() }
+        observe(workspace, NSWorkspace.sessionDidResignActiveNotification) { [weak self] in self?.send(.screenLock(locked: nil)) }
+        observe(workspace, NSWorkspace.sessionDidBecomeActiveNotification) { [weak self] in self?.rebaseline() }
+        rebaseline()
+    }
+
+    /// Stops listening; the lock is unknown from then on.
+    func stop() {
+        guard !observers.isEmpty else { return }
+        for (center, observer) in observers {
+            center.removeObserver(observer)
+        }
+        observers = []
+        send(.screenLock(locked: nil))
+    }
+
+    /// Forgets the lock and reads it again: what came before the gap is never compared with what
+    /// comes after it.
+    private func rebaseline() {
+        send(.screenLock(locked: nil))
+        if let locked = readBaseline() {
+            send(.screenLock(locked: locked))
+        }
+    }
+
+    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor () -> Void) {
+        let observer = center.addObserver(forName: name, object: nil, queue: .main) { _ in
+            MainActor.assumeIsolated { handler() }
+        }
+        observers.append((center, observer))
+    }
+
+    /// The baseline from the session dictionary (see the type's comment).
+    nonisolated static func sessionDictionaryReading() -> Bool? {
+        guard let session = CGSessionCopyCurrentDictionary() as? [String: Any] else { return nil }
+        return baseline(fromSession: session)
+    }
+
+    /// `nil` unless the session is on the console; then locked when `CGSSessionScreenIsLocked` is
+    /// true, unlocked when it's false or absent (as observed on macOS 27.2), unknown when it's
+    /// something else.
+    nonisolated static func baseline(fromSession session: [String: Any]) -> Bool? {
+        guard let onConsole = session[kCGSessionOnConsoleKey as String] as? Bool, onConsole else { return nil }
+        guard let locked = session["CGSSessionScreenIsLocked"] else { return false }
+        return locked as? Bool
+    }
+}
+
 /// What the app can tell about how it was opened (TS-3): whether the open-application event says
 /// it was opened as a login item, and when the user's console login session began.
 enum LaunchSignals {

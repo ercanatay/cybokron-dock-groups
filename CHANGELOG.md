@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Triggers: **When the Screen Locks** (Finish only, right away) and **When the Screen Unlocks** (Show the Popup, Open All, Start). macOS documents no lock signal, so they're best effort: a lock or an unlock can be missed (around a sleep or a user switch), and nothing runs when the lock can't be told
+
 ## [0.13.3] - 2026-11-08
 
 ### Added

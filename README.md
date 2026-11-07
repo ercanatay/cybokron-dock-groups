@@ -83,7 +83,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
 - **Triggers**: in the group window's **Triggers** section, **Add Trigger…** makes a group start,
   open all, show its popup or finish when something happens — **At a Time** (a time on chosen days:
   Weekdays, Weekends, Every Day or your own), **At Login**, **When Cybokron Dock Groups Opens**,
-  **When the Screens Wake**, **When the Screens Sleep** (Finish only), or when displays connect or
+  **When the Screens Wake**, **When the Screens Sleep** (Finish only), **When the Screen Unlocks**,
+  **When the Screen Locks** (Finish only; macOS doesn't document its lock signal, so a lock or an
+  unlock can be missed, and nothing runs when it can't be told), or when displays connect or
   disconnect (below). Open All, Start and Finish
   show a 5-second notice at the top right of the screen first, with **Not Now** (or ask first, or
   run right away); Show the Popup runs right away. **At most once a day** is optional, and a trigger
@@ -734,6 +736,11 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      Settings → General → Login Items: Settings → Triggers follows when the app comes forward.
    - **When the Screens Sleep / Wake**: `pmset displaysleepnow`, then wake them; and the lid, on a
      laptop. Finish at the screens' sleep runs without a notice.
+   - **When the Screen Locks / Unlocks** (unreleased): Control-Command-Q, then unlock; with "Require
+     password" set to immediately, also `pmset displaysleepnow`. Finish at the lock runs without a
+     notice; locking and unlocking within 2 seconds runs only the unlock. Still to check by hand: the
+     screen saver, fast user switching, the lid / `pmset sleepnow`, a delayed password setting
+     (`docs/design/app-presence-session-lock-trigger.md` §1.2).
    - Pause Triggers → For 1 Hour in the menu bar menu: a due trigger is *Skipped …: triggers were
      paused.*; Resume Triggers. Archive the group: its triggers don't run, and the archived summary
      counts them; restore it after the time: the time passed while archived doesn't run.

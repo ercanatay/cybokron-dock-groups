@@ -1,7 +1,7 @@
 import Foundation
 
 /// What the trigger editor shows and changes (triggers spec §3.2): when — a moment (a time, login,
-/// the app opening, the screens waking or sleeping) or a change (a display connecting or
+/// the app opening, the screens waking or sleeping, the screen locking or unlocking) or a change (a display connecting or
 /// disconnecting, a set of displays being connected or no longer, the Mac joining or leaving a
 /// Wi-Fi network, Ethernet connecting or disconnecting) —, the action that event allows (§1.6),
 /// how it runs, At most once a day and, for a Start on a change's start, Finish when it ends. Show
@@ -16,6 +16,9 @@ public struct TriggerDraft: Equatable, Sendable {
         case appOpens
         case screensWake
         case screensSleep
+        /// Best effort: macOS doesn't document its lock signal (TS-11).
+        case screenLocks
+        case screenUnlocks
     }
 
     /// Events that are the start or the end of a condition.
@@ -120,6 +123,8 @@ public struct TriggerDraft: Equatable, Sendable {
         case .appOpens: when = .moment(.appOpens)
         case .screensWake: when = .moment(.screensWake)
         case .screensSleep: when = .moment(.screensSleep)
+        case .screenLocks: when = .moment(.screenLocks)
+        case .screenUnlocks: when = .moment(.screenUnlocks)
         case .condition(.display(let match), let edge):
             when = .change(edge == .starts ? .displayConnects : .displayDisconnects)
             display = match
@@ -165,6 +170,8 @@ public struct TriggerDraft: Equatable, Sendable {
         case .moment(.appOpens): return .appOpens
         case .moment(.screensWake): return .screensWake
         case .moment(.screensSleep): return .screensSleep
+        case .moment(.screenLocks): return .screenLocks
+        case .moment(.screenUnlocks): return .screenUnlocks
         case .change(let change): return .condition(condition(of: change), edge: change.edge)
         case .application(let edge): return .applicationPresence(bundleIdentifier: applicationBundleIdentifier, edge: edge)
         }

@@ -1690,6 +1690,8 @@ extension L10n {
             static func whenAppOpens(_ appName: String) -> String { tr("triggers.editor.event.appOpens", "When %@ Opens", appName) }
             static var whenScreensWake: String { tr("triggers.editor.event.screensWake", "When the Screens Wake") }
             static var whenScreensSleep: String { tr("triggers.editor.event.screensSleep", "When the Screens Sleep") }
+            static var whenScreenLocks: String { tr("triggers.editor.event.screenLocks", "When the Screen Locks") }
+            static var whenScreenUnlocks: String { tr("triggers.editor.event.screenUnlocks", "When the Screen Unlocks") }
             static var whenDisplayConnects: String { tr("triggers.editor.event.displayConnects", "When a Display Connects") }
             static var whenDisplayDisconnects: String { tr("triggers.editor.event.displayDisconnects", "When a Display Disconnects") }
             static var whenDisplaysConnected: String { tr("triggers.editor.event.displaysConnected", "When These Displays Are Connected") }
@@ -1809,6 +1811,18 @@ extension L10n {
                 tr(
                     "triggers.editor.hint.screensSleep",
                     "Nobody can answer a notice while the screens sleep, so this trigger finishes the group right away."
+                )
+            }
+            static var lockHint: String {
+                tr(
+                    "triggers.editor.hint.screenLocks",
+                    "Nobody can answer a notice while the screen is locked, so this trigger finishes the group right away."
+                )
+            }
+            static var screenLockNote: String {
+                tr(
+                    "triggers.editor.screenLock.note",
+                    "macOS doesn't document when the screen locks, so a lock or an unlock can be missed, for example right after the Mac sleeps or when another user switches in. Nothing runs when it can't be told."
                 )
             }
             static func catchUp(_ time: String) -> String {
