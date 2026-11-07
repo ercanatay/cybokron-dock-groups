@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Più di un gruppo si chiama “%@”, quindi il link non ne ha aperto nessuno. Copia di nuovo il link del gruppo da Impostazioni → Scorciatoie e Siri.";
 "core.rename.nameTaken" = "Un altro gruppo si chiama già “%@”. Scegli un nome diverso.";
 "settings.shortcuts.identityLinks.footer" = "Apri un link da uno script o da un'altra app, ad esempio con `open` nel Terminale. Un link identifica il suo gruppo tramite ID, quindi continua a funzionare dopo una rinomina; il nome dopo l'ID serve solo per la lettura. Un link che scrivi tu può usare invece il nome del gruppo (maiuscole, accenti e punteggiatura non contano). Aggiungi ?mode=force a un link di chiusura per forzare la chiusura.";
+"about.project.limitGuard" = "Limiti di utilizzo di Codex nella barra dei menu";

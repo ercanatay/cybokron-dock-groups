@@ -148,9 +148,9 @@ private struct BookCard: View {
                     .font(.callout.weight(.medium))
                     .foregroundStyle(palette.primaryText)
                     .multilineTextAlignment(.leading)
-                HStack(spacing: 8) {
-                    languageButton("🌐 English", url: book.englishURL)
-                    languageButton("🇹🇷 Türkçe", url: book.turkishURL)
+                // One row of equal-width buttons: four editions still fit, since the labels are short.
+                HStack(spacing: 6) {
+                    ForEach(book.editions) { languageButton($0.label, url: $0.url) }
                 }
             }
             Spacer(minLength: 0)
@@ -164,6 +164,8 @@ private struct BookCard: View {
         Button { NSWorkspace.shared.open(url) } label: {
             Text(title)
                 .font(.caption.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 5)
                 .foregroundStyle(.white)

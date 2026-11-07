@@ -1258,6 +1258,7 @@ enum L10n {
                     "Detects forbidden keywords (e.g. 'Casino') in post titles — like a WP audit checker."
                 )
             }
+            static var limitGuard: String { tr("about.project.limitGuard", "Codex usage limits in the menu bar") }
         }
     }
 }

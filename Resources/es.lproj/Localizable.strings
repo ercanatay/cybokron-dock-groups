@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Hay más de un grupo llamado “%@”, así que el enlace no abrió ninguno. Copia de nuevo el enlace del grupo desde Ajustes → Accesos directos y Siri.";
 "core.rename.nameTaken" = "Ya existe otro grupo llamado “%@”. Elige un nombre diferente.";
 "settings.shortcuts.identityLinks.footer" = "Abre un enlace desde un script u otra app, por ejemplo con `open` en Terminal. Un enlace identifica su grupo por ID, así que sigue funcionando tras un cambio de nombre; el nombre que aparece después del ID solo sirve para leerlo. Un enlace que escribas tú mismo puede usar el nombre del grupo (no importan mayúsculas, acentos ni signos de puntuación). Añade ?mode=force a un enlace de cierre para forzar el cierre.";
+"about.project.limitGuard" = "Límites de uso de Codex en la barra de menús";

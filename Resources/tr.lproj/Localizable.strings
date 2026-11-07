@@ -1164,3 +1164,4 @@
 "core.link.groupAmbiguous" = "“%@” adlı birden fazla grup var, bu yüzden bağlantı bunlardan hiçbirini açmadı. Grubun bağlantısını Ayarlar → Kısayollar ve Siri bölümünden yeniden kopyalayın.";
 "core.rename.nameTaken" = "“%@” adında başka bir grup zaten var. Farklı bir ad seçin.";
 "settings.shortcuts.identityLinks.footer" = "Bağlantıyı bir betikten veya başka bir uygulamadan açın; örneğin Terminal'de `open` ile. Bağlantı grubunu kimliğiyle belirtir, bu yüzden yeniden adlandırıldıktan sonra da çalışmaya devam eder; kimlikten sonraki ad yalnızca okunabilirlik içindir. Kendiniz yazdığınız bir bağlantı bunun yerine grubun adını kullanabilir (büyük/küçük harf, aksan ve noktalama önemsizdir). Zorla kapatmak için çıkış bağlantısına ?mode=force ekleyin.";
+"about.project.limitGuard" = "Menü çubuğunda Codex kullanım limitleri";

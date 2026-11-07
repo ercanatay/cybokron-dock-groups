@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Er zijn meerdere groepen met de naam “%@”, dus de link heeft er geen geopend. Kopieer de link van de groep opnieuw via Instellingen → Opdrachten en Siri.";
 "core.rename.nameTaken" = "Er bestaat al een andere groep met de naam “%@”. Kies een andere naam.";
 "settings.shortcuts.identityLinks.footer" = "Open een link vanuit een script of een andere app, bijv. met `open` in Terminal. Een link noemt zijn groep met ID, dus hij blijft werken na een hernoeming; de naam na het ID is alleen om te lezen. Een link die je zelf schrijft, kan in plaats daarvan de naam van de groep gebruiken (hoofdletters, accenten en leestekens doen er niet toe). Voeg ?mode=force toe aan een afsluitlink om geforceerd af te sluiten.";
+"about.project.limitGuard" = "Codexgebruikslimieten in de menubalk";

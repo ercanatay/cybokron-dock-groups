@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "“%@” adlı birdən çox qrup var, buna görə link heç birini açmadı. Qrupun linkini Parametrlər → Shortcuts & Siri bölməsindən yenidən kopyalayın.";
 "core.rename.nameTaken" = "Başqa qrup artıq “%@” adını daşıyır. Fərqli ad seçin.";
 "settings.shortcuts.identityLinks.footer" = "Linki skriptdən və ya başqa tətbiqdən açın, məsələn, Terminal-da `open` ilə. Link qrupu ID ilə müəyyən edir, buna görə adı dəyişdikdən sonra da işləyir; ID-dən sonrakı ad yalnız oxunması üçündür. Özünüz yazdığınız link qrupun adından da istifadə edə bilər (böyük-kiçik hərflər, diakritik işarələr və durğu işarələri fərq etmir). Quit linkinə məcburi çıxış üçün ?mode=force əlavə edin.";
+"about.project.limitGuard" = "Menyu çubuğunda Codex istifadə limitləri";

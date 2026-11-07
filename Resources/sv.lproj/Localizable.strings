@@ -1166,3 +1166,4 @@
 "core.link.groupAmbiguous" = "Mer än en grupp heter “%@”, så länken öppnade ingen av dem. Kopiera gruppens länk igen från Inställningar → Genvägar och Siri.";
 "core.rename.nameTaken" = "En annan grupp heter redan “%@”. Välj ett annat namn.";
 "settings.shortcuts.identityLinks.footer" = "Öppna en länk från ett skript eller en annan app, t.ex. med `open` i Terminal. En länk anger sin grupp med ID, så den fungerar även efter ett namnbyte; namnet efter ID:t finns bara för läsbarhetens skull. En länk du skriver själv kan i stället använda gruppens namn (versaler, accenter och skiljetecken spelar ingen roll). Lägg till ?mode=force i en avslutslänk för att tvinga avslut.";
+"about.project.limitGuard" = "Codex-användningsgränser i menyraden";
