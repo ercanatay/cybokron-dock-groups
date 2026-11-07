@@ -50,6 +50,9 @@ final class ApprovalRig {
     /// What a newly registered watch reports at its first poll.
     var initialWatchEvent: ExperimentalProcessEventWatchPollResult = .idle
     let reads: FakeIdentityReads
+    let incarnations = FakeIncarnations()
+    /// Called as each watch is made, before it is registered with its wake-up.
+    var onMakeWatch: ((Int32) -> Void)?
     /// The approver's own watch bound, so other tests' watches don't count against it.
     let budget: ApplicationProcessWatchBudget
     let persistence: MemoryTriggerPersistence
@@ -61,7 +64,7 @@ final class ApprovalRig {
         self.budget = budget
         persistence = MemoryTriggerPersistence(triggers)
         store = TriggerStore(persistence: persistence, saveDelay: .zero)
-        let reads = reads
+        let reads = reads, incarnations = incarnations
         weak var box: ApprovalRig?
         approver = TriggerApplicationApprover(
             store: store,
@@ -69,6 +72,7 @@ final class ApprovalRig {
             makeWatch: { pid in box?.makeWatch(pid) },
             budget: budget,
             read: { pid, identifier in reads.read(pid, identifier) },
+            readIncarnation: { incarnations.read($0) },
             timeout: timeout,
             clock: { ApprovalRig.approvedAt }
         )
@@ -86,6 +90,7 @@ final class ApprovalRig {
 
     private func makeWatch(_ pid: Int32) -> (any ApplicationProcessWatching)? {
         guard !failsToWatch.contains(pid) else { return nil }
+        onMakeWatch?(pid)
         let watch = FakeProcessWatch()
         watch.event = initialWatchEvent
         watch.signallingFails = failsToSignal.contains(pid)
@@ -399,6 +404,93 @@ struct ApplicationIdentityApprovalTests {
         rig.reads.gate.open()
         #expect(await approval.value == .failed(.appChanged))
         #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+    }
+
+    // MARK: The start-time bracket
+
+    @Test func theStartTimeBracketsAnApprovalThatSucceeds() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity()
+        #expect(await rig.approver.approve(triggerID: trigger.id) == .approved)
+        // Listed, after the watch, right before and right after the reading, after the reading.
+        #expect(rig.incarnations.reads(of: 42) == 5)
+        #expect(rig.stored(trigger)?.applicationIdentity == .authorized(ApprovalRig.binding()))
+        #expect(rig.nothingLeftOpen)
+    }
+
+    @Test func aStartTimeThatChangesDuringTheReadingSavesNothing() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger], holding: true)
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity()
+        let approval = rig.startApproval(of: trigger)
+        #expect(await eventually { rig.reads.startedCount == 1 })
+        // The PID names another process now; its watch, instance list and reading look fine.
+        rig.incarnations.script(42, [FakeIncarnations.of(42, start: 1_793_000_001)])
+        rig.reads.gate.open()
+        #expect(await approval.value == .failed(.appChanged))
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        #expect(rig.nothingLeftOpen)
+    }
+
+    @Test func aStartTimeThatCantBeReadDuringTheReadingSavesNothing() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger], holding: true)
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity()
+        let approval = rig.startApproval(of: trigger)
+        #expect(await eventually { rig.reads.startedCount == 1 })
+        rig.incarnations.script(42, [nil])
+        rig.reads.gate.open()
+        #expect(await approval.value == .failed(.checkFailed))
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        #expect(rig.nothingLeftOpen)
+    }
+
+    @Test func aStartTimeThatCantBeReadWhenListedReadsAndWatchesNothing() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.instances = [42, 43]
+        rig.reads[42] = rig.identity()
+        rig.reads[43] = rig.identity()
+        rig.incarnations.script(43, [nil])
+        #expect(await rig.approver.approve(triggerID: trigger.id) == .failed(.checkFailed))
+        #expect(rig.watches.isEmpty && rig.reads.startedCount == 0)
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        #expect(rig.nothingLeftOpen)
+    }
+
+    @Test func aStartTimeThatChangesAroundTheWatchReadsNothing() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity()
+        // Between listing and registration: the watch is on whatever process has the PID now.
+        rig.onMakeWatch = { [incarnations = rig.incarnations] pid in incarnations.script(pid, [FakeIncarnations.of(pid, start: 1_793_000_001)]) }
+        #expect(await rig.approver.approve(triggerID: trigger.id) == .failed(.appChanged))
+        #expect(rig.reads.startedCount == 0)
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        #expect(rig.nothingLeftOpen)
+    }
+
+    @Test func aStartTimeThatChangesWhileTheUserConfirmsAdHocSavesNothing() async {
+        let trigger = ApprovalRig.trigger()
+        let rig = ApprovalRig([trigger])
+        defer { rig.tearDown() }
+        rig.reads[42] = rig.identity(ApprovalRig.newHash, .adHoc)
+        let changed = await rig.approver.approve(triggerID: trigger.id, confirmAdHoc: { rig.incarnations.script(42, [FakeIncarnations.of(42, start: 1_793_000_001)]); return true })
+        #expect(changed == .failed(.appChanged))
+        #expect(rig.stored(trigger) == trigger && rig.persistence.saveCount == 0)
+        let unreadable = ApprovalRig([trigger])
+        defer { unreadable.tearDown() }
+        unreadable.reads[42] = unreadable.identity(ApprovalRig.newHash, .adHoc)
+        let failed = await unreadable.approver.approve(triggerID: trigger.id, confirmAdHoc: { unreadable.incarnations.script(42, [nil]); return true })
+        #expect(failed == .failed(.checkFailed))
+        #expect(unreadable.stored(trigger) == trigger && unreadable.persistence.saveCount == 0)
+        #expect(rig.nothingLeftOpen && unreadable.nothingLeftOpen)
     }
 
     @Test func aWatchThatCantBeRegisteredOrReportsAtOnceSavesNothing() async {

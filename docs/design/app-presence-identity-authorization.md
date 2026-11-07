@@ -301,7 +301,8 @@ appears in diagnostics (which report trigger counts and kinds only).
   with its (PID, kernel start time) from listing through the check and at every later question
   (threat model §3.4): a PID recycled after listing is `unavailable`, never `verified` or
   `codeChanged`. Still open: a PID reused before the instances were listed (a stale workspace entry)
-  reads as the new process; the approval reading isn't bracketed; the start time is kept across
+  reads as the new process (for the approval too, which brackets its reading the same way since
+  2026-11-07); the start time is kept across
   exec, so an exec before registration is still not reported by the watch (T5 partly, T6 partly).
   Since 2026-11-06 a fixture test shows the fresh check after registration sees the post-exec code,
   so that exec affects attribution only (an accepted limit, threat model §3.5).

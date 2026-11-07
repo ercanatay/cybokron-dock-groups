@@ -7,9 +7,18 @@ import Testing
 private final class QuietProcessWatch: ApplicationProcessWatching {
     private var isClosed = false
     func poll() -> ExperimentalProcessEventWatchPollResult { isClosed ? .unknown : .idle }
-    func close() { isClosed = true }
+    private var descriptorClosed: (@Sendable () -> Void)?
+    func close() {
+        guard !isClosed else { return }
+        isClosed = true
+        descriptorClosed?()
+    }
     /// Its wake-up never fires.
     func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool { !isClosed }
+    /// Its descriptor closes in `close()`.
+    func whenDescriptorClosed(_ action: @escaping @Sendable () -> Void) {
+        if isClosed { action() } else { descriptorClosed = action }
+    }
 }
 
 /// The app's controller with the running-code verifier: it is the production setting, a code
@@ -109,7 +118,8 @@ struct TriggerControllerIdentityVerifierTests {
             store: f.store,
             instances: { _ in running },
             makeWatch: { _ in QuietProcessWatch() },
-            read: { _, _ in .identity(ApplicationRunningIdentity(codeHash: hash, signature: .appStore)) }
+            read: { _, _ in .identity(ApplicationRunningIdentity(codeHash: hash, signature: .appStore)) },
+            readIncarnation: Self.fixedIncarnation
         )
         // Not running: nothing saved.
         #expect(await f.controller.approveApplication(ofTrigger: unverified.id) == .notRunning)

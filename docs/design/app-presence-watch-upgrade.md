@@ -138,8 +138,40 @@ unchanged except that the verifier and approval rigs get their own bound.
 
 Still open after this: **T6 before registration** (attribution only); **T10**; **PID reuse before
 listing**; the **uncancellable Security call** (a wake-up or cancellation only stops waiting); the
-approval's reading isn't bracketed by the start time; descriptor exhaustion by other code in the
-process isn't tested; the read source inside the signed, hardened app (§7, manual).
+approval's reading isn't bracketed by the start time (closed below); descriptor exhaustion by
+other code in the process isn't tested; the read source inside the signed, hardened app (§7,
+manual).
+
+## Implementation status (2026-11-07, approval bracket and slot release)
+
+| # | Item | Status |
+|---|------|--------|
+| 3 (approval) | (PID, kernel start time) bracket of the approval | **Implemented** in `TriggerApplicationApprover` with the verifier's pattern (`ProcessIncarnation`, injectable `readIncarnation`): read for every instance in the main-actor turn that listed it, again after its watch is registered, right before and right after each reading on the thread of the Security call, after the reading (with the relisting) and after the ad-hoc confirmation. Every reading must equal the first: another start time is `failed(appChanged)`, one that can't be read `failed(checkFailed)`; nothing is saved either way, and never `approved` |
+| 1b (bound) | Slot freed when the descriptor is really closed | **Implemented.** `ApplicationProcessWatching.whenDescriptorClosed` runs once right after the watch's descriptor is closed: inside `close()` without a started wake-up, in the read source's cancel handler (main queue, after `close()`) with one. The budget's watch frees its slot there, guarded to once (a close reported twice frees one slot), instead of in `close()`. So open watch descriptors never exceed `processLimit`; a slot freed a main-queue turn later only keeps the bound full (`atCapacity` / `checkFailed`) that much longer |
+
+Fail-closed matrix (approval bracket):
+
+| Situation | Outcome | Saved? |
+|-----------|---------|--------|
+| A start time can't be read at listing | `failed(checkFailed)`, no watch, no reading | no |
+| Another start time (or none) after the watch is registered | `failed(appChanged)` (`checkFailed`), no reading, every watch closed | no |
+| Another start time (or none) right before or after a reading | `failed(appChanged)` (`checkFailed`), the reading's answer ignored | no |
+| Another start time (or none) after the reading or the ad-hoc confirmation | `failed(appChanged)` (`checkFailed`) | no |
+
+Tests: `ApplicationIdentityApprovalTests.swift` ("The start-time bracket": the normal path reads the
+start time five times and approves; a start time that changes or becomes unreadable during a held
+reading, at listing, between listing and registration, and while the user confirms ad-hoc code
+saves nothing) and `ApplicationIdentityApprovalWakeUpTests.swift` (a slot stays taken while a
+closed watch's descriptor is open and is freed once when it closes, a double report or a second
+close frees nothing more, a released watch holds its slot until its descriptor closes, a caller's
+own action runs after the slot is free, and a real watch with a started wake-up holds its slot
+until its source's cancel handler closed the descriptor once). The test fakes report their
+descriptor closed in `close()`, as before.
+
+Still open after this: **T6 before registration** (attribution only); **T10**; **PID reuse before
+listing** (for the approval too: the bracket starts at listing); the **uncancellable Security
+call**; descriptor exhaustion by other code in the process isn't tested; the read source inside
+the signed, hardened app (§7, manual).
 
 ## 1. Evidence gathered for this document
 

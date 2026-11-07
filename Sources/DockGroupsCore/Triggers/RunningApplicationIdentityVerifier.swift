@@ -228,6 +228,12 @@ protocol ApplicationProcessWatching: AnyObject {
     /// `close()`. A hint, never evidence: the handler must `poll()` and decide from that. `false`
     /// when it can't be started; the caller then treats the watch as not registered.
     func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool
+    /// Calls `action` at most once, right after the watch's descriptor is really closed (at once
+    /// when it already is), on whatever thread closes it. `close()` may close it later (a started
+    /// wake-up closes it in its source's cancel handler), so this, not `close()`, is when the
+    /// descriptor is gone: `ApplicationProcessWatchBudget` frees a slot here. A later call replaces
+    /// an action that hasn't run yet.
+    func whenDescriptorClosed(_ action: @escaping @Sendable () -> Void)
 }
 
 extension ExperimentalProcessEventWatch: ApplicationProcessWatching {}

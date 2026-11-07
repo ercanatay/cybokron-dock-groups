@@ -58,7 +58,6 @@ internal enum DisplayTargetPlanner {
         let primaryIndices = candidates.indices.filter { candidates[$0].isPrimary }
         guard primaryIndices.count == 1 else { return nil }
         let primaryOffset = primaryIndices[0]
-        let primaryCandidate = candidates[primaryOffset]
 
         // 3. Capture hint must be positive and finite (never a physical identity).
         guard captureHint.width.isFinite, captureHint.height.isFinite,

@@ -84,7 +84,7 @@ internal enum MachOSliceTable {
         var slices: [Slice] = []
         slices.reserveCapacity(count)
         var seenPairs = Set<ArchitecturePair>()
-        var tableEnd = UInt64(tableSize)
+        let tableEnd = UInt64(tableSize)
 
         for i in 0..<count {
             let offset = 8 + i * recordSize
