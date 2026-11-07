@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2] - 2026-11-07
+
+### Fixed
+
+- Approving an app now checks the process start time as well, so a reused process identifier can't be approved by mistake
+- App trigger watches return their slot only once the descriptor is actually closed, so a busy Mac can't exceed the watch limit
+- Scripts and the release workflow attach disk images with `diskutil image attach` where available, falling back to `hdiutil`, so macOS 27's deprecation warning doesn't hide failures
+
 ## [0.13.1] - 2026-11-06
 
 ### Changed
@@ -554,7 +562,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.1...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...HEAD
+[0.13.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.1...v0.13.2
 [0.13.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.0...v0.13.1
 [0.13.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.12.0...v0.12.1
