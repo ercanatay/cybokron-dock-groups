@@ -23,8 +23,8 @@ internal enum LayoutFileCoordinationError: Error, Equatable, Sendable {
 
 internal enum LayoutFileCoordination {
     /// Acquire a nonblocking advisory exclusive `flock` on `.window-layout.lock`
-    /// inside `directory`, run `perform`, release (close descriptor) on return
-    /// or throw, and propagate `perform` errors. The lock descriptor is never
+    /// inside `directory`, run `perform`, release (`LOCK_UN`, then close the
+    /// descriptor) on return or throw, and propagate `perform` errors. The lock descriptor is never
     /// exposed.
     static func withExclusiveLock<T>(
         in directory: URL,
@@ -102,6 +102,12 @@ internal enum LayoutFileCoordination {
             }
             throw LayoutFileCoordinationError.lockFailed
         }
+        // Release explicitly before the descriptor is closed (defers run in reverse order).
+        // A flock lock belongs to the open file description and close() only drops it with the
+        // last reference; a child spawned on another thread (posix_spawn/Process) holds a copy of
+        // every descriptor, O_CLOEXEC ones included, until it execs. Without LOCK_UN the next
+        // acquisition could see a spurious lockBusy from such an in-flight child.
+        defer { _ = flock(lockFD, LOCK_UN) }
 
         // Run the callback; hold the descriptor open until it returns or throws.
         do {

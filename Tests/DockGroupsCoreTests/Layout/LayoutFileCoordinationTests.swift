@@ -152,4 +152,79 @@ struct LayoutFileCoordinationTests {
         #expect(!called)
     }
 
+    /// A copy of the lock descriptor that outlives the call — what a child spawned on another
+    /// thread holds until it execs — must not keep the lock held once the call returns.
+    @Test func lockIsReleasedWhileACopyOfItsDescriptorIsStillOpen() throws {
+        let dir = try directory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let suffix = "/\(dir.lastPathComponent)/.window-layout.lock"
+        let copy = try LayoutFileCoordination.withExclusiveLock(in: dir) { () -> Int32 in
+            try #require(Self.duplicateOpenDescriptor(pathSuffix: suffix))
+        }
+        defer { _ = close(copy) }
+        #expect(try LayoutFileCoordination.withExclusiveLock(in: dir) { true })
+    }
+
+    /// `posix_spawn`/`Process` on another thread copies every descriptor into the child, and
+    /// close-on-exec descriptors are closed only when the child execs. Back-to-back calls must not
+    /// report `lockBusy` because of such an in-flight child.
+    @Test func backToBackCallsAreNotBusyWhileChildrenSpawnConcurrently() throws {
+        let dir = try directory()
+        defer { try? FileManager.default.removeItem(at: dir) }
+        let spawner = ConcurrentSpawner(spawns: 50)
+        spawner.start()
+        var calls = 0
+        var busy = 0
+        while !spawner.isFinished {
+            do {
+                _ = try LayoutFileCoordination.withExclusiveLock(in: dir) { true }
+            } catch LayoutFileCoordinationError.lockBusy {
+                busy += 1
+            }
+            calls += 1
+        }
+        #expect(spawner.failures == 0)
+        #expect(calls > 0)
+        #expect(busy == 0)
+    }
+
+    /// Duplicates the process's open descriptor whose path ends with `pathSuffix`.
+    private static func duplicateOpenDescriptor(pathSuffix: String) -> Int32? {
+        var buffer = [CChar](repeating: 0, count: Int(MAXPATHLEN))
+        for fd in 0..<min(getdtablesize(), 1 << 20) where fcntl(fd, F_GETPATH, &buffer) == 0 {
+            if String(cString: buffer).hasSuffix(pathSuffix) {
+                let copy = fcntl(fd, F_DUPFD_CLOEXEC, 0)
+                return copy >= 0 ? copy : nil
+            }
+        }
+        return nil
+    }
+}
+
+/// Spawns `/usr/bin/true` repeatedly on a background thread.
+private final class ConcurrentSpawner: @unchecked Sendable {
+    private let spawns: Int
+    private let lock = NSLock()
+    private var finished = false
+    private var failed = 0
+
+    init(spawns: Int) { self.spawns = spawns }
+
+    var isFinished: Bool { lock.withLock { finished } }
+    var failures: Int { lock.withLock { failed } }
+
+    func start() {
+        Thread.detachNewThread { [self] in
+            for _ in 0..<spawns {
+                var pid: pid_t = 0
+                let argv: [UnsafeMutablePointer<CChar>?] = [strdup("/usr/bin/true"), nil]
+                defer { argv.forEach { free($0) } }
+                var status: Int32 = 0
+                if posix_spawn(&pid, "/usr/bin/true", nil, nil, argv, environ) != 0 || waitpid(pid, &status, 0) != pid {
+                    lock.withLock { failed += 1 }
+                }
+            }
+            lock.withLock { finished = true }
+        }
+    }
 }
