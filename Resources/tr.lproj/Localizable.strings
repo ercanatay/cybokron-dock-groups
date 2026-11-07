@@ -1165,3 +1165,9 @@
 "core.rename.nameTaken" = "“%@” adında başka bir grup zaten var. Farklı bir ad seçin.";
 "settings.shortcuts.identityLinks.footer" = "Bağlantıyı bir betikten veya başka bir uygulamadan açın; örneğin Terminal'de `open` ile. Bağlantı grubunu kimliğiyle belirtir, bu yüzden yeniden adlandırıldıktan sonra da çalışmaya devam eder; kimlikten sonraki ad yalnızca okunabilirlik içindir. Kendiniz yazdığınız bir bağlantı bunun yerine grubun adını kullanabilir (büyük/küçük harf, aksan ve noktalama önemsizdir). Zorla kapatmak için çıkış bağlantısına ?mode=force ekleyin.";
 "about.project.limitGuard" = "Menü çubuğunda Codex kullanım limitleri";
+"core.trigger.summary.screenLocks" = "Ekran kilitlendiğinde";
+"core.trigger.summary.screenUnlocks" = "Ekranın kilidi açıldığında";
+"triggers.editor.event.screenLocks" = "Ekran Kilitlendiğinde";
+"triggers.editor.event.screenUnlocks" = "Ekran Kilidi Açıldığında";
+"triggers.editor.hint.screenLocks" = "Ekran kilitliyken kimse bir bildirimi yanıtlayamayacağı için bu tetikleyici grubu hemen tamamlar.";
+"triggers.editor.screenLock.note" = "macOS, ekranın ne zaman kilitleneceğini belgelemediğinden; örneğin Mac uyku moduna geçtikten hemen sonra ya da başka bir kullanıcı oturum açtığında kilitlenme veya kilit açılma olayı kaçırılabilir. Algılanamadığında hiçbir şey çalıştırılmaz.";

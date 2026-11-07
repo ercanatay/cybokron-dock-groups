@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Eine andere Gruppe heißt bereits „%@“. Wähle einen anderen Namen.";
 "settings.shortcuts.identityLinks.footer" = "Öffne einen Link aus einem Skript oder einer anderen App, z. B. mit `open` im Terminal. Ein Link benennt seine Gruppe über die ID, daher funktioniert er auch nach einer Umbenennung weiter; der Name nach der ID dient nur zur Lesbarkeit. Einen selbst geschriebenen Link kannst du stattdessen mit dem Namen der Gruppe verwenden (Groß-/Kleinschreibung, Akzente und Satzzeichen spielen keine Rolle). Füge ?mode=force an einen Beenden-Link an, um zwangsweise zu beenden.";
 "about.project.limitGuard" = "Codex-Nutzungslimits in der Menüleiste";
+"core.trigger.summary.screenLocks" = "Wenn der Bildschirm gesperrt wird";
+"core.trigger.summary.screenUnlocks" = "Wenn der Bildschirm entsperrt wird";
+"triggers.editor.event.screenLocks" = "Wenn der Bildschirm gesperrt wird";
+"triggers.editor.event.screenUnlocks" = "Wenn der Bildschirm entsperrt wird";
+"triggers.editor.hint.screenLocks" = "Solange der Bildschirm gesperrt ist, kann niemand auf eine Benachrichtigung antworten, daher beendet dieser Auslöser die Gruppe sofort.";
+"triggers.editor.screenLock.note" = "macOS dokumentiert nicht, wann der Bildschirm gesperrt wird. Eine Sperre oder Entsperrung kann daher übersehen werden, zum Beispiel direkt nach dem Ruhezustand des Macs oder wenn ein anderer Benutzer wechselt. Wenn dies nicht erkannt wird, wird nichts ausgeführt.";

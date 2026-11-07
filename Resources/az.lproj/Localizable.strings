@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Başqa qrup artıq “%@” adını daşıyır. Fərqli ad seçin.";
 "settings.shortcuts.identityLinks.footer" = "Linki skriptdən və ya başqa tətbiqdən açın, məsələn, Terminal-da `open` ilə. Link qrupu ID ilə müəyyən edir, buna görə adı dəyişdikdən sonra da işləyir; ID-dən sonrakı ad yalnız oxunması üçündür. Özünüz yazdığınız link qrupun adından da istifadə edə bilər (böyük-kiçik hərflər, diakritik işarələr və durğu işarələri fərq etmir). Quit linkinə məcburi çıxış üçün ?mode=force əlavə edin.";
 "about.project.limitGuard" = "Menyu çubuğunda Codex istifadə limitləri";
+"core.trigger.summary.screenLocks" = "Ekran kilidlənəndə";
+"core.trigger.summary.screenUnlocks" = "Ekran kilidi açılanda";
+"triggers.editor.event.screenLocks" = "Ekran kilidlənəndə";
+"triggers.editor.event.screenUnlocks" = "Ekran kilidi açılanda";
+"triggers.editor.hint.screenLocks" = "Ekran kilidli olduqda heç kim bildirişə cavab verə bilmədiyi üçün bu tetikləyici qrupu dərhal tamamlayır.";
+"triggers.editor.screenLock.note" = "macOS ekranın nə vaxt kilidləndiyini sənədləşdirmir, ona görə də kilidlənmə və ya kilidin açılması qaçırıla bilər, məsələn, Mac yuxu rejimindən çıxdıqdan dərhal sonra və ya başqa istifadəçi sessiyaya keçəndə. Bunu müəyyən etmək mümkün olmadıqda heç nə işə düşmür.";

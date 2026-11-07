@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Un autre groupe porte déjà le nom “%@”. Choisissez un autre nom.";
 "settings.shortcuts.identityLinks.footer" = "Ouvrez un lien depuis un script ou une autre app, par exemple avec `open` dans Terminal. Un lien désigne son groupe par son ID, il continue donc de fonctionner après un renommage ; le nom après l'ID sert uniquement à la lecture. Un lien que vous écrivez vous-même peut utiliser le nom du groupe à la place (la casse, les accents et la ponctuation n'ont pas d'importance). Ajoutez ?mode=force à un lien de fermeture pour forcer la fermeture.";
 "about.project.limitGuard" = "Limites d'utilisation de Codex dans la barre de menus";
+"core.trigger.summary.screenLocks" = "Quand l'écran se verrouille";
+"core.trigger.summary.screenUnlocks" = "Quand l'écran se déverrouille";
+"triggers.editor.event.screenLocks" = "Quand l'écran se verrouille";
+"triggers.editor.event.screenUnlocks" = "Quand l'écran se déverrouille";
+"triggers.editor.hint.screenLocks" = "Personne ne peut répondre à une notification pendant que l'écran est verrouillé, donc ce déclencheur termine le groupe immédiatement.";
+"triggers.editor.screenLock.note" = "macOS ne documente pas le moment où l'écran se verrouille, donc un verrouillage ou un déverrouillage peut être manqué, par exemple juste après la mise en veille du Mac ou lorsqu'un autre utilisateur prend la session. Rien ne s'exécute quand on ne peut pas le savoir.";

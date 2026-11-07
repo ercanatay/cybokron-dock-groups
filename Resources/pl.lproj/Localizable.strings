@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Inna grupa ma już nazwę „%@”. Wybierz inną nazwę.";
 "settings.shortcuts.identityLinks.footer" = "Otwórz link ze skryptu lub innej aplikacji, np. poleceniem `open` w Terminal. Link wskazuje grupę po ID, więc działa także po zmianie nazwy; nazwa po ID służy tylko do odczytu. Samodzielnie napisany link może zamiast tego używać nazwy grupy (wielkość liter, akcenty i interpunkcja nie mają znaczenia). Dodaj ?mode=force do linku zamykającego, aby wymusić zamknięcie.";
 "about.project.limitGuard" = "Limity użycia Codex na pasku menu";
+"core.trigger.summary.screenLocks" = "Gdy ekran się zablokuje";
+"core.trigger.summary.screenUnlocks" = "Gdy ekran się odblokuje";
+"triggers.editor.event.screenLocks" = "Gdy ekran się zablokuje";
+"triggers.editor.event.screenUnlocks" = "Gdy ekran się odblokuje";
+"triggers.editor.hint.screenLocks" = "Nikt nie może odpowiedzieć na powiadomienie, gdy ekran jest zablokowany, dlatego ten wyzwalacz od razu kończy grupę.";
+"triggers.editor.screenLock.note" = "macOS nie udokumentował, kiedy ekran się blokuje, więc blokada lub odblokowanie mogą zostać pominięte, na przykład zaraz po uśpieniu Maca lub gdy inny użytkownik przełącza konto. Gdy nie da się tego wykryć, nic się nie uruchamia.";

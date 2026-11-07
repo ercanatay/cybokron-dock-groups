@@ -1384,7 +1384,7 @@ A rule is its event and its action joined ("At 9:00 on weekdays: start"), so the
 | `triggers.editor.wifi.restricted` | Location access isn't available on this Mac: it's restricted by a profile or Screen Time. |
 | `triggers.editor.ethernet.hint` | Ethernet counts as connected while a wired connection — built in, an adapter or a dock — has a network, even when Wi-Fi is used first. It needs no permission. |
 
-## Triggers: the screen locking or unlocking — the rule, the editor's events, hint and note (English only for now; `awaitingTranslation`: `core.trigger.summary.screenLocks`, `core.trigger.summary.screenUnlocks`, `triggers.editor.event.screenLocks`, `triggers.editor.event.screenUnlocks`, `triggers.editor.hint.screenLocks`, `triggers.editor.screenLock.`)
+## Triggers: the screen locking or unlocking — the rule, the editor's events, hint and note
 
 | Key | English |
 | --- | --- |

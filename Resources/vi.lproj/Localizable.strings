@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Một nhóm khác đã có tên “%@”. Hãy chọn tên khác.";
 "settings.shortcuts.identityLinks.footer" = "Mở liên kết từ một tập lệnh hoặc ứng dụng khác, ví dụ bằng lệnh `open` trong Terminal. Liên kết xác định nhóm bằng ID nên vẫn hoạt động sau khi đổi tên; phần tên đi sau ID chỉ để người đọc dễ hiểu. Liên kết do bạn tự viết có thể dùng tên nhóm thay thế (không phân biệt chữ hoa, dấu thanh và dấu câu). Thêm ?mode=force vào liên kết thoát để buộc thoát.";
 "about.project.limitGuard" = "Giới hạn sử dụng Codex trên thanh menu";
+"core.trigger.summary.screenLocks" = "Khi màn hình khóa";
+"core.trigger.summary.screenUnlocks" = "Khi màn hình mở khóa";
+"triggers.editor.event.screenLocks" = "Khi Màn Hình Khóa";
+"triggers.editor.event.screenUnlocks" = "Khi Màn Hình Mở Khóa";
+"triggers.editor.hint.screenLocks" = "Khi màn hình đang khóa, không ai có thể phản hồi thông báo, nên trigger này kết thúc nhóm ngay lập tức.";
+"triggers.editor.screenLock.note" = "macOS không ghi tài liệu về thời điểm màn hình khóa, nên việc khóa hoặc mở khóa có thể bị bỏ sót, chẳng hạn ngay sau khi Mac ngủ hoặc khi người dùng khác chuyển vào. Nếu không thể xác định, sẽ không có gì được thực thi.";

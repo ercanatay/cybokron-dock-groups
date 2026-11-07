@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Jiná skupina už se jmenuje “%@”. Zvolte jiný název.";
 "settings.shortcuts.identityLinks.footer" = "Otevřete odkaz ze skriptu nebo jiné aplikace, např. příkazem `open` v Terminal. Odkaz určuje skupinu podle ID, takže po přejmenování dál funguje; název za ID slouží jen ke čtení. Odkaz, který napíšete sami, může místo toho použít název skupiny (velikost písmen, diakritika ani interpunkce nehrají roli). Chcete-li u odkazu na ukončení vynutit ukončení, přidejte ?mode=force.";
 "about.project.limitGuard" = "Limity využití Codexu v liště nabídek";
+"core.trigger.summary.screenLocks" = "Při zamknutí obrazovky";
+"core.trigger.summary.screenUnlocks" = "Při odemknutí obrazovky";
+"triggers.editor.event.screenLocks" = "Při zamknutí obrazovky";
+"triggers.editor.event.screenUnlocks" = "Při odemknutí obrazovky";
+"triggers.editor.hint.screenLocks" = "Když je obrazovka zamčená, na oznámení nikdo nemůže reagovat, proto tento spouštěč skupinu okamžitě ukončí.";
+"triggers.editor.screenLock.note" = "macOS nedokumentuje, kdy se obrazovka zamkne, takže zamknutí nebo odemknutí může být přehlédnuto, například hned po uspání Macu nebo při přepnutí na jiného uživatele. Pokud nelze změnu zjistit, nic se nespustí.";

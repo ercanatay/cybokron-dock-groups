@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Grup lain sudah bernama “%@”. Pilih nama yang berbeda.";
 "settings.shortcuts.identityLinks.footer" = "Buka tautan dari skrip atau aplikasi lain, misalnya dengan `open` di Terminal. Tautan menyebut grupnya dengan ID, jadi tetap berfungsi setelah diganti nama; nama setelah ID hanya untuk dibaca. Tautan yang Anda tulis sendiri dapat menggunakan nama grup sebagai gantinya (huruf besar/kecil, aksen, dan tanda baca tidak berpengaruh). Tambahkan ?mode=force pada tautan berhenti untuk memaksa berhenti.";
 "about.project.limitGuard" = "Batas penggunaan Codex di bilah menu";
+"core.trigger.summary.screenLocks" = "Saat layar terkunci";
+"core.trigger.summary.screenUnlocks" = "Saat layar dibuka kuncinya";
+"triggers.editor.event.screenLocks" = "Saat Layar Terkunci";
+"triggers.editor.event.screenUnlocks" = "Saat Layar Dibuka Kuncinya";
+"triggers.editor.hint.screenLocks" = "Tidak ada yang bisa merespons notifikasi saat layar terkunci, jadi pemicu ini langsung menyelesaikan grup.";
+"triggers.editor.screenLock.note" = "macOS tidak mendokumentasikan kapan layar terkunci, sehingga kunci atau buka kunci bisa terlewat, misalnya tepat setelah Mac tidur atau saat pengguna lain beralih masuk. Tidak ada yang dijalankan saat hal itu tidak dapat dideteksi.";

@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "Másik csoport már “%@” néven szerepel. Válassz másik nevet.";
 "settings.shortcuts.identityLinks.footer" = "Hivatkozást szkriptből vagy másik alkalmazásból is megnyithatsz, például a Terminal alkalmazásban a `open` paranccsal. A hivatkozás azonosítóval nevezi meg a csoportot, ezért átnevezés után is működik; az azonosító utáni név csak olvasás céljából van ott. Saját készítésű hivatkozásban a csoport nevét is használhatod (a kis- és nagybetű, az ékezetek és az írásjelek nem számítanak). Kényszerített kilépéshez adj a kilépési hivatkozáshoz ?mode=force részt.";
 "about.project.limitGuard" = "Codex-használati korlátok a menüsorban";
+"core.trigger.summary.screenLocks" = "Amikor a képernyő zárolódik";
+"core.trigger.summary.screenUnlocks" = "Amikor a képernyő feloldódik";
+"triggers.editor.event.screenLocks" = "Amikor a képernyő zárolódik";
+"triggers.editor.event.screenUnlocks" = "Amikor a képernyő feloldódik";
+"triggers.editor.hint.screenLocks" = "Zárolt képernyő mellett senki sem tud értesítésre válaszolni, ezért ez az indító azonnal befejezi a csoportot.";
+"triggers.editor.screenLock.note" = "A macOS nem dokumentálja, mikor zárolódik a képernyő, ezért egy zárolás vagy feloldás kimaradhat, például közvetlenül azután, hogy a Mac elaludt, vagy amikor egy másik felhasználó vált be. Ha ez nem derül ki, semmi nem fut le.";

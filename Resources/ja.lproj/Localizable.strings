@@ -1167,3 +1167,9 @@
 "core.rename.nameTaken" = "“%@”という名前のグループは既に存在します。別の名前を選んでください。";
 "settings.shortcuts.identityLinks.footer" = "スクリプトや他のアプリからリンクを開きます（例：ターミナルで `open` を使用）。リンクはグループをIDで指定するため、名前を変更しても機能し続けます。IDの後ろの名前は読みやすくするためだけのものです。自分で書くリンクでは、代わりにグループ名を使うこともできます（大文字小文字、アクセント、句読点は区別されません）。終了リンクに ?mode=force を追加すると強制終了します。";
 "about.project.limitGuard" = "メニューバーに表示される Codex の利用上限";
+"core.trigger.summary.screenLocks" = "画面がロックされたとき";
+"core.trigger.summary.screenUnlocks" = "画面のロックが解除されたとき";
+"triggers.editor.event.screenLocks" = "画面がロックされたとき";
+"triggers.editor.event.screenUnlocks" = "画面のロックが解除されたとき";
+"triggers.editor.hint.screenLocks" = "画面がロックされている間は通知に応答できないため、このトリガーはグループをただちに完了させます。";
+"triggers.editor.screenLock.note" = "macOSは画面がロックされるタイミングを公式に文書化していないため、Macがスリープした直後や別のユーザーに切り替わった直後などでは、ロックやロック解除を見逃すことがあります。検出できない場合は何も実行されません。";
