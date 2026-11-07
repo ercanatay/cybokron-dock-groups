@@ -463,6 +463,7 @@
 "about.project.antigravityUpdater" = "Lightweight macOS updater for Antigravity Tools, 21 languages.";
 "about.project.widgetVisibility" = "Jetpack-free WP plugin for widget visibility with descendant support.";
 "about.project.forbiddenContent" = "Detects forbidden keywords (e.g. 'Casino') in post titles — like a WP audit checker.";
+"about.project.limitGuard" = "Codex usage limits in the menu bar";
 
 /* Siri phrases and link titles shown in Settings → Shortcuts & Siri (keep the phrases identical to the App Shortcuts phrases of the same language) */
 "core.invocation.showGroup" = "Show Group";
