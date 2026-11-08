@@ -178,7 +178,7 @@ struct JSONDuplicateKeyPreflightTests {
 
     @Test func oneByteOverTwoMibFails() {
         let cap = 2 * 1024 * 1024 + 1
-        var bytes = [UInt8](repeating: 0x20, count: cap) // all spaces
+        let bytes = [UInt8](repeating: 0x20, count: cap) // all spaces
         let data = Data(bytes)
         #expect(data.count == cap)
         #expect(JSONDuplicateKeyPreflight.check(data: data) != .pass)
@@ -230,7 +230,6 @@ struct JSONDuplicateKeyPreflightTests {
     // MARK: - Privacy of errors
 
     @Test func errorNeverContainsRawKey() {
-        let data = Data("{\"secretKey\":\"value\"}".utf8)
         // Force a duplicate on a "secret" key so error mentions key word but not value.
         let dup = Data("{\"secretKey\":1,\"secretKey\":2}".utf8)
         let result = JSONDuplicateKeyPreflight.check(data: dup)

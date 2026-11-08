@@ -232,7 +232,7 @@ struct WindowLayoutJSONEncoderTests {
 
     @Test func oversizedErrorDoesNotContainBundleIdentifierOrPath() throws {
         var groups: [WindowLayoutDocument.Group] = []
-        for g in 0..<150 {
+        for _ in 0..<150 {
             var windows: [WindowLayoutDocument.Window] = []
             for w in 0..<64 {
                 windows.append(WindowLayoutDocument.Window(
