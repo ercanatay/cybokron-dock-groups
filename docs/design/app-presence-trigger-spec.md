@@ -7,7 +7,9 @@ For a selected application bundle identifier, an open event is a transition from
 running instances to at least one; a close event is a transition from one or more to
 zero. Intermediate instance count changes do not fire. A window closing is not process
 termination. The initial trusted observation, and the first observation after a gap,
-source restart, sleep/wake or a changed/enabled rule, are baselines, not events.
+source restart, sleep/wake or a changed/enabled rule, are baselines, not events — except,
+for triggers with "run what was missed" on, the net change across a bounded sleep, display
+sleep or session gap ([app-presence-catch-up.md](app-presence-catch-up.md) §4.2, §11).
 
 The isolated tracker accepts observations in the order its caller supplies them; it
 does not detect reordered callbacks within the same generation. Clearing a baseline
@@ -49,4 +51,5 @@ fixtures, UI, localization, downgrade, safety and real end-to-end gates pass.
 Lock/unlock triggers and configurable delays are separate work
 ([app-presence-session-lock-trigger.md](app-presence-session-lock-trigger.md),
 [trigger-delay.md](trigger-delay.md): a delayed application firing is cancelled when its
-observation generation or revision is outdated); replay of missed events is still to be designed. No release or version bump is implied by this design.
+observation generation or revision is outdated); missed events are not replayed, and the net
+change across a bounded gap is [app-presence-catch-up.md](app-presence-catch-up.md). No release or version bump is implied by this design.
