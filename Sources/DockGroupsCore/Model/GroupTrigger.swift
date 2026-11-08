@@ -215,6 +215,8 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     public static let maximumPerGroup = 10
     /// The most triggers in all.
     public static let maximumCount = 100
+    /// The delays a trigger can wait before its action, in seconds (0: none).
+    public static let delayRange = 0...3600
 
     public let id: UUID
     public var groupID: DockGroup.ID
@@ -239,6 +241,17 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     public var finishesWhenEventEnds: Bool {
         didSet { normalize() }
     }
+    /// Seconds to wait after the trigger is accepted (after its notice is answered, if it shows
+    /// one) before the action runs; 0 runs it at once. While it waits, any change that makes the
+    /// firing stale cancels it (`TriggerCoordinator`). A value outside `delayRange` makes the
+    /// trigger unrunnable (`isRunnable`) and is kept as it is, never clamped: it never runs sooner
+    /// than it said. Setting it replaces a value this version couldn't read.
+    public var delaySeconds: Int {
+        didSet { unreadableDelay = nil }
+    }
+    /// A delay a file had that isn't a whole number (a newer version's, or a damaged file): kept
+    /// and written back as it was; the trigger then doesn't run.
+    private(set) var unreadableDelay: JSONValue?
     /// An action a newer version wrote that this one doesn't know; then the trigger doesn't run.
     private(set) var unrecognizedAction: String?
     /// Application-presence rules only (`nil` for every other event): which code the rule was
@@ -254,7 +267,8 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         runMode: TriggerRunMode? = nil,
         isEnabled: Bool = true,
         oncePerDay: Bool = false,
-        finishesWhenEventEnds: Bool = false
+        finishesWhenEventEnds: Bool = false,
+        delaySeconds: Int = 0
     ) {
         self.id = id
         self.groupID = groupID
@@ -264,14 +278,21 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         self.isEnabled = isEnabled
         self.oncePerDay = oncePerDay
         self.finishesWhenEventEnds = finishesWhenEventEnds
+        self.delaySeconds = delaySeconds
         normalize()
     }
 
-    /// Whether the rule can run at all: an event this version understands with valid values, and an
-    /// action that event allows.
+    /// Whether the rule can run at all: an event this version understands with valid values, an
+    /// action that event allows, and a delay it can wait.
     public var isRunnable: Bool {
         unrecognizedAction == nil && event.isValid && event.allowedActions.contains(action)
             && applicationIdentityStatus != .invalid && applicationIdentityStatus != .needsReapproval
+            && hasValidDelay
+    }
+
+    /// Whether the delay is one this version can wait: a whole number in `delayRange`.
+    public var hasValidDelay: Bool {
+        unreadableDelay == nil && Self.delayRange.contains(delaySeconds)
     }
 
     /// The application-presence rule's authorization as it stands: `unverified` without a record, and
@@ -352,7 +373,7 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
 
 extension GroupTrigger: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds, applicationIdentity
+        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds, delaySeconds, applicationIdentity
     }
 
     /// The identifier and the group are required (an entry without them is left out by the file);
@@ -376,6 +397,22 @@ extension GroupTrigger: Codable {
         isEnabled = container.decodeLeniently(Bool.self, forKey: .enabled) ?? false
         oncePerDay = container.decodeLeniently(Bool.self, forKey: .oncePerDay) ?? false
         finishesWhenEventEnds = container.decodeLeniently(Bool.self, forKey: .finishesWhenEventEnds) ?? false
+        // Missing: no delay (every file before delays existed). A whole number is kept as it is,
+        // in range or not (out of range, the trigger doesn't run); anything else is kept raw and the
+        // trigger doesn't run either — never read as 0, which would run it sooner than it said.
+        if container.contains(.delaySeconds) {
+            let rawDelay = (try? container.decode(JSONValue.self, forKey: .delaySeconds)) ?? .null
+            if let seconds = rawDelay.intValue {
+                delaySeconds = seconds
+                unreadableDelay = nil
+            } else {
+                delaySeconds = 0
+                unreadableDelay = rawDelay
+            }
+        } else {
+            delaySeconds = 0
+            unreadableDelay = nil
+        }
         if case .applicationPresence(let bundleIdentifier, _) = event {
             let rawIdentity = container.decodeLeniently(JSONValue.self, forKey: .applicationIdentity) ?? .null
             if rawIdentity == .null {
@@ -410,6 +447,12 @@ extension GroupTrigger: Codable {
         }
         if finishesWhenEventEnds {
             try container.encode(true, forKey: .finishesWhenEventEnds)
+        }
+        // Only when there is one (any value but 0, so one this version can't run is kept as well).
+        if let unreadableDelay {
+            try container.encode(unreadableDelay, forKey: .delaySeconds)
+        } else if delaySeconds != 0 {
+            try container.encode(delaySeconds, forKey: .delaySeconds)
         }
         try container.encodeIfPresent(applicationIdentity?.json, forKey: .applicationIdentity)
     }

@@ -46,5 +46,7 @@ alone do not establish signed-binary downgrade or backup compatibility; those re
 isolated copies of both versions. The feature is not ready for release until source
 fixtures, UI, localization, downgrade, safety and real end-to-end gates pass.
 
-Lock/unlock triggers, configurable delays, and replay of missed events are separate
-work. No release or version bump is implied by this design.
+Lock/unlock triggers and configurable delays are separate work
+([app-presence-session-lock-trigger.md](app-presence-session-lock-trigger.md),
+[trigger-delay.md](trigger-delay.md): a delayed application firing is cancelled when its
+observation generation or revision is outdated); replay of missed events is still to be designed. No release or version bump is implied by this design.

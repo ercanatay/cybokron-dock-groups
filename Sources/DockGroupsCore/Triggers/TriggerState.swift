@@ -27,6 +27,10 @@ public enum TriggerSkipReason: String, CaseIterable, Sendable {
     /// An authorized application-presence rule's running code couldn't be confirmed in time (the
     /// check was still running, failed or timed out, or an instance changed): nothing ran.
     case applicationNotConfirmed
+    /// It was waiting for its delay when something it depends on changed (its rule, the screen
+    /// lock, the application observation, the Mac's sleep or session, a newer firing of it):
+    /// nothing ran.
+    case cancelledBeforeRun
 
     public var explanation: String {
         switch self {
@@ -46,6 +50,8 @@ public enum TriggerSkipReason: String, CaseIterable, Sendable {
             return Localization.string("core.trigger.skip.applicationNotVerified", "the app isn't verified, so only Show Popup can run")
         case .applicationNotConfirmed:
             return Localization.string("core.trigger.skip.applicationNotConfirmed", "the app's running code couldn't be confirmed, so nothing ran")
+        case .cancelledBeforeRun:
+            return Localization.string("core.trigger.skip.cancelledBeforeRun", "it was cancelled before it ran")
         }
     }
 }

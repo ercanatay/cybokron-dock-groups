@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1094 keys.
+1096 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1560,3 +1560,17 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `core.link.groupAmbiguous` | More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri. |
 | `core.rename.nameTaken` | Another group is already named “%@”. Choose a different name. |
 | `settings.shortcuts.identityLinks.footer` | Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit. |
+
+## Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field (English only for now)
+
+A trigger can wait 0 to 3600 seconds after it's accepted (after its notice, if it shows one) before
+its action runs. `core.trigger.skip.cancelledBeforeRun` completes “Skipped today at 9:00: …”, so it
+starts in lowercase: the trigger was waiting for its delay when something it depends on changed, so
+nothing ran. The editor's field reuses `item.launch.delay` (Delay) as its label, and the trigger row
+shows the delay, and the time left while it waits, with `item.launch.row.delay` (After %ld s).
+These keys are listed in `LocalizationTests.awaitingTranslation` until they are translated.
+
+| Key | English |
+| --- | --- |
+| `core.trigger.skip.cancelledBeforeRun` | it was cancelled before it ran |
+| `triggers.editor.delay.hint` | Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs. |

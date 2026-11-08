@@ -38,6 +38,8 @@ final class TriggerController: ObservableObject {
     let coordinator: TriggerCoordinator
     /// The state as the coordinator keeps it, for the rows' last-run lines and the pause.
     @Published private(set) var state: TriggerState
+    /// When each trigger waiting for its delay runs, for the rows (`TriggerCoordinator.delayedUntil`).
+    @Published private(set) var delayedUntil: [GroupTrigger.ID: Date] = [:]
 
     private let groups: GroupStore
     private let stateStore: TriggerStateStore
@@ -93,6 +95,10 @@ final class TriggerController: ObservableObject {
         coordinator.verifyRunningApplicationIdentities()
         coordinator.onApplicationIdentityCodeChanged = { [weak self] ids in
             self?.store.requireApplicationReapproval(for: ids)
+        }
+        coordinator.onDelayedFiringsChange = { [weak self] in
+            guard let self else { return }
+            self.delayedUntil = self.coordinator.delayedUntil
         }
         coordinator.onApplicationObservationsNeedRestart = { [weak self] in
             guard let self, self.applicationPresenceSource != nil else { return }
@@ -358,6 +364,8 @@ final class TriggerController: ObservableObject {
             }
             coordinator.rulesChanged(previous: asBefore)
         }
+        // An archived or deleted group's trigger that waits for its delay is cancelled.
+        coordinator.revalidateDelayedFirings()
         clock?.reschedule()
         updateSources()
         if oldActive != newActive {

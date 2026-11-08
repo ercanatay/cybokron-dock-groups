@@ -8,7 +8,8 @@ import SwiftUI
 /// one) connects or disconnects, when these displays are connected or no longer, when the Mac joins
 /// or leaves a Wi-Fi network, when Ethernet connects or disconnects —, what to do — only the
 /// actions that event allows, with Finish when it ends for a Start on a change's start —, how — a
-/// notice, Ask First, Run Right Away; Show the Popup runs right away — and At most once a day. It
+/// notice, Ask First, Run Right Away; Show the Popup runs right away —, At most once a day and how
+/// long it waits before the action (Delay: 0 to 3600 seconds, after the notice). It
 /// says what a Start or Finish does (never quitting), how late a missed time still runs, and when an
 /// At Login trigger needs Open at Login. Return saves, Escape cancels.
 ///
@@ -97,6 +98,7 @@ struct TriggerEditorSheet: View {
                 whenRows
                 doRow
                 howRow
+                delayRow
             }
             notes
             HStack {
@@ -602,6 +604,31 @@ struct TriggerEditorSheet: View {
                 .fixedSize()
                 .disabled(draft.allowedRunModes.count < 2)
                 Toggle(Texts.oncePerDay, isOn: $draft.oncePerDay)
+            }
+        }
+    }
+
+    /// How long it waits before the action: typed (0 to 3600 seconds) or stepped. Anything else
+    /// can't be saved: the hint then shows in orange.
+    private var delayRow: some View {
+        GridRow {
+            Text(L10n.Launch.delay)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 4) {
+                    TextField(L10n.Launch.delay, text: $draft.delayText)
+                        .labelsHidden()
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 64)
+                    Stepper(L10n.Launch.delay, value: Binding(
+                        get: { draft.delaySeconds ?? 0 },
+                        set: { draft.delayText = String($0) }
+                    ), in: GroupTrigger.delayRange)
+                    .labelsHidden()
+                }
+                Text(Texts.delayHint)
+                    .font(.caption)
+                    .foregroundStyle(draft.delaySeconds == nil ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }

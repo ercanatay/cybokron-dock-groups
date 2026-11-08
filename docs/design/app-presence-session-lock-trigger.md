@@ -2,7 +2,8 @@
 
 Status: implemented as **best effort**. macOS documents no screen-lock signal; this design uses
 two long-standing but undocumented distributed notifications and says so in the editor. Per-trigger
-delays and "run what was missed" are out of scope (next work items).
+delays are in [trigger-delay.md](trigger-delay.md); "run what was missed" is out of scope (next
+work item).
 
 Related: [triggers-spec.md](triggers-spec.md) §2.3 (TS-11 row), [app-presence-trigger-spec.md](app-presence-trigger-spec.md)
 (application triggers, generation and revision rules), [app-presence-threat-model.md](app-presence-threat-model.md).
@@ -205,4 +206,5 @@ and the note; the trigger rows use the `lock` / `lock.open` symbols.
 - Unverified cases (§1.2), especially system sleep, the screen saver and fast user switching; these
   are manual gates before a release.
 - A lock right before system sleep doesn't run its Finish (§3.4).
-- Next, separately: per-trigger delays and "run what was missed".
+- Per-trigger delays: done ([trigger-delay.md](trigger-delay.md)); a delayed lock or unlock
+  trigger is cancelled when the lock changes again. Next, separately: "run what was missed".

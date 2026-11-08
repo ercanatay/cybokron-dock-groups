@@ -156,6 +156,7 @@ struct TriggerRow: View {
                     .font(.caption)
                     .foregroundStyle(trigger.isRunnable ? Color.secondary : Color.orange)
                     .fixedSize(horizontal: false, vertical: true)
+                delayLabel
                 if let identity {
                     TriggerIdentityLabel(state: identity, signature: trigger.approvedApplicationSignature)
                 }
@@ -178,6 +179,28 @@ struct TriggerRow: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(identity.map { "\(summary). \(L10n.Triggers.Identity.badge($0)). \(status)" } ?? "\(summary). \(status)")
+    }
+
+    /// The delay a trigger waits before its action ("After 30 s"); while it waits, the time left,
+    /// counting down, with an hourglass. Nothing for a trigger without a delay.
+    @ViewBuilder
+    private var delayLabel: some View {
+        if let due = triggers.delayedUntil[trigger.id] {
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                Label(TriggerDescriptions.delay(Self.secondsLeft(until: due, now: context.date)), systemImage: "hourglass")
+                    .font(.caption)
+                    .foregroundStyle(Color.accentColor)
+            }
+        } else if trigger.delaySeconds > 0, trigger.hasValidDelay {
+            Label(TriggerDescriptions.delay(trigger.delaySeconds), systemImage: "timer")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    /// Whole seconds left until `due`, rounded up; 0 once it's due.
+    static func secondsLeft(until due: Date, now: Date) -> Int {
+        max(0, Int(due.timeIntervalSince(now).rounded(.up)))
     }
 
     static func symbol(for event: TriggerEvent) -> String {
