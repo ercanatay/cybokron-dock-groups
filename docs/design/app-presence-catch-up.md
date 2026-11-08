@@ -1,7 +1,8 @@
 # "Run what was missed" (catch-up) for application and lock triggers — design
 
-Status: design / feasibility only. Nothing here is implemented, and nothing here approves a
-release or a version bump. Written against `main` at `7030c76`.
+Status: the core (model, gap tracking, net-change synthesis, gates) is implemented as described in
+§11; the editor, notice and last-run texts are not (slice 4 of §9). Nothing here approves a release
+or a version bump. Written against `main` at `7030c76`.
 
 Related: [triggers-spec.md](triggers-spec.md) §1.9 (gates), §1.10 (missed times, edges while the
 app wasn't open), [app-presence-trigger-spec.md](app-presence-trigger-spec.md) (baselines,
@@ -376,3 +377,42 @@ Effort: **S** ≤ 1 day incl. tests, **M** 2–5 days, **L** more than a week.
   accepted.
 - `triggers-spec.md` §1.10: add a line for application triggers next to the condition rule.
 - No change to `trigger-delay.md` §2 or the session-lock doc beyond the link in slice 0.
+
+## 11. Implementation status (core slice)
+
+Implemented in `GroupTrigger` (`catchUp`, `canCatchUp`, `catchesUp`), `TriggerDraft` (`catchUp`,
+carried through edits only, no editor row yet), `TriggerFiring.isCatchUp`, `TriggerNotice.isCatchUp`
+and `TriggerCoordinator` ("Run what was missed" section); tests in `TriggerCatchUpTests` (core) and
+`TriggerControllerCatchUpTests` (app controller ordering). Decisions as recommended: D1 (off by
+default, the `catchUp` key written only when `true`, anything but `true` read as off), D2 (30 min,
+`TriggerCoordinator.catchUpLongestGap`), D3 (3 per wake, 60 s wait, `catchUpLimitPerWake`,
+`catchUpReadingWait`), D4 and D5 (no), D6 (Run Right Away shows the notice, Ask First stays, Show
+the Popup runs as always), D8, D9 (no), D10 (both edges, each rule only its own). D7 (texts) is the
+UI slice: no user-visible text or key was added.
+
+How it behaves, where this document left room:
+
+- The last readings are taken from every trusted snapshot, of authorized rules with the option on
+  whose code is verified **or being checked**; a reading is kept for a gap only if the verifier's
+  verdict is `verified` when the gap starts (the verifier forgets every verdict at each gap, so it
+  was confirmed since). This is how "trusted only once the clearance is `allActions`" (§2) is read:
+  otherwise the first wake's reading, made while the fresh check ran, would never count.
+- After the gap, a post-gap reading under a `pending` verdict is compared, and its firing waits for
+  the check like an observed edge (one extra settle, then `applicationNotConfirmed`).
+- The kept readings are used up by the first trusted snapshot after the gap, whatever it shows, and
+  dropped if it comes more than 60 s after the gap's end (checked against the clock when it comes:
+  no timer). Waking and sleeping again within those 60 s continues the same gap, from its first
+  start.
+- `missed` (§5.1) is recorded only for a rule whose own edge would have run — a gap over 30 min, or
+  past the third catch-up of the wake — with the gap's end as `lastOutcomeAt`, so a long sleep
+  without a change records nothing. The miss reason is `sessionInactive` when the gap began with
+  the session leaving, `macAsleep` otherwise (system or display sleep).
+- The echo rule (§4.2): the comparison is void when an automatic action started at or after the
+  gap's end, or is still running; a rule whose edge would have run then records
+  `skipped(rightAfterAutomaticAction)`.
+- The `catchUp` key is kept as read on every event (written back unchanged), but only an
+  application rule acts on it (`catchesUp`); lock and unlock rules never keep a reading.
+
+Not changed in this slice: the `TriggerState` doc comment mismatch of §6.3 (a crafted
+`Entry.condition` can turn a real display or network reading into an edge) is still open; the
+catch-up readings are memory only and add nothing to `trigger-state.json`.

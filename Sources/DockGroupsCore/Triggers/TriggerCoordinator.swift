@@ -33,13 +33,17 @@ public struct TriggerNotice: Hashable, Sendable {
     public let runMode: TriggerRunMode
     /// The countdown, or how long the question waits.
     public let waits: Duration
+    /// Whether it's for a change that happened while the Mac couldn't act ("run what was missed",
+    /// `docs/design/app-presence-catch-up.md`), so the notice can say so.
+    public let isCatchUp: Bool
 
-    public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, groupName: String, action: TriggerAction, runMode: TriggerRunMode) {
+    public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, groupName: String, action: TriggerAction, runMode: TriggerRunMode, isCatchUp: Bool = false) {
         self.triggerID = triggerID
         self.groupID = groupID
         self.groupName = groupName
         self.action = action
         self.runMode = runMode
+        self.isCatchUp = isCatchUp
         waits = runMode == .askFirst ? Self.askFirstTimeout : Self.countdown
     }
 }
@@ -89,6 +93,16 @@ public protocol TriggerNoticePresenting: AnyObject {
 /// application observation it came from changed, the screens slept or woke or the session changed.
 /// When the delay is over every check is made again — with the cooldown, At most once a day and the
 /// echo window — right before the action runs.
+///
+/// "Run what was missed" (`GroupTrigger.catchUp`, `docs/design/app-presence-catch-up.md`): for an
+/// authorized application trigger with the option on, the last trusted reading (running or not)
+/// before the Mac stops being able to act — system sleep, display sleep, another user's session —
+/// is kept in memory only. The first trusted reading after the gap is compared with it: a net change
+/// that is the trigger's own edge runs it once, through every gate an observed edge goes through,
+/// and never right away. Not for gaps longer than 30 minutes (recorded missed), not past 3 per wake
+/// (recorded missed), not when no trusted reading came within 60 seconds of the gap's end, not when
+/// an automatic action started since the gap ended (recorded as the echo). Opens and closes that
+/// cancel out during the gap can't be seen; an unknown reading is never "not running".
 @MainActor
 public final class TriggerCoordinator {
     /// How long firings wait for more before they're reduced.
@@ -165,6 +179,44 @@ public final class TriggerCoordinator {
     /// verdicts changed which rules are observed); the app resets its presence source.
     public var onApplicationObservationsNeedRestart: (() -> Void)?
 
+    // MARK: Run what was missed (memory only, never saved)
+
+    /// The longest gap whose net change still runs (D2): the same 30 minutes as times.
+    public static let catchUpLongestGap: TimeInterval = TriggerEvaluator.catchUpWindow
+    /// The most catch-up firings one wake lets into the settle (D3); the rest are recorded missed.
+    public static let catchUpLimitPerWake = 3
+    /// How long after the gap's end the kept readings wait for a trusted reading (D3).
+    public static let catchUpReadingWait: TimeInterval = 60
+
+    /// A trusted reading of an application rule that catches up, and the rule as it was read.
+    private struct CatchUpReading {
+        let rule: GroupTrigger
+        let isRunning: Bool
+    }
+
+    /// The readings kept across a gap.
+    private struct CatchUpGap {
+        /// When the Mac stopped being able to act.
+        let start: Date
+        /// What the gap was, for a `missed` record.
+        let reason: TriggerMissReason
+        let readings: [GroupTrigger.ID: CatchUpReading]
+        /// When it could act again; `nil` while the gap lasts.
+        var end: Date?
+    }
+
+    /// The last readings of the current observation (`trustedReadingsStamp`), of the rules that
+    /// catch up (`recordTrustedReadings`).
+    private var trustedReadings: [GroupTrigger.ID: CatchUpReading] = [:]
+    private var trustedReadingsStamp: (generation: UInt64, revision: UInt64)?
+    private var catchUpGap: CatchUpGap?
+    /// When the last automatic action started: a comparison after a gap is void once one started
+    /// since the gap ended (it may have opened the app itself).
+    private var automaticActionStartedAt: Date?
+
+    /// How many rules' readings wait for the first trusted reading after a gap (for tests).
+    var catchUpReadingCount: Int { catchUpGap?.readings.count ?? 0 }
+
     /// - Parameters:
     ///   - rules: The triggers, in Settings → Triggers' order.
     ///   - activeGroups: The groups that aren't archived or deleted.
@@ -228,7 +280,11 @@ public final class TriggerCoordinator {
         guard observation.isAccepted else { return .rejected }
         if observation.isUncertain {
             // Fail closed: drop presence firings (queued, pending, awaiting notice) but keep
-            // observing and leave other triggers' firings alone. Baselines are already reset.
+            // observing and leave other triggers' firings alone. Baselines are already reset, and
+            // no reading before this one is trusted for catching up. Readings kept across a gap
+            // wait (bounded by `catchUpReadingWait`).
+            trustedReadings = [:]
+            trustedReadingsStamp = nil
             invalidateApplicationPresenceFirings()
             processIfNeeded()
             return .accepted(isUncertain: true)
@@ -274,6 +330,8 @@ public final class TriggerCoordinator {
                 break
             }
         }
+        catchUpAfterGap(generation: generation, revision: observedRevision, counts: counts, edgeRuleIDs: Set(ids))
+        recordTrustedReadings(generation: generation, revision: observedRevision, counts: counts)
         return .accepted(isUncertain: false)
     }
 
@@ -281,8 +339,143 @@ public final class TriggerCoordinator {
         stopApplicationTracker()
     }
 
+    /// The session-only "identified apps only" option changed: what was read before isn't
+    /// compared with what is read after it.
     public func cancelApplicationPresenceForPolicyChange() {
+        catchUpGap = nil
         stopApplicationTracker()
+    }
+
+    // MARK: - Run what was missed
+
+    /// Keeps the readings of the rules that catch up from `counts`, a trusted snapshot of the
+    /// current generation and revision: only authorized rules (D8) with the option on that can run
+    /// in an active group, and whose running code is verified or being checked. A reading becomes
+    /// trusted only once the code is verified: `beginCatchUpGap` keeps it only if the verdict is
+    /// `verified` then (the verifier forgets every verdict at each gap, so it was confirmed since).
+    private func recordTrustedReadings(generation: UInt64, revision: UInt64, counts: [String: Int]) {
+        trustedReadings = [:]
+        trustedReadingsStamp = nil
+        guard environment.canAct, applicationTracker.isActive(generation: generation), applicationTracker.isCurrent(revision: revision) else { return }
+        let active = activeGroups()
+        var readings: [GroupTrigger.ID: CatchUpReading] = [:]
+        for rule in rules() where rule.catchesUp && rule.canRun && active.contains(rule.groupID) {
+            guard rule.applicationIdentityStatus == .authorized else { continue }
+            switch applicationIdentityClearance(of: rule) {
+            case .allActions, .awaitingVerification: break
+            case .showPopupOnly, .none: continue
+            }
+            guard case .applicationPresence(let bundleID, _) = rule.event, let count = counts[bundleID.lowercased()], count >= 0 else { continue }
+            readings[rule.id] = CatchUpReading(rule: rule, isRunning: count > 0)
+        }
+        guard !readings.isEmpty else { return }
+        trustedReadings = readings
+        trustedReadingsStamp = (generation, revision)
+    }
+
+    /// The Mac stopped being able to act (D5: system sleep, display sleep, another user's
+    /// session): the last trusted readings, if still those of the running observation, are kept
+    /// for the first trusted reading after the gap. A gap still waiting for its reading goes on.
+    private func beginCatchUpGap(reason: TriggerMissReason) {
+        let now = clock()
+        var kept: [GroupTrigger.ID: CatchUpReading] = [:]
+        if let stamp = trustedReadingsStamp,
+           applicationTracker.isActive(generation: stamp.generation),
+           applicationTracker.isCurrent(revision: stamp.revision) {
+            let current = Dictionary(rules().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+            let active = activeGroups()
+            kept = trustedReadings.filter { id, reading in
+                guard let rule = current[id], rule == reading.rule, rule.canRun, active.contains(rule.groupID),
+                      let binding = rule.applicationIdentity?.binding
+                else { return false }
+                return applicationIdentityVerifier.displayedVerdict(for: binding) == .verified
+            }
+        }
+        trustedReadings = [:]
+        trustedReadingsStamp = nil
+        if !kept.isEmpty {
+            catchUpGap = CatchUpGap(start: now, reason: reason, readings: kept)
+        } else if var gap = catchUpGap, let end = gap.end {
+            // Woke and slept again before a trusted reading came: the same gap goes on, unless its
+            // readings already waited too long.
+            let waited = now.timeIntervalSince(end)
+            if waited >= 0, waited <= Self.catchUpReadingWait {
+                gap.end = nil
+                catchUpGap = gap
+            } else {
+                catchUpGap = nil
+            }
+        }
+    }
+
+    /// The Mac can act again: the kept readings wait for the first trusted reading.
+    private func endCatchUpGap() {
+        guard catchUpGap != nil else { return }
+        catchUpGap?.end = clock()
+    }
+
+    /// The first trusted reading after a gap: compared with the readings kept before it, at most
+    /// one firing per rule, its own edge only (D10), each through every gate (`receive`). The kept
+    /// readings are used up whatever happens.
+    private func catchUpAfterGap(generation: UInt64, revision: UInt64, counts: [String: Int], edgeRuleIDs: Set<UUID>) {
+        guard let gap = catchUpGap, let end = gap.end else { return }
+        catchUpGap = nil
+        let now = clock()
+        let waited = now.timeIntervalSince(end)
+        let length = end.timeIntervalSince(gap.start)
+        // A clock that went back can't tell how long anything took: nothing is compared.
+        guard waited >= 0, waited <= Self.catchUpReadingWait, length >= 0 else {
+            logger.notice("Readings kept across a gap expired: nothing caught up")
+            return
+        }
+        // An automatic action that started since the gap ended (or still runs) may have opened
+        // the app itself: the change isn't attributed to the gap.
+        let isVoid = environment.echoUntil == .distantFuture || (automaticActionStartedAt.map { $0 >= end } ?? false)
+        var accepted = 0
+        for rule in rules() {
+            guard let kept = gap.readings[rule.id] else { continue }
+            // The observation went stale meanwhile (a firing's state change re-entered): stop.
+            guard environment.canAct, applicationTracker.isActive(generation: generation), applicationTracker.isCurrent(revision: revision) else { return }
+            guard rule == kept.rule, rule.catchesUp, rule.canRun, activeGroups().contains(rule.groupID),
+                  rule.applicationIdentityStatus == .authorized, applicationIdentityClearance(of: rule) != .none
+            else { continue }
+            guard case .applicationPresence(let bundleID, let edge) = rule.event,
+                  let count = counts[bundleID.lowercased()], count >= 0
+            else { continue }
+            // An edge this observation already delivered is not run twice.
+            guard !edgeRuleIDs.contains(rule.id) else { continue }
+            let isRunning = count > 0
+            guard isRunning != kept.isRunning, (isRunning ? TriggerEdge.starts : .ends) == edge else { continue }
+            if isVoid {
+                record(.skipped(.rightAfterAutomaticAction), for: rule.id, at: now)
+                continue
+            }
+            guard length <= Self.catchUpLongestGap, accepted < Self.catchUpLimitPerWake else {
+                record(.missed(gap.reason), for: rule.id, at: end)
+                continue
+            }
+            let stamp = ApplicationPresenceStamp(generation: generation, revision: revision, rule: rule)
+            let isValid = { [weak self] () -> Bool in
+                guard let self else { return false }
+                guard self.environment.canAct,
+                      self.applicationTracker.isActive(generation: generation),
+                      self.applicationTracker.isCurrent(revision: revision),
+                      let current = self.rules().first(where: { $0.id == rule.id }), current == rule, current.canRun,
+                      self.activeGroups().contains(current.groupID)
+                else { return false }
+                return self.applicationIdentityClearance(of: current) != .none
+            }
+            logger.notice("Trigger \(rule.id, privacy: .public) catches up a change while the Mac couldn't act")
+            if receive(.applicationEdge(triggerID: rule.id, edge: edge), presence: (stamp, isValid), isCatchUp: true) {
+                accepted += 1
+            }
+        }
+    }
+
+    private func record(_ outcome: TriggerOutcome, for id: GroupTrigger.ID, at date: Date) {
+        var state = state
+        state.record(outcome, for: id, at: date)
+        update(state)
     }
 
     /// The Mac stopped or started being able to act (sleep, wake, a session change): the verifier
@@ -368,6 +561,10 @@ public final class TriggerCoordinator {
     /// `isApplicationPresenceFiringCurrent`).
     private func stopApplicationTracker() {
         applicationTracker.stop()
+        // What the stopped observation read is no longer the last trusted reading; readings kept
+        // across a gap stay (`beginCatchUpGap` took them before the stop).
+        trustedReadings = [:]
+        trustedReadingsStamp = nil
         invalidateApplicationPresenceFirings()
     }
 
@@ -512,6 +709,14 @@ public final class TriggerCoordinator {
         update(TriggerEvaluator.rebaseline(previous: previous, rules: nowRules, state: state, now: clock(), calendar: calendar()))
         let currentByID = Dictionary(nowRules.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let previousByID = Dictionary(previous.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        // A rule changed in any field, turned off or deleted reads from a fresh baseline after a gap.
+        if let gap = catchUpGap {
+            let readings = gap.readings.filter { id, reading in
+                guard let rule = currentByID[id] else { return false }
+                return rule == reading.rule && rule.canRun
+            }
+            catchUpGap = readings.isEmpty ? nil : CatchUpGap(start: gap.start, reason: gap.reason, readings: readings, end: gap.end)
+        }
         func invalidated(_ firing: TriggerFiring) -> Bool {
             guard let nowRule = currentByID[firing.triggerID] else { return true }
             if !nowRule.canRun { return true }
@@ -582,10 +787,15 @@ public final class TriggerCoordinator {
     ///   right before the firings are enqueued; when it returns `false`, only the
     ///   application-presence firings of this delivery are dropped. Without it, application-presence
     ///   firings are never enqueued.
-    private func receive(_ signal: TriggerSignal, presence: (stamp: ApplicationPresenceStamp, isValid: () -> Bool)?) {
+    ///   - isCatchUp: The edge is a net change across a gap (`catchUpAfterGap`): its firings never
+    ///     run right away.
+    /// - Returns: Whether an application-presence firing was enqueued.
+    @discardableResult
+    private func receive(_ signal: TriggerSignal, presence: (stamp: ApplicationPresenceStamp, isValid: () -> Bool)?, isCatchUp: Bool = false) -> Bool {
         let lockRevision = environment.screenLockRevision
         let wasAsleep = environment.screensAsleep
         let wasActive = environment.sessionActive
+        let couldAct = environment.canAct
         let evaluation = TriggerEvaluator.evaluate(
             signal,
             rules: rules(),
@@ -596,6 +806,16 @@ public final class TriggerCoordinator {
             calendar: calendar()
         )
         environment = evaluation.environment
+        // A bounded gap starts or ends (D5): before anything below stops the tracker.
+        if couldAct, !environment.canAct {
+            if case .session(active: false) = signal {
+                beginCatchUpGap(reason: .sessionInactive)
+            } else {
+                beginCatchUpGap(reason: .macAsleep)
+            }
+        } else if !couldAct, environment.canAct {
+            endCatchUpGap()
+        }
         if case .screens(asleep: true) = signal {
             screensRevision &+= 1
         } else if environment.screensAsleep != wasAsleep {
@@ -633,11 +853,13 @@ public final class TriggerCoordinator {
                 guard firing.isApplicationPresence else { return firing }
                 var stamped = firing
                 stamped.presenceStamp = presence.stamp
+                stamped.isCatchUp = isCatchUp
                 return stamped
             }
         } else {
             firings.removeAll { $0.isApplicationPresence }
         }
+        let enqueuedPresence = firings.contains { $0.isApplicationPresence }
         if !firings.isEmpty {
             for firing in firings {
                 logger.notice("Trigger \(firing.triggerID, privacy: .public) asks to \(firing.action.rawValue, privacy: .public) group \(firing.groupID, privacy: .public)")
@@ -651,6 +873,7 @@ public final class TriggerCoordinator {
         checkDelayedFirings()
         // The screens woke or the session came back: what waited can go on.
         processIfNeeded()
+        return enqueuedPresence
     }
 
     private func restartSettle() {
@@ -815,7 +1038,12 @@ public final class TriggerCoordinator {
 
         // Nobody can answer a notice while the screens sleep: a trigger on them going to sleep runs
         // right away (it can only finish — hide — the current group).
-        let runMode: TriggerRunMode = runsWithoutAnyone(firing) ? .immediately : trigger.runMode
+        var runMode: TriggerRunMode = runsWithoutAnyone(firing) ? .immediately : trigger.runMode
+        // A change that happened while the Mac couldn't act is never acted on silently (D6): Run
+        // Right Away shows the notice; Show the Popup is its own notice.
+        if firing.isCatchUp, runMode == .immediately, firing.action != .showPopup {
+            runMode = .notice
+        }
         switch runMode {
         case .immediately:
             break
@@ -839,7 +1067,7 @@ public final class TriggerCoordinator {
                 return
             }
             isPresentingNotice = true
-            let answer = await presenter.present(TriggerNotice(triggerID: trigger.id, groupID: group.id, groupName: group.name, action: firing.action, runMode: runMode))
+            let answer = await presenter.present(TriggerNotice(triggerID: trigger.id, groupID: group.id, groupName: group.name, action: firing.action, runMode: runMode, isCatchUp: firing.isCatchUp))
             isPresentingNotice = false
             // The screen locked or unlocked again while the notice showed: dropped, like a stale
             // firing that never reached its notice.
@@ -1082,6 +1310,7 @@ public final class TriggerCoordinator {
 
     private func run(_ firing: TriggerFiring, trigger: GroupTrigger, group: DockGroup, handler: AutomationHandling) async {
         environment.echoUntil = .distantFuture
+        automaticActionStartedAt = clock()
         var outcome: TriggerOutcome = .ran(firing.action)
         switch firing.action {
         case .start:
