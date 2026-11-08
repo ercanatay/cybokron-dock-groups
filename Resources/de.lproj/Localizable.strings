@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Wenn der Bildschirm entsperrt wird";
 "triggers.editor.hint.screenLocks" = "Solange der Bildschirm gesperrt ist, kann niemand auf eine Benachrichtigung antworten, daher beendet dieser Auslöser die Gruppe sofort.";
 "triggers.editor.screenLock.note" = "macOS dokumentiert nicht, wann der Bildschirm gesperrt wird. Eine Sperre oder Entsperrung kann daher übersehen werden, zum Beispiel direkt nach dem Ruhezustand des Macs oder wenn ein anderer Benutzer wechselt. Wenn dies nicht erkannt wird, wird nichts ausgeführt.";
+"core.trigger.skip.cancelledBeforeRun" = "vor dem Start abgebrochen";
+"triggers.editor.delay.hint" = "Sekunden Wartezeit, 0 bis 3600, bevor die Aktion ausgeführt wird (nach der Benachrichtigung, falls eine angezeigt wird). Ändert sich in der Zwischenzeit etwas – der Trigger, seine Gruppe, eine Pause, die Bildschirmsperre oder der Ruhezustand des Macs –, wird nichts ausgeführt.";

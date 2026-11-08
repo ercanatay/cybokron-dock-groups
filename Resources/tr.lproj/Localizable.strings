@@ -1171,3 +1171,5 @@
 "triggers.editor.event.screenUnlocks" = "Ekran Kilidi Açıldığında";
 "triggers.editor.hint.screenLocks" = "Ekran kilitliyken kimse bir bildirimi yanıtlayamayacağı için bu tetikleyici grubu hemen tamamlar.";
 "triggers.editor.screenLock.note" = "macOS, ekranın ne zaman kilitleneceğini belgelemediğinden; örneğin Mac uyku moduna geçtikten hemen sonra ya da başka bir kullanıcı oturum açtığında kilitlenme veya kilit açılma olayı kaçırılabilir. Algılanamadığında hiçbir şey çalıştırılmaz.";
+"core.trigger.skip.cancelledBeforeRun" = "çalıştırılmadan önce iptal edildi";
+"triggers.editor.delay.hint" = "Eylem çalışmadan önce beklenecek saniye sayısı, 0 ile 3600 arasında (varsa bildirimden sonra). Bu süre içinde — tetikleyici, grubu, duraklatma, ekran kilidi veya Mac'in uykuya geçmesi gibi — herhangi bir şey değişirse hiçbir şey çalıştırılmaz.";

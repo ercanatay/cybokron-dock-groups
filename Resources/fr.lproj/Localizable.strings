@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Quand l'écran se déverrouille";
 "triggers.editor.hint.screenLocks" = "Personne ne peut répondre à une notification pendant que l'écran est verrouillé, donc ce déclencheur termine le groupe immédiatement.";
 "triggers.editor.screenLock.note" = "macOS ne documente pas le moment où l'écran se verrouille, donc un verrouillage ou un déverrouillage peut être manqué, par exemple juste après la mise en veille du Mac ou lorsqu'un autre utilisateur prend la session. Rien ne s'exécute quand on ne peut pas le savoir.";
+"core.trigger.skip.cancelledBeforeRun" = "annulé avant son exécution";
+"triggers.editor.delay.hint" = "Secondes d'attente, de 0 à 3600, avant que l'action s'exécute (après l'avis, s'il est affiché). Si quoi que ce soit change entre-temps — le déclencheur, son groupe, une pause, le verrouillage de l'écran, la mise en veille du Mac — rien ne s'exécute.";

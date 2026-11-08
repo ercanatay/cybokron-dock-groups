@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Cuando se desbloquea la pantalla";
 "triggers.editor.hint.screenLocks" = "Nadie puede responder a un aviso mientras la pantalla está bloqueada, así que este disparador finaliza el grupo de inmediato.";
 "triggers.editor.screenLock.note" = "macOS no documenta cuándo se bloquea la pantalla, por lo que un bloqueo o un desbloqueo puede pasarse por alto, por ejemplo justo después de que el Mac entre en reposo o cuando otro usuario cambia de sesión. Si no es posible detectarlo, no se ejecuta nada.";
+"core.trigger.skip.cancelledBeforeRun" = "se canceló antes de ejecutarse";
+"triggers.editor.delay.hint" = "Segundos de espera, de 0 a 3600, antes de que se ejecute la acción (después del aviso, si se muestra uno). Si algo cambia mientras tanto — el disparador, su grupo, una pausa, el bloqueo de pantalla, el Mac en reposo — no se ejecuta nada.";

@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Gdy ekran się odblokuje";
 "triggers.editor.hint.screenLocks" = "Nikt nie może odpowiedzieć na powiadomienie, gdy ekran jest zablokowany, dlatego ten wyzwalacz od razu kończy grupę.";
 "triggers.editor.screenLock.note" = "macOS nie udokumentował, kiedy ekran się blokuje, więc blokada lub odblokowanie mogą zostać pominięte, na przykład zaraz po uśpieniu Maca lub gdy inny użytkownik przełącza konto. Gdy nie da się tego wykryć, nic się nie uruchamia.";
+"core.trigger.skip.cancelledBeforeRun" = "anulowano przed uruchomieniem";
+"triggers.editor.delay.hint" = "Liczba sekund oczekiwania, od 0 do 3600, przed wykonaniem akcji (po powiadomieniu, jeśli się pojawia). Jeśli w międzyczasie cokolwiek się zmieni — wyzwalacz, jego grupa, wstrzymanie, blokada ekranu, uśpienie Maca — nic nie zostanie uruchomione.";

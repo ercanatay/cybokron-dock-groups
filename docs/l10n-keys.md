@@ -1561,14 +1561,14 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `core.rename.nameTaken` | Another group is already named “%@”. Choose a different name. |
 | `settings.shortcuts.identityLinks.footer` | Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit. |
 
-## Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field (English only for now)
+## Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field
 
 A trigger can wait 0 to 3600 seconds after it's accepted (after its notice, if it shows one) before
 its action runs. `core.trigger.skip.cancelledBeforeRun` completes “Skipped today at 9:00: …”, so it
 starts in lowercase: the trigger was waiting for its delay when something it depends on changed, so
 nothing ran. The editor's field reuses `item.launch.delay` (Delay) as its label, and the trigger row
 shows the delay, and the time left while it waits, with `item.launch.row.delay` (After %ld s).
-These keys are listed in `LocalizationTests.awaitingTranslation` until they are translated.
+These keys are translated in every language.
 
 | Key | English |
 | --- | --- |

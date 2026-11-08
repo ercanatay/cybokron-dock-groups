@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Quando a Tela Desbloquear";
 "triggers.editor.hint.screenLocks" = "Ninguém consegue responder a um aviso enquanto a tela está bloqueada, então este gatilho finaliza o grupo imediatamente.";
 "triggers.editor.screenLock.note" = "O macOS não documenta quando a tela é bloqueada, então um bloqueio ou desbloqueio pode não ser detectado, por exemplo logo após o Mac entrar em suspensão ou quando outro usuário troca de sessão. Nada é executado quando não é possível detectar.";
+"core.trigger.skip.cancelledBeforeRun" = "foi cancelado antes de ser executado";
+"triggers.editor.delay.hint" = "Segundos a aguardar, de 0 a 3600, antes de a ação ser executada (depois do aviso, se houver um). Se qualquer coisa mudar nesse intervalo — o gatilho, o grupo dele, uma pausa, o bloqueio de tela ou o Mac entrar em suspensão — nada será executado.";

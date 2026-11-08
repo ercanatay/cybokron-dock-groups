@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "画面のロックが解除されたとき";
 "triggers.editor.hint.screenLocks" = "画面がロックされている間は通知に応答できないため、このトリガーはグループをただちに完了させます。";
 "triggers.editor.screenLock.note" = "macOSは画面がロックされるタイミングを公式に文書化していないため、Macがスリープした直後や別のユーザーに切り替わった直後などでは、ロックやロック解除を見逃すことがあります。検出できない場合は何も実行されません。";
+"core.trigger.skip.cancelledBeforeRun" = "実行前にキャンセルされました";
+"triggers.editor.delay.hint" = "アクションが実行されるまでの待機秒数（0〜3600）。通知が表示される場合は、その後に待機します。待機中に何かが変化した場合 — トリガー、そのグループ、一時停止、画面ロック、Macのスリープ — 何も実行されません。";

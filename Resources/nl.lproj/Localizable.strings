@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Wanneer het scherm ontgrendelt";
 "triggers.editor.hint.screenLocks" = "Niemand kan op een melding reageren terwijl het scherm vergrendeld is, dus deze trigger rondt de groep meteen af.";
 "triggers.editor.screenLock.note" = "macOS documenteert niet wanneer het scherm vergrendelt, dus een vergrendeling of ontgrendeling kan gemist worden, bijvoorbeeld direct nadat de Mac in slaap is gegaan of wanneer een andere gebruiker wisselt. Er wordt niets uitgevoerd wanneer dat niet vastgesteld kan worden.";
+"core.trigger.skip.cancelledBeforeRun" = "het werd geannuleerd voordat het liep";
+"triggers.editor.delay.hint" = "Seconden wachten, 0 tot 3600, voordat de actie wordt uitgevoerd (na de melding, als er een wordt getoond). Als er ondertussen iets verandert — de trigger, de groep, een pauze, het vergrendelen van het scherm, of de Mac die in slaapstand gaat — wordt er niets uitgevoerd.";
