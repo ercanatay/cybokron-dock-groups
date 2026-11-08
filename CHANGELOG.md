@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A trigger can wait 0 to 3600 seconds before its action runs, after its notice if it shows one. While it waits the trigger's row counts down, and the wait is cancelled — nothing runs, the row says why — if the trigger, its group, the screen lock, the Mac's sleep or session changes, triggers are paused, or the trigger fires again. Older versions don't know the delay: editing a delayed trigger there removes it.
+
 ## [0.14.0] - 2026-11-08
 
 ### Added
