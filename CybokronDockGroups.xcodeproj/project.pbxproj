@@ -332,6 +332,7 @@
 		C2CC27EF1757636ACBEF3DCA /* DockGroupsCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12CB7124AFAE38B6477EB822 /* DockGroupsCLI.swift */; };
 		C45AE83829FFDBC3927286F8 /* GroupShortcutSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61F4453A596239F7F4EA9E0 /* GroupShortcutSection.swift */; };
 		C53269759D7E3AF86B0580D3 /* UpdateSignatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6B742E35580E9C38323FE5 /* UpdateSignatureTests.swift */; };
+		C64F97A00E9158A4CCA878F4 /* TriggerCatchUpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDA09F8E46595A7A51BFE1C /* TriggerCatchUpTests.swift */; };
 		C6C5DA2A48359D6546CF5767 /* AppPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B21FD5905B6A1DB8F202AB9 /* AppPicker.swift */; };
 		C7876DAF31A923A4A3538E92 /* AgentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCA1F338506369A3F1A9BB6 /* AgentConfiguration.swift */; };
 		C7A5BB2261C2FD28B7173559 /* TriggerApplicationEventCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077EA31DCC10925F4ED64E74 /* TriggerApplicationEventCodingTests.swift */; };
@@ -831,6 +832,7 @@
 		CC7F3720CA9C005633ECBA02 /* GroupItemCodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupItemCodingTests.swift; sourceTree = "<group>"; };
 		CD1E661D809118A871B08346 /* ArchiveFakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveFakes.swift; sourceTree = "<group>"; };
 		CD49F22661AB6C053CDD32E2 /* PopupCellTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCellTextTests.swift; sourceTree = "<group>"; };
+		CDDA09F8E46595A7A51BFE1C /* TriggerCatchUpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerCatchUpTests.swift; sourceTree = "<group>"; };
 		CEBD76B37DC84AB1971C113A /* DockTileList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockTileList.swift; sourceTree = "<group>"; };
 		CEC0B230ACDF8E49341D8FF3 /* FreeLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeLayout.swift; sourceTree = "<group>"; };
 		CECC195460426C83A873DFB2 /* AppArrangementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppArrangementTests.swift; sourceTree = "<group>"; };
@@ -1499,6 +1501,7 @@
 				DC068B729A8ADC30DF52573E /* TriggerApplicationIdentityPresentationTests.swift */,
 				A41D8E7D9D13B64822C6E09E /* TriggerAppSourceTests.swift */,
 				1C19DA1A7525C9D921E1E98B /* TriggerBackupTests.swift */,
+				CDDA09F8E46595A7A51BFE1C /* TriggerCatchUpTests.swift */,
 				D6BBB14C3899B11F1B489FC4 /* TriggerCompatibilityTests.swift */,
 				D06B66DC5EAEB23747F58B5E /* TriggerCoordinatorTests.swift */,
 				D634072C3BE543C6AF68C76F /* TriggerDelayTests.swift */,
@@ -2271,6 +2274,7 @@
 				6E0D0DC71E52541B30E22B77 /* TriggerApplicationIdentifierTests.swift in Sources */,
 				30905D0A894994B9BBC438E2 /* TriggerApplicationIdentityPresentationTests.swift in Sources */,
 				036CF196760E5DB17BB7485F /* TriggerBackupTests.swift in Sources */,
+				C64F97A00E9158A4CCA878F4 /* TriggerCatchUpTests.swift in Sources */,
 				2A0D9FE4CECD8B2C121F00C6 /* TriggerCompatibilityTests.swift in Sources */,
 				8DC5666A85A791A18D8FA1A9 /* TriggerCoordinatorTests.swift in Sources */,
 				6257C81917E4EB4C17E44798 /* TriggerDelayTests.swift in Sources */,
