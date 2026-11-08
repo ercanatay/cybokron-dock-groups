@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS dokumenterar inte när skärmen låses, så en låsning eller upplåsning kan missas, till exempel direkt efter att Mac:en gått i viloläge eller när en annan användare byter in. Inget körs när det inte kan avgöras.";
 "core.trigger.skip.cancelledBeforeRun" = "den avbröts innan den kördes";
 "triggers.editor.delay.hint" = "Sekunder att vänta, 0 till 3600, innan åtgärden körs (efter meddelandet, om ett visas). Om något ändras under tiden — utlösaren, dess grupp, en paus, skärmlåsningen, att Mac:en somnar — körs ingenting.";
+"settings.shortcuts.identityLinks.versionNote" = "Länkar som kopieras hit kräver version 0.13.0 eller senare på datorn som öppnar dem; en äldre version förstår bara länkar som skrivits med gruppens namn.";
+"triggers.editor.afterWake" = "Kör den när Mac-datorn vaknar";
+"triggers.editor.afterWake.note" = "Endast för en godkänd app som öppnades eller avslutades medan Mac-datorn eller dess skärmar var vilande eller en annan användare använde den, upp till 30 minuter. Den körs högst en gång per väckning, alltid med ett meddelande. Om appen avslutas och öppnas igen under tiden körs ingenting.";
+"core.trigger.afterWake.opened" = "%@ öppnades medan Mac-datorn sov";
+"core.trigger.afterWake.closed" = "%@ avslutades medan Mac-datorn sov";
+"core.trigger.lastRun.afterWake" = "%@ (efter att Mac-datorn vaknade)";
+"core.trigger.missed.afterWake" = "den ändrades för länge sedan, eller för många utlösare kördes om samtidigt";

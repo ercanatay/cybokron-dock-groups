@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS nu documentează momentul în care ecranul se blochează, așa că un blocaj sau un deblocaj poate fi ratat, de exemplu imediat după ce Mac-ul intră în repaus sau când un alt utilizator comută sesiunea. Nimic nu se execută când acest lucru nu poate fi detectat.";
 "core.trigger.skip.cancelledBeforeRun" = "a fost anulat înainte de rulare";
 "triggers.editor.delay.hint" = "Secunde de așteptat, între 0 și 3600, înainte ca acțiunea să ruleze (după notificare, dacă apare una). Dacă se schimbă ceva între timp — declanatorul, grupul lui, o pauză, blocarea ecranului, Mac-ul în repaus — nu se rulează nimic.";
+"settings.shortcuts.identityLinks.versionNote" = "Linkurile copiate aici au nevoie de versiunea 0.13.0 sau mai nouă pe Mac-ul care le deschide; o versiune mai veche înțelege doar linkurile scrise cu numele grupului.";
+"triggers.editor.afterWake" = "Rulează-l după ce Mac-ul se trezește";
+"triggers.editor.afterWake.note" = "Doar pentru o aplicație aprobată care a fost deschisă sau închisă cât timp Mac-ul sau ecranele sale erau în repaus sau alt utilizator le folosea, până la 30 de minute. Rulează cel mult o dată la fiecare trezire, întotdeauna cu o notificare. Dacă aplicația se închide și se deschide din nou între timp, nu rulează nimic.";
+"core.trigger.afterWake.opened" = "%@ s-a deschis cât timp Mac-ul era în repaus";
+"core.trigger.afterWake.closed" = "%@ s-a închis cât timp Mac-ul era în repaus";
+"core.trigger.lastRun.afterWake" = "%@ (după ce Mac-ul s-a trezit)";
+"core.trigger.missed.afterWake" = "s-a schimbat cu prea mult timp în urmă, sau prea mulți declanșatori au fost recuperați deodată";

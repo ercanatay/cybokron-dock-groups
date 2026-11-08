@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS nedokumentuje, kdy se obrazovka zamkne, takže zamknutí nebo odemknutí může být přehlédnuto, například hned po uspání Macu nebo při přepnutí na jiného uživatele. Pokud nelze změnu zjistit, nic se nespustí.";
 "core.trigger.skip.cancelledBeforeRun" = "zrušeno před spuštěním";
 "triggers.editor.delay.hint" = "Počet sekund čekání, 0 až 3600, před spuštěním akce (po upozornění, pokud se zobrazí). Pokud se mezitím cokoli změní — spouštěč, jeho skupina, pozastavení, zamčení obrazovky, uspání Macu — nic se nespustí.";
+"settings.shortcuts.identityLinks.versionNote" = "Odkazy zkopírované sem vyžadují verzi 0.13.0 nebo novější na Macu, který je otevírá; starší verze rozumí pouze odkazům zapsaným názvem skupiny.";
+"triggers.editor.afterWake" = "Spustit po probuzení Macu";
+"triggers.editor.afterWake.note" = "Pouze pro schválenou aplikaci, která se otevřela nebo ukončila, zatímco Mac nebo jeho obrazovky spaly nebo jiný uživatel Mac používal, až 30 minut. Spustí se nejvýše jednou po každém probuzení, vždy s upozorněním. Pokud se aplikace mezitím ukončí a znovu otevře, nespustí se nic.";
+"core.trigger.afterWake.opened" = "%@ byl otevřen, zatímco Mac spal";
+"core.trigger.afterWake.closed" = "%@ byl ukončen, zatímco Mac spal";
+"core.trigger.lastRun.afterWake" = "%@ (po probuzení Macu)";
+"core.trigger.missed.afterWake" = "změnilo se příliš dávno, nebo se najednou dohnalo příliš mnoho spouštěčů";

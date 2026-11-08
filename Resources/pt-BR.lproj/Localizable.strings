@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "O macOS não documenta quando a tela é bloqueada, então um bloqueio ou desbloqueio pode não ser detectado, por exemplo logo após o Mac entrar em suspensão ou quando outro usuário troca de sessão. Nada é executado quando não é possível detectar.";
 "core.trigger.skip.cancelledBeforeRun" = "foi cancelado antes de ser executado";
 "triggers.editor.delay.hint" = "Segundos a aguardar, de 0 a 3600, antes de a ação ser executada (depois do aviso, se houver um). Se qualquer coisa mudar nesse intervalo — o gatilho, o grupo dele, uma pausa, o bloqueio de tela ou o Mac entrar em suspensão — nada será executado.";
+"settings.shortcuts.identityLinks.versionNote" = "Links copiados aqui precisam da versão 0.13.0 ou posterior no Mac que os abrir; uma versão anterior só entende links escritos com o nome do grupo.";
+"triggers.editor.afterWake" = "Executar depois que o Mac acordar";
+"triggers.editor.afterWake.note" = "Somente para um app aprovado que abriu ou fechou enquanto o Mac ou suas telas estavam em repouso, ou enquanto outro usuário estava usando o Mac, em até 30 minutos. Ele é executado no máximo uma vez por despertar, sempre com um aviso. Se o app fechar e abrir novamente nesse meio tempo, nada é executado.";
+"core.trigger.afterWake.opened" = "%@ foi aberto enquanto o Mac estava em repouso";
+"core.trigger.afterWake.closed" = "%@ foi fechado enquanto o Mac estava em repouso";
+"core.trigger.lastRun.afterWake" = "%@ (depois que o Mac acordou)";
+"core.trigger.missed.afterWake" = "mudou há tempo demais, ou muitos disparos foram recuperados de uma vez";

@@ -759,6 +759,12 @@ enum L10n {
                     "Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit."
                 )
             }
+            static var linksVersionNote: String {
+                tr(
+                    "settings.shortcuts.identityLinks.versionNote",
+                    "Links copied here need version 0.13.0 or later on the Mac that opens them; an older version only understands links written with the group's name."
+                )
+            }
             static func copyHelp(_ text: String) -> String { tr("settings.shortcuts.copy.help", "Copy “%@” to the clipboard.", text) }
         }
 

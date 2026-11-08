@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "A macOS nem dokumentálja, mikor zárolódik a képernyő, ezért egy zárolás vagy feloldás kimaradhat, például közvetlenül azután, hogy a Mac elaludt, vagy amikor egy másik felhasználó vált be. Ha ez nem derül ki, semmi nem fut le.";
 "core.trigger.skip.cancelledBeforeRun" = "a futtatás előtt megszakítva";
 "triggers.editor.delay.hint" = "Várakozási idő másodpercben, 0 és 3600 között, mielőtt a művelet lefut (az értesítés után, ha az megjelenik). Ha közben bármi változik — a trigger, a csoportja, a szüneteltetés, a képernyőzár vagy a Mac alvó állapota — semmi sem fut le.";
+"settings.shortcuts.identityLinks.versionNote" = "Az ide másolt hivatkozásokhoz legalább 0.13.0-s verzió szükséges azon a Macen, amelyen megnyitják; a régebbi verzió csak a csoport nevével írt hivatkozásokat érti.";
+"triggers.editor.afterWake" = "Futtatás a Mac ébredése után";
+"triggers.editor.afterWake.note" = "Csak olyan jóváhagyott alkalmazásnál, amely addig nyílt meg vagy zárult be, amíg a Mac vagy a kijelzői aludtak, vagy más felhasználó használta, legfeljebb 30 percen belül. Ébredésenként legfeljebb egyszer fut le, mindig értesítéssel. Ha az alkalmazás közben bezáródik és újra megnyílik, nem fut le semmi.";
+"core.trigger.afterWake.opened" = "%@ a Mac alvása közben nyílt meg";
+"core.trigger.afterWake.closed" = "%@ a Mac alvása közben zárult be";
+"core.trigger.lastRun.afterWake" = "%@ (a Mac felébredése után)";
+"core.trigger.missed.afterWake" = "túl régen változott, vagy túl sok trigger került egyszerre utólagos futásra";

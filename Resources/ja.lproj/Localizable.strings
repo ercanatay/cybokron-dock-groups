@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOSは画面がロックされるタイミングを公式に文書化していないため、Macがスリープした直後や別のユーザーに切り替わった直後などでは、ロックやロック解除を見逃すことがあります。検出できない場合は何も実行されません。";
 "core.trigger.skip.cancelledBeforeRun" = "実行前にキャンセルされました";
 "triggers.editor.delay.hint" = "アクションが実行されるまでの待機秒数（0〜3600）。通知が表示される場合は、その後に待機します。待機中に何かが変化した場合 — トリガー、そのグループ、一時停止、画面ロック、Macのスリープ — 何も実行されません。";
+"settings.shortcuts.identityLinks.versionNote" = "ここにコピーされたリンクは、開く Mac で 0.13.0 以降が必要です。古いバージョンは、グループ名で書かれたリンクしか理解できません。";
+"triggers.editor.afterWake" = "Mac がスリープから復帰した後に実行";
+"triggers.editor.afterWake.note" = "承認済みアプリのうち、Mac または画面がスリープ中に、または別のユーザーが使用中に開いた、または終了したものだけが対象です（最大 30 分）。復帰ごとに最大 1 回、必ず通知付きで実行されます。その間にアプリが終了して再び開かれた場合は、何も実行されません。";
+"core.trigger.afterWake.opened" = "%@ が Mac のスリープ中に開きました";
+"core.trigger.afterWake.closed" = "%@ が Mac のスリープ中に終了しました";
+"core.trigger.lastRun.afterWake" = "%@（Mac の復帰後）";
+"core.trigger.missed.afterWake" = "変更からの時間が長すぎるか、一度に多くのトリガーが追いついたため";

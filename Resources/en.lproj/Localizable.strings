@@ -1218,6 +1218,7 @@
 "core.link.groupAmbiguous" = "More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri.";
 "core.rename.nameTaken" = "Another group is already named “%@”. Choose a different name.";
 "settings.shortcuts.identityLinks.footer" = "Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit.";
+"settings.shortcuts.identityLinks.versionNote" = "Links copied here need version 0.13.0 or later on the Mac that opens them; an older version only understands links written with the group's name.";
 
 /* Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field (English only for now) */
 "core.trigger.skip.cancelledBeforeRun" = "it was cancelled before it ran";

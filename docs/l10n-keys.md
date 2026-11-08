@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1102 keys.
+1103 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1552,7 +1552,7 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `triggers.identity.approve.failure.checkFailed` | The app's code couldn't be checked. Nothing was approved. |
 | `triggers.identity.approve.failure.notSaved` | The approval couldn't be saved. Nothing was approved. |
 
-## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri
+## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer and version note in Settings → Shortcuts & Siri
 
 | Key | English |
 | --- | --- |
@@ -1560,6 +1560,7 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `core.link.groupAmbiguous` | More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri. |
 | `core.rename.nameTaken` | Another group is already named “%@”. Choose a different name. |
 | `settings.shortcuts.identityLinks.footer` | Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit. |
+| `settings.shortcuts.identityLinks.versionNote` | Links copied here need version 0.13.0 or later on the Mac that opens them; an older version only understands links written with the group's name. |
 
 ## Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field
 
@@ -1575,7 +1576,7 @@ These keys are translated in every language.
 | `core.trigger.skip.cancelledBeforeRun` | it was cancelled before it ran |
 | `triggers.editor.delay.hint` | Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs. |
 
-## Run what was missed: the editor's option, the notice and the last-run line after the Mac woke (English only for now)
+## Run what was missed: the editor's option, the notice and the last-run line after the Mac woke
 
 An application trigger can run once for an app that opened or quit while the Mac or its screens
 slept or another user was using it (`docs/design/app-presence-catch-up.md`). The editor shows the
