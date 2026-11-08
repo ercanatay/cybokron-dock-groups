@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-11-08
+
 ### Added
 
-- A trigger can wait 0 to 3600 seconds before its action runs, after its notice if it shows one. While it waits the trigger's row counts down, and the wait is cancelled — nothing runs, the row says why — if the trigger, its group, the screen lock, the Mac's sleep or session changes, triggers are paused, or the trigger fires again. Older versions don't know the delay: editing a delayed trigger there removes it.
+- Triggers can wait before they run: 0 to 3600 seconds, applied after a notice is answered. While it waits the trigger's row counts down, and the wait is cancelled — nothing runs, and the status line says it was cancelled before it ran (or why, when it can say more) — if the trigger, its group, the screen lock, the Mac's sleep or session changes, triggers are paused, or the trigger fires again.
+
+### Changed
+
+- An older version of the app doesn't know the delay and drops it when it saves `triggers.json`, so a delayed trigger edited there runs immediately. The file format stays version 1 on purpose, so older builds don't reject the whole file.
 
 ## [0.14.0] - 2026-11-08
 
@@ -582,7 +588,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...v0.14.0
 [0.13.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...v0.13.3
 [0.13.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.1...v0.13.2
