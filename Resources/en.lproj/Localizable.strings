@@ -1223,3 +1223,11 @@
 /* Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field (English only for now) */
 "core.trigger.skip.cancelledBeforeRun" = "it was cancelled before it ran";
 "triggers.editor.delay.hint" = "Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs.";
+
+/* Run what was missed: the editor's option for application triggers, the notice and the last-run line after the Mac woke (English only for now) */
+"triggers.editor.afterWake" = "Run it after the Mac wakes";
+"triggers.editor.afterWake.note" = "Only for an approved app that opened or quit while the Mac or its screens slept or another user was using it, up to 30 minutes. It runs at most once per wake, always with a notice. If the app quits and opens again meanwhile, nothing runs.";
+"core.trigger.afterWake.opened" = "%@ opened while the Mac was asleep";
+"core.trigger.afterWake.closed" = "%@ quit while the Mac was asleep";
+"core.trigger.lastRun.afterWake" = "%@ (after the Mac woke)";
+"core.trigger.missed.afterWake" = "it changed too long ago, or too many triggers caught up at once";

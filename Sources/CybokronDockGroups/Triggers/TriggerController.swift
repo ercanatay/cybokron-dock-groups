@@ -115,7 +115,7 @@ final class TriggerController: ObservableObject {
         guard clock == nil else { return }
         notice.describe = { [weak self] notice in
             guard let trigger = self?.store.trigger(withID: notice.triggerID) else { return "" }
-            return TriggerDescriptions.event(trigger.event, appName: AppInfo.name, calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
+            return TriggerDescriptions.noticeDetail(trigger, isCatchUp: notice.isCatchUp, appName: AppInfo.name, calendar: .autoupdatingCurrent, locale: .autoupdatingCurrent)
         }
         coordinator.onStateChange = { [weak self] state in
             guard let self else { return }
