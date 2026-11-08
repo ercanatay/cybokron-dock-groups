@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Khi Màn Hình Mở Khóa";
 "triggers.editor.hint.screenLocks" = "Khi màn hình đang khóa, không ai có thể phản hồi thông báo, nên trigger này kết thúc nhóm ngay lập tức.";
 "triggers.editor.screenLock.note" = "macOS không ghi tài liệu về thời điểm màn hình khóa, nên việc khóa hoặc mở khóa có thể bị bỏ sót, chẳng hạn ngay sau khi Mac ngủ hoặc khi người dùng khác chuyển vào. Nếu không thể xác định, sẽ không có gì được thực thi.";
+"core.trigger.skip.cancelledBeforeRun" = "đã bị hủy trước khi chạy";
+"triggers.editor.delay.hint" = "Số giây chờ, từ 0 đến 3600, trước khi hành động được thực hiện (sau thông báo, nếu có hiển thị) — nếu có thay đổi trong lúc chờ, như trigger, nhóm của nó, tạm dừng, khóa màn hình hoặc Mac đang ngủ — thì sẽ không có gì được chạy.";

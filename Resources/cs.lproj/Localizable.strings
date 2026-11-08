@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Při odemknutí obrazovky";
 "triggers.editor.hint.screenLocks" = "Když je obrazovka zamčená, na oznámení nikdo nemůže reagovat, proto tento spouštěč skupinu okamžitě ukončí.";
 "triggers.editor.screenLock.note" = "macOS nedokumentuje, kdy se obrazovka zamkne, takže zamknutí nebo odemknutí může být přehlédnuto, například hned po uspání Macu nebo při přepnutí na jiného uživatele. Pokud nelze změnu zjistit, nic se nespustí.";
+"core.trigger.skip.cancelledBeforeRun" = "zrušeno před spuštěním";
+"triggers.editor.delay.hint" = "Počet sekund čekání, 0 až 3600, před spuštěním akce (po upozornění, pokud se zobrazí). Pokud se mezitím cokoli změní — spouštěč, jeho skupina, pozastavení, zamčení obrazovky, uspání Macu — nic se nespustí.";

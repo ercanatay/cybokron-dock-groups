@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Când ecranul se deblochează";
 "triggers.editor.hint.screenLocks" = "Nimeni nu poate răspunde unei notificări cât timp ecranul este blocat, deci acest declanșator încheie grupul imediat.";
 "triggers.editor.screenLock.note" = "macOS nu documentează momentul în care ecranul se blochează, așa că un blocaj sau un deblocaj poate fi ratat, de exemplu imediat după ce Mac-ul intră în repaus sau când un alt utilizator comută sesiunea. Nimic nu se execută când acest lucru nu poate fi detectat.";
+"core.trigger.skip.cancelledBeforeRun" = "a fost anulat înainte de rulare";
+"triggers.editor.delay.hint" = "Secunde de așteptat, între 0 și 3600, înainte ca acțiunea să ruleze (după notificare, dacă apare una). Dacă se schimbă ceva între timp — declanatorul, grupul lui, o pauză, blocarea ecranului, Mac-ul în repaus — nu se rulează nimic.";

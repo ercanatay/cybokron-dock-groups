@@ -1171,3 +1171,5 @@
 "triggers.editor.event.screenUnlocks" = "화면 잠금이 해제될 때";
 "triggers.editor.hint.screenLocks" = "화면이 잠겨 있으면 아무도 알림에 응답할 수 없으므로, 이 트리거는 그룹을 즉시 완료합니다.";
 "triggers.editor.screenLock.note" = "macOS는 화면이 언제 잠기는지 문서로 밝히지 않으므로, 예를 들어 Mac이 잠자기에서 깬 직후나 다른 사용자로 전환될 때처럼 잠금이나 잠금 해제를 놓칠 수 있습니다. 구분할 수 없으면 아무것도 실행되지 않습니다.";
+"core.trigger.skip.cancelledBeforeRun" = "실행되기 전에 취소됨";
+"triggers.editor.delay.hint" = "작업이 실행되기 전까지 기다릴 시간(초), 0~3600 (알림이 표시되는 경우 알림 이후) — 그 사이에 트리거, 그 그룹, 일시 정지, 화면 잠금, Mac 절전 중 무엇이든 바뀌면 — 아무것도 실행되지 않습니다.";

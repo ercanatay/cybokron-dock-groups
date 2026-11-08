@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "屏幕解锁时";
 "triggers.editor.hint.screenLocks" = "屏幕锁定时无人能响应通知，因此此触发器会立即结束该分组。";
 "triggers.editor.screenLock.note" = "macOS 没有公开说明屏幕何时锁定，因此锁定或解锁可能会被遗漏，例如 Mac 刚进入睡眠后，或其他用户切换进来时。无法判断时，不会执行任何操作。";
+"core.trigger.skip.cancelledBeforeRun" = "在运行前已取消";
+"triggers.editor.delay.hint" = "等待的秒数，0 到 3600，在动作执行之前等待（若显示了通知，则在通知之后）。若期间有任何变化 — 触发器、其所在分组、暂停、屏幕锁定、Mac 睡眠 — 则什么都不会执行。";

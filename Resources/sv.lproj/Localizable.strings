@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "När skärmen låses upp";
 "triggers.editor.hint.screenLocks" = "Ingen kan svara på ett meddelande när skärmen är låst, så den här utlösaren avslutar gruppen direkt.";
 "triggers.editor.screenLock.note" = "macOS dokumenterar inte när skärmen låses, så en låsning eller upplåsning kan missas, till exempel direkt efter att Mac:en gått i viloläge eller när en annan användare byter in. Inget körs när det inte kan avgöras.";
+"core.trigger.skip.cancelledBeforeRun" = "den avbröts innan den kördes";
+"triggers.editor.delay.hint" = "Sekunder att vänta, 0 till 3600, innan åtgärden körs (efter meddelandet, om ett visas). Om något ändras under tiden — utlösaren, dess grupp, en paus, skärmlåsningen, att Mac:en somnar — körs ingenting.";

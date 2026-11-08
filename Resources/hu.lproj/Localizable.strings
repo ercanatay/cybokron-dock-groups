@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Amikor a képernyő feloldódik";
 "triggers.editor.hint.screenLocks" = "Zárolt képernyő mellett senki sem tud értesítésre válaszolni, ezért ez az indító azonnal befejezi a csoportot.";
 "triggers.editor.screenLock.note" = "A macOS nem dokumentálja, mikor zárolódik a képernyő, ezért egy zárolás vagy feloldás kimaradhat, például közvetlenül azután, hogy a Mac elaludt, vagy amikor egy másik felhasználó vált be. Ha ez nem derül ki, semmi nem fut le.";
+"core.trigger.skip.cancelledBeforeRun" = "a futtatás előtt megszakítva";
+"triggers.editor.delay.hint" = "Várakozási idő másodpercben, 0 és 3600 között, mielőtt a művelet lefut (az értesítés után, ha az megjelenik). Ha közben bármi változik — a trigger, a csoportja, a szüneteltetés, a képernyőzár vagy a Mac alvó állapota — semmi sem fut le.";

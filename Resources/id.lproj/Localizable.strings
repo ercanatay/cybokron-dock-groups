@@ -1173,3 +1173,5 @@
 "triggers.editor.event.screenUnlocks" = "Saat Layar Dibuka Kuncinya";
 "triggers.editor.hint.screenLocks" = "Tidak ada yang bisa merespons notifikasi saat layar terkunci, jadi pemicu ini langsung menyelesaikan grup.";
 "triggers.editor.screenLock.note" = "macOS tidak mendokumentasikan kapan layar terkunci, sehingga kunci atau buka kunci bisa terlewat, misalnya tepat setelah Mac tidur atau saat pengguna lain beralih masuk. Tidak ada yang dijalankan saat hal itu tidak dapat dideteksi.";
+"core.trigger.skip.cancelledBeforeRun" = "dibatalkan sebelum sempat berjalan";
+"triggers.editor.delay.hint" = "Jumlah detik untuk menunggu, 0 hingga 3600, sebelum tindakan dijalankan (setelah pemberitahuan, jika ditampilkan). Jika ada yang berubah selama itu — pemicu, grupnya, jeda, kunci layar, Mac tidur — tidak ada yang dijalankan.";
