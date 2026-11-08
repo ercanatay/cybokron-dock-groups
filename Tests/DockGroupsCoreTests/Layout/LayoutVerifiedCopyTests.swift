@@ -67,7 +67,7 @@ struct LayoutVerifiedCopyTests {
         let source = dir.appendingPathComponent("source.json")
         let target = dir.appendingPathComponent("copy.json")
         try validBytes.write(to: source)
-        try LayoutFileCoordination.withExclusiveLock(in: dir) {
+        _ = try LayoutFileCoordination.withExclusiveLock(in: dir) {
             #expect(throws: LayoutVerifiedCopyError.lock(.lockBusy)) {
                 try LayoutVerifiedCopy.copy(from: source, to: target)
             }

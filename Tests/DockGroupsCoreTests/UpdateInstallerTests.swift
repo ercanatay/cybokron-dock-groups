@@ -248,12 +248,12 @@ struct RealDiskImageCreationTests {
     @Test func aTransientFailureIsRetriedAtMostTwice() async throws {
         let sleeps = RecordedSleeps()
         let recovers = ScriptedTools([Self.busy, ToolResult(status: 0, output: "created")])
-        let recovered = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: recovers, sleep: sleeps.sleep)
+        let recovered = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: recovers, sleep: { await sleeps.sleep($0) })
         #expect(recovered.succeeded)
         #expect(recovers.calls.count == 2)
 
         let stuck = ScriptedTools([Self.busy])
-        let failed = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: stuck, sleep: sleeps.sleep)
+        let failed = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: stuck, sleep: { await sleeps.sleep($0) })
         #expect(!failed.succeeded)
         #expect(stuck.calls.count == 3)
         #expect(sleeps.delays == [.seconds(1), .seconds(1), .seconds(3)])
@@ -265,7 +265,7 @@ struct RealDiskImageCreationTests {
         let sleeps = RecordedSleeps()
         let tools = ScriptedTools([ToolResult(status: 1, output: "hdiutil: create failed - No such file or directory"), ToolResult(status: 0, output: "")])
 
-        let creation = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: tools, sleep: sleeps.sleep)
+        let creation = try await RealDiskImages.create(volumeName: "Test", from: folder, at: image, runner: tools, sleep: { await sleeps.sleep($0) })
 
         #expect(!creation.succeeded)
         #expect(tools.calls.count == 1)
@@ -354,7 +354,7 @@ struct DiskImageAttachRetryTests {
     @Test func transientFailuresAreRetriedUntilAttachSucceeds() async throws {
         let tools = FlakyAttachTools(failures: 2)
         let sleeps = RecordedSleeps()
-        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: sleeps.sleep)
+        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: { await sleeps.sleep($0) })
 
         let result = try await runner.run(UpdateInstaller.hdiutil, arguments: attach)
 
@@ -366,7 +366,7 @@ struct DiskImageAttachRetryTests {
     @Test func persistentFailureIsReportedAfterThreeRetries() async throws {
         let tools = FlakyAttachTools(failures: 10)
         let sleeps = RecordedSleeps()
-        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: sleeps.sleep)
+        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: { await sleeps.sleep($0) })
 
         let result = try await runner.run(UpdateInstaller.hdiutil, arguments: attach)
 
@@ -380,7 +380,7 @@ struct DiskImageAttachRetryTests {
         let temporary = try TemporaryDirectory()
         defer { temporary.remove() }
         let sleeps = RecordedSleeps()
-        let runner = DiskImageAttachRetryingRunner(base: FlakyAttachTools(failures: 10), sleep: sleeps.sleep)
+        let runner = DiskImageAttachRetryingRunner(base: FlakyAttachTools(failures: 10), sleep: { await sleeps.sleep($0) })
         let installer = UpdateInstaller(directories: UpdateDirectories(root: temporary.url.appending(path: "updates")), tools: runner)
 
         await #expect(throws: UpdateInstallError.mountFailed("hdiutil: attach failed - Resource temporarily unavailable")) {
@@ -392,7 +392,7 @@ struct DiskImageAttachRetryTests {
     @Test func otherToolsAndDetachAreNotRetried() async throws {
         let sleeps = RecordedSleeps()
         let tools = FlakyAttachTools(failures: 10)
-        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: sleeps.sleep)
+        let runner = DiskImageAttachRetryingRunner(base: tools, sleep: { await sleeps.sleep($0) })
 
         let detach = try await runner.run(UpdateInstaller.hdiutil, arguments: ["detach", "/tmp/mount"])
         let ditto = try await runner.run(UpdateInstaller.ditto, arguments: ["a", "b"])

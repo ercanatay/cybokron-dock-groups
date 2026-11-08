@@ -30,7 +30,7 @@ struct LayoutFileCoordinationTests {
         let dir = try directory()
         defer { try? FileManager.default.removeItem(at: dir) }
         var called = false
-        try LayoutFileCoordination.withExclusiveLock(in: dir) {
+        _ = try LayoutFileCoordination.withExclusiveLock(in: dir) {
             #expect(throws: LayoutFileCoordinationError.lockBusy) {
                 try LayoutFileCoordination.withExclusiveLock(in: dir) { called = true }
             }
