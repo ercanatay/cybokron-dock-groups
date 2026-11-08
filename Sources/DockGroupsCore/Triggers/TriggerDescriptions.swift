@@ -149,6 +149,18 @@ public enum TriggerDescriptions {
         Localization.format("item.launch.row.delay", "After %ld s", seconds)
     }
 
+    /// The line under a notice's title: what the trigger waits for ("When com.example.app opens"),
+    /// or, for a change that happened while the Mac couldn't act (`TriggerNotice.isCatchUp`), that
+    /// the app opened or quit meanwhile ("com.example.app opened while the Mac was asleep").
+    public static func noticeDetail(_ trigger: GroupTrigger, isCatchUp: Bool, appName: String, calendar: Calendar, locale: Locale) -> String {
+        if isCatchUp, case .applicationPresence(let bundleIdentifier, let edge) = trigger.event {
+            return edge == .starts
+                ? Localization.format("core.trigger.afterWake.opened", "%@ opened while the Mac was asleep", bundleIdentifier)
+                : Localization.format("core.trigger.afterWake.closed", "%@ quit while the Mac was asleep", bundleIdentifier)
+        }
+        return event(trigger.event, appName: appName, calendar: calendar, locale: locale)
+    }
+
     // MARK: - What happened
 
     /// A moment as the last-run line says it: "today at 9:00", "yesterday at 9:00", or the date and
@@ -176,13 +188,18 @@ public enum TriggerDescriptions {
 
     /// What happened the last time the trigger's event came: "Last ran today at 9:00: started
     /// “Work”.", "Skipped today at 9:00: triggers were paused.", "Missed at 9:00: the Mac was
-    /// asleep.", "Not run yet."
+    /// asleep.", "Not run yet." For a change that happened while the Mac couldn't act
+    /// (`TriggerState.Entry.isCatchUp`) the moment says so: "Last ran today at 9:00 (after the Mac
+    /// woke): started “Work”."; missed, it says why it didn't catch up.
     public static func lastRun(_ entry: TriggerState.Entry, groupName: String, now: Date, calendar: Calendar, locale: Locale) -> String {
         guard let outcome = entry.lastOutcome else {
             return Localization.string("core.trigger.lastRun.never", "Not run yet.")
         }
-        let when = (entry.lastOutcomeAt ?? entry.lastRunAt).map { moment($0, now: now, calendar: calendar, locale: locale) }
+        var when = (entry.lastOutcomeAt ?? entry.lastRunAt).map { moment($0, now: now, calendar: calendar, locale: locale) }
             ?? Localization.string("core.trigger.lastRun.recently", "recently")
+        if entry.isCatchUp {
+            when = Localization.format("core.trigger.lastRun.afterWake", "%@ (after the Mac woke)", when)
+        }
         switch outcome {
         case .ran(.start):
             return Localization.format("core.trigger.lastRun.started", "Last ran %1$@: started “%2$@”.", when, groupName)
@@ -196,7 +213,9 @@ public enum TriggerDescriptions {
             let why = reason.explanation
             return Localization.format("core.trigger.lastRun.skipped", "Skipped %1$@: %2$@.", when, why)
         case .missed(let reason):
-            let why = reason.explanation
+            let why = entry.isCatchUp
+                ? Localization.string("core.trigger.missed.afterWake", "it changed too long ago, or too many triggers caught up at once")
+                : reason.explanation
             return Localization.format("core.trigger.lastRun.missed", "Missed %1$@: %2$@.", when, why)
         }
     }

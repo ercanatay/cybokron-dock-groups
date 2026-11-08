@@ -88,20 +88,35 @@ public struct TriggerState: Equatable, Sendable {
 
     public struct Entry: Equatable, Sendable {
         public var lastRunAt: Date?
-        public var lastOutcome: TriggerOutcome?
+        /// Setting it clears `isCatchUp`: the flag only ever describes the outcome it was set with.
+        public var lastOutcome: TriggerOutcome? {
+            didSet { isCatchUp = false }
+        }
         /// When `lastOutcome` happened: the occurrence of a time, or the moment for the others.
         public var lastOutcomeAt: Date?
         /// Times: the latest occurrence dealt with (run, skipped, missed or passed while off).
         public var lastHandledOccurrence: Date?
         /// Conditions: how many times it held at the last known reading; `nil` when unknown.
         public var condition: Int?
+        /// `lastOutcome` came from a change that happened while the Mac couldn't act ("run what was
+        /// missed", `TriggerFiring.isCatchUp`), so the last-run line can say so ("(after the Mac
+        /// woke)"). Only words depend on it: nothing in it makes a trigger run.
+        public var isCatchUp: Bool
 
-        public init(lastRunAt: Date? = nil, lastOutcome: TriggerOutcome? = nil, lastOutcomeAt: Date? = nil, lastHandledOccurrence: Date? = nil, condition: Int? = nil) {
+        public init(
+            lastRunAt: Date? = nil,
+            lastOutcome: TriggerOutcome? = nil,
+            lastOutcomeAt: Date? = nil,
+            lastHandledOccurrence: Date? = nil,
+            condition: Int? = nil,
+            isCatchUp: Bool = false
+        ) {
             self.lastRunAt = lastRunAt
             self.lastOutcome = lastOutcome
             self.lastOutcomeAt = lastOutcomeAt
             self.lastHandledOccurrence = lastHandledOccurrence
             self.condition = condition
+            self.isCatchUp = isCatchUp
         }
     }
 
@@ -161,20 +176,23 @@ public struct TriggerState: Equatable, Sendable {
         pauseReason = nil
     }
 
-    /// Records what happened to a trigger's event.
-    mutating func record(_ outcome: TriggerOutcome, for id: GroupTrigger.ID, at date: Date) {
+    /// Records what happened to a trigger's event; `isCatchUp` for a change that happened while
+    /// the Mac couldn't act.
+    mutating func record(_ outcome: TriggerOutcome, for id: GroupTrigger.ID, at date: Date, isCatchUp: Bool = false) {
         var entry = self.entry(for: id)
         entry.lastOutcome = outcome
         entry.lastOutcomeAt = date
+        entry.isCatchUp = isCatchUp
         entries[id] = entry
     }
 
     /// Records that a trigger's action ran at `date`: its last run, and one run for the budget.
-    mutating func recordRun(_ action: TriggerAction, for id: GroupTrigger.ID, at date: Date) {
+    mutating func recordRun(_ action: TriggerAction, for id: GroupTrigger.ID, at date: Date, isCatchUp: Bool = false) {
         var entry = self.entry(for: id)
         entry.lastRunAt = date
         entry.lastOutcome = .ran(action)
         entry.lastOutcomeAt = date
+        entry.isCatchUp = isCatchUp
         entries[id] = entry
         recentRuns = Array((recentRuns + [date]).suffix(Self.maximumRecentRuns))
     }
@@ -222,9 +240,11 @@ extension TriggerOutcome: Codable {
 extension TriggerState.Entry: Codable {
     private enum CodingKeys: String, CodingKey {
         case lastRunAt, lastOutcome, lastOutcomeAt, lastHandledOccurrence, condition
+        case isCatchUp = "catchUp"
     }
 
     /// Every value is optional; one that can't be read is left out. Dates are seconds since 1970.
+    /// `catchUp` is written only when `true`, and read only as `true` with an outcome to describe.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         func date(_ key: CodingKeys) -> Date? {
@@ -235,6 +255,7 @@ extension TriggerState.Entry: Codable {
         lastOutcomeAt = date(.lastOutcomeAt)
         lastHandledOccurrence = date(.lastHandledOccurrence)
         condition = container.decodeLeniently(Int.self, forKey: .condition).flatMap { $0 >= 0 ? $0 : nil }
+        isCatchUp = lastOutcome != nil && container.decodeLeniently(Bool.self, forKey: .isCatchUp) == true
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -244,6 +265,9 @@ extension TriggerState.Entry: Codable {
         try container.encodeIfPresent(lastOutcomeAt?.timeIntervalSince1970, forKey: .lastOutcomeAt)
         try container.encodeIfPresent(lastHandledOccurrence?.timeIntervalSince1970, forKey: .lastHandledOccurrence)
         try container.encodeIfPresent(condition, forKey: .condition)
+        if isCatchUp, lastOutcome != nil {
+            try container.encode(true, forKey: .isCatchUp)
+        }
     }
 }
 

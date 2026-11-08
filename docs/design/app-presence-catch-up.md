@@ -1,8 +1,8 @@
 # "Run what was missed" (catch-up) for application and lock triggers — design
 
-Status: the core (model, gap tracking, net-change synthesis, gates) is implemented as described in
-§11; the editor, notice and last-run texts are not (slice 4 of §9). Nothing here approves a release
-or a version bump. Written against `main` at `7030c76`.
+Status: the core (model, gap tracking, net-change synthesis, gates) and the editor, notice and
+last-run texts (slice 4 of §9) are implemented as described in §11 and §12; the texts are English
+only until translated. Nothing here approves a release or a version bump. Written against `main` at `7030c76`.
 
 Related: [triggers-spec.md](triggers-spec.md) §1.9 (gates), §1.10 (missed times, edges while the
 app wasn't open), [app-presence-trigger-spec.md](app-presence-trigger-spec.md) (baselines,
@@ -416,3 +416,32 @@ How it behaves, where this document left room:
 Not changed in this slice: the `TriggerState` doc comment mismatch of §6.3 (a crafted
 `Entry.condition` can turn a real display or network reading into an edge) is still open; the
 catch-up readings are memory only and add nothing to `trigger-state.json`.
+
+## 12. Implementation status (UI slice)
+
+D7 as implemented, six keys, English only for now (`LocalizationTests.awaitingTranslation`,
+`docs/l10n-keys.md`):
+
+- **Editor:** "Run it after the Mac wakes" (`triggers.editor.afterWake`, off by default) under At
+  most once a day, with its note (`triggers.editor.afterWake.note`), shown for application opens
+  and closes only (`TriggerEditorSheet.showsAfterWake`, `TriggerDraft.canCatchUp`). Choosing any
+  other event turns the option off in the draft (`TriggerDraft.normalize`), and coming back to an
+  application event keeps it off.
+- **Notice:** for a catch-up firing the line under the title says what happened instead of what the
+  trigger waits for: "com.example.app opened while the Mac was asleep" / "… quit while the Mac was
+  asleep" (`TriggerDescriptions.noticeDetail`, `core.trigger.afterWake.opened` / `.closed`). The run
+  modes are unchanged (D6: Run Right Away shows the notice, Ask First asks).
+- **Last-run line:** an outcome recorded for a catch-up firing — ran, skipped (the notice's Not
+  Now, a gate, the echo after the wake) or missed (gap over 30 minutes, past the third per wake) —
+  carries `TriggerState.Entry.isCatchUp`, and its moment reads "today at 9:00 (after the Mac woke)"
+  (`core.trigger.lastRun.afterWake`). A missed catch-up says "it changed too long ago, or too many
+  triggers caught up at once" (`core.trigger.missed.afterWake`); skipped reasons keep their texts.
+- **Why a stored flag:** the line is built from `trigger-state.json`, the way every other last-run
+  line is, so the trace survives a relaunch like the outcome it describes. It is written only when
+  `true` (`"catchUp": true` in the trigger's entry), read only as `true` with an outcome, and cleared
+  by every new outcome (`lastOutcome`'s observer). Only words depend on it: nothing reads it to
+  decide whether a trigger runs, so a crafted value can at most mislabel a line. Older versions drop
+  it on their next save (an unknown key), which only loses the label.
+- The wording says "asleep" / "after the Mac woke" for every gap, including another user's session
+  (the miss reason `sessionInactive` is kept in the state but not worded separately), to stay within
+  six keys.

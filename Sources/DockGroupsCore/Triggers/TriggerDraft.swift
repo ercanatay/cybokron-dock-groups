@@ -95,7 +95,8 @@ public struct TriggerDraft: Equatable, Sendable {
     public var finishesWhenEventEnds: Bool
     /// The delay as typed, in seconds (`delaySeconds` reads it).
     public var delayText: String
-    /// "Run what was missed" (`GroupTrigger.catchUp`): kept for application triggers only.
+    /// "Run what was missed" (`GroupTrigger.catchUp`, the editor's Run It After the Mac Wakes):
+    /// application triggers only; any other event turns it off (`normalize`).
     public var catchUp = false
 
     /// A new trigger: at 9:00 on the calendar's working days, Start, with a notice.
@@ -323,6 +324,9 @@ public struct TriggerDraft: Equatable, Sendable {
         }
         if !canFinishWhenEventEnds {
             finishesWhenEventEnds = false
+        }
+        if !canCatchUp {
+            catchUp = false
         }
     }
 }
