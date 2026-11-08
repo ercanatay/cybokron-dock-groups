@@ -80,6 +80,15 @@ public protocol TriggerNoticePresenting: AnyObject {
 /// Firings that come while the app isn't ready (no handler yet), or while the screens sleep or the
 /// session isn't active, wait — up to the catch-up window. The state changes are handed to
 /// `onStateChange` (the app saves them, `TriggerStateStore`). Nothing is polled.
+///
+/// A trigger with a delay (`GroupTrigger.delaySeconds`) is accepted as above — its notice answered,
+/// if it shows one — and then waits, in memory only, without holding other triggers up. While it
+/// waits, anything that makes it stale cancels it and records `.cancelledBeforeRun` (or a reason
+/// that says more: paused, the budget, the group gone, the app's code not confirmed): its rule
+/// changed or can't run, a newer firing of the same trigger came, the screen lock or the
+/// application observation it came from changed, the screens slept or woke or the session changed.
+/// When the delay is over every check is made again — with the cooldown, At most once a day and the
+/// echo window — right before the action runs.
 @MainActor
 public final class TriggerCoordinator {
     /// How long firings wait for more before they're reduced.
@@ -125,6 +134,17 @@ public final class TriggerCoordinator {
     private var processing: Task<Void, Never>?
     /// The trigger that started each group, while this app runs (never saved).
     private var startedBy: [DockGroup.ID: GroupTrigger.ID] = [:]
+    /// Accepted firings waiting for their trigger's delay, in the order they were accepted; never saved.
+    private var delayed: [DelayedFiring] = []
+    private var delayToken: UInt64 = 0
+    /// Count every change of the screens sleeping (and every report that they sleep: a repeat is the
+    /// Mac going to sleep) and of the session being active: a delayed firing is carried out only
+    /// while they're the ones it was accepted with.
+    private var screensRevision: UInt64 = 0
+    private var sessionRevision: UInt64 = 0
+    private var isCheckingDelayed = false
+    /// Called whenever a firing starts or stops waiting for its delay (`delayedUntil`).
+    public var onDelayedFiringsChange: (() -> Void)?
     private var applicationTracker = AppPresenceRuleTracker()
     /// Confirms that the code running under an authorized application rule's identifier is the
     /// authorized code. By default it never confirms anything, so authorized rules don't act (fail
@@ -164,8 +184,13 @@ public final class TriggerCoordinator {
         self.calendar = calendar
     }
 
-    /// Whether nothing is settling, waiting or being carried out.
-    public var isIdle: Bool { settleTask == nil && processing == nil && pending.isEmpty && queue.isEmpty }
+    /// Whether nothing is settling, waiting (for its turn or its delay) or being carried out.
+    public var isIdle: Bool { settleTask == nil && processing == nil && pending.isEmpty && queue.isEmpty && delayed.isEmpty }
+
+    /// When each trigger waiting for its delay is due, for the trigger rows.
+    public var delayedUntil: [GroupTrigger.ID: Date] {
+        Dictionary(delayed.map { ($0.firing.triggerID, $0.due) }, uniquingKeysWith: min)
+    }
 
     /// The firings waiting to be carried out, in order.
     public var waitingFirings: [TriggerFiring] { queue }
@@ -408,6 +433,7 @@ public final class TriggerCoordinator {
         for firing in unconfirmed {
             skip(firing, .applicationNotConfirmed)
         }
+        checkDelayedFirings()
     }
 
     /// Drops every application-presence firing that is pending, queued or awaiting its notice.
@@ -420,6 +446,7 @@ public final class TriggerCoordinator {
             currentInvalidated = true
             noticePresenter?.dismiss()
         }
+        checkDelayedFirings()
     }
 
     /// Configures the tracker with the rules that can be observed now. When that changes the
@@ -497,6 +524,7 @@ public final class TriggerCoordinator {
             currentInvalidated = true
             noticePresenter?.dismiss()
         }
+        checkDelayedFirings()
     }
 
     /// When the clock must look next (`TriggerEvaluator.nextDue`).
@@ -556,6 +584,8 @@ public final class TriggerCoordinator {
     ///   firings are never enqueued.
     private func receive(_ signal: TriggerSignal, presence: (stamp: ApplicationPresenceStamp, isValid: () -> Bool)?) {
         let lockRevision = environment.screenLockRevision
+        let wasAsleep = environment.screensAsleep
+        let wasActive = environment.sessionActive
         let evaluation = TriggerEvaluator.evaluate(
             signal,
             rules: rules(),
@@ -566,6 +596,14 @@ public final class TriggerCoordinator {
             calendar: calendar()
         )
         environment = evaluation.environment
+        if case .screens(asleep: true) = signal {
+            screensRevision &+= 1
+        } else if environment.screensAsleep != wasAsleep {
+            screensRevision &+= 1
+        }
+        if environment.sessionActive != wasActive {
+            sessionRevision &+= 1
+        }
         if environment.screenLockRevision != lockRevision {
             // The screen locked or unlocked again, or the lock can't be told: what the earlier lock
             // or unlock asked for is stale.
@@ -604,9 +642,13 @@ public final class TriggerCoordinator {
             for firing in firings {
                 logger.notice("Trigger \(firing.triggerID, privacy: .public) asks to \(firing.action.rawValue, privacy: .public) group \(firing.groupID, privacy: .public)")
             }
+            // A trigger's newer firing takes the place of the one waiting for its delay.
+            cancelDelayedFirings(of: Set(firings.map(\.triggerID)))
             pending += firings
             restartSettle()
         }
+        // The screens slept or woke, the session or the lock changed: a waiting delay may be stale.
+        checkDelayedFirings()
         // The screens woke or the session came back: what waited can go on.
         processIfNeeded()
     }
@@ -699,7 +741,8 @@ public final class TriggerCoordinator {
     }
 
     private func processIfNeeded() {
-        guard processing == nil, let next = queue.first, handler != nil, canCarryOut(next) else { return }
+        guard processing == nil, handler != nil else { return }
+        guard delayed.contains(where: \.isDue) || queue.first.map(canCarryOut) == true else { return }
         processing = Task { @MainActor [weak self] in
             await self?.processQueue()
             self?.processing = nil
@@ -709,7 +752,19 @@ public final class TriggerCoordinator {
     }
 
     private func processQueue() async {
-        while let next = queue.first, handler != nil, canCarryOut(next) {
+        while handler != nil {
+            // A firing whose delay is over goes first: it was accepted before what waits in the queue.
+            if let index = delayed.firstIndex(where: \.isDue) {
+                let entry = delayed.remove(at: index)
+                onDelayedFiringsChange?()
+                current = entry.firing
+                currentInvalidated = false
+                currentInvalidationReason = nil
+                await carryOutDelayed(entry)
+                current = nil
+                continue
+            }
+            guard let next = queue.first, canCarryOut(next) else { break }
             let firing = queue.removeFirst()
             current = firing
             currentInvalidated = false
@@ -841,7 +896,167 @@ public final class TriggerCoordinator {
             if runMode != .immediately { skip(firing, .anotherTrigger) }
             return
         }
+        // Accepted: a trigger with a delay waits for it first (`carryOutDelayed`).
+        if trigger.delaySeconds > 0 {
+            park(firing, trigger: trigger)
+            return
+        }
         await run(firing, trigger: trigger, group: group, handler: handler)
+    }
+
+    // MARK: - Delays
+
+    /// A firing accepted and waiting for its trigger's delay.
+    private struct DelayedFiring {
+        let token: UInt64
+        let firing: TriggerFiring
+        /// The rule as it was accepted: any change to it cancels the firing.
+        let rule: GroupTrigger
+        let due: Date
+        let screensRevision: UInt64
+        let sessionRevision: UInt64
+        /// The delay is over: it waits for its turn.
+        var isDue = false
+        var task: Task<Void, Never>?
+    }
+
+    private enum DelayedCheck: Equatable {
+        case holds
+        /// Its rule was deleted: dropped without a record.
+        case gone
+        case cancelled(TriggerSkipReason)
+    }
+
+    /// Starts `firing`'s delay. It doesn't hold the queue up: the next firings go on meanwhile.
+    private func park(_ firing: TriggerFiring, trigger: GroupTrigger) {
+        delayToken &+= 1
+        let token = delayToken
+        let seconds = trigger.delaySeconds
+        var entry = DelayedFiring(
+            token: token,
+            firing: firing,
+            rule: trigger,
+            due: clock().addingTimeInterval(TimeInterval(seconds)),
+            screensRevision: screensRevision,
+            sessionRevision: sessionRevision
+        )
+        entry.task = Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await self.sleeper.sleep(for: .seconds(seconds))
+            } catch {
+                return
+            }
+            self.delayElapsed(token)
+        }
+        delayed.append(entry)
+        logger.notice("Trigger \(firing.triggerID, privacy: .public) waits \(seconds, privacy: .public) s before it runs")
+        onDelayedFiringsChange?()
+    }
+
+    private func delayElapsed(_ token: UInt64) {
+        // Cancelled meanwhile: nothing is left to do.
+        guard let index = delayed.firstIndex(where: { $0.token == token }) else { return }
+        delayed[index].isDue = true
+        delayed[index].task = nil
+        processIfNeeded()
+    }
+
+    /// Whether a waiting firing still stands. `isDue` adds what only counts when it would run now:
+    /// the cooldown, At most once a day and the echo window.
+    private func delayedCheck(_ entry: DelayedFiring, isDue: Bool) -> DelayedCheck {
+        let firing = entry.firing
+        guard let rule = rules().first(where: { $0.id == firing.triggerID }) else { return .gone }
+        guard rule == entry.rule, rule.canRun else { return .cancelled(.cancelledBeforeRun) }
+        let now = clock()
+        if state.isPaused(at: now) { return .cancelled(state.pauseReason == .budget ? .budget : .paused) }
+        guard activeGroups().contains(firing.groupID) else { return .cancelled(.groupMissing) }
+        guard isScreenLockFiringCurrent(firing) else { return .cancelled(.cancelledBeforeRun) }
+        switch applicationPresenceCheck(firing) {
+        case .current: break
+        case .stale: return .cancelled(.cancelledBeforeRun)
+        case .identityNotConfirmed: return .cancelled(.applicationNotConfirmed)
+        }
+        guard entry.sessionRevision == sessionRevision else { return .cancelled(.cancelledBeforeRun) }
+        // A lock trigger's Finish is meant for the locked screen: the displays sleeping then don't
+        // matter (its lock revision does). Every other firing needs the screens as they were.
+        if rule.event != .screenLocks, entry.screensRevision != screensRevision { return .cancelled(.cancelledBeforeRun) }
+        guard canCarryOut(firing) else { return .cancelled(.cancelledBeforeRun) }
+        guard isDue else { return .holds }
+        if !firing.isFinishWhenEnded, let lastRun = state.entry(for: rule.id).lastRunAt {
+            let elapsed = now.timeIntervalSince(lastRun)
+            if elapsed >= 0, elapsed < TriggerEvaluator.cooldown { return .cancelled(.cooldown) }
+            if rule.oncePerDay, calendar().isDate(lastRun, inSameDayAs: now) { return .cancelled(.alreadyRanToday) }
+        }
+        if rule.event.isEdge, environment.isInEchoWindow(at: now) { return .cancelled(.rightAfterAutomaticAction) }
+        return .holds
+    }
+
+    /// Cancels the waiting firings that no longer stand, recording why.
+    private func checkDelayedFirings() {
+        guard !delayed.isEmpty, !isCheckingDelayed else { return }
+        isCheckingDelayed = true
+        defer { isCheckingDelayed = false }
+        let verdicts = delayed.map { delayedCheck($0, isDue: false) }
+        var cancelled: [(DelayedFiring, TriggerSkipReason?)] = []
+        var kept: [DelayedFiring] = []
+        for (entry, verdict) in zip(delayed, verdicts) {
+            switch verdict {
+            case .holds: kept.append(entry)
+            case .gone: cancelled.append((entry, nil))
+            case .cancelled(let reason): cancelled.append((entry, reason))
+            }
+        }
+        guard !cancelled.isEmpty else { return }
+        delayed = kept
+        for (entry, reason) in cancelled {
+            entry.task?.cancel()
+            logger.notice("Trigger \(entry.firing.triggerID, privacy: .public) was cancelled while it waited")
+            if let reason { skip(entry.firing, reason) }
+        }
+        onDelayedFiringsChange?()
+    }
+
+    /// Cancels the waiting firings of `triggerIDs` (a newer firing of each came).
+    private func cancelDelayedFirings(of triggerIDs: Set<GroupTrigger.ID>) {
+        let superseded = delayed.filter { triggerIDs.contains($0.firing.triggerID) }
+        guard !superseded.isEmpty else { return }
+        delayed.removeAll { triggerIDs.contains($0.firing.triggerID) }
+        for entry in superseded {
+            entry.task?.cancel()
+            skip(entry.firing, .cancelledBeforeRun)
+        }
+        onDelayedFiringsChange?()
+    }
+
+    /// The app's groups changed (one archived or deleted): the waiting firings are looked at again.
+    public func revalidateDelayedFirings() {
+        checkDelayedFirings()
+    }
+
+    /// A firing whose delay is over: every check again, then the action, with no notice (it was
+    /// answered before the delay).
+    private func carryOutDelayed(_ entry: DelayedFiring) async {
+        let firing = entry.firing
+        switch delayedCheck(entry, isDue: true) {
+        case .holds:
+            break
+        case .gone:
+            return
+        case .cancelled(let reason):
+            logger.notice("Trigger \(firing.triggerID, privacy: .public) was cancelled when its delay ended")
+            skip(firing, reason)
+            return
+        }
+        guard let handler, let group = handler.group(withID: firing.groupID) else {
+            skip(firing, .groupMissing)
+            return
+        }
+        if let reason = blocker(for: firing, trigger: entry.rule, handler: handler) {
+            skip(firing, reason)
+            return
+        }
+        await run(firing, trigger: entry.rule, group: group, handler: handler)
     }
 
     /// Why `firing` can't run now, or `nil`.
@@ -913,5 +1128,9 @@ public final class TriggerCoordinator {
         guard newState != state else { return }
         state = newState
         onStateChange?(newState)
+        // Paused (by the user or the budget): what waits for its delay is cancelled.
+        if !delayed.isEmpty, newState.isPaused(at: clock()) {
+            checkDelayedFirings()
+        }
     }
 }

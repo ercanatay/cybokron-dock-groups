@@ -143,6 +143,12 @@ public enum TriggerDescriptions {
         return Localization.format("core.trigger.summary.rule", "%1$@: %2$@", event, action)
     }
 
+    /// A delay as the trigger rows show it, the one set or the time left while it waits: "After
+    /// 30 s" (the words an item's launch delay is shown with).
+    public static func delay(_ seconds: Int) -> String {
+        Localization.format("item.launch.row.delay", "After %ld s", seconds)
+    }
+
     // MARK: - What happened
 
     /// A moment as the last-run line says it: "today at 9:00", "yesterday at 9:00", or the date and

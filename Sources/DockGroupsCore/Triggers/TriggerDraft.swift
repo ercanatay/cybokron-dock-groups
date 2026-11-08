@@ -4,8 +4,8 @@ import Foundation
 /// the app opening, the screens waking or sleeping, the screen locking or unlocking) or a change (a display connecting or
 /// disconnecting, a set of displays being connected or no longer, the Mac joining or leaving a
 /// Wi-Fi network, Ethernet connecting or disconnecting) —, the action that event allows (§1.6),
-/// how it runs, At most once a day and, for a Start on a change's start, Finish when it ends. Show
-/// the Popup always runs right away.
+/// how it runs, At most once a day, how long it waits before its action (0 to 3600 seconds) and,
+/// for a Start on a change's start, Finish when it ends. Show the Popup runs without a notice.
 ///
 /// VPNs aren't offered: macOS doesn't say reliably when one connects (TS-8).
 public struct TriggerDraft: Equatable, Sendable {
@@ -93,6 +93,8 @@ public struct TriggerDraft: Equatable, Sendable {
     public var oncePerDay: Bool
     /// Finish when it ends: only for a Start on a change's start (`canFinishWhenEventEnds`).
     public var finishesWhenEventEnds: Bool
+    /// The delay as typed, in seconds (`delaySeconds` reads it).
+    public var delayText: String
 
     /// A new trigger: at 9:00 on the calendar's working days, Start, with a notice.
     public init(calendar: Calendar) {
@@ -106,6 +108,7 @@ public struct TriggerDraft: Equatable, Sendable {
         runMode = .notice
         oncePerDay = false
         finishesWhenEventEnds = false
+        delayText = "0"
     }
 
     /// The draft of `trigger`; `nil` for an event this editor doesn't offer (a VPN, or one it
@@ -147,6 +150,8 @@ public struct TriggerDraft: Equatable, Sendable {
         runMode = trigger.runMode
         oncePerDay = trigger.oncePerDay
         finishesWhenEventEnds = trigger.finishesWhenEventEnds
+        // A delay this version can't read shows empty: it must be typed again before saving.
+        delayText = trigger.unreadableDelay == nil ? String(trigger.delaySeconds) : ""
         normalize()
     }
 
@@ -201,10 +206,22 @@ public struct TriggerDraft: Equatable, Sendable {
         action == .start && change?.edge == .starts
     }
 
+    /// The delay typed: a whole number of seconds in `GroupTrigger.delayRange` (spaces around it
+    /// allowed); `nil` for anything else, which can't be saved.
+    public var delaySeconds: Int? {
+        let text = delayText.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty, text.allSatisfy(\.isASCIIDigit), text.count <= 4, let seconds = Int(text),
+              GroupTrigger.delayRange.contains(seconds)
+        else { return nil }
+        return seconds
+    }
+
     /// Whether it can be saved: a time needs at least one day, These Displays one to eight
-    /// displays, a chosen display can't be the built-in one, a Wi-Fi network a valid name.
+    /// displays, a chosen display can't be the built-in one, a Wi-Fi network a valid name, the
+    /// delay 0 to 3600 seconds.
     public var isValid: Bool {
-        GroupTrigger(groupID: UUID(), event: event, action: action, runMode: runMode).isRunnable
+        guard let delaySeconds else { return false }
+        return GroupTrigger(groupID: UUID(), event: event, action: action, runMode: runMode, delaySeconds: delaySeconds).isRunnable
     }
 
     public mutating func setWhen(_ when: When) {
@@ -277,7 +294,9 @@ public struct TriggerDraft: Equatable, Sendable {
             runMode: runMode,
             isEnabled: isEnabled,
             oncePerDay: oncePerDay,
-            finishesWhenEventEnds: finishesWhenEventEnds && canFinishWhenEventEnds
+            finishesWhenEventEnds: finishesWhenEventEnds && canFinishWhenEventEnds,
+            // A delay that can't be read makes an unrunnable trigger (the editor doesn't save it).
+            delaySeconds: delaySeconds ?? -1
         )
         if let identity {
             trigger.applicationIdentity = identity
@@ -337,4 +356,8 @@ public enum DisplayChoices {
     public static func isConnected(_ display: DisplayIdentity, in connected: [DisplayIdentity]) -> Bool {
         connected.contains(where: display.matches)
     }
+}
+
+private extension Character {
+    var isASCIIDigit: Bool { ("0"..."9").contains(self) }
 }
