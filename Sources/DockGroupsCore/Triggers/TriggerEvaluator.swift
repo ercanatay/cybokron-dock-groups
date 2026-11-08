@@ -58,6 +58,9 @@ public struct TriggerFiring: Hashable, Sendable {
     /// (`TriggerEnvironment.screenLockRevision`). Once the screen locks or unlocks again, or the
     /// lock can't be told, the firing is stale and dropped; one without it never runs.
     var screenLockRevision: UInt64?
+    /// Whether it was synthesized from a net change across a gap ("run what was missed",
+    /// `docs/design/app-presence-catch-up.md`): it then never runs right away (D6).
+    var isCatchUp = false
 
     public init(triggerID: GroupTrigger.ID, groupID: DockGroup.ID, action: TriggerAction, occurrence: Date, isFinishWhenEnded: Bool = false, order: Int = 0, isApplicationPresence: Bool = false) {
         self.triggerID = triggerID
