@@ -447,11 +447,11 @@ public final class TriggerCoordinator {
             let isRunning = count > 0
             guard isRunning != kept.isRunning, (isRunning ? TriggerEdge.starts : .ends) == edge else { continue }
             if isVoid {
-                record(.skipped(.rightAfterAutomaticAction), for: rule.id, at: now)
+                record(.skipped(.rightAfterAutomaticAction), for: rule.id, at: now, isCatchUp: true)
                 continue
             }
             guard length <= Self.catchUpLongestGap, accepted < Self.catchUpLimitPerWake else {
-                record(.missed(gap.reason), for: rule.id, at: end)
+                record(.missed(gap.reason), for: rule.id, at: end, isCatchUp: true)
                 continue
             }
             let stamp = ApplicationPresenceStamp(generation: generation, revision: revision, rule: rule)
@@ -472,9 +472,9 @@ public final class TriggerCoordinator {
         }
     }
 
-    private func record(_ outcome: TriggerOutcome, for id: GroupTrigger.ID, at date: Date) {
+    private func record(_ outcome: TriggerOutcome, for id: GroupTrigger.ID, at date: Date, isCatchUp: Bool = false) {
         var state = state
-        state.record(outcome, for: id, at: date)
+        state.record(outcome, for: id, at: date, isCatchUp: isCatchUp)
         update(state)
     }
 
@@ -910,7 +910,7 @@ public final class TriggerCoordinator {
         let reduction = TriggerReducer.reduce(queue + batch)
         var state = state
         for skip in reduction.skipped {
-            state.record(.skipped(skip.reason), for: skip.firing.triggerID, at: skip.firing.occurrence)
+            state.record(.skipped(skip.reason), for: skip.firing.triggerID, at: skip.firing.occurrence, isCatchUp: skip.firing.isCatchUp)
             logger.notice("Trigger \(skip.firing.triggerID, privacy: .public) skipped: \(skip.reason.rawValue, privacy: .public)")
         }
         update(state)
@@ -1026,7 +1026,7 @@ public final class TriggerCoordinator {
         }
         guard clock().timeIntervalSince(firing.occurrence) <= TriggerEvaluator.catchUpWindow else {
             var state = state
-            state.record(.missed(.macAsleep), for: trigger.id, at: firing.occurrence)
+            state.record(.missed(.macAsleep), for: trigger.id, at: firing.occurrence, isCatchUp: firing.isCatchUp)
             update(state)
             return
         }
@@ -1338,17 +1338,17 @@ public final class TriggerCoordinator {
         environment.echoUntil = end.addingTimeInterval(Self.echoInterval)
         var state = state
         if case .ran(let action) = outcome {
-            state.recordRun(action, for: trigger.id, at: end)
+            state.recordRun(action, for: trigger.id, at: end, isCatchUp: firing.isCatchUp)
             logger.notice("Trigger \(trigger.id, privacy: .public) (\(trigger.event.kindName, privacy: .public)) did \(action.rawValue, privacy: .public) for group \(group.id, privacy: .public)")
         } else {
-            state.record(outcome, for: trigger.id, at: end)
+            state.record(outcome, for: trigger.id, at: end, isCatchUp: firing.isCatchUp)
         }
         update(state)
     }
 
     private func skip(_ firing: TriggerFiring, _ reason: TriggerSkipReason) {
         var state = state
-        state.record(.skipped(reason), for: firing.triggerID, at: firing.occurrence)
+        state.record(.skipped(reason), for: firing.triggerID, at: firing.occurrence, isCatchUp: firing.isCatchUp)
         update(state)
         logger.notice("Trigger \(firing.triggerID, privacy: .public) skipped: \(reason.rawValue, privacy: .public)")
     }

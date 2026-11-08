@@ -1793,6 +1793,14 @@ extension L10n {
             static var askFirst: String { tr("triggers.editor.runMode.askFirst", "Ask First") }
             static var rightAway: String { tr("triggers.editor.runMode.immediately", "Run Right Away") }
             static var oncePerDay: String { tr("triggers.editor.oncePerDay", "At most once a day") }
+            /// "Run what was missed" for an application trigger (`TriggerDraft.catchUp`).
+            static var afterWake: String { tr("triggers.editor.afterWake", "Run it after the Mac wakes") }
+            static var afterWakeNote: String {
+                tr(
+                    "triggers.editor.afterWake.note",
+                    "Only for an approved app that opened or quit while the Mac or its screens slept or another user was using it, up to 30 minutes. It runs at most once per wake, always with a notice. If the app quits and opens again meanwhile, nothing runs."
+                )
+            }
             /// Under the delay field: what the delay does and the seconds it takes.
             static var delayHint: String {
                 tr("triggers.editor.delay.hint", "Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs.")

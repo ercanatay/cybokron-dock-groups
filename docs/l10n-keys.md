@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1096 keys.
+1102 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1574,3 +1574,24 @@ These keys are translated in every language.
 | --- | --- |
 | `core.trigger.skip.cancelledBeforeRun` | it was cancelled before it ran |
 | `triggers.editor.delay.hint` | Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs. |
+
+## Run what was missed: the editor's option, the notice and the last-run line after the Mac woke (English only for now)
+
+An application trigger can run once for an app that opened or quit while the Mac or its screens
+slept or another user was using it (`docs/design/app-presence-catch-up.md`). The editor shows the
+option and its note for application triggers only. `core.trigger.afterWake.opened` / `.closed` are
+the line under the notice's title (no final period: VoiceOver's announcement adds one); `%@` is the
+app's bundle identifier, as in “When %@ opens”. `core.trigger.lastRun.afterWake` wraps the moment of
+the last-run line (“Last ran today at 9:00 (after the Mac woke): started “Work”.”), and
+`core.trigger.missed.afterWake` completes “Missed today at 9:00 (after the Mac woke): …”, so it
+starts in lowercase. These keys are listed in `LocalizationTests.awaitingTranslation` until they are
+translated.
+
+| Key | English |
+| --- | --- |
+| `triggers.editor.afterWake` | Run it after the Mac wakes |
+| `triggers.editor.afterWake.note` | Only for an approved app that opened or quit while the Mac or its screens slept or another user was using it, up to 30 minutes. It runs at most once per wake, always with a notice. If the app quits and opens again meanwhile, nothing runs. |
+| `core.trigger.afterWake.opened` | %@ opened while the Mac was asleep |
+| `core.trigger.afterWake.closed` | %@ quit while the Mac was asleep |
+| `core.trigger.lastRun.afterWake` | %@ (after the Mac woke) |
+| `core.trigger.missed.afterWake` | it changed too long ago, or too many triggers caught up at once |

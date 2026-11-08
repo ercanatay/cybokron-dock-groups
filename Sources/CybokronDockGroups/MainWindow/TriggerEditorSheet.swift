@@ -9,7 +9,8 @@ import SwiftUI
 /// or leaves a Wi-Fi network, when Ethernet connects or disconnects —, what to do — only the
 /// actions that event allows, with Finish when it ends for a Start on a change's start —, how — a
 /// notice, Ask First, Run Right Away; Show the Popup runs right away —, At most once a day and how
-/// long it waits before the action (Delay: 0 to 3600 seconds, after the notice). It
+/// long it waits before the action (Delay: 0 to 3600 seconds, after the notice) and, for an
+/// application trigger, Run It After the Mac Wakes (off by default). It
 /// says what a Start or Finish does (never quitting), how late a missed time still runs, and when an
 /// At Login trigger needs Open at Login. Return saves, Escape cancels.
 ///
@@ -604,8 +605,22 @@ struct TriggerEditorSheet: View {
                 .fixedSize()
                 .disabled(draft.allowedRunModes.count < 2)
                 Toggle(Texts.oncePerDay, isOn: $draft.oncePerDay)
+                if Self.showsAfterWake(draft) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle(Texts.afterWake, isOn: $draft.catchUp)
+                        Text(Texts.afterWakeNote)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
             }
         }
+    }
+
+    /// Run It After the Mac Wakes is offered for application triggers only.
+    static func showsAfterWake(_ draft: TriggerDraft) -> Bool {
+        draft.canCatchUp
     }
 
     /// How long it waits before the action: typed (0 to 3600 seconds) or stepped. Anything else
