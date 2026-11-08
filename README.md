@@ -281,6 +281,10 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   group's name instead — case, accents, spaces and punctuation don't matter
   (`Çalışma Alanı` → `calisma-alani`) — or the ID alone. An ID no group has never falls back to a
   name, and a name more than one group answers to opens none of them; either way an alert says why.
+  Links copied from Settings name their group by ID; those need version 0.13.0 or later on the Mac
+  that opens them. An older version resolves only by name. For an automation shared across machines
+  that may run an older version, write the link with the group's name instead
+  (`cybokrondockgroups://open/work`): both old and new versions understand it.
   Renaming a group to another group's name is refused. The same link is ignored when it comes again
   within 5 seconds, and `launch` / `hide` / `start` / `finish` links share one more 5-second limit:
   one group's apps are opened, hidden, started or finished per 5 seconds, whichever group the links

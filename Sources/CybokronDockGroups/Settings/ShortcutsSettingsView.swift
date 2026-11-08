@@ -246,9 +246,14 @@ struct ShortcutsSettingsView: View {
         } header: {
             Text(L10n.Common.links)
         } footer: {
-            Text(markdown: "\(L10n.Settings.Shortcuts.linksFooter) \(L10n.Switching.Shortcuts.linksFooter)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(markdown: "\(L10n.Settings.Shortcuts.linksFooter) \(L10n.Switching.Shortcuts.linksFooter)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(L10n.Settings.Shortcuts.linksVersionNote)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
         }
     }
 

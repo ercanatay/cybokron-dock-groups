@@ -1552,7 +1552,7 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `triggers.identity.approve.failure.checkFailed` | The app's code couldn't be checked. Nothing was approved. |
 | `triggers.identity.approve.failure.notSaved` | The approval couldn't be saved. Nothing was approved. |
 
-## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri
+## Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer and version note in Settings → Shortcuts & Siri
 
 | Key | English |
 | --- | --- |
@@ -1560,6 +1560,7 @@ against an approval; *unverified* is the state of a trigger whose app isn't appr
 | `core.link.groupAmbiguous` | More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri. |
 | `core.rename.nameTaken` | Another group is already named “%@”. Choose a different name. |
 | `settings.shortcuts.identityLinks.footer` | Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit. |
+| `settings.shortcuts.identityLinks.versionNote` | Links copied here need version 0.13.0 or later on the Mac that opens them; an older version only understands links written with the group's name. |
 
 ## Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field
 

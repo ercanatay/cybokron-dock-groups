@@ -35,7 +35,7 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = []
+    static let awaitingTranslation: [String] = ["settings.shortcuts.identityLinks.versionNote"]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }
@@ -287,6 +287,17 @@ struct LocalizationTests {
         for prefix in Self.awaitingTranslation {
             #expect(english.keys.contains { $0.hasPrefix(prefix) }, "no en.lproj key starts with \(prefix)")
         }
+    }
+
+    /// The link version note is in the English table and the README says the same about old versions.
+    @Test func linkVersionNoteIsInEnglishTableAndReadme() throws {
+        let english = try Self.table("en")
+        let note = try #require(english["settings.shortcuts.identityLinks.versionNote"])
+        #expect(note.contains("0.13.0"))
+        let readme = try String(contentsOf: Self.root.appending(path: "README.md"), encoding: .utf8)
+            .replacingOccurrences(of: "\n  ", with: " ")
+        #expect(readme.contains("need version 0.13.0 or later on the Mac that opens them"))
+        #expect(readme.contains("(`cybokrondockgroups://open/work`): both old and new versions understand it."))
     }
 
     // MARK: - Lookup
