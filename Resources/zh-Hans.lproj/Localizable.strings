@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS 没有公开说明屏幕何时锁定，因此锁定或解锁可能会被遗漏，例如 Mac 刚进入睡眠后，或其他用户切换进来时。无法判断时，不会执行任何操作。";
 "core.trigger.skip.cancelledBeforeRun" = "在运行前已取消";
 "triggers.editor.delay.hint" = "等待的秒数，0 到 3600，在动作执行之前等待（若显示了通知，则在通知之后）。若期间有任何变化 — 触发器、其所在分组、暂停、屏幕锁定、Mac 睡眠 — 则什么都不会执行。";
+"settings.shortcuts.identityLinks.versionNote" = "通过复制得到的链接需要在打开它们的 Mac 上使用 0.13.0 或更高版本；较旧版本只能识别使用群组名称编写的链接。";
+"triggers.editor.afterWake" = "在 Mac 唤醒后运行";
+"triggers.editor.afterWake.note" = "仅适用于已获批准的应用：当 Mac 或其屏幕处于休眠状态，或其他用户正在使用时，该应用打开或退出，最多可在 30 分钟内触发。每次唤醒最多运行一次，并始终显示通知。若期间应用退出后又重新打开，则不会运行任何操作。";
+"core.trigger.afterWake.opened" = "%@ 在 Mac 休眠时打开";
+"core.trigger.afterWake.closed" = "%@ 在 Mac 休眠时退出";
+"core.trigger.lastRun.afterWake" = "%@（Mac 唤醒后）";
+"core.trigger.missed.afterWake" = "其变更时间过久，或同时追赶的触发器过多";

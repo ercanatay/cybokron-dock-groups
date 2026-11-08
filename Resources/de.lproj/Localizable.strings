@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS dokumentiert nicht, wann der Bildschirm gesperrt wird. Eine Sperre oder Entsperrung kann daher übersehen werden, zum Beispiel direkt nach dem Ruhezustand des Macs oder wenn ein anderer Benutzer wechselt. Wenn dies nicht erkannt wird, wird nichts ausgeführt.";
 "core.trigger.skip.cancelledBeforeRun" = "vor dem Start abgebrochen";
 "triggers.editor.delay.hint" = "Sekunden Wartezeit, 0 bis 3600, bevor die Aktion ausgeführt wird (nach der Benachrichtigung, falls eine angezeigt wird). Ändert sich in der Zwischenzeit etwas – der Trigger, seine Gruppe, eine Pause, die Bildschirmsperre oder der Ruhezustand des Macs –, wird nichts ausgeführt.";
+"settings.shortcuts.identityLinks.versionNote" = "Hier kopierte Links benötigen Version 0.13.0 oder neuer auf dem Mac, der sie öffnet; eine ältere Version versteht nur Links, die mit dem Namen der Gruppe geschrieben sind.";
+"triggers.editor.afterWake" = "Nach dem Aufwachen des Mac ausführen";
+"triggers.editor.afterWake.note" = "Nur für eine genehmigte App, die geöffnet oder beendet wurde, während der Mac oder seine Bildschirme im Ruhezustand waren oder ein anderer Benutzer ihn verwendete, bis zu 30 Minuten. Es wird höchstens einmal pro Aufwachen ausgeführt, immer mit einem Hinweis. Wenn die App inzwischen beendet und wieder geöffnet wird, wird nichts ausgeführt.";
+"core.trigger.afterWake.opened" = "%@ wurde geöffnet, während der Mac schlief";
+"core.trigger.afterWake.closed" = "%@ wurde beendet, während der Mac schlief";
+"core.trigger.lastRun.afterWake" = "%@ (nachdem der Mac aufgewacht ist)";
+"core.trigger.missed.afterWake" = "es hat sich zu lange vorher geändert oder zu viele Auslöser wurden gleichzeitig nachgeholt";

@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS documenteert niet wanneer het scherm vergrendelt, dus een vergrendeling of ontgrendeling kan gemist worden, bijvoorbeeld direct nadat de Mac in slaap is gegaan of wanneer een andere gebruiker wisselt. Er wordt niets uitgevoerd wanneer dat niet vastgesteld kan worden.";
 "core.trigger.skip.cancelledBeforeRun" = "het werd geannuleerd voordat het liep";
 "triggers.editor.delay.hint" = "Seconden wachten, 0 tot 3600, voordat de actie wordt uitgevoerd (na de melding, als er een wordt getoond). Als er ondertussen iets verandert — de trigger, de groep, een pauze, het vergrendelen van het scherm, of de Mac die in slaapstand gaat — wordt er niets uitgevoerd.";
+"settings.shortcuts.identityLinks.versionNote" = "Hier gekopieerde links vereisen versie 0.13.0 of later op de Mac die ze opent; een oudere versie begrijpt alleen links die met de naam van de groep zijn geschreven.";
+"triggers.editor.afterWake" = "Uitvoeren nadat de Mac ontwaakt";
+"triggers.editor.afterWake.note" = "Alleen voor een goedgekeurde app die werd geopend of afgesloten terwijl de Mac of de schermen sliepen of een andere gebruiker hem gebruikte, tot 30 minuten. Het wordt hooguit één keer per ontwaking uitgevoerd, altijd met een melding. Als de app in de tussentijd wordt afgesloten en opnieuw wordt geopend, wordt niets uitgevoerd.";
+"core.trigger.afterWake.opened" = "%@ is geopend terwijl de Mac sliep";
+"core.trigger.afterWake.closed" = "%@ is afgesloten terwijl de Mac sliep";
+"core.trigger.lastRun.afterWake" = "%@ (nadat de Mac ontwaakte)";
+"core.trigger.missed.afterWake" = "het is te lang geleden veranderd, of er zijn te veel triggers tegelijk ingehaald";

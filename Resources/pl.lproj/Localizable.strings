@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS nie udokumentował, kiedy ekran się blokuje, więc blokada lub odblokowanie mogą zostać pominięte, na przykład zaraz po uśpieniu Maca lub gdy inny użytkownik przełącza konto. Gdy nie da się tego wykryć, nic się nie uruchamia.";
 "core.trigger.skip.cancelledBeforeRun" = "anulowano przed uruchomieniem";
 "triggers.editor.delay.hint" = "Liczba sekund oczekiwania, od 0 do 3600, przed wykonaniem akcji (po powiadomieniu, jeśli się pojawia). Jeśli w międzyczasie cokolwiek się zmieni — wyzwalacz, jego grupa, wstrzymanie, blokada ekranu, uśpienie Maca — nic nie zostanie uruchomione.";
+"settings.shortcuts.identityLinks.versionNote" = "Skopiowane tutaj linki wymagają wersji 0.13.0 lub nowszej na Macu, który je otwiera; starsza wersja rozumie tylko linki zapisane z nazwą grupy.";
+"triggers.editor.afterWake" = "Uruchom po wybudzeniu Maca";
+"triggers.editor.afterWake.note" = "Tylko dla zatwierdzonej aplikacji, która została otwarta lub zamknięta, gdy Mac lub jego ekrany były uśpione albo gdy korzystał z niego inny użytkownik, do 30 minut. Uruchamia się najwyżej raz po każdym wybudzeniu, zawsze z powiadomieniem. Jeśli aplikacja w tym czasie zostanie zamknięta i ponownie otwarta, nic się nie uruchomi.";
+"core.trigger.afterWake.opened" = "%@ został otwarty, gdy Mac spał";
+"core.trigger.afterWake.closed" = "%@ został zamknięty, gdy Mac spał";
+"core.trigger.lastRun.afterWake" = "%@ (po wybudzeniu Maca)";
+"core.trigger.missed.afterWake" = "zmieniono ją zbyt dawno temu albo nadrobiono zbyt wiele wyzwalaczy naraz";

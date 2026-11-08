@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS ne documente pas le moment où l'écran se verrouille, donc un verrouillage ou un déverrouillage peut être manqué, par exemple juste après la mise en veille du Mac ou lorsqu'un autre utilisateur prend la session. Rien ne s'exécute quand on ne peut pas le savoir.";
 "core.trigger.skip.cancelledBeforeRun" = "annulé avant son exécution";
 "triggers.editor.delay.hint" = "Secondes d'attente, de 0 à 3600, avant que l'action s'exécute (après l'avis, s'il est affiché). Si quoi que ce soit change entre-temps — le déclencheur, son groupe, une pause, le verrouillage de l'écran, la mise en veille du Mac — rien ne s'exécute.";
+"settings.shortcuts.identityLinks.versionNote" = "Les liens copiés ici nécessitent la version 0.13.0 ou ultérieure sur le Mac qui les ouvre ; une version plus ancienne ne comprend que les liens écrits avec le nom du groupe.";
+"triggers.editor.afterWake" = "Exécuter après le réveil du Mac";
+"triggers.editor.afterWake.note" = "Uniquement pour une app approuvée qui s'est ouverte ou fermée pendant que le Mac ou ses écrans étaient en veille, ou pendant qu'un autre utilisateur s'en servait, jusqu'à 30 minutes. Elle s'exécute au plus une fois par réveil, toujours avec une notification. Si l'app se ferme puis se rouvre entre-temps, rien ne s'exécute.";
+"core.trigger.afterWake.opened" = "%@ s'est ouvert pendant que le Mac était en veille";
+"core.trigger.afterWake.closed" = "%@ s'est fermé pendant que le Mac était en veille";
+"core.trigger.lastRun.afterWake" = "%@ (après le réveil du Mac)";
+"core.trigger.missed.afterWake" = "il a changé il y a trop longtemps, ou trop de déclencheurs ont été rattrapés en même temps";

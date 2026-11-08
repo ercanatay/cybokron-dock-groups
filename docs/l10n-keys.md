@@ -1576,7 +1576,7 @@ These keys are translated in every language.
 | `core.trigger.skip.cancelledBeforeRun` | it was cancelled before it ran |
 | `triggers.editor.delay.hint` | Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs. |
 
-## Run what was missed: the editor's option, the notice and the last-run line after the Mac woke (English only for now)
+## Run what was missed: the editor's option, the notice and the last-run line after the Mac woke
 
 An application trigger can run once for an app that opened or quit while the Mac or its screens
 slept or another user was using it (`docs/design/app-presence-catch-up.md`). The editor shows the

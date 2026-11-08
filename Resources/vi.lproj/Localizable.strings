@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS không ghi tài liệu về thời điểm màn hình khóa, nên việc khóa hoặc mở khóa có thể bị bỏ sót, chẳng hạn ngay sau khi Mac ngủ hoặc khi người dùng khác chuyển vào. Nếu không thể xác định, sẽ không có gì được thực thi.";
 "core.trigger.skip.cancelledBeforeRun" = "đã bị hủy trước khi chạy";
 "triggers.editor.delay.hint" = "Số giây chờ, từ 0 đến 3600, trước khi hành động được thực hiện (sau thông báo, nếu có hiển thị) — nếu có thay đổi trong lúc chờ, như trigger, nhóm của nó, tạm dừng, khóa màn hình hoặc Mac đang ngủ — thì sẽ không có gì được chạy.";
+"settings.shortcuts.identityLinks.versionNote" = "Liên kết được sao chép tại đây cần phiên bản 0.13.0 trở lên trên Mac mở chúng; phiên bản cũ hơn chỉ hiểu các liên kết được viết bằng tên nhóm.";
+"triggers.editor.afterWake" = "Chạy sau khi Mac thức dậy";
+"triggers.editor.afterWake.note" = "Chỉ áp dụng cho ứng dụng đã được phê duyệt mở hoặc thoát khi Mac hoặc màn hình của Mac đang ngủ, hoặc khi người dùng khác đang sử dụng, trong tối đa 30 phút. Tác vụ chạy tối đa một lần mỗi lần thức dậy, và luôn có thông báo. Nếu ứng dụng thoát rồi mở lại trong thời gian đó, sẽ không có gì được chạy.";
+"core.trigger.afterWake.opened" = "%@ đã mở khi Mac đang ngủ";
+"core.trigger.afterWake.closed" = "%@ đã thoát khi Mac đang ngủ";
+"core.trigger.lastRun.afterWake" = "%@ (sau khi Mac thức dậy)";
+"core.trigger.missed.afterWake" = "đã thay đổi quá lâu trước đó, hoặc quá nhiều trigger được xử lý bù cùng lúc";

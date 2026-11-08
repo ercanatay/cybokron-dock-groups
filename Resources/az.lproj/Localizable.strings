@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS ekranın nə vaxt kilidləndiyini sənədləşdirmir, ona görə də kilidlənmə və ya kilidin açılması qaçırıla bilər, məsələn, Mac yuxu rejimindən çıxdıqdan dərhal sonra və ya başqa istifadəçi sessiyaya keçəndə. Bunu müəyyən etmək mümkün olmadıqda heç nə işə düşmür.";
 "core.trigger.skip.cancelledBeforeRun" = "işə düşməzdən əvvəl ləğv edilib";
 "triggers.editor.delay.hint" = "Hərəkət işə düşməzdən əvvəl (bildiriş göstərilirsə, ondan sonra) gözləmək üçün saniyə sayı, 0-dan 3600-ə qədər. Bu müddətdə hər hansı dəyişiklik baş verərsə — tətik, onun qrupu, pauza, ekran kilidi, Mac-in yuxuya getməsi — heç nə işə düşmür.";
+"settings.shortcuts.identityLinks.versionNote" = "Bura kopyalanan linklər onları açan Mac-də 0.13.0 və ya daha yeni versiya tələb edir; köhnə versiya yalnız qrupun adı ilə yazılmış linkləri başa düşür.";
+"triggers.editor.afterWake" = "Mac oyandıqdan sonra işə salın";
+"triggers.editor.afterWake.note" = "Yalnız Mac və ya onun ekranları yuxuda olduqda və ya başqa istifadəçi işlədikdə açılan və ya bağlanan təsdiqlənmiş tətbiqlər üçün, 30 dəqiqəyə qədər. Hər oyanışda ən çox bir dəfə, həmişə bildiriş ilə işləyir. Bu müddətdə tətbiq bağlanıb yenidən açılarsa, heç nə işləmir.";
+"core.trigger.afterWake.opened" = "%@ Mac yuxuda olarkən açıldı";
+"core.trigger.afterWake.closed" = "%@ Mac yuxuda olarkən bağlandı";
+"core.trigger.lastRun.afterWake" = "%@ (Mac oyandıqdan sonra)";
+"core.trigger.missed.afterWake" = "dəyişiklik çox əvvəl baş verib, ya da eyni anda çox tətik gecikmiş yerinə yetirilib";

@@ -1175,3 +1175,10 @@
 "triggers.editor.screenLock.note" = "macOS non documenta quando lo schermo si blocca, quindi un blocco o uno sblocco può non essere rilevato, ad esempio subito dopo che il Mac è andato in stop o quando un altro utente cambia sessione. Quando non è possibile rilevarlo, non viene eseguito nulla.";
 "core.trigger.skip.cancelledBeforeRun" = "annullato prima dell'esecuzione";
 "triggers.editor.delay.hint" = "Secondi di attesa, da 0 a 3600, prima che l'azione venga eseguita (dopo l'avviso, se ne viene mostrato uno). Se nel frattempo cambia qualcosa — il trigger, il suo gruppo, una pausa, il blocco dello schermo, la sospensione del Mac — non viene eseguito nulla.";
+"settings.shortcuts.identityLinks.versionNote" = "I link copiati qui richiedono la versione 0.13.0 o successiva sul Mac che li apre; una versione precedente riconosce solo i link scritti con il nome del gruppo.";
+"triggers.editor.afterWake" = "Esegui dopo il risveglio del Mac";
+"triggers.editor.afterWake.note" = "Solo per un'app approvata che si è aperta o chiusa mentre il Mac o i suoi schermi erano in stop o un altro utente lo stava usando, fino a 30 minuti. Viene eseguita al massimo una volta per risveglio, sempre con un avviso. Se l'app si chiude e si riapre nel frattempo, non viene eseguito nulla.";
+"core.trigger.afterWake.opened" = "%@ aperta mentre il Mac era in stop";
+"core.trigger.afterWake.closed" = "%@ chiusa mentre il Mac era in stop";
+"core.trigger.lastRun.afterWake" = "%@ (dopo il risveglio del Mac)";
+"core.trigger.missed.afterWake" = "modificato troppo tempo fa, oppure troppi trigger recuperati insieme";

@@ -1173,3 +1173,10 @@
 "triggers.editor.screenLock.note" = "macOS, ekranın ne zaman kilitleneceğini belgelemediğinden; örneğin Mac uyku moduna geçtikten hemen sonra ya da başka bir kullanıcı oturum açtığında kilitlenme veya kilit açılma olayı kaçırılabilir. Algılanamadığında hiçbir şey çalıştırılmaz.";
 "core.trigger.skip.cancelledBeforeRun" = "çalıştırılmadan önce iptal edildi";
 "triggers.editor.delay.hint" = "Eylem çalışmadan önce beklenecek saniye sayısı, 0 ile 3600 arasında (varsa bildirimden sonra). Bu süre içinde — tetikleyici, grubu, duraklatma, ekran kilidi veya Mac'in uykuya geçmesi gibi — herhangi bir şey değişirse hiçbir şey çalıştırılmaz.";
+"settings.shortcuts.identityLinks.versionNote" = "Burada kopyalanan bağlantılar, bunları açan Mac'te 0.13.0 veya daha yeni bir sürüm gerektirir; daha eski bir sürüm yalnızca grubun adıyla yazılmış bağlantıları anlar.";
+"triggers.editor.afterWake" = "Mac uyandıktan sonra çalıştır";
+"triggers.editor.afterWake.note" = "Yalnızca Mac veya ekranları uykudayken ya da başka bir kullanıcı Mac'i kullanırken açılan veya kapanan onaylı uygulamalar için geçerlidir; en fazla 30 dakika. Her uyanışta en fazla bir kez çalışır ve her zaman bir bildirimle birlikte. Bu sırada uygulama kapanıp yeniden açılırsa hiçbir şey çalışmaz.";
+"core.trigger.afterWake.opened" = "%@ Mac uykudayken açıldı";
+"core.trigger.afterWake.closed" = "%@ Mac uykudayken kapandı";
+"core.trigger.lastRun.afterWake" = "%@ (Mac uyandıktan sonra)";
+"core.trigger.missed.afterWake" = "çok uzun süre önce değişti veya aynı anda çok fazla tetikleyici yakalandı";
