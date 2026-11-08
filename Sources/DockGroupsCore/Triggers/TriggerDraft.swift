@@ -95,6 +95,8 @@ public struct TriggerDraft: Equatable, Sendable {
     public var finishesWhenEventEnds: Bool
     /// The delay as typed, in seconds (`delaySeconds` reads it).
     public var delayText: String
+    /// "Run what was missed" (`GroupTrigger.catchUp`): kept for application triggers only.
+    public var catchUp = false
 
     /// A new trigger: at 9:00 on the calendar's working days, Start, with a notice.
     public init(calendar: Calendar) {
@@ -152,6 +154,7 @@ public struct TriggerDraft: Equatable, Sendable {
         finishesWhenEventEnds = trigger.finishesWhenEventEnds
         // A delay this version can't read shows empty: it must be typed again before saving.
         delayText = trigger.unreadableDelay == nil ? String(trigger.delaySeconds) : ""
+        catchUp = trigger.catchUp
         normalize()
     }
 
@@ -199,6 +202,12 @@ public struct TriggerDraft: Equatable, Sendable {
     /// Show the Popup runs right away only (its popup is its own notice).
     public var allowedRunModes: [TriggerRunMode] {
         action == .showPopup ? [.immediately] : TriggerRunMode.allCases
+    }
+
+    /// Whether "run what was missed" applies: an application trigger.
+    public var canCatchUp: Bool {
+        if case .application = when { return true }
+        return false
     }
 
     /// Whether Finish when it ends applies: a Start on a change's start.
@@ -296,7 +305,8 @@ public struct TriggerDraft: Equatable, Sendable {
             oncePerDay: oncePerDay,
             finishesWhenEventEnds: finishesWhenEventEnds && canFinishWhenEventEnds,
             // A delay that can't be read makes an unrunnable trigger (the editor doesn't save it).
-            delaySeconds: delaySeconds ?? -1
+            delaySeconds: delaySeconds ?? -1,
+            catchUp: catchUp && canCatchUp
         )
         if let identity {
             trigger.applicationIdentity = identity

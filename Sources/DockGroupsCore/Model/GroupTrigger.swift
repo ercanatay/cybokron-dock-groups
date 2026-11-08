@@ -249,6 +249,13 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
     public var delaySeconds: Int {
         didSet { unreadableDelay = nil }
     }
+    /// Application-presence rules only: also run once for a change that happened while the Mac
+    /// couldn't act — a net change between the last trusted reading before a bounded gap (sleep,
+    /// display sleep, another user's session) and the first one after it
+    /// (`docs/design/app-presence-catch-up.md`, D1). Off by default; written to the file only when
+    /// on. Kept as read for every event, but only an application-presence rule acts on it
+    /// (`catchesUp`): never a lock or unlock trigger (D9).
+    public var catchUp: Bool
     /// A delay a file had that isn't a whole number (a newer version's, or a damaged file): kept
     /// and written back as it was; the trigger then doesn't run.
     private(set) var unreadableDelay: JSONValue?
@@ -268,7 +275,8 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         isEnabled: Bool = true,
         oncePerDay: Bool = false,
         finishesWhenEventEnds: Bool = false,
-        delaySeconds: Int = 0
+        delaySeconds: Int = 0,
+        catchUp: Bool = false
     ) {
         self.id = id
         self.groupID = groupID
@@ -279,6 +287,7 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         self.oncePerDay = oncePerDay
         self.finishesWhenEventEnds = finishesWhenEventEnds
         self.delaySeconds = delaySeconds
+        self.catchUp = catchUp
         normalize()
     }
 
@@ -318,6 +327,17 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
         }
         return nil
     }
+
+    /// Whether "run what was missed" can apply to its event: application opens and closes only
+    /// (decisions D9, D10). Whether it acts also depends on the rule's authorization (D8, checked by
+    /// `TriggerCoordinator`).
+    public var canCatchUp: Bool {
+        if case .applicationPresence = event { return true }
+        return false
+    }
+
+    /// Whether "run what was missed" is on and applies to its event.
+    public var catchesUp: Bool { catchUp && canCatchUp }
 
     /// Whether "Finish when it ends" applies: Start on a condition's start.
     public var canFinishWhenEventEnds: Bool {
@@ -373,7 +393,7 @@ public struct GroupTrigger: Identifiable, Hashable, Sendable {
 
 extension GroupTrigger: Codable {
     private enum CodingKeys: String, CodingKey {
-        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds, delaySeconds, applicationIdentity
+        case id, groupID, enabled, event, action, runMode, oncePerDay, finishesWhenEventEnds, delaySeconds, catchUp, applicationIdentity
     }
 
     /// The identifier and the group are required (an entry without them is left out by the file);
@@ -397,6 +417,8 @@ extension GroupTrigger: Codable {
         isEnabled = container.decodeLeniently(Bool.self, forKey: .enabled) ?? false
         oncePerDay = container.decodeLeniently(Bool.self, forKey: .oncePerDay) ?? false
         finishesWhenEventEnds = container.decodeLeniently(Bool.self, forKey: .finishesWhenEventEnds) ?? false
+        // Missing or anything but `true` (every file before it existed): off.
+        catchUp = container.decodeLeniently(Bool.self, forKey: .catchUp) ?? false
         // Missing: no delay (every file before delays existed). A whole number is kept as it is,
         // in range or not (out of range, the trigger doesn't run); anything else is kept raw and the
         // trigger doesn't run either — never read as 0, which would run it sooner than it said.
@@ -453,6 +475,9 @@ extension GroupTrigger: Codable {
             try container.encode(unreadableDelay, forKey: .delaySeconds)
         } else if delaySeconds != 0 {
             try container.encode(delaySeconds, forKey: .delaySeconds)
+        }
+        if catchUp {
+            try container.encode(true, forKey: .catchUp)
         }
         try container.encodeIfPresent(applicationIdentity?.json, forKey: .applicationIdentity)
     }
