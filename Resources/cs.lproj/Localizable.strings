@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Verze %@ se nedokáže aktualizovat sama: chcete-li se vrátit, stáhněte novější verzi ze stránky vydání.";
 "settings.otherVersions.confirm.skips" = "Automatické kontroly pak přeskočí novější verze (%@); Zkontrolovat aktualizace… je přesto nabídne.";
 "settings.otherVersions.confirm.older" = "Starší verze nemusí znát funkce přidané později; zvažte nejprve export zálohy (Nastavení → Záloha).";
+"settings.otherVersions.confirm.settingsCopy" = "Kopie vašeho nastavení je uložena vedle nich (preferences.pre-downgrade-…json) a v případě potřeby ji lze ručně obnovit.";
 "settings.otherVersions.confirm.upgrade" = "Přeskočené verze budou vymazány, takže automatické kontroly znovu nabídnou každé novější vydání.";
 
 /* Settings → Backup */

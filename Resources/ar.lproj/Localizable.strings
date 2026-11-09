@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "الإصدار %@ لا يستطيع تحديث نفسه: للعودة، نزّل إصدارًا أحدث من صفحة الإصدارات.";
 "settings.otherVersions.confirm.skips" = "عندها سيتخطى الفحص التلقائي الإصدارات الأحدث (%@)، لكن «التحقق من التحديثات…» ما زال يعرضها.";
 "settings.otherVersions.confirm.older" = "قد لا يعرف الإصدار الأقدم عن الميزات المضافة بعده؛ فكّر في تصدير نسخة احتياطية أولًا (الإعدادات ← النسخ الاحتياطي).";
+"settings.otherVersions.confirm.settingsCopy" = "تُحفظ نسخة من إعداداتك بجانبها (preferences.pre-downgrade-…json) ويمكن استعادتها يدويًا عند الحاجة.";
 "settings.otherVersions.confirm.upgrade" = "ستُمسح الإصدارات المتجاوَزة، فيعرض الفحص التلقائي كل إصدار أحدث من جديد.";
 
 /* Settings → Backup */

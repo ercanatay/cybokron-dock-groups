@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Versie %@ kan zichzelf niet bijwerken: om terug te gaan, download je een nieuwere versie van de releasepagina.";
 "settings.otherVersions.confirm.skips" = "Automatische controles slaan de nieuwere versies dan over (%@); Controleer op updates… biedt ze nog steeds aan.";
 "settings.otherVersions.confirm.older" = "Een oudere versie kent mogelijk de functies niet die sindsdien zijn toegevoegd; overweeg eerst een back-up te exporteren (Instellingen → Back-up).";
+"settings.otherVersions.confirm.settingsCopy" = "Er wordt een kopie van je instellingen naast de originele bewaard (preferences.pre-downgrade-…json) en die kan indien nodig handmatig worden teruggezet.";
 "settings.otherVersions.confirm.upgrade" = "Overgeslagen versies worden gewist, zodat automatische controles elke nieuwere release weer aanbieden.";
 
 /* Settings → Backup */

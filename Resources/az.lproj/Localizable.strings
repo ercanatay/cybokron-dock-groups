@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "%@ versiyası özünü yeniləyə bilmir: geri qayıtmaq üçün buraxılışlar səhifəsindən daha yeni versiya yükləyin.";
 "settings.otherVersions.confirm.skips" = "Bundan sonra avtomatik yoxlamalar daha yeni versiyaları (%@) atlayır; Yeniləmələri yoxla… isə yenə təklif edir.";
 "settings.otherVersions.confirm.older" = "Köhnə versiya bundan sonra əlavə olunmuş funksiyaları tanımaya bilər; əvvəlcə ehtiyat nüsxə ixrac etməyi düşünün (Ayarlar → Ehtiyat nüsxə).";
+"settings.otherVersions.confirm.settingsCopy" = "Parametrlərinizin surəti onların yanında saxlanılır (preferences.pre-downgrade-…json) və lazım olduqda əl ilə geri qaytarıla bilər.";
 "settings.otherVersions.confirm.upgrade" = "Atlanmış versiyalar təmizlənir, beləliklə avtomatik yoxlamalar hər yeni buraxılışı yenidən təklif edir.";
 
 /* Settings → Backup */

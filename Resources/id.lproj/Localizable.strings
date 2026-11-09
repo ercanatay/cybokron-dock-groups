@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Versi %@ tidak dapat memperbarui dirinya sendiri: untuk kembali, unduh versi yang lebih baru dari halaman rilis.";
 "settings.otherVersions.confirm.skips" = "Pemeriksaan otomatis lalu melewati versi yang lebih baru (%@); Periksa Pembaruan… tetap menawarkannya.";
 "settings.otherVersions.confirm.older" = "Versi lama mungkin tidak mengenal fitur yang ditambahkan sesudahnya; pertimbangkan untuk mengekspor cadangan dulu (Pengaturan → Cadangan).";
+"settings.otherVersions.confirm.settingsCopy" = "Salinan pengaturan Anda disimpan di sebelahnya (preferences.pre-downgrade-…json) dan dapat dikembalikan secara manual jika diperlukan.";
 "settings.otherVersions.confirm.upgrade" = "Versi yang dilewati dihapus, sehingga pemeriksaan otomatis menawarkan setiap rilis yang lebih baru lagi.";
 
 /* Settings → Backup */

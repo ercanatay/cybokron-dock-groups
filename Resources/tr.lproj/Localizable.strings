@@ -332,6 +332,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "%@ sürümü kendini güncelleyemez: geri dönmek için sürümler sayfasından daha yeni bir sürüm indirin.";
 "settings.otherVersions.confirm.skips" = "Bundan sonra otomatik denetimler daha yeni sürümleri atlar (%@); Güncellemeleri Denetle… yine de onları önerir.";
 "settings.otherVersions.confirm.older" = "Eski bir sürüm, o zamandan sonra eklenen özellikleri bilmeyebilir; önce bir yedek almayı düşünün (Ayarlar → Yedekleme).";
+"settings.otherVersions.confirm.settingsCopy" = "Ayarlarınızın bir kopyası yanlarında tutulur (preferences.pre-downgrade-…json) ve gerekirse elle geri yüklenebilir.";
 "settings.otherVersions.confirm.upgrade" = "Atlanan sürümler temizlenir; böylece otomatik denetimler her yeni sürümü yeniden önerir.";
 
 /* Settings → Backup */

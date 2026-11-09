@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "版本 %@ 无法自行更新：如需回到此版本，请从发布页面下载。";
 "settings.otherVersions.confirm.skips" = "之后自动检查将跳过较新的版本（%@）；“检查更新…”仍会提供它们。";
 "settings.otherVersions.confirm.older" = "旧版本可能不了解之后新增的功能；请考虑先导出备份（设置 → 备份）。";
+"settings.otherVersions.confirm.settingsCopy" = "设置的副本保存在它们旁边（preferences.pre-downgrade-…json），如有需要，可以手动恢复。";
 "settings.otherVersions.confirm.upgrade" = "已跳过的版本将被清除，因此自动检查会再次提供所有较新的版本。";
 
 /* Settings → Backup */

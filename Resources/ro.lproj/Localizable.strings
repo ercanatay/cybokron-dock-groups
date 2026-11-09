@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Versiunea %@ nu se poate actualiza singură: ca să revii, descarcă o versiune mai nouă de pe pagina versiunilor.";
 "settings.otherVersions.confirm.skips" = "Verificările automate vor omite apoi versiunile mai noi (%@); Caută actualizări… le oferă în continuare.";
 "settings.otherVersions.confirm.older" = "O versiune mai veche poate să nu cunoască funcțiile adăugate între timp; ia în considerare mai întâi exportul unei copii de rezervă (Setări → Copie de rezervă).";
+"settings.otherVersions.confirm.settingsCopy" = "O copie a setărilor tale este păstrată lângă acestea (preferences.pre-downgrade-…json) și poate fi restaurată manual, dacă este nevoie.";
 "settings.otherVersions.confirm.upgrade" = "Versiunile omise sunt șterse, astfel încât verificările automate oferă din nou fiecare versiune mai nouă.";
 
 /* Settings → Backup */

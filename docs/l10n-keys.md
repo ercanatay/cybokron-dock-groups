@@ -746,7 +746,7 @@ replace `groupWindow.section.apps`, `groupWindow.apps.empty` and `groupWindow.ap
 | `settings.backup.leftOut.one` | 1 item in the backup was left out: it can't be opened safely. |
 | `settings.backup.leftOut.other` | %ld items in the backup were left out: they can't be opened safely. |
 
-## Settings → Updates → Other Versions…, a copy of the settings before going back (English only for now)
+## Settings → Updates → Other Versions…, a copy of the settings before going back
 
 Added to every question about going back to an older version: `preferences.json` is copied aside as
 `preferences.pre-downgrade-<time>.json` (the last three are kept), and the install goes on even if
