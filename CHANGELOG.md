@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-09
+
+### Added
+
+- Triggers can catch up after the Mac wakes: an application trigger can run once when the app opened or quit while the Mac or its screens slept, or another user was using the Mac, for gaps up to 30 minutes. It runs at most once per wake, always shows a notice, and only for an approved app; if the app quit and opened again meanwhile, nothing runs.
+
+### Changed
+
+- Settings → Shortcuts & Siri now says links copied there need version 0.13.0 or later on the Mac that opens them, and the README explains when to use a name-based link instead for automations shared across machines.
+
 ## [0.15.0] - 2026-11-08
 
 ### Added
@@ -588,7 +598,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...v0.14.0
 [0.13.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...v0.13.3
