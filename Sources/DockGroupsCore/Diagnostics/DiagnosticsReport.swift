@@ -195,6 +195,8 @@ public enum DiagnosticsReport {
         lines.append("Group shortcuts: \(describeGroupShortcuts(in: info))")
         lines.append("Standalone Dock menus: \(onOff(preferences.showsStandaloneDockMenus))")
         lines.append("Restore windows of running apps: \(onOff(preferences.restoresWindowsOfRunningApps))")
+        // The setting only: never how the user authenticated or what was refused.
+        lines.append("Ask before quitting apps: \(onOff(preferences.asksForAuthenticationBeforeQuitting))")
         // The two capture settings only: never which apps were open or captured.
         lines.append("Capture: order \(preferences.capture.order.rawValue), windowed-only \(onOff(preferences.capture.selectsOnlyAppsWithWindows))")
         lines.append("Language: \(preferences.language.rawValue)")

@@ -4,7 +4,8 @@ import SwiftUI
 
 /// Settings → Switching (spec §2.8, §2.10, §4.4): the protected apps — which Start, Finish and Close
 /// All never quit, and switching never hides — added with an open panel or from the running apps;
-/// whether quitting apps asks for authentication first (`docs/design/quit-authentication.md`);
+/// whether quitting apps asks for authentication first — and turning that off asks too
+/// (`docs/design/quit-authentication.md`);
 /// what Start and Finish do, with the current group; and how a Focus starts a group: where its
 /// filter is set up (System Settings → Focus), and what the current Focus asks for, read when the
 /// pane appears. Each group's own Start and Finish settings are in its group window.
@@ -15,6 +16,9 @@ struct SwitchingSettingsView: View {
     /// Redraws the pane when apps launch or quit, so "Add a Running App" lists the running ones.
     @ObservedObject var runningApps: RunningAppsMonitor
     let icons: AppIconProviding
+    /// "Ask for authentication before quitting apps": turning it off asks for authentication
+    /// first (`QuitAuthentication.change`), sharing the app's one-prompt-at-a-time rule.
+    let quitAuthentication: QuitAuthentication
     /// What the current Focus's filter asks for (`FocusFilterBridge.currentRequest`).
     var readFocusRequest: () async -> FocusRequest? = FocusFilterBridge.currentRequest
 
@@ -162,18 +166,53 @@ struct SwitchingSettingsView: View {
 
     // MARK: - Authentication
 
-    /// "Ask for authentication before quitting apps", off by default.
+    /// "Ask for authentication before quitting apps", off by default. Turning it on needs nothing;
+    /// turning it off asks for authentication first, and stays on unless that succeeds — or, on a
+    /// Mac that can't authenticate, unless the user confirms (`QuitAuthentication.change`).
     private var authenticationSection: some View {
         Section {
             Toggle(L10n.Switching.Settings.quitAuthentication, isOn: Binding(
                 get: { preferences.preferences.asksForAuthenticationBeforeQuitting },
-                set: { newValue in preferences.update { $0.asksForAuthenticationBeforeQuitting = newValue } }
+                set: { newValue in
+                    Task { @MainActor in await changeQuitAuthentication(to: newValue) }
+                }
             ))
         } footer: {
             Text(L10n.Switching.Settings.quitAuthenticationFooter)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    private func changeQuitAuthentication(to isOn: Bool) async {
+        let change = await quitAuthentication.change(
+            to: isOn,
+            confirmWithoutAuthentication: Self.confirmTurningOffWithoutAuthentication,
+            apply: { value in preferences.update { $0.asksForAuthenticationBeforeQuitting = value } }
+        )
+        if case .keptOn = change {
+            Self.presentKeptOn()
+        }
+    }
+
+    /// This Mac can't authenticate: turn the setting off anyway? Cancel (and Escape) keeps it on.
+    private static func confirmTurningOffWithoutAuthentication() -> Bool {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = QuitAuthenticationChange.turnOffWithoutAuthenticationQuestion
+        alert.addButton(withTitle: L10n.Common.ok)
+        alert.addButton(withTitle: L10n.Common.cancel)
+        NSApp.activate()
+        return alert.runModal() == .alertFirstButtonReturn
+    }
+
+    /// Authentication was cancelled or failed: the setting stays on, and says so.
+    private static func presentKeptOn() {
+        let alert = NSAlert()
+        alert.alertStyle = .informational
+        alert.messageText = QuitAuthenticationChange.turnOffRefusalMessage
+        NSApp.activate()
+        alert.runModal()
     }
 
     // MARK: - Start and Finish

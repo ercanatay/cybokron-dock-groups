@@ -119,6 +119,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// only hands its URLs over to that copy and quits.
     private var secondCopyHandoff: SecondCopyHandoff?
     private var urlGate = URLCommandGate()
+    /// While "Ask for authentication before quitting apps" is on, at most one alert per 5 seconds
+    /// about links refused for it; the rest only go to the log.
+    private var linkRefusalNotice = LinkRefusalNotice()
     /// Close All from every source; a link asks first. It also asks a start or finish link's
     /// question, one question at a time.
     private lazy var quitRequests = GroupQuitRequests(
@@ -177,6 +180,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         runningApps: runningApps,
         icons: icons,
         triggers: triggers,
+        quitAuthentication: quitAuthentication,
         isStatusItemShown: { [weak self] in self?.statusBarController?.itemFrame != nil },
         // Standalone groups from a backup get their Dock tiles instead of being turned off.
         groupsRestored: { [weak self] groups in self?.standalone.adoptRestoredGroups(groups) },
@@ -452,7 +456,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// authentication is required, a link quits nothing and says why.
     private func closeAll(_ group: DockGroup, mode: QuitMode, from source: QuitRequestSource) -> GroupQuitRequests.Outcome {
         let outcome = quitRequests.request(group, mode: mode, from: source)
-        present(outcome)
+        present(outcome, from: source)
         return outcome
     }
 
@@ -468,19 +472,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if outcome == .dropped {
                 logger.notice("Close All of group \(group.id, privacy: .public): another question or authentication prompt is showing")
             }
-            present(outcome)
+            present(outcome, from: .userAction)
         }
     }
 
-    private func present(_ outcome: GroupQuitRequests.Outcome) {
+    private func present(_ outcome: GroupQuitRequests.Outcome, from source: QuitRequestSource) {
         switch outcome {
         case .quit(let report):
             LaunchReportPresenter.presentProblems(in: report)
+        case .notAuthenticated(let failure) where source == .link:
+            presentLinkRefusal(failure)
         case .notAuthenticated(let failure):
             LaunchReportPresenter.presentRefusal(failure)
         case .declined, .dropped:
             break
         }
+    }
+
+    /// A link refused while authentication is required says why — once per
+    /// `LinkRefusalNotice.window`: a script sending many links gets one alert, the rest are logged.
+    private func presentLinkRefusal(_ failure: QuitAuthenticationFailure) {
+        guard linkRefusalNotice.shouldAlert() else {
+            urlLogger.notice("Not showing why a link was refused (\(failure.rawValue, privacy: .public)): an alert about it is showing or was dismissed less than \(Int(LinkRefusalNotice.window)) seconds ago")
+            return
+        }
+        LaunchReportPresenter.presentRefusal(failure)
+        linkRefusalNotice.alertDismissed()
     }
 
     private func hideAll(_ group: DockGroup) {
@@ -686,10 +703,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .dropped:
             urlLogger.notice("Ignored \(command.throttleKey, privacy: .public) for group \(group.id, privacy: .public): another link's question is showing")
             return
-        case .notAuthenticated:
+        case .notAuthenticated(let failure):
             // A link can't ask for authentication: it would quit apps, so it did nothing.
             urlLogger.notice("\(command.throttleKey, privacy: .public) for group \(group.id, privacy: .public): would quit apps, which needs authentication a link can't ask for; nothing done")
-            LaunchReportPresenter.presentProblems(in: report)
+            presentLinkRefusal(failure)
             urlGate.restartCooldown(for: command)
             return
         }

@@ -107,24 +107,153 @@ public final class QuitAuthentication {
     /// Asks the device owner once. `nil` when another prompt is showing (the request is dropped).
     /// Only the result is logged: nothing about how the user authenticated.
     public func authenticate() async -> QuitAuthenticationResult? {
+        await ask(reason: Self.reason, success: "Quitting: authenticated", refusal: "Not quitting")
+    }
+
+    /// The system prompt's reason when the setting is turned off: “Cybokron Dock Groups is trying
+    /// to turn off authentication before quitting apps.”
+    public static var turnOffReason: String {
+        Localization.string("core.quitAuthentication.turnOff.reason", "turn off authentication before quitting apps")
+    }
+
+    /// Turns the setting on or off from Settings → Switching (`apply` saves it). Turning it on, or
+    /// "off" while it's already off, needs nothing. Turning it off while it's on asks the device
+    /// owner first, so the setting can't be switched off by whoever finds the Mac unlocked more
+    /// easily than the apps can be quit:
+    ///
+    /// - authenticated → off;
+    /// - cancelled or failed → stays on (`keptOn`; the user is told);
+    /// - authentication isn't available on this Mac (no password, no Touch ID, no window for the
+    ///   prompt, no authenticator — `unavailable`, `notInteractive`) → `confirmWithoutAuthentication`
+    ///   asks whether to turn it off anyway, so a Mac that can't authenticate never locks the user
+    ///   into a setting that quits nothing; off only when it says yes;
+    /// - another prompt is showing → dropped, stays on.
+    public func change(
+        to isOn: Bool,
+        confirmWithoutAuthentication: () -> Bool,
+        apply: (Bool) -> Void
+    ) async -> QuitAuthenticationChange {
+        if isOn {
+            guard !isRequired else { return .unchanged }
+            apply(true)
+            logger.notice("Quit authentication turned on")
+            return .turnedOn
+        }
+        guard isRequired else { return .unchanged }
+        let success = "Turning quit authentication off: authenticated"
+        switch await ask(reason: Self.turnOffReason, success: success, refusal: "Not turning quit authentication off") {
+        case nil:
+            return .dropped
+        case .authenticated?:
+            apply(false)
+            return .turnedOff
+        case .refused(let failure)? where failure == .cancelled || failure == .failed:
+            return .keptOn(failure)
+        case .refused?:
+            guard confirmWithoutAuthentication() else {
+                logger.notice("Not turning quit authentication off: authentication unavailable, the user cancelled")
+                return .declined
+            }
+            apply(false)
+            logger.notice("Quit authentication turned off without authenticating: unavailable on this Mac, confirmed")
+            return .turnedOffWithoutAuthentication
+        }
+    }
+
+    private func ask(reason: String, success: String, refusal: String) async -> QuitAuthenticationResult? {
         guard !isAuthenticating else {
-            logger.notice("Not quitting: another authentication prompt is showing")
+            logger.notice("\(refusal, privacy: .public): another authentication prompt is showing")
             return nil
         }
         guard let authenticator else {
-            logger.notice("Not quitting: \(QuitAuthenticationFailure.unavailable.rawValue, privacy: .public)")
+            logger.notice("\(refusal, privacy: .public): \(QuitAuthenticationFailure.unavailable.rawValue, privacy: .public)")
             return .refused(.unavailable)
         }
         isAuthenticating = true
         defer { isAuthenticating = false }
-        let result = await authenticator.authenticate(reason: Self.reason)
+        let result = await authenticator.authenticate(reason: reason)
         switch result {
         case .authenticated:
-            logger.notice("Quitting: authenticated")
+            logger.notice("\(success, privacy: .public)")
         case .refused(let failure):
-            logger.notice("Not quitting: \(failure.rawValue, privacy: .public)")
+            logger.notice("\(refusal, privacy: .public): \(failure.rawValue, privacy: .public)")
         }
         return result
+    }
+}
+
+/// What a change of "Ask for authentication before quitting apps" in Settings did
+/// (`QuitAuthentication.change`).
+public enum QuitAuthenticationChange: Equatable, Sendable {
+    /// Turned on; nothing asked.
+    case turnedOn
+    /// Turned off after authenticating.
+    case turnedOff
+    /// Turned off without authenticating: this Mac can't, and the user confirmed.
+    case turnedOffWithoutAuthentication
+    /// Still on: authentication was cancelled or failed. The user is told
+    /// (`turnOffRefusalMessage`).
+    case keptOn(QuitAuthenticationFailure)
+    /// Still on: authentication isn't available and the user chose not to turn it off anyway.
+    case declined
+    /// Still on: another authentication prompt was showing.
+    case dropped
+    /// Already as asked.
+    case unchanged
+
+    /// Whether the setting is off now (when it was asked to be).
+    public var turnsOff: Bool { self == .turnedOff || self == .turnedOffWithoutAuthentication }
+
+    /// The question when this Mac can't authenticate: turn the setting off anyway?
+    public static var turnOffWithoutAuthenticationQuestion: String {
+        Localization.string(
+            "core.quitAuthentication.turnOff.unavailable",
+            "Authentication isn't available on this Mac; turn off “Ask for authentication before quitting apps” anyway?"
+        )
+    }
+
+    /// What the user is told when the setting stays on because authentication was cancelled or
+    /// failed.
+    public static var turnOffRefusalMessage: String {
+        Localization.string(
+            "core.quitAuthentication.turnOff.notAuthenticated",
+            "“Ask for authentication before quitting apps” stays on: authentication was cancelled or failed."
+        )
+    }
+}
+
+/// While "Ask for authentication before quitting apps" is on, a link (or the command line) that
+/// would quit apps is refused (`QuitAuthenticationFailure.notInteractive`), and the app says why.
+/// A script that sends many such links would get as many alerts, so only one shows per window
+/// (`CommandThrottle.urlCooldown`, 5 seconds), like the links' own cooldown: refusals while the
+/// alert shows, or within the window after it was shown or dismissed, are only logged. A refusal
+/// from the app's own clicks isn't counted here: it always says why.
+public struct LinkRefusalNotice: Sendable {
+    /// How long after an alert another refusal only goes to the log.
+    public static let window: TimeInterval = CommandThrottle.urlCooldown
+
+    private static let key = "quitAuthentication.linkRefusal"
+    private var throttle: CommandThrottle
+    /// Whether the alert is showing.
+    public private(set) var isShowing = false
+
+    public init(window: TimeInterval = LinkRefusalNotice.window) {
+        throttle = CommandThrottle(interval: window)
+    }
+
+    /// Whether a refusal at `now` shows the alert; when it does, the window starts and the alert
+    /// counts as showing until `alertDismissed`. Otherwise it's only logged.
+    public mutating func shouldAlert(at now: Date = Date()) -> Bool {
+        guard !isShowing, throttle.accept(Self.key, at: now) else { return false }
+        isShowing = true
+        return true
+    }
+
+    /// The alert was dismissed at `now`: the window starts again, so the refusals that came while
+    /// it showed (or right after) don't bring it back at once.
+    public mutating func alertDismissed(at now: Date = Date()) {
+        isShowing = false
+        throttle.restartCooldown(for: Self.key, at: now)
     }
 }
 

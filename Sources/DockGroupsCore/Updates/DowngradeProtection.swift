@@ -26,6 +26,10 @@ import Foundation
 /// item macOS keeps) stays on with no setting for it there, so the question says so
 /// (`triggersWarning`).
 ///
+/// Going back to a version older than `ReleaseHistory.firstQuitAuthenticationVersion` while "Ask for
+/// authentication before quitting apps" is on gets a line too (`quitAuthenticationWarning`): that
+/// version doesn't know the setting, quits apps without asking, and drops it when it saves the settings.
+///
 /// `UpdateInstaller` replaces the app only and never reads the settings; this happens around it.
 public enum DowngradeProtection {
     /// The label of the copies: `groups.pre-downgrade-<timestamp>.json`.
@@ -131,6 +135,27 @@ public enum DowngradeProtection {
             ))
         }
         return lines
+    }
+
+    /// Whether installing `target` while `current` runs goes back to a version without "Ask for
+    /// authentication before quitting apps".
+    public static func appliesToQuitAuthentication(installing target: SemanticVersion, over current: SemanticVersion?) -> Bool {
+        guard ReleaseHistory.lacksQuitAuthentication(target) else { return false }
+        return current.map { target < $0 } ?? true
+    }
+
+    /// The install question's line about "Ask for authentication before quitting apps" (none
+    /// unless it's on and `target` predates it): that version doesn't know the setting, quits
+    /// apps without asking, and drops the setting once it saves the settings (it then is off after
+    /// coming back). No copy is made for it alone.
+    public static func quitAuthenticationWarning(installing target: SemanticVersion, over current: SemanticVersion?, preferences: PopupPreferences) -> [String] {
+        guard preferences.asksForAuthenticationBeforeQuitting,
+              appliesToQuitAuthentication(installing: target, over: current) else { return [] }
+        return [Localization.format(
+            "core.quitAuthentication.olderVersion.unknown",
+            "Version %@ doesn't know “Ask for authentication before quitting apps”: it quits apps without asking, and the setting is lost once it saves your settings.",
+            target.description
+        )]
     }
 
     /// Copies the groups file and the preferences file aside before `target` is installed over

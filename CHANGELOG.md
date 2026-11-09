@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Settings → Switching → Ask for authentication before quitting apps (off by default): Close All, Force Quit, and Start or Finish when they would quit apps ask for Touch ID, an Apple Watch or your password first. If that's cancelled or fails, nothing is quit and the app says so. Links, the command line, Siri, Shortcuts and standalone groups' own apps can't ask, so while it's on they quit nothing and say why. Hiding and opening apps never ask.
+- Turning Ask for authentication before quitting apps off asks for authentication too; if that's cancelled or fails, it stays on and says so. On a Mac that can't authenticate, the app asks whether to turn it off anyway instead of locking you in. Other Versions… warns that versions before 0.17.0 don't know the setting, and the diagnostics report says whether it's on. Refused links show at most one alert every 5 seconds; the rest are only logged.
 
 ## [0.16.1] - 2026-11-09
 

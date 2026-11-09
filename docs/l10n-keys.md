@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1109 keys.
+1113 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -334,7 +334,7 @@ the app ("System (Türkçe)"); the other choices are language names in themselve
 | `settings.shortcuts.siri.noGroups` | Add a group to see what to ask Siri for it. |
 | `settings.shortcuts.openShortcuts` | Open Shortcuts |
 | `settings.shortcuts.shortcutsApp` | Shortcuts app |
-| `settings.shortcuts.shortcutsApp.detail` | Launch Group, Quit Group and Show Group are actions there and in Spotlight: add them to your own shortcuts, with your own trigger. |
+| `settings.shortcuts.shortcutsApp.detail` | Launch Group, Quit Group, Show Group, New Group from Open Apps and Add Open Apps to Group are actions in Shortcuts and Spotlight: add them to your own shortcuts, with your own trigger. |
 | `settings.shortcuts.siri.header` | Siri and Shortcuts |
 | `settings.shortcuts.siri.footer` | Ask Siri with these words, by voice or by typing. They use the group's current name; shortcuts you build keep working after a rename. |
 | `settings.shortcuts.links.noGroups` | Add a group to see its links. |
@@ -1623,3 +1623,21 @@ is the app name.
 | `core.quitAuthentication.reason` | quit apps |
 | `core.quitAuthentication.notAuthenticated` | Nothing was quit: authentication was cancelled, failed or isn't available on this Mac. |
 | `core.quitAuthentication.notInteractive` | Nothing was quit: “Ask for authentication before quitting apps” is on, and links, Siri, Shortcuts, the command line and standalone groups' own apps can't ask for it. Quit the apps from %@ itself instead. |
+
+## Ask for authentication before quitting apps: turning it off, older versions (English only for now)
+
+Turning the setting off asks for authentication first (`docs/design/quit-authentication.md`):
+`core.quitAuthentication.turnOff.reason` completes the system's own sentence “Cybokron Dock Groups
+is trying to …”, so it starts in lowercase and has no final period; `….unavailable` is the question
+when this Mac can't authenticate (OK / Cancel), `….notAuthenticated` the alert when it stays on.
+`core.quitAuthentication.olderVersion.unknown` is a line of the Other Versions… install question;
+`%@` is the version. Each names the toggle: use exactly the translation of
+`switching.quitAuthentication.toggle` there. These keys are listed in
+`LocalizationTests.awaitingTranslation` until they are translated.
+
+| Key | English |
+| --- | --- |
+| `core.quitAuthentication.turnOff.reason` | turn off authentication before quitting apps |
+| `core.quitAuthentication.turnOff.unavailable` | Authentication isn't available on this Mac; turn off “Ask for authentication before quitting apps” anyway? |
+| `core.quitAuthentication.turnOff.notAuthenticated` | “Ask for authentication before quitting apps” stays on: authentication was cancelled or failed. |
+| `core.quitAuthentication.olderVersion.unknown` | Version %@ doesn't know “Ask for authentication before quitting apps”: it quits apps without asking, and the setting is lost once it saves your settings. |

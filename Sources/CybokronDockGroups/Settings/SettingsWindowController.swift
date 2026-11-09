@@ -31,6 +31,7 @@ final class SettingsWindowController: NSWindowController {
         runningApps: RunningAppsMonitor,
         icons: AppIconProviding,
         triggers: TriggerController,
+        quitAuthentication: QuitAuthentication,
         isStatusItemShown: @escaping () -> Bool,
         groupsRestored: @escaping ([DockGroup]) -> Void,
         showGroupSettings: @escaping (DockGroup.ID) -> Void
@@ -61,6 +62,7 @@ final class SettingsWindowController: NSWindowController {
                 runningApps: runningApps,
                 icons: icons,
                 triggers: triggers,
+                quitAuthentication: quitAuthentication,
                 backup: backup,
                 diagnostics: diagnostics,
                 changelog: changelog,
@@ -184,6 +186,8 @@ private struct SettingsView: View {
     let runningApps: RunningAppsMonitor
     let icons: AppIconProviding
     let triggers: TriggerController
+    /// Turning "Ask for authentication before quitting apps" off asks for it first.
+    let quitAuthentication: QuitAuthentication
     let backup: SettingsBackupController
     let diagnostics: DiagnosticsController
     let changelog: ChangelogService
@@ -223,7 +227,7 @@ private struct SettingsView: View {
         case .shortcuts:
             ShortcutsSettingsView(preferences: preferences, store: store, shortcuts: shortcuts, showGroupSettings: showGroupSettings)
         case .switching:
-            SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)
+            SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons, quitAuthentication: quitAuthentication)
         case .triggers:
             TriggersSettingsView(
                 triggers: triggers,

@@ -35,7 +35,10 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = []
+    static let awaitingTranslation: [String] = [
+        "core.quitAuthentication.turnOff.",
+        "core.quitAuthentication.olderVersion.",
+    ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }
@@ -281,11 +284,70 @@ struct LocalizationTests {
         #expect(Self.placeholders("%2$@ and %@") == Self.placeholders("%1$@ and %2$@"))
     }
 
-    /// Every key awaiting translation is in the English table, so the prefixes don't hide a typo.
+    /// What `docs/l10n-keys.md` lists: every table row's key in order, the keys under a heading
+    /// marked “(English only for now)”, and the “N keys.” line.
+    struct KeyDocument {
+        var keys: [String] = []
+        var englishOnly: Set<String> = []
+        var stated: [Int] = []
+    }
+
+    static func keyDocument() throws -> KeyDocument {
+        let text = try String(contentsOf: root.appending(components: "docs", "l10n-keys.md"), encoding: .utf8)
+        let row = try NSRegularExpression(pattern: #"^\|\s*`([^`]+)`\s*\|"#)
+        let count = try NSRegularExpression(pattern: #"^(\d+) keys\.$"#)
+        var document = KeyDocument()
+        var inEnglishOnlySection = false
+        for line in text.components(separatedBy: "\n") {
+            let range = NSRange(line.startIndex..., in: line)
+            if line.hasPrefix("## ") {
+                inEnglishOnlySection = line.contains("(English only for now)")
+            } else if let match = row.firstMatch(in: line, range: range), let key = Range(match.range(at: 1), in: line) {
+                document.keys.append(String(line[key]))
+                if inEnglishOnlySection { document.englishOnly.insert(String(line[key])) }
+            } else if let match = count.firstMatch(in: line, range: range), let number = Range(match.range(at: 1), in: line) {
+                document.stated.append(Int(line[number]) ?? -1)
+            }
+        }
+        return document
+    }
+
+    /// Keeps `awaitingTranslation` honest, whether it's empty or not: `docs/l10n-keys.md` lists
+    /// exactly the English table's keys (once each, with the right count), the keys it marks
+    /// “English only for now” are exactly the ones awaiting translation, every prefix names English
+    /// keys (so a typo can't hide a missing translation) that some translation still lacks (so a
+    /// translated section doesn't stay exempt), and with nothing awaiting, no translation lacks a key.
     @Test func keysAwaitingTranslationAreEnglishKeys() throws {
         let english = try Self.table("en")
+        let document = try Self.keyDocument()
+
+        let duplicates = Dictionary(grouping: document.keys, by: { $0 }).filter { $0.value.count > 1 }.keys
+        #expect(duplicates.isEmpty, "docs/l10n-keys.md lists keys twice: \(duplicates.sorted())")
+        let documented = Set(document.keys)
+        let undocumented = Set(english.keys).subtracting(documented)
+        let unknown = documented.subtracting(english.keys)
+        #expect(undocumented.isEmpty, "docs/l10n-keys.md lacks en.lproj keys: \(undocumented.sorted())")
+        #expect(unknown.isEmpty, "docs/l10n-keys.md lists keys en.lproj doesn't have: \(unknown.sorted())")
+        #expect(document.stated == [english.count], "docs/l10n-keys.md says \(document.stated) keys, en.lproj has \(english.count)")
+
+        let awaiting = Set(english.keys.filter(Self.isAwaitingTranslation))
+        #expect(document.englishOnly == awaiting,
+                "“English only for now” in docs/l10n-keys.md and awaitingTranslation differ: \(document.englishOnly.symmetricDifference(awaiting).sorted())")
+
+        let translations = try Self.languages.filter { $0 != "en" }.map { ($0, try Self.table($0)) }
+        #expect(!translations.isEmpty)
         for prefix in Self.awaitingTranslation {
-            #expect(english.keys.contains { $0.hasPrefix(prefix) }, "no en.lproj key starts with \(prefix)")
+            let keys = english.keys.filter { $0.hasPrefix(prefix) }
+            #expect(!keys.isEmpty, "no en.lproj key starts with \(prefix)")
+            #expect(translations.contains { _, table in keys.contains { table[$0] == nil } },
+                    "every language has the \(prefix) keys: remove the prefix from awaitingTranslation")
+        }
+        if Self.awaitingTranslation.isEmpty {
+            #expect(document.englishOnly.isEmpty)
+            for (language, table) in translations {
+                let missing = Set(english.keys).subtracting(table.keys)
+                #expect(missing.isEmpty, "\(language).lproj lacks \(missing.sorted()), and nothing awaits translation")
+            }
         }
     }
 

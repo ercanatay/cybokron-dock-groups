@@ -377,6 +377,13 @@ final class AutoUpdater: ObservableObject {
         )
     }
 
+    /// The install question's line when installing `version` goes back to a version that doesn't
+    /// know "Ask for authentication before quitting apps" while it's on
+    /// (`DowngradeProtection.quitAuthenticationWarning`).
+    func quitAuthenticationWarning(installing version: SemanticVersion) -> [String] {
+        DowngradeProtection.quitAuthenticationWarning(installing: version, over: currentVersion, preferences: preferences.preferences)
+    }
+
     /// Clears the skipped versions, so automatic checks offer every newer release again.
     func clearSkippedVersions() {
         state.skippedVersions = []
