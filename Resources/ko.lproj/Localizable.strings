@@ -1180,3 +1180,6 @@
 "core.trigger.afterWake.closed" = "%@이(가) Mac이 잠자는 동안 종료됨";
 "core.trigger.lastRun.afterWake" = "%@ (Mac이 깨어난 후)";
 "core.trigger.missed.afterWake" = "마지막 변경이 너무 오래전이거나, 한꺼번에 처리할 트리거가 너무 많음";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub에서 지금 다운로드를 제공할 수 없습니다(HTTP %ld). 연결 상태를 확인하고 몇 분 후에 다시 시도하세요.";

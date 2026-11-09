@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ a Mac alvása közben zárult be";
 "core.trigger.lastRun.afterWake" = "%@ (a Mac felébredése után)";
 "core.trigger.missed.afterWake" = "túl régen változott, vagy túl sok trigger került egyszerre utólagos futásra";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "A GitHub most nem tudta kiszolgálni a letöltést (HTTP %ld). Ellenőrizd a kapcsolatot, és próbáld újra néhány perc múlva.";

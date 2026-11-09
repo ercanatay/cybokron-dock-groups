@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "أُغلق %@ أثناء نوم جهاز Mac";
 "core.trigger.lastRun.afterWake" = "%@ (بعد استيقاظ جهاز Mac)";
 "core.trigger.missed.afterWake" = "لأنه تغيّر منذ وقت طويل، أو لأن عدداً كبيراً من المشغّلات تراكم دفعة واحدة";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "تعذّر على GitHub تقديم التنزيل الآن (HTTP %ld). تحقّق من اتصالك، وأعد المحاولة بعد بضع دقائق.";

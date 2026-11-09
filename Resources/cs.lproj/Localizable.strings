@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ byl ukončen, zatímco Mac spal";
 "core.trigger.lastRun.afterWake" = "%@ (po probuzení Macu)";
 "core.trigger.missed.afterWake" = "změnilo se příliš dávno, nebo se najednou dohnalo příliš mnoho spouštěčů";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub nemohl právě teď poskytnout stahování (HTTP %ld). Zkontrolujte připojení a zkuste to znovu za několik minut.";
