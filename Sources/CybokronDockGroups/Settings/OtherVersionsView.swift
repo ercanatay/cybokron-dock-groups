@@ -211,6 +211,7 @@ private struct PendingInstall {
             parts.append(contentsOf: triggerLines)
             parts.append(contentsOf: quitAuthenticationLines)
             parts.append(L10n.Settings.OtherVersions.confirmOlder)
+            parts.append(L10n.Settings.OtherVersions.confirmSettingsCopy)
         case .upgrade:
             parts.append(L10n.Settings.OtherVersions.confirmUpgrade)
         case .reinstall, nil:

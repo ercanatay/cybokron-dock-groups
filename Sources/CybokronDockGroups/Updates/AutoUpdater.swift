@@ -443,6 +443,16 @@ final class AutoUpdater: ObservableObject {
                     for copy in copies {
                         self.logger.notice("Copied \(copy.lastPathComponent, privacy: .public) before installing \(release.version, privacy: .public)")
                     }
+                    // Any other way back: the settings alone, as a courtesy; a failure doesn't stop the install.
+                    if let copy = DowngradeProtection.preserveSettings(
+                        of: self.preferences,
+                        installing: release.version,
+                        over: self.currentVersion,
+                        alreadyCopied: copies,
+                        onFailure: { self.logger.error("Couldn't copy preferences.json before installing \(release.version, privacy: .public): \(String(describing: $0), privacy: .public); installing anyway") }
+                    ) {
+                        self.logger.notice("Copied \(copy.lastPathComponent, privacy: .public) before installing \(release.version, privacy: .public)")
+                    }
                 }
                 if isDryRun {
                     self?.logger.notice("Dry run: staged \(staged.path, privacy: .public); nothing replaced")
