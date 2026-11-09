@@ -7,10 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-09
+
 ### Added
 
-- Settings → Switching → Ask for authentication before quitting apps (off by default): Close All, Force Quit, and Start or Finish when they would quit apps ask for Touch ID, an Apple Watch or your password first. If that's cancelled or fails, nothing is quit and the app says so. Links, the command line, Siri, Shortcuts and standalone groups' own apps can't ask, so while it's on they quit nothing and say why. Hiding and opening apps never ask.
-- Turning Ask for authentication before quitting apps off asks for authentication too; if that's cancelled or fails, it stays on and says so. On a Mac that can't authenticate, the app asks whether to turn it off anyway instead of locking you in. Other Versions… warns that versions before 0.17.0 don't know the setting, and the diagnostics report says whether it's on. Refused links show at most one alert every 5 seconds; the rest are only logged.
+- Settings → Switching → Ask for authentication before quitting apps (off by default): Close All, Force Quit, and Start or Finish when they would quit apps ask for Touch ID, an Apple Watch or your Mac password first. If that's cancelled or fails, nothing is quit and the app says so. Links, the command line, Siri, Shortcuts and standalone groups' own apps can't ask, so while it's on they quit nothing and say why. Hiding and opening apps never ask.
+
+### Changed
+
+- Turning Ask for authentication before quitting apps off asks for authentication too; if that's cancelled or fails, it stays on and says so. On a Mac where authentication isn't available, the app asks whether to turn it off anyway instead of locking you out. Other Versions… warns that versions before 0.17.0 don't know the setting, and the diagnostics report says whether it's on.
+
+### Fixed
+
+- A link refused while Ask for authentication before quitting apps is on shows at most one alert every 5 seconds instead of one per attempt; the rest are only logged.
 
 ## [0.16.1] - 2026-11-09
 
@@ -607,7 +616,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.16.1...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.0...HEAD
+[0.17.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...v0.16.1
 [0.15.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...v0.14.0
