@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Downloading an update rides out GitHub's brief outages: a server error (HTTP 5xx), 408, 429 or a network timeout is tried again after 2 and then 6 seconds, and when the release's download address still fails, the same file is fetched through the asset's GitHub API address. Either way the file must match its published size and SHA-256, and the disk image and app keep their Developer ID signature checks. When GitHub can't serve the file at all, the update window says so ("GitHub couldn't serve the download right now (HTTP 504)…") instead of a bare status code, and Cancel stops a download, also while it waits to try again. 403 and 404 aren't retried.
 
+## [0.16.0] - 2026-11-09
+
+### Added
+
+- Triggers can catch up after the Mac wakes: an application trigger can run once when the app opened or quit while the Mac or its screens slept, or another user was using the Mac, for gaps up to 30 minutes. It runs at most once per wake, always shows a notice, and only for an approved app; if the app quit and opened again meanwhile, nothing runs.
+
+### Changed
+
+- Settings → Shortcuts & Siri now says links copied there need version 0.13.0 or later on the Mac that opens them, and the README explains when to use a name-based link instead for automations shared across machines.
+
 ## [0.15.0] - 2026-11-08
 
 ### Added
@@ -592,7 +602,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.3...v0.14.0
 [0.13.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.13.2...v0.13.3
