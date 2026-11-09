@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub konnte den Download gerade nicht bereitstellen (HTTP %ld). Prüfe deine Verbindung und versuche es in ein paar Minuten erneut.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Vor dem Beenden von Apps nach Authentifizierung fragen";
+"switching.quitAuthentication.footer" = "Bei „Alle schließen“, „Sofort beenden“ sowie „Start“ und „Fertig“ fragt zuerst Touch ID, deine Apple Watch oder dein Passwort nach, wenn dabei Apps beendet würden. Wird dies abgebrochen oder schlägt es fehl, wird nichts beendet. Links, Siri, Kurzbefehle, die Befehlszeile und die eigenen Apps eigenständiger Gruppen können nicht nachfragen, daher beenden sie bei aktivierter Option nichts. Das Ausblenden und Öffnen von Apps fragt nie nach.";
+"core.quitAuthentication.reason" = "apps beenden";
+"core.quitAuthentication.notAuthenticated" = "Nichts wurde beendet: Die Authentifizierung wurde abgebrochen, ist fehlgeschlagen oder ist auf diesem Mac nicht verfügbar.";
+"core.quitAuthentication.notInteractive" = "Nichts wurde beendet: „Vor dem Beenden von Apps nach Authentifizierung fragen“ ist aktiviert, und Links, Siri, Kurzbefehle, die Befehlszeile sowie die eigenen Apps eigenständiger Gruppen können nicht danach fragen. Beende die Apps stattdessen direkt in %@.";

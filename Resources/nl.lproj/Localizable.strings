@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub kon de download op dit moment niet leveren (HTTP %ld). Controleer je verbinding en probeer het over enkele minuten opnieuw.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Vraag om authenticatie voordat apps worden afgesloten";
+"switching.quitAuthentication.footer" = "Alles sluiten, Geforceerd afsluiten, en Start en Finish wanneer ze apps zouden afsluiten, vragen eerst om Touch ID, je Apple Watch of je wachtwoord. Als dat wordt geannuleerd of mislukt, wordt er niets afgesloten. Links, Siri, Opdrachten, de opdrachtregel en de eigen apps van zelfstandige groepen kunnen niet om authenticatie vragen, dus sluiten ze niets af zolang dit aan staat. Verbergen en openen van apps vraagt nooit om authenticatie.";
+"core.quitAuthentication.reason" = "apps afsluiten";
+"core.quitAuthentication.notAuthenticated" = "Er is niets afgesloten: authenticatie is geannuleerd, mislukt of is niet beschikbaar op deze Mac.";
+"core.quitAuthentication.notInteractive" = "Er is niets afgesloten: “Vraag om authenticatie voordat apps worden afgesloten” staat aan, en links, Siri, Opdrachten, de opdrachtregel en de eigen apps van zelfstandige groepen kunnen er niet om vragen. Sluit de apps uit %@ zelf af.";

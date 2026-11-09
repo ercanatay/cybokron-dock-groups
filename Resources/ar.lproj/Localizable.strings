@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "تعذّر على GitHub تقديم التنزيل الآن (HTTP %ld). تحقّق من اتصالك، وأعد المحاولة بعد بضع دقائق.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "طلب المصادقة قبل إنهاء التطبيقات";
+"switching.quitAuthentication.footer" = "عند تنفيذ Close All وفرض الإنهاء (Force Quit) وStart وFinish التي تؤدي إلى إنهاء التطبيقات، يُطلب أولاً Touch ID أو ساعة Apple أو كلمة المرور. إذا أُلغي الطلب أو فشل، فلن يُنهى أي تطبيق. لا تستطيع الروابط وسيري والاختصارات وسطر الأوامر والتطبيقات الخاصة بالمجموعات المستقلة طلب المصادقة، لذلك لن تُنهى أي تطبيقات أثناء تفعيل هذا الخيار. إخفاء التطبيقات وفتحها لا يطلب المصادقة أبداً.";
+"core.quitAuthentication.reason" = "إنهاء التطبيقات";
+"core.quitAuthentication.notAuthenticated" = "لم يُنهَ أي شيء: أُلغيت المصادقة أو فشلت أو غير متوفرة على هذا Mac.";
+"core.quitAuthentication.notInteractive" = "لم يُنهَ أي شيء: خيار “طلب المصادقة قبل إنهاء التطبيقات” مفعّل، والروابط وسيري والاختصارات وسطر الأوامر والتطبيقات الخاصة بالمجموعات المستقلة لا تستطيع طلبها. أنهِ التطبيقات من %@ نفسه بدلاً من ذلك.";

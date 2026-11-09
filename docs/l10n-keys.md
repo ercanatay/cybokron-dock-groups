@@ -1607,15 +1607,14 @@ is the HTTP status. Other download failures keep `core.update.install.downloadFa
 | --- | --- |
 | `core.update.install.serverUnavailable` | GitHub couldn't serve the download right now (HTTP %ld). Check your connection and try again in a few minutes. |
 
-## Ask for authentication before quitting apps (English only for now)
+## Ask for authentication before quitting apps
 
 Settings → Switching's toggle and its footer, the reason macOS shows in its authentication prompt,
 and the alert when nothing was quit (`docs/design/quit-authentication.md`).
 `core.quitAuthentication.reason` completes the system's own sentence “Cybokron Dock Groups is trying
 to …”, so it starts in lowercase and has no final period. `core.quitAuthentication.notInteractive`
 names the toggle: use exactly the translation of `switching.quitAuthentication.toggle` there; `%@`
-is the app name. These keys are listed in `LocalizationTests.awaitingTranslation` until they are
-translated.
+is the app name.
 
 | Key | English |
 | --- | --- |

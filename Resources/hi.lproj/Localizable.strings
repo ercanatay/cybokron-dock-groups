@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub अभी डाउनलोड उपलब्ध नहीं करा पा रहा है (HTTP %ld)। अपना कनेक्शन जाँचें और कुछ मिनट बाद फिर से कोशिश करें।";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "ऐप बंद करने से पहले प्रमाणीकरण माँगें";
+"switching.quitAuthentication.footer" = "Close All, Force Quit, और Start व Finish, जब वे ऐप बंद करेंगे, पहले Touch ID, आपकी Apple Watch या आपका पासवर्ड माँगेंगे। यदि यह रद्द हो जाए या विफल हो, तो कोई ऐप बंद नहीं होगा। Links, Siri, Shortcuts, कमांड लाइन और स्वतंत्र समूहों के अपने ऐप यह नहीं पूछ सकते, इसलिए यह चालू होने पर वे कोई ऐप बंद नहीं करेंगे। ऐप छिपाने और खोलने पर कभी नहीं पूछा जाता।";
+"core.quitAuthentication.reason" = "ऐप बंद करना";
+"core.quitAuthentication.notAuthenticated" = "कोई ऐप बंद नहीं हुआ: प्रमाणीकरण रद्द हो गया, विफल रहा या इस Mac पर उपलब्ध नहीं है।";
+"core.quitAuthentication.notInteractive" = "कोई ऐप बंद नहीं हुआ: “ऐप बंद करने से पहले प्रमाणीकरण माँगें” चालू है, और links, Siri, Shortcuts, कमांड लाइन और स्वतंत्र समूहों के अपने ऐप इसके लिए नहीं पूछ सकते। इसके बजाय %@ से ही ऐप स्वयं बंद करें।";

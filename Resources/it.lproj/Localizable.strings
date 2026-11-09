@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub non è riuscito a fornire il download in questo momento (HTTP %ld). Controlla la connessione e riprova tra qualche minuto.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Chiedi l'autenticazione prima di uscire dalle app";
+"switching.quitAuthentication.footer" = "Chiudi tutto, Forza uscita e Avvia e Termina, quando causerebbero l'uscita di app, chiedono prima Touch ID, il tuo Apple Watch o la password. Se l'operazione viene annullata o non riesce, non viene chiusa nessuna app. Link, Siri, Shortcuts, la riga di comando e le app proprie dei gruppi autonomi non possono chiedere, quindi non chiudono nessuna app mentre questa opzione è attiva. Nascondere e aprire le app non chiede mai nulla.";
+"core.quitAuthentication.reason" = "uscire dalle app";
+"core.quitAuthentication.notAuthenticated" = "Nessuna app è stata chiusa: l'autenticazione è stata annullata, non è riuscita o non è disponibile su questo Mac.";
+"core.quitAuthentication.notInteractive" = "Nessuna app è stata chiusa: «Chiedi l'autenticazione prima di uscire dalle app» è attivo, e link, Siri, Shortcuts, la riga di comando e le app proprie dei gruppi autonomi non possono chiederla. Chiudi invece le app da %@ stesso.";

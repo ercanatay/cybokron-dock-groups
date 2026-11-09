@@ -1183,3 +1183,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub에서 지금 다운로드를 제공할 수 없습니다(HTTP %ld). 연결 상태를 확인하고 몇 분 후에 다시 시도하세요.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "종료 전에 인증 요청";
+"switching.quitAuthentication.footer" = "모두 닫기, 강제 종료, 시작과 완료가 앱을 종료하게 될 경우, 먼저 Touch ID, Apple Watch 또는 암호를 요청합니다. 취소되거나 실패하면 아무 앱도 종료되지 않습니다. 링크, Siri, 단축어, 명령줄, 독립 그룹의 자체 앱은 인증을 요청할 수 없으므로 이 설정이 켜져 있는 동안에는 아무 앱도 종료하지 않습니다. 숨기기와 앱 열기는 인증을 요청하지 않습니다.";
+"core.quitAuthentication.reason" = "앱 종료";
+"core.quitAuthentication.notAuthenticated" = "아무 앱도 종료되지 않았습니다: 인증이 취소되었거나 실패했거나, 이 Mac에서 사용할 수 없습니다.";
+"core.quitAuthentication.notInteractive" = "아무 앱도 종료되지 않았습니다: “종료 전에 인증 요청” 설정이 켜져 있으며, 링크, Siri, 단축어, 명령줄, 독립 그룹의 자체 앱은 인증을 요청할 수 없습니다. 대신 %@ 자체에서 앱을 종료하세요.";

@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub kunde inte leverera hämtningen just nu (HTTP %ld). Kontrollera din anslutning och försök igen om några minuter.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Be om autentisering innan appar avslutas";
+"switching.quitAuthentication.footer" = "Stäng alla, Tvinga avsluta, samt Start och Slutför när de skulle avsluta appar ber först om Touch ID, din Apple Watch eller ditt lösenord. Om det avbryts eller misslyckas avslutas ingenting. Länkar, Siri, Genvägar, kommandoraden och fristående gruppers egna appar kan inte be om autentisering, så de avslutar ingenting när detta är på. Att dölja och öppna appar frågar aldrig.";
+"core.quitAuthentication.reason" = "avsluta appar";
+"core.quitAuthentication.notAuthenticated" = "Inget avslutades: autentiseringen avbröts, misslyckades eller är inte tillgänglig på den här Mac:en.";
+"core.quitAuthentication.notInteractive" = "Inget avslutades: “Be om autentisering innan appar avslutas” är på, och länkar, Siri, Genvägar, kommandoraden och fristående gruppers egna appar kan inte begära den. Avsluta apparna från %@ själva i stället.";

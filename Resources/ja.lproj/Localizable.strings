@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub でダウンロードを提供できませんでした (HTTP %ld)。接続を確認し、数分後にもう一度お試しください。";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "アプリを終了する前に認証を求める";
+"switching.quitAuthentication.footer" = "Close All、Force Quit、そして Start と Finish は、アプリを終了することになる場合に、まず Touch ID、Apple Watch、またはパスワードを求めます。キャンセルされた場合や失敗した場合は、何も終了されません。リンク、Siri、ショートカット、コマンドライン、およびスタンドアロングループ自身のアプリは認証を求められないため、この設定がオンの間は何も終了されません。非表示にする操作とアプリを開く操作では、認証は求められません。";
+"core.quitAuthentication.reason" = "アプリを終了する";
+"core.quitAuthentication.notAuthenticated" = "何も終了されませんでした: 認証がキャンセルされたか、失敗したか、またはこの Mac では利用できません。";
+"core.quitAuthentication.notInteractive" = "何も終了されませんでした: 「アプリを終了する前に認証を求める」がオンのため、リンク、Siri、ショートカット、コマンドライン、およびスタンドアロングループ自身のアプリは認証を求められません。代わりに %@ 自体からアプリを終了してください。";

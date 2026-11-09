@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub nu a putut livra descărcarea acum (HTTP %ld). Verifică conexiunea și încearcă din nou peste câteva minute.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Solicită autentificare înainte de a închide aplicațiile";
+"switching.quitAuthentication.footer" = "Close All, Force Quit, precum și Start și Finish, atunci când ar închide aplicații, solicită mai întâi Touch ID, Apple Watch sau parola. Dacă solicitarea este anulată sau eșuează, nu se închide nimic. Linkurile, Siri, Shortcuts, linia de comandă și aplicațiile proprii ale grupurilor independente nu pot solicita autentificarea, așa că nu închid nimic cât timp această opțiune este activă. Ascunderea și deschiderea aplicațiilor nu solicită niciodată autentificare.";
+"core.quitAuthentication.reason" = "închidă aplicații";
+"core.quitAuthentication.notAuthenticated" = "Nu s-a închis nimic: autentificarea a fost anulată, a eșuat sau nu este disponibilă pe acest Mac.";
+"core.quitAuthentication.notInteractive" = "Nu s-a închis nimic: „Solicită autentificare înainte de a închide aplicațiile” este activată, iar linkurile, Siri, Shortcuts, linia de comandă și aplicațiile proprii ale grupurilor independente nu pot solicita autentificarea. Închide aplicațiile direct din %@.";

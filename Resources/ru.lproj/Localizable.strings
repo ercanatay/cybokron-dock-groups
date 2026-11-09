@@ -1184,3 +1184,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub не смог отдать загрузку прямо сейчас (HTTP %ld). Проверьте подключение и повторите попытку через несколько минут.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Запрашивать аутентификацию перед завершением приложений";
+"switching.quitAuthentication.footer" = "Команды Close All, Force Quit, а также Start и Finish, если они завершили бы приложения, сначала запрашивают Touch ID, Apple Watch или пароль. Если действие отменено или не пройдено, ничего не завершается. Ссылки, Siri, Shortcuts, командная строка и собственные приложения отдельных групп не могут запросить подтверждение, поэтому при включенной настройке они ничего не завершают. Скрытие и открытие приложений никогда не требуют подтверждения.";
+"core.quitAuthentication.reason" = "завершить приложения";
+"core.quitAuthentication.notAuthenticated" = "Ничего не завершено: аутентификация была отменена, не пройдена или недоступна на этом Mac.";
+"core.quitAuthentication.notInteractive" = "Ничего не завершено: включена настройка “Запрашивать аутентификацию перед завершением приложений”, а ссылки, Siri, Shortcuts, командная строка и собственные приложения отдельных групп не могут её запросить. Завершите приложения непосредственно в %@.";

@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub в момента не може да предостави изтеглянето (HTTP %ld). Проверете връзката си и опитайте отново след няколко минути.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Изисквай удостоверяване преди затваряне на приложения";
+"switching.quitAuthentication.footer" = "Close All, Force Quit, както и Start и Finish, когато биха затворили приложения, първо изискват Touch ID, Apple Watch или паролата ви. Ако това бъде отказано или се провали, нищо не се затваря. Връзки, Siri, Shortcuts, командният ред и самостоятелните групи със собствените си приложения не могат да изискат удостоверяване, затова, докато това е включено, не затварят нищо. Скриването и отварянето на приложения никога не изисква удостоверяване.";
+"core.quitAuthentication.reason" = "затвори приложения";
+"core.quitAuthentication.notAuthenticated" = "Нищо не беше затворено: удостоверяването беше отказано, провалило се е или не е налично на този Mac.";
+"core.quitAuthentication.notInteractive" = "Нищо не беше затворено: „Изисквай удостоверяване преди затваряне на приложения“ е включено, а връзки, Siri, Shortcuts, командният ред и самостоятелните групи със собствените си приложения не могат да го изискат. Затворете приложенията от самото %@ вместо това.";
