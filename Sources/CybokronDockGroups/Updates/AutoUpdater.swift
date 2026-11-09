@@ -88,6 +88,11 @@ final class AutoUpdater: ObservableObject {
     /// (also through Try Again); `nil` for an update offered by a check.
     private var pickedFromReleases: [ReleaseInfo]?
     private var releaseListDate: Date?
+    /// The installation under way, cancelled by `cancelDownload()` while it downloads.
+    private var installTask: Task<Void, Never>?
+    /// What the window showed before the installation started, shown again when the download is
+    /// cancelled.
+    private var statusBeforeInstall: Status = .idle
     private let isDryRun: Bool
     private var tickTimer: Timer?
     private var hasHandledLaunch = false
@@ -282,6 +287,15 @@ final class AutoUpdater: ObservableObject {
         }
     }
 
+    /// Stops the download under way (also while it waits to try again); the window shows what it
+    /// showed before. Does nothing once the download is done and the new version is being checked
+    /// or put in place.
+    func cancelDownload() {
+        guard case .downloading(let release, _) = status, let installTask else { return }
+        logger.notice("Download of \(release.version, privacy: .public) cancelled")
+        installTask.cancel()
+    }
+
     // MARK: - Other versions
 
     /// Loads the published releases for "Other Versions…", unless they're loading already or were
@@ -378,14 +392,17 @@ final class AutoUpdater: ObservableObject {
             status = .installFailed(release, asset: asset, message: problem)
             return
         }
-        logger.notice("Downloading \(asset.downloadURL.absoluteString, privacy: .public)")
+        logger.notice("Downloading \(asset.downloadURL.absoluteString, privacy: .public)\(asset.apiURL == nil ? "" : " (API address as fallback)", privacy: .public)")
+        statusBeforeInstall = status
         status = .downloading(release, fraction: 0)
         let progress: @Sendable (Double) -> Void = { [weak self] fraction in
             Task { @MainActor in self?.downloadProgressed(fraction) }
         }
-        Task { @MainActor [weak self, installer, isDryRun] in
+        installTask = Task { @MainActor [weak self, installer, isDryRun] in
             do {
-                let diskImage = try await installer.download(asset, progress: progress)
+                let diskImage = try await installer.download(asset, userAgent: "CybokronDockGroups/\(AppInfo.version)", progress: progress)
+                // Cancelled just as the download finished: nothing is installed.
+                try Task.checkCancellation()
                 self?.status = .installing(release)
                 // A Developer ID signed copy only takes a disk image and an app signed with a
                 // Developer ID of its own team; the disk image is checked before it's mounted.
@@ -434,6 +451,10 @@ final class AutoUpdater: ObservableObject {
                 // Let the "restarting" text show before the app quits.
                 try? await Task.sleep(nanoseconds: 600_000_000)
                 self?.relaunch(appURL, backup: backup, release: release, asset: asset)
+            } catch is CancellationError {
+                guard let self else { return }
+                self.logger.notice("Installing \(release.version, privacy: .public) stopped: the download was cancelled")
+                self.status = self.statusBeforeInstall
             } catch {
                 self?.logger.error("Update failed: \(String(describing: error), privacy: .public)")
                 self?.status = .installFailed(release, asset: asset, message: error.localizedDescription)

@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1103 keys.
+1104 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1596,3 +1596,14 @@ translated.
 | `core.trigger.afterWake.closed` | %@ quit while the Mac was asleep |
 | `core.trigger.lastRun.afterWake` | %@ (after the Mac woke) |
 | `core.trigger.missed.afterWake` | it changed too long ago, or too many triggers caught up at once |
+
+## Update download: GitHub kept answering with a server error
+
+Shown in the Software Update window (and Settings → Updates) when GitHub answered the download with
+HTTP 5xx after every retry, at the release's download address and at its API address alike; `%ld`
+is the HTTP status. Other download failures keep `core.update.install.downloadFailed`. These keys
+are listed in `LocalizationTests.awaitingTranslation` until they are translated.
+
+| Key | English |
+| --- | --- |
+| `core.update.install.serverUnavailable` | GitHub couldn't serve the download right now (HTTP %ld). Check your connection and try again in a few minutes. |

@@ -24,8 +24,9 @@ the advisory will be published and you'll be credited unless you prefer otherwis
 The app runs locally and stores its data in `~/Library/Application Support/Cybokron/DockGroups/`.
 Its only network traffic is over HTTPS to GitHub: unauthenticated GET requests to
 `api.github.com` (update checks, Other Versions…, Settings → Changelog; answers redirected
-elsewhere are refused) and the download of a release's disk image, which is checked against its
-published size and SHA-256 and, on a Developer ID signed copy, against the team's Developer ID
+elsewhere are refused) and the download of a release's disk image — from its download address or,
+when GitHub keeps answering that with a server error, from the asset's `api.github.com` address —
+which, whichever address served it, is checked against its published size and SHA-256 and, on a Developer ID signed copy, against the team's Developer ID
 signature before it's mounted and again on the app inside. Nothing about you or your groups is
 sent. Other apps and web pages can send it commands through its URL scheme
 (`cybokrondockgroups://`): quitting asks first, and opening, hiding, starting or finishing groups
