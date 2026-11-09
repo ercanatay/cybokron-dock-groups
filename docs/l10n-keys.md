@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1113 keys.
+1114 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -745,6 +745,16 @@ replace `groupWindow.section.apps`, `groupWindow.apps.empty` and `groupWindow.ap
 | `popup.item.help.openFolder` | Open the folder %@. |
 | `settings.backup.leftOut.one` | 1 item in the backup was left out: it can't be opened safely. |
 | `settings.backup.leftOut.other` | %ld items in the backup were left out: they can't be opened safely. |
+
+## Settings → Updates → Other Versions…, a copy of the settings before going back (English only for now)
+
+Added to every question about going back to an older version: `preferences.json` is copied aside as
+`preferences.pre-downgrade-<time>.json` (the last three are kept), and the install goes on even if
+that copy fails.
+
+| Key | English |
+| --- | --- |
+| `settings.otherVersions.confirm.settingsCopy` | A copy of your settings is kept next to them (preferences.pre-downgrade-…json) and can be put back by hand if needed. |
 
 ## Settings → Updates → Other Versions…, going back to a version without files, folders and item details
 
