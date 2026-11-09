@@ -8,12 +8,35 @@ public struct ReleaseAsset: Hashable, Sendable {
     public let size: Int
     /// GitHub's checksum of the file, e.g. `sha256:3fd7…`; older releases have none.
     public let digest: String?
+    /// The asset's address in GitHub's API (`https://api.github.com/repos/{owner}/{repo}/releases/assets/{id}`),
+    /// which serves the file itself when asked for `application/octet-stream`. The updater tries it
+    /// when `downloadURL` keeps failing with a server error; the file is checked the same way.
+    /// `nil` when the release information has none (or one of another shape, `apiURL(from:)`).
+    public let apiURL: URL?
 
-    public init(name: String, downloadURL: URL, size: Int, digest: String? = nil) {
+    public init(name: String, downloadURL: URL, size: Int, digest: String? = nil, apiURL: URL? = nil) {
         self.name = name
         self.downloadURL = downloadURL
         self.size = size
         self.digest = digest
+        self.apiURL = apiURL
+    }
+
+    /// `text` when it's a GitHub API asset address — `https://api.github.com/repos/{owner}/{repo}/releases/assets/{id}`
+    /// with nothing else (no port, user, query or fragment); otherwise `nil`.
+    public static func apiURL(from text: String?) -> URL? {
+        guard let text, let components = URLComponents(string: text),
+              components.scheme?.lowercased() == "https",
+              components.host?.lowercased() == "api.github.com",
+              components.port == nil, components.user == nil, components.password == nil,
+              components.query == nil, components.fragment == nil,
+              components.percentEncodedPath.range(
+                  of: #"^/repos/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+/releases/assets/[0-9]+$"#,
+                  options: .regularExpression
+              ) != nil,
+              let url = components.url
+        else { return nil }
+        return url
     }
 
     /// The lowercase hex SHA-256 from `digest`, `nil` when there's none or it's another algorithm.
@@ -109,7 +132,13 @@ public struct ReleaseInfo: Hashable, Sendable {
                   let name = asset.name, !name.isEmpty,
                   let link = asset.browserDownloadURL, let url = URL(string: link), url.scheme != nil
             else { return nil }
-            return ReleaseAsset(name: name, downloadURL: url, size: asset.size ?? 0, digest: asset.digest)
+            return ReleaseAsset(
+                name: name,
+                downloadURL: url,
+                size: asset.size ?? 0,
+                digest: asset.digest,
+                apiURL: ReleaseAsset.apiURL(from: asset.apiURL)
+            )
         }
         self.init(
             tagName: raw.tagName,
@@ -198,6 +227,8 @@ private struct RawRelease: Decodable {
 private struct RawAsset: Decodable {
     let name: String?
     let browserDownloadURL: String?
+    /// The asset's API address (`url`).
+    let apiURL: String?
     let size: Int?
     let state: String?
     let digest: String?
@@ -205,12 +236,14 @@ private struct RawAsset: Decodable {
     private enum CodingKeys: String, CodingKey {
         case name, size, state, digest
         case browserDownloadURL = "browser_download_url"
+        case apiURL = "url"
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try? container.decodeIfPresent(String.self, forKey: .name)
         browserDownloadURL = try? container.decodeIfPresent(String.self, forKey: .browserDownloadURL)
+        apiURL = try? container.decodeIfPresent(String.self, forKey: .apiURL)
         size = try? container.decodeIfPresent(Int.self, forKey: .size)
         state = try? container.decodeIfPresent(String.self, forKey: .state)
         digest = try? container.decodeIfPresent(String.self, forKey: .digest)

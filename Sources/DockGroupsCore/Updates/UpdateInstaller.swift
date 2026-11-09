@@ -1,11 +1,15 @@
 import CryptoKit
 import Foundation
+import OSLog
 
 /// Why downloading or installing an update failed.
 public enum UpdateInstallError: LocalizedError, Equatable, Sendable {
     /// The download address isn't HTTPS (plain HTTP is allowed only for this Mac, for testing).
     case insecureDownloadURL(String)
     case downloadFailed(String)
+    /// GitHub kept answering the download with a server error (HTTP 5xx), at the release's
+    /// download address and at its API address alike.
+    case serverUnavailable(status: Int)
     /// The downloaded file doesn't have the size GitHub reported.
     case sizeMismatch(expected: Int, actual: Int)
     /// The downloaded file doesn't match GitHub's SHA-256 checksum.
@@ -35,6 +39,8 @@ public enum UpdateInstallError: LocalizedError, Equatable, Sendable {
             return Localization.format("core.update.install.insecureURL", "The update's download address isn't secure (%@).", url)
         case .downloadFailed(let reason):
             return Localization.format("core.update.install.downloadFailed", "The update couldn't be downloaded: %@", reason)
+        case .serverUnavailable(let status):
+            return Localization.format("core.update.install.serverUnavailable", "GitHub couldn't serve the download right now (HTTP %ld). Check your connection and try again in a few minutes.", status)
         case .sizeMismatch(let expected, let actual):
             return Localization.format("core.update.install.sizeMismatch", "The downloaded update is incomplete (%1$ld of %2$ld bytes).", actual, expected)
         case .checksumMismatch:
@@ -86,7 +92,11 @@ public struct UpdateDirectories: Sendable {
 
 /// Downloads a release's disk image and swaps the running app for the one inside:
 ///
-/// 1. `download` saves the disk image in `downloads/` and checks its size and SHA-256 checksum.
+/// 1. `download` saves the disk image in `downloads/` and checks its size and SHA-256 checksum. A
+///    server error or a timeout is tried again (`UpdateDownloadRetry`); when the release's download
+///    address keeps failing that way, the asset's GitHub API address is tried instead
+///    (`ReleaseAsset.apiURL`). Whichever address served it, the file gets the same checks, here and
+///    in the steps below.
 /// 2. `stageApp` checks the disk image's own signature when the running app is Developer ID signed
 ///    (`verifyDiskImageSignature`, before anything is mounted), then mounts it read-only and hidden
 ///    (`hdiutil attach -readonly -nobrowse`), copies the app to `staging/` with `ditto`, and
@@ -115,6 +125,7 @@ public struct UpdateInstaller: Sendable {
 
     public let directories: UpdateDirectories
     private let tools: ToolRunning
+    private static let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Updates")
 
     public init(directories: UpdateDirectories = UpdateDirectories(), tools: ToolRunning = SystemToolRunner()) {
         self.directories = directories
@@ -153,9 +164,29 @@ public struct UpdateInstaller: Sendable {
     }
 
     /// Downloads `asset` to `downloads/` and checks it with `verify`. Returns the file's location.
+    /// See `download(_:transport:userAgent:retry:progress:)`.
     public func download(
         _ asset: ReleaseAsset,
         session: URLSession = .shared,
+        userAgent: String? = nil,
+        retry: UpdateDownloadRetry = .standard,
+        progress: @escaping @Sendable (Double) -> Void = { _ in }
+    ) async throws -> URL {
+        try await download(asset, transport: URLSessionUpdateTransport(session: session), userAgent: userAgent, retry: retry, progress: progress)
+    }
+
+    /// Downloads `asset` to `downloads/` and checks it with `verify`. Returns the file's location.
+    ///
+    /// The release's download address is tried first, again after a server error or a timeout
+    /// (`retry`). When those tries are used up, the asset's GitHub API address (`apiURL`) is tried
+    /// the same way. Any other failure — a 404, an insecure redirect, cancellation — ends the
+    /// download right away. A file from either address must match the size and checksum GitHub
+    /// published, or it isn't kept for installing.
+    public func download(
+        _ asset: ReleaseAsset,
+        transport: UpdateDownloadTransport,
+        userAgent: String? = nil,
+        retry: UpdateDownloadRetry = .standard,
         progress: @escaping @Sendable (Double) -> Void = { _ in }
     ) async throws -> URL {
         guard Self.isAllowedDownloadURL(asset.downloadURL) else {
@@ -172,45 +203,117 @@ public struct UpdateInstaller: Sendable {
             throw UpdateInstallError.downloadFailed(error.localizedDescription)
         }
 
-        var request = URLRequest(url: asset.downloadURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 60)
-        request.setValue("application/octet-stream", forHTTPHeaderField: "Accept")
-        let box = DownloadTaskBox()
-        try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                let task = session.downloadTask(with: request) { location, response, error in
-                    if let error {
-                        let cancelled = (error as? URLError)?.code == .cancelled
-                        continuation.resume(throwing: cancelled ? CancellationError() : UpdateInstallError.downloadFailed(error.localizedDescription))
-                        return
-                    }
-                    guard let http = response as? HTTPURLResponse, let location else {
-                        continuation.resume(throwing: UpdateInstallError.downloadFailed(Localization.string("core.update.install.noFile", "The server sent no file.")))
-                        return
-                    }
-                    guard http.statusCode == 200 else {
-                        continuation.resume(throwing: UpdateInstallError.downloadFailed(Localization.format("core.update.install.httpStatus", "HTTP status %ld.", http.statusCode)))
-                        return
-                    }
-                    // Redirects are followed; they must stay secure too.
-                    if let finalURL = http.url, !Self.isAllowedDownloadURL(finalURL) {
-                        continuation.resume(throwing: UpdateInstallError.insecureDownloadURL(finalURL.absoluteString))
-                        return
-                    }
-                    do {
-                        // The temporary file is deleted once this handler returns.
-                        try FileManager.default.moveItem(at: location, to: destination)
-                        continuation.resume()
-                    } catch {
-                        continuation.resume(throwing: UpdateInstallError.downloadFailed(error.localizedDescription))
-                    }
-                }
-                box.start(task, progress: progress)
+        let fetch = { (source: URL) in
+            try await Self.fetch(source, to: destination, transport: transport, userAgent: userAgent, retry: retry, progress: progress)
+        }
+        do {
+            try await fetch(asset.downloadURL)
+        } catch let primaryFailure as TransientDownloadFailure {
+            guard let apiURL = asset.apiURL, Self.isAllowedDownloadURL(apiURL) else {
+                throw primaryFailure.installError
             }
-        } onCancel: {
-            box.cancel()
+            Self.logger.notice("Download address failed (\(primaryFailure.description, privacy: .public)); trying \(Self.logDescription(of: apiURL), privacy: .public)")
+            do {
+                try await fetch(apiURL)
+            } catch let error as CancellationError {
+                throw error
+            } catch let error as UpdateInstallError {
+                if case .insecureDownloadURL = error { throw error }
+                Self.logger.error("API address failed too: \(String(describing: error), privacy: .public)")
+                throw primaryFailure.installError
+            } catch {
+                Self.logger.error("API address failed too: \(String(describing: error), privacy: .public)")
+                throw primaryFailure.installError
+            }
         }
         try Self.verify(destination, against: asset)
         return destination
+    }
+
+    /// Downloads `source` to `destination`, again after an answer worth retrying
+    /// (`UpdateDownloadRetry`). Throws `TransientDownloadFailure` once those tries are used up.
+    private static func fetch(
+        _ source: URL,
+        to destination: URL,
+        transport: UpdateDownloadTransport,
+        userAgent: String?,
+        retry: UpdateDownloadRetry,
+        progress: @escaping @Sendable (Double) -> Void
+    ) async throws {
+        for attempt in 1...retry.maximumAttempts {
+            try Task.checkCancellation()
+            if attempt > 1 { progress(0) }
+            let failure: TransientDownloadFailure
+            do {
+                try await fetchOnce(source, to: destination, transport: transport, userAgent: userAgent, progress: progress)
+                return
+            } catch let transient as TransientDownloadFailure {
+                failure = transient
+            }
+            logger.notice("Download attempt \(attempt) of \(retry.maximumAttempts) from \(logDescription(of: source), privacy: .public) failed: \(failure.description, privacy: .public)")
+            guard attempt < retry.maximumAttempts else { throw failure }
+            try await retry.sleep(retry.delays[attempt - 1])
+        }
+    }
+
+    /// One try at `source`. An answer worth retrying throws `TransientDownloadFailure`; any other
+    /// failure an `UpdateInstallError` (or `CancellationError`). Only an HTTP 200 answer, from a
+    /// secure address after any redirects, leaves the file at `destination`.
+    private static func fetchOnce(
+        _ source: URL,
+        to destination: URL,
+        transport: UpdateDownloadTransport,
+        userAgent: String?,
+        progress: @escaping @Sendable (Double) -> Void
+    ) async throws {
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: destination.path) {
+            try? fileManager.removeItem(at: destination)
+        }
+        var request = URLRequest(url: source, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 60)
+        request.setValue("application/octet-stream", forHTTPHeaderField: "Accept")
+        if let userAgent {
+            request.setValue(userAgent, forHTTPHeaderField: "User-Agent")
+        }
+        let http: HTTPURLResponse
+        do {
+            http = try await transport.download(request, to: destination, progress: progress)
+        } catch let error as URLError {
+            try? fileManager.removeItem(at: destination)
+            if error.code == .cancelled || Task.isCancelled { throw CancellationError() }
+            if UpdateDownloadRetry.isRetryable(error) {
+                throw TransientDownloadFailure(status: nil, networkError: error)
+            }
+            throw UpdateInstallError.downloadFailed(error.localizedDescription)
+        } catch let error as CancellationError {
+            try? fileManager.removeItem(at: destination)
+            throw error
+        } catch let error as UpdateInstallError {
+            try? fileManager.removeItem(at: destination)
+            throw error
+        } catch {
+            try? fileManager.removeItem(at: destination)
+            if Task.isCancelled { throw CancellationError() }
+            throw UpdateInstallError.downloadFailed(error.localizedDescription)
+        }
+        guard http.statusCode == 200 else {
+            try? fileManager.removeItem(at: destination)
+            if UpdateDownloadRetry.isRetryable(status: http.statusCode) {
+                throw TransientDownloadFailure(status: http.statusCode, networkError: nil)
+            }
+            throw UpdateInstallError.downloadFailed(Localization.format("core.update.install.httpStatus", "HTTP status %ld.", http.statusCode))
+        }
+        // Redirects are followed; they must stay secure too.
+        if let finalURL = http.url, !isAllowedDownloadURL(finalURL) {
+            try? fileManager.removeItem(at: destination)
+            throw UpdateInstallError.insecureDownloadURL(finalURL.absoluteString)
+        }
+    }
+
+    /// Host and path of a download address for the log; the query (where a redirect's signed
+    /// address would carry its token) is left out.
+    static func logDescription(of url: URL) -> String {
+        "\(url.host ?? "")\(url.path)"
     }
 
     /// Checks the downloaded file against the size and SHA-256 checksum GitHub published for it
@@ -576,34 +679,6 @@ public struct UpdateInstaller: Sendable {
     static func safeFileName(_ name: String) -> String {
         let component = URL(fileURLWithPath: name).lastPathComponent
         return component.isEmpty || component.hasPrefix(".") || component == "/" ? "update.dmg" : component
-    }
-}
-
-/// Holds a download task for cancellation and reports its progress.
-private final class DownloadTaskBox: @unchecked Sendable {
-    private let lock = NSLock()
-    private var task: URLSessionDownloadTask?
-    private var observation: NSKeyValueObservation?
-    private var isCancelled = false
-
-    func start(_ task: URLSessionDownloadTask, progress: @escaping @Sendable (Double) -> Void) {
-        let cancelled = lock.withLock { () -> Bool in
-            self.task = task
-            observation = task.progress.observe(\.fractionCompleted, options: [.new]) { observed, _ in
-                progress(observed.fractionCompleted)
-            }
-            return isCancelled
-        }
-        task.resume()
-        if cancelled { task.cancel() }
-    }
-
-    func cancel() {
-        let task = lock.withLock { () -> URLSessionDownloadTask? in
-            isCancelled = true
-            return self.task
-        }
-        task?.cancel()
     }
 }
 

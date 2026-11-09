@@ -115,6 +115,11 @@ private struct UpdateView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
+            buttons {
+                Spacer()
+                Button(L10n.Common.cancel) { updater.cancelDownload() }
+                    .keyboardShortcut(.cancelAction)
+            }
 
         case .installing(let release):
             title(L10n.Common.installingVersion(release.version.description))
