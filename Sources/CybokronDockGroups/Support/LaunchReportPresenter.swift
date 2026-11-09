@@ -52,6 +52,10 @@ enum LaunchReportPresenter {
     /// Open All does), then — in one alert — apps that couldn't be hidden, asked to quit or shown
     /// again. Apps left alone on purpose (protected, shared, this app) aren't problems.
     static func presentProblems(in report: TransitionReport) {
+        if case .notAuthenticated(let failure) = report.outcome {
+            presentRefusal(failure)
+            return
+        }
         guard report.outcome == .done else { return }
         if let launch = report.launch {
             presentProblems(in: launch)
@@ -69,6 +73,16 @@ enum LaunchReportPresenter {
             alert.messageText = L10n.Switching.Problems.finish(report.plan.groupName)
         }
         alert.informativeText = lines.joined(separator: "\n")
+        NSApp.activate()
+        alert.runModal()
+    }
+
+    /// Tells the user that nothing was quit while "Ask for authentication before quitting apps" is
+    /// on, and why (`QuitAuthenticationFailure`): never silently.
+    static func presentRefusal(_ failure: QuitAuthenticationFailure) {
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = failure.message(appName: AppInfo.name)
         NSApp.activate()
         alert.runModal()
     }

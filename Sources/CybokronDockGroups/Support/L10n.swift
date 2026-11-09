@@ -1346,6 +1346,15 @@ extension L10n {
             static var pickerMessage: String {
                 tr("switching.protected.picker.message", "Choose apps that Start, Finish and Close All never quit.")
             }
+            static var quitAuthentication: String {
+                tr("switching.quitAuthentication.toggle", "Ask for authentication before quitting apps")
+            }
+            static var quitAuthenticationFooter: String {
+                tr(
+                    "switching.quitAuthentication.footer",
+                    "Close All, Force Quit, and Start and Finish when they would quit apps, first ask for Touch ID, your Apple Watch or your password. If that's cancelled or fails, nothing is quit. Links, Siri, Shortcuts, the command line and standalone groups' own apps can't ask, so they quit nothing while this is on. Hiding and opening apps never ask."
+                )
+            }
             static var startHeader: String { tr("switching.start.header", "Start and Finish") }
             static var startSummary: String {
                 tr(

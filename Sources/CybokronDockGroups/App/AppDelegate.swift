@@ -96,7 +96,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         launcher: launcher,
         terminator: terminator,
         applications: SystemRunningApplicationsListing(),
-        questions: quitRequests
+        questions: quitRequests,
+        authentication: quitAuthentication
     )
     private let icons = WorkspaceAppIconProvider()
     private let runningApps = RunningAppsMonitor()
@@ -122,10 +123,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// question, one question at a time.
     private lazy var quitRequests = GroupQuitRequests(
         prompt: QuitConfirmationAlert(),
-        transitionPrompt: TransitionConfirmationAlert()
+        transitionPrompt: TransitionConfirmationAlert(),
+        authentication: quitAuthentication
     ) { [terminator] group, mode in
         terminator.closeAll(group, mode: mode)
     }
+    /// "Ask for authentication before quitting apps" (Settings → Switching): Close All, Force Quit,
+    /// and Start and Finish when they'd quit apps ask for Touch ID, an Apple Watch or the password
+    /// first; links, Siri and Shortcuts then quit nothing.
+    private lazy var quitAuthentication = QuitAuthentication(
+        isRequired: { [weak self] in self?.preferences.preferences.asksForAuthenticationBeforeQuitting ?? true },
+        authenticator: DeviceOwnerAuthenticator()
+    )
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "App")
     private let urlLogger = Logger(subsystem: "com.cybokron.dockgroups", category: "URLScheme")
 
@@ -196,7 +205,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         actions: PopupPanelController.Actions(
             open: { [weak self] app, group in self?.open(app, in: group) },
             openAll: { [weak self] group in self?.openAll(group) },
-            closeAll: { [weak self] group, mode in _ = self?.closeAll(group, mode: mode, from: .userAction) },
+            closeAll: { [weak self] group, mode in self?.closeAllFromClick(group, mode: mode) },
             hideAll: { [weak self] group in self?.hideAll(group) },
             manageGroups: { [weak self] in self?.mainWindowController.show() },
             showGroupSettings: { [weak self] group in self?.mainWindowController.showSettings(ofGroup: group.id.uuidString) },
@@ -439,13 +448,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    /// Quits the group's running apps, asking first when a link asked (`QuitRequestSource`).
+    /// Quits the group's running apps, asking first when a link asked (`QuitRequestSource`). While
+    /// authentication is required, a link quits nothing and says why.
     private func closeAll(_ group: DockGroup, mode: QuitMode, from source: QuitRequestSource) -> GroupQuitRequests.Outcome {
         let outcome = quitRequests.request(group, mode: mode, from: source)
-        if let report = outcome.report {
-            LaunchReportPresenter.presentProblems(in: report)
-        }
+        present(outcome)
         return outcome
+    }
+
+    /// Close All or Force Quit from the popup: right away, as before, unless authentication is
+    /// required — then it asks first, and quits nothing unless that succeeds.
+    private func closeAllFromClick(_ group: DockGroup, mode: QuitMode) {
+        guard quitRequests.requiresAuthentication else {
+            _ = closeAll(group, mode: mode, from: .userAction)
+            return
+        }
+        Task { @MainActor in
+            let outcome = await quitRequests.quit(group, mode: mode, from: .userAction)
+            if outcome == .dropped {
+                logger.notice("Close All of group \(group.id, privacy: .public): another question or authentication prompt is showing")
+            }
+            present(outcome)
+        }
+    }
+
+    private func present(_ outcome: GroupQuitRequests.Outcome) {
+        switch outcome {
+        case .quit(let report):
+            LaunchReportPresenter.presentProblems(in: report)
+        case .notAuthenticated(let failure):
+            LaunchReportPresenter.presentRefusal(failure)
+        case .declined, .dropped:
+            break
+        }
     }
 
     private func hideAll(_ group: DockGroup) {
@@ -567,6 +602,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     logger.notice("\(starting ? "Start" : "Finish", privacy: .public) of group \(group.id, privacy: .public) from its shortcut: cancelled")
                 case .dropped:
                     logger.notice("\(starting ? "Start" : "Finish", privacy: .public) of group \(group.id, privacy: .public) from its shortcut: another question is showing")
+                case .notAuthenticated:
+                    logger.notice("\(starting ? "Start" : "Finish", privacy: .public) of group \(group.id, privacy: .public) from its shortcut: not authenticated, nothing done")
+                    LaunchReportPresenter.presentProblems(in: report)
                 }
             } catch {
                 logger.error("\(starting ? "Starting" : "Finishing", privacy: .public) group \(group.id, privacy: .public) from its shortcut failed: \(String(describing: error), privacy: .public)")
@@ -648,6 +686,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .dropped:
             urlLogger.notice("Ignored \(command.throttleKey, privacy: .public) for group \(group.id, privacy: .public): another link's question is showing")
             return
+        case .notAuthenticated:
+            // A link can't ask for authentication: it would quit apps, so it did nothing.
+            urlLogger.notice("\(command.throttleKey, privacy: .public) for group \(group.id, privacy: .public): would quit apps, which needs authentication a link can't ask for; nothing done")
+            LaunchReportPresenter.presentProblems(in: report)
+            urlGate.restartCooldown(for: command)
+            return
         }
         // As for quit links: the cooldown starts again once the question is answered.
         if report.wasAsked {
@@ -671,6 +715,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             case .dropped:
                 urlLogger.notice("Ignored quitting the apps of group \(group.id, privacy: .public): another link's question is showing")
                 return
+            case .notAuthenticated:
+                urlLogger.notice("Quitting the apps of group \(group.id, privacy: .public): needs authentication, which a link can't ask for; nothing quit")
             }
             // The cooldown starts once the question is answered, so links that came while it showed
             // (or right after) don't ask again.
@@ -753,7 +799,12 @@ extension AppDelegate: GroupIntentHandling {
     /// Siri and Shortcuts ask in their own way (`QuitGroupIntent`), not with the app's alert.
     func quitAll(_ group: DockGroup, mode: QuitMode, confirm: (QuitConfirmation) async throws -> Void) async throws -> QuitReport {
         triggers.noteRequest()
-        return try await quitRequests.requestFromIntent(group, mode: mode, confirm: confirm)
+        do {
+            return try await quitRequests.requestFromIntent(group, mode: mode, confirm: confirm)
+        } catch is QuitAuthenticationRefusal {
+            logger.notice("Quit Group (Siri or Shortcuts) for group \(group.id, privacy: .public): needs authentication, which Siri and Shortcuts can't ask for; nothing quit")
+            throw GroupIntentError.authenticationRequired
+        }
     }
 
     /// Start Group: asks in Siri or Shortcuts (`confirm`) before quitting anything.

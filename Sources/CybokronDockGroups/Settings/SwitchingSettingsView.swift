@@ -4,6 +4,7 @@ import SwiftUI
 
 /// Settings → Switching (spec §2.8, §2.10, §4.4): the protected apps — which Start, Finish and Close
 /// All never quit, and switching never hides — added with an open panel or from the running apps;
+/// whether quitting apps asks for authentication first (`docs/design/quit-authentication.md`);
 /// what Start and Finish do, with the current group; and how a Focus starts a group: where its
 /// filter is set up (System Settings → Focus), and what the current Focus asks for, read when the
 /// pane appears. Each group's own Start and Finish settings are in its group window.
@@ -27,6 +28,7 @@ struct SwitchingSettingsView: View {
     var body: some View {
         Form {
             protectedSection
+            authenticationSection
             startSection
             focusSection
         }
@@ -156,6 +158,22 @@ struct SwitchingSettingsView: View {
 
     private func remove(_ app: GroupItem) {
         preferences.update { $0.protectedApps = $0.protectedApps.removing(identity: app.normalizedBundleIdentifier) }
+    }
+
+    // MARK: - Authentication
+
+    /// "Ask for authentication before quitting apps", off by default.
+    private var authenticationSection: some View {
+        Section {
+            Toggle(L10n.Switching.Settings.quitAuthentication, isOn: Binding(
+                get: { preferences.preferences.asksForAuthenticationBeforeQuitting },
+                set: { newValue in preferences.update { $0.asksForAuthenticationBeforeQuitting = newValue } }
+            ))
+        } footer: {
+            Text(L10n.Switching.Settings.quitAuthenticationFooter)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
     }
 
     // MARK: - Start and Finish

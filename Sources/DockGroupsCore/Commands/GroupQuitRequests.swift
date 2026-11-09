@@ -13,6 +13,11 @@ public enum QuitRequestSource: String, Sendable, CaseIterable {
 
     /// Only links get the app's alert before quitting anything.
     public var asksFirst: Bool { self == .link }
+
+    /// Whether the request can ask for authentication (`QuitAuthentication`): only the user's own
+    /// click in the app. A link or Siri and Shortcuts can't, so while authentication is required
+    /// they quit nothing.
+    public var canAuthenticate: Bool { self == .userAction }
 }
 
 /// The question a link's quit request asks: the group's name, what happens, and — when the link
@@ -94,8 +99,12 @@ public final class GroupQuitRequests: TransitionQuestioning {
         case quit(QuitReport)
         /// The user chose not to quit them.
         case declined
-        /// Another link's question was showing; this request was dropped without asking.
+        /// Another link's question (or an authentication prompt) was showing; this request was
+        /// dropped without asking.
         case dropped
+        /// Authentication was required and didn't succeed, or couldn't be asked for: nothing was
+        /// quit (`QuitAuthentication`).
+        case notAuthenticated(QuitAuthenticationFailure)
 
         public var report: QuitReport? {
             if case .quit(let report) = self { return report }
@@ -108,23 +117,40 @@ public final class GroupQuitRequests: TransitionQuestioning {
 
     private let prompt: QuitConfirmationPrompting
     private let transitionPrompt: TransitionConfirmationPrompting?
+    private let authentication: QuitAuthentication?
     private let quitApps: (DockGroup, QuitMode) -> QuitReport
 
     /// - Parameters:
     ///   - transitionPrompt: Asks a link's question before a transition quits apps; without one,
     ///     such a link is answered Cancel, so nothing is quit unasked.
+    ///   - authentication: "Ask for authentication before quitting apps"; without it, nothing
+    ///     asks for authentication.
     ///   - quitApps: Quits the group's running apps (`GroupTerminator.closeAll`).
     public init(
         prompt: QuitConfirmationPrompting,
         transitionPrompt: TransitionConfirmationPrompting? = nil,
+        authentication: QuitAuthentication? = nil,
         quitApps: @escaping (DockGroup, QuitMode) -> QuitReport
     ) {
         self.prompt = prompt
         self.transitionPrompt = transitionPrompt
+        self.authentication = authentication
         self.quitApps = quitApps
     }
 
+    /// Whether Close All needs authentication now: callers that can ask then use `quit`.
+    public var requiresAuthentication: Bool { authentication?.isRequired == true }
+
+    /// Close All without waiting, as before authentication existed. It can't ask for
+    /// authentication: while it's required, nothing is quit (`notAuthenticated`) — `notInteractive`
+    /// for a link, `unavailable` for a click, which goes through `quit` instead.
     public func request(_ group: DockGroup, mode: QuitMode, from source: QuitRequestSource) -> Outcome {
+        if requiresAuthentication {
+            if let failure = authentication?.refusalWithoutAsking(interactive: source.canAuthenticate) {
+                return .notAuthenticated(failure)
+            }
+            return .notAuthenticated(.unavailable)
+        }
         if source.asksFirst {
             guard !isAsking else { return .dropped }
             isAsking = true
@@ -134,16 +160,49 @@ public final class GroupQuitRequests: TransitionQuestioning {
         return .quit(quitApps(group, mode))
     }
 
+    /// Close All that asks for authentication when it's required (spec:
+    /// `docs/design/quit-authentication.md`): a request that can't ask (`canAuthenticate`) is
+    /// refused at once, before any question; otherwise the link's question comes first (when it
+    /// asks one), then authentication, and only then are the apps quit. A failed, cancelled or
+    /// unavailable authentication quits nothing. While a question or a prompt is showing, another
+    /// request is dropped. Without authentication required, this is `request`.
+    public func quit(_ group: DockGroup, mode: QuitMode, from source: QuitRequestSource) async -> Outcome {
+        guard requiresAuthentication, let authentication else { return request(group, mode: mode, from: source) }
+        if let failure = authentication.refusalWithoutAsking(interactive: source.canAuthenticate) {
+            return .notAuthenticated(failure)
+        }
+        guard !isAsking else { return .dropped }
+        isAsking = true
+        defer { isAsking = false }
+        if source.asksFirst, !prompt.confirm(QuitConfirmation(groupName: group.name, mode: mode)) {
+            return .declined
+        }
+        switch await authentication.authenticate() {
+        case nil:
+            return .dropped
+        case .refused(let failure)?:
+            return .notAuthenticated(failure)
+        case .authenticated?:
+            return .quit(quitApps(group, mode))
+        }
+    }
+
     /// Quit Group from Siri or the Shortcuts app (`QuitRequestSource.intent`): asks first through
     /// `confirm` — the intent's own question, which Siri or Shortcuts shows instead of the app's
     /// alert, force quitting included — and quits the apps once it returns. When the user declines,
     /// `confirm` throws and the error ends the request: nothing is quit. A link's alert showing
     /// meanwhile doesn't matter; the two ask in different places.
+    ///
+    /// Siri and Shortcuts can't ask for authentication: while it's required, this throws
+    /// `QuitAuthenticationRefusal(.notInteractive)` before asking anything, and nothing is quit.
     public func requestFromIntent(
         _ group: DockGroup,
         mode: QuitMode,
         confirm: (QuitConfirmation) async throws -> Void
     ) async throws -> QuitReport {
+        if let failure = authentication?.refusalWithoutAsking(interactive: QuitRequestSource.intent.canAuthenticate) {
+            throw QuitAuthenticationRefusal(failure)
+        }
         try await confirm(QuitConfirmation(groupName: group.name, mode: mode))
         return quitApps(group, mode)
     }

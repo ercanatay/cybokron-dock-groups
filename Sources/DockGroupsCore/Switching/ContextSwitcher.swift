@@ -27,6 +27,7 @@ public final class ContextSwitcher {
     private let terminator: GroupTerminator
     private let applications: RunningApplicationsListing
     private let questions: TransitionQuestioning
+    private let authentication: QuitAuthentication?
     private let clock: () -> Date
     private var subscriptions: Set<AnyCancellable> = []
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Switching")
@@ -40,6 +41,8 @@ public final class ContextSwitcher {
     ///   - applications: The running apps, read once per transition.
     ///   - questions: Asks a link's or keyboard shortcut's question before a transition quits apps
     ///     (`GroupQuitRequests`).
+    ///   - authentication: "Ask for authentication before quitting apps", asked after the question
+    ///     and only for a plan that still quits apps; without it, nothing asks for authentication.
     ///   - clock: The time, for `ContextSession.repeatInterval`.
     public init(
         store: GroupStore,
@@ -49,6 +52,7 @@ public final class ContextSwitcher {
         terminator: GroupTerminator,
         applications: RunningApplicationsListing,
         questions: TransitionQuestioning,
+        authentication: QuitAuthentication? = nil,
         clock: @escaping () -> Date = Date.init
     ) {
         self.store = store
@@ -58,6 +62,7 @@ public final class ContextSwitcher {
         self.terminator = terminator
         self.applications = applications
         self.questions = questions
+        self.authentication = authentication
         self.clock = clock
         // Deleted groups leave the current group and the history.
         store.$groups
@@ -165,8 +170,29 @@ public final class ContextSwitcher {
         case stopped(TransitionReport.Outcome)
     }
 
-    /// The plan to carry out, after asking when it quits apps and the trigger asks first.
+    /// The plan to carry out, after asking when it quits apps and the trigger asks first, then —
+    /// while "Ask for authentication before quitting apps" is on and the plan still quits apps
+    /// (Hide Instead doesn't) — after the device owner authenticates. A trigger that can't ask for
+    /// authentication (a link, Siri, Shortcuts) is stopped before any question; a failed, cancelled
+    /// or unavailable authentication stops the transition, so nothing is hidden, quit or opened.
     private func confirmed(_ plan: TransitionPlan, confirm: ((TransitionConfirmation) async throws -> Void)?) async throws -> Confirmation {
+        guard plan.quitsAnything, let authentication, authentication.isRequired else {
+            return try await askedFirst(plan, confirm: confirm)
+        }
+        if let failure = authentication.refusalWithoutAsking(interactive: plan.trigger.canAuthenticate) {
+            return .stopped(.notAuthenticated(failure))
+        }
+        let answer = try await askedFirst(plan, confirm: confirm)
+        guard case .proceed(let confirmedPlan, _) = answer, confirmedPlan.quitsAnything else { return answer }
+        switch await authentication.authenticate() {
+        case nil: return .stopped(.dropped)
+        case .refused(let failure)?: return .stopped(.notAuthenticated(failure))
+        case .authenticated?: return answer
+        }
+    }
+
+    /// The plan to carry out, after asking when it quits apps and the trigger asks first.
+    private func askedFirst(_ plan: TransitionPlan, confirm: ((TransitionConfirmation) async throws -> Void)?) async throws -> Confirmation {
         guard plan.requiresConfirmation, let question = TransitionConfirmation(plan: plan) else { return .proceed(plan, asked: false) }
         switch plan.trigger {
         case .intent:

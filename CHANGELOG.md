@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Settings → Switching → Ask for authentication before quitting apps (off by default): Close All, Force Quit, and Start or Finish when they would quit apps ask for Touch ID, an Apple Watch or your password first. If that's cancelled or fails, nothing is quit and the app says so. Links, the command line, Siri, Shortcuts and standalone groups' own apps can't ask, so while it's on they quit nothing and say why. Hiding and opening apps never ask.
+
 ## [0.16.1] - 2026-11-09
 
 ### Added
