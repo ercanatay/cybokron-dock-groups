@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ तब बंद हुआ जब Mac सो रहा था";
 "core.trigger.lastRun.afterWake" = "%@ (Mac के जागने के बाद)";
 "core.trigger.missed.afterWake" = "यह बहुत पहले बदला था, या एक साथ बहुत-से ट्रिगर पूरे करने पड़े";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub अभी डाउनलोड उपलब्ध नहीं करा पा रहा है (HTTP %ld)। अपना कनेक्शन जाँचें और कुछ मिनट बाद फिर से कोशिश करें।";

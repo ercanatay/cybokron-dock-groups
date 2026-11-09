@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ đã thoát khi Mac đang ngủ";
 "core.trigger.lastRun.afterWake" = "%@ (sau khi Mac thức dậy)";
 "core.trigger.missed.afterWake" = "đã thay đổi quá lâu trước đó, hoặc quá nhiều trigger được xử lý bù cùng lúc";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub hiện không thể cung cấp bản tải xuống (HTTP %ld). Hãy kiểm tra kết nối và thử lại sau vài phút.";

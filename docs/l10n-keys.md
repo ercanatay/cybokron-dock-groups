@@ -1601,8 +1601,7 @@ translated.
 
 Shown in the Software Update window (and Settings → Updates) when GitHub answered the download with
 HTTP 5xx after every retry, at the release's download address and at its API address alike; `%ld`
-is the HTTP status. Other download failures keep `core.update.install.downloadFailed`. These keys
-are listed in `LocalizationTests.awaitingTranslation` until they are translated.
+is the HTTP status. Other download failures keep `core.update.install.downloadFailed`.
 
 | Key | English |
 | --- | --- |

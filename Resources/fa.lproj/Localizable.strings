@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ در زمان خواب بودن مک بسته شد";
 "core.trigger.lastRun.afterWake" = "%@ (پس از بیدار شدن مک)";
 "core.trigger.missed.afterWake" = "تغییر آن خیلی قدیمی است، یا تعداد زیادی محرک همزمان جبران شده‌اند";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "گیت‌هاب در حال حاضر نتوانست دانلود را ارائه کند (HTTP %ld). اتصال اینترنت خود را بررسی کنید و چند دقیقه بعد دوباره تلاش کنید.";

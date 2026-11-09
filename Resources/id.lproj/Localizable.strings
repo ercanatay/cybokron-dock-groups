@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ ditutup saat Mac sedang tidur";
 "core.trigger.lastRun.afterWake" = "%@ (setelah Mac bangun)";
 "core.trigger.missed.afterWake" = "terlalu lama sejak perubahannya, atau terlalu banyak pemicu yang terkejar sekaligus";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub tidak dapat menyediakan unduhan saat ini (HTTP %ld). Periksa koneksi Anda dan coba lagi dalam beberapa menit.";

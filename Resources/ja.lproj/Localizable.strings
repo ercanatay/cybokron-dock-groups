@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ が Mac のスリープ中に終了しました";
 "core.trigger.lastRun.afterWake" = "%@（Mac の復帰後）";
 "core.trigger.missed.afterWake" = "変更からの時間が長すぎるか、一度に多くのトリガーが追いついたため";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub でダウンロードを提供できませんでした (HTTP %ld)。接続を確認し、数分後にもう一度お試しください。";

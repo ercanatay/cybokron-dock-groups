@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ 在 Mac 休眠时退出";
 "core.trigger.lastRun.afterWake" = "%@（Mac 唤醒后）";
 "core.trigger.missed.afterWake" = "其变更时间过久，或同时追赶的触发器过多";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub 暂时无法提供下载（HTTP %ld）。请检查网络连接，几分钟后重试。";

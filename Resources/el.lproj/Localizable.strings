@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "Το %@ έκλεισε όσο το Mac ήταν σε αναστολή";
 "core.trigger.lastRun.afterWake" = "%@ (μετά την αφύπνιση του Mac)";
 "core.trigger.missed.afterWake" = "άλλαξε πριν από πολύ καιρό, ή έγιναν ταυτόχρονα πάρα πολλές ενεργοποιήσεις";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "Το GitHub δεν μπόρεσε να εξυπηρετήσει τη λήψη αυτή τη στιγμή (HTTP %ld). Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά σε λίγα λεπτά.";

@@ -1232,5 +1232,5 @@
 "core.trigger.lastRun.afterWake" = "%@ (after the Mac woke)";
 "core.trigger.missed.afterWake" = "it changed too long ago, or too many triggers caught up at once";
 
-/* Update download: GitHub kept answering with a server error (English only for now) */
+/* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub couldn't serve the download right now (HTTP %ld). Check your connection and try again in a few minutes.";

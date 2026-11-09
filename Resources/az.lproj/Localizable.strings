@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ Mac yuxuda olarkən bağlandı";
 "core.trigger.lastRun.afterWake" = "%@ (Mac oyandıqdan sonra)";
 "core.trigger.missed.afterWake" = "dəyişiklik çox əvvəl baş verib, ya da eyni anda çox tətik gecikmiş yerinə yetirilib";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub hal-hazırda yükləməni təqdim edə bilmir (HTTP %ld). Bağlantınızı yoxlayın və bir neçə dəqiqədən sonra yenidən cəhd edin.";

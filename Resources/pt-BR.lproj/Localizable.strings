@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ foi fechado enquanto o Mac estava em repouso";
 "core.trigger.lastRun.afterWake" = "%@ (depois que o Mac acordou)";
 "core.trigger.missed.afterWake" = "mudou há tempo demais, ou muitos disparos foram recuperados de uma vez";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "O GitHub não conseguiu fornecer o download agora (HTTP %ld). Verifique sua conexão e tente novamente em alguns minutos.";

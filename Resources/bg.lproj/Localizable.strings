@@ -1182,3 +1182,6 @@
 "core.trigger.afterWake.closed" = "%@ беше затворено, докато Mac беше в режим на сън";
 "core.trigger.lastRun.afterWake" = "%@ (след като Mac се събуди)";
 "core.trigger.missed.afterWake" = "промяната беше преди твърде дълго или твърде много тригери бяха наваксани едновременно";
+
+/* Update download: GitHub kept answering with a server error */
+"core.update.install.serverUnavailable" = "GitHub в момента не може да предостави изтеглянето (HTTP %ld). Проверете връзката си и опитайте отново след няколко минути.";
