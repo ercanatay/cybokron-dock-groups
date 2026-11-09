@@ -255,7 +255,9 @@ struct SwitchingRig {
     let switcher: ContextSwitcher
     static let ownPID: pid_t = 1
 
-    init(groups: [DockGroup], protected: [GroupItem] = [], answer: TransitionConfirmation.Answer = .quit) {
+    /// - Parameter authentication: "Ask for authentication before quitting apps", for Close All
+    ///   and the switcher alike; none by default.
+    init(groups: [DockGroup], protected: [GroupItem] = [], answer: TransitionConfirmation.Answer = .quit, authentication: QuitAuthentication? = nil) {
         apps = FakeRunningApps(log: log)
         workspace = SwitchingWorkspace(log: log)
         let persistence = MemoryGroupPersistence()
@@ -272,7 +274,7 @@ struct SwitchingRig {
         )
         transitionPrompt = FakeTransitionPrompt(answer: answer)
         let terminator = self.terminator
-        quitRequests = GroupQuitRequests(prompt: quitPrompt, transitionPrompt: transitionPrompt) { group, mode in
+        quitRequests = GroupQuitRequests(prompt: quitPrompt, transitionPrompt: transitionPrompt, authentication: authentication) { group, mode in
             terminator.closeAll(group, mode: mode)
         }
         let clock = self.clock
@@ -284,6 +286,7 @@ struct SwitchingRig {
             terminator: terminator,
             applications: apps,
             questions: quitRequests,
+            authentication: authentication,
             clock: { clock.now }
         )
     }
