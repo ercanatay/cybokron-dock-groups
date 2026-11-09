@@ -38,7 +38,10 @@ C, Start and Finish:
 - **C-4** **Protected apps**, a list in Settings, are never quit by Start, Finish or Close All
   (from the popup, the menus, a link, Siri, or a standalone group's own app) and never hidden by
   Start or Finish. This app and its standalone groups' apps are always protected, and Finder is
-  never quit.
+  never quit. *Later addition:* with **Ask for authentication before quitting apps** on (off by
+  default), Close All, Force Quit and quitting Starts and Finishes also need Touch ID, an Apple
+  Watch or the password, and links, Siri, Shortcuts, the command line and standalone groups' apps
+  quit nothing — see [quit-authentication.md](quit-authentication.md).
 - **C-5** Start and Finish are offered in the popup, the menu bar menu, the group window, through
   links (`cybokrondockgroups://start/<group>`, `…/finish/<group>`) and in Siri and the Shortcuts
   app. A standalone group's own app doesn't offer them in this wave.
@@ -315,6 +318,9 @@ Hiding first and opening second matches the research's order and keeps T's apps 
 
 The question names the apps it would quit. Declining a link's question offers to hide instead; a
 declined Siri confirmation ends the request (as Quit Group does). Force quitting is never offered.
+With **Ask for authentication before quitting apps** on, a quitting plan from the user's click or
+a group shortcut also needs authentication (after the question, if any), and one from a link, Siri
+or Shortcuts does nothing ([quit-authentication.md](quit-authentication.md)).
 
 Dialog drafts (en-US):
 
