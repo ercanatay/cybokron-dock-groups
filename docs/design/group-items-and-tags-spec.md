@@ -845,6 +845,11 @@ earlier than the first one with item support, the app:
 2. if any group has file or folder items or details, adds the warning in §4.5 to the existing
    install confirmation.
 
+Later waves extend this: every way back to an older version also copies `preferences.json`
+(`DowngradeProtection.preserveSettings`, `preferences.pre-downgrade-<time>.json`, 3 kept). That
+copy isn't a gate: when it fails, the failure is logged and the install goes on. The install
+question adds one sentence that the copy exists and can be put back by hand.
+
 `UpdateInstaller` itself stays untouched: it never reads settings (§0.8).
 
 ### 5.4 Agents across versions

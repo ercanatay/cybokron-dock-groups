@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Going back to any older version from Other Versions… now also keeps a copy of your settings (`preferences.pre-downgrade-*.json`, the last three kept), and the question says so. If that copy can't be made, the install goes on and the failure is logged.
+
 ## [0.17.0] - 2026-11-09
 
 ### Added

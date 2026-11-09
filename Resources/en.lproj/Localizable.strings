@@ -338,6 +338,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Version %@ can't update itself: to come back, download a newer version from the releases page.";
 "settings.otherVersions.confirm.skips" = "Automatic checks then skip the newer versions (%@); Check for Updates… still offers them.";
 "settings.otherVersions.confirm.older" = "An older version may not know about features added since; consider exporting a backup first (Settings → Backup).";
+"settings.otherVersions.confirm.settingsCopy" = "A copy of your settings is kept next to them (preferences.pre-downgrade-…json) and can be put back by hand if needed.";
 "settings.otherVersions.confirm.upgrade" = "Skipped versions are cleared, so automatic checks offer every newer release again.";
 
 /* Settings → Backup */

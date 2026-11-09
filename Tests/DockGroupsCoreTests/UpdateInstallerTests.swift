@@ -997,3 +997,75 @@ struct PreDowngradeShortcutsTests {
         }
     }
 }
+
+/// Going back to any older version copies `preferences.json` aside, even one that lacks nothing the
+/// older wave protects; the copy is a courtesy, never a gate.
+@Suite("Update installer: a copy of the settings before going back to any older version")
+@MainActor
+struct PreDowngradeSettingsCopyTests {
+    private static func version(_ text: String) -> SemanticVersion { SemanticVersion(text)! }
+
+    private struct FailingCopy: PreferencesPersisting {
+        struct Failure: Error {}
+        func loadPreferences() throws -> PopupPreferences? { nil }
+        func savePreferences(_ preferences: PopupPreferences) throws {}
+        func preserveUnreadableData() throws -> URL? { nil }
+        func preserveCopy(label: String) throws -> URL? { throw Failure() }
+    }
+
+    private func store(in directory: TemporaryDirectory) -> PreferencesStore {
+        let store = PreferencesStore(persistence: JSONFilePreferencesPersistence(fileURL: directory.url.appending(path: "preferences.json")), saveDelay: .zero)
+        store.update { $0.asksForAuthenticationBeforeQuitting = true }
+        return store
+    }
+
+    @Test func appliesToEveryWayBackOnly() {
+        #expect(DowngradeProtection.appliesToSettingsCopy(installing: Self.version("0.16.1"), over: Self.version("0.17.0")))
+        #expect(!DowngradeProtection.appliesToSettingsCopy(installing: Self.version("0.17.0"), over: Self.version("0.17.0")))
+        #expect(!DowngradeProtection.appliesToSettingsCopy(installing: Self.version("0.18.0"), over: Self.version("0.17.0")))
+        #expect(!DowngradeProtection.appliesToSettingsCopy(installing: Self.version("0.1.0"), over: nil))
+    }
+
+    @Test func copiesValidJSONAndKeepsThree() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let preferences = store(in: temporary)
+        var failures = 0
+
+        let first = try #require(DowngradeProtection.preserveSettings(
+            of: preferences, installing: Self.version("0.16.1"), over: Self.version("0.17.0"), onFailure: { _ in failures += 1 }
+        ))
+        #expect(first.lastPathComponent.hasPrefix("preferences.pre-downgrade-") && first.pathExtension == "json")
+        let loaded = try JSONFilePreferencesPersistence(fileURL: first).loadPreferences()
+        #expect(loaded?.asksForAuthenticationBeforeQuitting == true)
+        _ = try JSONSerialization.jsonObject(with: Data(contentsOf: first))
+
+        for _ in 0..<4 {
+            DowngradeProtection.preserveSettings(of: preferences, installing: Self.version("0.16.1"), over: Self.version("0.17.0"), onFailure: { _ in failures += 1 })
+        }
+        let files = try FileManager.default.contentsOfDirectory(atPath: temporary.url.path)
+        #expect(files.filter { $0.hasPrefix("preferences.pre-downgrade-") }.count == JSONFileSupport.keptCopies)
+        #expect(files.contains("preferences.json"))
+        #expect(failures == 0)
+    }
+
+    @Test func noCopyWhenNotGoingBackOrAlreadyCopied() throws {
+        let temporary = try TemporaryDirectory()
+        defer { temporary.remove() }
+        let preferences = store(in: temporary)
+        #expect(DowngradeProtection.preserveSettings(of: preferences, installing: Self.version("0.18.0"), over: Self.version("0.17.0"), onFailure: { _ in }) == nil)
+        let existing = temporary.url.appending(path: "preferences.pre-downgrade-x.json")
+        #expect(DowngradeProtection.preserveSettings(of: preferences, installing: Self.version("0.16.1"), over: Self.version("0.17.0"), alreadyCopied: [existing], onFailure: { _ in }) == nil)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: temporary.url.path).filter { $0.contains("pre-downgrade") }.isEmpty)
+    }
+
+    @Test func aFailedCopyIsReportedAndDoesNotThrow() {
+        let preferences = PreferencesStore(persistence: FailingCopy(), saveDelay: .zero)
+        var reported: [Error] = []
+        let copy = DowngradeProtection.preserveSettings(
+            of: preferences, installing: Self.version("0.16.1"), over: Self.version("0.17.0"), onFailure: { reported.append($0) }
+        )
+        #expect(copy == nil)
+        #expect(reported.count == 1)
+    }
+}

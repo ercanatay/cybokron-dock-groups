@@ -30,6 +30,11 @@ import Foundation
 /// authentication before quitting apps" is on gets a line too (`quitAuthenticationWarning`): that
 /// version doesn't know the setting, quits apps without asking, and drops it when it saves the settings.
 ///
+/// Going back to any older version, whatever it lacks, also copies `preferences.json` aside
+/// (`preserveSettings`): a version that doesn't know a setting drops it once it saves the settings,
+/// and the copy lets you put them back by hand. That copy is a courtesy, not a gate: if it can't
+/// be made, the failure is logged and the install goes on.
+///
 /// `UpdateInstaller` replaces the app only and never reads the settings; this happens around it.
 public enum DowngradeProtection {
     /// The label of the copies: `groups.pre-downgrade-<timestamp>.json`.
@@ -173,6 +178,36 @@ public enum DowngradeProtection {
         guard appliesToContextSwitching(installing: target, over: current)
             || appliesToGroupShortcuts(installing: target, over: current) else { return [] }
         return try [store.preserveCopy(label: copyLabel), preferences.preserveCopy(label: copyLabel)].compactMap { $0 }
+    }
+
+    /// Whether installing `target` while `current` runs goes back to any older version (`false` when
+    /// the running app has no version).
+    public static func appliesToSettingsCopy(installing target: SemanticVersion, over current: SemanticVersion?) -> Bool {
+        current.map { target < $0 } ?? false
+    }
+
+    /// Copies the preferences file aside (`preferences.pre-downgrade-<timestamp>.json`, the last three
+    /// kept) before `target` is installed over `current`, when that goes back to an older version
+    /// and `alreadyCopied` doesn't hold a preferences copy from `preserveCopies`. Never throws: a
+    /// failed copy is reported to `onFailure` and the install goes on.
+    /// - Returns: The copy's location; `nil` when no copy is needed, nothing has been saved yet or the copy failed.
+    @MainActor
+    @discardableResult
+    public static func preserveSettings(
+        of preferences: PreferencesStore,
+        installing target: SemanticVersion,
+        over current: SemanticVersion?,
+        alreadyCopied: [URL] = [],
+        onFailure: (Error) -> Void
+    ) -> URL? {
+        guard appliesToSettingsCopy(installing: target, over: current),
+              !alreadyCopied.contains(where: { $0.lastPathComponent.hasPrefix("preferences.") }) else { return nil }
+        do {
+            return try preferences.preserveCopy(label: copyLabel)
+        } catch {
+            onFailure(error)
+            return nil
+        }
     }
 
     /// Copies the groups file aside before `target` is installed over `current`, when that goes back
