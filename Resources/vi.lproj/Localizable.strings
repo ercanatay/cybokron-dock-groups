@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub hiện không thể cung cấp bản tải xuống (HTTP %ld). Hãy kiểm tra kết nối và thử lại sau vài phút.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Yêu cầu xác thực trước khi thoát ứng dụng";
+"switching.quitAuthentication.footer" = "Khi Close All, Force Quit, Start và Finish sẽ thoát ứng dụng, trước tiên sẽ yêu cầu Touch ID, Apple Watch hoặc mật khẩu của bạn. Nếu thao tác này bị hủy hoặc thất bại, sẽ không có ứng dụng nào bị thoát. Liên kết, Siri, Shortcuts, dòng lệnh và các ứng dụng riêng của nhóm độc lập không thể yêu cầu xác thực, nên khi tùy chọn này đang bật, chúng sẽ không thoát ứng dụng nào. Việc ẩn và mở ứng dụng không bao giờ yêu cầu xác thực.";
+"core.quitAuthentication.reason" = "thoát ứng dụng";
+"core.quitAuthentication.notAuthenticated" = "Không có ứng dụng nào bị thoát: xác thực đã bị hủy, thất bại hoặc không khả dụng trên Mac này.";
+"core.quitAuthentication.notInteractive" = "Không có ứng dụng nào bị thoát: “Yêu cầu xác thực trước khi thoát ứng dụng” đang bật, và liên kết, Siri, Shortcuts, dòng lệnh cùng các ứng dụng riêng của nhóm độc lập không thể yêu cầu xác thực. Hãy tự thoát các ứng dụng từ %@.";

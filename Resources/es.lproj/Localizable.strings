@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub no pudo servir la descarga en este momento (HTTP %ld). Comprueba tu conexión e inténtalo de nuevo en unos minutos.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Pedir autenticación antes de cerrar apps";
+"switching.quitAuthentication.footer" = "Cerrar todo, Forzar salida, e Iniciar y Terminar, cuando cerrarían apps, primero piden Touch ID, tu Apple Watch o tu contraseña. Si se cancela o falla, no se cierra nada. Los enlaces, Siri, Atajos, la línea de comandos y las apps propias de los grupos independientes no pueden pedir autenticación, así que no cierran nada mientras esta opción esté activada. Ocultar y abrir apps nunca pide autenticación.";
+"core.quitAuthentication.reason" = "cerrar apps";
+"core.quitAuthentication.notAuthenticated" = "No se cerró nada: la autenticación se canceló, falló o no está disponible en este Mac.";
+"core.quitAuthentication.notInteractive" = "No se cerró nada: «Pedir autenticación antes de cerrar apps» está activado, y los enlaces, Siri, Atajos, la línea de comandos y las apps propias de los grupos independientes no pueden pedir autenticación. Cierra las apps desde %@ directamente.";

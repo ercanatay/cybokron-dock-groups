@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub tidak dapat menyediakan unduhan saat ini (HTTP %ld). Periksa koneksi Anda dan coba lagi dalam beberapa menit.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Minta autentikasi sebelum menutup aplikasi";
+"switching.quitAuthentication.footer" = "Close All, Paksa Berhenti, serta Start dan Finish, saat fitur tersebut akan menutup aplikasi, terlebih dahulu meminta Touch ID, Apple Watch Anda, atau kata sandi. Jika dibatalkan atau gagal, tidak ada aplikasi yang ditutup. Tautan, Siri, Pintasan, baris perintah, dan aplikasi milik grup mandiri tidak dapat meminta autentikasi, sehingga tidak ada yang ditutup selama fitur ini aktif. Menyembunyikan dan membuka aplikasi tidak pernah meminta autentikasi.";
+"core.quitAuthentication.reason" = "menutup aplikasi";
+"core.quitAuthentication.notAuthenticated" = "Tidak ada aplikasi yang ditutup: autentikasi dibatalkan, gagal, atau tidak tersedia di Mac ini.";
+"core.quitAuthentication.notInteractive" = "Tidak ada aplikasi yang ditutup: “Minta autentikasi sebelum menutup aplikasi” aktif, dan tautan, Siri, Pintasan, baris perintah, serta aplikasi milik grup mandiri tidak dapat memintanya. Tutup aplikasi dari %@ itu sendiri.";

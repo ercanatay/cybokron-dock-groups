@@ -1183,3 +1183,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub şu anda indirme isteğine yanıt veremiyor (HTTP %ld). Bağlantınızı kontrol edip birkaç dakika sonra tekrar deneyin.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Uygulamaları kapatmadan önce kimlik doğrulaması iste";
+"switching.quitAuthentication.footer" = "Tümünü Kapat, Zorla Çık ve uygulamaları kapatacaklarsa Başlat ve Bitir, önce Touch ID, Apple Watch'unuz veya parolanız istenir. İptal edilir ya da başarısız olursa hiçbir uygulama kapatılmaz. Bağlantılar, Siri, Kısayollar, komut satırı ve bağımsız grupların kendi uygulamaları bu seçenek açıkken kimlik doğrulaması isteyemez, bu yüzden hiçbir şeyi kapatmaz. Uygulamaları gizleme ve açma işlemleri hiçbir zaman kimlik doğrulaması istemez.";
+"core.quitAuthentication.reason" = "uygulamaları kapatmak";
+"core.quitAuthentication.notAuthenticated" = "Hiçbir şey kapatılmadı: kimlik doğrulaması iptal edildi, başarısız oldu veya bu Mac'te kullanılamıyor.";
+"core.quitAuthentication.notInteractive" = "Hiçbir şey kapatılmadı: “Uygulamaları kapatmadan önce kimlik doğrulaması iste” açık ve bağlantılar, Siri, Kısayollar, komut satırı ile bağımsız grupların kendi uygulamaları kimlik doğrulaması isteyemez. Bunun yerine uygulamaları doğrudan %@ içinden kapatın.";

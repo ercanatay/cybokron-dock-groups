@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "A GitHub most nem tudta kiszolgálni a letöltést (HTTP %ld). Ellenőrizd a kapcsolatot, és próbáld újra néhány perc múlva.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Hitelesítés kérése alkalmazások bezárása előtt";
+"switching.quitAuthentication.footer" = "Az Összes bezárása, a Kényszerített kilépés, valamint az Indítás és a Befejezés funkció, ha alkalmazásokat zárna be, először Touch ID, Apple Watch vagy jelszó megadását kéri. Ha ezt megszakítják vagy sikertelen, semmi nem záródik be. A hivatkozások, a Siri, a Parancsikonok, a parancssor és az önálló csoportok saját alkalmazásai nem tudnak hitelesítést kérni, ezért ez alatt a beállítás alatt nem zárnak be semmit. Az alkalmazások elrejtése és megnyitása sosem kér hitelesítést.";
+"core.quitAuthentication.reason" = "alkalmazásokat bezárni";
+"core.quitAuthentication.notAuthenticated" = "Nincs bezárva semmi: a hitelesítést megszakították, sikertelen volt, vagy ezen a Macen nem érhető el.";
+"core.quitAuthentication.notInteractive" = "Nincs bezárva semmi: a “Hitelesítés kérése alkalmazások bezárása előtt” be van kapcsolva, a hivatkozások, a Siri, a Parancsikonok, a parancssor és az önálló csoportok saját alkalmazásai pedig nem tudnak hitelesítést kérni. Zárd be helyette az alkalmazásokat magában a(z) %@ alkalmazásban.";

@@ -1184,3 +1184,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub не зміг надати завантаження зараз (HTTP %ld). Перевірте з'єднання та спробуйте ще раз за кілька хвилин.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Запитувати автентифікацію перед закриттям застосунків";
+"switching.quitAuthentication.footer" = "Close All, Force Quit, а також Start і Finish, якщо вони закривали б застосунки, спершу запитують Touch ID, ваш Apple Watch або пароль. Якщо це скасовано або не вдалося, нічого не закривається. Посилання, Siri, Shortcuts, командний рядок і власні застосунки окремих груп не можуть запитувати автентифікацію, тому, поки це ввімкнено, вони нічого не закривають. Приховування та відкриття застосунків ніколи не запитують автентифікацію.";
+"core.quitAuthentication.reason" = "закрити застосунки";
+"core.quitAuthentication.notAuthenticated" = "Нічого не закрито: автентифікацію скасовано, вона не вдалася або недоступна на цьому Mac.";
+"core.quitAuthentication.notInteractive" = "Нічого не закрито: «Запитувати автентифікацію перед закриттям застосунків» увімкнено, а посилання, Siri, Shortcuts, командний рядок і власні застосунки окремих груп не можуть запитувати її. Закрийте застосунки з %@ напряму.";

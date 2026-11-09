@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "Το GitHub δεν μπόρεσε να εξυπηρετήσει τη λήψη αυτή τη στιγμή (HTTP %ld). Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά σε λίγα λεπτά.";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "Ζήτηση ελέγχου ταυτότητας πριν τον τερματισμό εφαρμογών";
+"switching.quitAuthentication.footer" = "Τα Close All, Αναγκαστική έξοδος, Start και Finish, όταν θα τερμάτιζαν εφαρμογές, ζητούν πρώτα Touch ID, το Apple Watch σας ή τον κωδικό σας. Αν αυτό ακυρωθεί ή αποτύχει, δεν τερματίζεται τίποτα. Οι σύνδεσμοι, το Siri, οι Συντομεύσεις, η γραμμή εντολών και οι αυτόνομες ομάδες με τις δικές τους εφαρμογές δεν μπορούν να ζητήσουν έλεγχο, οπότε δεν τερματίζουν τίποτα όσο αυτή η ρύθμιση είναι ενεργή. Η απόκρυψη και το άνοιγμα εφαρμογών δεν ζητούν ποτέ έλεγχο.";
+"core.quitAuthentication.reason" = "τερματίσει εφαρμογές";
+"core.quitAuthentication.notAuthenticated" = "Δεν τερματίστηκε τίποτα: ο έλεγχος ταυτότητας ακυρώθηκε, απέτυχε ή δεν είναι διαθέσιμος σε αυτό το Mac.";
+"core.quitAuthentication.notInteractive" = "Δεν τερματίστηκε τίποτα: η ρύθμιση “Ζήτηση ελέγχου ταυτότητας πριν τον τερματισμό εφαρμογών” είναι ενεργή, και οι σύνδεσμοι, το Siri, οι Συντομεύσεις, η γραμμή εντολών και οι αυτόνομες ομάδες με τις δικές τους εφαρμογές δεν μπορούν να τον ζητήσουν. Τερματίστε τις εφαρμογές από το ίδιο το %@.";

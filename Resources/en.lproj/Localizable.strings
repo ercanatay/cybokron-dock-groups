@@ -900,10 +900,10 @@
 "settings.backup.library.status.templates.one" = "Added 1 template";
 "settings.backup.library.status.templates.other" = "Added %ld templates";
 
-/* Settings → Updates → Other Versions…, going back to a version without group shortcuts, archived groups and templates (English only for now) */
+/* Settings → Updates → Other Versions…, going back to a version without group shortcuts, archived groups and templates */
 "updates.otherVersions.library.warning" = "Version %@ doesn't know archived groups, group shortcuts or templates. Archived groups show there as ordinary groups, and editing groups there drops their shortcuts and which groups are archived. Copies of your groups and settings are kept before it's installed; templates stay for when you come back.";
 
-/* Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, the "Add Open Apps" link's title and the New Group from Open Apps Siri phrase in Settings (English only for now) */
+/* Capturing the open apps into a group: the suggested name, the open apps that can't be added, the limit, the "Add Open Apps" link's title and the New Group from Open Apps Siri phrase in Settings */
 "core.capture.name.none" = "Open Apps";
 "core.capture.name.more" = "%1$@ +%2$ld";
 "core.capture.unavailable.one" = "1 open app can't be added here: it isn't an app bundle, or it runs from a temporary copy (move it to Applications first).";
@@ -913,7 +913,7 @@
 "core.invocation.capture.newGroup" = "New Group from Open Apps";
 "core.invocation.capture.newGroup.phrase" = "Capture my open apps in %@";
 
-/* Capturing the open apps: the menu bar menu's, the group window's and an empty popup's items, and the review sheet (English only for now) */
+/* Capturing the open apps: the menu bar menu's, the group window's and an empty popup's items, and the review sheet */
 "menuBar.capture.newGroup" = "New Group from Open Apps…";
 "menuBar.capture.newGroup.tooltip" = "Make a group of the apps that are open now. You choose which ones first.";
 "groupWindow.capture.newGroup" = "New Group from Open Apps…";
@@ -942,7 +942,7 @@
 "capture.sheet.empty" = "No other apps are open.";
 "capture.sheet.allInGroup" = "Every open app is already in “%@”.";
 
-/* Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation (English only for now) */
+/* Triggers (Core): why a trigger's occurrence was skipped or missed, the hourly budget, the limits, a trigger that can't run, a triggers file that couldn't be loaded or saved, going back to a version without triggers, and triggers in Import Settings…'s confirmation */
 "core.trigger.skip.paused" = "triggers were paused";
 "core.trigger.skip.budget" = "triggers ran too often and were paused";
 "core.trigger.skip.notNow" = "you chose Not Now";
@@ -976,7 +976,7 @@
 "core.backup.triggers.merges.one" = "It adds 1 trigger, turned off.";
 "core.backup.triggers.merges.other" = "It adds %ld triggers, turned off.";
 
-/* Triggers (Core): a trigger's rule as its row shows it (its event and action, times in the user's locale), and what happened the last time it came (English only for now) */
+/* Triggers (Core): a trigger's rule as its row shows it (its event and action, times in the user's locale), and what happened the last time it came */
 "core.trigger.summary.time.everyDay" = "At %@ every day";
 "core.trigger.summary.time.weekdays" = "At %@ on weekdays";
 "core.trigger.summary.time.weekends" = "At %@ on weekends";
@@ -1017,7 +1017,7 @@
 "core.trigger.lastRun.skipped" = "Skipped %1$@: %2$@.";
 "core.trigger.lastRun.missed" = "Missed %1$@: %2$@.";
 
-/* Triggers: the New Trigger / Edit Trigger sheet, the notice before a trigger runs, the group window's Triggers section, Settings → Triggers (Open at Login, the pause, Location access, every trigger) and the menu bar's Pause Triggers (English only for now) */
+/* Triggers: the New Trigger / Edit Trigger sheet, the notice before a trigger runs, the group window's Triggers section, Settings → Triggers (Open at Login, the pause, Location access, every trigger) and the menu bar's Pause Triggers */
 "triggers.editor.title.new" = "New Trigger for “%@”";
 "triggers.editor.title.edit" = "Edit Trigger";
 "triggers.editor.when" = "When";
@@ -1213,18 +1213,18 @@
 "triggers.identity.approve.failure.checkFailed" = "The app's code couldn't be checked. Nothing was approved.";
 "triggers.identity.approve.failure.notSaved" = "The approval couldn't be saved. Nothing was approved.";
 
-/* Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri (English only for now) */
+/* Group links by identity: a link whose group doesn't exist anymore or whose name more than one group has, a rename refused because another group has the name, and the links' footer in Settings → Shortcuts & Siri */
 "core.link.groupNotFound" = "The group this link opens doesn't exist anymore. It may have been deleted or archived, or renamed if the link names it by name.";
 "core.link.groupAmbiguous" = "More than one group is named “%@”, so the link didn't open any of them. Copy the group's link again from Settings → Shortcuts & Siri.";
 "core.rename.nameTaken" = "Another group is already named “%@”. Choose a different name.";
 "settings.shortcuts.identityLinks.footer" = "Open a link from a script or another app, e.g. with `open` in Terminal. A link names its group by ID, so it keeps working after a rename; the name after the ID is only there to read. A link you write yourself can use the group's name instead (case, accents and punctuation don't matter). Add ?mode=force to a quit link to force quit.";
 "settings.shortcuts.identityLinks.versionNote" = "Links copied here need version 0.13.0 or later on the Mac that opens them; an older version only understands links written with the group's name.";
 
-/* Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field (English only for now) */
+/* Per-trigger delays: why a waiting trigger didn't run, and the editor's delay field */
 "core.trigger.skip.cancelledBeforeRun" = "it was cancelled before it ran";
 "triggers.editor.delay.hint" = "Seconds to wait, 0 to 3600, before the action runs (after the notice, if it shows one). If anything changes meanwhile — the trigger, its group, a pause, the screen lock, the Mac sleeping — nothing runs.";
 
-/* Run what was missed: the editor's option for application triggers, the notice and the last-run line after the Mac woke (English only for now) */
+/* Run what was missed: the editor's option for application triggers, the notice and the last-run line after the Mac woke */
 "triggers.editor.afterWake" = "Run it after the Mac wakes";
 "triggers.editor.afterWake.note" = "Only for an approved app that opened or quit while the Mac or its screens slept or another user was using it, up to 30 minutes. It runs at most once per wake, always with a notice. If the app quits and opens again meanwhile, nothing runs.";
 "core.trigger.afterWake.opened" = "%@ opened while the Mac was asleep";
@@ -1235,7 +1235,7 @@
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub couldn't serve the download right now (HTTP %ld). Check your connection and try again in a few minutes.";
 
-/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit (English only for now) */
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
 "switching.quitAuthentication.toggle" = "Ask for authentication before quitting apps";
 "switching.quitAuthentication.footer" = "Close All, Force Quit, and Start and Finish when they would quit apps, first ask for Touch ID, your Apple Watch or your password. If that's cancelled or fails, nothing is quit. Links, Siri, Shortcuts, the command line and standalone groups' own apps can't ask, so they quit nothing while this is on. Hiding and opening apps never ask.";
 "core.quitAuthentication.reason" = "quit apps";

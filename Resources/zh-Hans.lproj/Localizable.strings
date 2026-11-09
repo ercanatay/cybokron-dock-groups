@@ -1185,3 +1185,10 @@
 
 /* Update download: GitHub kept answering with a server error */
 "core.update.install.serverUnavailable" = "GitHub 暂时无法提供下载（HTTP %ld）。请检查网络连接，几分钟后重试。";
+
+/* Ask for authentication before quitting apps: the Switching setting, the system prompt's reason and why nothing was quit */
+"switching.quitAuthentication.toggle" = "退出应用前要求验证身份";
+"switching.quitAuthentication.footer" = "执行“全部关闭”“强制退出”，以及会退出应用的“开始”和“完成”时，会先要求使用触控 ID、Apple Watch 或密码进行验证。如果验证被取消或失败，则不会退出任何应用。链接、Siri、快捷指令、命令行以及独立群组自带的应用无法请求验证，因此在此选项开启时，它们不会退出任何应用。隐藏和打开应用从不需要验证。";
+"core.quitAuthentication.reason" = "退出应用";
+"core.quitAuthentication.notAuthenticated" = "未退出任何应用：验证已取消、失败，或此 Mac 上无法使用验证。";
+"core.quitAuthentication.notInteractive" = "未退出任何应用：已开启“退出应用前要求验证身份”，而链接、Siri、快捷指令、命令行以及独立群组自带的应用无法请求验证。请直接在 %@ 中退出这些应用。";
