@@ -34,7 +34,7 @@ struct SettingsPaneTests {
         let settings = try Self.source("CybokronDockGroups", "Settings", "SettingsWindowController.swift")
         #expect(settings.contains("case .switching: L10n.Switching.Settings.tab"))
         #expect(settings.contains("case .switching: \"arrow.left.arrow.right.square\""))
-        #expect(settings.contains("SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons)"))
+        #expect(settings.contains("SwitchingSettingsView(preferences: preferences, store: store, session: session, runningApps: runningApps, icons: icons, quitAuthentication: quitAuthentication)"))
         #expect(try LocalizationTests.table("en")["settings.tab.switching"] == "Switching")
     }
 

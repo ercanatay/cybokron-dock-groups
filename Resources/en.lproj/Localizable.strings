@@ -1241,3 +1241,9 @@
 "core.quitAuthentication.reason" = "quit apps";
 "core.quitAuthentication.notAuthenticated" = "Nothing was quit: authentication was cancelled, failed or isn't available on this Mac.";
 "core.quitAuthentication.notInteractive" = "Nothing was quit: “Ask for authentication before quitting apps” is on, and links, Siri, Shortcuts, the command line and standalone groups' own apps can't ask for it. Quit the apps from %@ itself instead.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "turn off authentication before quitting apps";
+"core.quitAuthentication.turnOff.unavailable" = "Authentication isn't available on this Mac; turn off “Ask for authentication before quitting apps” anyway?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Ask for authentication before quitting apps” stays on: authentication was cancelled or failed.";
+"core.quitAuthentication.olderVersion.unknown" = "Version %@ doesn't know “Ask for authentication before quitting apps”: it quits apps without asking, and the setting is lost once it saves your settings.";

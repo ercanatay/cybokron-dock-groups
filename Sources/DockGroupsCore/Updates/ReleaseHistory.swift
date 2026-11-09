@@ -55,6 +55,16 @@ public enum ReleaseHistory {
         version < firstTriggersVersion
     }
 
+    /// The first version with "Ask for authentication before quitting apps". An older one ignores
+    /// the setting (it keeps it in `preferences.json` until it saves the settings) and quits apps
+    /// without asking (`DowngradeProtection.quitAuthenticationWarning`).
+    public static let firstQuitAuthenticationVersion = SemanticVersion(major: 0, minor: 17, patch: 0)
+
+    /// Whether `version` predates `firstQuitAuthenticationVersion`.
+    public static func lacksQuitAuthentication(_ version: SemanticVersion) -> Bool {
+        version < firstQuitAuthenticationVersion
+    }
+
     /// The releases to list: neither drafts nor prereleases, one per version (the first listed
     /// wins), newest first.
     public static func installable(_ releases: [ReleaseInfo]) -> [ReleaseInfo] {

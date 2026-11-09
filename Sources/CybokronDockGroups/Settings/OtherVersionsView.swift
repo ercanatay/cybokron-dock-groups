@@ -133,7 +133,8 @@ struct OtherVersionsView: View {
                         dropsGroupItems: updater.warnsAboutGroupItems(installing: release.version),
                         dropsSwitching: updater.warnsAboutContextSwitching(installing: release.version),
                         dropsLibrary: updater.warnsAboutGroupLibrary(installing: release.version),
-                        triggerLines: updater.triggersWarning(installing: release.version)
+                        triggerLines: updater.triggersWarning(installing: release.version),
+                        quitAuthenticationLines: updater.quitAuthenticationWarning(installing: release.version)
                     )
                 }
                 .disabled(!hasInstaller || updater.isBusy)
@@ -162,6 +163,9 @@ private struct PendingInstall {
     let dropsLibrary: Bool
     /// The version runs no trigger, and keeps opening at login (`DowngradeProtection.triggersWarning`).
     let triggerLines: [String]
+    /// The version doesn't know "Ask for authentication before quitting apps", which is on
+    /// (`DowngradeProtection.quitAuthenticationWarning`).
+    let quitAuthenticationLines: [String]
 
     private var target: SemanticVersion { release.version }
 
@@ -205,6 +209,7 @@ private struct PendingInstall {
                 parts.append(L10n.Settings.OtherVersions.libraryWarning(target.description))
             }
             parts.append(contentsOf: triggerLines)
+            parts.append(contentsOf: quitAuthenticationLines)
             parts.append(L10n.Settings.OtherVersions.confirmOlder)
         case .upgrade:
             parts.append(L10n.Settings.OtherVersions.confirmUpgrade)
