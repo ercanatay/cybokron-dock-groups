@@ -19,6 +19,9 @@ public protocol QuittableApplication: AnyObject {
     var processIdentifier: pid_t { get }
     var isTerminated: Bool { get }
     var isHidden: Bool { get }
+    /// Whether the app has a Dock icon (`.regular`), a menu bar item only (`.accessory`) or no UI
+    /// at all (`.prohibited`). macOS doesn't hide the last two.
+    var activationPolicy: NSApplication.ActivationPolicy { get }
     /// Hides the app, as ⌘H would. Returns `false` when that wasn't possible.
     func hide() -> Bool
     /// Sends the app a quit request. Returns `false` when the request couldn't be sent.
@@ -28,6 +31,15 @@ public protocol QuittableApplication: AnyObject {
 }
 
 extension NSRunningApplication: QuittableApplication {}
+
+extension QuittableApplication {
+    /// Fakes that don't say are regular apps.
+    public var activationPolicy: NSApplication.ActivationPolicy { .regular }
+
+    /// Whether macOS can hide the app at all: background (`.accessory`, `.prohibited`) apps have
+    /// nothing to hide, so not hiding isn't a failure.
+    var isHideable: Bool { activationPolicy == .regular }
+}
 
 /// Finds running instances of an app.
 @MainActor
@@ -72,8 +84,18 @@ public struct HideReport: Equatable, Sendable {
     public let groupName: String
     /// Running apps that were hidden (or already were), in the group's order.
     public let hidden: [AppReference]
-    /// Running apps that couldn't be hidden.
+    /// Running regular apps that couldn't be hidden.
     public let refused: [AppReference]
+    /// Running background apps (no Dock icon: `.accessory`, `.prohibited`) that macOS doesn't hide.
+    /// Not a problem to tell the user about; only logged.
+    public let unhideable: [AppReference]
+
+    public init(groupName: String, hidden: [AppReference], refused: [AppReference], unhideable: [AppReference] = []) {
+        self.groupName = groupName
+        self.hidden = hidden
+        self.refused = refused
+        self.unhideable = unhideable
+    }
 }
 
 /// What hiding, quitting or showing running apps again did (`GroupTerminator.hide`, `quit`,
@@ -109,7 +131,12 @@ public final class GroupTerminator {
     private let ownProcessIdentifier: pid_t
     private let protectedApps: () -> ProtectedApps
     private let pendingLaunches: DelayedLaunches?
+    private let sleeper: Sleeping
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "GroupTerminator")
+
+    /// How long to wait before looking again at apps whose hide request came back `false`: macOS
+    /// often applies a hide a moment after the call reports no.
+    public static let hideSettleDelay: Duration = .milliseconds(400)
 
     /// - Parameters:
     ///   - listing: Finds the apps a transition plan names by process identifier; by default
@@ -118,13 +145,17 @@ public final class GroupTerminator {
     ///     are added to them.
     ///   - pendingLaunches: The group's items still waiting for their launch delay
     ///     (`GroupLauncher.pendingLaunches`): Close All and Hide All cancel them.
+    ///   - sleeper: Waits `hideSettleDelay` before checking again that apps asked to hide did;
+    ///     `TaskSleeping` by default.
     public init(
         applications: RunningApplicationsProviding,
         ownProcessIdentifier: pid_t,
         listing: RunningApplicationsListing? = nil,
         protectedApps: @escaping () -> ProtectedApps = { ProtectedApps() },
-        pendingLaunches: DelayedLaunches? = nil
+        pendingLaunches: DelayedLaunches? = nil,
+        sleeper: Sleeping? = nil
     ) {
+        self.sleeper = sleeper ?? TaskSleeping()
         self.applications = applications
         self.ownProcessIdentifier = ownProcessIdentifier
         self.listing = listing ?? SystemRunningApplicationsListing()
@@ -194,6 +225,45 @@ public final class GroupTerminator {
         return HideReport(groupName: group.name, hidden: hidden, refused: refused)
     }
 
+    /// Like `hideAll`, but an app whose hide request came back `false` gets `hideSettleDelay` to
+    /// show up hidden before it counts as refused (macOS often hides a moment after saying no).
+    /// Background apps (`.accessory`, `.prohibited`) that stay visible are reported as
+    /// `unhideable`, not refused.
+    public func hideAllSettled(_ group: DockGroup) async -> HideReport {
+        pendingLaunches?.cancel(group: group.id)
+        var requested: [(app: AppReference, instances: [any QuittableApplication], notHidden: [any QuittableApplication])] = []
+        for app in group.apps {
+            let instances = runningInstances(of: app)
+            guard !instances.isEmpty else { continue }
+            requested.append((app, instances, instances.filter { !$0.isHidden && !$0.hide() }))
+        }
+        await settle(requested.contains { $0.notHidden.contains { $0.isHideable } })
+
+        var hidden: [AppReference] = []
+        var refused: [AppReference] = []
+        var unhideable: [AppReference] = []
+        for entry in requested {
+            let stillVisible = entry.notHidden.filter { !$0.isHidden && !$0.isTerminated }
+            if stillVisible.isEmpty {
+                hidden.append(entry.app)
+            } else if stillVisible.contains(where: \.isHideable) {
+                refused.append(entry.app)
+                logger.error("Hide All in group \(group.id, privacy: .public): \(entry.app.bundleIdentifier, privacy: .public) refused")
+            } else {
+                unhideable.append(entry.app)
+                logger.notice("Hide All in group \(group.id, privacy: .public): \(entry.app.bundleIdentifier, privacy: .public) is a background app, macOS doesn't hide it")
+            }
+        }
+        logger.debug("Hide All in group \(group.id, privacy: .public): \(hidden.count) hidden, \(refused.count) refused, \(unhideable.count) background")
+        return HideReport(groupName: group.name, hidden: hidden, refused: refused, unhideable: unhideable)
+    }
+
+    /// Waits `hideSettleDelay` when `needed`; a cancelled wait just ends early.
+    private func settle(_ needed: Bool) async {
+        guard needed else { return }
+        try? await sleeper.sleep(for: Self.hideSettleDelay)
+    }
+
     // MARK: - Transitions
 
     /// Hides the apps, as Start and Finish do. Protected apps and this app are skipped, and so is
@@ -202,6 +272,39 @@ public final class GroupTerminator {
         perform(on: apps, protectedFrom: .hiding, label: "Hide") { application in
             application.isHidden || application.hide()
         }
+    }
+
+    /// Like `hide`, but an app whose hide request came back `false` gets `hideSettleDelay` to show
+    /// up hidden before it counts as refused. Background apps (`.accessory`, `.prohibited`) that
+    /// stay visible are skipped (logged), not refused.
+    public func hideSettled(_ apps: [RunningAppSnapshot]) async -> RunningAppsReport {
+        let protected = protectedApps()
+        var entries: [(snapshot: RunningAppSnapshot, application: (any SwitchableApplication)?, hidNow: Bool)] = []
+        for snapshot in apps {
+            let application = eligibleApplication(for: snapshot, protectedFrom: .hiding, protected: protected)
+            entries.append((snapshot, application, application.map { $0.isHidden || $0.hide() } ?? false))
+        }
+        await settle(entries.contains { !$0.hidNow && $0.application?.isHideable == true })
+
+        var done: [RunningAppSnapshot] = []
+        var refused: [RunningAppSnapshot] = []
+        var skipped: [RunningAppSnapshot] = []
+        for entry in entries {
+            guard let application = entry.application else {
+                skipped.append(entry.snapshot)
+                continue
+            }
+            if entry.hidNow || application.isHidden || application.isTerminated {
+                done.append(entry.snapshot)
+            } else if application.isHideable {
+                refused.append(entry.snapshot)
+                logger.error("Hide: \(entry.snapshot.identity, privacy: .public) refused")
+            } else {
+                skipped.append(entry.snapshot)
+                logger.notice("Hide: \(entry.snapshot.identity, privacy: .public) is a background app, macOS doesn't hide it")
+            }
+        }
+        return RunningAppsReport(done: done, refused: refused, skipped: skipped)
     }
 
     /// Asks the apps to quit, as Start and Finish do: always gracefully, so they can still ask to
@@ -239,13 +342,7 @@ public final class GroupTerminator {
         var skipped: [RunningAppSnapshot] = []
         let protected = protectedApps()
         for app in apps {
-            if app.processIdentifier == ownProcessIdentifier
-                || action.map({ protected.protects(app, from: $0) }) == true
-                || (action == nil && ProtectedApps.isAlwaysProtected(identity: app.identity, action: .hiding)) {
-                skipped.append(app)
-                continue
-            }
-            guard let application = currentApplication(for: app), !application.isTerminated else {
+            guard let application = eligibleApplication(for: app, protectedFrom: action, protected: protected) else {
                 skipped.append(app)
                 continue
             }
@@ -257,6 +354,21 @@ public final class GroupTerminator {
             }
         }
         return RunningAppsReport(done: done, refused: refused, skipped: skipped)
+    }
+
+    /// The app still running as planned, unless it's this app or protected from `action`.
+    private func eligibleApplication(
+        for app: RunningAppSnapshot,
+        protectedFrom action: ProtectedApps.Action?,
+        protected: ProtectedApps
+    ) -> (any SwitchableApplication)? {
+        if app.processIdentifier == ownProcessIdentifier
+            || action.map({ protected.protects(app, from: $0) }) == true
+            || (action == nil && ProtectedApps.isAlwaysProtected(identity: app.identity, action: .hiding)) {
+            return nil
+        }
+        guard let application = currentApplication(for: app), !application.isTerminated else { return nil }
+        return application
     }
 
     /// The running app with the snapshot's process identifier, if it's still the same app: a

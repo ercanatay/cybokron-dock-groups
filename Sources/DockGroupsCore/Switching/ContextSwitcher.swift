@@ -110,7 +110,7 @@ public final class ContextSwitcher {
             // (and the started group's own are scheduled again by its Open All).
             launcher.pendingLaunches?.cancelAll()
             var report = TransitionReport(outcome: .done, plan: plan, wasAsked: asked)
-            report.hidden = terminator.hide(plan.hide.map(\.app))
+            report.hidden = await terminator.hideSettled(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))
             report.launch = await launcher.openAll(group)
             session.didStart(id, at: clock(), by: trigger)
@@ -153,7 +153,7 @@ public final class ContextSwitcher {
             }
             launcher.pendingLaunches?.cancel(group: id)
             var report = TransitionReport(outcome: .done, plan: plan, wasAsked: asked)
-            report.hidden = terminator.hide(plan.hide.map(\.app))
+            report.hidden = await terminator.hideSettled(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))
             report.shown = terminator.unhide(plan.unhide.map(\.app), bringingToFront: plan.front)
             session.didFinish(id, showing: plan.next)
