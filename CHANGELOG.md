@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Downloading an update rides out GitHub's brief outages: a server error (HTTP 5xx), 408, 429 or a network timeout is tried again after 2 and then 6 seconds, and when the release's download address still fails, the same file is fetched through the asset's GitHub API address. Either way the file must match its published size and SHA-256, and the disk image and app keep their Developer ID signature checks. When GitHub can't serve the file at all, the update window says so ("GitHub couldn't serve the download right now (HTTP 504)…") instead of a bare status code, and Cancel stops a download, also while it waits to try again. 403 and 404 aren't retried.
+
 ## [0.15.0] - 2026-11-08
 
 ### Added
