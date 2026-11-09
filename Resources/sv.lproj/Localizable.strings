@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "avsluta appar";
 "core.quitAuthentication.notAuthenticated" = "Inget avslutades: autentiseringen avbröts, misslyckades eller är inte tillgänglig på den här Mac:en.";
 "core.quitAuthentication.notInteractive" = "Inget avslutades: “Be om autentisering innan appar avslutas” är på, och länkar, Siri, Genvägar, kommandoraden och fristående gruppers egna appar kan inte begära den. Avsluta apparna från %@ själva i stället.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "stänga av autentisering innan appar avslutas";
+"core.quitAuthentication.turnOff.unavailable" = "Autentisering är inte tillgänglig på den här Mac-datorn. Stäng ändå av “Be om autentisering innan appar avslutas”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Be om autentisering innan appar avslutas” förblir på: autentiseringen avbröts eller misslyckades.";
+"core.quitAuthentication.olderVersion.unknown" = "Version %@ känner inte till “Be om autentisering innan appar avslutas”: den avslutar appar utan att fråga, och inställningen går förlorad när den sparar dina inställningar.";

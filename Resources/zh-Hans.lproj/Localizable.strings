@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "退出应用";
 "core.quitAuthentication.notAuthenticated" = "未退出任何应用：验证已取消、失败，或此 Mac 上无法使用验证。";
 "core.quitAuthentication.notInteractive" = "未退出任何应用：已开启“退出应用前要求验证身份”，而链接、Siri、快捷指令、命令行以及独立群组自带的应用无法请求验证。请直接在 %@ 中退出这些应用。";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "关闭退出应用前的身份验证";
+"core.quitAuthentication.turnOff.unavailable" = "这台 Mac 无法使用身份验证；仍要关闭“退出应用前要求验证身份”吗？";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“退出应用前要求验证身份”保持开启：身份验证已取消或失败。";
+"core.quitAuthentication.olderVersion.unknown" = "版本 %@ 不支持“退出应用前要求验证身份”：它会直接退出应用而不询问，保存设置后该选项会丢失。";

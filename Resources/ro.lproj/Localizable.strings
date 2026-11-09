@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "închidă aplicații";
 "core.quitAuthentication.notAuthenticated" = "Nu s-a închis nimic: autentificarea a fost anulată, a eșuat sau nu este disponibilă pe acest Mac.";
 "core.quitAuthentication.notInteractive" = "Nu s-a închis nimic: „Solicită autentificare înainte de a închide aplicațiile” este activată, iar linkurile, Siri, Shortcuts, linia de comandă și aplicațiile proprii ale grupurilor independente nu pot solicita autentificarea. Închide aplicațiile direct din %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "oprește autentificarea înainte de închiderea aplicațiilor";
+"core.quitAuthentication.turnOff.unavailable" = "Autentificarea nu este disponibilă pe acest Mac; oprești „Solicită autentificare înainte de a închide aplicațiile” oricum?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "„Solicită autentificare înainte de a închide aplicațiile” rămâne activată: autentificarea a fost anulată sau a eșuat.";
+"core.quitAuthentication.olderVersion.unknown" = "Versiunea %@ nu cunoaște „Solicită autentificare înainte de a închide aplicațiile”: închide aplicațiile fără să ceară, iar setarea se pierde după ce își salvează setările.";

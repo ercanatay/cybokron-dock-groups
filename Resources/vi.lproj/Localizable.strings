@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "thoát ứng dụng";
 "core.quitAuthentication.notAuthenticated" = "Không có ứng dụng nào bị thoát: xác thực đã bị hủy, thất bại hoặc không khả dụng trên Mac này.";
 "core.quitAuthentication.notInteractive" = "Không có ứng dụng nào bị thoát: “Yêu cầu xác thực trước khi thoát ứng dụng” đang bật, và liên kết, Siri, Shortcuts, dòng lệnh cùng các ứng dụng riêng của nhóm độc lập không thể yêu cầu xác thực. Hãy tự thoát các ứng dụng từ %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "tắt xác thực trước khi thoát ứng dụng";
+"core.quitAuthentication.turnOff.unavailable" = "Xác thực không khả dụng trên Mac này; vẫn tắt “Yêu cầu xác thực trước khi thoát ứng dụng”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Yêu cầu xác thực trước khi thoát ứng dụng” vẫn bật: xác thực đã bị hủy hoặc không thành công.";
+"core.quitAuthentication.olderVersion.unknown" = "Phiên bản %@ không hỗ trợ “Yêu cầu xác thực trước khi thoát ứng dụng”: phiên bản này thoát ứng dụng mà không hỏi, và cài đặt sẽ bị mất sau khi lưu cài đặt của bạn.";

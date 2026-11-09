@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "アプリを終了する";
 "core.quitAuthentication.notAuthenticated" = "何も終了されませんでした: 認証がキャンセルされたか、失敗したか、またはこの Mac では利用できません。";
 "core.quitAuthentication.notInteractive" = "何も終了されませんでした: 「アプリを終了する前に認証を求める」がオンのため、リンク、Siri、ショートカット、コマンドライン、およびスタンドアロングループ自身のアプリは認証を求められません。代わりに %@ 自体からアプリを終了してください。";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "アプリの終了前の認証をオフにする";
+"core.quitAuthentication.turnOff.unavailable" = "このMacでは認証を利用できません。それでも“アプリを終了する前に認証を求める”をオフにしますか？";
+"core.quitAuthentication.turnOff.notAuthenticated" = "認証がキャンセルされたか失敗したため、“アプリを終了する前に認証を求める”はオンのままです。";
+"core.quitAuthentication.olderVersion.unknown" = "バージョン %@ は“アプリを終了する前に認証を求める”に対応していません。このバージョンでは確認なしにアプリが終了し、設定を保存すると、この設定は失われます。";

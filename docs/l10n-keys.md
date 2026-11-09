@@ -1624,7 +1624,7 @@ is the app name.
 | `core.quitAuthentication.notAuthenticated` | Nothing was quit: authentication was cancelled, failed or isn't available on this Mac. |
 | `core.quitAuthentication.notInteractive` | Nothing was quit: “Ask for authentication before quitting apps” is on, and links, Siri, Shortcuts, the command line and standalone groups' own apps can't ask for it. Quit the apps from %@ itself instead. |
 
-## Ask for authentication before quitting apps: turning it off, older versions (English only for now)
+## Ask for authentication before quitting apps: turning it off, older versions
 
 Turning the setting off asks for authentication first (`docs/design/quit-authentication.md`):
 `core.quitAuthentication.turnOff.reason` completes the system's own sentence “Cybokron Dock Groups
@@ -1632,8 +1632,7 @@ is trying to …”, so it starts in lowercase and has no final period; `….una
 when this Mac can't authenticate (OK / Cancel), `….notAuthenticated` the alert when it stays on.
 `core.quitAuthentication.olderVersion.unknown` is a line of the Other Versions… install question;
 `%@` is the version. Each names the toggle: use exactly the translation of
-`switching.quitAuthentication.toggle` there. These keys are listed in
-`LocalizationTests.awaitingTranslation` until they are translated.
+`switching.quitAuthentication.toggle` there.
 
 | Key | English |
 | --- | --- |

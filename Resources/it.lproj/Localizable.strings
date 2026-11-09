@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "uscire dalle app";
 "core.quitAuthentication.notAuthenticated" = "Nessuna app è stata chiusa: l'autenticazione è stata annullata, non è riuscita o non è disponibile su questo Mac.";
 "core.quitAuthentication.notInteractive" = "Nessuna app è stata chiusa: «Chiedi l'autenticazione prima di uscire dalle app» è attivo, e link, Siri, Shortcuts, la riga di comando e le app proprie dei gruppi autonomi non possono chiederla. Chiudi invece le app da %@ stesso.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "disattivare l'autenticazione prima di uscire dalle app";
+"core.quitAuthentication.turnOff.unavailable" = "L'autenticazione non è disponibile su questo Mac; disattivare comunque “Chiedi l'autenticazione prima di uscire dalle app”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Chiedi l'autenticazione prima di uscire dalle app” resta attivo: l'autenticazione è stata annullata o non è riuscita.";
+"core.quitAuthentication.olderVersion.unknown" = "La versione %@ non supporta “Chiedi l'autenticazione prima di uscire dalle app”: chiude le app senza chiedere, e l'impostazione va persa al salvataggio delle tue preferenze.";

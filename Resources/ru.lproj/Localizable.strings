@@ -1191,3 +1191,9 @@
 "core.quitAuthentication.reason" = "завершить приложения";
 "core.quitAuthentication.notAuthenticated" = "Ничего не завершено: аутентификация была отменена, не пройдена или недоступна на этом Mac.";
 "core.quitAuthentication.notInteractive" = "Ничего не завершено: включена настройка “Запрашивать аутентификацию перед завершением приложений”, а ссылки, Siri, Shortcuts, командная строка и собственные приложения отдельных групп не могут её запросить. Завершите приложения непосредственно в %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "отключить аутентификацию перед выходом из приложений";
+"core.quitAuthentication.turnOff.unavailable" = "Аутентификация недоступна на этом Mac. Всё равно отключить “Запрашивать аутентификацию перед завершением приложений”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Запрашивать аутентификацию перед завершением приложений” остаётся включённой: аутентификация была отменена или не удалась.";
+"core.quitAuthentication.olderVersion.unknown" = "Версия %@ не поддерживает “Запрашивать аутентификацию перед завершением приложений”: она завершает приложения без запроса, а настройка будет потеряна после сохранения ваших параметров.";
