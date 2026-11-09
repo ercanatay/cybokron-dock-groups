@@ -501,7 +501,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func hideAll(_ group: DockGroup) {
-        LaunchReportPresenter.presentProblems(in: terminator.hideAll(group))
+        Task { @MainActor in
+            LaunchReportPresenter.presentProblems(in: await terminator.hideAllSettled(group))
+        }
     }
 
     /// Start from the popup, the menu bar menu or the group window: the user's click, which quits

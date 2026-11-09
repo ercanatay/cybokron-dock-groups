@@ -359,7 +359,9 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func hideAll(_ group: DockGroup) {
-        LaunchReportPresenter.presentProblems(in: terminator.hideAll(group))
+        Task { @MainActor in
+            LaunchReportPresenter.presentProblems(in: await terminator.hideAllSettled(group))
+        }
     }
 
     /// Groups are edited in the main app: open its group window.
