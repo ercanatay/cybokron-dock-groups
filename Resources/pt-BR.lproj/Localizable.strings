@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "encerrar apps";
 "core.quitAuthentication.notAuthenticated" = "Nada foi encerrado: a autenticação foi cancelada, falhou ou não está disponível neste Mac.";
 "core.quitAuthentication.notInteractive" = "Nada foi encerrado: “Pedir autenticação antes de encerrar apps” está ativada, e links, Siri, Shortcuts, a linha de comando e os próprios apps dos grupos independentes não conseguem pedir autenticação. Encerre os apps pelo próprio %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "desativar a autenticação antes de sair dos apps";
+"core.quitAuthentication.turnOff.unavailable" = "A autenticação não está disponível neste Mac; desativar “Pedir autenticação antes de encerrar apps” mesmo assim?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Pedir autenticação antes de encerrar apps” continua ativado: a autenticação foi cancelada ou falhou.";
+"core.quitAuthentication.olderVersion.unknown" = "A versão %@ não conhece “Pedir autenticação antes de encerrar apps”: ela fecha os apps sem perguntar, e a configuração se perde assim que salvar suas preferências.";

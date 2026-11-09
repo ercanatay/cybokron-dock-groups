@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "τερματίσει εφαρμογές";
 "core.quitAuthentication.notAuthenticated" = "Δεν τερματίστηκε τίποτα: ο έλεγχος ταυτότητας ακυρώθηκε, απέτυχε ή δεν είναι διαθέσιμος σε αυτό το Mac.";
 "core.quitAuthentication.notInteractive" = "Δεν τερματίστηκε τίποτα: η ρύθμιση “Ζήτηση ελέγχου ταυτότητας πριν τον τερματισμό εφαρμογών” είναι ενεργή, και οι σύνδεσμοι, το Siri, οι Συντομεύσεις, η γραμμή εντολών και οι αυτόνομες ομάδες με τις δικές τους εφαρμογές δεν μπορούν να τον ζητήσουν. Τερματίστε τις εφαρμογές από το ίδιο το %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "απενεργοποιήσει τον έλεγχο ταυτότητας πριν από το κλείσιμο εφαρμογών";
+"core.quitAuthentication.turnOff.unavailable" = "Ο έλεγχος ταυτότητας δεν είναι διαθέσιμος σε αυτό το Mac· να απενεργοποιηθεί το “Ζήτηση ελέγχου ταυτότητας πριν τον τερματισμό εφαρμογών” ούτως ή άλλως;";
+"core.quitAuthentication.turnOff.notAuthenticated" = "Το “Ζήτηση ελέγχου ταυτότητας πριν τον τερματισμό εφαρμογών” παραμένει ενεργό: ο έλεγχος ταυτότητας ακυρώθηκε ή απέτυχε.";
+"core.quitAuthentication.olderVersion.unknown" = "Η έκδοση %@ δεν γνωρίζει το “Ζήτηση ελέγχου ταυτότητας πριν τον τερματισμό εφαρμογών”: κλείνει εφαρμογές χωρίς να ρωτά, και η ρύθμιση χάνεται μόλις αποθηκευτούν οι ρυθμίσεις σας.";

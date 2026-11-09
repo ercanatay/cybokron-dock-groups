@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "إنهاء التطبيقات";
 "core.quitAuthentication.notAuthenticated" = "لم يُنهَ أي شيء: أُلغيت المصادقة أو فشلت أو غير متوفرة على هذا Mac.";
 "core.quitAuthentication.notInteractive" = "لم يُنهَ أي شيء: خيار “طلب المصادقة قبل إنهاء التطبيقات” مفعّل، والروابط وسيري والاختصارات وسطر الأوامر والتطبيقات الخاصة بالمجموعات المستقلة لا تستطيع طلبها. أنهِ التطبيقات من %@ نفسه بدلاً من ذلك.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "إيقاف المصادقة قبل إنهاء التطبيقات";
+"core.quitAuthentication.turnOff.unavailable" = "المصادقة غير متاحة على جهاز Mac هذا؛ هل تريد إيقاف “طلب المصادقة قبل إنهاء التطبيقات” على أي حال؟";
+"core.quitAuthentication.turnOff.notAuthenticated" = "يبقى “طلب المصادقة قبل إنهاء التطبيقات” مفعّلاً: أُلغيت المصادقة أو فشلت.";
+"core.quitAuthentication.olderVersion.unknown" = "الإصدار %@ لا يتعرّف على “طلب المصادقة قبل إنهاء التطبيقات”: فهو ينهي التطبيقات دون أن يسأل، وتُفقد هذا الإعداد بمجرد أن يحفظ إعداداتك.";

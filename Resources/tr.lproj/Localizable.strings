@@ -1190,3 +1190,9 @@
 "core.quitAuthentication.reason" = "uygulamaları kapatmak";
 "core.quitAuthentication.notAuthenticated" = "Hiçbir şey kapatılmadı: kimlik doğrulaması iptal edildi, başarısız oldu veya bu Mac'te kullanılamıyor.";
 "core.quitAuthentication.notInteractive" = "Hiçbir şey kapatılmadı: “Uygulamaları kapatmadan önce kimlik doğrulaması iste” açık ve bağlantılar, Siri, Kısayollar, komut satırı ile bağımsız grupların kendi uygulamaları kimlik doğrulaması isteyemez. Bunun yerine uygulamaları doğrudan %@ içinden kapatın.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "uygulamalar kapatılmadan önce kimlik doğrulamasını kapatmak";
+"core.quitAuthentication.turnOff.unavailable" = "Bu Mac'te kimlik doğrulaması kullanılamıyor; “Uygulamaları kapatmadan önce kimlik doğrulaması iste” yine de kapatılsın mı?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Uygulamaları kapatmadan önce kimlik doğrulaması iste” açık kalır: kimlik doğrulaması iptal edildi veya başarısız oldu.";
+"core.quitAuthentication.olderVersion.unknown" = "%@ sürümü “Uygulamaları kapatmadan önce kimlik doğrulaması iste” ayarını tanımıyor: uygulamaları sormadan kapatır ve ayarlarınızı kaydettiğinde bu ayar kaybolur.";

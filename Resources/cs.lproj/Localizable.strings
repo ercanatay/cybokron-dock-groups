@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "ukončit aplikace";
 "core.quitAuthentication.notAuthenticated" = "Nic nebylo ukončeno: ověření bylo zrušeno, selhalo, nebo na tomto Macu není k dispozici.";
 "core.quitAuthentication.notInteractive" = "Nic nebylo ukončeno: možnost „Ptát se na ověření před ukončením aplikací“ je zapnutá a odkazy, Siri, Zkratky, příkazový řádek a vlastní aplikace samostatných skupin se ověřit nemohou. Ukončete aplikace přímo z %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "vypnout ověřování před ukončením aplikací";
+"core.quitAuthentication.turnOff.unavailable" = "Ověřování na tomto Macu není k dispozici; přesto vypnout “Ptát se na ověření před ukončením aplikací”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Ptát se na ověření před ukončením aplikací” zůstane zapnuté: ověření bylo zrušeno nebo selhalo.";
+"core.quitAuthentication.olderVersion.unknown" = "Verze %@ nezná nastavení “Ptát se na ověření před ukončením aplikací”: ukončuje aplikace bez dotazu a nastavení se po uložení vašich předvoleb ztratí.";

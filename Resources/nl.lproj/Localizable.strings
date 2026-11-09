@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "apps afsluiten";
 "core.quitAuthentication.notAuthenticated" = "Er is niets afgesloten: authenticatie is geannuleerd, mislukt of is niet beschikbaar op deze Mac.";
 "core.quitAuthentication.notInteractive" = "Er is niets afgesloten: “Vraag om authenticatie voordat apps worden afgesloten” staat aan, en links, Siri, Opdrachten, de opdrachtregel en de eigen apps van zelfstandige groepen kunnen er niet om vragen. Sluit de apps uit %@ zelf af.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "authenticatie uitschakelen voordat apps worden afgesloten";
+"core.quitAuthentication.turnOff.unavailable" = "Authenticatie is niet beschikbaar op deze Mac; toch “Vraag om authenticatie voordat apps worden afgesloten” uitschakelen?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Vraag om authenticatie voordat apps worden afgesloten” blijft aan: authenticatie is geannuleerd of mislukt.";
+"core.quitAuthentication.olderVersion.unknown" = "Versie %@ kent “Vraag om authenticatie voordat apps worden afgesloten” niet: er worden apps afgesloten zonder te vragen, en de instelling gaat verloren zodra de instellingen worden opgeslagen.";

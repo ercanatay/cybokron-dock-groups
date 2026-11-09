@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "apps beenden";
 "core.quitAuthentication.notAuthenticated" = "Nichts wurde beendet: Die Authentifizierung wurde abgebrochen, ist fehlgeschlagen oder ist auf diesem Mac nicht verfügbar.";
 "core.quitAuthentication.notInteractive" = "Nichts wurde beendet: „Vor dem Beenden von Apps nach Authentifizierung fragen“ ist aktiviert, und Links, Siri, Kurzbefehle, die Befehlszeile sowie die eigenen Apps eigenständiger Gruppen können nicht danach fragen. Beende die Apps stattdessen direkt in %@.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "Authentifizierung vor dem Beenden von Apps ausschalten";
+"core.quitAuthentication.turnOff.unavailable" = "Authentifizierung ist auf diesem Mac nicht verfügbar; „Vor dem Beenden von Apps nach Authentifizierung fragen“ trotzdem ausschalten?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "„Vor dem Beenden von Apps nach Authentifizierung fragen“ bleibt eingeschaltet: Die Authentifizierung wurde abgebrochen oder ist fehlgeschlagen.";
+"core.quitAuthentication.olderVersion.unknown" = "Version %@ kennt „Vor dem Beenden von Apps nach Authentifizierung fragen“ nicht: Sie beendet Apps ohne Nachfrage, und die Einstellung geht verloren, sobald sie Ihre Einstellungen speichert.";

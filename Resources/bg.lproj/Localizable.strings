@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "затвори приложения";
 "core.quitAuthentication.notAuthenticated" = "Нищо не беше затворено: удостоверяването беше отказано, провалило се е или не е налично на този Mac.";
 "core.quitAuthentication.notInteractive" = "Нищо не беше затворено: „Изисквай удостоверяване преди затваряне на приложения“ е включено, а връзки, Siri, Shortcuts, командният ред и самостоятелните групи със собствените си приложения не могат да го изискат. Затворете приложенията от самото %@ вместо това.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "изключи удостоверяването преди затваряне на приложенията";
+"core.quitAuthentication.turnOff.unavailable" = "Удостоверяването не е налично на този Mac; да се изключи ли “Изисквай удостоверяване преди затваряне на приложения” въпреки това?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Изисквай удостоверяване преди затваряне на приложения” остава включено: удостоверяването беше отменено или не успя.";
+"core.quitAuthentication.olderVersion.unknown" = "Версия %@ не поддържа “Изисквай удостоверяване преди затваряне на приложения”: затваря приложенията без питане, а настройката се губи, след като запише вашите настройки.";

@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "tətbiqləri bağla";
 "core.quitAuthentication.notAuthenticated" = "Heç nə bağlanmadı: identifikasiya ləğv edildi, uğursuz oldu və ya bu Mac-də mövcud deyil.";
 "core.quitAuthentication.notInteractive" = "Heç nə bağlanmadı: “Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” açıqdır, linklər, Siri, Shortcuts, komanda sətri və müstəqil qrupların öz tətbiqləri bunun üçün soruşa bilməz. Bunun əvəzinə tətbiqləri özü %@ daxilində bağlayın.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "tətbiqlərdən çıxmazdan əvvəl autentifikasiyanı söndürmək";
+"core.quitAuthentication.turnOff.unavailable" = "Bu Mac-də autentifikasiya mövcud deyil; “Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” seçimi yenə də söndürülsün?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” aktiv qalır: autentifikasiya ləğv edildi və ya uğursuz oldu.";
+"core.quitAuthentication.olderVersion.unknown" = "%@ versiyası “Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” seçimini tanımır: tətbiqləri soruşmadan bağlayır və parametrləri saxladıqda bu seçim itir.";

@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "ऐप बंद करना";
 "core.quitAuthentication.notAuthenticated" = "कोई ऐप बंद नहीं हुआ: प्रमाणीकरण रद्द हो गया, विफल रहा या इस Mac पर उपलब्ध नहीं है।";
 "core.quitAuthentication.notInteractive" = "कोई ऐप बंद नहीं हुआ: “ऐप बंद करने से पहले प्रमाणीकरण माँगें” चालू है, और links, Siri, Shortcuts, कमांड लाइन और स्वतंत्र समूहों के अपने ऐप इसके लिए नहीं पूछ सकते। इसके बजाय %@ से ही ऐप स्वयं बंद करें।";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "ऐप बंद करने से पहले प्रमाणीकरण बंद करना";
+"core.quitAuthentication.turnOff.unavailable" = "इस Mac पर प्रमाणीकरण उपलब्ध नहीं है; फिर भी “ऐप बंद करने से पहले प्रमाणीकरण माँगें” बंद करें?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“ऐप बंद करने से पहले प्रमाणीकरण माँगें” चालू रहेगी: प्रमाणीकरण रद्द हो गया या विफल रहा।";
+"core.quitAuthentication.olderVersion.unknown" = "संस्करण %@ “ऐप बंद करने से पहले प्रमाणीकरण माँगें” को नहीं पहचानता: यह बिना पूछे ऐप बंद कर देता है, और सेटिंग सहेजने के बाद यह सेटिंग खो जाती है।";

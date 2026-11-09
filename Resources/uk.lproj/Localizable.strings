@@ -1191,3 +1191,9 @@
 "core.quitAuthentication.reason" = "закрити застосунки";
 "core.quitAuthentication.notAuthenticated" = "Нічого не закрито: автентифікацію скасовано, вона не вдалася або недоступна на цьому Mac.";
 "core.quitAuthentication.notInteractive" = "Нічого не закрито: «Запитувати автентифікацію перед закриттям застосунків» увімкнено, а посилання, Siri, Shortcuts, командний рядок і власні застосунки окремих груп не можуть запитувати її. Закрийте застосунки з %@ напряму.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "вимкнути автентифікацію перед завершенням застосунків";
+"core.quitAuthentication.turnOff.unavailable" = "Автентифікація недоступна на цьому Mac; все одно вимкнути “Запитувати автентифікацію перед закриттям застосунків”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Запитувати автентифікацію перед закриттям застосунків” лишається увімкненим: автентифікацію скасовано або вона не вдалася.";
+"core.quitAuthentication.olderVersion.unknown" = "Версія %@ не знає про “Запитувати автентифікацію перед закриттям застосунків”: вона завершує застосунки без запиту, а налаштування втрачається, щойно зберігає ваші параметри.";

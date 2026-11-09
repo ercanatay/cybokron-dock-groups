@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "zamknąć aplikacje";
 "core.quitAuthentication.notAuthenticated" = "Nic nie zostało zamknięte: uwierzytelnienie zostało anulowane, nie powiodło się lub nie jest dostępne na tym Macu.";
 "core.quitAuthentication.notInteractive" = "Nic nie zostało zamknięte: opcja „Pytaj o uwierzytelnienie przed zamykaniem aplikacji” jest włączona, a linki, Siri, Skróty, wiersz poleceń oraz własne aplikacje samodzielnych grup nie mogą o nie zapytać. Zamknij aplikacje z %@ samodzielnie.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "wyłącz uwierzytelnianie przed zamknięciem aplikacji";
+"core.quitAuthentication.turnOff.unavailable" = "Uwierzytelnianie nie jest dostępne na tym Macu; wyłączyć opcję „Pytaj o uwierzytelnienie przed zamykaniem aplikacji” mimo to?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "Opcja „Pytaj o uwierzytelnienie przed zamykaniem aplikacji” pozostaje włączona: uwierzytelnianie zostało anulowane lub nie powiodło się.";
+"core.quitAuthentication.olderVersion.unknown" = "Wersja %@ nie obsługuje opcji „Pytaj o uwierzytelnienie przed zamykaniem aplikacji”: zamyka aplikacje bez pytania, a ustawienie zostanie utracone po zapisaniu ustawień.";

@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "برنامه‌ها را ببندد";
 "core.quitAuthentication.notAuthenticated" = "هیچ برنامه‌ای بسته نشد: احراز هویت لغو شد، ناموفق بود یا روی این مک در دسترس نیست.";
 "core.quitAuthentication.notInteractive" = "هیچ برنامه‌ای بسته نشد: گزینه «درخواست احراز هویت پیش از خروج از برنامه‌ها» روشن است و پیوندها، Siri، Shortcuts، خط فرمان و برنامه‌های خود گروه‌های مستقل نمی‌توانند آن را درخواست کنند. به جای آن، برنامه‌ها را از خود %@ ببندید.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "خاموش کردن احراز هویت پیش از بستن برنامه‌ها";
+"core.quitAuthentication.turnOff.unavailable" = "احراز هویت روی این Mac در دسترس نیست؛ با این حال «درخواست احراز هویت پیش از خروج از برنامه‌ها» خاموش شود؟";
+"core.quitAuthentication.turnOff.notAuthenticated" = "«درخواست احراز هویت پیش از خروج از برنامه‌ها» روشن می‌ماند: احراز هویت لغو شد یا ناموفق بود.";
+"core.quitAuthentication.olderVersion.unknown" = "نسخه %@ از «درخواست احراز هویت پیش از خروج از برنامه‌ها» خبر ندارد: برنامه‌ها را بدون پرسش می‌بندد و پس از ذخیره تنظیمات، این گزینه از دست می‌رود.";

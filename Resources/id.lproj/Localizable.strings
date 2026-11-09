@@ -1192,3 +1192,9 @@
 "core.quitAuthentication.reason" = "menutup aplikasi";
 "core.quitAuthentication.notAuthenticated" = "Tidak ada aplikasi yang ditutup: autentikasi dibatalkan, gagal, atau tidak tersedia di Mac ini.";
 "core.quitAuthentication.notInteractive" = "Tidak ada aplikasi yang ditutup: “Minta autentikasi sebelum menutup aplikasi” aktif, dan tautan, Siri, Pintasan, baris perintah, serta aplikasi milik grup mandiri tidak dapat memintanya. Tutup aplikasi dari %@ itu sendiri.";
+
+/* Ask for authentication before quitting apps: turning it off (the system prompt's reason, the question when this Mac can't authenticate, why it stays on) and the warning before installing an older version */
+"core.quitAuthentication.turnOff.reason" = "mematikan autentikasi sebelum keluar dari aplikasi";
+"core.quitAuthentication.turnOff.unavailable" = "Autentikasi tidak tersedia di Mac ini; tetap matikan “Minta autentikasi sebelum menutup aplikasi”?";
+"core.quitAuthentication.turnOff.notAuthenticated" = "“Minta autentikasi sebelum menutup aplikasi” tetap aktif: autentikasi dibatalkan atau gagal.";
+"core.quitAuthentication.olderVersion.unknown" = "Versi %@ tidak mengenal “Minta autentikasi sebelum menutup aplikasi”: versi ini keluar dari aplikasi tanpa bertanya, dan pengaturan tersebut hilang setelah pengaturan Anda disimpan.";
