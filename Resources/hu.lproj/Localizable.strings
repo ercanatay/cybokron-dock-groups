@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "A(z) %@ verzió nem tud magától frissíteni: a visszatéréshez töltsön le egy újabb verziót a kiadások oldaláról.";
 "settings.otherVersions.confirm.skips" = "Az automatikus ellenőrzések ekkor kihagyják az újabb verziókat (%@); a Frissítések keresése… továbbra is felajánlja őket.";
 "settings.otherVersions.confirm.older" = "Egy régebbi verzió nem ismerheti a közben hozzáadott funkciókat; érdemes előbb biztonsági mentést exportálni (Beállítások → Biztonsági mentés).";
+"settings.otherVersions.confirm.settingsCopy" = "A beállításaid másolata a közelükben van (preferences.pre-downgrade-…json), és szükség esetén kézzel visszaállítható.";
 "settings.otherVersions.confirm.upgrade" = "A kihagyott verziók törlődnek, így az automatikus ellenőrzések újra felajánlják az összes újabb kiadást.";
 
 /* Settings → Backup */

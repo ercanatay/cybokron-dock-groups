@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "버전 %@은(는) 스스로 업데이트할 수 없습니다. 다시 돌아가려면 릴리스 페이지에서 더 새로운 버전을 다운로드하세요.";
 "settings.otherVersions.confirm.skips" = "그러면 자동 확인은 더 새로운 버전(%@)을 건너뜁니다. 업데이트 확인…에서는 여전히 제안합니다.";
 "settings.otherVersions.confirm.older" = "이전 버전에서는 이후에 추가된 기능을 인식하지 못할 수 있습니다. 먼저 백업을 내보내 두는 것이 좋습니다(설정 → 백업).";
+"settings.otherVersions.confirm.settingsCopy" = "설정의 사본이 그 옆(preferences.pre-downgrade-…json)에 보관되며, 필요하면 수동으로 되돌릴 수 있습니다.";
 "settings.otherVersions.confirm.upgrade" = "건너뛴 버전 기록이 지워지므로, 자동 확인은 더 새로운 릴리스를 모두 다시 제안합니다.";
 
 /* 설정 → 백업 */

@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Version %@ kann sich nicht selbst aktualisieren: Um zurückzukehren, laden Sie eine neuere Version von der Versionsseite herunter.";
 "settings.otherVersions.confirm.skips" = "Automatische Prüfungen überspringen danach die neueren Versionen (%@); Nach Updates suchen… bietet sie weiterhin an.";
 "settings.otherVersions.confirm.older" = "Eine ältere Version kennt womöglich seither hinzugefügte Funktionen nicht; erwägen Sie, zuvor eine Sicherung zu exportieren (Einstellungen → Sicherung).";
+"settings.otherVersions.confirm.settingsCopy" = "Eine Kopie Ihrer Einstellungen wird neben ihnen aufbewahrt (preferences.pre-downgrade-…json) und kann bei Bedarf manuell wiederhergestellt werden.";
 "settings.otherVersions.confirm.upgrade" = "Übersprungene Versionen werden gelöscht, sodass automatische Prüfungen jede neuere Version wieder anbieten.";
 
 /* Settings → Backup */

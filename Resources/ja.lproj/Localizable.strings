@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "バージョン %@ は自動で更新できません。元に戻すには、リリースページから新しいバージョンをダウンロードしてください。";
 "settings.otherVersions.confirm.skips" = "その後、自動確認は新しいバージョン（%@）をスキップします。「アップデートを確認…」では引き続き提示されます。";
 "settings.otherVersions.confirm.older" = "古いバージョンでは、その後追加された機能が使えない場合があります。先にバックアップを書き出すことをお勧めします（設定 → バックアップ）。";
+"settings.otherVersions.confirm.settingsCopy" = "設定のコピーは元の設定のすぐ隣に保存されています(preferences.pre-downgrade-…json)。必要に応じて手動で元に戻すことができます。";
 "settings.otherVersions.confirm.upgrade" = "スキップしたバージョンはクリアされるため、自動確認では新しいリリースがすべて再び提示されます。";
 
 /* 設定 → バックアップ */

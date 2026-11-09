@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Version %@ kan inte uppdatera sig själv: för att gå tillbaka, ladda ner en nyare version från sidan med versioner.";
 "settings.otherVersions.confirm.skips" = "Automatiska kontroller hoppar då över de nyare versionerna (%@); Sök efter uppdateringar… erbjuder dem fortfarande.";
 "settings.otherVersions.confirm.older" = "En äldre version känner kanske inte till funktioner som lagts till sedan dess; överväg att exportera en säkerhetskopia först (Inställningar → Säkerhetskopia).";
+"settings.otherVersions.confirm.settingsCopy" = "En kopia av dina inställningar sparas bredvid dem (preferences.pre-downgrade-…json) och kan återställas manuellt vid behov.";
 "settings.otherVersions.confirm.upgrade" = "Överhoppade versioner rensas, så automatiska kontroller erbjuder varje nyare version igen.";
 
 /* Settings → Backup */

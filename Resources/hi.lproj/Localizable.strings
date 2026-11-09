@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "संस्करण %@ स्वयं अपडेट नहीं हो सकता: वापस आने के लिए, रिलीज़ पेज से नया संस्करण डाउनलोड करें।";
 "settings.otherVersions.confirm.skips" = "फिर स्वचालित जाँच नए संस्करण (%@) छोड़ देगी; अपडेट जाँचें… फिर भी उन्हें पेश करेगा।";
 "settings.otherVersions.confirm.older" = "पुराना संस्करण उन सुविधाओं को नहीं जानता होगा जो बाद में जुड़ीं; पहले बैकअप निर्यात करने पर विचार करें (सेटिंग्स → बैकअप)।";
+"settings.otherVersions.confirm.settingsCopy" = "आपकी सेटिंग्स की एक प्रति उनके पास रखी जाती है (preferences.pre-downgrade-…json) और ज़रूरत पड़ने पर उसे हाथ से वापस रखा जा सकता है।";
 "settings.otherVersions.confirm.upgrade" = "छोड़े गए संस्करण साफ़ हो जाएँगे, ताकि स्वचालित जाँच हर नई रिलीज़ फिर से पेश करे।";
 
 /* Settings → Backup */

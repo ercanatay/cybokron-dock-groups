@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Wersja %@ nie potrafi zaktualizować się sama: aby wrócić, pobierz nowszą wersję ze strony wydań.";
 "settings.otherVersions.confirm.skips" = "Automatyczne sprawdzanie pominie wtedy nowsze wersje (%@); Sprawdź aktualizacje… nadal je zaoferuje.";
 "settings.otherVersions.confirm.older" = "Starsza wersja może nie znać funkcji dodanych później; rozważ najpierw eksport kopii zapasowej (Ustawienia → Kopia zapasowa).";
+"settings.otherVersions.confirm.settingsCopy" = "Obok nich przechowywana jest kopia Twoich ustawień (preferences.pre-downgrade-…json), którą w razie potrzeby można przywrócić ręcznie.";
 "settings.otherVersions.confirm.upgrade" = "Pominięte wersje zostaną wyczyszczone, więc automatyczne sprawdzanie znów zaoferuje każde nowsze wydanie.";
 
 /* Settings → Backup */

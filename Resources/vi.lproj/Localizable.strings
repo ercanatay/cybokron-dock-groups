@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "Phiên bản %@ không thể tự cập nhật: để quay lại, hãy tải phiên bản mới hơn từ trang phát hành.";
 "settings.otherVersions.confirm.skips" = "Khi đó kiểm tra tự động sẽ bỏ qua các phiên bản mới hơn (%@); Kiểm tra cập nhật… vẫn đề xuất chúng.";
 "settings.otherVersions.confirm.older" = "Phiên bản cũ có thể không biết về các tính năng được thêm sau đó; hãy cân nhắc xuất bản sao lưu trước (Cài đặt → Sao lưu).";
+"settings.otherVersions.confirm.settingsCopy" = "Một bản sao cài đặt của bạn được lưu bên cạnh chúng (preferences.pre-downgrade-…json) và có thể được khôi phục thủ công nếu cần.";
 "settings.otherVersions.confirm.upgrade" = "Các phiên bản đã bỏ qua sẽ được xóa, nên kiểm tra tự động sẽ đề xuất lại mọi bản phát hành mới hơn.";
 
 /* Settings → Backup */

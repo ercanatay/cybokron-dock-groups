@@ -334,6 +334,7 @@
 "settings.otherVersions.confirm.cantUpdate" = "La versione %@ non può aggiornarsi da sola: per tornare indietro, scarica una versione più recente dalla pagina delle versioni.";
 "settings.otherVersions.confirm.skips" = "I controlli automatici salteranno poi le versioni più recenti (%@); Verifica aggiornamenti… le proporrà comunque.";
 "settings.otherVersions.confirm.older" = "Una versione più vecchia potrebbe non conoscere le funzioni aggiunte dopo; valuta di esportare prima un backup (Impostazioni → Backup).";
+"settings.otherVersions.confirm.settingsCopy" = "Accanto alle impostazioni viene conservata una copia (preferences.pre-downgrade-…json), che può essere ripristinata manualmente se necessario.";
 "settings.otherVersions.confirm.upgrade" = "Le versioni saltate vengono cancellate, così i controlli automatici propongono di nuovo ogni versione più recente.";
 
 /* Settings → Backup */
