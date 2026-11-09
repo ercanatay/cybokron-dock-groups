@@ -59,6 +59,11 @@ public struct PopupPreferences: Hashable, Sendable {
     public var language: AppLanguage
     /// Apps that Start, Finish and Close All never quit, and that Start and Finish never hide.
     public var protectedApps: ProtectedApps
+    /// "Ask for authentication before quitting apps": Close All, Force Quit, and Start and Finish
+    /// when they'd quit apps ask for Touch ID, an Apple Watch or the account password first, and
+    /// requests that can't ask (links, Siri, Shortcuts, standalone groups' own apps) quit nothing
+    /// (`QuitAuthentication`). Off by default.
+    public var asksForAuthenticationBeforeQuitting: Bool
     /// The order and the window option of capturing the open apps, as last chosen.
     public var capture: CaptureSettings
 
@@ -80,6 +85,7 @@ public struct PopupPreferences: Hashable, Sendable {
         restoresWindowsOfRunningApps: Bool = true,
         language: AppLanguage = .system,
         protectedApps: ProtectedApps = ProtectedApps(),
+        asksForAuthenticationBeforeQuitting: Bool = false,
         capture: CaptureSettings = CaptureSettings()
     ) {
         self.theme = theme
@@ -99,6 +105,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.restoresWindowsOfRunningApps = restoresWindowsOfRunningApps
         self.language = language
         self.protectedApps = protectedApps
+        self.asksForAuthenticationBeforeQuitting = asksForAuthenticationBeforeQuitting
         self.capture = capture
     }
 
@@ -171,6 +178,7 @@ extension PopupPreferences: Codable {
         case restoresWindowsOfRunningApps = "restoreRunningAppWindows"
         case language
         case protectedApps
+        case asksForAuthenticationBeforeQuitting = "authenticateBeforeQuitting"
         case capture
     }
 
@@ -206,12 +214,15 @@ extension PopupPreferences: Codable {
             ?? defaults.restoresWindowsOfRunningApps
         language = container.decodeLeniently(AppLanguage.self, forKey: .language) ?? defaults.language
         protectedApps = container.decodeLeniently(ProtectedApps.self, forKey: .protectedApps) ?? defaults.protectedApps
+        asksForAuthenticationBeforeQuitting = container.decodeLeniently(Bool.self, forKey: .asksForAuthenticationBeforeQuitting)
+            ?? defaults.asksForAuthenticationBeforeQuitting
         capture = container.decodeLeniently(CaptureSettings.self, forKey: .capture) ?? defaults.capture
     }
 
-    /// Every setting is written; the protected apps only once there are any, and the capture
-    /// settings only when they aren't the defaults, so preferences that never had them are saved
-    /// as before (byte for byte: a version without them reads and writes the same file).
+    /// Every setting is written; the protected apps only once there are any, asking for
+    /// authentication only while it's on, and the capture settings only when they aren't the
+    /// defaults, so preferences that never had them are saved as before (byte for byte: a version
+    /// without them reads and writes the same file).
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(theme, forKey: .theme)
@@ -232,6 +243,9 @@ extension PopupPreferences: Codable {
         try container.encode(language, forKey: .language)
         if !protectedApps.isEmpty {
             try container.encode(protectedApps, forKey: .protectedApps)
+        }
+        if asksForAuthenticationBeforeQuitting {
+            try container.encode(asksForAuthenticationBeforeQuitting, forKey: .asksForAuthenticationBeforeQuitting)
         }
         if !capture.isDefault {
             try container.encode(capture, forKey: .capture)

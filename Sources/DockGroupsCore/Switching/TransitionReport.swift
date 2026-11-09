@@ -12,6 +12,9 @@ public struct TransitionReport: Equatable, Sendable {
         case declined
         /// Another link's question was showing, so this link's was dropped: nothing was done.
         case dropped
+        /// The plan quits apps and authentication was required, but it failed, was cancelled or
+        /// couldn't be asked for (`QuitAuthentication`): nothing was done.
+        case notAuthenticated(QuitAuthenticationFailure)
     }
 
     public let outcome: Outcome
@@ -50,6 +53,11 @@ extension TransitionReport {
             return "“\(group)” was just started."
         case .declined, .dropped:
             return isStart ? "Didn't switch to “\(group)”." : "Didn't finish “\(group)”."
+        case .notAuthenticated(let failure):
+            let didnt = isStart ? "Didn't switch to “\(group)”" : "Didn't finish “\(group)”"
+            return failure == .notInteractive
+                ? "\(didnt): it would quit apps, and quitting apps needs authentication, which Siri and Shortcuts can't ask for. Nothing was quit."
+                : "\(didnt): it would quit apps, and authentication didn't succeed. Nothing was quit."
         case .done:
             break
         }

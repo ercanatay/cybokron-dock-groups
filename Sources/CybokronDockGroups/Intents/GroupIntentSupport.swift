@@ -88,6 +88,9 @@ enum GroupIntentError: Error, CustomLocalizedStringResourceConvertible {
     /// The group is archived (spec §2.11): nothing is done until it's restored.
     case groupArchived(name: String)
     case notReady
+    /// "Ask for authentication before quitting apps" is on, which Siri and Shortcuts can't ask
+    /// for: nothing was quit.
+    case authenticationRequired
 
     var localizedStringResource: LocalizedStringResource {
         switch self {
@@ -97,6 +100,8 @@ enum GroupIntentError: Error, CustomLocalizedStringResourceConvertible {
             return "“\(name)” is archived. Restore it in Cybokron Dock Groups to use it."
         case .notReady:
             return "Cybokron Dock Groups is still starting. Try again in a moment."
+        case .authenticationRequired:
+            return "Nothing was quit: “Ask for authentication before quitting apps” is on, and Siri and Shortcuts can't ask for it. Quit the apps from Cybokron Dock Groups itself instead."
         }
     }
 }

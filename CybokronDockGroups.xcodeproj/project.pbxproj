@@ -119,6 +119,7 @@
 		44A3983E32A86E8F4699E693 /* WindowLayoutJSONDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB6AED5D7FF89FEB58AA208 /* WindowLayoutJSONDecoderTests.swift */; };
 		450D4EDBC7E78B7A66E0BD4E /* PopupPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4468B22320653764608FF0CF /* PopupPanel.swift */; };
 		451ADF258DB5D7CEA3F311D3 /* Version090TemplateFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BC2151F81FF2E61AD49487 /* Version090TemplateFixtures.swift */; };
+		487C36CA909184B5220C94E2 /* QuitAuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE0664941A682AA70A0EE5 /* QuitAuthenticationTests.swift */; };
 		4988700087A3430EF15C03EF /* ChangelogServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C089DC1E44BB070B6D52770 /* ChangelogServiceTests.swift */; };
 		49B5964D0782AE429CAE3A42 /* ArchiveFakes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1E661D809118A871B08346 /* ArchiveFakes.swift */; };
 		4B114DC8D9F12FDD6648C179 /* LinkPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEE6CACA9E835DA2080C23A /* LinkPolicyTests.swift */; };
@@ -342,6 +343,7 @@
 		C8CEEC26732742B3AC7DE7DD /* PopupCellTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD49F22661AB6C053CDD32E2 /* PopupCellTextTests.swift */; };
 		C957E1E7A5940F156C0CBD87 /* ProtectedApps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E187F0FFD69A95B338946DA /* ProtectedApps.swift */; };
 		CA7555B78014D5E005074FAB /* TriggerScreenLockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F73A4AB8E536421B5DFA6A /* TriggerScreenLockTests.swift */; };
+		CAE0AF2D93D91E1ADA149796 /* QuitAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7EAE600B99A9B8229059153 /* QuitAuthentication.swift */; };
 		CB793B3A101AFE1F4DC1CCD0 /* SettingsBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1512A5A7DA9832E32B3F7D9A /* SettingsBackup.swift */; };
 		CC4A463623AEC3B370AA0E23 /* LayoutFileCoordination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE827DA5980B44AC57071D0 /* LayoutFileCoordination.swift */; };
 		CC789B34F4CC82D1F1D06695 /* TriggerDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD7EA7245FB1713477690FE /* TriggerDraft.swift */; };
@@ -580,6 +582,7 @@
 		3FDAB8D5A090FEA8D4DB2166 /* Version090PreferencesFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version090PreferencesFixtures.swift; sourceTree = "<group>"; };
 		40249A13EF9B3C69AA55DD5A /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		405DF8AF75658A120D5DA30F /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		40BE0664941A682AA70A0EE5 /* QuitAuthenticationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuitAuthenticationTests.swift; sourceTree = "<group>"; };
 		41676CE635E1EDD7DD6AD40D /* ApplicationIdentityCountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationIdentityCountTests.swift; sourceTree = "<group>"; };
 		41B2EFC729786F0FB63C6ABF /* TransitionConfirmation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionConfirmation.swift; sourceTree = "<group>"; };
 		41DDC41D27A2CC29CC3B1132 /* ItemPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemPicker.swift; sourceTree = "<group>"; };
@@ -886,6 +889,7 @@
 		E68B979CA937B03478C5B973 /* GroupQuitRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQuitRequests.swift; sourceTree = "<group>"; };
 		E705D5D9796ECFD25107AB3B /* SettingsBackup+Stores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsBackup+Stores.swift"; sourceTree = "<group>"; };
 		E74BA4F784048326B9CE9E12 /* TriggerDescriptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerDescriptions.swift; sourceTree = "<group>"; };
+		E7EAE600B99A9B8229059153 /* QuitAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuitAuthentication.swift; sourceTree = "<group>"; };
 		E85E906C590A2B99FB486E72 /* GroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStore.swift; sourceTree = "<group>"; };
 		E89324743D77634C8B87FBB1 /* ItemInterfaceFakes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemInterfaceFakes.swift; sourceTree = "<group>"; };
 		E8965A76C4527637115472B7 /* ApplicationCodeRequirementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCodeRequirementTests.swift; sourceTree = "<group>"; };
@@ -1090,6 +1094,7 @@
 				889366A1C43E902E8112A021 /* InstanceHandoff.swift */,
 				9C9A57653CECB1CACC3DCE7A /* ItemAction.swift */,
 				8FFB35C941955919FA3FA072 /* ItemAddition.swift */,
+				E7EAE600B99A9B8229059153 /* QuitAuthentication.swift */,
 				CBC3759E0527D0F36B02E970 /* URLCommand.swift */,
 			);
 			path = Commands;
@@ -1481,6 +1486,7 @@
 				3D701EEF2516B76A45510399 /* PopupSearchTests.swift */,
 				CAD0FDAC7C6E829A4C9BC786 /* ProcessIncarnationTests.swift */,
 				DE7A62D650683714D33A825B /* ProtectedCloseAllTests.swift */,
+				40BE0664941A682AA70A0EE5 /* QuitAuthenticationTests.swift */,
 				B07FE6B5A848EFDF8A5BBE59 /* ReleaseFeedTests.swift */,
 				14ABDA64DB2E8523B1E5D3C4 /* ReleaseFixtures.swift */,
 				0722F40415BF7A6B4778D340 /* ReleaseHistoryTests.swift */,
@@ -2088,6 +2094,7 @@
 				6482738FE0038968B0AF791A /* PreferencesStore.swift in Sources */,
 				3D7F2328B16B1049A628BFF4 /* ProcessIncarnation.swift in Sources */,
 				C957E1E7A5940F156C0CBD87 /* ProtectedApps.swift in Sources */,
+				CAE0AF2D93D91E1ADA149796 /* QuitAuthentication.swift in Sources */,
 				55CA6C229D0665CC6F49BAF3 /* ReleaseFeed.swift in Sources */,
 				D56AA0483258486311E7A6ED /* ReleaseHistory.swift in Sources */,
 				04BFCB558CC2A1E369D77B99 /* ReleaseInfo.swift in Sources */,
@@ -2257,6 +2264,7 @@
 				60E6AA400EFDD34B246171A7 /* PopupSearchTests.swift in Sources */,
 				0EDE8B1A36E9412BA6F33390 /* ProcessIncarnationTests.swift in Sources */,
 				5EC75B5B49BC28D9E891DD1A /* ProtectedCloseAllTests.swift in Sources */,
+				487C36CA909184B5220C94E2 /* QuitAuthenticationTests.swift in Sources */,
 				57325673B5EFB1BE2FD03103 /* ReleaseFeedTests.swift in Sources */,
 				69BF01E3BA752B1135E0A320 /* ReleaseFixtures.swift in Sources */,
 				BB518DFF6EB4DF6686BA375A /* ReleaseHistoryTests.swift in Sources */,

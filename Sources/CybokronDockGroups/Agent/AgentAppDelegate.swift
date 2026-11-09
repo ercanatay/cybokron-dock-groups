@@ -25,6 +25,8 @@ import OSLog
 /// Close All still leaves protected apps alone (the configuration has the protected apps of this
 /// group), and Open All opens items with a launch delay after it, as in the main app; those wait in
 /// the agent's own `DelayedLaunches`, which Hide All, Close All and quitting the agent cancel.
+/// While the main app's "Ask for authentication before quitting apps" is on, Close All here quits
+/// nothing and says so: only the main app asks for authentication.
 ///
 /// Files and folders in the places macOS guards with its privacy settings (Desktop, Documents,
 /// Downloads, iCloud Drive, other volumes) aren't looked at until they're opened
@@ -57,6 +59,12 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         ownProcessIdentifier: ProcessInfo.processInfo.processIdentifier,
         protectedApps: { [weak self] in self?.preferences?.preferences.protectedApps ?? ProtectedApps() },
         pendingLaunches: delayedLaunches
+    )
+    /// The main app's "Ask for authentication before quitting apps", from the configuration; the
+    /// agent never asks (no authenticator), so while it's on Close All quits nothing here.
+    private lazy var quitAuthentication = QuitAuthentication(
+        isRequired: { [weak self] in self?.preferences.map(\.preferences.asksForAuthenticationBeforeQuitting) ?? true },
+        authenticator: nil
     )
     private let icons = WorkspaceAppIconProvider(locator: DeferringItemLocator(base: WorkspaceItemLocator()))
     private let runningApps = RunningAppsMonitor()
@@ -338,7 +346,15 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Close All from the popup or the Dock menu. While "Ask for authentication before quitting
+    /// apps" is on (the main app's setting, in the configuration), a group's own app can't ask for
+    /// it — only the main app does — so it quits nothing and says why.
     private func closeAll(_ group: DockGroup, mode: QuitMode) {
+        if let failure = quitAuthentication.refusalWithoutAsking(interactive: false) {
+            logger.notice("Close All in group \(group.id, privacy: .public): needs authentication, which a group's own app can't ask for; nothing quit")
+            LaunchReportPresenter.presentRefusal(failure)
+            return
+        }
         LaunchReportPresenter.presentProblems(in: terminator.closeAll(group, mode: mode))
     }
 

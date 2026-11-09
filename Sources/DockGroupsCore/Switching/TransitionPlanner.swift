@@ -26,6 +26,12 @@ public enum TransitionTrigger: String, Sendable, CaseIterable {
     /// A link, Siri, Shortcuts and a keyboard shortcut ask before a transition quits anything; the
     /// user's own click doesn't (the user chose the setting and clicked, as with Close All).
     public var asksBeforeQuitting: Bool { self == .link || self == .intent || self == .shortcut }
+
+    /// Whether a transition that quits apps can ask for authentication (`QuitAuthentication`):
+    /// the user's click and a group's own keyboard shortcut, both in the app. A link, Siri and
+    /// Shortcuts can't, so while authentication is required their quitting transitions do nothing;
+    /// a Focus and a trigger never quit.
+    public var canAuthenticate: Bool { self == .userAction || self == .shortcut }
 }
 
 /// What a transition will do, app by app, and why: planned before anything happens
