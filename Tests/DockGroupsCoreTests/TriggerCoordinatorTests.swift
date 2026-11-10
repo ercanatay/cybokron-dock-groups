@@ -500,6 +500,22 @@ struct TriggerCoordinatorTests {
         #expect(rig.handler.calls == ["start:Work:automation", "finish:Work:automation:true"])
     }
 
+    /// A hand-edited `trigger-state.json` saying Ethernet was off: the first real reading after the
+    /// launch is still only a baseline, and the next real change runs (catch-up §6.3).
+    @Test func aConditionEditedIntoTheStateFileRunsNothing() async {
+        let docked = GroupTrigger.on(.condition(.ethernet, edge: .starts), group: work)
+        let text = #"{"formatVersion": 1, "triggers": {"\#(docked.id.uuidString)": {"condition": 0}}}"#
+        let rig = TriggerRig([docked], state: JSONFileTriggerStatePersistence.decode(Data(text.utf8)))
+        await rig.send(.network(NetworkReading(usesEthernet: true)))
+        #expect(rig.handler.calls.isEmpty)
+        #expect(rig.outcome(docked) == nil)
+        rig.clock.advance(60)
+        await rig.send(.network(NetworkReading(usesEthernet: false)))
+        rig.clock.advance(60)
+        await rig.send(.network(NetworkReading(usesEthernet: true)))
+        #expect(rig.handler.calls == ["start:Work:automation"])
+    }
+
     @Test func itDoesntFinishWhatTheUserStartedSince() async {
         let docked = GroupTrigger.on(.condition(.ethernet, edge: .starts), group: work, finishesWhenEventEnds: true)
         let rig = TriggerRig([docked])

@@ -286,19 +286,54 @@ struct TriggerEvaluatorTests {
         #expect(evaluate(.network(NetworkReading(usesEthernet: true)), [connects], state: state, at: wednesday(9, 0, 5)).firings.isEmpty)
     }
 
-    /// Kept across launches: a change between the last reading before quitting and the first after
-    /// launching is an edge; an unchanged one isn't.
-    @Test func conditionsAreRememberedAcrossLaunches() throws {
+    /// Not kept across launches (app-presence catch-up §6.3): the state file carries no reading, so
+    /// the first reading after launching is a baseline, whatever it is; later changes are edges.
+    @Test func conditionsStartUnknownAfterALaunch() throws {
         let joins = GroupTrigger.on(.condition(.wifi(WiFiNetworkName("Office")!), edge: .starts), group: Self.work)
         var state = baseline([joins], at: wednesday(8, 0))
         state = evaluate(.network(NetworkReading(wifi: .connected(WiFiNetworkName("Home")!))), [joins], state: state, at: wednesday(8, 1)).state
+        #expect(state.entry(for: joins.id).condition == 0)
         let saved = try JSONEncoder().encode(state)
+        #expect(!String(decoding: saved, as: UTF8.self).contains("condition"))
         let reloaded = JSONFileTriggerStatePersistence.decode(saved)
-        #expect(reloaded == state)
+        #expect(reloaded.entry(for: joins.id).condition == nil)
+        // Joined while the app was quit: the first reading is only a baseline.
         let office = evaluate(.network(NetworkReading(wifi: .connected(WiFiNetworkName("Office")!))), [joins], state: reloaded, at: wednesday(10, 0))
-        #expect(office.firings.count == 1)
-        let stillHome = evaluate(.network(NetworkReading(wifi: .connected(WiFiNetworkName("Home")!))), [joins], state: reloaded, at: wednesday(10, 0))
-        #expect(stillHome.firings.isEmpty)
+        #expect(office.firings.isEmpty)
+        #expect(office.state.entry(for: joins.id).condition == 1)
+        // A real change in the same run is still an edge.
+        let home = evaluate(.network(NetworkReading(wifi: .connected(WiFiNetworkName("Home")!))), [joins], state: office.state, at: wednesday(10, 5))
+        #expect(home.firings.isEmpty)
+        let back = evaluate(.network(NetworkReading(wifi: .connected(WiFiNetworkName("Office")!))), [joins], state: home.state, at: wednesday(10, 10))
+        #expect(back.firings.map(\.triggerID) == [joins.id])
+    }
+
+    /// A condition written into `trigger-state.json` (by hand, or by 0.17.2 and older) is ignored:
+    /// one opposite to the real reading makes no edge, and one equal to it hides none.
+    @Test(arguments: [0, 1, 7])
+    func aConditionReadFromTheFileIsIgnored(written: Int) throws {
+        let plugged = GroupTrigger.on(.condition(.ethernet, edge: .starts), group: Self.work)
+        let unplugged = GroupTrigger.on(.condition(.ethernet, edge: .ends), group: Self.design, action: .showPopup)
+        let rules = [plugged, unplugged]
+        let text = #"""
+        {"formatVersion": 1, "triggers": {
+          "\#(plugged.id.uuidString)": {"condition": \#(written), "lastHandledOccurrence": 1800000000},
+          "\#(unplugged.id.uuidString)": {"condition": \#(written)}}}
+        """#
+        let loaded = JSONFileTriggerStatePersistence.decode(Data(text.utf8))
+        #expect(loaded.entries.count == 2)
+        #expect(loaded.entry(for: plugged.id).condition == nil)
+        #expect(loaded.entry(for: unplugged.id).condition == nil)
+        #expect(loaded.entry(for: plugged.id).lastHandledOccurrence == Date(timeIntervalSince1970: 1_800_000_000))
+        let state = TriggerEvaluator.baseline(rules: rules, state: loaded, now: wednesday(9, 0), calendar: TriggerTime.calendar())
+
+        for reading in [true, false] {
+            let first = evaluate(.network(NetworkReading(usesEthernet: reading)), rules, state: state, at: wednesday(9, 1))
+            #expect(first.firings.isEmpty)
+            // The next real change runs, whatever the file said.
+            let change = evaluate(.network(NetworkReading(usesEthernet: !reading)), rules, state: first.state, at: wednesday(9, 2))
+            #expect(change.firings.map(\.triggerID) == [reading ? unplugged.id : plugged.id])
+        }
     }
 
     // MARK: - Gates

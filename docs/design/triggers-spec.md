@@ -86,7 +86,8 @@ the office Wi-Fi, finish Work". Three decisions carry most of the weight:
    30-minute catch-up for missed times, and a documented Shortcuts recipe for the quit app.
 2. **Triggers live in their own files, keyed by group identifier** (§2.7): `triggers.json` holds
    the rules (user intent, in backups), `trigger-state.json` the runtime state (last runs, pause,
-   per-trigger condition states; a convenience like `update-state.json`). Neither `groups.json`
+   a convenience like `update-state.json`; per-trigger condition readings were kept there up to
+   0.17.2 and are memory only since, app-presence catch-up §6.3). Neither `groups.json`
    nor `preferences.json` gains a key, so 0.10.0 keeps them byte for byte, agents see nothing
    (`AgentConfiguration` unchanged), and a trigger whose group isn't in `store.groups` — archived,
    deleted, unreadable — is inert by construction (fail closed).
@@ -218,9 +219,10 @@ occurrence jumped over isn't run unless the catch-up rule (§1.10) covers it.
 
 - **Settled set.** Displays are read 2 seconds after the last `NSApplication.didChangeScreenParameters`
   notification, so a monitor that flickers on wake or a resolution change counts once or not at all.
-  An edge is the difference between this settled set and the last settled set **kept across sleep
-  and launches** (per trigger, §2.7): a monitor that stays connected through sleep isn't "connected"
-  again on wake (TS-6).
+  An edge is the difference between this settled set and the last settled set **kept across sleep**
+  (per trigger, in memory): a monitor that stays connected through sleep isn't "connected" again on
+  wake (TS-6). The set isn't kept across launches (app-presence catch-up §6.3): the first settled
+  set after a launch is a baseline.
 - **A display's identity** is what CoreGraphics reports without permission: vendor, model and serial
   numbers, the name (`NSScreen.localizedName`) and whether it's built in. A serial of 0 or a
   placeholder (0x01010101, which this Mac's monitor reports) is ignored; then vendor + model + name
@@ -323,10 +325,11 @@ A Focus filter and a trigger asking for the same Start within 3 seconds start it
   the app wasn't open runs as soon as it can (wake, session active, launch) **if it's at most 30
   minutes late**; otherwise it's skipped and shown as "Missed at 9:00: the Mac was asleep" or "…the
   app wasn't open". Only the latest missed occurrence of a trigger can run.
-- **Edges** while the app wasn't open: the first settled reading after launch is compared with the
-  last one kept from before; a difference is an edge. "Joined the office Wi-Fi since the app last
-  looked" runs once; an unchanged state runs nothing. A trigger added just now has no earlier
-  reading: its first reading is its baseline, and nothing runs until the next change.
+- **Edges** while the app wasn't open don't run: condition readings aren't saved (app-presence
+  catch-up §6.3), so the first settled reading after launch is a baseline, like a trigger added
+  just now, and nothing runs until the next change. (Up to 0.17.2 the last reading was kept in
+  `trigger-state.json` and "joined the office Wi-Fi since the app last looked" ran once; that let
+  the file turn a real reading into an edge.)
 - **The first launch of 0.11.0**, or a missing `trigger-state.json`: past occurrences of today count
   as handled; nothing catches up.
 
@@ -505,7 +508,7 @@ public struct TriggerState: Equatable, Sendable {
         public var lastRunAt: Date?
         public var lastOutcome: TriggerOutcome?       // .started, .opened, .shown, .finished, .skipped(reason), .missed(reason)
         public var lastHandledOccurrence: Date?       // schedules
-        public var condition: Bool?                   // conditions: last known value, nil = unknown
+        public var condition: Bool?                   // conditions: last known value, nil = unknown; memory only (§6.3 of app-presence-catch-up.md)
     }
     public var entries: [GroupTrigger.ID: Entry]
     public var pausedUntil: Date?                     // .distantFuture = until resumed
@@ -616,8 +619,9 @@ That's why Wi-Fi names are their own PR (PR 4) and a decision of their own (§9 
 4. **Screens** (`.screens`): the matching edge fires (wake → `screensWake`, sleep → `screensSleep`).
 5. **Conditions** (`.displays`, `.network`): the trigger's condition is computed from the reading
    (true, false or unknown); with a known previous value and a different known new value, the
-   matching edge fires; the state keeps the new known value (`TriggerState.Entry.condition`).
-   Unknown readings change nothing.
+   matching edge fires; the state keeps the new known value (`TriggerState.Entry.condition`, in
+   memory only: not written to `trigger-state.json`, and ignored when found there). Unknown
+   readings change nothing.
 6. **Gates**, in order: cooldown (60 s since `lastRunAt`), once a day (`lastRunAt` today), the echo
    window (edges only), pause. A gated firing is recorded as skipped with its reason; nothing
    gated is kept for later.
@@ -740,7 +744,8 @@ catch-up window and the app isn't running; the app evaluates its own rules (T-S6
   "lastLoginSession": 1798700100, "quietLaunchUntil": null,
   "recentRuns": [1798700500, …],                                  // the last hour, for the budget
   "triggers": { "<id>": { "lastRunAt": 1798700500, "lastOutcome": "started",
-                          "lastHandledOccurrence": 1798700400, "condition": true } } }
+                          "lastHandledOccurrence": 1798700400 } } }
+// (up to 0.17.2 entries also carried "condition"; it's no longer written, and ignored when read)
 ```
 
 | Saved (`triggers.json`) | Read as |
@@ -1009,8 +1014,9 @@ through the existing gates), quitting anything, running code.
 - **A crafted `trigger-state.json`** can pause triggers or mark occurrences handled (so they skip):
   it can suppress triggers but not cause runs. Which trigger started the current group is kept in
   the coordinator's memory, like the session itself, never in the file, so "Finish when it ends"
-  can't be pointed at a group by editing it. A forged condition value can at most fake one edge
-  of a trigger the user turned on. `pausedUntil` far in the future is shown as "Paused until I
+  can't be pointed at a group by editing it. Condition readings aren't read from it (since the
+  release after 0.17.2; before, a forged value could fake one edge of a trigger the user turned on,
+  app-presence catch-up §6.3). `pausedUntil` far in the future is shown as "Paused until I
   resume them".
 - **Look-alike signals.** A hotspot named "Office" or a monitor reporting another's identifiers can
   set off the matching trigger: the action is the user's own (notice by default, never quits). The
@@ -1077,7 +1083,8 @@ answers), signal builders, a fixed `Calendar` and time zones.
   min is `.missed` with its reason; screens asleep / session inactive defer within the window;
   first run without state handles today's past occurrences; login once per session; app opens:
   normal fires, quiet and URL launches don't; condition edges from known → known only (unknown →
-  anything makes none, both directions); persisted condition state across a simulated relaunch;
+  anything makes none, both directions); condition state not kept across a simulated relaunch
+  (a condition in the file is ignored, the first reading is a baseline);
   a trigger added while the condition is true doesn't fire; display matching with serials,
   placeholder serials, identical twins, built-in ignored for connect/disconnect; arrangement
   multiset equality; cooldown 60 s; once a day across midnight and a time zone change; echo window

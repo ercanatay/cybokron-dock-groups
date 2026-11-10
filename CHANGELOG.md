@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Display and network triggers no longer save their last reading in `trigger-state.json`, and ignore one found there (written by an older version or by hand): the first reading after the app opens is only a starting point, so a change that happened while the app was quit no longer runs a trigger, and an edited state file can't make one run or keep one from running. Changes while the app is open run as before.
+
 ## [0.17.2] - 2026-11-10
 
 ### Fixed
