@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Autentikasi tidak tersedia di Mac ini; tetap matikan “Minta autentikasi sebelum menutup aplikasi”?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Minta autentikasi sebelum menutup aplikasi” tetap aktif: autentikasi dibatalkan atau gagal.";
 "core.quitAuthentication.olderVersion.unknown" = "Versi %@ tidak mengenal “Minta autentikasi sebelum menutup aplikasi”: versi ini keluar dari aplikasi tanpa bertanya, dan pengaturan tersebut hilang setelah pengaturan Anda disimpan.";
+"problems.hide.hint" = "macOS tidak akan menyembunyikan aplikasi yang memiliki jendela layar penuh, atau yang berada di Space lain. Keluar dari layar penuh atau pindah Space, lalu coba lagi.";

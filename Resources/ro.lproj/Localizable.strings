@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Autentificarea nu este disponibilă pe acest Mac; oprești „Solicită autentificare înainte de a închide aplicațiile” oricum?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "„Solicită autentificare înainte de a închide aplicațiile” rămâne activată: autentificarea a fost anulată sau a eșuat.";
 "core.quitAuthentication.olderVersion.unknown" = "Versiunea %@ nu cunoaște „Solicită autentificare înainte de a închide aplicațiile”: închide aplicațiile fără să ceară, iar setarea se pierde după ce își salvează setările.";
+"problems.hide.hint" = "macOS nu ascunde o aplicație care are o fereastră în ecran complet sau care se află într-un alt Space. Ieșiți din ecranul complet sau comutați la alt Space, apoi încercați din nou.";

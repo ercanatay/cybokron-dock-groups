@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Autentisering är inte tillgänglig på den här Mac-datorn. Stäng ändå av “Be om autentisering innan appar avslutas”?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Be om autentisering innan appar avslutas” förblir på: autentiseringen avbröts eller misslyckades.";
 "core.quitAuthentication.olderVersion.unknown" = "Version %@ känner inte till “Be om autentisering innan appar avslutas”: den avslutar appar utan att fråga, och inställningen går förlorad när den sparar dina inställningar.";
+"problems.hide.hint" = "macOS döljer inte en app som har ett fönster i helskärm, eller en som finns i ett annat Space. Avsluta helskärm eller byt Space och försök igen.";

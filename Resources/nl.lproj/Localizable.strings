@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Authenticatie is niet beschikbaar op deze Mac; toch “Vraag om authenticatie voordat apps worden afgesloten” uitschakelen?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Vraag om authenticatie voordat apps worden afgesloten” blijft aan: authenticatie is geannuleerd of mislukt.";
 "core.quitAuthentication.olderVersion.unknown" = "Versie %@ kent “Vraag om authenticatie voordat apps worden afgesloten” niet: er worden apps afgesloten zonder te vragen, en de instelling gaat verloren zodra de instellingen worden opgeslagen.";
+"problems.hide.hint" = "macOS verbergt een app niet wanneer die een venster op volledig scherm heeft of zich in een andere Space bevindt. Verlaat het volledige scherm of wissel van Space en probeer het opnieuw.";

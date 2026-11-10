@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "La autenticación no está disponible en este Mac; ¿desactivar “Pedir autenticación antes de cerrar apps” de todos modos?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Pedir autenticación antes de cerrar apps” sigue activado: la autenticación se canceló o falló.";
 "core.quitAuthentication.olderVersion.unknown" = "La versión %@ no reconoce “Pedir autenticación antes de cerrar apps”: cierra las apps sin preguntar, y la configuración se pierde una vez que guarda tus ajustes.";
+"problems.hide.hint" = "macOS no oculta una app que tiene una ventana en pantalla completa, ni una que esté en otro Space. Sal de pantalla completa o cambia de Space y vuelve a intentarlo.";

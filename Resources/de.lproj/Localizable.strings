@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Authentifizierung ist auf diesem Mac nicht verfügbar; „Vor dem Beenden von Apps nach Authentifizierung fragen“ trotzdem ausschalten?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "„Vor dem Beenden von Apps nach Authentifizierung fragen“ bleibt eingeschaltet: Die Authentifizierung wurde abgebrochen oder ist fehlgeschlagen.";
 "core.quitAuthentication.olderVersion.unknown" = "Version %@ kennt „Vor dem Beenden von Apps nach Authentifizierung fragen“ nicht: Sie beendet Apps ohne Nachfrage, und die Einstellung geht verloren, sobald sie Ihre Einstellungen speichert.";
+"problems.hide.hint" = "macOS blendet eine App nicht aus, wenn sie ein Vollbildfenster hat oder sich in einem anderen Space befindet. Beende den Vollbildmodus oder wechsle den Space und versuche es dann erneut.";

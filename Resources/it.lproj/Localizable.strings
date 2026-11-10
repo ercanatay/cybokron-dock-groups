@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "L'autenticazione non è disponibile su questo Mac; disattivare comunque “Chiedi l'autenticazione prima di uscire dalle app”?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Chiedi l'autenticazione prima di uscire dalle app” resta attivo: l'autenticazione è stata annullata o non è riuscita.";
 "core.quitAuthentication.olderVersion.unknown" = "La versione %@ non supporta “Chiedi l'autenticazione prima di uscire dalle app”: chiude le app senza chiedere, e l'impostazione va persa al salvataggio delle tue preferenze.";
+"problems.hide.hint" = "macOS non nasconde un'app che ha una finestra a schermo intero o che si trova in un altro Space. Esci dalla modalità schermo intero o passa a un altro Space, poi riprova.";

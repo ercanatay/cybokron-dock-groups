@@ -1651,11 +1651,11 @@ when this Mac can't authenticate (OK / Cancel), `….notAuthenticated` the alert
 | `core.quitAuthentication.turnOff.notAuthenticated` | “Ask for authentication before quitting apps” stays on: authentication was cancelled or failed. |
 | `core.quitAuthentication.olderVersion.unknown` | Version %@ doesn't know “Ask for authentication before quitting apps”: it quits apps without asking, and the setting is lost once it saves your settings. |
 
-## Hide All: why an app couldn't be hidden (English only for now)
+## Hide All: why an app couldn't be hidden
 
 `problems.hide.hint` is the second paragraph of the Hide All alert, under the list of apps. The
 cause isn't detected (macOS has no public way to tell), so it says what usually prevents hiding.
-It is listed in `LocalizationTests.awaitingTranslation` until it is translated.
+It is translated in every language.
 
 | Key | English |
 | --- | --- |

@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Uwierzytelnianie nie jest dostępne na tym Macu; wyłączyć opcję „Pytaj o uwierzytelnienie przed zamykaniem aplikacji” mimo to?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "Opcja „Pytaj o uwierzytelnienie przed zamykaniem aplikacji” pozostaje włączona: uwierzytelnianie zostało anulowane lub nie powiodło się.";
 "core.quitAuthentication.olderVersion.unknown" = "Wersja %@ nie obsługuje opcji „Pytaj o uwierzytelnienie przed zamykaniem aplikacji”: zamyka aplikacje bez pytania, a ustawienie zostanie utracone po zapisaniu ustawień.";
+"problems.hide.hint" = "macOS nie ukrywa aplikacji, która ma okno w trybie pełnoekranowym lub znajduje się w innym Space. Wyjdź z trybu pełnoekranowego lub przełącz Space, a następnie spróbuj ponownie.";
