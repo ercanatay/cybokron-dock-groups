@@ -327,17 +327,21 @@ extension LayoutAccessibilityObserver where Reader == SystemLayoutAccessibilityR
     init(protection: @escaping (String) -> WindowObservations.TriState = { _ in .unknown }) {
         self.init(
             reader: SystemLayoutAccessibilityReader(),
-            runningInstances: { identifier in
-                guard !identifier.isEmpty, !identifier.contains("/"), !identifier.contains(":") else { return .unknown }
-                let instances = NSRunningApplication.runningApplications(withBundleIdentifier: identifier)
-                    .filter { !$0.isTerminated }
-                switch instances.count {
-                case 0: return .none
-                case 1: return .one(instances[0].processIdentifier)
-                default: return .several
-                }
-            },
+            runningInstances: Self.systemRunningInstances,
             protection: protection
         )
+    }
+
+    /// The running, not terminated instances of the app with this plain bundle identifier; a
+    /// path, website or file identity (any "/" or ":") is `.unknown`. Not an Accessibility call.
+    static func systemRunningInstances(_ identifier: String) -> RunningInstances {
+        guard !identifier.isEmpty, !identifier.contains("/"), !identifier.contains(":") else { return .unknown }
+        let instances = NSRunningApplication.runningApplications(withBundleIdentifier: identifier)
+            .filter { !$0.isTerminated }
+        switch instances.count {
+        case 0: return .none
+        case 1: return .one(instances[0].processIdentifier)
+        default: return .several
+        }
     }
 }

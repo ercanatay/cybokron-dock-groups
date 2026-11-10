@@ -2,6 +2,8 @@ import AppKit
 import DockGroupsCore
 
 /// A URL client only: the main app remains responsible for group lookup, cooldowns and questions.
+/// The one exception is the hidden, read-only developer layout probe (`LayoutObservationProbe`),
+/// which runs only with `CYBOKRON_LAYOUT_PROBE=1` and never dispatches a URL.
 @main
 struct CommandLineClient {
     @MainActor static func main() async {
