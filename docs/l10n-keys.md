@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1114 keys.
+1115 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1650,3 +1650,13 @@ when this Mac can't authenticate (OK / Cancel), `….notAuthenticated` the alert
 | `core.quitAuthentication.turnOff.unavailable` | Authentication isn't available on this Mac; turn off “Ask for authentication before quitting apps” anyway? |
 | `core.quitAuthentication.turnOff.notAuthenticated` | “Ask for authentication before quitting apps” stays on: authentication was cancelled or failed. |
 | `core.quitAuthentication.olderVersion.unknown` | Version %@ doesn't know “Ask for authentication before quitting apps”: it quits apps without asking, and the setting is lost once it saves your settings. |
+
+## Hide All: why an app couldn't be hidden (English only for now)
+
+`problems.hide.hint` is the second paragraph of the Hide All alert, under the list of apps. The
+cause isn't detected (macOS has no public way to tell), so it says what usually prevents hiding.
+It is listed in `LocalizationTests.awaitingTranslation` until it is translated.
+
+| Key | English |
+| --- | --- |
+| `problems.hide.hint` | macOS doesn't hide an app that has a full-screen window, or one that is in another Space. Leave full screen or switch Space, then try again. |

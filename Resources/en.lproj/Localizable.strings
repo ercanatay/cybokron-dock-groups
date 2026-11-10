@@ -206,6 +206,7 @@
 "problems.quit.force" = "Some apps in “%@” couldn't be force quit.";
 "problems.quit.graceful" = "Some apps in “%@” couldn't be asked to quit.";
 "problems.hide" = "Some apps in “%@” couldn't be hidden.";
+"problems.hide.hint" = "macOS doesn't hide an app that has a full-screen window, or one that is in another Space. Leave full screen or switch Space, then try again.";
 "problems.standalone.failed" = "“%@” couldn't get its own Dock icon.";
 
 /* A standalone group's own app */
