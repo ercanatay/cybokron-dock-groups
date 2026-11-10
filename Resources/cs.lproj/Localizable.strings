@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Ověřování na tomto Macu není k dispozici; přesto vypnout “Ptát se na ověření před ukončením aplikací”?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Ptát se na ověření před ukončením aplikací” zůstane zapnuté: ověření bylo zrušeno nebo selhalo.";
 "core.quitAuthentication.olderVersion.unknown" = "Verze %@ nezná nastavení “Ptát se na ověření před ukončením aplikací”: ukončuje aplikace bez dotazu a nastavení se po uložení vašich předvoleb ztratí.";
+"problems.hide.hint" = "macOS neskryje aplikaci, která má okno na celou obrazovku, ani aplikaci v jiném Space. Ukončete režim celé obrazovky nebo přepněte Space a zkuste to znovu.";

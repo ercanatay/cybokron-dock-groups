@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Bu Mac-də autentifikasiya mövcud deyil; “Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” seçimi yenə də söndürülsün?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” aktiv qalır: autentifikasiya ləğv edildi və ya uğursuz oldu.";
 "core.quitAuthentication.olderVersion.unknown" = "%@ versiyası “Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” seçimini tanımır: tətbiqləri soruşmadan bağlayır və parametrləri saxladıqda bu seçim itir.";
+"problems.hide.hint" = "macOS məhdud ekranlı (full screen) pəncərəsi olan və ya başqa Space-də olan tətbiqi gizlətmir. Tam ekrandan çıxın və ya Space-i dəyişin, sonra yenidən cəhd edin.";

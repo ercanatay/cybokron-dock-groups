@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "这台 Mac 无法使用身份验证；仍要关闭“退出应用前要求验证身份”吗？";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“退出应用前要求验证身份”保持开启：身份验证已取消或失败。";
 "core.quitAuthentication.olderVersion.unknown" = "版本 %@ 不支持“退出应用前要求验证身份”：它会直接退出应用而不询问，保存设置后该选项会丢失。";
+"problems.hide.hint" = "macOS 不会隐藏处于全屏窗口或位于其他 Space 中的应用。请退出全屏或切换 Space，然后重试。";

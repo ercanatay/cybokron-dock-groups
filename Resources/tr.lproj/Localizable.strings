@@ -1197,3 +1197,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "Bu Mac'te kimlik doğrulaması kullanılamıyor; “Uygulamaları kapatmadan önce kimlik doğrulaması iste” yine de kapatılsın mı?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Uygulamaları kapatmadan önce kimlik doğrulaması iste” açık kalır: kimlik doğrulaması iptal edildi veya başarısız oldu.";
 "core.quitAuthentication.olderVersion.unknown" = "%@ sürümü “Uygulamaları kapatmadan önce kimlik doğrulaması iste” ayarını tanımıyor: uygulamaları sormadan kapatır ve ayarlarınızı kaydettiğinde bu ayar kaybolur.";
+"problems.hide.hint" = "macOS, tam ekran penceresi olan veya başka bir Space'te bulunan bir uygulamayı gizlemez. Tam ekrandan çıkın ya da Space değiştirin, ardından tekrar deneyin.";

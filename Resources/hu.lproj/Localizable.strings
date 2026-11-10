@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "A hitelesítés nem érhető el ezen a Macen. Mindenképpen kikapcsolja a következő beállítást: “Hitelesítés kérése alkalmazások bezárása előtt”?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "A “Hitelesítés kérése alkalmazások bezárása előtt” beállítás bekapcsolva marad: a hitelesítést megszakították vagy nem sikerült.";
 "core.quitAuthentication.olderVersion.unknown" = "A(z) %@ verzió nem ismeri a “Hitelesítés kérése alkalmazások bezárása előtt” beállítást: kérdezés nélkül bezárja az alkalmazásokat, és a beállítás elvész, amint elmenti a beállításokat.";
+"problems.hide.hint" = "A macOS nem rejti el azt az alkalmazást, amelynek teljes képernyős ablaka van, vagy amely másik Space-en fut. Lépj ki a teljes képernyőből, vagy válts Space-t, majd próbáld újra.";

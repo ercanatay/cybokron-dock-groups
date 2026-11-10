@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "このMacでは認証を利用できません。それでも“アプリを終了する前に認証を求める”をオフにしますか？";
 "core.quitAuthentication.turnOff.notAuthenticated" = "認証がキャンセルされたか失敗したため、“アプリを終了する前に認証を求める”はオンのままです。";
 "core.quitAuthentication.olderVersion.unknown" = "バージョン %@ は“アプリを終了する前に認証を求める”に対応していません。このバージョンでは確認なしにアプリが終了し、設定を保存すると、この設定は失われます。";
+"problems.hide.hint" = "macOSでは、フルスクリーンのウインドウがあるアプリや、別のSpaceにあるアプリは非表示にできません。フルスクリーンを終了するか、Spaceを切り替えてから、もう一度お試しください。";

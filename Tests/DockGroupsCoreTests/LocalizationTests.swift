@@ -36,7 +36,6 @@ struct LocalizationTests {
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
     static let awaitingTranslation: [String] = [
-        "problems.hide.hint",
     ]
 
     static func isAwaitingTranslation(_ key: String) -> Bool {

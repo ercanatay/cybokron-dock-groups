@@ -1199,3 +1199,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "L'authentification n'est pas disponible sur ce Mac ; désactiver «Demander une authentification avant de quitter les apps» quand même ?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "«Demander une authentification avant de quitter les apps» reste activé : l'authentification a été annulée ou a échoué.";
 "core.quitAuthentication.olderVersion.unknown" = "La version %@ ne connaît pas «Demander une authentification avant de quitter les apps» : elle quitte les apps sans demander, et ce réglage est perdu dès qu'elle enregistre vos réglages.";
+"problems.hide.hint" = "macOS ne masque pas une app qui a une fenêtre en plein écran, ni une app qui se trouve dans un autre Space. Quittez le plein écran ou changez de Space, puis réessayez.";

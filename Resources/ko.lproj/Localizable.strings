@@ -1197,3 +1197,4 @@
 "core.quitAuthentication.turnOff.unavailable" = "이 Mac에서는 인증을 사용할 수 없습니다. 그래도 “종료 전에 인증 요청” 설정을 끄시겠습니까?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "인증이 취소되었거나 실패하여 “종료 전에 인증 요청” 설정이 켜진 상태로 유지됩니다.";
 "core.quitAuthentication.olderVersion.unknown" = "%@ 버전은 “종료 전에 인증 요청” 설정을 인식하지 못합니다. 이 버전은 묻지 않고 앱을 종료하며, 설정을 저장하면 이 설정이 사라집니다.";
+"problems.hide.hint" = "macOS는 전체 화면 창이 있는 앱이나 다른 Space에 있는 앱을 숨기지 않습니다. 전체 화면을 종료하거나 Space를 전환한 뒤 다시 시도하세요.";
