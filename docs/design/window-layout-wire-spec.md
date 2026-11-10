@@ -1,6 +1,6 @@
 # Draft: layout document wire format
 
-Status: proposed, not implemented or released. Read with [storage and import safety](window-layout-storage-spec.md) and the [window layouts design](window-layouts-and-cli-spec.md). This proposal does not authorize moving windows or close the AX, identity, Space, permission, or manual test gates.
+Status: proposed, not released. An internal codec for this envelope exists on `main` (`WindowLayoutJSONEncoder`, `WindowLayoutJSONDecoder` and `JSONDuplicateKeyPreflight`), but it is not integrated: no app path reads or writes a layout document. Read with [storage and import safety](window-layout-storage-spec.md) and the [window layouts design](window-layouts-and-cli-spec.md). This proposal does not authorize moving windows or close the AX, identity, Space, permission, or manual test gates.
 
 ## Version 1 envelope
 
