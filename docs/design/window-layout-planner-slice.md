@@ -13,7 +13,8 @@ Pure planning over caller-supplied values, in `Sources/DockGroupsCore/Layout/`:
   state, reported window count, windows with AX top-left frame, role, subrole and tri-state
   minimized/visible/current-Space/full-screen/identifiable facts), `LayoutDisplay` (AppKit frame,
   visible frame, scale, primary flag), the shared `LayoutDisplayConfiguration` gate, and the
-  `LayoutWindowObserving` protocol. The protocol is a contract only; nothing conforms to it.
+  `LayoutWindowObserving` protocol. The planners never call the protocol; its read-only adapter is
+  described in [the observer slice](window-layout-observer-slice.md).
 - `LayoutCapturePlanner.swift` — permission + observations + displays → a validated
   `WindowLayoutDocument.Group`, or a group skip reason, plus one decision per observed app.
 - `LayoutRestorePreviewPlanner.swift` — group + current displays → per window, a target frame

@@ -80,7 +80,8 @@ Use a separate, temporary signed test app and ordinary test windows, never the u
    codec with duplicate-key preflight, bounded reader, create-only writer, advisory lock and
    verified-copy helpers, and the
    [side-effect-free capture and restore-preview planners](window-layout-planner-slice.md).
-   Still missing: an AX observation adapter, `layouts.json` integration, replacement and backup
+   A [read-only AX observation adapter and screen reader](window-layout-observer-slice.md) is
+   also on `main`, unconnected. Still missing: `layouts.json` integration, replacement and backup
    handling, and any writer.
 3. **H App PR:** Save/Restore UI, explicit permission path, AX adapter, previews/results. Manual matrix in §5 and downgrade copies before release.
 4. **CLI PR:** small executable, URL encoding/validation, status, packaging in SwiftPM and Xcode, README, tests. Keep CLI independently releasable if H remains blocked.
