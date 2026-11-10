@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.3] - 2026-11-10
+
 ### Changed
 
-- Display and network triggers no longer save their last reading in `trigger-state.json`, and ignore one found there (written by an older version or by hand): the first reading after the app opens is only a starting point, so a change that happened while the app was quit no longer runs a trigger, and an edited state file can't make one run or keep one from running. Changes while the app is open run as before.
+- The Hide All alert now explains the usual reason an app can't be hidden: macOS doesn't hide an app that has a full-screen window or is in another Space, so leave full screen or switch Space and try again. The text is translated into every language.
+- A screen or network change that happened while the app was quit no longer counts as a change at launch: the app starts from the state it finds, so a hand-edited state file can neither fire a trigger nor hide a real change.
 
 ## [0.17.2] - 2026-11-10
 
@@ -627,7 +630,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.2...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.3...HEAD
+[0.17.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.16.1...v0.17.1
 [0.16.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.15.0...v0.16.1
