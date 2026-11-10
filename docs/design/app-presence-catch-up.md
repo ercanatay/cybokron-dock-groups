@@ -23,10 +23,12 @@ nobody observed it on a real Mac.
   session was inactive or the app wasn't open runs if it is at most 30 minutes late
   (`TriggerEvaluator.catchUpWindow`); later it is recorded `missed` (triggers spec §1.10). This
   document does not change that.
-- **Display / network conditions** already have a form of catch-up: their last known reading is
-  kept in `trigger-state.json` (`TriggerState.Entry.condition`) across sleep and launches, and the
-  first settled reading afterwards is compared with it, so "joined the office Wi-Fi since the app
-  last looked" runs once (triggers spec §1.10, TS-6).
+- **Display / network conditions** already have a form of catch-up across sleep: their last known
+  reading (`TriggerState.Entry.condition`) is kept in memory, and the first settled reading after
+  the wake is compared with it (triggers spec §1.10, TS-6). Across launches they have none: up to
+  0.17.2 the reading was also kept in `trigger-state.json`, so "joined the office Wi-Fi since the
+  app last looked" ran once; it's no longer written or read (§6.3), and the first reading after a
+  launch is a baseline.
 - **Application opens/closes** do not: every gap (source start, rule change, sleep/wake, session
   change, verdict change, uncertain snapshot, sequence gap) clears every baseline, and the first
   trusted snapshot afterwards is a baseline, never an edge (`AppPresenceRuleTracker`,
@@ -260,7 +262,8 @@ while apps relaunch), but the wait is bounded (§5.1).
 
 ### 5.6 Not covered (deferred)
 
-- **The app wasn't running.** Would need the reading in `trigger-state.json` (§6.3), a gap start
+- **The app wasn't running.** Would need the reading in `trigger-state.json` — which §6.3 rules
+  out for conditions too, so it would need a reading the file can't forge — a gap start
   (the last time the app observed, not just the last reading) and a downgrade analysis (older
   versions read the state leniently; an unknown field is dropped on their next save — expected, not
   verified for this field). Decision D4.
@@ -298,13 +301,27 @@ unchanged; catch-up adds no new way to inject a lock edge.
   "not running" for a rule so the next real reading makes an "opened" edge. A1 is out of the
   defendable boundary (threat model §2) and can launch the app itself, but the state file would then
   carry a value that makes a trigger run.
-  *Mismatch found:* `TriggerState`'s doc comment says "A crafted file can at most pause triggers or
-  make occurrences count as handled: nothing in it makes a trigger run", but `Entry.condition` is
-  already read from the file (`TriggerState.swift`, `decodeLeniently(Int.self, forKey: .condition)`)
-  and compared with the next real reading, so a crafted condition value can turn a real display or
-  network reading into an edge (argued from code, not tested). The comment should be narrowed
-  ("…nothing in it makes a trigger run without a real reading that differs from it") whatever is
-  decided here; D4 must account for it.
+- *Mismatch found, then closed:* `TriggerState`'s doc comment says "A crafted file can at most pause
+  triggers or make occurrences count as handled: nothing in it makes a trigger run", but up to
+  0.17.2 `Entry.condition` was read from the file (`decodeLeniently(Int.self, forKey: .condition)`)
+  and compared with the next real reading, so a crafted condition value could turn a real display
+  or network reading into an edge, or make a real change look like none (confirmed by tests that
+  fail on 0.17.2). **Fixed (fail closed):** the condition reading is memory only, like the
+  application readings. `TriggerState.Entry`'s coding neither writes nor reads `condition`; a
+  value in the file (written by an older version or by hand) is ignored, every launch starts
+  unknown and the first real reading is a baseline. The comment is now true as written.
+  - *Lost:* a display or network change that happened while Dock Groups was quit no longer runs
+    when it opens. That change was never observed by this run, so treating it as unknown is the
+    honest reading; the same holds for application rules (§5.6).
+  - *Kept:* changes while the app runs, including across sleep (the reading stays in memory), still
+    make edges; rule changes still rebaseline (`TriggerEvaluator.rebaseline`).
+  - *Why not write it and ignore it on read:* a value nothing reads is dead weight that an older
+    version would still trust. Not writing it means a downgrade to 0.17.2 or older reads no
+    condition, so its first reading is a baseline too (fail closed both ways). The file's format
+    version doesn't change: older versions read it leniently and don't need the key.
+  - Tests: `TriggerEvaluatorTests.conditionsStartUnknownAfterALaunch`,
+    `aConditionReadFromTheFileIsIgnored`, `TriggerCoordinatorTests.aConditionEditedIntoTheStateFileRunsNothing`,
+    `TriggerStoreTests.theStateRoundTrips`.
 - The 3-per-wake bound, the reducer, cooldown and budget limit how many actions any sequence of
   gaps can cause; repeated sleep/wake is bounded by the cooldown (one run per minute per trigger)
   and the 12-per-hour budget.
@@ -415,7 +432,8 @@ How it behaves, where this document left room:
 
 Not changed in this slice: the `TriggerState` doc comment mismatch of §6.3 (a crafted
 `Entry.condition` can turn a real display or network reading into an edge) is still open; the
-catch-up readings are memory only and add nothing to `trigger-state.json`.
+catch-up readings are memory only and add nothing to `trigger-state.json`. (Closed later: §6.3,
+condition readings are no longer written to or read from the file.)
 
 ## 12. Implementation status (UI slice)
 

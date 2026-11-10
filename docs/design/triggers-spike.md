@@ -171,8 +171,9 @@ group on macOS 26 and later.
 - TS-6 isn't measured, so the spec's fallback is in from the start: nothing is read while the
   screens or the Mac sleep (`screensDidSleep`, `willSleep`), and after `screensDidWake` / `didWake`
   nothing is read for 5 seconds, however the screen list changes meanwhile. The reading after the
-  wake is compared with the set kept from before the sleep (per trigger, in `trigger-state.json`),
-  so a monitor that rejoined makes no edge.
+  wake is compared with the set kept from before the sleep (per trigger, in memory; written to
+  `trigger-state.json` up to 0.17.2, no longer saved since — app-presence catch-up §6.3), so a
+  monitor that rejoined makes no edge.
 - The source runs only while a display trigger can run (`TriggerSourceNeeds`).
 
 ## Manual gates still open (record before 0.11.0)

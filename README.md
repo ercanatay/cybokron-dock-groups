@@ -105,8 +105,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   Displays** saves the displays connected now, built-in included, and the trigger waits for exactly
   those; where they are, their resolution and which one is main don't matter. Displays are read 2
   seconds after they change and not while the screens sleep, so a monitor that stays connected
-  through a sleep doesn't count as connecting again, and one that changed while the app was quit
-  counts once when it opens. A Start on a connection can **Finish when it ends**: when the display
+  through a sleep doesn't count as connecting again. What was connected isn't saved between
+  launches: the first reading after the app opens is only a starting point, so a change while the
+  app was quit doesn't count. A Start on a connection can **Finish when it ends**: when the display
   disconnects, the group finishes — hiding only — if it's still the current group and that trigger
   started it. Display triggers need no permission: they read what macOS tells every app about its
   displays (their maker's and model's numbers, the serial number when there's a real one, the name).
