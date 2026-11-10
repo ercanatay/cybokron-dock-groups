@@ -237,7 +237,11 @@ struct TriggerStoreTests {
         defer { directory.remove() }
         let persistence = JSONFileTriggerStatePersistence(fileURL: directory.url.appending(path: "trigger-state.json"))
         try persistence.saveState(state)
-        #expect(persistence.loadState() == state)
+        // Everything but the condition reading, which is kept in memory only (catch-up §6.3).
+        var expected = state
+        expected.entries[id]?.condition = nil
+        #expect(persistence.loadState() == expected)
+        #expect(try !String(contentsOf: persistence.fileURL, encoding: .utf8).contains("condition"))
         for outcome in [TriggerOutcome.ran(.finish), .missed(.appNotOpen), .skipped(.budget)] {
             #expect(try JSONDecoder().decode(TriggerOutcome.self, from: JSONEncoder().encode(outcome)) == outcome)
         }

@@ -99,7 +99,8 @@ public struct TriggerEvaluation: Equatable, Sendable {
 /// - A time runs once per occurrence, up to `catchUpWindow` late, and only while the Mac can act;
 ///   later it's missed. A trigger without remembered state takes the latest occurrence as handled.
 /// - A condition fires on a change between two known readings; an unknown reading changes nothing,
-///   and the first known one is only a baseline.
+///   and the first known one is only a baseline — also the first after a launch, since readings
+///   aren't saved (`TriggerState.Entry.condition`).
 /// - Gates, in order: the 60-second cooldown and At most once a day (not for a Start's own "Finish
 ///   when it ends"), the echo window (changes only), the pause. What a gate stops is recorded and
 ///   never run later.

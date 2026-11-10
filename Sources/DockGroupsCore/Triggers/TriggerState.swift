@@ -82,6 +82,9 @@ public enum TriggerOutcome: Hashable, Sendable {
 /// `trigger-state.json` (spec §2.7): a convenience like `update-state.json`, never in backups.
 /// Losing it means only that today's past times count as handled (§1.10). A crafted file can at
 /// most pause triggers or make occurrences count as handled: nothing in it makes a trigger run.
+/// Condition readings (`Entry.condition`) are why: they live in memory only, are never written and
+/// never read back, so a reading from a file can't turn a real display or network reading into an
+/// edge, or hide one.
 public struct TriggerState: Equatable, Sendable {
     /// The most run times kept for the budget.
     public static let maximumRecentRuns = 50
@@ -96,7 +99,10 @@ public struct TriggerState: Equatable, Sendable {
         public var lastOutcomeAt: Date?
         /// Times: the latest occurrence dealt with (run, skipped, missed or passed while off).
         public var lastHandledOccurrence: Date?
-        /// Conditions: how many times it held at the last known reading; `nil` when unknown.
+        /// Conditions: how many times it held at the last known reading; `nil` when unknown. Kept
+        /// in memory only — not written to `trigger-state.json`, and a value found there is ignored
+        /// — so every launch starts unknown and its first real reading is a baseline: a change that
+        /// happened while the app was quit doesn't run (app-presence catch-up §6.3).
         public var condition: Int?
         /// `lastOutcome` came from a change that happened while the Mac couldn't act ("run what was
         /// missed", `TriggerFiring.isCatchUp`), so the last-run line can say so ("(after the Mac
@@ -239,12 +245,14 @@ extension TriggerOutcome: Codable {
 
 extension TriggerState.Entry: Codable {
     private enum CodingKeys: String, CodingKey {
-        case lastRunAt, lastOutcome, lastOutcomeAt, lastHandledOccurrence, condition
+        case lastRunAt, lastOutcome, lastOutcomeAt, lastHandledOccurrence
         case isCatchUp = "catchUp"
     }
 
     /// Every value is optional; one that can't be read is left out. Dates are seconds since 1970.
     /// `catchUp` is written only when `true`, and read only as `true` with an outcome to describe.
+    /// `condition` is neither written nor read: a `"condition"` key (written by 0.17.2 and older,
+    /// or by hand) is ignored, and the entry's condition starts unknown.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         func date(_ key: CodingKeys) -> Date? {
@@ -254,7 +262,7 @@ extension TriggerState.Entry: Codable {
         lastOutcome = container.decodeLeniently(TriggerOutcome.self, forKey: .lastOutcome)
         lastOutcomeAt = date(.lastOutcomeAt)
         lastHandledOccurrence = date(.lastHandledOccurrence)
-        condition = container.decodeLeniently(Int.self, forKey: .condition).flatMap { $0 >= 0 ? $0 : nil }
+        condition = nil
         isCatchUp = lastOutcome != nil && container.decodeLeniently(Bool.self, forKey: .isCatchUp) == true
     }
 
@@ -264,7 +272,6 @@ extension TriggerState.Entry: Codable {
         try container.encodeIfPresent(lastOutcome, forKey: .lastOutcome)
         try container.encodeIfPresent(lastOutcomeAt?.timeIntervalSince1970, forKey: .lastOutcomeAt)
         try container.encodeIfPresent(lastHandledOccurrence?.timeIntervalSince1970, forKey: .lastHandledOccurrence)
-        try container.encodeIfPresent(condition, forKey: .condition)
         if isCatchUp, lastOutcome != nil {
             try container.encode(true, forKey: .isCatchUp)
         }
