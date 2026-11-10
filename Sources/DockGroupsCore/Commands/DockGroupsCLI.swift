@@ -100,7 +100,24 @@ public enum DockGroupsCLI {
 
         """
 
-    @MainActor public static func run(arguments: [String], application: () -> CLIApplication?, runtime: some CLIRuntime) async -> CLIResult {
+    /// - Parameters:
+    ///   - environment: decides whether the hidden developer layout probe is enabled
+    ///     (`LayoutObservationProbe`); without `CYBOKRON_LAYOUT_PROBE=1` its option is an unknown
+    ///     argument like any other.
+    ///   - layoutProbe: runs the enabled probe for its bundle identifiers.
+    @MainActor public static func run(
+        arguments: [String],
+        application: () -> CLIApplication?,
+        runtime: some CLIRuntime,
+        environment: [String: String] = ProcessInfo.processInfo.environment,
+        layoutProbe: @MainActor ([String]) -> CLIResult = LayoutObservationProbe.runSystem
+    ) async -> CLIResult {
+        if arguments.first == LayoutObservationProbe.option, LayoutObservationProbe.isEnabled(environment: environment) {
+            guard let identifiers = LayoutObservationProbe.bundleIdentifiers(arguments: arguments) else {
+                return CLIResult(exitCode: 2, output: "", errors: LayoutObservationProbe.usage)
+            }
+            return layoutProbe(identifiers)
+        }
         guard let command = CLICommand(arguments: arguments) else {
             return CLIResult(exitCode: 2, output: "", errors: help)
         }

@@ -1,7 +1,8 @@
 # Slice: read-only Accessibility window observer and screen reader
 
 Status: internal Core code on `main`, not connected to the app: no UI, setting, link, trigger or
-CLI calls it. Part of the H Core step in the
+user-facing CLI command calls it. The hidden, read-only [developer probe](window-layout-probe.md)
+(`CYBOKRON_LAYOUT_PROBE=1`) runs it unchanged for the §5 experiment. Part of the H Core step in the
 [window layouts design](window-layouts-and-cli-spec.md#6-implementation-plan-and-release-gates).
 It does **not** close the Accessibility gate in §5 and moves nothing.
 
@@ -89,8 +90,8 @@ is skipped (not failed) without access, and its counterpart then checks the `den
 
 ## Next step: §5 experiment
 
-Before any writer or UI: run the §5 matrix with a separate signed probe that uses this observer
-unchanged — untrusted preflight with independent UI observation of prompt absence, grant /
+Before any writer or UI: run the §5 matrix with a probe that uses this observer unchanged (the
+[developer probe](window-layout-probe.md) covers the read-only part) — untrusted preflight with independent UI observation of prompt absence, grant /
 revocation / relaunch, a deliberately unresponsive app (time to `unknown`), two windows, dialog,
 minimized, full-screen, another Space, Stage Manager and split view, two displays with
 negative coordinates and mixed scales, and macOS 14, 15, 26 and 27. Only a public signal found
