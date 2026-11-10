@@ -1,6 +1,6 @@
 # Draft: window layout storage and import safety
 
-Status: design only, not shipped or implemented. This extends the [H and CLI design](window-layouts-and-cli-spec.md); it does not close the Accessibility, window identity, current Space, or real-display safety gates. The in-memory model in PR #22 is provisional. Its limits and types do not by themselves define an on-disk format or provide a decoder.
+Status: design only, not shipped. This extends the [H and CLI design](window-layouts-and-cli-spec.md); it does not close the Accessibility, window identity, current Space, or real-display safety gates. The in-memory model from PR #22 is provisional. `main` now also has an internal decoder (`WindowLayoutJSONDecoder`, with a duplicate-key preflight) and a bounded read-only loader (`LayoutFileReader`), plus create-only, lock and verified-copy helpers. None of them is connected to the app: nothing reads, writes or names a real `layouts.json`, and the contract below is still not implemented as a whole.
 
 ## Existing behavior to preserve
 

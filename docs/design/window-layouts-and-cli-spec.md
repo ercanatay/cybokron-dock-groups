@@ -1,10 +1,14 @@
 # Design spec: group window layouts (H) and command-line interface
 
-- **Status:** H window layouts remain a draft and are not implemented. The CLI was merged to
-  `main` in [PR #11](https://github.com/ercanatay/cybokron-dock-groups/pull/11) after this design
-  was written; it is not included in the released v0.11.1 package. See the implementation and
-  current release notes for shipped behavior.
-- **Baseline:** `main` at `61c763c` (0.11.1, build 1101). This document describes proposed behavior, not a release promise.
+- **Status:** H window layouts remain a draft; nothing reads or moves another app's windows and
+  no user-facing H feature exists. Parts of the H Core are on `main` as internal, unconnected
+  code (see §6). The CLI was merged in
+  [PR #11](https://github.com/ercanatay/cybokron-dock-groups/pull/11) after this design was written;
+  `scripts/build-app.sh` bundles it in `Contents/MacOS` of every package built since v0.12.0, and
+  the README documents it. See the implementation and current release notes for shipped behavior.
+- **Baseline:** originally written against `main` at `61c763c` (0.11.1, build 1101); status lines
+  refreshed at `1422078` (0.17.3, build 1703). This document describes proposed behavior, not a
+  release promise.
 - **Scope:** an explicit, per-group window layout on the current desktop; a bundled CLI that dispatches the existing `start`, `finish`, and `open` links and reports whether the app is running.
 - **Gate:** no window-moving implementation PR until the Accessibility spike in §5 passes on the actual macOS releases and window managers we support.
 
@@ -71,6 +75,13 @@ Use a separate, temporary signed test app and ordinary test windows, never the u
 
 1. **Spike PR:** documentation and disposable probe only; record a go/no-go matrix. No production AX writer.
 2. **H Core PR:** layout model, bounded planner, persistence/import sanitation, geometry abstraction and fakes. No UI or permission prompt.
+   **Status: partial.** On `main`, internal and not connected to the app: the geometry, coordinate
+   conversion, display-target planner, eligibility decision, document model and validator, JSON
+   codec with duplicate-key preflight, bounded reader, create-only writer, advisory lock and
+   verified-copy helpers, and the
+   [side-effect-free capture and restore-preview planners](window-layout-planner-slice.md).
+   Still missing: an AX observation adapter, `layouts.json` integration, replacement and backup
+   handling, and any writer.
 3. **H App PR:** Save/Restore UI, explicit permission path, AX adapter, previews/results. Manual matrix in §5 and downgrade copies before release.
 4. **CLI PR:** small executable, URL encoding/validation, status, packaging in SwiftPM and Xcode, README, tests. Keep CLI independently releasable if H remains blocked.
 5. **Localization/release:** 26 languages through the project translation helper, packaged-app verification, CI/CodeQL, signing/notarization, and the release manual gates. No version bump or release is implied by this spec.
