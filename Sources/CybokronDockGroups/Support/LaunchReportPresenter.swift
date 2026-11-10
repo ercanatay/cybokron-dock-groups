@@ -44,6 +44,7 @@ enum LaunchReportPresenter {
         alert.alertStyle = .warning
         alert.messageText = L10n.Problems.notHidden(report.groupName)
         alert.informativeText = report.refused.map { "• \($0.displayName)" }.joined(separator: "\n")
+            + "\n\n" + L10n.Problems.notHiddenHint
         NSApp.activate()
         alert.runModal()
     }

@@ -564,6 +564,9 @@ enum L10n {
         static func notHidden(_ groupName: String) -> String {
             tr("problems.hide", "Some apps in “%@” couldn't be hidden.", groupName)
         }
+        static var notHiddenHint: String {
+            tr("problems.hide.hint", "macOS doesn't hide an app that has a full-screen window, or one that is in another Space. Leave full screen or switch Space, then try again.")
+        }
         static func noDockIcon(_ groupName: String) -> String {
             tr("problems.standalone.failed", "“%@” couldn't get its own Dock icon.", groupName)
         }
