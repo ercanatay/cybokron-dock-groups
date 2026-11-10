@@ -3,8 +3,8 @@ import CoreGraphics
 // Read-only inputs for the side-effect-free window layout planners (design spec H).
 //
 // Every type here is a plain value supplied by a caller. Nothing in this file reads Accessibility,
-// a display, a file or a window list; `LayoutWindowObserving` only states the contract a future,
-// separately reviewed adapter would have to meet. Facts the caller could not establish are
+// a display, a file or a window list; `LayoutWindowObserving` only states the contract that the
+// separate, read-only `LayoutAccessibilityObserver` meets. Facts the caller could not establish are
 // `.unknown`, and the planners never treat an unknown as present or absent.
 //
 // Privacy: an observation holds an app's bundle identifier and window geometry only. There is no
@@ -160,9 +160,9 @@ struct LayoutDisplayConfiguration: Equatable, Sendable {
     }
 }
 
-/// The contract a future Accessibility adapter would implement. It is only a contract: no type in
-/// this module conforms to it, and the planners take its results as plain values instead of
-/// calling it.
+/// The contract a read-only Accessibility adapter implements. `LayoutAccessibilityObserver` is
+/// the one conforming type; the planners take its results as plain values instead of calling it,
+/// and nothing in the app calls it yet.
 ///
 /// A conforming adapter must read without prompting, writing, raising, unminimizing or activating
 /// anything; must not read window titles; and must report `.unknown` for anything it could not

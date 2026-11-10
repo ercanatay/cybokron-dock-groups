@@ -474,9 +474,9 @@ shortcut, a group is archived or a template exists.
 
 ## Command-line interface
 
-This CLI is available in source builds and is intended for a future release. The published
-v0.11.1 app does not include it. Builds from this source tree bundle `cybokrondockgroups` in
-`Contents/MacOS`. Use its full path, or create a link in a directory you already have on `PATH`
+The app bundles the `cybokrondockgroups` command-line tool in `Contents/MacOS`: every package
+built since v0.12.0 includes it, among them the published v0.17.3 release, and so do builds from
+this source tree. Use its full path, or create a link in a directory you already have on `PATH`
 (installation does not change your shell configuration):
 
 ```sh
