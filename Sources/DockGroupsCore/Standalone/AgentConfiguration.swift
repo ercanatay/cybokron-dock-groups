@@ -19,13 +19,13 @@ public struct AgentConfiguration: Equatable, Sendable {
     /// Start and Finish settings (agents don't start or finish groups) and its keyboard shortcut
     /// (only the main app registers shortcuts), and how capturing the open apps lists them (only the
     /// main app captures). Of the protected apps, only those in the group are kept: the agent's
-    /// Close All reaches no others.
+    /// Close All reaches no others. Launch actions are left out: agents don't support them yet.
     public init(group: DockGroup, preferences: PopupPreferences) {
         formatVersion = Self.currentFormatVersion
         var group = group
         group.switching = GroupSwitching()
         group.shortcut = nil
-        self.group = group
+        self.group = Self.withoutLaunchActions(group)
         var snapshot = preferences
         snapshot.automaticallyChecksForUpdates = PopupPreferences().automaticallyChecksForUpdates
         snapshot.protectedApps = preferences.protectedApps.restricted(to: group)
@@ -56,6 +56,18 @@ public struct AgentConfiguration: Equatable, Sendable {
     public static func load(from fileURL: URL) throws -> AgentConfiguration {
         try decode(from: Data(contentsOf: fileURL))
     }
+
+    /// `group` with no item carrying a launch action, so none reaches or comes back from an agent.
+    static func withoutLaunchActions(_ group: DockGroup) -> DockGroup {
+        guard group.apps.contains(where: { $0.launchActionSetting != nil }) else { return group }
+        var group = group
+        group.apps = group.apps.map { item in
+            var item = item
+            item.launchActionSetting = nil
+            return item
+        }
+        return group
+    }
 }
 
 public enum AgentConfigurationError: LocalizedError, Equatable, Sendable {
@@ -78,7 +90,7 @@ extension AgentConfiguration: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         formatVersion = try container.decode(Int.self, forKey: .formatVersion)
-        group = try container.decode(DockGroup.self, forKey: .group)
+        group = Self.withoutLaunchActions(try container.decode(DockGroup.self, forKey: .group))
         preferences = container.decodeLeniently(PopupPreferences.self, forKey: .preferences) ?? PopupPreferences()
     }
 }

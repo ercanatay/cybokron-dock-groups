@@ -60,6 +60,9 @@ public struct SettingsBackup: Equatable, Sendable {
     /// Items of the file kept without the app chosen to open them, because that app could run them
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
     public private(set) var resetLaunchOptionCount = 0
+    /// Items of the file whose launch action came in turned off, needing review, and not written
+    /// again (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
+    private(set) var disabledLaunchActionCount = 0
 
     public init(
         appVersion: String,
@@ -159,6 +162,7 @@ public struct SettingsBackup: Equatable, Sendable {
         let results = sanitized + sanitizedArchived.map(\.1) + sanitizedTemplates.map(\.1)
         leftOutItemCount = results.reduce(0) { $0 + $1.leftOutItemCount }
         resetLaunchOptionCount = results.reduce(0) { $0 + $1.resetLaunchOptionCount }
+        disabledLaunchActionCount = results.reduce(0) { $0 + $1.disabledLaunchActionCount }
         triggers = Self.importedTriggers(document.triggers?.triggers ?? [], groupIDs: Set(groups.map(\.id) + archivedGroups.map(\.id)))
         preferences = document.preferences.preferences
     }
@@ -197,21 +201,63 @@ public struct SettingsBackup: Equatable, Sendable {
     /// default app — when it's an app that runs what it opens (`ItemOpenerPolicy.isRunner`),
     /// Terminal and iTerm2 for folders included: those are accepted only when chosen on this Mac.
     /// Other chosen apps are checked again every time the item opens.
-    static func sanitizedForImport(_ group: DockGroup) -> (group: DockGroup, leftOutItemCount: Int, resetLaunchOptionCount: Int) {
+    ///
+    /// A launch action comes in turned off, needing review (`LaunchActionSetting.disabledForImport`,
+    /// threat model D4): it isn't used or written again until the user turns it on on this Mac.
+    static func sanitizedForImport(_ group: DockGroup) -> (group: DockGroup, leftOutItemCount: Int, resetLaunchOptionCount: Int, disabledLaunchActionCount: Int) {
         var group = group
         var reset = 0
+        var disabled = 0
         let items = group.apps.compactMap { item -> GroupItem? in
             guard var item = safeItem(item) else { return nil }
             if let opener = item.launch.opener, ItemOpenerPolicy.isRunner(bundleIdentifier: opener.bundleIdentifier) {
                 item.launch = item.launch.withoutOpener
                 reset += 1
             }
+            if let setting = item.launchActionSetting {
+                item.launchActionSetting = setting.disabledForImport
+                disabled += 1
+            }
             return item
         }
         let leftOut = group.apps.count - items.count
         group.apps = items
         group.freeLayoutSlots = DockGroup.sanitizedFreeLayoutSlots(group.freeLayoutSlots, apps: group.apps)
-        return (group, leftOut, reset)
+        return (group, leftOut, reset, disabled)
+    }
+
+    /// `group` with every item's launch action turned off, needing review, as it comes in from a
+    /// backup (`LaunchActionSetting.disabledForImport`).
+    static func disablingLaunchActions(in group: DockGroup) -> DockGroup {
+        guard group.apps.contains(where: { $0.launchActionSetting != nil }) else { return group }
+        var group = group
+        group.apps = group.apps.map { item in
+            var item = item
+            item.launchActionSetting = item.launchActionSetting?.disabledForImport
+            return item
+        }
+        return group
+    }
+
+    /// The groups, archived groups and templates as restoring or merging brings them in: launch
+    /// actions turned off again (`disablingLaunchActions`), also for a backup that wasn't read
+    /// from a file.
+    /// Archived groups and templates without a launch action are passed on as they are.
+    var importedGroups: StoredGroups {
+        StoredGroups(
+            active: groups.map(Self.disablingLaunchActions),
+            archived: archivedGroups.map { archived in
+                let group = Self.disablingLaunchActions(in: archived.group)
+                return group == archived.group ? archived : archived.replacingGroup(group)
+            }
+        )
+    }
+
+    var importedTemplates: [GroupTemplate] {
+        templates.map { template in
+            let group = Self.disablingLaunchActions(in: template.group)
+            return group == template.group ? template : template.replacingGroup(group)
+        }
     }
 
     /// `item` if it can be brought in from a backup (see `sanitizedForImport`), with an app's

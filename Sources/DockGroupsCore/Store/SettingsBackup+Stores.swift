@@ -56,7 +56,7 @@ extension SettingsBackup {
             copies.append(copy)
         }
         do {
-            if let copy = try groups.replaceGroups(with: StoredGroups(active: self.groups, archived: archivedGroups)) {
+            if let copy = try groups.replaceGroups(with: importedGroups) {
                 copies.append(copy)
             }
         } catch {
@@ -66,7 +66,7 @@ extension SettingsBackup {
         var replacedTemplates = false
         if let templates, !self.templates.isEmpty {
             do {
-                if let copy = try templates.replaceTemplates(with: self.templates) {
+                if let copy = try templates.replaceTemplates(with: importedTemplates) {
                     copies.append(copy)
                 }
                 replacedTemplates = true
@@ -102,7 +102,8 @@ extension SettingsBackup {
     /// copied next to itself first (`groups.pre-import-<timestamp>.json`) when anything is added.
     @discardableResult
     public func merge(into groups: GroupStore) throws -> GroupMergeResult {
-        try groups.mergeGroups(self.groups, archived: archivedGroups)
+        let imported = importedGroups
+        return try groups.mergeGroups(imported.active, archived: imported.archived)
     }
 
     /// `merge(into:)`, then the backup's templates that aren't here yet (by name or identifier) are
@@ -112,7 +113,7 @@ extension SettingsBackup {
     @discardableResult
     public func merge(into groups: GroupStore, templates: TemplateStore, triggers: TriggerStore? = nil) throws -> SettingsMergeResult {
         let merged = try merge(into: groups)
-        let added = try templates.mergeTemplates(self.templates)
+        let added = try templates.mergeTemplates(importedTemplates)
         guard let triggers else { return SettingsMergeResult(groups: merged, addedTemplates: added) }
         let addedGroupIDs = Set(merged.addedGroups.map(\.id) + merged.addedArchivedGroups.map(\.id))
         let incoming = self.triggers.filter { addedGroupIDs.contains($0.groupID) }.map(\.turnedOff)
