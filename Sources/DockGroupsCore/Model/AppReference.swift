@@ -50,6 +50,10 @@ public struct AppReference: Identifiable, Hashable, Sendable {
         }
     }
 
+    /// The item's launch action (`LaunchAction`): `nil` for most items, and then not written. Only
+    /// an enabled, valid one is written; nothing opens the item with it yet.
+    var launchActionSetting: LaunchActionSetting?
+
     public var id: String { bundleIdentifier }
 
     public init(bundleIdentifier: String, name: String, path: String? = nil) {
@@ -163,7 +167,7 @@ public struct AppReference: Identifiable, Hashable, Sendable {
 
 extension AppReference: Codable {
     private enum CodingKeys: String, CodingKey {
-        case bundleIdentifier, name, path, kind, url, alias, tags, notes, launchDelay, openWith
+        case bundleIdentifier, name, path, kind, url, alias, tags, notes, launchDelay, openWith, launchAction
     }
 
     /// Items without a `kind` are apps, as everything saved before websites existed. A website is
@@ -174,7 +178,9 @@ extension AppReference: Codable {
     /// know, is kept as an app that can't be found, so it stays visible and removable instead of
     /// making the whole group unreadable. The alias, tags and task notes are each read on their own:
     /// an unreadable one is left empty; so are the launch delay (clamped to its range) and the app
-    /// that opens the item, which an app never has.
+    /// that opens the item, which an app never has. A launch action is read strictly
+    /// (`LaunchActionCoding`): one that isn't valid for the item is kept as needing review, never
+    /// fixed; the rest of the item is read as usual.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let identifier = try container.decode(String.self, forKey: .bundleIdentifier)
@@ -207,6 +213,10 @@ extension AppReference: Codable {
             delay: container.decodeLeniently(Int.self, forKey: .launchDelay) ?? 0,
             opener: container.decodeLeniently(ItemOpener.self, forKey: .openWith)
         ).allowed(for: kind)
+        if container.contains(.launchAction) {
+            let read = (try? container.decode(LaunchActionCoding.self, forKey: .launchAction))?.result ?? .failure(.notAnObject)
+            launchActionSetting = LaunchActionSetting(reading: read, for: kind)
+        }
     }
 
     /// The kind a saved file or folder item has: the saved one, or — without one — what its
@@ -221,7 +231,8 @@ extension AppReference: Codable {
     }
 
     /// Apps are written as before (no `kind`); websites add `kind` and `url`, files and folders
-    /// `kind` only. The alias, tags, task notes, launch delay and opener are written only when set.
+    /// `kind` only. The alias, tags, task notes, launch delay, opener and launch action are written
+    /// only when set; a launch action only when it's enabled and valid for the item.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(bundleIdentifier, forKey: .bundleIdentifier)
@@ -244,6 +255,9 @@ extension AppReference: Codable {
             try container.encode(launch.delay, forKey: .launchDelay)
         }
         try container.encodeIfPresent(launch.opener, forKey: .openWith)
+        if let launchAction {
+            try container.encode(LaunchActionCoding(launchAction), forKey: .launchAction)
+        }
     }
 }
 
