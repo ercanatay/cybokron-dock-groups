@@ -1,7 +1,8 @@
 # Launch actions (E phase 2): design options and threat model
 
-- **Status:** design and threat model only. No code, no release decision, no spike run. Nothing
-  here is implemented.
+- **Status:** design and threat model. Option A's core slice (§10 slice 2: model, strict decoder,
+  validator; nothing executed) is in [launch-action-core-slice.md](launch-action-core-slice.md).
+  No release decision, no spike run; nothing opens an item with a launch action yet.
 - **Baseline:** `main` at `10233ff`. File references are `path:line` at that commit, relative to
   `Sources/` unless they start with `Tests/`, `docs/` or a root file.
 - **Builds on:** [context-switching-spec.md](context-switching-spec.md) (E phase 1: delay and Open
@@ -310,7 +311,10 @@ running app.
 
 1. **Spike + spec update** (S): record spike results; finalize templates and grammar.
 2. **Core model + decoder + validator** (M): `launchAction` key, template registry, fail-closed
-   rules 1–6, 11; fixtures T1–T5, T12. No UI; nothing writes the key yet.
+   rules 1–6, 11; fixtures T1–T5, T12. No UI; nothing writes the key yet. **Done** (Core only,
+   [launch-action-core-slice.md](launch-action-core-slice.md)): rules 2–4, 6 and 11 at decode time;
+   imported actions off (D4); agents drop actions (D11). Rules 1 and 5 move to slice 3 (nothing is
+   opened with an action yet). Started before slice 1's spike, so the grammar may still narrow.
 3. **Launcher integration** (M): build argv per template, pass via `OpenConfiguration.arguments`
    (extend `ApplicationWorkspace.open(_:withApplicationAt:)` / `launchApplication(at:)` with an
    arguments parameter), delayed re-check, report texts, log privacy (T6–T8 partial, T9).
@@ -323,11 +327,20 @@ C is not scheduled.
 
 ## 11. Documents to update if this is accepted
 
+Status after the core slice ([launch-action-core-slice.md](launch-action-core-slice.md)): **no
+row below is due yet.** The core slice stores and checks actions but executes none, so every
+statement below is still true of what the app does. Each row says which slice makes it due.
+
 - `context-switching-spec.md` §5.3 L-1 ("no arguments") and `ItemLaunchOptions.swift:7-9` doc
   comment: would need to say "only shipped templates; no free arguments, environment, commands or
   scripts" once A lands. Until then they are correct and **this document does not override them.**
+  — *Core slice: unchanged on purpose (launch options still have no arguments; the stored action
+  is not a launch option and isn't executed). Due with slice 3 (launcher integration).*
 - `SECURITY.md` "Scope": one sentence on launch templates (and, only if B ships, on approved
-  arguments being able to make an app run code).
+  arguments being able to make an app run code). — *Due with slice 3, when a template first
+  passes arguments to a browser.*
 - `09_YOL_HARITASI.md` item 5: scope narrowed to "templates first; terminal commands/scripts not
-  planned".
+  planned". — *Can be done now (outside this repository); the core slice implements templates only.*
 - `06_GUVENLIK.md`: add rule "launch actions are templates; imported ones come in disabled".
+  — *Can be done now (outside this repository): the core slice already enforces both halves
+  (`LaunchActionCoding`, `SettingsBackup.sanitizedForImport` / `restore` / `merge`).*
