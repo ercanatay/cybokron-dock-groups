@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A website item can open in a browser profile: Edit Details… → Open in Browser Profile, then Chrome, Edge, Brave or Firefox (browsers that aren't on this Mac can't be chosen) and the profile's name, with a hint where each browser shows it. A name that can't be used is explained and can't be saved. The app shows the browser, the profile and the full address and asks before it turns the profile on. A browser profile from a backup stays off, and its item isn't opened, until you check it and turn it on; the row says so. The row shows “Chrome · Work” and, while that browser is running, that the item opens only after you quit it. The new texts are in English only for now.
+
 ## [0.17.3] - 2026-11-10
 
 ### Changed
