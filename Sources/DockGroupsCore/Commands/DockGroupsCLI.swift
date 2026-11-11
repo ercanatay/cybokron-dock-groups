@@ -105,6 +105,9 @@ public enum DockGroupsCLI {
     ///     (`LayoutObservationProbe`); without `CYBOKRON_LAYOUT_PROBE=1` its option is an unknown
     ///     argument like any other.
     ///   - layoutProbe: runs the enabled probe for its bundle identifiers.
+    ///
+    /// The hidden launch plan dry run (`LaunchActionPlanProbe`) is enabled the same way, by
+    /// `CYBOKRON_LAUNCH_PROBE=1`; it only prints a plan and never resolves or dispatches anything.
     @MainActor public static func run(
         arguments: [String],
         application: () -> CLIApplication?,
@@ -117,6 +120,9 @@ public enum DockGroupsCLI {
                 return CLIResult(exitCode: 2, output: "", errors: LayoutObservationProbe.usage)
             }
             return layoutProbe(identifiers)
+        }
+        if arguments.first == LaunchActionPlanProbe.option, LaunchActionPlanProbe.isEnabled(environment: environment) {
+            return LaunchActionPlanProbe.run(arguments: arguments)
         }
         guard let command = CLICommand(arguments: arguments) else {
             return CLIResult(exitCode: 2, output: "", errors: help)

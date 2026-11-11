@@ -350,12 +350,17 @@ struct LaunchActionExecutionScanTests {
     /// Words that name the launch action types or the item field.
     static let actionTokens = ["LaunchAction", "launchAction", "BrowserFamily", "BrowserProfileName"]
 
-    /// The only files that may mention launch actions in this slice.
+    /// The only files that may mention launch actions: the model and its coding (slice 2), the
+    /// argument plan and its dry run, and the CLI line that gates the dry run (slice 3, computing
+    /// part). No launcher, app or CLI executable file.
     static let allowedFiles: Set<String> = [
         "DockGroupsCore/Model/LaunchAction.swift",
         "DockGroupsCore/Model/AppReference.swift",
         "DockGroupsCore/Persistence/SettingsBackup.swift",
         "DockGroupsCore/Standalone/AgentConfiguration.swift",
+        "DockGroupsCore/LaunchActions/LaunchActionArgumentPlan.swift",
+        "DockGroupsCore/LaunchActions/LaunchActionPlanProbe.swift",
+        "DockGroupsCore/Commands/DockGroupsCLI.swift",
     ]
 
     /// What running or opening something looks like.
