@@ -318,6 +318,11 @@ running app.
 3. **Launcher integration** (M): build argv per template, pass via `OpenConfiguration.arguments`
    (extend `ApplicationWorkspace.open(_:withApplicationAt:)` / `launchApplication(at:)` with an
    arguments parameter), delayed re-check, report texts, log privacy (T6–T8 partial, T9).
+   **Computing part done** ([launch-action-argv-slice.md](launch-action-argv-slice.md)): the
+   argument plan (per-template bundle-ID set, argv per browser, URL policy, grammar re-checked,
+   no environment) and a hidden `CYBOKRON_LAUNCH_PROBE=1` dry run. Nothing passes a plan to the
+   workspace yet; the launcher part (rules 1 and 5 of §6 at launch time) is still open and waits
+   for the slice 1 spike.
 4. **Editor + caption + import gating** (M): picker, preview, disabled-on-import, restore summary,
    localization keys (T11).
 5. **Agent support for A** (S–M) and the downgrade round trip (manual).
