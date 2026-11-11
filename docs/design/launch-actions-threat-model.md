@@ -229,6 +229,13 @@ Applies to every source (editor, `groups.json`, backup, template, agent config) 
 11. **Newer version's data** (unknown template) in this version → rule 2.
 12. **Permissions:** no new entitlement, TCC purpose string, Automation or Accessibility request is
     introduced by A or B. If a future design needs one and it is denied → not opened.
+13. **Status is saved.** An action is written with `"status": "enabled"` or `"status": "review"`
+    and a `reason` (`imported` / `invalid`), so an action needing review stays off after a restart
+    (D4, D5). Only `enabled` — or no status, in files written before statuses, when the action is
+    valid — can run; any other or unknown status, or a malformed one, is invalid and not opened.
+    A refused object's other keys are written back unchanged (never a forbidden one, rule 6).
+    Accepted: a same-user writer can switch `review` to `enabled` by hand (D9). See
+    [launch-action-review-persistence.md](launch-action-review-persistence.md).
 
 ## 7. Confirmation and visibility
 
@@ -360,6 +367,9 @@ statement below is still true of what the app does. Each row says which slice ma
   "Scope"; README "Opening" has the matching sentence).*
 - `09_YOL_HARITASI.md` item 5: scope narrowed to "templates first; terminal commands/scripts not
   planned". — *Can be done now (outside this repository); the core slice implements templates only.*
+- `launch-action-core-slice.md` / `launch-action-ui-slice.md`: "needs review isn't written" no
+  longer holds. — *Done with [launch-action-review-persistence.md](launch-action-review-persistence.md)
+  (§6 rule 13): the status is written, and a review survives a restart.*
 - `06_GUVENLIK.md`: add rule "launch actions are templates; imported ones come in disabled".
   — *Can be done now (outside this repository): the core slice already enforces both halves
   (`LaunchActionCoding`, `SettingsBackup.sanitizedForImport` / `restore` / `merge`).*

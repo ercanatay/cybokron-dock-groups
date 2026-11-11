@@ -23,7 +23,10 @@ grammar may still change before anything is executed.
 
 ## On-disk form
 
-An optional item key, written only for an enabled, valid action:
+An optional item key. *Since [launch-action-review-persistence.md](launch-action-review-persistence.md)
+it also carries a `status` (`enabled` / `review` + `reason`), and an action under review is written
+too; the rest of this section describes the core slice as it was.* Originally written only for an
+enabled, valid action:
 
 ```json
 { "bundleIdentifier": "https://github.com/cybokron", "kind": "website", "name": "GitHub",
@@ -66,14 +69,15 @@ Refused, never trimmed, escaped or fixed. Checked in this order (first reason wi
 | Valid action on a website | `.enabled`; round-trips unchanged |
 | Valid action on an app, file or folder | `.needsReview(.invalid(.unsupportedItemKind))` |
 | Any decoder or grammar refusal | `.needsReview(.invalid(reason))`; the rest of the item is read as usual |
-| `.needsReview` of any kind | `launchAction == nil`; **not written** — the next save drops it |
+| `.needsReview` of any kind | `launchAction == nil`; ~~not written~~ — now written under review ([launch-action-review-persistence.md](launch-action-review-persistence.md)) |
 | Enabled case built in code with a bad name | not used, not written (`launchAction` and encoding re-validate) |
 | Backup read (`SettingsBackup.decode`): groups, archived groups, templates | `.needsReview(.imported(action))`, counted in `disabledLaunchActionCount` (D4, T11) |
 | Restore / merge (`SettingsBackup.restore`, `merge`) | turned off again, also for a backup built in code; nothing reaches the groups or templates file |
 | Standalone agent config (`AgentConfiguration`) | dropped on write and on read (D11: no agent support yet) |
 
-"Needs review" is internal state only: no UI shows it and it isn't saved, so an imported or invalid
-action is gone after the next save or restart. Rules 1 and 7 of threat model §6 ("not opened at
+"Needs review" was internal state only in this slice: no UI showed it and it wasn't saved, so an
+imported or invalid action was gone after the next save or restart (fixed since:
+[launch-action-review-persistence.md](launch-action-review-persistence.md)). Rules 1 and 7 of threat model §6 ("not opened at
 all") are **not** enforced yet, because nothing opens items with actions: today an item with an
 invalid or imported action opens plainly, as an older version would (rule 10).
 

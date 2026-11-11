@@ -50,9 +50,12 @@ Opening part:
     Done ask too.
   - *Invalid:* nothing of it can be shown (the reason holds no text from the file). The toggle is
     off; the user sets a browser and a name, then Turn On or Done asks. Leaving it off keeps it as
-    it is (not opened; it isn't written, so it's gone after the next restart, as before).
+    it is (not opened). Turning the toggle on and off again removes it.
 - The launcher keeps refusing the item until the setting is `.enabled`
   (`plan(.actionDisabled)` / `plan(.actionNeedsReview)`), unchanged from slice 3.
+- Both review states are **written** (`"status": "review"`, `"reason": "imported"` / `"invalid"`)
+  and survive a restart: the item stays unopened and the row keeps its warning
+  ([launch-action-review-persistence.md](launch-action-review-persistence.md)).
 
 ### Confirmation (every time an action is set or turned on)
 
@@ -62,14 +65,14 @@ Done (with a new or changed action) and Turn On show one alert:
 - **Message (not localized):** the full address and the browser app with its bundle identifier:
   `https://github.com/cybokron` / `Google Chrome (com.google.Chrome)`.
 - **Turn On** records the confirmation in the draft and closes the editor, saving once:
-  `LaunchActionSetting.enabled` is written. **Cancel** closes only the alert: nothing changes and
+  `LaunchActionSetting.enabled` is written (`"status": "enabled"`). **Cancel** closes only the alert: nothing changes and
   the editor stays open.
 - Closing the popover another way (a click elsewhere) saves the other fields but **not an
   unconfirmed action**: the item's action stays as it was.
 - Removing an action (toggle off) needs no confirmation: it can only make the item open plainly
   in the default browser, which needs no review.
-- No record of the confirmation is kept (D9 deferred): the only trace is `.enabled` in the groups
-  file.
+- No record of the confirmation is kept (D9 deferred): the only trace is `"status": "enabled"` in
+  the groups file.
 
 ### Row caption (`LaunchActionCaption`)
 
@@ -92,7 +95,8 @@ the page would otherwise never open). Items without an action show neither line.
 | `.imported(A)` | Done only | nothing (still under review) |
 | `.imported(A)` | Turn On, confirms | `.enable(A)` |
 | `.invalid` | sets browser + valid name, confirms | `.enable(action)` |
-| `.invalid` | nothing | nothing |
+| `.invalid` | nothing | nothing (still under review, also after a restart) |
+| `.invalid` | toggle on, then off | `.remove` |
 | any | Cancel | nothing |
 
 A confirmation counts only for the exact action chosen; changing a field afterwards asks again. A
@@ -158,9 +162,11 @@ items without an action; summary title/details with the full address; and throug
 - **No approval record (D9 deferred).** The confirmation is UI only. A same-user writer of
   `groups.json` can still write an enabled action directly, as before this slice (the accepted
   model of option A); only imported (backup/template) actions are forced through review.
-- **Invalid actions vanish on restart.** An invalid or imported action isn't written, so after the
-  next save and restart the item has no action and opens plainly (core slice, threat model §6
-  rule 10). The review warning lasts only for the session.
+- ~~**Invalid actions vanish on restart.**~~ Fixed by
+  [launch-action-review-persistence.md](launch-action-review-persistence.md): an imported or invalid
+  action is written under review, so after a restart the item still isn't opened and the row still
+  warns. A same-user writer can change `"review"` to `"enabled"` by hand; accepted (D9), as they
+  could always write an enabled action.
 - **Running state is a snapshot.** The row's running note follows `RunningAppsMonitor`; the
   launcher asks again right before starting, which is what counts.
 - **Installed browsers are checked when the editor opens**, not live; a browser installed while the
