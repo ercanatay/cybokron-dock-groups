@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Pedir autenticação antes de encerrar apps” continua ativado: a autenticação foi cancelada ou falhou.";
 "core.quitAuthentication.olderVersion.unknown" = "A versão %@ não conhece “Pedir autenticação antes de encerrar apps”: ela fecha os apps sem perguntar, e a configuração se perde assim que salvar suas preferências.";
 "problems.hide.hint" = "O macOS não oculta um app que tenha uma janela em tela cheia nem um app que esteja em outro Space. Saia da tela cheia ou troque de Space e tente novamente.";
+"item.launch.profile.toggle" = "Abrir no perfil do navegador";
+"item.launch.profile.hint" = "Abre o site neste perfil quando você o abre manualmente e o navegador não está em execução. Chrome, Edge, Brave: o nome da pasta no final de “Profile Path” em chrome://version, como Default ou Profile 1. Firefox: o nome do perfil em about:profiles.";
+"item.launch.profile.invalid" = "Digite o nome como o navegador o exibe: até 64 caracteres, sem quebras de linha ou caracteres invisíveis, sem “-” ou espaço no início, sem espaço no final, sem “..”, e sem nenhum destes: / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Este perfil do navegador veio com um backup ou não pode ser usado como foi salvo, então o item não será aberto até que você o verifique e o ative.";
+"item.launch.profile.turnOn" = "Ativar";
+"item.launch.profile.row.review" = "Perfil do navegador precisa de revisão: o item não será aberto até que você o ative.";
+"item.launch.profile.row.running" = "%@ está em execução: o item só será aberto depois que você fechar o navegador.";
+"item.launch.profile.confirm.title" = "Abrir “%1$@” no %2$@ com o perfil “%3$@”?";

@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Ptát se na ověření před ukončením aplikací” zůstane zapnuté: ověření bylo zrušeno nebo selhalo.";
 "core.quitAuthentication.olderVersion.unknown" = "Verze %@ nezná nastavení “Ptát se na ověření před ukončením aplikací”: ukončuje aplikace bez dotazu a nastavení se po uložení vašich předvoleb ztratí.";
 "problems.hide.hint" = "macOS neskryje aplikaci, která má okno na celou obrazovku, ani aplikaci v jiném Space. Ukončete režim celé obrazovky nebo přepněte Space a zkuste to znovu.";
+"item.launch.profile.toggle" = "Otevřít v profilu prohlížeče";
+"item.launch.profile.hint" = "Otevře webovou stránku v tomto profilu, když ji otevřete sami a prohlížeč neběží. Chrome, Edge, Brave: název složky na konci položky „Profile Path“ na chrome://version, například Default nebo Profile 1. Firefox: název profilu na about:profiles.";
+"item.launch.profile.invalid" = "Zadejte název tak, jak ho prohlížeč zobrazuje: nejvýše 64 znaků, bez zalomení řádku a neviditelných znaků, bez „-“ nebo mezery na začátku, bez mezery na konci, bez „..“ a bez znaků / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Tento profil prohlížeče byl importován ze zálohy nebo ho nelze použít v podobě, v jaké byl uložen, takže se položka neotevře, dokud ho nezkontrolujete a nezapnete.";
+"item.launch.profile.turnOn" = "Zapnout";
+"item.launch.profile.row.review" = "Profil prohlížeče vyžaduje kontrolu: položka se neotevře, dokud ho nezapnete.";
+"item.launch.profile.row.running" = "%@ je spuštěn: položka se otevře až po jeho ukončení.";
+"item.launch.profile.confirm.title" = "Otevřít „%1$@“ v prohlížeči %2$@ s profilem „%3$@“?";

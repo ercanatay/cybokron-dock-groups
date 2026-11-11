@@ -1661,7 +1661,7 @@ It is translated in every language.
 | --- | --- |
 | `problems.hide.hint` | macOS doesn't hide an app that has a full-screen window, or one that is in another Space. Leave full screen or switch Space, then try again. |
 
-## A website's browser profile: the details editor's toggle, hint, name rule, review note and Turn On, the rows' captions and the confirmation's question (English only for now)
+## A website's browser profile: the details editor's toggle, hint, name rule, review note and Turn On, the rows' captions and the confirmation's question
 
 See [launch-action-ui-slice.md](design/launch-action-ui-slice.md). Browser names (Chrome, Edge,
 Brave, Firefox), profile names, `chrome://version`, `about:profiles`, `Default`, `Profile 1` and

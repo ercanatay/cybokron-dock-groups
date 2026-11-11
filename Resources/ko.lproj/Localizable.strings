@@ -1198,3 +1198,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "인증이 취소되었거나 실패하여 “종료 전에 인증 요청” 설정이 켜진 상태로 유지됩니다.";
 "core.quitAuthentication.olderVersion.unknown" = "%@ 버전은 “종료 전에 인증 요청” 설정을 인식하지 못합니다. 이 버전은 묻지 않고 앱을 종료하며, 설정을 저장하면 이 설정이 사라집니다.";
 "problems.hide.hint" = "macOS는 전체 화면 창이 있는 앱이나 다른 Space에 있는 앱을 숨기지 않습니다. 전체 화면을 종료하거나 Space를 전환한 뒤 다시 시도하세요.";
+"item.launch.profile.toggle" = "브라우저 프로필에서 열기";
+"item.launch.profile.hint" = "브라우저가 실행 중이 아닐 때 직접 항목을 열면 이 프로필에서 웹사이트를 엽니다. Chrome, Edge, Brave: chrome://version의 “Profile Path” 끝에 있는 폴더 이름(예: Default 또는 Profile 1)입니다. Firefox: about:profiles에 표시된 프로필 이름입니다.";
+"item.launch.profile.invalid" = "브라우저에 표시되는 대로 이름을 입력하세요. 최대 64자이며, 줄 바꿈이나 보이지 않는 문자를 포함할 수 없고, 시작에 “-” 또는 공백을 쓸 수 없으며, 끝에 공백을 쓸 수 없고, “..”를 포함할 수 없으며, / \\ ~ $ ` ; | & > < * ? \" ' = : 문자를 사용할 수 없습니다.";
+"item.launch.profile.review" = "이 브라우저 프로필은 백업에서 가져왔거나 저장된 그대로는 사용할 수 없습니다. 확인하고 켜기 전까지 이 항목은 열리지 않습니다.";
+"item.launch.profile.turnOn" = "켜기";
+"item.launch.profile.row.review" = "브라우저 프로필 검토 필요: 켜기 전까지 이 항목은 열리지 않습니다.";
+"item.launch.profile.row.running" = "%@이(가) 실행 중입니다: 종료한 후에만 이 항목이 열립니다.";
+"item.launch.profile.confirm.title" = "프로필 “%3$@”(으)로 %2$@에서 “%1$@”을(를) 열까요?";

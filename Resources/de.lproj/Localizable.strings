@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "„Vor dem Beenden von Apps nach Authentifizierung fragen“ bleibt eingeschaltet: Die Authentifizierung wurde abgebrochen oder ist fehlgeschlagen.";
 "core.quitAuthentication.olderVersion.unknown" = "Version %@ kennt „Vor dem Beenden von Apps nach Authentifizierung fragen“ nicht: Sie beendet Apps ohne Nachfrage, und die Einstellung geht verloren, sobald sie Ihre Einstellungen speichert.";
 "problems.hide.hint" = "macOS blendet eine App nicht aus, wenn sie ein Vollbildfenster hat oder sich in einem anderen Space befindet. Beende den Vollbildmodus oder wechsle den Space und versuche es dann erneut.";
+"item.launch.profile.toggle" = "In Browser-Profil öffnen";
+"item.launch.profile.hint" = "Öffnet die Website in diesem Profil, wenn du sie selbst öffnest und der Browser nicht läuft. Chrome, Edge, Brave: der Ordnername am Ende von „Profilpfad“ in chrome://version, zum Beispiel Default oder Profile 1. Firefox: der Name des Profils in about:profiles.";
+"item.launch.profile.invalid" = "Gib den Namen so ein, wie der Browser ihn anzeigt: bis zu 64 Zeichen, keine Zeilenumbrüche oder unsichtbaren Zeichen, kein „-“ oder Leerzeichen am Anfang, kein Leerzeichen am Ende, kein „..“ und keines der Zeichen / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Dieses Browserprofil stammt aus einer Sicherung oder kann nicht so verwendet werden, wie es gespeichert wurde. Das Element wird erst geöffnet, wenn du es prüfst und einschaltest.";
+"item.launch.profile.turnOn" = "Einschalten";
+"item.launch.profile.row.review" = "Browserprofil muss geprüft werden: Das Element wird erst geöffnet, wenn du es einschaltest.";
+"item.launch.profile.row.running" = "%@ läuft: Das Element wird erst geöffnet, nachdem du den Browser beendet hast.";
+"item.launch.profile.confirm.title" = "„%1$@“ in %2$@ mit dem Profil „%3$@“ öffnen?";

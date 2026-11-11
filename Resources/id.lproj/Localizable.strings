@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Minta autentikasi sebelum menutup aplikasi” tetap aktif: autentikasi dibatalkan atau gagal.";
 "core.quitAuthentication.olderVersion.unknown" = "Versi %@ tidak mengenal “Minta autentikasi sebelum menutup aplikasi”: versi ini keluar dari aplikasi tanpa bertanya, dan pengaturan tersebut hilang setelah pengaturan Anda disimpan.";
 "problems.hide.hint" = "macOS tidak akan menyembunyikan aplikasi yang memiliki jendela layar penuh, atau yang berada di Space lain. Keluar dari layar penuh atau pindah Space, lalu coba lagi.";
+"item.launch.profile.toggle" = "Buka di Profil Browser";
+"item.launch.profile.hint" = "Membuka situs web di profil ini saat Anda membukanya sendiri dan browser tidak sedang berjalan. Chrome, Edge, Brave: nama folder di akhir “Profile Path” di chrome://version, seperti Default atau Profile 1. Firefox: nama profil di about:profiles.";
+"item.launch.profile.invalid" = "Ketik nama seperti yang ditampilkan browser: hingga 64 karakter, tanpa baris baru atau karakter tak terlihat, tanpa “-” atau spasi di awal, tanpa spasi di akhir, tanpa “..”, dan tanpa karakter / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Profil browser ini berasal dari cadangan atau tidak dapat digunakan seperti saat disimpan, sehingga item tidak akan terbuka sampai Anda memeriksanya dan mengaktifkannya.";
+"item.launch.profile.turnOn" = "Aktifkan";
+"item.launch.profile.row.review" = "Profil browser perlu ditinjau: item tidak akan terbuka sampai Anda mengaktifkannya.";
+"item.launch.profile.row.running" = "%@ sedang berjalan: item hanya akan terbuka setelah Anda menutupnya.";
+"item.launch.profile.confirm.title" = "Buka “%1$@” di %2$@ dengan profil “%3$@”?";
