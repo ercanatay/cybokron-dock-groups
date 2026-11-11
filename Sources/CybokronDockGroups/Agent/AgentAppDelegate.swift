@@ -336,13 +336,13 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
     private func open(_ app: AppReference, in group: DockGroup) {
         let restoresWindows = preferences?.preferences.restoresWindowsOfRunningApps ?? PopupPreferences().restoresWindowsOfRunningApps
         Task { @MainActor in
-            LaunchReportPresenter.presentProblems(in: await launcher.open(app, inGroup: group, restoringWindows: restoresWindows))
+            LaunchReportPresenter.presentProblems(in: await launcher.open(app, inGroup: group, restoringWindows: restoresWindows, source: .standaloneAgent))
         }
     }
 
     private func openAll(_ group: DockGroup) {
         Task { @MainActor in
-            LaunchReportPresenter.presentProblems(in: await launcher.openAll(group))
+            LaunchReportPresenter.presentProblems(in: await launcher.openAll(group, source: .standaloneAgent))
         }
     }
 

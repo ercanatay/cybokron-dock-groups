@@ -45,7 +45,8 @@ extension ApplicationWorkspace {
 /// `ApplicationWorkspace` backed by `NSWorkspace` and `NSRunningApplication`.
 @MainActor
 public final class SystemApplicationWorkspace: ApplicationWorkspace {
-    private let workspace: NSWorkspace
+    /// Also used by the launch action runner to start a browser.
+    let workspace: NSWorkspace
     private lazy var restorer = WindowRestorer()
 
     public init(workspace: NSWorkspace = .shared) {

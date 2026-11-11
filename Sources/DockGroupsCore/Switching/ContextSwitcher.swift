@@ -112,7 +112,7 @@ public final class ContextSwitcher {
             var report = TransitionReport(outcome: .done, plan: plan, wasAsked: asked)
             report.hidden = await terminator.hideSettled(plan.hide.map(\.app))
             report.quit = terminator.quit(plan.quit.map(\.app))
-            report.launch = await launcher.openAll(group)
+            report.launch = await launcher.openAll(group, source: LaunchSource(trigger))
             session.didStart(id, at: clock(), by: trigger)
             logger.notice("Started group \(id, privacy: .public) (\(trigger.rawValue, privacy: .public)): \(report.hidden.done.count) hidden, \(report.quit.done.count) asked to quit, \(plan.kept.count) left alone")
             return report

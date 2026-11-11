@@ -265,11 +265,14 @@ struct LaunchActionArgumentPlanTests {
         }
     }
 
-    @Test func noLauncherOrAppFileBuildsAPlan() throws {
+    @Test func onlyTheLauncherAndRunnerUseAPlanAndNoAppFile() throws {
         let using = try LaunchActionExecutionScanTests.swiftFiles()
             .filter { $0.text.contains("LaunchActionArgumentPlan") }
             .map(\.path)
-        #expect(Set(using) == Set(Self.planFiles))
+        #expect(Set(using) == Set(Self.planFiles + [
+            LaunchActionExecutionScanTests.runnerFile,
+            "DockGroupsCore/Launching/GroupLauncher.swift",
+        ]))
     }
 }
 

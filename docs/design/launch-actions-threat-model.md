@@ -2,7 +2,9 @@
 
 - **Status:** design and threat model. Option A's core slice (§10 slice 2: model, strict decoder,
   validator; nothing executed) is in [launch-action-core-slice.md](launch-action-core-slice.md).
-  No release decision, no spike run; nothing opens an item with a launch action yet.
+  The launcher part of slice 3 is in [launch-action-runner-slice.md](launch-action-runner-slice.md):
+  an enabled action now opens its website through `LaunchActionRunner`, only for the user's own
+  click and only while the browser isn't running. No release decision; no UI to set an action.
 - **Baseline:** `main` at `10233ff`. File references are `path:line` at that commit, relative to
   `Sources/` unless they start with `Tests/`, `docs/` or a root file.
 - **Builds on:** [context-switching-spec.md](context-switching-spec.md) (E phase 1: delay and Open
@@ -320,9 +322,12 @@ running app.
    arguments parameter), delayed re-check, report texts, log privacy (T6–T8 partial, T9).
    **Computing part done** ([launch-action-argv-slice.md](launch-action-argv-slice.md)): the
    argument plan (per-template bundle-ID set, argv per browser, URL policy, grammar re-checked,
-   no environment) and a hidden `CYBOKRON_LAUNCH_PROBE=1` dry run. Nothing passes a plan to the
-   workspace yet; the launcher part (rules 1 and 5 of §6 at launch time) is still open and waits
-   for the slice 1 spike.
+   no environment) and a hidden `CYBOKRON_LAUNCH_PROBE=1` dry run. **Launcher part done**
+   ([launch-action-runner-slice.md](launch-action-runner-slice.md)): `LaunchActionRunner` passes the
+   plan via `OpenConfiguration.arguments` with an empty environment and refuses a running browser
+   (T6); rules 1, 5 and 9 of §6 at launch time; D5 (not opened at all) and D6 (user-present only,
+   `LaunchSource`); delayed re-check of the action; fixed log codes. A minimal real-machine check of
+   the running/not-running behaviour for Chrome and Firefox is recorded there.
 4. **Editor + caption + import gating** (M): picker, preview, disabled-on-import, restore summary,
    localization keys (T11).
 5. **Agent support for A** (S–M) and the downgrade round trip (manual).
@@ -341,9 +346,13 @@ statement below is still true of what the app does. Each row says which slice ma
   scripts" once A lands. Until then they are correct and **this document does not override them.**
   — *Core slice: unchanged on purpose (launch options still have no arguments; the stored action
   is not a launch option and isn't executed). Due with slice 3 (launcher integration).*
+  *Runner slice: still unchanged — launch options themselves take no arguments; the executed
+  action is a separate template field, documented in
+  [launch-action-runner-slice.md](launch-action-runner-slice.md). To be reworded with slice 4,
+  when the editor makes actions visible.*
 - `SECURITY.md` "Scope": one sentence on launch templates (and, only if B ships, on approved
-  arguments being able to make an app run code). — *Due with slice 3, when a template first
-  passes arguments to a browser.*
+  arguments being able to make an app run code). — *Done with the runner slice (one sentence in
+  "Scope"; README "Opening" has the matching sentence).*
 - `09_YOL_HARITASI.md` item 5: scope narrowed to "templates first; terminal commands/scripts not
   planned". — *Can be done now (outside this repository); the core slice implements templates only.*
 - `06_GUVENLIK.md`: add rule "launch actions are templates; imported ones come in disabled".

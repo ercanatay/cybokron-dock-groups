@@ -120,11 +120,13 @@ public final class DelayedLaunches {
         guard let command = commands[commandID], command.waiting[delay] != nil else { return }
         command.waiting[delay] = nil
         command.waitingItemCount -= batch.count
-        // The items as they are now: still in the group, with the same launch options.
+        // The items as they are now: still in the group, with the same launch options and the
+        // same launch action (or none), so one changed while waiting isn't opened with the old one.
         if let current = group(command.groupID) {
             let unchanged = batch.filter { scheduled in
                 current.apps.contains {
                     $0.normalizedBundleIdentifier == scheduled.normalizedBundleIdentifier && $0.kind == scheduled.kind && $0.launch == scheduled.launch
+                        && $0.launchActionSetting == scheduled.launchActionSetting
                 }
             }
             if unchanged.count < batch.count {

@@ -58,7 +58,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return try await self.switcher.finish(id, trigger: trigger, showsPrevious: showsPrevious)
         },
         // The app delegate lives as long as the app.
-        openAll: { [unowned self] group in await self.launcher.openAll(group) },
+        openAll: { [unowned self] group in await self.launcher.openAll(group, source: .trigger) },
         showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) }
     ))
     /// The templates (`templates.json`), read when the group window or Settings first needs them,
@@ -153,7 +153,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             capture: capture,
             triggers: triggers,
             actions: MainWindowView.Actions(
-                openAll: { [weak self] group in self?.openAll(group) },
+                openAll: { [weak self] group in self?.openAll(group, source: .userAction) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
                 showPopup: { [weak self] group in self?.popupController.show(groupID: group.id) },
                 start: { [weak self] group in self?.start(group) },
@@ -208,7 +208,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         session: session,
         actions: PopupPanelController.Actions(
             open: { [weak self] app, group in self?.open(app, in: group) },
-            openAll: { [weak self] group in self?.openAll(group) },
+            openAll: { [weak self] group in self?.openAll(group, source: .userAction) },
             closeAll: { [weak self] group, mode in self?.closeAllFromClick(group, mode: mode) },
             hideAll: { [weak self] group in self?.hideAll(group) },
             manageGroups: { [weak self] in self?.mainWindowController.show() },
@@ -273,7 +273,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     guard let self else { return }
                     self.popupController.toggle(groupID: group.id, source: self.menuBarSource)
                 },
-                openAll: { [weak self] group in self?.openAll(group) },
+                openAll: { [weak self] group in self?.openAll(group, source: .userAction) },
                 hideAll: { [weak self] group in self?.hideAll(group) },
                 start: { [weak self] group in self?.start(group) },
                 finish: { [weak self] group in self?.finish(group) },
@@ -441,15 +441,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             AccessibilityAccess.promptOnceForRestoringWindows(of: app)
         }
         Task { @MainActor in
-            let report = await launcher.open(app, inGroup: group, restoringWindows: restoresWindows)
+            let report = await launcher.open(app, inGroup: group, restoringWindows: restoresWindows, source: .userAction)
             LaunchReportPresenter.presentProblems(in: report)
         }
     }
 
-    private func openAll(_ group: DockGroup) {
+    /// Opens the group's items; `source` says who asked (`LaunchSource`).
+    private func openAll(_ group: DockGroup, source: LaunchSource) {
         Task { @MainActor in
-            LaunchReportPresenter.presentProblems(in: await launchAll(group))
+            LaunchReportPresenter.presentProblems(in: await launchAll(group, source: source))
         }
+    }
+
+    private func launchAll(_ group: DockGroup, source: LaunchSource) async -> LaunchReport {
+        triggers.noteRequest()
+        return await launcher.openAll(group, source: source)
     }
 
     /// Quits the group's running apps, asking first when a link asked (`QuitRequestSource`). While
@@ -595,7 +601,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .showPopup:
             popupController.toggle(groupID: id)
         case .openAll:
-            openAll(group)
+            openAll(group, source: .keyboardShortcut)
         case .startOrFinish:
             switch ShortcutTransition.forGroup(id, in: session, at: Date()) {
             case .start:
@@ -723,7 +729,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .showGroup(let name):
             if let group = group(named: name) { popupController.show(groupID: group.id) }
         case .launchGroup(let name):
-            if let group = group(named: name) { openAll(group) }
+            if let group = group(named: name) { openAll(group, source: .link) }
         case .quitGroup(let name, let mode):
             guard let group = group(named: name) else { return }
             switch closeAll(group, mode: mode, from: .link) {
@@ -811,8 +817,7 @@ extension AppDelegate: GroupIntentHandling {
     }
 
     func launchAll(_ group: DockGroup) async -> LaunchReport {
-        triggers.noteRequest()
-        return await launcher.openAll(group)
+        await launchAll(group, source: .intent)
     }
 
     /// Siri and Shortcuts ask in their own way (`QuitGroupIntent`), not with the app's alert.
@@ -880,7 +885,7 @@ extension AppDelegate: FocusRequestHandling {
     }
 
     func openAllItems(of group: DockGroup) async {
-        LaunchReportPresenter.presentProblems(in: await launchAll(group))
+        LaunchReportPresenter.presentProblems(in: await launchAll(group, source: .focus))
     }
 
     func showPopup(of group: DockGroup) {

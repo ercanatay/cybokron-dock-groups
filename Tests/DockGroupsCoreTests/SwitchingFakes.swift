@@ -158,6 +158,10 @@ final class SwitchingWorkspace: ApplicationWorkspace {
 
     func activateRunningApplication(bundleIdentifier: String) -> Bool { false }
 
+    func recordStart(of bundleIdentifier: String) {
+        log.record("start:\(bundleIdentifier)")
+    }
+
     func locateApplication(_ app: AppReference) -> URL? {
         URL(fileURLWithPath: "/Applications/\(app.bundleIdentifier).app")
     }
@@ -181,6 +185,24 @@ final class SwitchingWorkspace: ApplicationWorkspace {
     }
 
     func revealFileItems(_ urls: [URL]) {}
+}
+
+/// Launch actions: every browser is installed and none runs; a start is logged as
+/// "start:<bundle identifier>".
+extension SwitchingWorkspace: LaunchActionWorkspace {
+    func isApplicationRunning(bundleIdentifier: String) -> Bool { false }
+
+    func applicationLocation(bundleIdentifier: String) -> URL? {
+        URL(fileURLWithPath: "/Applications/\(bundleIdentifier).app")
+    }
+
+    func bundleIdentifier(ofApplicationAt url: URL) -> String? {
+        url.deletingPathExtension().lastPathComponent
+    }
+
+    func startApplication(at applicationURL: URL, opening urls: [URL], configuration: NSWorkspace.OpenConfiguration) async throws {
+        recordStart(of: applicationURL.deletingPathExtension().lastPathComponent)
+    }
 }
 
 /// Answers a link's transition question with `answer`, recording the questions.

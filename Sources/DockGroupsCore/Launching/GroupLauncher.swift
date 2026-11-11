@@ -34,6 +34,9 @@ public struct LaunchReport: Equatable, Sendable {
     public struct Entry: Equatable, Sendable {
         public let app: AppReference
         public let outcome: Outcome
+        /// Why the item's launch action kept it from opening; `nil` for items without one and for
+        /// those opened with it. Internal: the report shows `outcome`'s existing text.
+        var launchActionRefusal: LaunchActionItemRefusal? = nil
     }
 
     public let groupName: String
@@ -60,6 +63,11 @@ public struct LaunchReport: Equatable, Sendable {
 /// the item isn't opened at all. Open All leaves the items with a launch delay to
 /// `DelayedLaunches`, which opens them later through these same checks; clicking an item opens it
 /// right away.
+///
+/// An item with a launch action (docs/design/launch-action-runner-slice.md) opens only through
+/// `LaunchActionRunner`, and only when the user opened it in the app (`LaunchSource`), its action
+/// is enabled and valid, and its browser is installed and not running. Otherwise it isn't opened at
+/// all — not plainly, not in another browser — and the report says it wasn't opened.
 @MainActor
 public final class GroupLauncher {
     private let workspace: ApplicationWorkspace
@@ -98,7 +106,13 @@ public final class GroupLauncher {
     /// click on its Dock icon (`PopupPreferences.restoresWindowsOfRunningApps`). A website opens in
     /// the default browser, and a file or folder (once checked) with its default app — or with the
     /// app chosen for it. The report has a single entry.
-    public func open(_ app: AppReference, inGroup group: DockGroup, restoringWindows: Bool = false) async -> LaunchReport {
+    /// - Parameter source: Who asked (`LaunchSource`); an item with a launch action opens only for
+    ///   the user's own click.
+    public func open(_ app: AppReference, inGroup group: DockGroup, restoringWindows: Bool = false, source: LaunchSource = .unspecified) async -> LaunchReport {
+        if app.launchActionSetting != nil {
+            let entry = await openWithLaunchAction(app, source: source)
+            return LaunchReport(groupName: group.name, entries: [entry])
+        }
         let outcome: LaunchReport.Outcome
         switch app.kind {
         case .website:
@@ -134,18 +148,20 @@ public final class GroupLauncher {
     ///
     /// Items with a launch delay are left to `pendingLaunches` and reported as `.scheduled`; they
     /// open later, and that is reported through `DelayedLaunches.onFinished`.
-    public func openAll(_ group: DockGroup) async -> LaunchReport {
+    /// - Parameter source: Who asked (`LaunchSource`), for the delayed items too; items with a launch
+    ///   action open only for the user's own click.
+    public func openAll(_ group: DockGroup, source: LaunchSource = .unspecified) async -> LaunchReport {
         let isDelayed = group.apps.map { pendingLaunches != nil && $0.launch.delay > 0 }
         let delayed = zip(group.apps, isDelayed).filter(\.1).map(\.0)
         if let pendingLaunches, !delayed.isEmpty {
             // Scheduled first: the delays count from now.
             pendingLaunches.schedule(delayed, of: group) { [weak self] items, current in
-                await self?.openRightAway(items, inGroup: current, context: "Delayed Open All in group \(current.id)")
+                await self?.openRightAway(items, inGroup: current, context: "Delayed Open All in group \(current.id)", source: source)
                     ?? LaunchReport(groupName: current.name, entries: [])
             }
         }
         let immediate = zip(group.apps, isDelayed).filter { !$0.1 }.map(\.0)
-        var opened = await openRightAway(immediate, inGroup: group, context: "Open All in group \(group.id)").entries.makeIterator()
+        var opened = await openRightAway(immediate, inGroup: group, context: "Open All in group \(group.id)", source: source).entries.makeIterator()
         let entries = zip(group.apps, isDelayed).map { item, isDelayed in
             isDelayed ? LaunchReport.Entry(app: item, outcome: .scheduled(seconds: item.launch.delay)) : (opened.next() ?? LaunchReport.Entry(app: item, outcome: .notFound))
         }
@@ -153,14 +169,21 @@ public final class GroupLauncher {
     }
 
     /// Opens `items` now, as Open All opens the items without a launch delay; the report lists
-    /// them in the order given.
-    func openRightAway(_ items: [GroupItem], inGroup group: DockGroup, context: String) async -> LaunchReport {
+    /// them in the order given. Items with a launch action open last, one at a time, through
+    /// `openWithLaunchAction`.
+    func openRightAway(_ items: [GroupItem], inGroup group: DockGroup, context: String, source: LaunchSource = .unspecified) async -> LaunchReport {
         var outcomes = [LaunchReport.Outcome?](repeating: nil, count: items.count)
         var launches: [(index: Int, url: URL)] = []
         var fileItems: [(index: Int, item: GroupItem)] = []
         var websites: [(index: Int, app: AppReference)] = []
+        var withActions: [(index: Int, item: GroupItem)] = []
+        var actionEntries: [Int: LaunchReport.Entry] = [:]
 
         for (index, app) in items.enumerated() {
+            if app.launchActionSetting != nil {
+                withActions.append((index, app))
+                continue
+            }
             switch app.kind {
             case .website:
                 websites.append((index, app))
@@ -205,9 +228,12 @@ public final class GroupLauncher {
                 outcomes[website.index] = outcome
             }
         }
+        for withAction in withActions {
+            actionEntries[withAction.index] = await openWithLaunchAction(withAction.item, source: source)
+        }
 
-        let entries = zip(items, outcomes).map { app, outcome in
-            LaunchReport.Entry(app: app, outcome: outcome ?? .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened.")))
+        let entries = zip(items, outcomes).enumerated().map { index, pair in
+            actionEntries[index] ?? LaunchReport.Entry(app: pair.0, outcome: pair.1 ?? .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened.")))
         }
         let report = LaunchReport(groupName: group.name, entries: entries)
         for problem in report.problems {
@@ -251,6 +277,42 @@ public final class GroupLauncher {
         }
         await open(withApps, into: &outcomes)
         return outcomes.map { $0 ?? .notFound }
+    }
+
+    /// Opens an item that has a launch action, only through `LaunchActionRunner`: when the user
+    /// asked (`source`), the workspace can start apps with launch actions, a plan can be made (the
+    /// action enabled and valid for the item, its address and browser accepted, the browser
+    /// installed), and the runner starts the browser (it refuses a running one). Anything else opens
+    /// nothing. Only a fixed code is logged, never the profile name, arguments or address.
+    private func openWithLaunchAction(_ item: GroupItem, source: LaunchSource) async -> LaunchReport.Entry {
+        let refusal: LaunchActionItemRefusal
+        if !source.isUserPresent {
+            refusal = .unattendedSource(source)
+        } else if let actions = workspace as? LaunchActionWorkspace {
+            let browser = item.launch.opener?.bundleIdentifier ?? item.launchAction?.preferredBrowserBundleIdentifier ?? ""
+            let planned = LaunchActionArgumentPlan.make(for: item, browserBundleIdentifier: browser) { identifier in
+                actions.applicationLocation(bundleIdentifier: identifier) != nil
+            }
+            switch planned {
+            case .success(let plan):
+                switch await LaunchActionRunner(workspace: actions).run(plan) {
+                case .launched:
+                    logger.notice("Opened a \(String(describing: item.kind), privacy: .public) item with its launch action")
+                    return LaunchReport.Entry(app: item, outcome: .launched)
+                case .refused(let reason):
+                    refusal = .run(reason)
+                }
+            case .failure(let reason):
+                refusal = .plan(reason)
+            case nil:
+                // The item has a setting, so this doesn't happen; it opens nothing all the same.
+                refusal = .plan(.actionNeedsReview)
+            }
+        } else {
+            refusal = .noRunner
+        }
+        logger.error("Not opened, launch action \(refusal.code, privacy: .public): a \(String(describing: item.kind), privacy: .public) item")
+        return LaunchReport.Entry(app: item, outcome: refusal.outcome, launchActionRefusal: refusal)
     }
 
     /// Where the app's bundle is. A location that isn't an app bundle — a crafted groups file can
@@ -363,7 +425,8 @@ public final class GroupLauncher {
     }
 
     private func logProblem(_ outcome: LaunchReport.Outcome, of app: AppReference, context: String) {
-        guard outcome.isProblem else { return }
+        // An item with a launch action was logged by its fixed code, without its address.
+        guard outcome.isProblem, app.launchActionSetting == nil else { return }
         // A file's failure reason may name it, or its location; the log gets its kind only.
         let description: String
         if app.kind.isFileSystemItem, case .failed = outcome {
