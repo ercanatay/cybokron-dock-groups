@@ -65,7 +65,7 @@ struct TriggerAppSourceTests {
         let bridge = String(delegate[start.lowerBound..<end.lowerBound])
         #expect(bridge.contains("self.switcher.start(id, trigger: trigger)"))
         #expect(bridge.contains("self.switcher.finish(id, trigger: trigger, showsPrevious: showsPrevious)"))
-        #expect(bridge.contains("self.launcher.openAll(group)"))
+        #expect(bridge.contains("self.launcher.openAll(group, source: .trigger)"))
         #expect(bridge.contains("popupController.show(groupID: group.id)"))
         for word in ["quit", "Quit", "confirm", "terminate", "forceTerminate", "closeAll"] {
             #expect(!bridge.contains(word), "the automation bridge mentions \(word)")

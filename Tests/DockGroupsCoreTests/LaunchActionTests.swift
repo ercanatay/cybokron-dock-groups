@@ -340,20 +340,28 @@ struct LaunchActionTests {
     }
 }
 
-/// Proof that this slice executes nothing: launch actions appear only in the model, its coding
-/// and the import paths that turn them off — never next to a launcher, a workspace call or a
-/// process. A source scan of this checkout, like `LayoutPlannerSourceScanTests`.
-@Suite("Launch actions: nothing executes them")
+/// Proof that only the runner executes launch actions: they appear only in the model, its coding,
+/// the import paths that turn them off, the plan, the launcher that hands plans to the runner, and
+/// the delayed launches that compare them — and outside the runner never next to a workspace call
+/// or a process. A source scan of this checkout, like `LayoutPlannerSourceScanTests`.
+@Suite("Launch actions: only the runner executes them")
 struct LaunchActionExecutionScanTests {
     static let sources = LocalizationTests.root.appending(path: "Sources", directoryHint: .isDirectory)
 
     /// Words that name the launch action types or the item field.
     static let actionTokens = ["LaunchAction", "launchAction", "BrowserFamily", "BrowserProfileName"]
 
+    /// The one file that starts anything with a launch action (slice 3, launcher part).
+    static let runnerFile = "DockGroupsCore/LaunchActions/LaunchActionRunner.swift"
+
     /// The only files that may mention launch actions: the model and its coding (slice 2), the
     /// argument plan and its dry run, and the CLI line that gates the dry run (slice 3, computing
-    /// part). No launcher, app or CLI executable file.
+    /// part); the runner, the launcher that uses it and the delayed launches that compare actions
+    /// (slice 3, launcher part). No app or CLI executable file.
     static let allowedFiles: Set<String> = [
+        runnerFile,
+        "DockGroupsCore/Launching/GroupLauncher.swift",
+        "DockGroupsCore/Launching/DelayedLaunches.swift",
         "DockGroupsCore/Model/LaunchAction.swift",
         "DockGroupsCore/Model/AppReference.swift",
         "DockGroupsCore/Persistence/SettingsBackup.swift",
@@ -380,16 +388,17 @@ struct LaunchActionExecutionScanTests {
         return files.sorted { $0.0 < $1.0 }
     }
 
-    @Test func onlyTheModelCodingAndImportMentionLaunchActions() throws {
+    @Test func onlyTheModelCodingImportPlanAndLauncherMentionLaunchActions() throws {
         let files = try Self.swiftFiles()
         #expect(files.count > 100, "the scan should see the whole Sources tree")
         let mentioning = Set(files.filter { file in Self.actionTokens.contains { file.text.contains($0) } }.map(\.path))
         #expect(mentioning == Self.allowedFiles)
-        #expect(!mentioning.contains { $0.hasPrefix("CybokronDockGroups/") || $0.contains("/Launching/") || $0.hasPrefix("CybokronDockGroupsCLI/") })
+        #expect(!mentioning.contains { $0.hasPrefix("CybokronDockGroups/") || $0.hasPrefix("CybokronDockGroupsCLI/") })
+        #expect(mentioning.filter { $0.contains("/Launching/") } == ["DockGroupsCore/Launching/GroupLauncher.swift", "DockGroupsCore/Launching/DelayedLaunches.swift"])
     }
 
-    @Test func noLineWithALaunchActionRunsOrOpensAnything() throws {
-        for file in try Self.swiftFiles() where Self.allowedFiles.contains(file.path) {
+    @Test func noLineWithALaunchActionRunsOrOpensAnythingOutsideTheRunner() throws {
+        for file in try Self.swiftFiles() where Self.allowedFiles.contains(file.path) && file.path != Self.runnerFile {
             for line in file.text.split(separator: "\n", omittingEmptySubsequences: false)
             where Self.actionTokens.contains(where: { line.contains($0) }) {
                 for token in Self.executionTokens {
@@ -397,6 +406,31 @@ struct LaunchActionExecutionScanTests {
                 }
             }
         }
+    }
+
+    /// What passing arguments or an environment to a started app looks like.
+    static let argumentTokens = [".arguments", "arguments =", ".environment", "environment =", "createsNewApplicationInstance"]
+
+    @Test func onlyTheRunnerStartsAnAppWithArgumentsAndItsEnvironmentIsEmpty() throws {
+        let files = try Self.swiftFiles()
+        // Files that configure a LaunchServices start: none but the runner passes arguments or an
+        // environment (`Process` arguments for fixed tools are another API and don't mention it).
+        for file in files where file.text.contains("OpenConfiguration") && file.path != Self.runnerFile {
+            for token in Self.argumentTokens {
+                #expect(!file.text.contains(token), "\(file.path) mentions \(token)")
+            }
+        }
+        let runner = try #require(files.first { $0.path == Self.runnerFile })
+        let environmentLines = runner.text.split(separator: "\n").filter { $0.contains("environment") && !$0.trimmingCharacters(in: .whitespaces).hasPrefix("//") }
+        #expect(environmentLines.map { $0.trimmingCharacters(in: .whitespaces) } == ["configuration.environment = [:]"])
+        #expect(runner.text.contains("configuration.arguments = plan.arguments"))
+        #expect(runner.text.contains("configuration.createsNewApplicationInstance = false"))
+        for token in ["Process(", "Process.", "posix_spawn", "execv", "system(", "NSTask", "executableURL", "NSAppleScript",
+                      "OSAScript", "/bin/sh", "/bin/zsh", "openApplication", "FileManager", "Library/Application Support"] {
+            #expect(!runner.text.contains(token), "the runner mentions \(token)")
+        }
+        // The only start with arguments: one `open(_:withApplicationAt:configuration:)` call.
+        #expect(runner.text.components(separatedBy: "workspace.open(").count == 2)
     }
 
     @Test func theModelFileRunsAndOpensNothing() throws {
