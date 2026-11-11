@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-12
+
 ### Added
 
-- A website item can open in a browser profile: Edit Details… → Open in Browser Profile, then Chrome, Edge, Brave or Firefox (browsers that aren't on this Mac can't be chosen) and the profile's name, with a hint where each browser shows it. A name that can't be used is explained and can't be saved. The app shows the browser, the profile and the full address and asks before it turns the profile on. A browser profile from a backup stays off, and its item isn't opened, until you check it and turn it on; the row says so. The row shows “Chrome · Work” and, while that browser is running, that the item opens only after you quit it. The new texts are in English only for now.
+- A website in a group can open in a chosen browser profile: Edit Details… → Open in Browser Profile, then Chrome, Edge, Brave or Firefox (browsers that aren't on this Mac can't be chosen) and the profile's name, with a hint where each browser shows it. A name that can't be used is explained and can't be saved. Before the profile is turned on, the app asks, showing the browser, the profile and the full address. The row shows “Chrome · Work” and, while that browser is running, that the item opens only after you quit it. The texts are translated into every language.
+- A website with a browser profile opens only when you open it yourself in the app and the browser isn't running. If the browser is running, nothing opens, because a running browser ignores profile arguments and the page would land in the wrong profile. A request from a link, the command line, Siri, Shortcuts, a Focus, a trigger, a group's keyboard shortcut or a standalone group's own app doesn't open it either.
+- Browser profiles that arrive with a backup, and ones that can't be read as saved, stay off, and their item isn't opened, until you check them and turn them on; the row says so, and they stay off after a restart too.
 
 ## [0.17.3] - 2026-11-10
 
@@ -634,7 +638,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.3...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.0...HEAD
+[0.18.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.3...v0.18.0
 [0.17.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.16.1...v0.17.1
