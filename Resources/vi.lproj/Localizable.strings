@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Yêu cầu xác thực trước khi thoát ứng dụng” vẫn bật: xác thực đã bị hủy hoặc không thành công.";
 "core.quitAuthentication.olderVersion.unknown" = "Phiên bản %@ không hỗ trợ “Yêu cầu xác thực trước khi thoát ứng dụng”: phiên bản này thoát ứng dụng mà không hỏi, và cài đặt sẽ bị mất sau khi lưu cài đặt của bạn.";
 "problems.hide.hint" = "macOS không ẩn ứng dụng có cửa sổ toàn màn hình hoặc ứng dụng nằm trong Space khác. Thoát chế độ toàn màn hình hoặc chuyển sang Space khác, rồi thử lại.";
+"item.launch.profile.toggle" = "Mở trong hồ sơ trình duyệt";
+"item.launch.profile.hint" = "Mở trang web trong hồ sơ này khi bạn tự mở mục và trình duyệt chưa chạy. Chrome, Edge, Brave: tên thư mục ở cuối “Profile Path” trong chrome://version, chẳng hạn Default hoặc Profile 1. Firefox: tên hồ sơ trong about:profiles.";
+"item.launch.profile.invalid" = "Nhập tên như trình duyệt hiển thị: tối đa 64 ký tự, không có ngắt dòng hoặc ký tự vô hình, không bắt đầu bằng “-” hoặc khoảng trắng, không kết thúc bằng khoảng trắng, không có “..”, và không chứa / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Hồ sơ trình duyệt này được nhập cùng bản sao lưu hoặc không thể dùng như đã lưu, nên mục sẽ không mở cho đến khi bạn kiểm tra và bật lại.";
+"item.launch.profile.turnOn" = "Bật";
+"item.launch.profile.row.review" = "Hồ sơ trình duyệt cần kiểm tra: mục sẽ không mở cho đến khi bạn bật lại.";
+"item.launch.profile.row.running" = "%@ đang chạy: mục chỉ mở sau khi bạn thoát ứng dụng này.";
+"item.launch.profile.confirm.title" = "Mở “%1$@” trong %2$@ với hồ sơ “%3$@”?";

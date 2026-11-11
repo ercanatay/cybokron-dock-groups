@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Be om autentisering innan appar avslutas” förblir på: autentiseringen avbröts eller misslyckades.";
 "core.quitAuthentication.olderVersion.unknown" = "Version %@ känner inte till “Be om autentisering innan appar avslutas”: den avslutar appar utan att fråga, och inställningen går förlorad när den sparar dina inställningar.";
 "problems.hide.hint" = "macOS döljer inte en app som har ett fönster i helskärm, eller en som finns i ett annat Space. Avsluta helskärm eller byt Space och försök igen.";
+"item.launch.profile.toggle" = "Öppna i webbläsarprofil";
+"item.launch.profile.hint" = "Öppnar webbplatsen i den här profilen när du öppnar den själv och webbläsaren inte körs. Chrome, Edge, Brave: mappnamnet i slutet av “Profile Path” på chrome://version, till exempel Default eller Profile 1. Firefox: profilens namn på about:profiles.";
+"item.launch.profile.invalid" = "Skriv namnet så som webbläsaren visar det: högst 64 tecken, inga radbrytningar eller osynliga tecken, inget “-” eller mellanslag i början, inget mellanslag i slutet, inget “..”, och inget av / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Den här webbläsarprofilen kom med en säkerhetskopia eller kan inte användas så som den sparades, så objektet öppnas inte förrän du kontrollerar den och slår på den.";
+"item.launch.profile.turnOn" = "Slå på";
+"item.launch.profile.row.review" = "Webbläsarprofilen behöver granskas: objektet öppnas inte förrän du slår på den.";
+"item.launch.profile.row.running" = "%@ körs: objektet öppnas först när du avslutar den.";
+"item.launch.profile.confirm.title" = "Öppna “%1$@” i %2$@ med profilen “%3$@”?";

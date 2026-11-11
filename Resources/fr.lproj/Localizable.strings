@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "«Demander une authentification avant de quitter les apps» reste activé : l'authentification a été annulée ou a échoué.";
 "core.quitAuthentication.olderVersion.unknown" = "La version %@ ne connaît pas «Demander une authentification avant de quitter les apps» : elle quitte les apps sans demander, et ce réglage est perdu dès qu'elle enregistre vos réglages.";
 "problems.hide.hint" = "macOS ne masque pas une app qui a une fenêtre en plein écran, ni une app qui se trouve dans un autre Space. Quittez le plein écran ou changez de Space, puis réessayez.";
+"item.launch.profile.toggle" = "Ouvrir dans le profil du navigateur";
+"item.launch.profile.hint" = "Ouvre le site web dans ce profil lorsque vous l'ouvrez vous-même et que le navigateur n'est pas en cours d'exécution. Chrome, Edge, Brave : le nom du dossier à la fin de « Profile Path » dans chrome://version, comme Default ou Profile 1. Firefox : le nom du profil dans about:profiles.";
+"item.launch.profile.invalid" = "Saisissez le nom tel qu'il est affiché par le navigateur : 64 caractères maximum, aucun saut de ligne ni caractère invisible, pas de « - » ni d'espace au début, pas d'espace à la fin, pas de « .. », et aucun de ces caractères : / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Ce profil de navigateur a été importé avec une sauvegarde ou ne peut pas être utilisé tel qu'il a été enregistré. L'élément ne s'ouvrira pas tant que vous ne l'aurez pas vérifié et activé.";
+"item.launch.profile.turnOn" = "Activer";
+"item.launch.profile.row.review" = "Profil de navigateur à vérifier : l'élément ne s'ouvrira pas tant que vous ne l'aurez pas activé.";
+"item.launch.profile.row.running" = "%@ est en cours d'exécution : l'élément ne s'ouvrira qu'après que vous l'aurez fermé.";
+"item.launch.profile.confirm.title" = "Ouvrir « %1$@ » dans %2$@ avec le profil « %3$@ » ?";

@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "A “Hitelesítés kérése alkalmazások bezárása előtt” beállítás bekapcsolva marad: a hitelesítést megszakították vagy nem sikerült.";
 "core.quitAuthentication.olderVersion.unknown" = "A(z) %@ verzió nem ismeri a “Hitelesítés kérése alkalmazások bezárása előtt” beállítást: kérdezés nélkül bezárja az alkalmazásokat, és a beállítás elvész, amint elmenti a beállításokat.";
 "problems.hide.hint" = "A macOS nem rejti el azt az alkalmazást, amelynek teljes képernyős ablaka van, vagy amely másik Space-en fut. Lépj ki a teljes képernyőből, vagy válts Space-t, majd próbáld újra.";
+"item.launch.profile.toggle" = "Megnyitás böngészőprofilban";
+"item.launch.profile.hint" = "Akkor nyitja meg a webhelyet ebben a profilban, ha Ön maga nyitja meg, és a böngésző nem fut. Chrome, Edge, Brave: a „Profile Path” sor végén lévő mappanév a chrome://version oldalon, például Default vagy Profile 1. Firefox: a profil neve az about:profiles oldalon.";
+"item.launch.profile.invalid" = "Írja be a nevet úgy, ahogy a böngésző megjeleníti: legfeljebb 64 karakter, nincs sortörés vagy láthatatlan karakter, nem kezdődhet „-” jellel vagy szóközzel, nem végződhet szóközzel, nem tartalmazhat „..” sorozatot, és nem tartalmazhatja a következő karakterek egyikét sem: / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Ez a böngészőprofil biztonsági mentésből érkezett, vagy a mentett állapotában nem használható, ezért az elem nem nyílik meg, amíg át nem ellenőrzi és be nem kapcsolja.";
+"item.launch.profile.turnOn" = "Bekapcsolás";
+"item.launch.profile.row.review" = "A böngészőprofilt át kell nézni: az elem nem nyílik meg, amíg be nem kapcsolja.";
+"item.launch.profile.row.running" = "A(z) %@ fut: az elem csak akkor nyílik meg, ha kilép belőle.";
+"item.launch.profile.confirm.title" = "Megnyitja a(z) „%1$@” elemet a(z) %2$@ böngészőben a(z) „%3$@” profillal?";

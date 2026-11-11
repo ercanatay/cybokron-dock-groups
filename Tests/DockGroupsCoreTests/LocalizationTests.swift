@@ -35,10 +35,7 @@ struct LocalizationTests {
     /// translations may lack these keys (the lookup then shows the English text) but not have others,
     /// and the keys they do have keep the English placeholders. Add a prefix here when new
     /// untranslated keys are added, and remove it once every language has its keys.
-    static let awaitingTranslation: [String] = [
-        // A website's browser profile (launch-action-ui-slice.md).
-        "item.launch.profile.",
-    ]
+    static let awaitingTranslation: [String] = []
 
     static func isAwaitingTranslation(_ key: String) -> Bool {
         awaitingTranslation.contains { key.hasPrefix($0) }

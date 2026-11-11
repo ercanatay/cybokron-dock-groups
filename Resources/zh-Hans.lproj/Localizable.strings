@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“退出应用前要求验证身份”保持开启：身份验证已取消或失败。";
 "core.quitAuthentication.olderVersion.unknown" = "版本 %@ 不支持“退出应用前要求验证身份”：它会直接退出应用而不询问，保存设置后该选项会丢失。";
 "problems.hide.hint" = "macOS 不会隐藏处于全屏窗口或位于其他 Space 中的应用。请退出全屏或切换 Space，然后重试。";
+"item.launch.profile.toggle" = "在浏览器配置文件中打开";
+"item.launch.profile.hint" = "当你自己打开该项目且浏览器未运行时，会在此配置文件中打开网站。Chrome、Edge、Brave：请使用 chrome://version 中“配置文件路径”末尾的文件夹名称，例如 Default 或 Profile 1。Firefox：请使用 about:profiles 中该配置文件的名称。";
+"item.launch.profile.invalid" = "请按浏览器显示的名称输入：最多 64 个字符，不能包含换行符或不可见字符，开头不能是“-”或空格，结尾不能是空格，不能包含“..”，也不能包含以下字符：/ \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "此浏览器配置文件来自备份，或无法按保存时的原样使用，因此在你检查并开启之前，该项目不会打开。";
+"item.launch.profile.turnOn" = "开启";
+"item.launch.profile.row.review" = "浏览器配置文件需要检查：在你开启之前，该项目不会打开。";
+"item.launch.profile.row.running" = "%@ 正在运行：只有在你退出它之后，该项目才会打开。";
+"item.launch.profile.confirm.title" = "要在 %2$@ 中使用配置文件“%3$@”打开“%1$@”吗？";

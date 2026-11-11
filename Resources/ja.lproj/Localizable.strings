@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "認証がキャンセルされたか失敗したため、“アプリを終了する前に認証を求める”はオンのままです。";
 "core.quitAuthentication.olderVersion.unknown" = "バージョン %@ は“アプリを終了する前に認証を求める”に対応していません。このバージョンでは確認なしにアプリが終了し、設定を保存すると、この設定は失われます。";
 "problems.hide.hint" = "macOSでは、フルスクリーンのウインドウがあるアプリや、別のSpaceにあるアプリは非表示にできません。フルスクリーンを終了するか、Spaceを切り替えてから、もう一度お試しください。";
+"item.launch.profile.toggle" = "ブラウザプロファイルで開く";
+"item.launch.profile.hint" = "ブラウザが起動していない状態で、ご自身でこの項目を開いたときに、このプロファイルでウェブサイトを開きます。Chrome、Edge、Brave：chrome://version の「Profile Path」末尾にあるフォルダー名（Default、Profile 1 など）。Firefox：about:profiles に表示されるプロファイル名。";
+"item.launch.profile.invalid" = "ブラウザに表示されるとおりに名前を入力してください。64文字以内、改行や不可視文字は使用不可、先頭に「-」や空白は不可、末尾に空白は不可、「..」は不可、次の文字は使用不可：/ \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "このブラウザプロファイルはバックアップから読み込まれたか、保存された状態のままでは使用できないため、確認して有効にするまで項目は開きません。";
+"item.launch.profile.turnOn" = "オンにする";
+"item.launch.profile.row.review" = "ブラウザプロファイルの確認が必要です：オンにするまで項目は開きません。";
+"item.launch.profile.row.running" = "%@ が実行中です：終了後にのみ項目が開きます。";
+"item.launch.profile.confirm.title" = "“%1$@” を、プロファイル “%3$@” の %2$@ で開きますか？";

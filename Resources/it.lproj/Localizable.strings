@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Chiedi l'autenticazione prima di uscire dalle app” resta attivo: l'autenticazione è stata annullata o non è riuscita.";
 "core.quitAuthentication.olderVersion.unknown" = "La versione %@ non supporta “Chiedi l'autenticazione prima di uscire dalle app”: chiude le app senza chiedere, e l'impostazione va persa al salvataggio delle tue preferenze.";
 "problems.hide.hint" = "macOS non nasconde un'app che ha una finestra a schermo intero o che si trova in un altro Space. Esci dalla modalità schermo intero o passa a un altro Space, poi riprova.";
+"item.launch.profile.toggle" = "Apri nel profilo del browser";
+"item.launch.profile.hint" = "Apre il sito web in questo profilo quando lo apri tu stesso e il browser non è in esecuzione. Chrome, Edge, Brave: il nome della cartella alla fine di “Profile Path” in chrome://version, ad esempio Default o Profile 1. Firefox: il nome del profilo in about:profiles.";
+"item.launch.profile.invalid" = "Digita il nome come lo mostra il browser: massimo 64 caratteri, nessun a capo o carattere invisibile, nessun “-” o spazio all'inizio, nessuno spazio alla fine, nessun “..”, e nessuno di / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Questo profilo del browser è arrivato con un backup o non può essere usato come era stato salvato, quindi l'elemento non si aprirà finché non lo controlli e non lo attivi.";
+"item.launch.profile.turnOn" = "Attiva";
+"item.launch.profile.row.review" = "Profilo del browser da controllare: l'elemento non si aprirà finché non lo attivi.";
+"item.launch.profile.row.running" = "%@ è in esecuzione: l'elemento si apre solo dopo che lo chiudi.";
+"item.launch.profile.confirm.title" = "Aprire “%1$@” in %2$@ con il profilo “%3$@”?";

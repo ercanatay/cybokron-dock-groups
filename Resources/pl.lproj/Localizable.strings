@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "Opcja „Pytaj o uwierzytelnienie przed zamykaniem aplikacji” pozostaje włączona: uwierzytelnianie zostało anulowane lub nie powiodło się.";
 "core.quitAuthentication.olderVersion.unknown" = "Wersja %@ nie obsługuje opcji „Pytaj o uwierzytelnienie przed zamykaniem aplikacji”: zamyka aplikacje bez pytania, a ustawienie zostanie utracone po zapisaniu ustawień.";
 "problems.hide.hint" = "macOS nie ukrywa aplikacji, która ma okno w trybie pełnoekranowym lub znajduje się w innym Space. Wyjdź z trybu pełnoekranowego lub przełącz Space, a następnie spróbuj ponownie.";
+"item.launch.profile.toggle" = "Otwórz w profilu przeglądarki";
+"item.launch.profile.hint" = "Otwiera witrynę w tym profilu, gdy sam ją otworzysz i przeglądarka nie jest uruchomiona. Chrome, Edge, Brave: nazwa folderu na końcu „Profile Path” w chrome://version, np. Default lub Profile 1. Firefox: nazwa profilu w about:profiles.";
+"item.launch.profile.invalid" = "Wpisz nazwę tak, jak wyświetla ją przeglądarka: do 64 znaków, bez znaków nowego wiersza i niewidocznych znaków, bez „-” lub spacji na początku, bez spacji na końcu, bez „..” oraz bez znaków / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Ten profil przeglądarki został przywrócony z kopii zapasowej lub nie może być użyty w zapisanej postaci, dlatego element nie otworzy się, dopóki go nie sprawdzisz i nie włączysz.";
+"item.launch.profile.turnOn" = "Włącz";
+"item.launch.profile.row.review" = "Profil przeglądarki wymaga sprawdzenia: element nie otworzy się, dopóki go nie włączysz.";
+"item.launch.profile.row.running" = "%@ jest uruchomiona: element otworzy się dopiero po jej zamknięciu.";
+"item.launch.profile.confirm.title" = "Otworzyć „%1$@” w %2$@ z profilem „%3$@”?";

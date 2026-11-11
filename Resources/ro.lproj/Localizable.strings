@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "„Solicită autentificare înainte de a închide aplicațiile” rămâne activată: autentificarea a fost anulată sau a eșuat.";
 "core.quitAuthentication.olderVersion.unknown" = "Versiunea %@ nu cunoaște „Solicită autentificare înainte de a închide aplicațiile”: închide aplicațiile fără să ceară, iar setarea se pierde după ce își salvează setările.";
 "problems.hide.hint" = "macOS nu ascunde o aplicație care are o fereastră în ecran complet sau care se află într-un alt Space. Ieșiți din ecranul complet sau comutați la alt Space, apoi încercați din nou.";
+"item.launch.profile.toggle" = "Deschide în profilul de browser";
+"item.launch.profile.hint" = "Deschide site-ul web în acest profil atunci când îl deschizi tu și browserul nu rulează. Chrome, Edge, Brave: numele folderului de la sfârșitul “Cale profil” din chrome://version, de exemplu Default sau Profile 1. Firefox: numele profilului din about:profiles.";
+"item.launch.profile.invalid" = "Scrie numele așa cum îl afișează browserul: cel mult 64 de caractere, fără linii noi sau caractere invizibile, fără “-” sau spațiu la început, fără spațiu la sfârșit, fără “..” și fără niciunul dintre caracterele / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Acest profil de browser a venit cu o copie de rezervă sau nu poate fi folosit așa cum a fost salvat, așa că elementul nu se va deschide până nu îl verifici și îl activezi.";
+"item.launch.profile.turnOn" = "Activează";
+"item.launch.profile.row.review" = "Profilul de browser trebuie verificat: elementul nu se va deschide până nu îl activezi.";
+"item.launch.profile.row.running" = "%@ rulează: elementul se deschide doar după ce închizi aplicația.";
+"item.launch.profile.confirm.title" = "Deschizi “%1$@” în %2$@ cu profilul “%3$@”?";

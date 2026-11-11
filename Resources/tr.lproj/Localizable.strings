@@ -1198,3 +1198,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Uygulamaları kapatmadan önce kimlik doğrulaması iste” açık kalır: kimlik doğrulaması iptal edildi veya başarısız oldu.";
 "core.quitAuthentication.olderVersion.unknown" = "%@ sürümü “Uygulamaları kapatmadan önce kimlik doğrulaması iste” ayarını tanımıyor: uygulamaları sormadan kapatır ve ayarlarınızı kaydettiğinde bu ayar kaybolur.";
 "problems.hide.hint" = "macOS, tam ekran penceresi olan veya başka bir Space'te bulunan bir uygulamayı gizlemez. Tam ekrandan çıkın ya da Space değiştirin, ardından tekrar deneyin.";
+"item.launch.profile.toggle" = "Tarayıcı Profilinde Aç";
+"item.launch.profile.hint" = "Öğeyi kendiniz açtığınızda ve tarayıcı çalışmıyorsa web sitesini bu profilde açar. Chrome, Edge, Brave: chrome://version sayfasındaki “Profile Path” satırının sonundaki klasör adı (ör. Default veya Profile 1). Firefox: about:profiles sayfasındaki profil adı.";
+"item.launch.profile.invalid" = "Adı tarayıcının gösterdiği biçimde yazın: en fazla 64 karakter, satır sonu veya görünmez karakter yok, başta “-” veya boşluk yok, sonda boşluk yok, “..” yok ve şu karakterlerden hiçbiri olmasın: / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Bu tarayıcı profili bir yedekle geldi veya kaydedildiği haliyle kullanılamıyor. Kontrol edip etkinleştirene kadar öğe açılmayacak.";
+"item.launch.profile.turnOn" = "Etkinleştir";
+"item.launch.profile.row.review" = "Tarayıcı profilinin incelenmesi gerekiyor: etkinleştirene kadar öğe açılmayacak.";
+"item.launch.profile.row.running" = "%@ çalışıyor: öğe yalnızca kapatıldıktan sonra açılır.";
+"item.launch.profile.confirm.title" = "“%1$@” öğesi “%3$@” profiliyle %2$@ içinde açılsın mı?";

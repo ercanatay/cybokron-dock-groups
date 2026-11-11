@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” aktiv qalır: autentifikasiya ləğv edildi və ya uğursuz oldu.";
 "core.quitAuthentication.olderVersion.unknown" = "%@ versiyası “Tətbiqləri bağlamazdan əvvəl identifikasiya tələb et” seçimini tanımır: tətbiqləri soruşmadan bağlayır və parametrləri saxladıqda bu seçim itir.";
 "problems.hide.hint" = "macOS məhdud ekranlı (full screen) pəncərəsi olan və ya başqa Space-də olan tətbiqi gizlətmir. Tam ekrandan çıxın və ya Space-i dəyişin, sonra yenidən cəhd edin.";
+"item.launch.profile.toggle" = "Brauzer profilində aç";
+"item.launch.profile.hint" = "Veb-saytı özünüz açanda və brauzer işləmirsə, sayt bu profildə açılır. Chrome, Edge, Brave: chrome://version səhifəsində “Profile Path” sətirinin sonundakı qovluq adı, məsələn Default və ya Profile 1. Firefox: about:profiles səhifəsindəki profilin adı.";
+"item.launch.profile.invalid" = "Adı brauzerdə göstərildiyi kimi yazın: 64 simvola qədər, sətir sonu və ya görünməz simvol olmadan, əvvəldə “-” və ya boşluq olmadan, sonda boşluq olmadan, “..” olmadan və bunlardan heç birində: / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Bu brauzer profili ehtiyat nüsxə ilə gəlib və ya saxlanıldığı kimi istifadə edilə bilmir, ona görə elementi yoxlayıb yandırana qədər o açılmayacaq.";
+"item.launch.profile.turnOn" = "Yandır";
+"item.launch.profile.row.review" = "Brauzer profilinə baxış lazımdır: elementi yandırana qədər o açılmayacaq.";
+"item.launch.profile.row.running" = "%@ işləyir: element yalnız onu bağladıqdan sonra açılır.";
+"item.launch.profile.confirm.title" = "“%1$@” elementi %2$@ brauzerində “%3$@” profili ilə açılsın?";

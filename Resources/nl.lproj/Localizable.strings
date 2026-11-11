@@ -1200,3 +1200,11 @@
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Vraag om authenticatie voordat apps worden afgesloten” blijft aan: authenticatie is geannuleerd of mislukt.";
 "core.quitAuthentication.olderVersion.unknown" = "Versie %@ kent “Vraag om authenticatie voordat apps worden afgesloten” niet: er worden apps afgesloten zonder te vragen, en de instelling gaat verloren zodra de instellingen worden opgeslagen.";
 "problems.hide.hint" = "macOS verbergt een app niet wanneer die een venster op volledig scherm heeft of zich in een andere Space bevindt. Verlaat het volledige scherm of wissel van Space en probeer het opnieuw.";
+"item.launch.profile.toggle" = "Openen in browserprofiel";
+"item.launch.profile.hint" = "Opent de website in dit profiel wanneer je hem zelf opent en de browser niet actief is. Chrome, Edge, Brave: de mapnaam aan het eind van “Profile Path” in chrome://version, zoals Default of Profile 1. Firefox: de naam van het profiel in about:profiles.";
+"item.launch.profile.invalid" = "Typ de naam zoals de browser die toont: maximaal 64 tekens, geen regeleindes of onzichtbare tekens, geen “-” of spatie aan het begin, geen spatie aan het eind, geen “..”, en geen van / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "Dit browserprofiel is met een back-up binnengekomen of kan niet worden gebruikt zoals het is opgeslagen, dus het item wordt pas geopend nadat je het hebt gecontroleerd en ingeschakeld.";
+"item.launch.profile.turnOn" = "Inschakelen";
+"item.launch.profile.row.review" = "Browserprofiel moet worden gecontroleerd: het item wordt pas geopend nadat je het inschakelt.";
+"item.launch.profile.row.running" = "%@ is actief: het item wordt pas geopend nadat je het hebt afgesloten.";
+"item.launch.profile.confirm.title" = "“%1$@” openen in %2$@ met het profiel “%3$@”?";
