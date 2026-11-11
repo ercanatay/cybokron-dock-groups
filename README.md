@@ -191,6 +191,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   may not open it leaves it closed. The row shows “Opens with … · after 3 s”, the popup's tooltip
   says the same. Importing a backup drops chosen apps that run what they open, and the import
   question says how many items it reset.
+  A website item's launch action (a browser profile; there's no way to set one in the app yet)
+  opens only from your own click or Open All/Start in the app, and only while that browser isn't
+  running — otherwise the item isn't opened at all.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are

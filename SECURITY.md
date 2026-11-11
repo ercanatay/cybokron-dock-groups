@@ -34,7 +34,7 @@ is rate limited; a start or finish link that would quit apps asks first too (or 
 instead), and protected apps are never quit by Close All, Start or Finish, whoever asks. An app
 chosen to open an item is kept by bundle identifier only and checked each time it's used: it must
 be an app macOS lists for the item that doesn't run what it opens (Terminal and iTerm2 only for
-folders, and never from a backup); otherwise the item isn't opened. A group's keyboard shortcut is a
+folders, and never from a backup); otherwise the item isn't opened. An item's launch action (a browser profile template, with no command, script, path or environment) is passed to its browser as launch arguments only when you open the item yourself in the app and the browser isn't already running; otherwise — a link, Siri or Shortcuts, a Focus, a trigger, the command-line tool, a keyboard shortcut, a standalone group's app, a running browser, or an action from a backup or that fails its checks — the item isn't opened at all. A group's keyboard shortcut is a
 hot key the app takes only while it runs, and only a key press acts on it; keys that typing, editing
 or macOS need (fewer than two of ⌃, ⌥ and ⌘; Escape, Return, Tab, Space, Delete; macOS's own
 shortcuts) are refused wherever they come from, so a groups file or backup can't take ⌘C or ⌘Q,

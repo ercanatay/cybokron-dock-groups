@@ -1,7 +1,8 @@
 # Slice: launch action argument plan and dry run (slice 3, computing part)
 
-Status: internal Core code plus a hidden developer dry run. **Still nothing executes a launch
-action**: the plan is computed and, in the dry run, printed. No launcher, workspace call, process,
+Status: internal Core code plus a hidden developer dry run. *Superseded in part by the
+[runner slice](launch-action-runner-slice.md), which now hands plans to the system; the statements
+below describe this slice as it was merged.* **Still nothing executes a launch action**: the plan is computed and, in the dry run, printed. No launcher, workspace call, process,
 AppleScript, UI, localization key, link, trigger or agent builds or uses a plan, and an item with a
 launch action still opens exactly as it does without one. This is the first half of slice 3 of the
 [launch actions threat model](launch-actions-threat-model.md#10-open-decisions-effort-and-slice-order);
