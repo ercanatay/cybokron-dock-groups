@@ -11,15 +11,18 @@ final class GroupWindowItems {
     let presence: ItemPresenceCache
     let icons: AppIconProviding
     let catalog: ApplicationCatalog
+    /// Which apps run: the rows of websites with a browser profile say when its browser does.
+    let runningApps: RunningAppsMonitor
     /// Shows a location in Quick Look over the group window; set once the window exists.
     var showPreview: (URL) -> Void = { _ in }
     /// The group window, which open panels attach to as sheets; set once it exists.
     weak var window: NSWindow?
 
-    init(presence: ItemPresenceCache, icons: AppIconProviding, catalog: ApplicationCatalog) {
+    init(presence: ItemPresenceCache, icons: AppIconProviding, catalog: ApplicationCatalog, runningApps: RunningAppsMonitor) {
         self.presence = presence
         self.icons = icons
         self.catalog = catalog
+        self.runningApps = runningApps
     }
 }
 
@@ -44,6 +47,7 @@ final class MainWindowController: NSWindowController {
         templates: TemplateStore,
         tiles: TileImageCache,
         icons: AppIconProviding,
+        runningApps: RunningAppsMonitor,
         standalone: StandaloneController,
         session: ContextSession,
         shortcuts: GlobalShortcutMonitor,
@@ -56,7 +60,8 @@ final class MainWindowController: NSWindowController {
         let items = GroupWindowItems(
             presence: ItemPresenceCache(locator: WorkspaceItemLocator(), catalog: catalog),
             icons: icons,
-            catalog: catalog
+            catalog: catalog,
+            runningApps: runningApps
         )
         self.items = items
         let hostingController = NSHostingController(

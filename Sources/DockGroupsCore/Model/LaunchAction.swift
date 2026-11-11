@@ -3,13 +3,13 @@ import Foundation
 // Launch actions (E phase 2, option A): docs/design/launch-actions-threat-model.md and
 // docs/design/launch-action-core-slice.md.
 //
-// This slice only models, reads, checks and stores them. Nothing opens anything with them: no
-// launcher, workspace call or process reads a launch action yet, and an item with one opens exactly
-// as it does without one.
+// This file only models, reads, checks and stores them; it opens nothing. Only the launcher runs an
+// enabled action, through `LaunchActionRunner` (docs/design/launch-action-runner-slice.md); the group
+// window shows, sets and turns them on (docs/design/launch-action-ui-slice.md).
 
 /// A browser whose profiles a website item can open in. Safari isn't one: there's no known public
 /// way to open one of its profiles.
-enum BrowserFamily: String, CaseIterable, Hashable, Sendable {
+public enum BrowserFamily: String, CaseIterable, Hashable, Sendable {
     case chrome
     case edge
     case brave
@@ -19,7 +19,7 @@ enum BrowserFamily: String, CaseIterable, Hashable, Sendable {
 /// What an item does when it opens, chosen from templates shipped with the app. A template is
 /// fixed behaviour with typed, checked parameters: no case holds a command, script, program,
 /// location, environment or raw argument, so data from a file can only select shipped behaviour.
-enum LaunchAction: Hashable, Sendable {
+public enum LaunchAction: Hashable, Sendable {
     /// Opens the website in `browser`, in its profile named `profileName`.
     case browserProfile(browser: BrowserFamily, profileName: String)
 

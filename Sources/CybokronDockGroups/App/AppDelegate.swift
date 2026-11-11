@@ -147,6 +147,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             templates: templates,
             tiles: tiles,
             icons: icons,
+            runningApps: runningApps,
             standalone: standalone,
             session: session,
             shortcuts: shortcutMonitor,
