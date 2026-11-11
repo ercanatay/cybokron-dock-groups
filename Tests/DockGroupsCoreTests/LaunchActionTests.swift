@@ -394,7 +394,8 @@ struct LaunchActionExecutionScanTests {
         let mentioning = Set(files.filter { file in Self.actionTokens.contains { file.text.contains($0) } }.map(\.path))
         #expect(mentioning == Self.allowedFiles)
         #expect(!mentioning.contains { $0.hasPrefix("CybokronDockGroups/") || $0.hasPrefix("CybokronDockGroupsCLI/") })
-        #expect(mentioning.filter { $0.contains("/Launching/") } == ["DockGroupsCore/Launching/GroupLauncher.swift", "DockGroupsCore/Launching/DelayedLaunches.swift"])
+        let launching: Set<String> = mentioning.filter { $0.contains("/Launching/") }
+        #expect(launching == ["DockGroupsCore/Launching/GroupLauncher.swift", "DockGroupsCore/Launching/DelayedLaunches.swift"])
     }
 
     @Test func noLineWithALaunchActionRunsOrOpensAnythingOutsideTheRunner() throws {
