@@ -90,6 +90,9 @@ line (nor `LaunchAction.swift` at all) mentions `Process`, `NSWorkspace`, `OpenC
 
 ## Next slice
 
+The computing part of slice 3 is done: [launch-action-argv-slice.md](launch-action-argv-slice.md)
+(argument plan and dry run; still nothing executes an action).
+
 Slice 3 (launcher integration), after the slice 1 spike: build argv per template (Chromium
 `--profile-directory=`, Firefox `-P`; the spike decides names vs. directories and may narrow this
 grammar), pass it through `OpenConfiguration.arguments` with an empty environment, re-check at
