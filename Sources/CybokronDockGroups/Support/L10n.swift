@@ -546,6 +546,23 @@ enum L10n {
         static func hintOpenWith(_ appName: String) -> String { tr("item.launch.hint.openWith", "Opens it with %@", appName) }
     }
 
+    /// A website's browser profile in the details editor (launch-action-ui-slice.md). The rows'
+    /// captions and the confirmation's question come from DockGroupsCore; browser names and profile
+    /// names aren't localized.
+    enum BrowserProfile {
+        static var toggle: String { tr("item.launch.profile.toggle", "Open in Browser Profile") }
+        static var hint: String {
+            tr("item.launch.profile.hint", "Opens the website in this profile when you open it yourself and the browser isn't running. Chrome, Edge, Brave: the folder name at the end of “Profile Path” in chrome://version, such as Default or Profile 1. Firefox: the profile's name in about:profiles.")
+        }
+        static var invalidName: String {
+            tr("item.launch.profile.invalid", "Type the name as the browser shows it: up to 64 characters, no line breaks or invisible characters, no “-” or space at the start, no space at the end, no “..”, and none of / \\ ~ $ ` ; | & > < * ? \" ' = :")
+        }
+        static var review: String {
+            tr("item.launch.profile.review", "This browser profile came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on.")
+        }
+        static var turnOn: String { tr("item.launch.profile.turnOn", "Turn On") }
+    }
+
     // MARK: - Problems
 
     enum Problems {

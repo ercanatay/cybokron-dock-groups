@@ -16,6 +16,13 @@ import SwiftUI
 /// app that isn't taken, isn't on this Mac or may no longer open the item is explained under the
 /// menu.
 ///
+/// A website can open in a browser profile (launch-action-ui-slice.md): a browser on this Mac
+/// (the others are shown but can't be chosen) and the profile's name, with where to read it. A name
+/// the grammar refuses is explained under the field and Done stays off. Done (or Turn On, for an
+/// action that came in with a backup or can't be used) first asks to confirm the action, showing
+/// the browser, the profile and the full address; Cancel there changes nothing. While a browser
+/// profile is chosen, "Open with" isn't offered: the profile's browser opens the website.
+///
 /// The group window shows it in a popover from a row's ⓘ button and its Edit Details… menu item,
 /// and as a sheet when the popup's Edit Details… opens the window on the item.
 struct ItemDetailsEditor: View {
@@ -28,12 +35,16 @@ struct ItemDetailsEditor: View {
     let openerRefusal: ItemOpenerRefusal?
     /// Other…: an open panel for an app; `nil` where there's none.
     let chooseOtherOpener: (() -> Void)?
+    /// The item being edited, for the confirmation's summary.
+    let item: GroupItem?
     let finish: (ItemDetailsDraft.Ending) -> Void
 
     @FocusState private var focusedField: Field?
+    /// The action the confirmation asks about, `nil` while it isn't shown.
+    @State private var confirming: LaunchActionSummary?
 
     private enum Field: Hashable {
-        case alias, tags, notes
+        case alias, tags, notes, profile
     }
 
     /// The choices of the "Open with" menu.
@@ -55,7 +66,7 @@ struct ItemDetailsEditor: View {
                     TextField(L10n.Details.alias, text: $draft.alias, prompt: Text(L10n.Details.aliasPlaceholder))
                         .labelsHidden()
                         .focused($focusedField, equals: .alias)
-                        .onSubmit { finish(.done) }
+                        .onSubmit(done)
                 }
                 GridRow {
                     label(L10n.Details.tags)
@@ -63,7 +74,7 @@ struct ItemDetailsEditor: View {
                         TextField(L10n.Details.tags, text: $draft.tagsText, prompt: Text(L10n.Details.tagsPlaceholder))
                             .labelsHidden()
                             .focused($focusedField, equals: .tags)
-                            .onSubmit { finish(.done) }
+                            .onSubmit(done)
                         tagsPreview
                         Text(draft.leftOutTagCount > 0 ? L10n.Details.tagsLimit(ItemDetails.maximumTagCount) : L10n.Details.tagsHint)
                             .font(.caption)
@@ -97,13 +108,48 @@ struct ItemDetailsEditor: View {
                 Button(L10n.Common.cancel) { finish(.cancel) }
                     .keyboardShortcut(.cancelAction)
                 // Return in the task notes starts a new line; in the other fields it means Done.
-                Button(L10n.Common.done) { finish(.done) }
+                Button(L10n.Common.done, action: done)
                     .keyboardShortcut(.defaultAction)
+                    .disabled(!draft.canFinish)
             }
         }
         .padding(16)
         .frame(width: 400)
         .onAppear { focusedField = .alias }
+        .alert(
+            confirming?.title ?? "",
+            isPresented: Binding(get: { confirming != nil }, set: { if !$0 { confirming = nil } }),
+            presenting: confirming
+        ) { summary in
+            Button(L10n.BrowserProfile.turnOn) { turnOn(summary) }
+            Button(L10n.Common.cancel, role: .cancel) { confirming = nil }
+        } message: { summary in
+            Text(verbatim: summary.details)
+        }
+    }
+
+    /// Done: asks first when a browser profile would be set or changed; otherwise closes.
+    private func done() {
+        guard draft.canFinish else { return }
+        if let action = draft.launchActionAwaitingConfirmation {
+            confirm(action)
+        } else {
+            finish(.done)
+        }
+    }
+
+    /// Shows the confirmation of `action`.
+    private func confirm(_ action: LaunchAction) {
+        guard let item, let summary = LaunchActionSummary(action, for: item) else { return }
+        confirming = summary
+    }
+
+    /// The confirmation's Turn On: the action is set and on, and the editor closes, saving.
+    private func turnOn(_ summary: LaunchActionSummary) {
+        confirming = nil
+        guard let action = draft.chosenLaunchAction, action.browser == summary.browser, action.profileName == summary.profileName else { return }
+        draft.confirmLaunchAction(action)
+        finish(.done)
     }
 
     // MARK: - Opening
@@ -116,7 +162,7 @@ struct ItemDetailsEditor: View {
                 .font(.subheadline.weight(.semibold))
                 .gridCellColumns(2)
         }
-        if draft.offersOpener, let opening {
+        if draft.offersOpener, draft.browser == nil, let opening {
             GridRow {
                 label(L10n.Launch.openWith)
                 VStack(alignment: .leading, spacing: 4) {
@@ -129,6 +175,9 @@ struct ItemDetailsEditor: View {
                     }
                 }
             }
+        }
+        if draft.offersBrowserProfile {
+            browserProfileRows
         }
         GridRow {
             label(L10n.Launch.delay)
@@ -146,6 +195,69 @@ struct ItemDetailsEditor: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+
+    // MARK: - Browser profile
+
+    /// A website's browser profile: on or off, the browser and the profile's name, where to find
+    /// the name, why a name can't be used, and Turn On for an action that needs review.
+    @ViewBuilder
+    private var browserProfileRows: some View {
+        GridRow {
+            Toggle(L10n.BrowserProfile.toggle, isOn: Binding(
+                get: { draft.browser != nil },
+                set: { draft.setBrowserProfileOn($0) }
+            ))
+            .disabled(!draft.canTurnOnBrowserProfile)
+            .gridCellColumns(2)
+        }
+        if draft.launchActionNeedsReview {
+            GridRow {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label(L10n.BrowserProfile.review, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let action = draft.launchActionToTurnOn {
+                        Button(L10n.BrowserProfile.turnOn) { confirm(action) }
+                            .controlSize(.small)
+                    }
+                }
+                .gridCellColumns(2)
+            }
+        }
+        if let browser = draft.browser {
+            GridRow {
+                browserPicker(browser)
+                    .gridColumnAlignment(.trailing)
+                VStack(alignment: .leading, spacing: 4) {
+                    TextField(L10n.BrowserProfile.toggle, text: $draft.profileName, prompt: Text(verbatim: browser.profileNameExample))
+                        .labelsHidden()
+                        .focused($focusedField, equals: .profile)
+                        .onSubmit(done)
+                    Text(draft.isProfileNameAccepted ? L10n.BrowserProfile.hint : L10n.BrowserProfile.invalidName)
+                        .font(.caption)
+                        .foregroundStyle(draft.isProfileNameAccepted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    /// Chrome, Edge, Brave and Firefox; one that isn't on this Mac is shown but can't be chosen.
+    private func browserPicker(_ browser: BrowserFamily) -> some View {
+        Picker(L10n.BrowserProfile.toggle, selection: Binding(
+            get: { browser },
+            set: { draft.chooseBrowser($0) }
+        )) {
+            ForEach(BrowserFamily.allCases, id: \.self) { family in
+                Text(draft.canChoose(family) ? family.name : L10n.Launch.notOnThisMac(family.name))
+                    .tag(family)
+                    .selectionDisabled(!draft.canChoose(family))
+            }
+        }
+        .labelsHidden()
+        .fixedSize()
     }
 
     private func openerPicker(_ opening: ItemOpenerMenu) -> some View {

@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1115 keys.
+1123 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1660,3 +1660,23 @@ It is translated in every language.
 | Key | English |
 | --- | --- |
 | `problems.hide.hint` | macOS doesn't hide an app that has a full-screen window, or one that is in another Space. Leave full screen or switch Space, then try again. |
+
+## A website's browser profile: the details editor's toggle, hint, name rule, review note and Turn On, the rows' captions and the confirmation's question (English only for now)
+
+See [launch-action-ui-slice.md](design/launch-action-ui-slice.md). Browser names (Chrome, Edge,
+Brave, Firefox), profile names, `chrome://version`, `about:profiles`, `Default`, `Profile 1` and
+the characters listed in `item.launch.profile.invalid` stay as they are. `item.launch.profile.turnOn`
+is both the editor's button and the confirmation's button. The confirmation's message (the full
+address, the browser app and its bundle identifier) isn't localized; a disabled browser in the menu
+reuses `item.launch.choice.notOnThisMac`.
+
+| Key | English |
+| --- | --- |
+| `item.launch.profile.toggle` | Open in Browser Profile |
+| `item.launch.profile.hint` | Opens the website in this profile when you open it yourself and the browser isn't running. Chrome, Edge, Brave: the folder name at the end of “Profile Path” in chrome://version, such as Default or Profile 1. Firefox: the profile's name in about:profiles. |
+| `item.launch.profile.invalid` | Type the name as the browser shows it: up to 64 characters, no line breaks or invisible characters, no “-” or space at the start, no space at the end, no “..”, and none of / \\ ~ $ \` ; \| & > < \* ? " ' = : |
+| `item.launch.profile.review` | This browser profile came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on. |
+| `item.launch.profile.turnOn` | Turn On |
+| `item.launch.profile.row.review` | Browser profile needs review: the item won't open until you turn it on. |
+| `item.launch.profile.row.running` | %@ is running: the item opens only after you quit it. |
+| `item.launch.profile.confirm.title` | Open “%1$@” in %2$@ with the profile “%3$@”? |

@@ -1249,3 +1249,13 @@
 "core.quitAuthentication.turnOff.unavailable" = "Authentication isn't available on this Mac; turn off “Ask for authentication before quitting apps” anyway?";
 "core.quitAuthentication.turnOff.notAuthenticated" = "“Ask for authentication before quitting apps” stays on: authentication was cancelled or failed.";
 "core.quitAuthentication.olderVersion.unknown" = "Version %@ doesn't know “Ask for authentication before quitting apps”: it quits apps without asking, and the setting is lost once it saves your settings.";
+
+/* A website's browser profile (launch actions): the details editor's toggle, hint, name rule, review note and Turn On; the rows' captions; the confirmation's question */
+"item.launch.profile.toggle" = "Open in Browser Profile";
+"item.launch.profile.hint" = "Opens the website in this profile when you open it yourself and the browser isn't running. Chrome, Edge, Brave: the folder name at the end of “Profile Path” in chrome://version, such as Default or Profile 1. Firefox: the profile's name in about:profiles.";
+"item.launch.profile.invalid" = "Type the name as the browser shows it: up to 64 characters, no line breaks or invisible characters, no “-” or space at the start, no space at the end, no “..”, and none of / \\ ~ $ ` ; | & > < * ? \" ' = :";
+"item.launch.profile.review" = "This browser profile came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on.";
+"item.launch.profile.turnOn" = "Turn On";
+"item.launch.profile.row.review" = "Browser profile needs review: the item won't open until you turn it on.";
+"item.launch.profile.row.running" = "%@ is running: the item opens only after you quit it.";
+"item.launch.profile.confirm.title" = "Open “%1$@” in %2$@ with the profile “%3$@”?";

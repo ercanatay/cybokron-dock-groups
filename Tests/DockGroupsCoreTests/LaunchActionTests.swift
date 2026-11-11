@@ -341,9 +341,10 @@ struct LaunchActionTests {
 }
 
 /// Proof that only the runner executes launch actions: they appear only in the model, its coding,
-/// the import paths that turn them off, the plan, the launcher that hands plans to the runner, and
-/// the delayed launches that compare them — and outside the runner never next to a workspace call
-/// or a process. A source scan of this checkout, like `LayoutPlannerSourceScanTests`.
+/// the import paths that turn them off, the plan, the launcher that hands plans to the runner, the
+/// delayed launches that compare them, and the group window that shows and sets them (slice 4) —
+/// and outside the runner never next to a workspace call or a process. A source scan of this
+/// checkout, like `LayoutPlannerSourceScanTests`.
 @Suite("Launch actions: only the runner executes them")
 struct LaunchActionExecutionScanTests {
     static let sources = LocalizationTests.root.appending(path: "Sources", directoryHint: .isDirectory)
@@ -354,11 +355,24 @@ struct LaunchActionExecutionScanTests {
     /// The one file that starts anything with a launch action (slice 3, launcher part).
     static let runnerFile = "DockGroupsCore/LaunchActions/LaunchActionRunner.swift"
 
+    /// The group window's files (slice 4, launch-action-ui-slice.md): the editor's draft, its
+    /// texts and the store's save in Core, and in the app the details editor, the row and the view
+    /// that gives them the installed and running browsers. They show and set actions; none of them
+    /// plans or runs one (`theGroupWindowNeverPlansOrRunsAnAction`).
+    static let groupWindowFiles: Set<String> = [
+        "DockGroupsCore/Model/LaunchActionEditing.swift",
+        "DockGroupsCore/Model/ItemDetailsDraft.swift",
+        "DockGroupsCore/Store/GroupStore.swift",
+        "CybokronDockGroups/MainWindow/ItemDetailsEditor.swift",
+        "CybokronDockGroups/MainWindow/AppRowView.swift",
+        "CybokronDockGroups/MainWindow/GroupDetailView.swift",
+    ]
+
     /// The only files that may mention launch actions: the model and its coding (slice 2), the
     /// argument plan and its dry run, and the CLI line that gates the dry run (slice 3, computing
     /// part); the runner, the launcher that uses it and the delayed launches that compare actions
-    /// (slice 3, launcher part). No app or CLI executable file.
-    static let allowedFiles: Set<String> = [
+    /// (slice 3, launcher part); the group window's files (slice 4). No CLI executable file.
+    static let allowedFiles: Set<String> = groupWindowFiles.union([
         runnerFile,
         "DockGroupsCore/Launching/GroupLauncher.swift",
         "DockGroupsCore/Launching/DelayedLaunches.swift",
@@ -369,7 +383,7 @@ struct LaunchActionExecutionScanTests {
         "DockGroupsCore/LaunchActions/LaunchActionArgumentPlan.swift",
         "DockGroupsCore/LaunchActions/LaunchActionPlanProbe.swift",
         "DockGroupsCore/Commands/DockGroupsCLI.swift",
-    ]
+    ])
 
     /// What running or opening something looks like.
     static let executionTokens = [
@@ -393,7 +407,8 @@ struct LaunchActionExecutionScanTests {
         #expect(files.count > 100, "the scan should see the whole Sources tree")
         let mentioning = Set(files.filter { file in Self.actionTokens.contains { file.text.contains($0) } }.map(\.path))
         #expect(mentioning == Self.allowedFiles)
-        #expect(!mentioning.contains { $0.hasPrefix("CybokronDockGroups/") || $0.hasPrefix("CybokronDockGroupsCLI/") })
+        #expect(!mentioning.contains { $0.hasPrefix("CybokronDockGroupsCLI/") })
+        #expect(mentioning.filter { $0.hasPrefix("CybokronDockGroups/") }.allSatisfy(Self.groupWindowFiles.contains))
         let launching: Set<String> = mentioning.filter { $0.contains("/Launching/") }
         #expect(launching == ["DockGroupsCore/Launching/GroupLauncher.swift", "DockGroupsCore/Launching/DelayedLaunches.swift"])
     }
@@ -432,6 +447,29 @@ struct LaunchActionExecutionScanTests {
         }
         // The only start with arguments: one `open(_:withApplicationAt:configuration:)` call.
         #expect(runner.text.components(separatedBy: "workspace.open(").count == 2)
+    }
+
+    /// What planning or running an action, or starting an app, looks like, anywhere in a file. (A
+    /// line that mentions an action is checked against `executionTokens` too, above.)
+    static let runningTokens = [
+        "LaunchActionRunner", "LaunchActionArgumentPlan", "LaunchActionWorkspace", "openWithLaunchAction",
+        "startApplication", "GroupLauncher", "Process(", "OpenConfiguration", "openApplication",
+    ]
+
+    @Test func theGroupWindowNeverPlansOrRunsAnAction() throws {
+        let files = try Self.swiftFiles()
+        for path in Self.groupWindowFiles {
+            let file = try #require(files.first { $0.path == path }, "\(path) is missing")
+            #expect(Self.actionTokens.contains { file.text.contains($0) }, "\(path) no longer mentions launch actions")
+            for token in Self.runningTokens {
+                #expect(!file.text.contains(token), "\(path) mentions \(token)")
+            }
+        }
+        // The editing file and the editor compute and show; they import no AppKit.
+        for path in ["DockGroupsCore/Model/LaunchActionEditing.swift", "CybokronDockGroups/MainWindow/ItemDetailsEditor.swift"] {
+            let file = try #require(files.first { $0.path == path })
+            #expect(!file.text.contains("import AppKit"), "\(path) imports AppKit")
+        }
     }
 
     @Test func theModelFileRunsAndOpensNothing() throws {

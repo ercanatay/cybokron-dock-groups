@@ -4,7 +4,8 @@
   validator; nothing executed) is in [launch-action-core-slice.md](launch-action-core-slice.md).
   The launcher part of slice 3 is in [launch-action-runner-slice.md](launch-action-runner-slice.md):
   an enabled action now opens its website through `LaunchActionRunner`, only for the user's own
-  click and only while the browser isn't running. No release decision; no UI to set an action.
+  click and only while the browser isn't running. The group window shows, sets and turns on
+  actions ([launch-action-ui-slice.md](launch-action-ui-slice.md), slice 4). No release decision.
 - **Baseline:** `main` at `10233ff`. File references are `path:line` at that commit, relative to
   `Sources/` unless they start with `Tests/`, `docs/` or a root file.
 - **Builds on:** [context-switching-spec.md](context-switching-spec.md) (E phase 1: delay and Open
@@ -329,7 +330,11 @@ running app.
    `LaunchSource`); delayed re-check of the action; fixed log codes. A minimal real-machine check of
    the running/not-running behaviour for Chrome and Firefox is recorded there.
 4. **Editor + caption + import gating** (M): picker, preview, disabled-on-import, restore summary,
-   localization keys (T11).
+   localization keys (T11). **Done except the restore summary line**
+   ([launch-action-ui-slice.md](launch-action-ui-slice.md)): browser + profile editor with hint and
+   grammar, review and Turn On for imported/invalid actions, a confirmation with the full address
+   before any action is turned on (no approval record, D9), row captions and the running-browser
+   note; 8 English-only keys.
 5. **Agent support for A** (S–M) and the downgrade round trip (manual).
 6. *(Optional, separate review)* **B** (L): approval sheet, digest store, source gating (T8, T10).
 

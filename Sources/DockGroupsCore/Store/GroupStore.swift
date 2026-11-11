@@ -434,16 +434,28 @@ public final class GroupStore: ObservableObject {
         return true
     }
 
-    /// Gives an item of the group new details and launch options at once (`nil`: kept as they are),
-    /// as one change of the group: one save, one notification of `groups`. An app keeps no opener.
+    /// Gives an item of the group new details, launch options and launch action at once (`nil`:
+    /// kept as they are), as one change of the group: one save, one notification of `groups`. An
+    /// app keeps no opener. A launch action that's turned on (`LaunchActionEdit.enable`) is kept as
+    /// needing review when it isn't valid for the item, and when it is, the item's Open With app is
+    /// dropped: the action's own browser opens it (launch-action-ui-slice.md).
     /// - Returns: Whether the item changed; `false` when it didn't or the group doesn't have it.
     @discardableResult
-    public func updateItem(_ identity: String, inGroup id: DockGroup.ID, details: ItemDetails?, launch: ItemLaunchOptions?) -> Bool {
+    public func updateItem(_ identity: String, inGroup id: DockGroup.ID, details: ItemDetails?, launch: ItemLaunchOptions?, launchAction: LaunchActionEdit? = nil) -> Bool {
         guard let groupIndex = index(of: id), let itemIndex = itemIndex(of: identity, inGroupAt: groupIndex) else { return false }
         let original = groups[groupIndex].apps[itemIndex]
         var edited = original
         if let details { edited.details = details }
         if let launch { edited.launch = launch.allowed(for: edited.kind) }
+        switch launchAction {
+        case .remove?:
+            edited.launchActionSetting = nil
+        case .enable(let action)?:
+            edited.setLaunchAction(action)
+            if edited.launchAction != nil { edited.launch = edited.launch.withoutOpener }
+        case nil:
+            break
+        }
         guard edited != original else { return false }
         groups[groupIndex].apps[itemIndex] = edited
         scheduleSave()

@@ -32,6 +32,8 @@ struct GroupDetailView: View {
     let items: GroupWindowItems
     @ObservedObject var selection: GroupWindowSelection
     @ObservedObject private var presence: ItemPresenceCache
+    /// Which browsers run, for the rows of websites with a browser profile.
+    @ObservedObject private var runningApps: RunningAppsMonitor
 
     @State private var nameDraft: String
     @State private var emojiDraft: String
@@ -91,6 +93,7 @@ struct GroupDetailView: View {
         self.items = items
         self.selection = selection
         presence = items.presence
+        runningApps = items.runningApps
         _nameDraft = State(initialValue: group.name)
         _emojiDraft = State(initialValue: group.emoji)
     }
@@ -256,6 +259,7 @@ struct GroupDetailView: View {
             onRemove: { store.removeApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id) },
             onLocate: canLocate ? { locate(item) } : nil,
             launchCaption: ItemLaunchCaption(item: item, isOpenerInstalled: presence.isOpenerInstalled(item)),
+            actionCaption: LaunchActionCaption(item: item) { runningApps.runningBundleIdentifiers.contains($0.lowercased()) },
             isEditingDetails: isEditingDetailsInPopover(of: item),
             detailsEditor: { detailsEditor() }
         )
@@ -492,12 +496,18 @@ struct GroupDetailView: View {
         let opened = openedLocation(of: item)
         editing = DetailsEditing(
             item: item,
-            draft: ItemDetailsDraft(item),
+            // LaunchServices is asked once, now, which browsers a browser profile can be set to.
+            draft: ItemDetailsDraft(item, installedBrowsers: item.isWebsite ? installedBrowsers() : []),
             isSheet: inSheet,
             target: opened,
             // LaunchServices is asked for the item's apps once, now.
             opening: opened.map { ItemOpenerMenu(for: item, opener: item.launch.opener, target: $0, catalog: items.catalog) }
         )
+    }
+
+    /// The browsers a website's browser profile can be set to: those on this Mac.
+    private func installedBrowsers() -> Set<BrowserFamily> {
+        Set(BrowserFamily.allCases.filter { items.catalog.applicationURL(forBundleIdentifier: $0.bundleIdentifier) != nil })
     }
 
     /// What opening the item opens, as the apps that may open it are checked against: a file's or
@@ -530,6 +540,7 @@ struct GroupDetailView: View {
             opening: editing?.opening,
             openerRefusal: editing?.openerRefusal,
             chooseOtherOpener: chooseOtherOpener,
+            item: editing?.item,
             finish: finishEditing
         )
     }

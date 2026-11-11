@@ -6,7 +6,8 @@ import SwiftUI
 /// below them its own name when an alias is shown instead, and what the item is — an app's bundle
 /// identifier (or location, for an app without one), a website's address, a file's or folder's
 /// location — or what's wrong with it (`ItemRowStatus`), and under that its launch options when it
-/// has some (`ItemLaunchCaption`). A missing file or folder has Locate…;
+/// has some (`ItemLaunchCaption`), and a website's browser profile: "Chrome · Work", that it waits
+/// for the browser to be quit, or that it needs review (`LaunchActionCaption`). A missing file or folder has Locate…;
 /// every row has an ⓘ button that opens the details editor (`detailsEditor`, in a popover) and a
 /// button that removes the item from the group.
 ///
@@ -23,6 +24,8 @@ struct AppRowView<DetailsEditor: View>: View {
     var onLocate: (() -> Void)?
     /// The delay and the app chosen to open it; `nil` without launch options.
     var launchCaption: ItemLaunchCaption?
+    /// The browser profile; `nil` without one.
+    var actionCaption: LaunchActionCaption?
     /// Whether the details editor is open in the ⓘ button's popover.
     @Binding var isEditingDetails: Bool
     @ViewBuilder let detailsEditor: () -> DetailsEditor
@@ -67,6 +70,9 @@ struct AppRowView<DetailsEditor: View>: View {
                         .lineLimit(1)
                         .truncationMode(.tail)
                 }
+                if let actionCaption {
+                    browserProfileLines(actionCaption)
+                }
             }
             .help(ifAny: PopupCellText.Details(item: app)?.text)
             Spacer(minLength: 8)
@@ -77,7 +83,7 @@ struct AppRowView<DetailsEditor: View>: View {
             Button {
                 isEditingDetails = true
             } label: {
-                Image(systemName: app.details.isEmpty && app.launch.isEmpty ? "info.circle" : "info.circle.fill")
+                Image(systemName: app.details.isEmpty && app.launch.isEmpty && actionCaption == nil ? "info.circle" : "info.circle.fill")
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.borderless)
@@ -92,6 +98,25 @@ struct AppRowView<DetailsEditor: View>: View {
             .help(removeHelp)
         }
         .padding(.vertical, 2)
+    }
+
+    /// "Chrome · Work" and, while Chrome runs, that the item waits for it to be quit; or that the
+    /// browser profile needs review, as a warning.
+    @ViewBuilder
+    private func browserProfileLines(_ caption: LaunchActionCaption) -> some View {
+        Label(caption.text, systemImage: caption.needsReview ? "exclamationmark.triangle.fill" : "person.crop.circle")
+            .foregroundStyle(caption.needsReview ? AnyShapeStyle(.orange) : AnyShapeStyle(.secondary))
+            .font(.caption)
+            .lineLimit(1)
+            .truncationMode(.tail)
+            .help(caption.text)
+        if let note = caption.note {
+            Text(note)
+                .foregroundStyle(.secondary)
+                .font(.caption)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var statusText: String {

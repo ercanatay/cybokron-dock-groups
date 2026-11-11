@@ -206,5 +206,6 @@ protects against.
 
 ## Next
 
-Slice 4 (editor, caption, review, restore summary, localization) and slice 5 (agents; downgrade
-round trip).
+Slice 4 is done: [launch-action-ui-slice.md](launch-action-ui-slice.md) (editor, caption, review,
+confirmation, localization; the restore summary line is still to do). Then slice 5 (agents;
+downgrade round trip).
