@@ -59,6 +59,9 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     public var profileName: String
     /// The action the user confirmed in this editor (`confirmLaunchAction`).
     public private(set) var confirmedLaunchAction: LaunchAction?
+    /// Whether the user turned the browser profile off in this editor: for an invalid action,
+    /// whose toggle starts off, that's what removes it.
+    private var turnedBrowserProfileOff = false
 
     /// A draft of these details alone, for an item without launch options.
     public init(_ details: ItemDetails) {
@@ -154,6 +157,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
         guard offersBrowserProfile else { return family == nil }
         if let family, !canChoose(family) { return false }
         browser = family
+        if family == nil { turnedBrowserProfileOff = true }
         return true
     }
 
@@ -167,6 +171,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     public mutating func setBrowserProfileOn(_ isOn: Bool) {
         guard isOn else {
             browser = nil
+            turnedBrowserProfileOff = true
             return
         }
         guard browser == nil, offersBrowserProfile else { return }
@@ -219,11 +224,13 @@ public struct ItemDetailsDraft: Equatable, Sendable {
 
     /// What closing the editor does to the item's launch action; `nil` keeps it as it is. After
     /// Cancel always `nil`. A confirmed action is set and on; turning the browser profile off
-    /// removes an action the item had. An unconfirmed or refused one changes nothing.
+    /// removes an action the item had — an invalid one, whose toggle starts off, once the user
+    /// turned it on and off again. An unconfirmed or refused one changes nothing.
     public func launchActionToSave(endingWith ending: Ending) -> LaunchActionEdit? {
         guard ending != .cancel else { return nil }
         guard let chosen = chosenLaunchAction else {
-            return startingLaunchAction == nil ? nil : .remove
+            let removes = startingLaunchAction != nil || (originalLaunchAction == .invalid && turnedBrowserProfileOff)
+            return removes ? .remove : nil
         }
         guard chosen == confirmedLaunchAction, chosen.rejection == nil, chosen.isAllowed(for: kind) else { return nil }
         if originalLaunchAction == .enabled(chosen) { return nil }
