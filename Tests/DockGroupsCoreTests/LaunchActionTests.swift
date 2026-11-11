@@ -30,7 +30,9 @@ struct LaunchActionTests {
     }
 
     /// Decodes `value` as the website's launch action and checks that it was refused for
-    /// `rejection`, that the item is otherwise as without one, and that nothing of it is written.
+    /// `rejection`, that the item is otherwise as without one, and that it's written under review
+    /// as invalid — with the object's other keys as they were, never a forbidden one — so it stays
+    /// refused when read again (launch-action-review-persistence.md).
     static func expectRefused(_ value: Any, _ rejection: LaunchActionRejection, item base: GroupItem = website, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let item = try decode(saved(base, launchAction: value))
         #expect(item.launchActionSetting == .needsReview(.invalid(rejection)), sourceLocation: sourceLocation)
@@ -39,10 +41,27 @@ struct LaunchActionTests {
         var withoutAction = item
         withoutAction.launchActionSetting = nil
         #expect(withoutAction == base, sourceLocation: sourceLocation)
-        let written = try JSONEncoder().encode(item)
-        #expect(try object(item)["launchAction"] == nil, sourceLocation: sourceLocation)
-        #expect(Set(try object(item).keys) == Set(try object(base).keys), sourceLocation: sourceLocation)
-        #expect(!String(decoding: written, as: UTF8.self).contains("launchAction"), sourceLocation: sourceLocation)
+        try expectWrittenInvalid(item, base: base, keeping: value, sourceLocation: sourceLocation)
+    }
+
+    /// Checks that `item` writes its launch action under review as invalid, keeping the keys of
+    /// `original` but `status`, `reason` and forbidden ones, and that read again it stays refused.
+    static func expectWrittenInvalid(_ item: GroupItem, base: GroupItem, keeping original: Any, sourceLocation: SourceLocation = #_sourceLocation) throws {
+        let saved = try object(item)
+        #expect(Set(saved.keys) == Set(try object(base).keys).union(["launchAction"]), sourceLocation: sourceLocation)
+        let written = try #require(saved["launchAction"] as? [String: Any], sourceLocation: sourceLocation)
+        #expect(written["status"] as? String == "review", sourceLocation: sourceLocation)
+        #expect(written["reason"] as? String == "invalid", sourceLocation: sourceLocation)
+        // Compared as `JSONValue`s: `JSONSerialization` drops a leading U+FEFF from strings it reads.
+        let originalObject = try JSONDecoder().decode(JSONValue.self, from: JSONSerialization.data(withJSONObject: original, options: [.fragmentsAllowed])).objectValue ?? [:]
+        let kept = originalObject.filter { !["status", "reason"].contains($0.key) && !LaunchActionCoding.isForbidden($0.key) }
+        let writtenObject = try #require(try JSONDecoder().decode([String: JSONValue].self, from: JSONEncoder().encode(item))["launchAction"]?.objectValue, sourceLocation: sourceLocation)
+        #expect(writtenObject.filter { !["status", "reason"].contains($0.key) } == kept, sourceLocation: sourceLocation)
+        #expect(!written.keys.contains(where: LaunchActionCoding.isForbidden), sourceLocation: sourceLocation)
+        let reread = try decode(JSONEncoder().encode(item))
+        #expect(reread.launchActionSetting == .needsReview(.invalid(.markedInvalid)), sourceLocation: sourceLocation)
+        #expect(reread.launchAction == nil, sourceLocation: sourceLocation)
+        #expect(try decode(JSONEncoder().encode(reread)) == reread, sourceLocation: sourceLocation)
     }
 
     // MARK: - Valid actions
@@ -68,7 +87,7 @@ struct LaunchActionTests {
         #expect(!item.launchActionNeedsReview)
 
         let saved = try Self.object(item)
-        #expect(saved["launchAction"] as? [String: String] == ["template": "browserProfile", "browser": browser.rawValue, "profile": profile])
+        #expect(saved["launchAction"] as? [String: String] == ["status": "enabled", "template": "browserProfile", "browser": browser.rawValue, "profile": profile])
         #expect(try Self.decode(JSONEncoder().encode(item)) == item)
 
         var set = Self.website
@@ -175,16 +194,21 @@ struct LaunchActionTests {
         #expect(reached == Set(BrowserProfileNameRejection.allCases))
     }
 
-    @Test func anInvalidActionSetInCodeIsKeptForReviewAndNotWritten() throws {
+    /// Was "…AndNotWritten": an action under review is now written as such, so it stays off after a
+    /// restart (launch-action-review-persistence.md) — but never with a refused value built in memory.
+    @Test func anInvalidActionSetInCodeIsKeptForReviewAndWrittenWithoutItsValues() throws {
         var item = Self.website
         item.setLaunchAction(.browserProfile(browser: .chrome, profileName: "--load-extension=/tmp/x"))
         #expect(item.launchActionSetting == .needsReview(.invalid(.profileName(.leadingHyphen))))
         #expect(item.launchAction == nil)
-        #expect(try Self.object(item)["launchAction"] == nil)
-        // Even forced in as enabled, it's neither used nor written.
+        #expect(try Self.object(item)["launchAction"] as? [String: String] == ["status": "review", "reason": "invalid"])
+        // Even forced in as enabled (or imported), it's neither used nor written with its name.
         item.launchActionSetting = .enabled(.browserProfile(browser: .chrome, profileName: "../x"))
         #expect(item.launchAction == nil)
-        #expect(try Self.object(item)["launchAction"] == nil)
+        #expect(try Self.object(item)["launchAction"] as? [String: String] == ["status": "review", "reason": "invalid"])
+        item.launchActionSetting = .needsReview(.imported(.browserProfile(browser: .chrome, profileName: "../x")))
+        #expect(try Self.object(item)["launchAction"] as? [String: String] == ["status": "review", "reason": "invalid"])
+        #expect(!String(decoding: try JSONEncoder().encode(item), as: UTF8.self).contains("../x"))
         #expect(throws: EncodingError.self) {
             try JSONEncoder().encode(LaunchActionCoding(.browserProfile(browser: .edge, profileName: "a;b")))
         }
@@ -255,7 +279,7 @@ struct LaunchActionTests {
             set.setLaunchAction(.browserProfile(browser: .chrome, profileName: "Work"))
             #expect(set.launchActionSetting == .needsReview(.invalid(.unsupportedItemKind)))
             #expect(set.launchAction == nil)
-            #expect(try Self.object(set)["launchAction"] == nil)
+            #expect(try Self.object(set)["launchAction"] as? [String: String] == ["status": "review", "reason": "invalid"])
         }
     }
 
@@ -289,7 +313,10 @@ struct LaunchActionTests {
         let read = try JSONDecoder().decode(DockGroup.self, from: JSONSerialization.data(withJSONObject: groupObject))
         #expect(read.apps.map(\.bundleIdentifier) == group.apps.map(\.bundleIdentifier))
         #expect(read.apps.allSatisfy { $0.launchActionNeedsReview })
-        #expect(!String(decoding: try JSONEncoder().encode(read), as: UTF8.self).contains("launchAction"))
+        // Written under review: the newer version's keys as they were, the forbidden one not.
+        try Self.expectWrittenInvalid(read.apps[0], base: Self.website, keeping: newer)
+        try Self.expectWrittenInvalid(read.apps[1], base: Self.app, keeping: [String: Any]())
+        #expect(!String(decoding: try JSONEncoder().encode(read), as: UTF8.self).contains("/bin/sh"))
     }
 
     @Test func theGroupsFileKeepsItsFormatVersionAndAValidAction() throws {
@@ -317,7 +344,9 @@ struct LaunchActionTests {
         #expect(try persistence.loadGroups().first?.apps == [Self.website, Self.app])
     }
 
-    @Test func anInvalidActionInTheGroupsFileIsDroppedOnTheNextSave() throws {
+    /// Was "…IsDroppedOnTheNextSave": dropping it let the item open plainly after a restart; it's
+    /// now kept under review (launch-action-review-persistence.md), still without the forbidden key.
+    @Test func anInvalidActionInTheGroupsFileStaysUnderReviewOnTheNextSave() throws {
         let directory = try TemporaryDirectory()
         defer { directory.remove() }
         let fileURL = directory.url.appending(path: "groups.json")
@@ -335,8 +364,11 @@ struct LaunchActionTests {
         #expect(loaded.first?.apps.first?.launchActionSetting == .needsReview(.invalid(.forbiddenKey)))
         try persistence.saveGroups(loaded)
         let rewritten = try String(contentsOf: fileURL, encoding: .utf8)
-        #expect(!rewritten.contains("launchAction"))
-        #expect(!rewritten.contains("/bin/zsh"))
+        #expect(rewritten.contains(#""reason" : "invalid""#))
+        #expect(!rewritten.contains("/bin/zsh") && !rewritten.contains("shell"))
+        let reloaded = try #require(try persistence.loadGroups().first?.apps.first)
+        #expect(reloaded.launchActionSetting == .needsReview(.invalid(.markedInvalid)))
+        #expect(reloaded.launchAction == nil)
     }
 }
 

@@ -50,9 +50,10 @@ public struct AppReference: Identifiable, Hashable, Sendable {
         }
     }
 
-    /// The item's launch action (`LaunchAction`): `nil` for most items, and then not written. Only
-    /// an enabled, valid one is written; nothing opens the item with it yet.
-    var launchActionSetting: LaunchActionSetting?
+    /// The item's launch action (`LaunchAction`, read and set as `launchActionSetting`) with what
+    /// its object kept: `nil` for most items, and then not written. Written with its status, so an
+    /// action under review stays off after a restart.
+    var storedLaunchAction: StoredLaunchAction?
 
     public var id: String { bundleIdentifier }
 
@@ -179,8 +180,8 @@ extension AppReference: Codable {
     /// making the whole group unreadable. The alias, tags and task notes are each read on their own:
     /// an unreadable one is left empty; so are the launch delay (clamped to its range) and the app
     /// that opens the item, which an app never has. A launch action is read strictly
-    /// (`LaunchActionCoding`): one that isn't valid for the item is kept as needing review, never
-    /// fixed; the rest of the item is read as usual.
+    /// (`LaunchActionCoding`): one that isn't valid for the item, or that the file has under
+    /// review, is kept as needing review, never fixed; the rest of the item is read as usual.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let identifier = try container.decode(String.self, forKey: .bundleIdentifier)
@@ -214,8 +215,8 @@ extension AppReference: Codable {
             opener: container.decodeLeniently(ItemOpener.self, forKey: .openWith)
         ).allowed(for: kind)
         if container.contains(.launchAction) {
-            let read = (try? container.decode(LaunchActionCoding.self, forKey: .launchAction))?.result ?? .failure(.notAnObject)
-            launchActionSetting = LaunchActionSetting(reading: read, for: kind)
+            let read = (try? container.decode(LaunchActionCoding.self, forKey: .launchAction)) ?? .unreadable
+            storedLaunchAction = StoredLaunchAction(LaunchActionSetting(reading: read.content, for: kind), keptFields: read.fields)
         }
     }
 
@@ -232,7 +233,7 @@ extension AppReference: Codable {
 
     /// Apps are written as before (no `kind`); websites add `kind` and `url`, files and folders
     /// `kind` only. The alias, tags, task notes, launch delay, opener and launch action are written
-    /// only when set; a launch action only when it's enabled and valid for the item.
+    /// only when set; a launch action always with its status (`LaunchActionCoding`).
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(bundleIdentifier, forKey: .bundleIdentifier)
@@ -255,8 +256,8 @@ extension AppReference: Codable {
             try container.encode(launch.delay, forKey: .launchDelay)
         }
         try container.encodeIfPresent(launch.opener, forKey: .openWith)
-        if let launchAction {
-            try container.encode(LaunchActionCoding(launchAction), forKey: .launchAction)
+        if let storedLaunchAction {
+            try container.encode(LaunchActionCoding(storedLaunchAction, for: kind), forKey: .launchAction)
         }
     }
 }

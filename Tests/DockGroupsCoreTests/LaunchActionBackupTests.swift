@@ -4,7 +4,8 @@ import Testing
 
 /// Launch actions that come from a file someone may have handed over (threat model D4, T11): a
 /// backup's groups, archived groups and templates bring their actions in turned off and needing
-/// review, and those aren't written again. Standalone agents carry none.
+/// review, and are written so (`"status": "review", "reason": "imported"`), so they stay off after a
+/// restart (launch-action-review-persistence.md). Standalone agents carry none.
 @Suite("Launch actions: backups, restore and agents")
 @MainActor
 struct LaunchActionBackupTests {
@@ -77,6 +78,7 @@ struct LaunchActionBackupTests {
         #expect(written.contains(#""browser" : "chrome""#))
         #expect(written.contains(#""profile" : "dev-edition""#))
         #expect(written.contains(#""browser" : "brave""#))
+        #expect(written.components(separatedBy: #""status" : "enabled""#).count - 1 == 3)
     }
 
     @Test func aBackupsActionsComeInTurnedOff() throws {
@@ -92,11 +94,15 @@ struct LaunchActionBackupTests {
         #expect(items.allSatisfy { $0.launchAction == nil })
         // The items themselves are kept.
         #expect(read.groups.first?.apps.map(\.bundleIdentifier) == Self.workGroup.apps.map(\.bundleIdentifier))
-        // Turned off, they aren't written again: exporting what was read carries none.
-        #expect(!Self.text(try read.encoded()).contains("launchAction"))
+        // Turned off, they're written so: exporting what was read carries them under review.
+        let exported = Self.text(try read.encoded())
+        #expect(exported.components(separatedBy: #""reason" : "imported""#).count - 1 == 3)
+        #expect(!exported.contains(#""status" : "enabled""#))
+        #expect(Self.allItems(try SettingsBackup.decode(from: read.encoded())).map(\.launchActionSetting) == items.map(\.launchActionSetting))
     }
 
-    @Test func aBackupsInvalidActionsComeInForReviewAndArentWritten() throws {
+    /// Was "…AndArentWritten": now written under review as invalid, without the forbidden key.
+    @Test func aBackupsInvalidActionsComeInForReviewAndAreWrittenSo() throws {
         var object = try #require(JSONSerialization.jsonObject(with: Self.backup(groups: [DockGroup(name: "Work", apps: [Self.website("https://github.com/", nil)])]).encoded()) as? [String: Any])
         var groups = try #require(object["groups"] as? [[String: Any]])
         var apps = try #require(groups[0]["apps"] as? [[String: Any]])
@@ -109,8 +115,8 @@ struct LaunchActionBackupTests {
         #expect(read.groups.first?.apps.first?.launchActionSetting == .needsReview(.invalid(.forbiddenKey)))
         #expect(read.disabledLaunchActionCount == 3)
         let written = Self.text(try read.encoded())
-        #expect(!written.contains("launchAction"))
-        #expect(!written.contains("remote-debugging"))
+        #expect(written.contains(#""reason" : "invalid""#))
+        #expect(!written.contains("remote-debugging") && !written.contains(#""args""#))
     }
 
     @Test func aBackupWithoutActionsCountsNone() throws {
@@ -122,7 +128,9 @@ struct LaunchActionBackupTests {
 
     // MARK: - Restoring and merging
 
-    @Test func restoringLeavesNoActionOnDisk() throws {
+    /// Was "restoringLeavesNoActionOnDisk": with nothing on disk the item opened plainly after a
+    /// restart; the actions are now written under review and stay so when the groups are read again.
+    @Test func restoringWritesTheActionsUnderReview() throws {
         let stores = try Stores()
         defer { stores.directory.remove() }
         let groups = stores.groups()
@@ -136,12 +144,19 @@ struct LaunchActionBackupTests {
         #expect(groups.archivedGroups.first?.group.apps.first?.launchActionSetting == .needsReview(.imported(Self.firefoxDev)))
         #expect(templates.templates.first?.group.apps.first?.launchActionSetting == .needsReview(.imported(Self.braveHome)))
         #expect((groups.groups + groups.archivedGroups.map(\.group) + templates.templates.map(\.group)).flatMap(\.apps).allSatisfy { $0.launchAction == nil })
-        // On disk: nothing, so a restart has no action at all.
-        #expect(!(try stores.groupsFile()).contains("launchAction"))
-        #expect(!Self.text(try JSONEncoder().encode(stores.templates.saved)).contains("launchAction"))
+        // On disk: under review, so a restart keeps them off.
+        let file = try stores.groupsFile()
+        #expect(file.components(separatedBy: #""reason" : "imported""#).count - 1 == 2, "the group's and the archived group's")
+        #expect(!file.contains(#""status" : "enabled""#))
+        let templatesFile = Self.text(try JSONEncoder().encode(stores.templates.saved))
+        #expect(templatesFile.contains(#""reason":"imported""#) && !templatesFile.contains(#""status":"enabled""#))
         let reloaded = stores.groups()
-        #expect(reloaded.groups.first?.apps.first?.launchActionSetting == nil)
+        #expect(reloaded.groups.first?.apps.first?.launchActionSetting == .needsReview(.imported(Self.chromeWork)))
+        #expect(reloaded.archivedGroups.first?.group.apps.first?.launchActionSetting == .needsReview(.imported(Self.firefoxDev)))
+        #expect(reloaded.groups.first?.apps.first?.launchActionStatus == .imported(Self.chromeWork))
         #expect(reloaded.groups.first?.apps.map(\.bundleIdentifier) == Self.workGroup.apps.map(\.bundleIdentifier))
+        let reloadedTemplates = try JSONDecoder().decode([GroupTemplate].self, from: JSONEncoder().encode(stores.templates.saved))
+        #expect(reloadedTemplates.first?.group.apps.first?.launchActionSetting == .needsReview(.imported(Self.braveHome)))
     }
 
     @Test func restoringABackupBuiltInCodeTurnsItsActionsOffToo() throws {
@@ -158,7 +173,8 @@ struct LaunchActionBackupTests {
         let restored = (groups.groups + groups.archivedGroups.map(\.group) + templates.templates.map(\.group)).flatMap(\.apps)
         #expect(restored.compactMap(\.launchAction).isEmpty)
         #expect(restored.filter { $0.launchActionNeedsReview }.count == 3)
-        #expect(!(try stores.groupsFile()).contains("launchAction"))
+        #expect(!(try stores.groupsFile()).contains(#""status" : "enabled""#))
+        #expect(stores.groups().groups.first?.apps.first?.launchActionSetting == .needsReview(.imported(Self.chromeWork)))
     }
 
     @Test func mergingTurnsTheAddedActionsOff() throws {
@@ -179,9 +195,15 @@ struct LaunchActionBackupTests {
         let added = (result.groups.addedGroups + result.groups.addedArchivedGroups.map(\.group) + result.addedTemplates.map(\.group)).flatMap(\.apps)
         #expect(added.compactMap(\.launchAction).isEmpty)
         #expect(added.filter { $0.launchActionNeedsReview }.count == 3)
-        // Only the local action is on disk.
-        #expect(try stores.groupsFile().components(separatedBy: "\"launchAction\"").count - 1 == 1)
-        #expect(!Self.text(try JSONEncoder().encode(stores.templates.saved)).contains("launchAction"))
+        // Only the local action is on disk turned on; the added ones are there under review.
+        let file = try stores.groupsFile()
+        #expect(file.components(separatedBy: #""status" : "enabled""#).count - 1 == 1)
+        #expect(file.components(separatedBy: #""reason" : "imported""#).count - 1 == 2)
+        let templatesFile = Self.text(try JSONEncoder().encode(stores.templates.saved))
+        #expect(templatesFile.contains(#""reason":"imported""#) && !templatesFile.contains(#""status":"enabled""#))
+        let reloaded = stores.groups()
+        #expect(reloaded.groups.first { $0.name == "Local" }?.apps.first?.launchAction == localAction)
+        #expect(reloaded.groups.first { $0.name == "Work" }?.apps.first?.launchActionSetting == .needsReview(.imported(Self.chromeWork)))
     }
 
     // MARK: - Standalone agents

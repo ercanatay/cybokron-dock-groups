@@ -60,8 +60,8 @@ public struct SettingsBackup: Equatable, Sendable {
     /// Items of the file kept without the app chosen to open them, because that app could run them
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
     public private(set) var resetLaunchOptionCount = 0
-    /// Items of the file whose launch action came in turned off, needing review, and not written
-    /// again (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
+    /// Items of the file whose launch action came in turned off, needing review, and written so
+    /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
     private(set) var disabledLaunchActionCount = 0
 
     public init(
@@ -203,7 +203,8 @@ public struct SettingsBackup: Equatable, Sendable {
     /// Other chosen apps are checked again every time the item opens.
     ///
     /// A launch action comes in turned off, needing review (`LaunchActionSetting.disabledForImport`,
-    /// threat model D4): it isn't used or written again until the user turns it on on this Mac.
+    /// threat model D4): it isn't used until the user turns it on on this Mac, and is written under
+    /// review (`"status": "review", "reason": "imported"`), so it stays off after a restart.
     static func sanitizedForImport(_ group: DockGroup) -> (group: DockGroup, leftOutItemCount: Int, resetLaunchOptionCount: Int, disabledLaunchActionCount: Int) {
         var group = group
         var reset = 0

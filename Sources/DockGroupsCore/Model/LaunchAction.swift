@@ -5,7 +5,8 @@ import Foundation
 //
 // This file only models, reads, checks and stores them; it opens nothing. Only the launcher runs an
 // enabled action, through `LaunchActionRunner` (docs/design/launch-action-runner-slice.md); the group
-// window shows, sets and turns them on (docs/design/launch-action-ui-slice.md).
+// window shows, sets and turns them on (docs/design/launch-action-ui-slice.md). An action under
+// review is saved as such (docs/design/launch-action-review-persistence.md).
 
 /// A browser whose profiles a website item can open in. Safari isn't one: there's no known public
 /// way to open one of its profiles.
@@ -63,6 +64,12 @@ enum LaunchActionRejection: Error, Hashable, Sendable {
     case unsupportedItemKind
     /// The profile name breaks the grammar (`BrowserProfileName`).
     case profileName(BrowserProfileNameRejection)
+    /// A `status` this version doesn't know, or `"review"` without a known `reason` (maybe written by
+    /// a newer version).
+    case unknownStatus
+    /// The file says the action was refused before (`"status": "review", "reason": "invalid"`): it
+    /// stays refused, whatever its other keys hold, until a new one is set.
+    case markedInvalid
 }
 
 /// Why a profile name was refused (`BrowserProfileName.rejection(for:)`).
@@ -134,11 +141,13 @@ enum BrowserProfileName {
     }
 }
 
-/// An item's launch action as kept in memory.
+/// An item's launch action as kept in memory and in the file.
 enum LaunchActionSetting: Hashable, Sendable {
-    /// A valid action for the item. Written to the file; not executed by this version.
+    /// A valid action for the item: the only kind the launcher runs. Written with
+    /// `"status": "enabled"`.
     case enabled(LaunchAction)
-    /// An action that can't be used until the user reviews it. Never written to a file.
+    /// An action that can't be used until the user reviews it. Written with `"status": "review"`
+    /// and its reason, so it stays off after a restart (launch-action-review-persistence.md).
     case needsReview(LaunchActionReview)
 
     /// `action` as an item of `kind` keeps it: enabled when it's valid and allowed for the kind,
@@ -153,11 +162,13 @@ enum LaunchActionSetting: Hashable, Sendable {
         }
     }
 
-    /// The action as it was read from a file for an item of `kind`.
-    init(reading result: Result<LaunchAction, LaunchActionRejection>, for kind: AppReference.Kind) {
-        switch result {
-        case .success(let action): self.init(action, for: kind)
-        case .failure(let rejection): self = .needsReview(.invalid(rejection))
+    /// The action as it was read from a file for an item of `kind`: one the file has under review
+    /// as imported stays so, and only one the file has on (or saved before statuses) can be enabled.
+    init(reading content: LaunchActionCoding.Content, for kind: AppReference.Kind) {
+        switch content {
+        case .enabled(let action): self.init(action, for: kind)
+        case .imported(let action): self = LaunchActionSetting(action, for: kind).disabledForImport
+        case .invalid(let rejection): self = .needsReview(.invalid(rejection))
         }
     }
 
@@ -168,10 +179,30 @@ enum LaunchActionSetting: Hashable, Sendable {
     }
 
     /// The setting as it comes in from a file someone may have handed over (a backup or its
-    /// templates): an enabled action is turned off until reviewed, and isn't written again.
+    /// templates): an enabled action is turned off until reviewed, and written so.
     var disabledForImport: LaunchActionSetting {
         guard case .enabled(let action) = self else { return self }
         return .needsReview(.imported(action))
+    }
+
+    /// Whether it needs review because it was refused.
+    var isInvalid: Bool {
+        if case .needsReview(.invalid) = self { return true }
+        return false
+    }
+}
+
+/// An item's launch action together with what its object in the file held besides: the keys of
+/// a refused action, written back as they were read so a newer version's data isn't lost. Never a
+/// forbidden key (`LaunchActionCoding.forbiddenKeys`), `status` or `reason`.
+struct StoredLaunchAction: Hashable, Sendable {
+    let setting: LaunchActionSetting
+    /// Kept only while the setting is refused (`LaunchActionSetting.isInvalid`); empty otherwise.
+    let keptFields: [String: JSONValue]
+
+    init(_ setting: LaunchActionSetting, keptFields: [String: JSONValue] = [:]) {
+        self.setting = setting
+        self.keptFields = setting.isInvalid ? keptFields.filter { !LaunchActionCoding.isForbidden($0.key) } : [:]
     }
 }
 
@@ -184,8 +215,15 @@ enum LaunchActionReview: Hashable, Sendable {
 }
 
 extension AppReference {
-    /// The item's launch action in use: valid, for its kind, not waiting for review. Nothing opens
-    /// the item with it yet.
+    /// The item's launch action (`nil`: none). Setting it keeps the kept fields of a refused action
+    /// only while it stays refused (`StoredLaunchAction`).
+    var launchActionSetting: LaunchActionSetting? {
+        get { storedLaunchAction?.setting }
+        set { storedLaunchAction = newValue.map { StoredLaunchAction($0, keptFields: storedLaunchAction?.keptFields ?? [:]) } }
+    }
+
+    /// The item's launch action in use: valid, for its kind, not waiting for review. Only the
+    /// launcher opens the item with it.
     var launchAction: LaunchAction? {
         launchActionSetting?.enabledAction(for: kind)
     }
@@ -197,7 +235,7 @@ extension AppReference {
     }
 
     /// Sets the item's launch action (`nil` removes it); one that isn't valid for the item is kept
-    /// as needing review, and isn't written.
+    /// and written as needing review, without its refused values.
     mutating func setLaunchAction(_ action: LaunchAction?) {
         launchActionSetting = action.map { LaunchActionSetting($0, for: kind) }
     }
@@ -205,14 +243,28 @@ extension AppReference {
 
 // MARK: - On-disk form
 
-/// The `launchAction` object of an item: exactly `template`, `browser` and `profile`, e.g.
-/// `{"template": "browserProfile", "browser": "chrome", "profile": "Work"}`. Read strictly: any
-/// other key, a wrong type or a missing parameter makes the action invalid; nothing is defaulted.
+/// The `launchAction` object of an item: a `status`, and the template's own keys, e.g.
+/// `{"status": "enabled", "template": "browserProfile", "browser": "chrome", "profile": "Work"}`.
+///
+/// - `"status": "enabled"` — on, so the launcher may run it.
+/// - `"status": "review", "reason": "imported"` — came in with a backup: off until turned on.
+/// - `"status": "review", "reason": "invalid"` — refused: never run; the object's other keys are
+///   written back as they were read (`fields`), forbidden ones excepted.
+/// - no `status` — written before statuses: read as `"enabled"`, so a valid action stays on.
+///
+/// Read strictly: any other `status` or `reason`, any other key, a wrong type or a missing
+/// parameter makes the action invalid; nothing is defaulted. Always written with a `status`.
 struct LaunchActionCoding: Codable {
+    static let statusKey = "status"
+    static let reasonKey = "reason"
     static let templateKey = "template"
     static let browserKey = "browser"
     static let profileKey = "profile"
-    /// The keys a launch action can have.
+    static let enabledStatus = "enabled"
+    static let reviewStatus = "review"
+    static let importedReason = "imported"
+    static let invalidReason = "invalid"
+    /// The template's keys.
     static let allowedKeys: Set<String> = [templateKey, browserKey, profileKey]
     /// Keys that are never read, kept or written, compared ignoring case. Any of them makes the
     /// action invalid (they'd be unknown anyway; listed so they're refused by name).
@@ -222,39 +274,113 @@ struct LaunchActionCoding: Codable {
     /// The template identifier of `LaunchAction.browserProfile`.
     static let browserProfileTemplate = "browserProfile"
 
-    /// What was read.
-    let result: Result<LaunchAction, LaunchActionRejection>
+    static func isForbidden(_ key: String) -> Bool {
+        forbiddenKeys.contains(key.lowercased())
+    }
 
+    /// What an object says, before the item's kind is considered.
+    enum Content: Hashable, Sendable {
+        case enabled(LaunchAction)
+        case imported(LaunchAction)
+        case invalid(LaunchActionRejection)
+    }
+
+    /// What was read, or is to be written.
+    let content: Content
+    /// The object's keys but `status`, `reason` and forbidden ones, as read; written back with an
+    /// invalid action. Empty for a value that isn't an object.
+    let fields: [String: JSONValue]
+
+    /// An enabled action, to write.
     init(_ action: LaunchAction) {
-        result = .success(action)
+        content = .enabled(action)
+        fields = [:]
+    }
+
+    /// `stored` as an item of `kind` writes it: on, or imported, only while valid and allowed for
+    /// the kind; anything else as invalid, with only the kept fields of an action that was read
+    /// refused (never a refused value built in memory).
+    init(_ stored: StoredLaunchAction, for kind: AppReference.Kind) {
+        switch stored.setting {
+        case .enabled(let action) where action.rejection == nil && action.isAllowed(for: kind):
+            content = .enabled(action)
+            fields = [:]
+        case .needsReview(.imported(let action)) where action.rejection == nil && action.isAllowed(for: kind):
+            content = .imported(action)
+            fields = [:]
+        case .needsReview(.invalid(let rejection)):
+            content = .invalid(rejection)
+            fields = stored.keptFields
+        case .enabled(let action), .needsReview(.imported(let action)):
+            content = .invalid(action.rejection ?? .unsupportedItemKind)
+            fields = [:]
+        }
     }
 
     /// Never throws: a value that can't be read is an invalid action, not an unreadable item.
     init(from decoder: Decoder) {
-        result = Self.read(decoder)
+        guard case .object(let object)? = try? JSONValue(from: decoder) else {
+            content = .invalid(.notAnObject)
+            fields = [:]
+            return
+        }
+        content = Self.read(object)
+        fields = object.filter { $0.key != Self.statusKey && $0.key != Self.reasonKey && !Self.isForbidden($0.key) }
     }
 
-    private static func read(_ decoder: Decoder) -> Result<LaunchAction, LaunchActionRejection> {
-        guard let container = try? decoder.container(keyedBy: Key.self) else { return .failure(.notAnObject) }
-        let keys = container.allKeys.map(\.stringValue)
-        if keys.contains(where: { forbiddenKeys.contains($0.lowercased()) }) { return .failure(.forbiddenKey) }
-        if keys.contains(where: { !allowedKeys.contains($0) }) { return .failure(.unknownKey) }
+    /// An object that couldn't be decoded at all.
+    static let unreadable = LaunchActionCoding(content: .invalid(.notAnObject), fields: [:])
+
+    private init(content: Content, fields: [String: JSONValue]) {
+        self.content = content
+        self.fields = fields
+    }
+
+    private static func read(_ object: [String: JSONValue]) -> Content {
+        if object.keys.contains(where: isForbidden) { return .invalid(.forbiddenKey) }
+        var keys = allowedKeys
+        var imported = false
+        switch string(object, statusKey) {
+        case .success(nil):
+            break
+        case .success(enabledStatus?):
+            keys.insert(statusKey)
+        case .success(reviewStatus?):
+            keys.formUnion([statusKey, reasonKey])
+            switch string(object, reasonKey) {
+            case .success(importedReason?): imported = true
+            case .success(invalidReason?): return .invalid(.markedInvalid)
+            case .success: return .invalid(.unknownStatus)
+            case .failure(let rejection): return .invalid(rejection)
+            }
+        case .success: return .invalid(.unknownStatus)
+        case .failure(let rejection): return .invalid(rejection)
+        }
+        if object.keys.contains(where: { !keys.contains($0) }) { return .invalid(.unknownKey) }
+        switch action(object) {
+        case .success(let action): return imported ? .imported(action) : .enabled(action)
+        case .failure(let rejection): return .invalid(rejection)
+        }
+    }
+
+    /// The template and its parameters.
+    private static func action(_ object: [String: JSONValue]) -> Result<LaunchAction, LaunchActionRejection> {
         let template: String
-        switch string(container, templateKey) {
+        switch string(object, templateKey) {
         case .success(let value?): template = value
         case .success(nil): return .failure(.missingTemplate)
         case .failure(let rejection): return .failure(rejection)
         }
         guard template == browserProfileTemplate else { return .failure(.unknownTemplate) }
         let browser: BrowserFamily
-        switch string(container, browserKey) {
+        switch string(object, browserKey) {
         case .success(let value?):
             guard let family = BrowserFamily(rawValue: value) else { return .failure(.unknownBrowser) }
             browser = family
         case .success(nil): return .failure(.missingBrowser)
         case .failure(let rejection): return .failure(rejection)
         }
-        switch string(container, profileKey) {
+        switch string(object, profileKey) {
         case .success(let profileName?):
             let action = LaunchAction.browserProfile(browser: browser, profileName: profileName)
             if let rejection = action.rejection { return .failure(rejection) }
@@ -266,37 +392,40 @@ struct LaunchActionCoding: Codable {
 
     /// The string at `key`; `nil` when it's missing, a failure when it's of another type (`null`
     /// included).
-    private static func string(_ container: KeyedDecodingContainer<Key>, _ key: String) -> Result<String?, LaunchActionRejection> {
-        let codingKey = Key(stringValue: key)
-        guard container.contains(codingKey) else { return .success(nil) }
-        guard let value = try? container.decode(String.self, forKey: codingKey) else { return .failure(.wrongValueType) }
-        return .success(value)
+    private static func string(_ object: [String: JSONValue], _ key: String) -> Result<String?, LaunchActionRejection> {
+        guard let value = object[key] else { return .success(nil) }
+        guard let string = value.stringValue else { return .failure(.wrongValueType) }
+        return .success(string)
     }
 
-    /// Writes only a valid action, with only its own keys.
+    /// Always with a `status`. An enabled or imported action only when it's valid, with only its
+    /// own keys; an invalid one with its kept fields, forbidden keys never.
     func encode(to encoder: Encoder) throws {
-        guard case .success(let action) = result, action.rejection == nil else {
-            throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "Not a valid launch action"))
+        var object: [String: JSONValue]
+        switch content {
+        case .enabled(let action), .imported(let action):
+            guard action.rejection == nil else {
+                throw EncodingError.invalidValue(self, EncodingError.Context(codingPath: encoder.codingPath, debugDescription: "Not a valid launch action"))
+            }
+            switch action {
+            case .browserProfile(let browser, let profileName):
+                object = [
+                    Self.templateKey: .string(Self.browserProfileTemplate),
+                    Self.browserKey: .string(browser.rawValue),
+                    Self.profileKey: .string(profileName),
+                ]
+            }
+            if case .imported = content {
+                object[Self.statusKey] = .string(Self.reviewStatus)
+                object[Self.reasonKey] = .string(Self.importedReason)
+            } else {
+                object[Self.statusKey] = .string(Self.enabledStatus)
+            }
+        case .invalid:
+            object = fields.filter { !Self.isForbidden($0.key) }
+            object[Self.statusKey] = .string(Self.reviewStatus)
+            object[Self.reasonKey] = .string(Self.invalidReason)
         }
-        var container = encoder.container(keyedBy: Key.self)
-        switch action {
-        case .browserProfile(let browser, let profileName):
-            try container.encode(Self.browserProfileTemplate, forKey: Key(stringValue: Self.templateKey))
-            try container.encode(browser.rawValue, forKey: Key(stringValue: Self.browserKey))
-            try container.encode(profileName, forKey: Key(stringValue: Self.profileKey))
-        }
-    }
-
-    private struct Key: CodingKey {
-        let stringValue: String
-        let intValue: Int? = nil
-
-        init(stringValue: String) {
-            self.stringValue = stringValue
-        }
-
-        init?(intValue: Int) {
-            nil
-        }
+        try JSONValue.object(object).encode(to: encoder)
     }
 }
