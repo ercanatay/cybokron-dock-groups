@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Profil browser perlu ditinjau: item tidak akan terbuka sampai Anda mengaktifkannya.";
 "item.launch.profile.row.running" = "%@ sedang berjalan: item hanya akan terbuka setelah Anda menutupnya.";
 "item.launch.profile.confirm.title" = "Buka “%1$@” di %2$@ dengan profil “%3$@”?";
+"item.launch.profile.approval.row" = "Persetujuan tidak ada di Mac ini: item tidak akan terbuka sampai Anda mengaktifkannya kembali.";
+"item.launch.profile.approval.editor" = "Persetujuan tidak ada di Mac ini, sehingga item tidak akan terbuka. Untuk mengaktifkannya, periksa profil lalu aktifkan kembali.";
+"core.backup.approval.disabled" = "%ld tindakan profil browser tiba dalam keadaan nonaktif dan memerlukan persetujuan.";

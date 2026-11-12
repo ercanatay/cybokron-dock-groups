@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Profil przeglądarki wymaga sprawdzenia: element nie otworzy się, dopóki go nie włączysz.";
 "item.launch.profile.row.running" = "%@ jest uruchomiona: element otworzy się dopiero po jej zamknięciu.";
 "item.launch.profile.confirm.title" = "Otworzyć „%1$@” w %2$@ z profilem „%3$@”?";
+"item.launch.profile.approval.row" = "Brak zatwierdzenia na tym Macu: element nie zostanie otwarty, dopóki go ponownie nie włączysz.";
+"item.launch.profile.approval.editor" = "Zatwierdzenie jest niedostępne na tym Macu, więc element nie zostanie otwarty. Aby je włączyć, sprawdź profil i włącz je ponownie.";
+"core.backup.approval.disabled" = "%ld działań profilu przeglądarki zostało dodanych wyłączonych i wymaga zatwierdzenia.";

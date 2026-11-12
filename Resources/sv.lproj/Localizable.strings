@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Webbläsarprofilen behöver granskas: objektet öppnas inte förrän du slår på den.";
 "item.launch.profile.row.running" = "%@ körs: objektet öppnas först när du avslutar den.";
 "item.launch.profile.confirm.title" = "Öppna “%1$@” i %2$@ med profilen “%3$@”?";
+"item.launch.profile.approval.row" = "Godkännande saknas på den här Mac:en: objektet öppnas inte förrän du slår på det igen.";
+"item.launch.profile.approval.editor" = "Godkännande saknas på den här Mac:en, så objektet öppnas inte. För att aktivera det, kontrollera profilen och slå på den igen.";
+"core.backup.approval.disabled" = "%ld åtgärd(er) för webbläsarprofiler kom avstängda och behöver godkännas.";

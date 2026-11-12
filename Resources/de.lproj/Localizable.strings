@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Browserprofil muss geprüft werden: Das Element wird erst geöffnet, wenn du es einschaltest.";
 "item.launch.profile.row.running" = "%@ läuft: Das Element wird erst geöffnet, nachdem du den Browser beendet hast.";
 "item.launch.profile.confirm.title" = "„%1$@“ in %2$@ mit dem Profil „%3$@“ öffnen?";
+"item.launch.profile.approval.row" = "Zustimmung auf diesem Mac fehlt: Das Element lässt sich erst öffnen, wenn du sie wieder aktivierst.";
+"item.launch.profile.approval.editor" = "Die Zustimmung fehlt auf diesem Mac, daher lässt sich das Element nicht öffnen. Zum Aktivieren prüfe das Profil und schalte es wieder ein.";
+"core.backup.approval.disabled" = "%ld Browserprofil-Aktion(en) wurde(n) deaktiviert eingegangen und benötigt/benötigen Zustimmung.";

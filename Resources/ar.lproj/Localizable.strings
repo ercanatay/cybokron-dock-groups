@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "ملف تعريف المتصفح يحتاج إلى مراجعة: لن يُفتح العنصر حتى تفعّله.";
 "item.launch.profile.row.running" = "%@ قيد التشغيل: لن يُفتح العنصر إلا بعد إغلاقه.";
 "item.launch.profile.confirm.title" = "هل تريد فتح “%1$@” في %2$@ باستخدام ملف التعريف “%3$@”؟";
+"item.launch.profile.approval.row" = "لا توجد موافقة على هذا Mac: لن يُفتح العنصر حتى تعيد تفعيلها.";
+"item.launch.profile.approval.editor" = "الموافقة غير موجودة على هذا Mac، لذلك لن يُفتح العنصر. لتفعيلها، تحقق من الملف الشخصي وأعد تفعيله.";
+"core.backup.approval.disabled" = "%ld إجراء(إجراءات) لملف تعريف المتصفح وصل معطلاً ويحتاج إلى موافقة.";

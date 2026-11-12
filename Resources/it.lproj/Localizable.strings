@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Profilo del browser da controllare: l'elemento non si aprirà finché non lo attivi.";
 "item.launch.profile.row.running" = "%@ è in esecuzione: l'elemento si apre solo dopo che lo chiudi.";
 "item.launch.profile.confirm.title" = "Aprire “%1$@” in %2$@ con il profilo “%3$@”?";
+"item.launch.profile.approval.row" = "Approvazione mancante su questo Mac: l'elemento non si aprirà finché non la riattivi.";
+"item.launch.profile.approval.editor" = "L'approvazione manca su questo Mac, quindi l'elemento non si aprirà. Per attivarla, controlla il profilo e riattivala.";
+"core.backup.approval.disabled" = "%ld azione/i del profilo del browser sono arrivate disattivate e richiedono approvazione.";

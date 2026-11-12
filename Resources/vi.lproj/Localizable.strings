@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Hồ sơ trình duyệt cần kiểm tra: mục sẽ không mở cho đến khi bạn bật lại.";
 "item.launch.profile.row.running" = "%@ đang chạy: mục chỉ mở sau khi bạn thoát ứng dụng này.";
 "item.launch.profile.confirm.title" = "Mở “%1$@” trong %2$@ với hồ sơ “%3$@”?";
+"item.launch.profile.approval.row" = "Thiếu chấp thuận trên Mac này: mục sẽ không mở cho đến khi bạn bật lại.";
+"item.launch.profile.approval.editor" = "Mac này thiếu chấp thuận nên mục sẽ không mở. Để bật, hãy kiểm tra hồ sơ và bật lại.";
+"core.backup.approval.disabled" = "%ld hành động hồ sơ trình duyệt đã đến ở trạng thái tắt và cần được chấp thuận.";

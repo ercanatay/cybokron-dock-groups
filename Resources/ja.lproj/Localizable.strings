@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "ブラウザプロファイルの確認が必要です：オンにするまで項目は開きません。";
 "item.launch.profile.row.running" = "%@ が実行中です：終了後にのみ項目が開きます。";
 "item.launch.profile.confirm.title" = "“%1$@” を、プロファイル “%3$@” の %2$@ で開きますか？";
+"item.launch.profile.approval.row" = "このMacでは承認がありません。再度有効にするまで、この項目は開きません。";
+"item.launch.profile.approval.editor" = "このMacでは承認がないため、この項目は開きません。有効にするには、プロファイルを確認して再度オンにしてください。";
+"core.backup.approval.disabled" = "%ld 件のブラウザプロファイル操作がオフの状態で届いており、承認が必要です。";

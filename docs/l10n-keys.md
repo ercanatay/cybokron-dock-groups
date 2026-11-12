@@ -1681,7 +1681,7 @@ reuses `item.launch.choice.notOnThisMac`.
 | `item.launch.profile.row.running` | %@ is running: the item opens only after you quit it. |
 | `item.launch.profile.confirm.title` | Open “%1$@” in %2$@ with the profile “%3$@”? |
 
-## Launch action approval on this Mac: the editor's and row's missing-approval notes, the restore summary's count (English only for now)
+## Launch action approval on this Mac: the editor's and row's missing-approval notes, the restore summary's count
 
 An action that's on needs this Mac's approval (threat model D9). `item.launch.profile.approval.editor`
 is shown in the details editor, with Turn On, and `item.launch.profile.approval.row` under the item's

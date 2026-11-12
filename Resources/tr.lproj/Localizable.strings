@@ -1206,3 +1206,6 @@
 "item.launch.profile.row.review" = "Tarayıcı profilinin incelenmesi gerekiyor: etkinleştirene kadar öğe açılmayacak.";
 "item.launch.profile.row.running" = "%@ çalışıyor: öğe yalnızca kapatıldıktan sonra açılır.";
 "item.launch.profile.confirm.title" = "“%1$@” öğesi “%3$@” profiliyle %2$@ içinde açılsın mı?";
+"item.launch.profile.approval.row" = "Bu Mac'te onay eksik: öğeyi tekrar açana kadar öğe açılmaz.";
+"item.launch.profile.approval.editor" = "Bu Mac'te onay eksik, bu yüzden öğe açılmaz. Etkinleştirmek için profili kontrol edin ve onayı yeniden açın.";
+"core.backup.approval.disabled" = "%ld tarayıcı profili işlemi kapalı olarak geldi ve onay gerektiriyor.";

@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Brauzer profilinə baxış lazımdır: elementi yandırana qədər o açılmayacaq.";
 "item.launch.profile.row.running" = "%@ işləyir: element yalnız onu bağladıqdan sonra açılır.";
 "item.launch.profile.confirm.title" = "“%1$@” elementi %2$@ brauzerində “%3$@” profili ilə açılsın?";
+"item.launch.profile.approval.row" = "Mac-də təsdiq yoxdur: element bunu yenidən aktivləşdirənə qədər açılmayacaq.";
+"item.launch.profile.approval.editor" = "Bu Mac-də təsdiq yoxdur, ona görə element açılmayacaq. Aktivləşdirmək üçün profili yoxlayın və yenidən aktiv edin.";
+"core.backup.approval.disabled" = "%ld brauzer profili əməliyyatı deaktiv halda gəlib və təsdiq tələb edir.";
