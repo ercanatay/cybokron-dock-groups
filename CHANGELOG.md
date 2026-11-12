@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.2] - 2026-11-12
+
+### Fixed
+
+- When a browser profile's approval is missing on this Mac — because the approvals file was removed or changed while the app was running — the item now says so in the editor and its row, and offers to approve it again, instead of failing silently at launch.
+- Restoring or importing a backup now says how many browser profile actions arrived turned off and need approval.
+
 ## [0.18.1] - 2026-11-12
 
 ### Changed
@@ -645,7 +652,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.1...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.2...HEAD
+[0.18.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.3...v0.18.0
 [0.17.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.2...v0.17.3
