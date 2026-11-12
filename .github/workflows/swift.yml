@@ -167,9 +167,18 @@ jobs:
           rm -f "$CERT"
           # Developer ID intermediates, in case the runner or the .p12 lacks the chain.
           for ca in DeveloperIDCA DeveloperIDG2CA; do
-            { curl -fsSL "https://www.apple.com/certificateauthority/$ca.cer" -o "$RUNNER_TEMP/$ca.cer" \
-                && security import "$RUNNER_TEMP/$ca.cer" -k "$SIGNING_KEYCHAIN"; } \
-              || echo "::warning::Could not import the $ca intermediate certificate"
+            if ! curl -fsSL "https://www.apple.com/certificateauthority/$ca.cer" -o "$RUNNER_TEMP/$ca.cer"; then
+              echo "::warning::Could not download the $ca intermediate certificate"
+              continue
+            fi
+            # An intermediate that is already in the keychain is fine; anything else stays a warning.
+            if ! OUT="$(security import "$RUNNER_TEMP/$ca.cer" -k "$SIGNING_KEYCHAIN" 2>&1)"; then
+              if grep -qi "already exists" <<< "$OUT"; then
+                echo "$ca intermediate certificate already present"
+              else
+                echo "::warning::Could not import the $ca intermediate certificate: $OUT"
+              fi
+            fi
           done
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
             -k "$KEYCHAIN_PASSWORD" "$SIGNING_KEYCHAIN" > /dev/null
