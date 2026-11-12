@@ -304,13 +304,25 @@ struct SwitchingRig {
             store: store,
             preferences: preferences,
             session: session,
-            launcher: GroupLauncher(workspace: workspace, locator: ScriptedLocator()),
+            // The groups' launch actions are approved, as turning them on records (launch-action-approvals.md).
+            launcher: GroupLauncher(workspace: workspace, locator: ScriptedLocator(), approvals: Self.approvals(of: groups)),
             terminator: terminator,
             applications: apps,
             questions: quitRequests,
             authentication: authentication,
             clock: { clock.now }
         )
+    }
+}
+
+extension SwitchingRig {
+    /// Approvals in memory of every launch action in `groups`.
+    static func approvals(of groups: [DockGroup]) -> LaunchActionApprovalStore {
+        let approvals = LaunchActionApprovalStore.inMemory()
+        for item in groups.flatMap(\.apps) {
+            try? approvals.approve(item)
+        }
+        return approvals
     }
 }
 

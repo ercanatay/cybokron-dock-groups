@@ -369,21 +369,29 @@ struct LaunchActionEditingTests {
 
     // MARK: - What opens
 
+    /// Turning it on records its approval (launch-action-approvals.md), which the launcher reads: the
+    /// store and the launcher share this Mac's approvals, here in memory.
     @Test func anImportedItemOpensOnlyOnceTurnedOn() async {
+        let approvals = LaunchActionApprovalStore.inMemory()
+        let store = GroupStore(persistence: MemoryGroupPersistence(), saveDelay: .zero, approvals: approvals)
         let item = Self.imported()
-        let id = group(with: item)
+        let id = store.addGroup(named: "Work").id
+        store.addItems([item], toGroup: id)
+        func stored(_ id: DockGroup.ID) -> GroupItem { store.group(withID: id)!.apps[0] }
         let workspace = LaunchActionFakeWorkspace()
 
-        let before = await GroupLauncher(workspace: workspace).open(stored(id), inGroup: store.group(withID: id)!, source: .userAction)
+        let before = await GroupLauncher(workspace: workspace, approvals: approvals).open(stored(id), inGroup: store.group(withID: id)!, source: .userAction)
         #expect(before.entries.first?.launchActionRefusal == .plan(.actionDisabled))
         #expect(workspace.starts.isEmpty && workspace.websiteRequests.isEmpty && workspace.openedWith.isEmpty)
+        #expect(approvals.load().isEmpty)
 
         var draft = ItemDetailsDraft(stored(id), installedBrowsers: Self.allInstalled)
         let action = draft.launchActionToTurnOn!
         draft.confirmLaunchAction(action)
         store.saveItemEdits(of: draft, endingWith: .done, ofItem: item.id, inGroup: id)
+        #expect(approvals.check(stored(id)) == .approved)
 
-        let after = await GroupLauncher(workspace: workspace).open(stored(id), inGroup: store.group(withID: id)!, source: .userAction)
+        let after = await GroupLauncher(workspace: workspace, approvals: approvals).open(stored(id), inGroup: store.group(withID: id)!, source: .userAction)
         #expect(after.entries == [LaunchReport.Entry(app: stored(id), outcome: .launched)])
         #expect(workspace.starts.map(\.arguments) == [["--profile-directory=Work"]])
         #expect(workspace.websiteRequests.isEmpty && workspace.openedWith.isEmpty)
