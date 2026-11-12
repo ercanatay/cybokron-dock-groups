@@ -62,7 +62,7 @@ public struct SettingsBackup: Equatable, Sendable {
     public private(set) var resetLaunchOptionCount = 0
     /// Items of the file whose launch action came in turned off, needing review, and written so
     /// (`sanitizedForImport`). Not part of the file; 0 for a backup being written.
-    private(set) var disabledLaunchActionCount = 0
+    public private(set) var disabledLaunchActionCount = 0
 
     public init(
         appVersion: String,
@@ -309,6 +309,8 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
     public var leftOutItemCount: Int
     /// Items of the backup kept without the app chosen to open them, which could run them.
     public var resetLaunchOptionCount: Int
+    /// Items of the backup whose browser profile action comes in turned off and needs approval here.
+    public var disabledLaunchActionCount: Int
     /// Current groups that a group of the same name in the backup takes the place of.
     public var replacedGroupCount: Int
     /// Current groups with no group of the same name in the backup; they're removed.
@@ -333,6 +335,7 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         itemCount = backup.itemCount
         leftOutItemCount = backup.leftOutItemCount
         resetLaunchOptionCount = backup.resetLaunchOptionCount
+        disabledLaunchActionCount = backup.disabledLaunchActionCount
         let backupNames = Set(backup.groups.map(GroupStore.mergeName(of:)))
         let matching = currentGroups.filter { backupNames.contains(GroupStore.mergeName(of: $0)) }.count
         replacedGroupCount = matching
@@ -354,6 +357,16 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         triggerCount = backup.triggers.count
         let addedGroupIDs = Set(merged.active.map(\.id) + merged.archived.map(\.id))
         mergedTriggerCount = backup.triggers.filter { addedGroupIDs.contains($0.groupID) }.count
+    }
+
+    /// For the line about the backup's contents: its browser profile actions, which come in turned
+    /// off until approved on this Mac; `nil` when there are none.
+    public var profileApprovalNote: String? {
+        guard disabledLaunchActionCount > 0 else { return nil }
+        return Localization.format(
+            "core.backup.approval.disabled",
+            "%ld browser profile action(s) arrived turned off and need approval.", disabledLaunchActionCount
+        )
     }
 
     /// For the line about the backup's contents: its triggers, which come in turned off; `nil` when

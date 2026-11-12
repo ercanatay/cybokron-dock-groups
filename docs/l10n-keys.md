@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1123 keys.
+1126 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1680,3 +1680,16 @@ reuses `item.launch.choice.notOnThisMac`.
 | `item.launch.profile.row.review` | Browser profile needs review: the item won't open until you turn it on. |
 | `item.launch.profile.row.running` | %@ is running: the item opens only after you quit it. |
 | `item.launch.profile.confirm.title` | Open “%1$@” in %2$@ with the profile “%3$@”? |
+
+## Launch action approval on this Mac: the editor's and row's missing-approval notes, the restore summary's count (English only for now)
+
+An action that's on needs this Mac's approval (threat model D9). `item.launch.profile.approval.editor`
+is shown in the details editor, with Turn On, and `item.launch.profile.approval.row` under the item's
+row; `core.backup.approval.disabled` is a sentence of the restore and merge confirmation (`%ld` is the
+number of the backup's browser profile actions that came in turned off).
+
+| Key | English |
+| --- | --- |
+| `item.launch.profile.approval.editor` | Approval is missing on this Mac, so the item won't open. To enable it, check the profile and turn it on again. |
+| `item.launch.profile.approval.row` | Approval missing on this Mac: the item won't open until you turn it on again. |
+| `core.backup.approval.disabled` | %ld browser profile action(s) arrived turned off and need approval. |

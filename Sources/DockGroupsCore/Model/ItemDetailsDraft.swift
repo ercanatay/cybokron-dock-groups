@@ -50,6 +50,8 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     }
     /// The item's launch action when the editor opened; `nil` without one.
     public let originalLaunchAction: LaunchActionStatus?
+    /// The action is on but this Mac has no approval for it (`GroupStore.isApprovalMissing(for:)`).
+    public let isApprovalMissing: Bool
     /// The browsers found on this Mac when the editor opened: only these can be chosen.
     public let installedBrowsers: Set<BrowserFamily>
     /// The browser whose profile the website opens in; `nil` while the browser profile is off.
@@ -71,11 +73,15 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     /// A draft of everything the editor edits of `item`.
     /// - Parameter installedBrowsers: The browsers on this Mac, which a website's browser profile
     ///   can be set to.
-    public init(_ item: GroupItem, installedBrowsers: Set<BrowserFamily> = []) {
-        self.init(details: item.details, launch: item.launch, kind: item.kind, action: item.launchActionStatus, installedBrowsers: installedBrowsers)
+    ///   - isApprovalMissing: The item's action is on but this Mac has no approval for it, so the
+    ///     editor offers Turn On, which writes it.
+    public init(_ item: GroupItem, installedBrowsers: Set<BrowserFamily> = [], isApprovalMissing: Bool = false) {
+        self.init(details: item.details, launch: item.launch, kind: item.kind, action: item.launchActionStatus, installedBrowsers: installedBrowsers,
+                  isApprovalMissing: isApprovalMissing && item.launchActionStatus?.needsReview == false)
     }
 
-    private init(details: ItemDetails, launch: ItemLaunchOptions, kind: AppReference.Kind, action: LaunchActionStatus?, installedBrowsers: Set<BrowserFamily>) {
+    private init(details: ItemDetails, launch: ItemLaunchOptions, kind: AppReference.Kind, action: LaunchActionStatus?, installedBrowsers: Set<BrowserFamily>, isApprovalMissing: Bool = false) {
+        self.isApprovalMissing = isApprovalMissing
         original = details
         self.kind = kind
         originalLaunch = launch.allowed(for: kind)
@@ -192,7 +198,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
 
     /// Whether the item's action needs the user's review before the item opens again: it came in
     /// with a backup, or couldn't be used.
-    public var launchActionNeedsReview: Bool { originalLaunchAction?.needsReview ?? false }
+    public var launchActionNeedsReview: Bool { (originalLaunchAction?.needsReview ?? false) || isApprovalMissing }
 
     /// Whether Done can close the editor: the name is accepted, and a changed browser profile is
     /// for a browser on this Mac.
@@ -233,7 +239,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
             return removes ? .remove : nil
         }
         guard chosen == confirmedLaunchAction, chosen.rejection == nil, chosen.isAllowed(for: kind) else { return nil }
-        if originalLaunchAction == .enabled(chosen) { return nil }
+        if originalLaunchAction == .enabled(chosen), !isApprovalMissing { return nil }
         return .enable(chosen)
     }
 

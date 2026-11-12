@@ -1257,5 +1257,8 @@
 "item.launch.profile.review" = "This browser profile came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on.";
 "item.launch.profile.turnOn" = "Turn On";
 "item.launch.profile.row.review" = "Browser profile needs review: the item won't open until you turn it on.";
+"item.launch.profile.approval.row" = "Approval missing on this Mac: the item won't open until you turn it on again.";
+"item.launch.profile.approval.editor" = "Approval is missing on this Mac, so the item won't open. To enable it, check the profile and turn it on again.";
+"core.backup.approval.disabled" = "%ld browser profile action(s) arrived turned off and need approval.";
 "item.launch.profile.row.running" = "%@ is running: the item opens only after you quit it.";
 "item.launch.profile.confirm.title" = "Open “%1$@” in %2$@ with the profile “%3$@”?";

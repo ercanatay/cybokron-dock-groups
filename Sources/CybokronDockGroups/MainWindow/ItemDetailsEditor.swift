@@ -214,7 +214,7 @@ struct ItemDetailsEditor: View {
         if draft.launchActionNeedsReview {
             GridRow {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label(L10n.BrowserProfile.review, systemImage: "exclamationmark.triangle.fill")
+                    Label(draft.isApprovalMissing ? L10n.BrowserProfile.approvalMissing : L10n.BrowserProfile.review, systemImage: "exclamationmark.triangle.fill")
                         .font(.caption)
                         .foregroundStyle(.orange)
                         .fixedSize(horizontal: false, vertical: true)

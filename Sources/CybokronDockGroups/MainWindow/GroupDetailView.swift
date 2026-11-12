@@ -259,7 +259,7 @@ struct GroupDetailView: View {
             onRemove: { store.removeApp(bundleIdentifier: item.bundleIdentifier, fromGroup: group.id) },
             onLocate: canLocate ? { locate(item) } : nil,
             launchCaption: ItemLaunchCaption(item: item, isOpenerInstalled: presence.isOpenerInstalled(item)),
-            actionCaption: LaunchActionCaption(item: item) { runningApps.runningBundleIdentifiers.contains($0.lowercased()) },
+            actionCaption: LaunchActionCaption(item: item, isApprovalMissing: store.isApprovalMissing(for: item)) { runningApps.runningBundleIdentifiers.contains($0.lowercased()) },
             isEditingDetails: isEditingDetailsInPopover(of: item),
             detailsEditor: { detailsEditor() }
         )
@@ -497,7 +497,7 @@ struct GroupDetailView: View {
         editing = DetailsEditing(
             item: item,
             // LaunchServices is asked once, now, which browsers a browser profile can be set to.
-            draft: ItemDetailsDraft(item, installedBrowsers: item.isWebsite ? installedBrowsers() : []),
+            draft: ItemDetailsDraft(item, installedBrowsers: item.isWebsite ? installedBrowsers() : [], isApprovalMissing: store.isApprovalMissing(for: item)),
             isSheet: inSheet,
             target: opened,
             // LaunchServices is asked for the item's apps once, now.
