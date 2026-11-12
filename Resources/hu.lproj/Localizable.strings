@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "A böngészőprofilt át kell nézni: az elem nem nyílik meg, amíg be nem kapcsolja.";
 "item.launch.profile.row.running" = "A(z) %@ fut: az elem csak akkor nyílik meg, ha kilép belőle.";
 "item.launch.profile.confirm.title" = "Megnyitja a(z) „%1$@” elemet a(z) %2$@ böngészőben a(z) „%3$@” profillal?";
+"item.launch.profile.approval.row" = "Jóváhagyás hiányzik ezen a Mac-en: az elem nem nyílik meg, amíg újra be nem kapcsolja.";
+"item.launch.profile.approval.editor" = "A jóváhagyás hiányzik ezen a Mac-en, ezért az elem nem nyílik meg. A engedélyezéshez ellenőrizze a profilt, majd kapcsolja be újra.";
+"core.backup.approval.disabled" = "%ld böngészőprofil-művelet kikapcsolva érkezett, és jóváhagyást igényel.";

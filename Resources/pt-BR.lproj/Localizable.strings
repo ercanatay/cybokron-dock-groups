@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Perfil do navegador precisa de revisão: o item não será aberto até que você o ative.";
 "item.launch.profile.row.running" = "%@ está em execução: o item só será aberto depois que você fechar o navegador.";
 "item.launch.profile.confirm.title" = "Abrir “%1$@” no %2$@ com o perfil “%3$@”?";
+"item.launch.profile.approval.row" = "Aprovação ausente neste Mac: o item não será aberto até que você a ative novamente.";
+"item.launch.profile.approval.editor" = "A aprovação está ausente neste Mac, então o item não será aberto. Para ativá-la, verifique o perfil e ative-a novamente.";
+"core.backup.approval.disabled" = "%ld ação(ões) de perfil do navegador chegaram desativadas e precisam de aprovação.";

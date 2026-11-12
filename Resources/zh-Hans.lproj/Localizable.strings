@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "浏览器配置文件需要检查：在你开启之前，该项目不会打开。";
 "item.launch.profile.row.running" = "%@ 正在运行：只有在你退出它之后，该项目才会打开。";
 "item.launch.profile.confirm.title" = "要在 %2$@ 中使用配置文件“%3$@”打开“%1$@”吗？";
+"item.launch.profile.approval.row" = "在这台 Mac 上缺少批准，项目在重新开启之前无法打开。";
+"item.launch.profile.approval.editor" = "这台 Mac 上缺少批准，因此该项目无法打开。要启用它，请检查配置文件并重新开启。";
+"core.backup.approval.disabled" = "%ld 个浏览器配置文件操作已被关闭，需要批准。";

@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Profilul de browser trebuie verificat: elementul nu se va deschide până nu îl activezi.";
 "item.launch.profile.row.running" = "%@ rulează: elementul se deschide doar după ce închizi aplicația.";
 "item.launch.profile.confirm.title" = "Deschizi “%1$@” în %2$@ cu profilul “%3$@”?";
+"item.launch.profile.approval.row" = "Aprobarea lipsește pe acest Mac: elementul nu se deschide până nu o activezi din nou.";
+"item.launch.profile.approval.editor" = "Aprobarea lipsește pe acest Mac, așa că elementul nu se deschide. Pentru a o activa, verifică profilul și activeaz-o din nou.";
+"core.backup.approval.disabled" = "%ld acțiune(i) de profil de browser au sosit dezactivate și necesită aprobare.";

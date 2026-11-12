@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Browserprofiel moet worden gecontroleerd: het item wordt pas geopend nadat je het inschakelt.";
 "item.launch.profile.row.running" = "%@ is actief: het item wordt pas geopend nadat je het hebt afgesloten.";
 "item.launch.profile.confirm.title" = "“%1$@” openen in %2$@ met het profiel “%3$@”?";
+"item.launch.profile.approval.row" = "Goedkeuring ontbreekt op deze Mac: het item wordt pas geopend als je het weer inschakelt.";
+"item.launch.profile.approval.editor" = "Goedkeuring ontbreekt op deze Mac, dus het item wordt niet geopend. Om het in te schakelen, controleer het profiel en schakel het opnieuw in.";
+"core.backup.approval.disabled" = "%ld browserprofielactie(s) zijn uitgeschakeld aangekomen en hebben goedkeuring nodig.";

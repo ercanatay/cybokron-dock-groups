@@ -1208,3 +1208,6 @@
 "item.launch.profile.row.review" = "Profil prohlížeče vyžaduje kontrolu: položka se neotevře, dokud ho nezapnete.";
 "item.launch.profile.row.running" = "%@ je spuštěn: položka se otevře až po jeho ukončení.";
 "item.launch.profile.confirm.title" = "Otevřít „%1$@“ v prohlížeči %2$@ s profilem „%3$@“?";
+"item.launch.profile.approval.row" = "Schválení na tomto Macu chybí: položka se neotevře, dokud ho znovu nezapnete.";
+"item.launch.profile.approval.editor" = "Schválení na tomto Macu chybí, takže se položka neotevře. Pro jeho zapnutí zkontrolujte profil a znovu ho zapněte.";
+"core.backup.approval.disabled" = "%ld akce(í) profilu prohlížeče dorazily vypnuté a vyžadují schválení.";
