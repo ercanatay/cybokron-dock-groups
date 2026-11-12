@@ -139,15 +139,23 @@ public final class GroupStore: ObservableObject {
     public private(set) var loadFailed = false
 
     private let persistence: GroupPersisting
+    /// This Mac's launch action approvals (launch-action-approvals.md); `nil` keeps none and leaves
+    /// actions as the file has them, as a standalone group's read-only copy does.
+    private let approvals: LaunchActionApprovalStore?
     private let saveDelay: Duration
     private var pendingSave: Task<Void, Never>?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "GroupStore")
 
-    /// - Parameter saveDelay: How long to wait for further changes before writing. `.zero` writes
-    ///   synchronously after every change.
-    public init(persistence: GroupPersisting, saveDelay: Duration = .milliseconds(250)) {
+    /// - Parameters:
+    ///   - saveDelay: How long to wait for further changes before writing. `.zero` writes
+    ///     synchronously after every change.
+    ///   - approvals: Where turning a launch action on is recorded. With them, an action that's on
+    ///     but not approved on this Mac is kept under review (as an imported one), and approvals no
+    ///     item uses any more are dropped whenever the groups are written.
+    public init(persistence: GroupPersisting, saveDelay: Duration = .milliseconds(250), approvals: LaunchActionApprovalStore? = nil) {
         self.persistence = persistence
         self.saveDelay = saveDelay
+        self.approvals = approvals
         loadFromDisk()
     }
 
@@ -438,7 +446,9 @@ public final class GroupStore: ObservableObject {
     /// kept as they are), as one change of the group: one save, one notification of `groups`. An
     /// app keeps no opener. A launch action that's turned on (`LaunchActionEdit.enable`) is kept as
     /// needing review when it isn't valid for the item, and when it is, the item's Open With app is
-    /// dropped: the action's own browser opens it (launch-action-ui-slice.md).
+    /// dropped: the action's own browser opens it (launch-action-ui-slice.md). Turning it on is the
+    /// user's confirmation, so its digest is written to the approval file first
+    /// (launch-action-approvals.md); if that fails, the action stays under review.
     /// - Returns: Whether the item changed; `false` when it didn't or the group doesn't have it.
     @discardableResult
     public func updateItem(_ identity: String, inGroup id: DockGroup.ID, details: ItemDetails?, launch: ItemLaunchOptions?, launchAction: LaunchActionEdit? = nil) -> Bool {
@@ -452,7 +462,10 @@ public final class GroupStore: ObservableObject {
             edited.launchActionSetting = nil
         case .enable(let action)?:
             edited.setLaunchAction(action)
-            if edited.launchAction != nil { edited.launch = edited.launch.withoutOpener }
+            if edited.launchAction != nil {
+                edited.launch = edited.launch.withoutOpener
+                approve(edited)
+            }
         case nil:
             break
         }
@@ -619,10 +632,11 @@ public final class GroupStore: ObservableObject {
             flushPendingSave()
         }
         let copyURL = try copyLabel.flatMap { try persistence.preserveCopy(label: $0) }
-        let sanitized = Self.sanitizedForRestore(newGroups)
+        let sanitized = requiringApproval(Self.sanitizedForRestore(newGroups))
         try persistence.saveStoredGroups(sanitized)
         archivedGroups = sanitized.archived
         groups = sanitized.active
+        pruneApprovals()
         // The unreadable file that suspended saving was just copied aside and replaced.
         isSavingSuspended = false
         loadFailed = false
@@ -760,7 +774,7 @@ public final class GroupStore: ObservableObject {
 
     private func loadFromDisk() {
         do {
-            let stored = try persistence.loadStoredGroups()
+            let stored = requiringApproval(try persistence.loadStoredGroups())
             archivedGroups = stored.archived
             groups = stored.active
         } catch let loadError {
@@ -812,8 +826,12 @@ public final class GroupStore: ObservableObject {
 
     private func writeToDisk() {
         pendingSave = nil
+        let stored = requiringApproval(StoredGroups(active: groups, archived: archivedGroups))
+        if stored.active != groups { groups = stored.active }
+        if stored.archived != archivedGroups { archivedGroups = stored.archived }
         do {
-            try persistence.saveStoredGroups(StoredGroups(active: groups, archived: archivedGroups))
+            try persistence.saveStoredGroups(stored)
+            pruneApprovals()
         } catch {
             logger.error("Saving groups failed: \(String(describing: error), privacy: .public)")
             if issue == nil {
@@ -822,6 +840,48 @@ public final class GroupStore: ObservableObject {
                     message: error.localizedDescription
                 )
             }
+        }
+    }
+
+    // MARK: - Launch action approvals
+
+    /// `stored` as this Mac keeps it: an action that's on but whose digest isn't in the approval
+    /// file is under review instead, so it isn't opened and the window offers to turn it on. The
+    /// file is read only when an action is on. Without approvals, unchanged.
+    private func requiringApproval(_ stored: StoredGroups) -> StoredGroups {
+        guard let approvals,
+              (stored.active + stored.archived.map(\.group)).contains(where: { $0.apps.contains(where: LaunchActionApprovals.isOn) })
+        else { return stored }
+        let current = approvals.load()
+        return StoredGroups(
+            active: stored.active.map(current.requiringApproval),
+            archived: stored.archived.map { $0.replacingGroup(current.requiringApproval($0.group)) }
+        )
+    }
+
+    /// Records that the user turned `item`'s action on. A failure is shown and logged; the action
+    /// then stays under review (`requiringApproval`), so nothing runs without its record.
+    private func approve(_ item: GroupItem) {
+        guard let approvals else { return }
+        do {
+            try approvals.approve(item)
+        } catch {
+            logger.error("Recording a launch action approval failed: \(String(describing: error), privacy: .public)")
+            issue = GroupStoreIssue(
+                title: Localization.string("core.store.saveFailed.title", "Your changes couldn't be saved"),
+                message: error.localizedDescription
+            )
+        }
+    }
+
+    /// Drops the approvals of actions no active or archived item has on any more: turned off,
+    /// changed, removed with their item or group, or replaced by a restore.
+    private func pruneApprovals() {
+        guard let approvals else { return }
+        do {
+            try approvals.prune(keepingApprovalsOf: (groups + archivedGroups.map(\.group)).flatMap(\.apps))
+        } catch {
+            logger.error("Removing unused launch action approvals failed: \(String(describing: error), privacy: .public)")
         }
     }
 

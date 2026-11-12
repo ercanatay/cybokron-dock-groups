@@ -87,16 +87,19 @@ enum LaunchActionItemRefusal: Hashable, Sendable {
     case noRunner
     /// No plan could be made (`LaunchActionArgumentPlan`).
     case plan(LaunchActionArgumentRefusal)
+    /// This Mac's approval file doesn't have the action's digest (`LaunchActionApprovalStore`).
+    case approval(LaunchActionApprovalRefusal)
     /// The plan wasn't started (`LaunchActionRunner`).
     case run(LaunchActionRunRefusal)
 
     /// The reason as a fixed code for the log: "source.link", "plan.actionDisabled",
-    /// "run.browserAlreadyRunning".
+    /// "approval.missing", "run.browserAlreadyRunning".
     var code: String {
         switch self {
         case .unattendedSource(let source): return "source.\(source.rawValue)"
         case .noRunner: return "noRunner"
         case .plan(let refusal): return "plan.\(refusal.rawValue)"
+        case .approval(let refusal): return "approval.\(refusal.rawValue)"
         case .run(let refusal): return "run.\(refusal.rawValue)"
         }
     }
@@ -107,7 +110,7 @@ enum LaunchActionItemRefusal: Hashable, Sendable {
         switch self {
         case .plan(.browserNotInstalled), .run(.browserNotInstalled):
             return .notFound
-        case .unattendedSource, .noRunner, .plan, .run:
+        case .unattendedSource, .noRunner, .plan, .approval, .run:
             return .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened."))
         }
     }

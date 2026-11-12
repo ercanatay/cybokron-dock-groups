@@ -33,7 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Lazy, like everything that reads the files: a second copy that hands its URLs over and quits
     // (`SecondCopyHandoff`, decided before launching finishes) never loads them — and so never
     // moves an unreadable file aside under the running copy.
-    private lazy var store = GroupStore(persistence: JSONFileGroupPersistence())
+    private lazy var store = GroupStore(persistence: JSONFileGroupPersistence(), approvals: .onThisMac)
     private lazy var preferences = PreferencesStore(persistence: JSONFilePreferencesPersistence())
     /// The triggers (`triggers.json`, `trigger-state.json`), read when the app finishes launching
     /// (or when a link arrives before that), so a second copy that hands its URLs over reads nothing.
@@ -77,7 +77,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         delayed.onFinished = { report in LaunchReportPresenter.presentProblems(in: report) }
         return delayed
     }()
-    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches)
+    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches, approvals: .onThisMac)
     /// Close All leaves the protected apps (Settings → Switching) alone, whoever asks.
     private lazy var terminator = GroupTerminator(
         applications: SystemRunningApplications(),
