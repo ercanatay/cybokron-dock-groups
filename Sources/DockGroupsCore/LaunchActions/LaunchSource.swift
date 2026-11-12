@@ -3,9 +3,10 @@ import Foundation
 /// Who asked to open a group's items (docs/design/launch-action-runner-slice.md).
 ///
 /// An item with a launch action opens only when the user opened it themselves, in the app's own
-/// windows and menus (`userAction`). From every other source such an item isn't opened at all and
-/// is reported with a fixed reason; items without a launch action open the same way from every
-/// source. A caller that doesn't say (`unspecified`) counts as unattended.
+/// windows and menus (`userAction`) or in a standalone group's own app (`standaloneAgent`, threat
+/// model D11: its popup and Dock menu open items only for a click). From every other source such an
+/// item isn't opened at all and is reported with a fixed reason; items without a launch action open
+/// the same way from every source. A caller that doesn't say (`unspecified`) counts as unattended.
 public enum LaunchSource: String, Sendable, CaseIterable {
     /// A click in the popup, the group window or the menu bar menu, Most Used among them.
     case userAction
@@ -21,7 +22,7 @@ public enum LaunchSource: String, Sendable, CaseIterable {
     case focus
     /// A trigger: a time, a login, a display, a network, an app opening.
     case trigger
-    /// A standalone group's own app.
+    /// A click in a standalone group's own app: its popup, its Dock menu, ⌥-clicking its tile.
     case standaloneAgent
     /// A caller that didn't say where the request came from.
     case unspecified
@@ -38,7 +39,7 @@ public enum LaunchSource: String, Sendable, CaseIterable {
         }
     }
 
-    /// Whether the user opened the items themselves in the app; only then can an item's launch
-    /// action run.
-    public var isUserPresent: Bool { self == .userAction }
+    /// Whether the user opened the items themselves in the app or a standalone group's app; only
+    /// then can an item's launch action run (and only with its approval, launch-action-approvals.md).
+    public var isUserPresent: Bool { self == .userAction || self == .standaloneAgent }
 }

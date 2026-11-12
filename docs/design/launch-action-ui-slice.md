@@ -71,8 +71,9 @@ Done (with a new or changed action) and Turn On show one alert:
   unconfirmed action**: the item's action stays as it was.
 - Removing an action (toggle off) needs no confirmation: it can only make the item open plainly
   in the default browser, which needs no review.
-- No record of the confirmation is kept (D9 deferred): the only trace is `"status": "enabled"` in
-  the groups file.
+- ~~No record of the confirmation is kept (D9 deferred)~~: since
+  [launch-action-approvals.md](launch-action-approvals.md) Turn On writes the action's digest to
+  `launch-action-approvals.json`, and only an action with its digest there runs.
 
 ### Row caption (`LaunchActionCaption`)
 
@@ -159,7 +160,7 @@ items without an action; summary title/details with the full address; and throug
   TCC). A mistyped Chromium directory makes Chrome create a new empty profile (verified in slice 3);
   a mistyped Firefox name shows Firefox's own error or Profile Manager (unverified). The hint says
   where to read the real name; nothing more can be done without reading another app's files.
-- **No approval record (D9 deferred).** The confirmation is UI only. A same-user writer of
+- **No approval record (D9 deferred).** *Done since [launch-action-approvals.md](launch-action-approvals.md).* The confirmation is UI only. A same-user writer of
   `groups.json` can still write an enabled action directly, as before this slice (the accepted
   model of option A); only imported (backup/template) actions are forced through review.
 - ~~**Invalid actions vanish on restart.**~~ Fixed by

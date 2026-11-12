@@ -403,7 +403,8 @@ struct LaunchActionExecutionScanTests {
     /// The only files that may mention launch actions: the model and its coding (slice 2), the
     /// argument plan and its dry run, and the CLI line that gates the dry run (slice 3, computing
     /// part); the runner, the launcher that uses it and the delayed launches that compare actions
-    /// (slice 3, launcher part); the group window's files (slice 4). No CLI executable file.
+    /// (slice 3, launcher part); the group window's files (slice 4); the approval record
+    /// (launch-action-approvals.md). No CLI executable file.
     static let allowedFiles: Set<String> = groupWindowFiles.union([
         runnerFile,
         "DockGroupsCore/Launching/GroupLauncher.swift",
@@ -414,6 +415,7 @@ struct LaunchActionExecutionScanTests {
         "DockGroupsCore/Standalone/AgentConfiguration.swift",
         "DockGroupsCore/LaunchActions/LaunchActionArgumentPlan.swift",
         "DockGroupsCore/LaunchActions/LaunchActionPlanProbe.swift",
+        "DockGroupsCore/LaunchActions/LaunchActionApprovals.swift",
         "DockGroupsCore/Commands/DockGroupsCLI.swift",
     ])
 
@@ -502,6 +504,27 @@ struct LaunchActionExecutionScanTests {
             let file = try #require(files.first { $0.path == path })
             #expect(!file.text.contains("import AppKit"), "\(path) imports AppKit")
         }
+    }
+
+    /// The approval record (launch-action-approvals.md) reads, writes and compares; it opens nothing.
+    /// The app and every standalone group's app give their launcher this Mac's approval file, and the
+    /// app's store records approvals in it: no launcher there runs an action without one.
+    @Test func theApprovalRecordOpensNothingAndBothAppsUseIt() throws {
+        let files = try Self.swiftFiles()
+        let approvals = try #require(files.first { $0.path == "DockGroupsCore/LaunchActions/LaunchActionApprovals.swift" })
+        for token in Self.executionTokens + Self.runningTokens {
+            #expect(!approvals.text.contains(token), "LaunchActionApprovals.swift mentions \(token)")
+        }
+        let app = try #require(files.first { $0.path == "CybokronDockGroups/App/AppDelegate.swift" })
+        let agent = try #require(files.first { $0.path == "CybokronDockGroups/Agent/AgentAppDelegate.swift" })
+        for file in [app, agent] {
+            let launchers = file.text.split(separator: "\n").filter { $0.contains("GroupLauncher(") }
+            #expect(launchers.count == 1, "\(file.path)")
+            #expect(launchers.allSatisfy { $0.contains("approvals: .onThisMac") }, "\(file.path)")
+        }
+        #expect(app.text.contains("GroupStore(persistence: JSONFileGroupPersistence(), approvals: .onThisMac)"))
+        // The agent's store is a read-only copy: it records and drops no approvals.
+        #expect(agent.text.split(separator: "\n").filter { $0.contains("GroupStore(") }.allSatisfy { !$0.contains("approvals") })
     }
 
     @Test func theModelFileRunsAndOpensNothing() throws {

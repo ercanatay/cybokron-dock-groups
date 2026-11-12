@@ -65,9 +65,10 @@ public struct LaunchReport: Equatable, Sendable {
 /// right away.
 ///
 /// An item with a launch action (docs/design/launch-action-runner-slice.md) opens only through
-/// `LaunchActionRunner`, and only when the user opened it in the app (`LaunchSource`), its action
-/// is enabled and valid, and its browser is installed and not running. Otherwise it isn't opened at
-/// all — not plainly, not in another browser — and the report says it wasn't opened.
+/// `LaunchActionRunner`, and only when the user opened it in the app or a standalone group's app
+/// (`LaunchSource`), its action is enabled and valid, this Mac's approval file has its digest
+/// (launch-action-approvals.md), and its browser is installed and not running. Otherwise it isn't
+/// opened at all — not plainly, not in another browser — and the report says it wasn't opened.
 @MainActor
 public final class GroupLauncher {
     private let workspace: ApplicationWorkspace
@@ -75,6 +76,8 @@ public final class GroupLauncher {
     private let catalog: ApplicationCatalog
     /// Opens Open All's items that have a launch delay; `nil` when delays are ignored.
     public let pendingLaunches: DelayedLaunches?
+    /// The approvals an item's launch action must have to run; without them none runs.
+    private let approvals: LaunchActionApprovalStore?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "GroupLauncher")
 
     /// - Parameters:
@@ -84,16 +87,20 @@ public final class GroupLauncher {
     ///     `SystemApplicationCatalog`.
     ///   - pendingLaunches: Opens Open All's items that have a launch delay after it. Without it
     ///     the delays are ignored and every item opens right away, as in versions without them.
+    ///   - approvals: This Mac's approvals, read again for every item with an action. Without
+    ///     them no item with an action is opened.
     public init(
         workspace: ApplicationWorkspace,
         locator: ItemLocating? = nil,
         catalog: ApplicationCatalog? = nil,
-        pendingLaunches: DelayedLaunches? = nil
+        pendingLaunches: DelayedLaunches? = nil,
+        approvals: LaunchActionApprovalStore? = nil
     ) {
         self.workspace = workspace
         self.locator = locator ?? WorkspaceItemLocator()
         self.catalog = catalog ?? SystemApplicationCatalog()
         self.pendingLaunches = pendingLaunches
+        self.approvals = approvals
     }
 
     public convenience init() {
@@ -282,7 +289,8 @@ public final class GroupLauncher {
     /// Opens an item that has a launch action, only through `LaunchActionRunner`: when the user
     /// asked (`source`), the workspace can start apps with launch actions, a plan can be made (the
     /// action enabled and valid for the item, its address and browser accepted, the browser
-    /// installed), and the runner starts the browser (it refuses a running one). Anything else opens
+    /// installed), the approval file has the digest of exactly this action for this item (read
+    /// now), and the runner starts the browser (it refuses a running one). Anything else opens
     /// nothing. Only a fixed code is logged, never the profile name, arguments or address.
     private func openWithLaunchAction(_ item: GroupItem, source: LaunchSource) async -> LaunchReport.Entry {
         let refusal: LaunchActionItemRefusal
@@ -295,12 +303,16 @@ public final class GroupLauncher {
             }
             switch planned {
             case .success(let plan):
-                switch await LaunchActionRunner(workspace: actions).run(plan) {
-                case .launched:
-                    logger.notice("Opened a \(String(describing: item.kind), privacy: .public) item with its launch action")
-                    return LaunchReport.Entry(app: item, outcome: .launched)
-                case .refused(let reason):
-                    refusal = .run(reason)
+                if let unapproved = approvalRefusal(for: item) {
+                    refusal = .approval(unapproved)
+                } else {
+                    switch await LaunchActionRunner(workspace: actions).run(plan) {
+                    case .launched:
+                        logger.notice("Opened a \(String(describing: item.kind), privacy: .public) item with its launch action")
+                        return LaunchReport.Entry(app: item, outcome: .launched)
+                    case .refused(let reason):
+                        refusal = .run(reason)
+                    }
                 }
             case .failure(let reason):
                 refusal = .plan(reason)
@@ -313,6 +325,16 @@ public final class GroupLauncher {
         }
         logger.error("Not opened, launch action \(refusal.code, privacy: .public): a \(String(describing: item.kind), privacy: .public) item")
         return LaunchReport.Entry(app: item, outcome: refusal.outcome, launchActionRefusal: refusal)
+    }
+
+    /// Why the approval file doesn't let `item`'s action run, read now; `nil` when it does. Without
+    /// approvals, or with a file that's missing or can't be read, nothing is approved.
+    private func approvalRefusal(for item: GroupItem) -> LaunchActionApprovalRefusal? {
+        switch approvals?.check(item) ?? .missing {
+        case .approved: return nil
+        case .mismatch: return .mismatch
+        case .missing, .noAction: return .missing
+        }
     }
 
     /// Where the app's bundle is. A location that isn't an app bundle — a crafted groups file can

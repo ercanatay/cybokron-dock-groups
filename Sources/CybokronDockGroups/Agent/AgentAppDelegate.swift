@@ -52,7 +52,8 @@ final class AgentAppDelegate: NSObject, NSApplicationDelegate {
         delayed.onFinished = { report in LaunchReportPresenter.presentProblems(in: report) }
         return delayed
     }()
-    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches)
+    /// Checks an item's launch action against the main app's approval file, as the main app does.
+    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches, approvals: .onThisMac)
     /// Close All leaves the group's protected apps (from the configuration) alone.
     private lazy var terminator = GroupTerminator(
         applications: SystemRunningApplications(),

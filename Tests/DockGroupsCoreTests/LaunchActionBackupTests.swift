@@ -5,7 +5,8 @@ import Testing
 /// Launch actions that come from a file someone may have handed over (threat model D4, T11): a
 /// backup's groups, archived groups and templates bring their actions in turned off and needing
 /// review, and are written so (`"status": "review", "reason": "imported"`), so they stay off after a
-/// restart (launch-action-review-persistence.md). Standalone agents carry none.
+/// restart (launch-action-review-persistence.md). Standalone agents carry the group's actions and
+/// check them against the approval file (launch-action-approvals.md).
 @Suite("Launch actions: backups, restore and agents")
 @MainActor
 struct LaunchActionBackupTests {
@@ -208,21 +209,20 @@ struct LaunchActionBackupTests {
 
     // MARK: - Standalone agents
 
-    @Test func agentsCarryNoLaunchAction() throws {
-        let configuration = AgentConfiguration(group: Self.workGroup, preferences: PopupPreferences())
-        #expect(configuration.group.apps.allSatisfy { $0.launchActionSetting == nil })
-        #expect(configuration.group.apps.map(\.bundleIdentifier) == Self.workGroup.apps.map(\.bundleIdentifier))
-        #expect(!Self.text(try configuration.encoded()).contains("launchAction"))
+    /// Agents carry the group's actions, status included (D11, launch-action-approvals.md); the
+    /// agent's launcher checks them against this Mac's approval file like the app's.
+    @Test func agentsCarryTheirLaunchActions() throws {
+        var group = Self.workGroup
+        var imported = AppReference(websiteURL: URL(string: "https://example.com/imported")!, name: "Imported")
+        imported.launchActionSetting = .needsReview(.imported(Self.chromeWork))
+        group.apps.append(imported)
+        let configuration = AgentConfiguration(group: group, preferences: PopupPreferences())
+        #expect(configuration.group.apps.map(\.launchActionSetting) == group.apps.map(\.launchActionSetting))
+        #expect(Self.text(try configuration.encoded()).contains("launchAction"))
 
-        // A config file someone wrote one into: read without it.
-        var object = try #require(JSONSerialization.jsonObject(with: configuration.encoded()) as? [String: Any])
-        var group = try #require(object["group"] as? [String: Any])
-        var apps = try #require(group["apps"] as? [[String: Any]])
-        apps[0]["launchAction"] = ["template": "browserProfile", "browser": "chrome", "profile": "Work"]
-        group["apps"] = apps
-        object["group"] = group
-        let read = try AgentConfiguration.decode(from: JSONSerialization.data(withJSONObject: object))
-        #expect(read.group.apps.allSatisfy { $0.launchActionSetting == nil })
+        let read = try AgentConfiguration.decode(from: configuration.encoded())
         #expect(read == configuration)
+        #expect(read.group.apps.map(\.launchActionSetting) == group.apps.map(\.launchActionSetting))
+        #expect(read.group.apps.last?.launchAction == nil, "one under review stays so")
     }
 }

@@ -154,8 +154,20 @@ enum LaunchActionFixtures {
         ).get()
     }
 
-    /// Every source other than the user's own click.
+    /// Every source other than the user's own click (in the app or a standalone group's app).
     static let unattendedSources = LaunchSource.allCases.filter { !$0.isUserPresent }
+
+    /// Approvals in memory of exactly these items' actions, as turning them on in the group window
+    /// records them (launch-action-approvals.md). An action runs only with its approval, so every
+    /// test that expects one to reach the runner gives the launcher these.
+    @MainActor
+    static func approving(_ items: GroupItem...) -> LaunchActionApprovalStore {
+        let approvals = LaunchActionApprovalStore.inMemory()
+        for item in items {
+            try? approvals.approve(item)
+        }
+        return approvals
+    }
 }
 
 // MARK: - Runner
@@ -262,7 +274,7 @@ struct LaunchActionLauncherTests {
         let workspace = LaunchActionFakeWorkspace()
         let item = F.website()
 
-        let report = await GroupLauncher(workspace: workspace).open(item, inGroup: group([item]), source: .userAction)
+        let report = await GroupLauncher(workspace: workspace, approvals: F.approving(item)).open(item, inGroup: group([item]), source: .userAction)
 
         #expect(report.entries == [LaunchReport.Entry(app: item, outcome: .launched)])
         #expect(workspace.starts.map(\.arguments) == [["--profile-directory=Work"]])
@@ -279,7 +291,7 @@ struct LaunchActionLauncherTests {
         let plain = AppReference(websiteURL: URL(string: "https://example.com")!)
         let item = F.website(.firefox, profile: "default-release")
 
-        let report = await GroupLauncher(workspace: workspace).openAll(group([item, app, plain]), source: .userAction)
+        let report = await GroupLauncher(workspace: workspace, approvals: F.approving(item)).openAll(group([item, app, plain]), source: .userAction)
 
         #expect(report.entries.map(\.app) == [item, app, plain])
         #expect(report.entries.map(\.outcome) == [.launched, .launched, .launched])
@@ -294,8 +306,8 @@ struct LaunchActionLauncherTests {
         let item = F.website()
 
         for report in [
-            await GroupLauncher(workspace: workspace).open(item, inGroup: group([item]), source: .userAction),
-            await GroupLauncher(workspace: workspace).openAll(group([item]), source: .userAction),
+            await GroupLauncher(workspace: workspace, approvals: F.approving(item)).open(item, inGroup: group([item]), source: .userAction),
+            await GroupLauncher(workspace: workspace, approvals: F.approving(item)).openAll(group([item]), source: .userAction),
         ] {
             #expect(report.entries == [LaunchReport.Entry(app: item, outcome: .failed(reason: F.notOpened), launchActionRefusal: .run(.browserAlreadyRunning))])
         }
@@ -317,7 +329,7 @@ struct LaunchActionLauncherTests {
         workspace.failsToStart = true
         let item = F.website()
 
-        let report = await GroupLauncher(workspace: workspace).open(item, inGroup: group([item]), source: .userAction)
+        let report = await GroupLauncher(workspace: workspace, approvals: F.approving(item)).open(item, inGroup: group([item]), source: .userAction)
 
         #expect(report.entries.first?.launchActionRefusal == .run(.launchFailed))
         #expect(report.problems.map(\.app) == [item])
@@ -382,8 +394,10 @@ struct LaunchActionLauncherTests {
         #expect(workspace.runningQueries.isEmpty)
     }
 
-    @Test func onlyTheUsersOwnClickIsUserPresent() {
-        #expect(LaunchSource.allCases.filter(\.isUserPresent) == [.userAction])
+    /// The user's click in the app and in a standalone group's own app (D11: the agent runs an
+    /// action with the same checks and approval as the app; launch-action-approvals.md).
+    @Test func onlyTheUsersOwnClicksAreUserPresent() {
+        #expect(LaunchSource.allCases.filter(\.isUserPresent) == [.userAction, .standaloneAgent])
         #expect(LaunchSource.allCases.count == 8)
         let mapped = TransitionTrigger.allCases.map { LaunchSource($0) }
         #expect(mapped == [.userAction, .link, .intent, .focus, .keyboardShortcut, .trigger])
@@ -403,7 +417,7 @@ struct LaunchActionLauncherTests {
         let workspace = LaunchActionFakeWorkspace(running: ["com.google.Chrome"])
         let item = F.website(profile: "SecretProfile", url: URL(string: "https://token.example.org/secret")!)
 
-        let report = await GroupLauncher(workspace: workspace).open(item, inGroup: group([item]), source: .userAction)
+        let report = await GroupLauncher(workspace: workspace, approvals: F.approving(item)).open(item, inGroup: group([item]), source: .userAction)
         let entry = report.entries.first
         #expect(entry?.launchActionRefusal == .run(.browserAlreadyRunning))
         let texts = [String(describing: entry?.outcome as Any), entry?.launchActionRefusal?.code ?? ""]
@@ -484,7 +498,11 @@ struct LaunchActionSwitchingTests {
             let pending = DelayedLaunches(sleeper: sleeper) { store.group(withID: $0) }
             let reports = self.reports
             pending.onFinished = { reports.reports.append($0) }
-            launcher = GroupLauncher(workspace: workspace, locator: ScriptedLocator(), catalog: FakeCatalog(), pendingLaunches: pending)
+            // Both profiles the tests use are approved, so only the checks under test refuse.
+            let approvals = LaunchActionApprovalStore.inMemory()
+            try? approvals.approve(F.website().launching(after: 5))
+            try? approvals.approve(F.website(profile: "Personal").launching(after: 5))
+            launcher = GroupLauncher(workspace: workspace, locator: ScriptedLocator(), catalog: FakeCatalog(), pendingLaunches: pending, approvals: approvals)
         }
 
         func add(_ item: GroupItem) -> DockGroup {

@@ -7,7 +7,8 @@ import Testing
 /// item still isn't opened (threat model D5). Only `"status": "enabled"` (or, for files written
 /// before statuses, no status at all) can run; every other status is refused. Each test writes a
 /// real groups file, reads it into a new store, as a restart does, and opens the item through the
-/// launcher with a fake workspace.
+/// launcher with a fake workspace. The store and the launcher use a real approval file next to the
+/// groups file (launch-action-approvals.md): an action that's on runs only with its approval.
 @Suite("Launch actions: the review status survives a restart")
 @MainActor
 struct LaunchActionReviewPersistenceTests {
@@ -18,15 +19,17 @@ struct LaunchActionReviewPersistenceTests {
 
     private let directory: TemporaryDirectory
     private let fileURL: URL
+    private let approvals: LaunchActionApprovalStore
 
     init() throws {
         directory = try TemporaryDirectory()
         fileURL = directory.url.appending(components: "DockGroups", "groups.json")
+        approvals = LaunchActionApprovalStore(fileURL: directory.url.appending(components: "DockGroups", LaunchActionApprovalStore.fileName))
     }
 
     /// A store on the groups file, as the app has after a (re)start.
     private func store() -> GroupStore {
-        GroupStore(persistence: JSONFileGroupPersistence(fileURL: fileURL), saveDelay: .zero)
+        GroupStore(persistence: JSONFileGroupPersistence(fileURL: fileURL), saveDelay: .zero, approvals: approvals)
     }
 
     /// A groups file with one group holding `item`; returns the group's identifier.
@@ -72,7 +75,7 @@ struct LaunchActionReviewPersistenceTests {
     /// Opens `item` as the user's own click does; returns the report entry and the workspace.
     private func open(_ item: GroupItem, in group: DockGroup) async -> (LaunchReport.Entry?, LaunchActionFakeWorkspace) {
         let workspace = LaunchActionFakeWorkspace()
-        let report = await GroupLauncher(workspace: workspace).open(item, inGroup: group, source: .userAction)
+        let report = await GroupLauncher(workspace: workspace, approvals: approvals).open(item, inGroup: group, source: .userAction)
         return (report.entries.first, workspace)
     }
 
@@ -83,7 +86,7 @@ struct LaunchActionReviewPersistenceTests {
         #expect(!workspace.openedAnything, "neither with the action nor plainly", sourceLocation: sourceLocation)
         // Open All too.
         let all = LaunchActionFakeWorkspace()
-        let report = await GroupLauncher(workspace: all).openAll(group, source: .userAction)
+        let report = await GroupLauncher(workspace: all, approvals: approvals).openAll(group, source: .userAction)
         #expect(report.entries.first?.launchActionRefusal == refusal, sourceLocation: sourceLocation)
         #expect(!all.openedAnything, sourceLocation: sourceLocation)
     }
@@ -97,8 +100,13 @@ struct LaunchActionReviewPersistenceTests {
 
     // MARK: - Enabled
 
+    /// Turned on in the window, so approved (launch-action-approvals.md): approved once the group is
+    /// there, as approvals no item uses are dropped on every save.
     @Test func anEnabledActionIsWrittenWithItsStatusAndRunsAfterARestart() async throws {
-        save(F.website(.chrome))
+        let store = store()
+        let id = store.addGroup(named: "Work").id
+        try approvals.approve(F.website(.chrome))
+        store.addItems([F.website(.chrome)], toGroup: id)
         #expect(try writtenAction() as? [String: String] == ["status": "enabled", "template": "browserProfile", "browser": "chrome", "profile": "Work"])
 
         let (item, group) = try reloadedItem()
@@ -175,8 +183,10 @@ struct LaunchActionReviewPersistenceTests {
 
     // MARK: - Files without a status
 
+    /// With its approval (launch-action-approvals.md); without one it's under review, as below.
     @Test func aValidActionWithoutAStatusStillRuns() async throws {
         try write(launchAction: ["template": "browserProfile", "browser": "chrome", "profile": "Work"])
+        try approvals.approve(F.website(.chrome))
         let (item, group) = try reloadedItem()
         #expect(item.launchActionSetting == .enabled(Self.work), "as before statuses")
         await expectOpenedWithTheProfile(item, in: group)
@@ -256,6 +266,7 @@ struct LaunchActionReviewPersistenceTests {
         draft.confirmLaunchAction(action)
         #expect(editing.saveItemEdits(of: draft, endingWith: .done, ofItem: imported.id, inGroup: id))
         #expect(try writtenAction() as? [String: String] == ["status": "enabled", "template": "browserProfile", "browser": "chrome", "profile": "Work"])
+        #expect(approvals.check(F.website(.chrome)) == .approved, "Turn On recorded the approval")
 
         let (item, group) = try reloadedItem()
         #expect(item.launchActionSetting == .enabled(Self.work))
@@ -380,9 +391,11 @@ struct LaunchActionReviewPersistenceTests {
 
     // MARK: - Accepted risk
 
-    /// A same-user writer of the groups file can turn an action on by hand, as it could always write
-    /// an enabled one (threat model D9): the status is no signature. Recorded here, not prevented.
-    @Test func aStatusEditedByHandIsTaken() async throws {
+    /// A status edited by hand to "enabled" is no longer enough (D9, launch-action-approvals.md): with
+    /// no approval on this Mac the action is read as under review and the item isn't opened. A
+    /// same-user writer of both files — the groups file and the approval file — can still turn an
+    /// action on by hand: the approval is no signature. Recorded here, not prevented.
+    @Test func aStatusEditedByHandRunsOnlyWithItsApproval() async throws {
         var imported = F.website(nil)
         imported.launchActionSetting = .needsReview(.imported(Self.work))
         save(imported)
@@ -390,6 +403,12 @@ struct LaunchActionReviewPersistenceTests {
         action["status"] = "enabled"
         action["reason"] = nil
         try rewrite(launchAction: action)
+        let (unapproved, unapprovedGroup) = try reloadedItem()
+        #expect(unapproved.launchActionSetting == .needsReview(.imported(Self.work)))
+        await expectNotOpened(unapproved, in: unapprovedGroup, .plan(.actionDisabled))
+
+        // The approval file written by hand too: taken.
+        try approvals.approve(F.website(.chrome))
         let (item, group) = try reloadedItem()
         #expect(item.launchActionSetting == .enabled(Self.work))
         await expectOpenedWithTheProfile(item, in: group)

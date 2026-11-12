@@ -312,7 +312,8 @@ struct LaunchOptionsWiringTests {
         for file in ["App/AppDelegate.swift", "Agent/AgentAppDelegate.swift"] {
             let url = LocalizationTests.root.appending(path: "Sources/CybokronDockGroups/\(file)")
             let source = try String(contentsOf: url, encoding: .utf8)
-            #expect(source.contains("GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches)"), "\(file)")
+            // With this Mac's launch action approvals since launch-action-approvals.md.
+            #expect(source.contains("GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches, approvals: .onThisMac)"), "\(file)")
             #expect(source.contains("pendingLaunches: delayedLaunches\n    )"), "\(file): the terminator cancels them")
             #expect(source.contains("delayedLaunches.cancelAll()"), "\(file): quitting cancels them")
         }
