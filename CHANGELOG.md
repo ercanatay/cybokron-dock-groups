@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-11-12
+
+### Changed
+
+- A browser profile is approved on this Mac: the approval is kept beside the groups file and tied to the browser, profile, address and opener. A groups file from another Mac, a restore or an import arrives unapproved and needs one Turn On. Browser profiles turned on in 0.18.0 need that confirmation once after updating.
+- A group's standalone Dock app now uses the same approval and refuses a profile it can't vouch for.
+
 ## [0.18.0] - 2026-11-12
 
 ### Added
@@ -638,7 +645,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.1...HEAD
+[0.18.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.3...v0.18.0
 [0.17.3]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.1...v0.17.2
