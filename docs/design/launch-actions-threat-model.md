@@ -5,7 +5,10 @@
   The launcher part of slice 3 is in [launch-action-runner-slice.md](launch-action-runner-slice.md):
   an enabled action now opens its website through `LaunchActionRunner`, only for the user's own
   click and only while the browser isn't running. The group window shows, sets and turns on
-  actions ([launch-action-ui-slice.md](launch-action-ui-slice.md), slice 4). No release decision.
+  actions ([launch-action-ui-slice.md](launch-action-ui-slice.md), slice 4). An action runs only
+  with its digest in a separate local approval file (D9), and standalone groups run approved
+  actions with the same checks (D11): [launch-action-approvals.md](launch-action-approvals.md).
+  No release decision.
 - **Baseline:** `main` at `10233ff`. File references are `path:line` at that commit, relative to
   `Sources/` unless they start with `Tests/`, `docs/` or a root file.
 - **Builds on:** [context-switching-spec.md](context-switching-spec.md) (E phase 1: delay and Open
@@ -118,7 +121,7 @@ cannot already run arbitrary code as the user.
 | **T10 Unattended execution (S4–S7)** | A: templates are harmless enough to run from every path. B: argv runs only from **user-present paths** (click in popup/group window, Open All/Start from the app's own UI); links, intents, Focus, triggers, CLI, agents skip it. | Tests per source (`URLCommand`, intents fakes, `TriggerCoordinator` fakes) that a B item is skipped with a reason. | A web page can still time an A action. | B item from an unattended source → skipped, report "opens with its arguments only when you open it yourself". |
 | **T11 Import / template propagation (S2, S3)** | Actions from backups and templates come in **disabled** ("needs review"), never silently enabled; counted in `SettingsRestoreSummary` like `resetLaunchOptionCount` (`SettingsBackup.swift:262-264`). | Backup fixtures: action present → item kept, action disabled, count shown. | User approves without reading. | Disabled action → item not opened (decision §10: or opened plain). |
 | **T12 Downgrade / unknown fields** | Old versions don't read the new key and drop it on save (§8). | Real-binary downgrade test with 0.11.x/0.12 copies. | Old version opens the item without the action (privacy for F2), then forgets it. | Old version: plain open. New version reading an action written by a newer one with unknown template ID → not opened. |
-| **T13 Standalone agent copy (S8)** | Agents don't run B actions in the first slices; A actions only if the agent re-validates identically. | `AgentConfiguration` coding tests. | A writer of an agent's bundle (ad-hoc signed) already replaces its executable. | Agent: B item → skipped with reason. |
+| **T13 Standalone agent copy (S8)** | Agents don't run B actions in the first slices; A actions only if the agent re-validates identically. *Done for A: the agent's launcher makes the same checks and needs the same approval digest ([launch-action-approvals.md](launch-action-approvals.md)).* | `AgentConfiguration` coding tests. | A writer of an agent's bundle (ad-hoc signed) already replaces its executable. | Agent: B item → skipped with reason. |
 
 ## 5. Design options and recommendation
 
@@ -221,7 +224,9 @@ Applies to every source (editor, `groups.json`, backup, template, agent config) 
 6. **Environment, command, script, executable, shell keys** are never read, never written, never
    preserved (as triggers today).
 7. **Approval missing, disabled (imported) or digest mismatch** (B; and imported A actions) → not
-   opened, "needs your approval".
+   opened, "needs your approval". *For A since [launch-action-approvals.md](launch-action-approvals.md):
+   an enabled action without its digest in `launch-action-approvals.json` is shown under review and
+   not opened (existing texts, codes `approval.missing` / `approval.mismatch`).*
 8. **Unattended source for a B action** → skipped with a reason; A follows the normal source rules.
 9. **App not installed** → "not found", as today; **no** fallback to another browser/app.
 10. **Older version** reading new data: action ignored (§8) — this is the one accepted non-fail-
@@ -234,8 +239,10 @@ Applies to every source (editor, `groups.json`, backup, template, agent config) 
     (D4, D5). Only `enabled` — or no status, in files written before statuses, when the action is
     valid — can run; any other or unknown status, or a malformed one, is invalid and not opened.
     A refused object's other keys are written back unchanged (never a forbidden one, rule 6).
-    Accepted: a same-user writer can switch `review` to `enabled` by hand (D9). See
-    [launch-action-review-persistence.md](launch-action-review-persistence.md).
+    A status of `enabled` also needs its approval digest (rule 7, D9). Accepted: a same-user writer
+    can switch `review` to `enabled` **and** write the approval by hand. See
+    [launch-action-review-persistence.md](launch-action-review-persistence.md) and
+    [launch-action-approvals.md](launch-action-approvals.md).
 
 ## 7. Confirmation and visibility
 
@@ -308,9 +315,9 @@ Applies to every source (editor, `groups.json`, backup, template, agent config) 
 | D6 | B actions from links, Siri, Focus, triggers, CLI, agents | **Skipped** with a reason; only user-present paths. |
 | D7 | Arguments for an already running app (B) | **Not applied; caption says so.** No `createsNewApplicationInstance`. |
 | D8 | Storage for B (item key vs. separate file) | Item key (simpler); accept loss on downgrade. Revisit if B is approved. |
-| D9 | Approval store and binding (B) | Separate local file, digest per item; accept forgery by a same-user writer as residual risk (no Keychain HMAC — already rejected). |
+| D9 | Approval store and binding (B) | Separate local file, digest per item; accept forgery by a same-user writer as residual risk (no Keychain HMAC — already rejected). **Done for A** (`launch-action-approvals.json`, [launch-action-approvals.md](launch-action-approvals.md)). |
 | D10 | Named-Shortcut action (D) | Out of scope until B is decided; if ever, same gates as B. |
-| D11 | Standalone agents | A: supported once the agent re-validates; B: skipped. |
+| D11 | Standalone agents | A: supported once the agent re-validates; B: skipped. **Done for A** ([launch-action-approvals.md](launch-action-approvals.md)). |
 
 **Spikes before any code (S, manual, no release):** Chrome/Edge/Brave/Firefox with `arguments`
 via `NSWorkspace.openApplication` and `open(_:withApplicationAt:configuration:)`, browser running
@@ -342,7 +349,9 @@ running app.
    grammar, review and Turn On for imported/invalid actions, a confirmation with the full address
    before any action is turned on (no approval record, D9), row captions and the running-browser
    note; 8 English-only keys.
-5. **Agent support for A** (S–M) and the downgrade round trip (manual).
+5. **Agent support for A** (S–M) and the downgrade round trip (manual). **Agent support done**, with
+   the approval record of D9 for app and agents alike
+   ([launch-action-approvals.md](launch-action-approvals.md)); the downgrade round trip is still manual.
 6. *(Optional, separate review)* **B** (L): approval sheet, digest store, source gating (T8, T10).
 
 C is not scheduled.

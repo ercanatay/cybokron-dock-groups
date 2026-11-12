@@ -55,7 +55,8 @@ profile name the grammar refuses, set in code) is never written: only `status` a
 | `review/*` | Done, dismissal or Cancel without the above | unchanged, still not opened |
 | any | restart | unchanged |
 
-Standalone agents still carry no action (D11).
+Standalone agents ~~still carry no action (D11)~~ carry their actions and run approved ones since
+[launch-action-approvals.md](launch-action-approvals.md).
 
 ## Backward compatibility
 
@@ -68,7 +69,9 @@ Standalone agents still carry no action (D11).
 ## Accepted risk
 
 - **A status is no signature.** Anyone who can write `groups.json` (the same user, or a process
-  running as them) can change `"review"` to `"enabled"` and the action runs. That writer could
+  running as them) can change `"review"` to `"enabled"` and the action runs. *Since
+  [launch-action-approvals.md](launch-action-approvals.md) it runs only if the approval file has its
+  digest too; a writer of both files is the accepted risk there.* That writer could
   already write an enabled action directly (option A's model, D9: no approval store, no Keychain
   HMAC). Nothing is added against it; `LaunchActionReviewPersistenceTests.aStatusEditedByHandIsTaken`
   records the behaviour.

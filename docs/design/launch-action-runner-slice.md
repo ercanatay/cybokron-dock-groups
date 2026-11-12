@@ -112,7 +112,7 @@ address and even the host are not logged; the generic problem log skips these it
 | Siri / Shortcuts (Open Group, Start Group) | `intent` | not opened |
 | Focus filter | `focus` | not opened |
 | Triggers (Open All, Start) | `trigger` | not opened |
-| Standalone group app (popup, Dock menu) | `standaloneAgent` | not opened (agents also drop actions on write and read, D11) |
+| Standalone group app (popup, Dock menu) | `standaloneAgent` | ~~not opened (agents also drop actions on write and read, D11)~~ opened through the runner, with its approval, since [launch-action-approvals.md](launch-action-approvals.md) |
 | Any caller that doesn't say | `unspecified` | not opened |
 
 "Not opened" means the item isn't opened at all — not plainly, not in the default browser — and is

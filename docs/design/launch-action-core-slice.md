@@ -73,7 +73,7 @@ Refused, never trimmed, escaped or fixed. Checked in this order (first reason wi
 | Enabled case built in code with a bad name | not used, not written (`launchAction` and encoding re-validate) |
 | Backup read (`SettingsBackup.decode`): groups, archived groups, templates | `.needsReview(.imported(action))`, counted in `disabledLaunchActionCount` (D4, T11) |
 | Restore / merge (`SettingsBackup.restore`, `merge`) | turned off again, also for a backup built in code; nothing reaches the groups or templates file |
-| Standalone agent config (`AgentConfiguration`) | dropped on write and on read (D11: no agent support yet) |
+| Standalone agent config (`AgentConfiguration`) | dropped on write and on read (D11: no agent support yet) — *kept since [launch-action-approvals.md](launch-action-approvals.md), checked by the agent's launcher with the approval file* |
 
 "Needs review" was internal state only in this slice: no UI showed it and it wasn't saved, so an
 imported or invalid action was gone after the next save or restart (fixed since:
