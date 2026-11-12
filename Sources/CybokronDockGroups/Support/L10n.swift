@@ -560,6 +560,10 @@ enum L10n {
         static var review: String {
             tr("item.launch.profile.review", "This browser profile came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on.")
         }
+        /// The action is on but this Mac has no approval for it (`ItemDetailsDraft.isApprovalMissing`).
+        static var approvalMissing: String {
+            tr("item.launch.profile.approval.editor", "Approval is missing on this Mac, so the item won't open. To enable it, check the profile and turn it on again.")
+        }
         static var turnOn: String { tr("item.launch.profile.turnOn", "Turn On") }
     }
 

@@ -212,7 +212,7 @@ final class SettingsBackupController: ObservableObject {
         if summary.resetLaunchOptionCount > 0 {
             contents += " " + Texts.launchReset(summary.resetLaunchOptionCount)
         }
-        for note in [summary.archivedGroupsNote, summary.templatesNote, summary.triggersNote].compactMap({ $0 }) {
+        for note in [summary.profileApprovalNote, summary.archivedGroupsNote, summary.templatesNote, summary.triggersNote].compactMap({ $0 }) {
             contents += " " + note
         }
         lines.append(contents)

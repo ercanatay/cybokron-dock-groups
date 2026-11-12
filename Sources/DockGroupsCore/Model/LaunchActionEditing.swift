@@ -154,9 +154,15 @@ public struct LaunchActionCaption: Equatable, Sendable {
 
     /// The caption of `item`; `nil` when it has no launch action.
     /// - Parameter isApplicationRunning: Whether the app with this bundle identifier runs now.
-    public init?(item: GroupItem, isApplicationRunning: (String) -> Bool) {
+    /// - Parameter isApprovalMissing: Whether this Mac has no approval for the action that's on
+    ///   (`GroupStore.isApprovalMissing(for:)`): the launcher refuses it, so the row says so.
+    public init?(item: GroupItem, isApprovalMissing: Bool = false, isApplicationRunning: (String) -> Bool) {
         guard let status = item.launchActionStatus else { return nil }
         switch status {
+        case .enabled where isApprovalMissing:
+            text = Localization.string("item.launch.profile.approval.row", "Approval missing on this Mac: the item won't open until you turn it on again.")
+            needsReview = true
+            note = nil
         case .enabled(let action):
             text = "\(action.browser.name) · \(action.profileName)"
             needsReview = false

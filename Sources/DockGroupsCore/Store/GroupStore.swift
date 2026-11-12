@@ -859,6 +859,17 @@ public final class GroupStore: ObservableObject {
         )
     }
 
+    /// Whether `item`'s action is on but this Mac's approval file doesn't have it (the file was
+    /// removed or changed since the groups were read): the launcher refuses it until it's turned on
+    /// again. `false` without approvals or without an action that's on.
+    public func isApprovalMissing(for item: GroupItem) -> Bool {
+        guard let approvals, LaunchActionApprovals.isOn(item) else { return false }
+        switch approvals.check(item) {
+        case .missing, .mismatch: return true
+        case .approved, .noAction: return false
+        }
+    }
+
     /// Records that the user turned `item`'s action on. A failure is shown and logged; the action
     /// then stays under review (`requiringApproval`), so nothing runs without its record.
     private func approve(_ item: GroupItem) {
