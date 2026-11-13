@@ -18,8 +18,12 @@ public enum LaunchActionPlanProbe {
     /// The output format; changes when a field changes meaning.
     static let formatVersion = 1
 
+    /// The word that selects the private window plan in place of a profile name.
+    static let privateFlag = "--private"
+
     static let usage = """
         Usage: CYBOKRON_LAUNCH_PROBE=1 cybokrondockgroups --launch-plan <browser> <profile> <url>
+               CYBOKRON_LAUNCH_PROBE=1 cybokrondockgroups --launch-plan <browser> --private <url>
 
         Developer dry run: prints, as JSON on stdout, the arguments a website item's browser
         profile action would start <browser> (chrome, edge, brave or firefox) with. Nothing is
@@ -37,7 +41,9 @@ public enum LaunchActionPlanProbe {
         guard arguments.count == 4, arguments[0] == option else {
             return CLIResult(exitCode: 2, output: "", errors: usage)
         }
-        let report = report(browser: arguments[1], profileName: arguments[2], address: arguments[3])
+        let report = arguments[2] == privateFlag
+            ? privateReport(browser: arguments[1], address: arguments[3])
+            : report(browser: arguments[1], profileName: arguments[2], address: arguments[3])
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         guard let data = try? encoder.encode(report), let json = String(data: data, encoding: .utf8) else {
@@ -68,6 +74,25 @@ public enum LaunchActionPlanProbe {
         }
     }
 
+    /// The plan for a private window of the family named `browser` at `address`, as a website item
+    /// holding `LaunchAction.browserPrivate` would plan it. Same unchecked installation answer.
+    static func privateReport(browser: String, address: String) -> Report {
+        guard let family = BrowserFamily(rawValue: browser) else { return Report(refusal: .unsupportedBrowser) }
+        guard let url = URL(string: address) else { return Report(family: family, refusal: .urlRejected) }
+        let setting = LaunchActionSetting(.browserPrivate(browser: family), for: .website)
+        let result = LaunchActionArgumentPlan.make(
+            setting: setting,
+            itemKind: .website,
+            url: url,
+            browserBundleIdentifier: family.bundleIdentifiers[0],
+            isInstalled: { _ in true }
+        )
+        switch result {
+        case .success(let plan): return Report(family: family, plan: plan, template: LaunchActionCoding.browserPrivateTemplate)
+        case .failure(let refusal): return Report(family: family, refusal: refusal)
+        }
+    }
+
     /// What is printed. A refused run holds only the reason and the browser family, never the
     /// profile name or address it was given.
     struct Report: Encodable, Equatable {
@@ -82,6 +107,10 @@ public enum LaunchActionPlanProbe {
         let arguments: [String]?
         let url: String?
         let refusal: String?
+        /// Only in a private window plan: the template, and the addresses handed to the browser
+        /// besides the arguments (none: the address is already among them).
+        let template: String?
+        let urlsToOpen: [String]?
 
         init(family: BrowserFamily? = nil, refusal: LaunchActionArgumentRefusal) {
             status = "refused"
@@ -90,19 +119,23 @@ public enum LaunchActionPlanProbe {
             arguments = nil
             url = nil
             self.refusal = refusal.rawValue
+            template = nil
+            urlsToOpen = nil
         }
 
-        init(family: BrowserFamily, plan: LaunchActionArgumentPlan) {
+        init(family: BrowserFamily, plan: LaunchActionArgumentPlan, template: String? = nil) {
             status = "planned"
             browser = family.rawValue
             executableBundleIdentifier = plan.executableBundleIdentifier
             arguments = plan.arguments
             url = plan.url.absoluteString
             refusal = nil
+            self.template = template
+            urlsToOpen = template == nil ? nil : plan.urlsToOpen.map(\.absoluteString)
         }
 
         private enum CodingKeys: String, CodingKey {
-            case formatVersion, dryRun, installationChecked, status, browser, executableBundleIdentifier, arguments, url, refusal
+            case formatVersion, dryRun, installationChecked, status, browser, executableBundleIdentifier, arguments, url, refusal, template, urlsToOpen
         }
     }
 }

@@ -367,6 +367,51 @@ struct LaunchActionPlanProbeTests {
         #expect(!result.output.contains(arguments[2]))
     }
 
+    @Test func aPrivateWindowPlanShowsTemplateArgumentsAndNoExtraAddress() async throws {
+        let (result, resolved, runtime) = await run([Probe.option, "chrome", "--private", "https://example.com"])
+        #expect(result.exitCode == 0)
+        #expect(result.errors == "Dry run: planned; nothing was opened.\n")
+        #expect(!resolved && runtime.urls.isEmpty && runtime.statusChecks == 0)
+        let json = try Self.json(result)
+        #expect(json["status"] as? String == "planned")
+        #expect(json["template"] as? String == "browserPrivate")
+        #expect(json["arguments"] as? [String] == ["--incognito", "https://example.com"])
+        #expect(json["urlsToOpen"] as? [String] == [])
+        #expect(json["executableBundleIdentifier"] as? String == "com.google.Chrome")
+        #expect(json["url"] as? String == "https://example.com")
+        #expect(json["dryRun"] as? Bool == true && json["installationChecked"] as? Bool == false)
+        #expect(json["refusal"] == nil)
+    }
+
+    @Test func aProfilePlanHasNoTemplateOrAddressList() async throws {
+        let (result, _, _) = await run([Probe.option, "chrome", "Work", "https://example.com"])
+        let json = try Self.json(result)
+        #expect(json["template"] == nil && json["urlsToOpen"] == nil)
+    }
+
+    @Test(arguments: [[String: String](), ["CYBOKRON_LAUNCH_PROBE": "0"], ["CYBOKRON_LAUNCH_PROBE": "true"]])
+    func thePrivateModeIsUnknownWithoutTheVariable(environment: [String: String]) async {
+        let (result, resolved, runtime) = await run([Probe.option, "chrome", "--private", "https://example.com"], environment: environment)
+        #expect(result == CLIResult(exitCode: 2, output: "", errors: DockGroupsCLI.help))
+        #expect(!resolved && runtime.urls.isEmpty && runtime.statusChecks == 0)
+    }
+
+    @Test(arguments: [
+        (["safari", "--private", "https://example.com"], "unsupportedBrowser"),
+        (["brave", "--private", "mailto:secret@example.com"], "urlRejected"),
+        (["firefox", "--private", "file:///etc/hosts"], "urlRejected"),
+    ])
+    func privateRefusalsPrintOnlyTheReason(arguments: [String], refusal: String) async throws {
+        let (result, resolved, runtime) = await run([Probe.option] + arguments)
+        #expect(result.exitCode == 3)
+        #expect(result.errors == "Dry run: refused (\(refusal)); nothing was opened.\n")
+        #expect(!resolved && runtime.urls.isEmpty)
+        let json = try Self.json(result)
+        #expect(json["refusal"] as? String == refusal)
+        #expect(json["arguments"] == nil && json["urlsToOpen"] == nil && json["template"] == nil)
+        #expect(!result.output.contains(arguments[2]))
+    }
+
     @Test(arguments: [[String](), ["chrome"], ["chrome", "Work"], ["chrome", "Work", "https://example.com", "extra"]])
     func badArgumentsPrintUsage(rest: [String]) async {
         let (result, resolved, _) = await run([Probe.option] + rest)

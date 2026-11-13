@@ -55,7 +55,7 @@ final class CatchUpDriver {
 struct TriggerCatchUpTests {
     private let work = TriggerRig.work
     private let design = TriggerRig.design
-    private static let key = "com.example.app"
+    private nonisolated static let key = "com.example.app"
 
     // MARK: - Helpers
 

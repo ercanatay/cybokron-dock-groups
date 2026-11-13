@@ -5,8 +5,8 @@ import Testing
 /// A coordinator with fakes: its rules and active groups can be changed between signals.
 @MainActor
 final class TriggerRig {
-    static let work = DockGroup.of("Work", ["com.apple.mail"])
-    static let design = DockGroup.of("Design", ["com.figma.Desktop"])
+    nonisolated static let work = DockGroup.of("Work", ["com.apple.mail"])
+    nonisolated static let design = DockGroup.of("Design", ["com.figma.Desktop"])
 
     var rules: [GroupTrigger]
     var active: Set<DockGroup.ID> = [work.id, design.id]
