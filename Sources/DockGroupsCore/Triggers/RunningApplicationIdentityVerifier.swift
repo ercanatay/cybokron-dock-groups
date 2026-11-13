@@ -227,7 +227,7 @@ protocol ApplicationProcessWatching: AnyObject {
     /// Calls `handler` on the main actor whenever the watch may have something to report, until
     /// `close()`. A hint, never evidence: the handler must `poll()` and decide from that. `false`
     /// when it can't be started; the caller then treats the watch as not registered.
-    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool
+    func startSignalling(_ handler: @escaping @MainActor @Sendable () -> Void) -> Bool
     /// Calls `action` at most once, right after the watch's descriptor is really closed (at once
     /// when it already is), on whatever thread closes it. `close()` may close it later (a started
     /// wake-up closes it in its source's cancel handler), so this, not `close()`, is when the
@@ -654,7 +654,7 @@ final class RunningApplicationIdentityVerifier: ApplicationIdentityVerifying {
     // MARK: Wake-up
 
     /// What a watch's wake-up calls. Holds neither the verifier nor the watch.
-    private func signalHandler(_ binding: ApplicationIdentityBinding, token: UInt64, pid: Int32, watch: any ApplicationProcessWatching) -> @MainActor () -> Void {
+    private func signalHandler(_ binding: ApplicationIdentityBinding, token: UInt64, pid: Int32, watch: any ApplicationProcessWatching) -> @MainActor @Sendable () -> Void {
         { [weak self, weak watch] in
             guard let watch else { return }
             guard let self else {

@@ -172,7 +172,7 @@ struct CaptureSheet: View {
     private var content: some View {
         if model.isNewGroup {
             LabeledContent(Texts.name) {
-                TextField(Texts.name, text: Binding(get: { model.name }, set: model.setName), prompt: Text(model.suggestion))
+                TextField(Texts.name, text: Binding(get: { model.name }, set: { model.setName($0) }), prompt: Text(model.suggestion))
                     .labelsHidden()
                     .textFieldStyle(.roundedBorder)
                     .focused($isNameFocused)
@@ -185,7 +185,7 @@ struct CaptureSheet: View {
             Text(Texts.header(model.plan.candidates.count))
                 .font(.subheadline.weight(.semibold))
             Spacer()
-            Picker(Texts.order, selection: Binding(get: { model.settings.order }, set: model.setOrder)) {
+            Picker(Texts.order, selection: Binding(get: { model.settings.order }, set: { model.setOrder($0) })) {
                 Text(Texts.orderRecentlyUsed).tag(CaptureSettings.Order.recentlyUsed)
                 Text(Texts.orderName).tag(CaptureSettings.Order.name)
             }
@@ -202,7 +202,7 @@ struct CaptureSheet: View {
 
         HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
-                Toggle(Texts.windowsOnly, isOn: Binding(get: { model.settings.selectsOnlyAppsWithWindows }, set: model.setSelectsOnlyAppsWithWindows))
+                Toggle(Texts.windowsOnly, isOn: Binding(get: { model.settings.selectsOnlyAppsWithWindows }, set: { model.setSelectsOnlyAppsWithWindows($0) }))
                     .toggleStyle(.checkbox)
                     .disabled(!model.plan.hasWindowInformation)
                 if !model.plan.hasWindowInformation {

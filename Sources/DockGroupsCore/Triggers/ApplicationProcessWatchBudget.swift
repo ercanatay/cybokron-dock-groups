@@ -123,7 +123,7 @@ private final class BudgetedProcessWatch: ApplicationProcessWatching {
         watch.close()
     }
 
-    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {
+    func startSignalling(_ handler: @escaping @MainActor @Sendable () -> Void) -> Bool {
         watch.startSignalling(handler)
     }
 

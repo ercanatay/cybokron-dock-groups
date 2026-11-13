@@ -101,6 +101,7 @@ final class PopupPreviewController: NSObject, QLPreviewPanelDataSource {
     }
 
     nonisolated func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> (any QLPreviewItem)! {
-        MainActor.assumeIsolated { item.map { $0 as NSURL } }
+        // The URL (Sendable) leaves the main actor; the preview item is made from it here.
+        MainActor.assumeIsolated { item }.map { $0 as NSURL }
     }
 }

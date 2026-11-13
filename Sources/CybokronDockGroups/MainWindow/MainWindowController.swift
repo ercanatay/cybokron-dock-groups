@@ -161,15 +161,17 @@ final class GroupWindow: NSWindow {
     /// Supplies what Quick Look shows.
     weak var preview: PopupPreviewController?
 
+    // Quick Look declares these nonisolated (an informal protocol on `NSObject`) and calls them on
+    // the main thread, from the key window's responder chain.
     override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool {
-        preview != nil
+        MainActor.assumeIsolated { preview != nil }
     }
 
     override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) {
-        preview?.begin(panel)
+        MainActor.assumeIsolated { preview?.begin(panel) }
     }
 
     override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {
-        preview?.end(panel)
+        MainActor.assumeIsolated { preview?.end(panel) }
     }
 }

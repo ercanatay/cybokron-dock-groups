@@ -207,17 +207,15 @@ public final class GroupLauncher {
             }
         }
 
-        let workspace = self.workspace
         await withTaskGroup(of: (Int, LaunchReport.Outcome).self) { taskGroup in
             for launch in launches {
-                taskGroup.addTask { @MainActor in
-                    do {
-                        try await workspace.launchApplication(at: launch.url)
-                        return (launch.index, .launched)
-                    } catch {
-                        return (launch.index, .failed(reason: error.localizedDescription))
-                    }
+                // Runs on the main actor, as before. Captures the launcher (main actor, so Sendable)
+                // rather than its non-Sendable workspace; a typed closure, because the
+                // region-based isolation checker can't check an `@MainActor in` literal here.
+                let launchApp: @MainActor @Sendable () async -> (Int, LaunchReport.Outcome) = {
+                    await (launch.index, self.launchOutcome(at: launch.url))
                 }
+                taskGroup.addTask(operation: launchApp)
             }
             for await (index, outcome) in taskGroup {
                 outcomes[index] = outcome
@@ -247,6 +245,16 @@ public final class GroupLauncher {
             logProblem(problem.outcome, of: problem.app, context: context)
         }
         return report
+    }
+
+    /// Launches the app at `url`: `launched` once it has started, or why it couldn't be.
+    private func launchOutcome(at url: URL) async -> LaunchReport.Outcome {
+        do {
+            try await workspace.launchApplication(at: url)
+            return .launched
+        } catch {
+            return .failed(reason: error.localizedDescription)
+        }
     }
 
     /// Opens the websites: those without a chosen browser (or whose browser isn't on this Mac) in

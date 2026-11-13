@@ -73,7 +73,7 @@ final class ClockSource {
         reschedule()
     }
 
-    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor () -> Void) {
+    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor @Sendable () -> Void) {
         let observer = center.addObserver(forName: name, object: nil, queue: .main) { _ in
             MainActor.assumeIsolated { handler() }
         }
@@ -97,7 +97,7 @@ final class WorkspaceSource {
     func start() {
         guard observers.isEmpty else { return }
         let center = NSWorkspace.shared.notificationCenter
-        let signals: [(Notification.Name, () -> TriggerSignal)] = [
+        let signals: [(Notification.Name, @Sendable () -> TriggerSignal)] = [
             (NSWorkspace.screensDidSleepNotification, { .screens(asleep: true) }),
             (NSWorkspace.screensDidWakeNotification, { .screens(asleep: false) }),
             (NSWorkspace.willSleepNotification, { .screens(asleep: true) }),
@@ -183,7 +183,7 @@ final class ScreenLockSource {
         }
     }
 
-    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor () -> Void) {
+    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor @Sendable () -> Void) {
         let observer = center.addObserver(forName: name, object: nil, queue: .main) { _ in
             MainActor.assumeIsolated { handler() }
         }
@@ -269,9 +269,11 @@ final class ApplicationPresenceSource {
         self.generation = generation
         let token = UUID()
         self.token = token
-        observation = NSWorkspace.shared.observe(\.runningApplications, options: [.initial, .new]) { [weak self] workspace, _ in
+        // The observed object is `NSWorkspace.shared`; it's read again on the main queue rather than
+        // sent there from the KVO callback's thread.
+        observation = NSWorkspace.shared.observe(\.runningApplications, options: [.initial, .new]) { [weak self] _, _ in
             DispatchQueue.main.async { [weak self] in
-                self?.deliver(workspace: workspace, expectedToken: token)
+                self?.deliver(workspace: NSWorkspace.shared, expectedToken: token)
             }
         }
     }

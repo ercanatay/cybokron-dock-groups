@@ -263,7 +263,7 @@ public final class TriggerApplicationApprover {
             watches.append(watch)
         }
 
-        func handler(for watch: any ApplicationProcessWatching) -> @MainActor () -> Void {
+        func handler(for watch: any ApplicationProcessWatching) -> @MainActor @Sendable () -> Void {
             { [weak self, weak watch] in
                 guard let watch else { return }
                 guard let self else {

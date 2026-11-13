@@ -175,7 +175,7 @@ final class ExperimentalProcessEventWatch {
     /// `false`, and nothing started, for a closed or latched watch or one that already signals.
     /// Once started, `close()` cancels the source and the source's cancel handler closes the
     /// descriptor (libdispatch requires the descriptor to outlive the source), exactly once.
-    func startSignalling(_ handler: @escaping @MainActor () -> Void) -> Bool {
+    func startSignalling(_ handler: @escaping @MainActor @Sendable () -> Void) -> Bool {
         guard descriptor >= 0, !isLatched, signalSource == nil else { return false }
         let fd = descriptor
         let closeDescriptor = closeDescriptor
