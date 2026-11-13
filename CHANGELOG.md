@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-11-13
+
 ### Added
 
-- A website can open in a private window of Chrome, Edge, Brave or Firefox (Edit Details… → Open in Browser Profile → Open in a private window). Like a browser profile, it's confirmed and approved on this Mac, and opens only from your own click while that browser isn't running.
+- A website in a group can open in a **private window** of Chrome, Edge, Brave or Firefox: one switch in Edit Details, approved once per Mac like a browser profile. It opens only when you open the item yourself and the browser isn't running; the address is passed with the flag so the page can't land in a normal window. Edge and Brave flags are unverified on this Mac.
 
 ## [0.18.2] - 2026-11-12
 
@@ -656,7 +658,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.2...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.0...HEAD
+[0.19.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.2...v0.19.0
 [0.18.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.17.3...v0.18.0
