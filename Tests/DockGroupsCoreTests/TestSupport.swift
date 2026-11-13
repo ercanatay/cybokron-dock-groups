@@ -130,7 +130,7 @@ final class ChildProcesses {
 
 /// Runs `body`, then stops and awaits every child it adopted, also when `body` throws: the async
 /// replacement for a `defer` that waits on children.
-func withChildProcesses<T>(sourceLocation: SourceLocation = #_sourceLocation, _ body: (ChildProcesses) async throws -> T) async throws -> T {
+func withChildProcesses<T>(isolation: isolated (any Actor)? = #isolation, sourceLocation: SourceLocation = #_sourceLocation, _ body: (ChildProcesses) async throws -> T) async throws -> T {
     let children = ChildProcesses()
     let result: Result<T, Error>
     do {

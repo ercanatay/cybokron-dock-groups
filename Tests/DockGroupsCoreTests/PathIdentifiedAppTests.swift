@@ -133,6 +133,7 @@ private final class PathRunningApplications: RunningApplicationsProviding {
         }
 
         func terminate() -> Bool {
+            let (owner, identifier) = (owner, identifier)
             MainActor.assumeIsolated { owner.terminated.append(identifier) }
             return true
         }

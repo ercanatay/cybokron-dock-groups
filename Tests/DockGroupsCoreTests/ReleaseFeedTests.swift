@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Testing
 @testable import DockGroupsCore
 
@@ -13,19 +14,22 @@ final class StubURLProtocol: URLProtocol {
         var finalURL: URL? = nil
     }
 
-    private static let lock = NSLock()
-    private static var responses: [URL: Response] = [:]
-    private static var requests: [URL: URLRequest] = [:]
+    private struct State {
+        var responses: [URL: Response] = [:]
+        var requests: [URL: URLRequest] = [:]
+    }
+
+    private static let state = OSAllocatedUnfairLock(initialState: State())
 
     /// Registers `response` under a fresh `https://stub.test/…` URL ending in `fileName`.
     static func register(_ response: Response, fileName: String = "latest") -> URL {
         let url = URL(string: "https://stub.test/\(UUID().uuidString)/\(fileName)")!
-        lock.withLock { responses[url] = response }
+        state.withLock { $0.responses[url] = response }
         return url
     }
 
     static func request(for url: URL) -> URLRequest? {
-        lock.withLock { requests[url] }
+        state.withLock { $0.requests[url] }
     }
 
     /// A session whose requests all go to this protocol.
@@ -39,9 +43,10 @@ final class StubURLProtocol: URLProtocol {
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
     override func startLoading() {
-        guard let url = request.url, let response = Self.lock.withLock({ () -> Response? in
-            Self.requests[url] = request
-            return Self.responses[url]
+        let request = request
+        guard let url = request.url, let response = Self.state.withLock({ (state: inout State) -> Response? in
+            state.requests[url] = request
+            return state.responses[url]
         }) else {
             client?.urlProtocol(self, didFailWithError: URLError(.cannotFindHost))
             return

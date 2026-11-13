@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Testing
 @testable import DockGroupsCore
 
@@ -184,18 +185,15 @@ struct LayoutFileCreateNewTests {
         defer { remove(dir) }
         let target = dir.appendingPathComponent("race.json")
         let doc = try WindowLayoutDocument(groups: [])
-        let lock = NSLock()
-        var outcomes: [String] = []
+        let outcomes = OSAllocatedUnfairLock(initialState: [String]())
         DispatchQueue.concurrentPerform(iterations: 2) { _ in
             let outcome: String
             do { try LayoutFileCreateNew.createNew(from: doc, at: target); outcome = "created" }
             catch LayoutFileCreateNewError.targetExists { outcome = "exists" }
             catch { outcome = "unexpected" }
-            lock.lock()
-            outcomes.append(outcome)
-            lock.unlock()
+            outcomes.withLock { $0.append(outcome) }
         }
-        #expect(outcomes.sorted() == ["created", "exists"])
+        #expect(outcomes.withLock { $0 }.sorted() == ["created", "exists"])
         #expect(try LayoutFileReader.readLayout(from: target) == doc)
         let names = try FileManager.default.contentsOfDirectory(atPath: dir.path)
         #expect(names == ["race.json"])
