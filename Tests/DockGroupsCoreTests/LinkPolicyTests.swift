@@ -7,7 +7,7 @@ import Testing
 struct LinkPolicyTests {
     /// The links of `text`, in order.
     private func links(in text: AttributedString) -> [URL] {
-        text.runs.compactMap(\.link)
+        text.runs.compactMap { $0.attributes[AttributeScopes.FoundationAttributes.LinkAttribute.self] }
     }
 
     /// Markdown with one link of every kind the tests care about.
@@ -49,7 +49,7 @@ struct LinkPolicyTests {
 
         #expect(links(in: text) == [URL(string: "https://cybokron.com/dock-groups/")!, URL(string: "mailto:hello@example.com")!])
         #expect(String(text.characters) == "What's new\n• file script quit settings plain web mail\n• second item")
-        #expect(text.runs.contains { String(text[$0.range].characters) == "What's new" && $0.inlinePresentationIntent == .stronglyEmphasized })
+        #expect(text.runs.contains { String(text[$0.range].characters) == "What's new" && $0.attributes[AttributeScopes.FoundationAttributes.InlinePresentationIntentAttribute.self] == .stronglyEmphasized })
         #expect(ReleaseNotesMarkdown.compact(" \n\t\n") == nil, "no notes")
     }
 
@@ -158,7 +158,7 @@ struct LinkPolicyTests {
         #expect(LinkPolicy.isClickable(try #require(URL(string: "mailto:someone@example.com"))), "a mail address isn't a user name")
 
         let text = ReleaseNotesMarkdown.inline("[GitHub](https://github.com%2F@evil.example/x) and https://user@evil.example")
-        #expect(!text.runs.contains { $0.link != nil })
+        #expect(!text.runs.contains { $0.attributes[AttributeScopes.FoundationAttributes.LinkAttribute.self] != nil })
         #expect(String(text.characters).hasPrefix("GitHub and "))
     }
 

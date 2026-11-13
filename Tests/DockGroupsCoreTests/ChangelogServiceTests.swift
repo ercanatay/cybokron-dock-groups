@@ -236,7 +236,7 @@ struct ChangelogTests {
 
     @Test func inlineMarkdownKeepsWebLinksOnly() {
         let text = ReleaseNotesMarkdown.inline("**Full Changelog**: https://github.com/a/b/compare/v1...v2 · [docs](https://cybokron.com) · [file](file:///etc/hosts) · `code`")
-        let runs = text.runs.map { (String(text[$0.range].characters), $0.link, $0.inlinePresentationIntent) }
+        let runs = text.runs.map { (String(text[$0.range].characters), $0.attributes[AttributeScopes.FoundationAttributes.LinkAttribute.self], $0.attributes[AttributeScopes.FoundationAttributes.InlinePresentationIntentAttribute.self]) }
 
         #expect(String(text.characters) == "Full Changelog: https://github.com/a/b/compare/v1...v2 · docs · file · code")
         #expect(runs.contains { $0.0 == "Full Changelog" && $0.2 == .stronglyEmphasized })
