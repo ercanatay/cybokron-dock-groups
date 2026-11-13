@@ -30,12 +30,17 @@ public enum LinkPolicy {
     /// `text` with every link `isClickable` refuses turned into plain text (the words stay).
     public static func removingUnclickableLinks(from text: AttributedString) -> AttributedString {
         var result = text
-        let refused = result.runs.compactMap { run -> Range<AttributedString.Index>? in
-            guard let link = run.link else { return nil }
-            return isClickable(link) ? nil : run.range
+        // Looked up by attribute type, not the `run.link` shorthand: that forms a non-Sendable key
+        // path, which strict concurrency flags.
+        let linkKey = AttributeScopes.FoundationAttributes.LinkAttribute.self
+        let refused = result.runs.compactMap { run -> (Range<AttributedString.Index>, AttributeContainer)? in
+            guard let link = run.attributes[linkKey], !isClickable(link) else { return nil }
+            var kept = run.attributes
+            kept[linkKey] = nil
+            return (run.range, kept)
         }
-        for range in refused {
-            result[range].link = nil
+        for (range, kept) in refused {
+            result[range].setAttributes(kept)
         }
         return result
     }
