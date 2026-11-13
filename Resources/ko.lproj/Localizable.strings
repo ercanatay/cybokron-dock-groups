@@ -1209,3 +1209,7 @@
 "item.launch.profile.approval.row" = "이 Mac에서 승인이 없어 항목을 다시 켜기 전까지 열리지 않습니다.";
 "item.launch.profile.approval.editor" = "이 Mac에서 승인이 없어 항목이 열리지 않습니다. 사용하려면 프로필을 확인한 후 다시 켜세요.";
 "core.backup.approval.disabled" = "브라우저 프로필 작업 %ld개가 꺼진 상태로 들어와 승인이 필요합니다.";
+"item.launch.private.toggle" = "비공개 창에서 열기";
+"item.launch.private.hint" = "브라우저가 실행 중이 아닐 때 직접 열면 웹사이트를 새 비공개 창에서 엽니다.";
+"item.launch.private.row" = "%@ · 비공개 창";
+"item.launch.private.confirm.title" = "“%1$@”을(를) %2$@ 비공개 창에서 여시겠습니까?";

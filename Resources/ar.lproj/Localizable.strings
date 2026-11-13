@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "لا توجد موافقة على هذا Mac: لن يُفتح العنصر حتى تعيد تفعيلها.";
 "item.launch.profile.approval.editor" = "الموافقة غير موجودة على هذا Mac، لذلك لن يُفتح العنصر. لتفعيلها، تحقق من الملف الشخصي وأعد تفعيله.";
 "core.backup.approval.disabled" = "%ld إجراء(إجراءات) لملف تعريف المتصفح وصل معطلاً ويحتاج إلى موافقة.";
+"item.launch.private.toggle" = "افتح في نافذة خاصة";
+"item.launch.private.hint" = "يفتح الموقع في نافذة خاصة جديدة عندما تفتحه بنفسك ولا يكون المتصفح قيد التشغيل.";
+"item.launch.private.row" = "%@ · نافذة خاصة";
+"item.launch.private.confirm.title" = "هل تريد فتح “%1$@” في نافذة خاصة في %2$@؟";

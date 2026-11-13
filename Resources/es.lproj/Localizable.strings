@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Aprobación ausente en este Mac: el elemento no se abrirá hasta que vuelvas a activarla.";
 "item.launch.profile.approval.editor" = "La aprobación falta en este Mac, así que el elemento no se abrirá. Para activarla, revisa el perfil y vuelve a habilitarla.";
 "core.backup.approval.disabled" = "%ld acción(es) de perfil del navegador llegaron desactivadas y necesitan aprobación.";
+"item.launch.private.toggle" = "Abrir en una ventana privada";
+"item.launch.private.hint" = "Abre el sitio web en una nueva ventana privada cuando lo abres tú mismo y el navegador no está en ejecución.";
+"item.launch.private.row" = "%@ · ventana privada";
+"item.launch.private.confirm.title" = "¿Abrir “%1$@” en una ventana privada de %2$@?";

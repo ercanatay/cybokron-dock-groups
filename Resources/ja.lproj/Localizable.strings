@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "このMacでは承認がありません。再度有効にするまで、この項目は開きません。";
 "item.launch.profile.approval.editor" = "このMacでは承認がないため、この項目は開きません。有効にするには、プロファイルを確認して再度オンにしてください。";
 "core.backup.approval.disabled" = "%ld 件のブラウザプロファイル操作がオフの状態で届いており、承認が必要です。";
+"item.launch.private.toggle" = "プライベートウインドウで開く";
+"item.launch.private.hint" = "ブラウザが起動していない状態でご自身がこのWebサイトを開くと、新しいプライベートウインドウで開きます。";
+"item.launch.private.row" = "%@ · プライベートウインドウ";
+"item.launch.private.confirm.title" = "“%1$@” をプライベートな%2$@ウインドウで開きますか?";

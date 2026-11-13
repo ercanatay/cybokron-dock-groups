@@ -1209,3 +1209,7 @@
 "item.launch.profile.approval.row" = "Bu Mac'te onay eksik: öğeyi tekrar açana kadar öğe açılmaz.";
 "item.launch.profile.approval.editor" = "Bu Mac'te onay eksik, bu yüzden öğe açılmaz. Etkinleştirmek için profili kontrol edin ve onayı yeniden açın.";
 "core.backup.approval.disabled" = "%ld tarayıcı profili işlemi kapalı olarak geldi ve onay gerektiriyor.";
+"item.launch.private.toggle" = "Özel pencerede aç";
+"item.launch.private.hint" = "Tarayıcı çalışmıyorsa ve web sitesini siz açtığınızda, siteyi yeni bir özel pencerede açar.";
+"item.launch.private.row" = "%@ · özel pencere";
+"item.launch.private.confirm.title" = "“%1$@” sitesi %2$@ içinde özel pencerede açılsın mı?";

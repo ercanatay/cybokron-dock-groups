@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Godkännande saknas på den här Mac:en: objektet öppnas inte förrän du slår på det igen.";
 "item.launch.profile.approval.editor" = "Godkännande saknas på den här Mac:en, så objektet öppnas inte. För att aktivera det, kontrollera profilen och slå på den igen.";
 "core.backup.approval.disabled" = "%ld åtgärd(er) för webbläsarprofiler kom avstängda och behöver godkännas.";
+"item.launch.private.toggle" = "Öppna i ett privat fönster";
+"item.launch.private.hint" = "Öppnar webbplatsen i ett nytt privat fönster när du öppnar den själv och webbläsaren inte körs.";
+"item.launch.private.row" = "%@ · privat fönster";
+"item.launch.private.confirm.title" = "Öppna “%1$@” i ett privat %2$@-fönster?";
