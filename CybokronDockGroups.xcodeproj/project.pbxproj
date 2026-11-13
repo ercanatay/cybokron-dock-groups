@@ -427,6 +427,7 @@
 		F005018C65E42DF6D3FB6783 /* ChangelogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395753BC1EBE78152CE243ED /* ChangelogEntry.swift */; };
 		F06CA131A1457A826121F683 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = ACA0E20C9A6DB04AD246C5DA /* Localizable.strings */; };
 		F073AD59C9BC468609E1ED43 /* AddWebsite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7828FC21B4581B2E3AB18D /* AddWebsite.swift */; };
+		F139076780FFC151C43563B2 /* LaunchActionPrivateWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700AEB0FCEA34BEAA7150870 /* LaunchActionPrivateWindowTests.swift */; };
 		F1B4DD8F468A20CDC9E51CEC /* DisplayIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165228B25B53343A41CA8255 /* DisplayIdentity.swift */; };
 		F1DC6FFAC0FE5516320AEBF4 /* GroupQuitRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B979CA937B03478C5B973 /* GroupQuitRequests.swift */; };
 		F20D7F89ADAB0009FCB309CE /* LaunchActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAC4BB12895FFAF65B383A09 /* LaunchActionRunner.swift */; };
@@ -716,6 +717,7 @@
 		6E4D1CAC5A97E5F0FA956055 /* SecondCopyHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondCopyHandoff.swift; sourceTree = "<group>"; };
 		6EBE470669CD5FF5E2325FBA /* UpdateDownloadRetryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateDownloadRetryTests.swift; sourceTree = "<group>"; };
 		6F6B742E35580E9C38323FE5 /* UpdateSignatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSignatureTests.swift; sourceTree = "<group>"; };
+		700AEB0FCEA34BEAA7150870 /* LaunchActionPrivateWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchActionPrivateWindowTests.swift; sourceTree = "<group>"; };
 		703330BDAF8359C2257B0C1A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		71FD86A85B8FAA870D785443 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
 		72BA58F5FCD042EED1E77712 /* UsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMonitor.swift; sourceTree = "<group>"; };
@@ -1557,6 +1559,7 @@
 				7DE4E61278A52D37122F8F9A /* LaunchActionArgumentPlanTests.swift */,
 				2E396FB3C02E9C3872EA69A7 /* LaunchActionBackupTests.swift */,
 				E8376EFD06071365D2358FBE /* LaunchActionEditingTests.swift */,
+				700AEB0FCEA34BEAA7150870 /* LaunchActionPrivateWindowTests.swift */,
 				EB3D7EE7FF60E16EB8D1EE7B /* LaunchActionReviewPersistenceTests.swift */,
 				C092C32FA1F5C4550C4D616E /* LaunchActionRunnerTests.swift */,
 				772E8478594B4EE04DBDA296 /* LaunchActionTests.swift */,
@@ -2359,6 +2362,7 @@
 				5C6D6905E93BC4F21C04892A /* LaunchActionArgumentPlanTests.swift in Sources */,
 				5CA4AA39D2F3E8EE7495061B /* LaunchActionBackupTests.swift in Sources */,
 				C158511936423F73B86CA031 /* LaunchActionEditingTests.swift in Sources */,
+				F139076780FFC151C43563B2 /* LaunchActionPrivateWindowTests.swift in Sources */,
 				FFBBDB51803766C3B9228166 /* LaunchActionReviewPersistenceTests.swift in Sources */,
 				1B58C42BD4FED3D1952A4BE9 /* LaunchActionRunnerTests.swift in Sources */,
 				ECA25A3B6B76F10D96AC71F7 /* LaunchActionTests.swift in Sources */,

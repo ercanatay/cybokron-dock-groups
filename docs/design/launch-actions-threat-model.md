@@ -308,7 +308,7 @@ Applies to every source (editor, `groups.json`, backup, template, agent config) 
 | # | Decision | Recommended default |
 | --- | --- | --- |
 | D1 | Which option to build first | **A only.** B was reviewed and is **not planned** ([launch-action-free-arguments-review.md](launch-action-free-arguments-review.md)); C not at all. |
-| D2 | Which templates in the first release | Chromium-family profile (Chrome, Edge, Brave; Vivaldi/Arc only if the spike confirms the flag). Firefox second. Safari not offered. |
+| D2 | Which templates in the first release | Chromium-family profile (Chrome, Edge, Brave; Vivaldi/Arc only if the spike confirms the flag). Firefox second. Safari not offered. Later: a private window (`browserPrivate`, [launch-action-private-window.md](launch-action-private-window.md)). |
 | D3 | Profile chosen by typed directory name or read from the browser's `Local State` / `profiles.ini` | **Typed / pick from a fixed `Default`, `Profile 1…N` list**, no reading of other apps' files (avoids new file access and possible macOS "data from other apps" prompts — unverified). Reading for display names can come later. |
 | D4 | Imported actions (backup, template from backup) | **Disabled until reviewed**, item kept. |
 | D5 | Disabled/invalid action: open the item plainly or not at all | **Not at all** (fail closed, consistent with L-5), with a one-click "Review". |

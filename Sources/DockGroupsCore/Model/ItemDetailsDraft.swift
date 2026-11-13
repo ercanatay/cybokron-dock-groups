@@ -1,8 +1,8 @@
 import Foundation
 
 /// An item's alias, tags, task notes, launch options and launch action while the details editor
-/// shows them: the text as typed, the delay and the app chosen, a website's browser profile, and
-/// what saving them would keep.
+/// shows them: the text as typed, the delay and the app chosen, a website's browser profile or
+/// private window, and what saving them would keep.
 ///
 /// A browser profile (launch-action-ui-slice.md) is set or turned on only once the user confirmed
 /// it (`confirmLaunchAction`): Done asks first, and closing the editor another way keeps the item's
@@ -57,8 +57,13 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     /// The browser whose profile the website opens in; `nil` while the browser profile is off.
     /// Set through `chooseBrowser(_:)` or `setBrowserProfileOn(_:)`.
     public private(set) var browser: BrowserFamily?
-    /// The profile name as typed; kept while the browser profile is off.
+    /// The profile name as typed; kept while the browser profile is off or a private window is
+    /// chosen.
     public var profileName: String
+    /// Whether the website opens in a private window of `browser` instead of a profile
+    /// (`LaunchAction.browserPrivate`, launch-action-private-window.md); the profile name is then
+    /// neither shown nor saved.
+    public var isPrivateWindow: Bool
     /// The action the user confirmed in this editor (`confirmLaunchAction`).
     public private(set) var confirmedLaunchAction: LaunchAction?
     /// Whether the user turned the browser profile off in this editor: for an invalid action,
@@ -95,6 +100,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
         let starting = Self.startingAction(of: action)
         browser = starting?.browser
         profileName = starting?.profileName ?? ""
+        isPrivateWindow = starting?.isPrivateWindow ?? false
     }
 
     /// Whether the editor offers "Open with": files, folders and websites; apps open themselves.
@@ -187,13 +193,14 @@ public struct ItemDetailsDraft: Equatable, Sendable {
 
     /// The action the editor's fields describe; `nil` while the browser profile is off.
     public var chosenLaunchAction: LaunchAction? {
-        browser.map { .browserProfile(browser: $0, profileName: profileName) }
+        browser.map { isPrivateWindow ? .browserPrivate(browser: $0) : .browserProfile(browser: $0, profileName: profileName) }
     }
 
-    /// Whether the profile name can be saved: the grammar takes it, or the browser profile is off.
-    /// When it can't, the editor says what a name may hold under the field.
+    /// Whether the profile name can be saved: the grammar takes it, the browser profile is off, or
+    /// a private window is chosen (the name isn't used). When it can't, the editor says what a
+    /// name may hold under the field.
     public var isProfileNameAccepted: Bool {
-        browser == nil || LaunchAction.isAcceptedProfileName(profileName)
+        browser == nil || isPrivateWindow || LaunchAction.isAcceptedProfileName(profileName)
     }
 
     /// Whether the item's action needs the user's review before the item opens again: it came in

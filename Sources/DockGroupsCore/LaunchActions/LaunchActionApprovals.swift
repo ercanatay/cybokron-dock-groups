@@ -104,7 +104,8 @@ enum LaunchActionApprovalRefusal: String, Error, CaseIterable, Hashable, Sendabl
 }
 
 /// The digest an approval binds to: SHA-256 of a canonical text of the item's identity and kind,
-/// the address it opens, the template, its browser and profile name, and the item's Open With app.
+/// the address it opens, the template, its browser and profile name (a private window has none),
+/// and the item's Open With app.
 /// Changing any of them changes the digest, so an approval never covers another action.
 enum LaunchActionApprovalDigest {
     /// The first line of the canonical text: what it is and its version.
@@ -125,6 +126,17 @@ enum LaunchActionApprovalDigest {
                 ("template", LaunchActionCoding.browserProfileTemplate),
                 ("browser", browser.rawValue),
                 ("profile", profileName),
+                ("opener", item.launch.opener?.bundleIdentifier.lowercased() ?? ""),
+            ]
+        case .browserPrivate(let browser):
+            // No profile line: the template has none, and its own template line keeps it apart
+            // from any browser profile's text.
+            fields = [
+                ("item", item.normalizedBundleIdentifier),
+                ("kind", item.kind.rawValue),
+                ("url", url.absoluteString),
+                ("template", LaunchActionCoding.browserPrivateTemplate),
+                ("browser", browser.rawValue),
                 ("opener", item.launch.opener?.bundleIdentifier.lowercased() ?? ""),
             ]
         }

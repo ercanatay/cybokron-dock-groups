@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A website can open in a private window of Chrome, Edge, Brave or Firefox (Edit Details… → Open in Browser Profile → Open in a private window). Like a browser profile, it's confirmed and approved on this Mac, and opens only from your own click while that browser isn't running.
+
 ## [0.18.2] - 2026-11-12
 
 ### Fixed

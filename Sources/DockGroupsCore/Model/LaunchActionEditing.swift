@@ -43,15 +43,23 @@ extension LaunchAction {
     /// The browser the action opens the website in.
     public var browser: BrowserFamily {
         switch self {
-        case .browserProfile(let browser, _): return browser
+        case .browserProfile(let browser, _), .browserPrivate(let browser): return browser
         }
     }
 
-    /// The profile the action opens the website in, as the user typed it.
-    public var profileName: String {
+    /// The profile the action opens the website in, as the user typed it; `nil` for a private
+    /// window, which has none.
+    public var profileName: String? {
         switch self {
         case .browserProfile(_, let profileName): return profileName
+        case .browserPrivate: return nil
         }
+    }
+
+    /// Whether the action opens the website in a private window (`browserPrivate`).
+    public var isPrivateWindow: Bool {
+        if case .browserPrivate = self { return true }
+        return false
     }
 
     /// Whether `profileName` passes the profile-name grammar (`BrowserProfileName`): the editor
@@ -110,26 +118,35 @@ public enum LaunchActionEdit: Hashable, Sendable {
 }
 
 /// What the confirmation before an action is turned on shows: which item, which browser (its app's
-/// name and bundle identifier), which profile and the full address that will open.
+/// name and bundle identifier), which profile or that it's a private window, and the full address
+/// that will open.
 public struct LaunchActionSummary: Equatable, Sendable {
+    /// The action asked about: Turn On sets it only when it's still the one chosen.
+    public let action: LaunchAction
     public let itemName: String
     public let browser: BrowserFamily
-    public let profileName: String
+    /// `nil` for a private window.
+    public let profileName: String?
     /// The website's whole address, as it will open.
     public let address: String
 
     /// The summary of `action` set on `item`; `nil` when the item isn't a website.
     public init?(_ action: LaunchAction, for item: GroupItem) {
         guard item.isWebsite, let url = item.websiteURL else { return nil }
+        self.action = action
         itemName = item.displayName
         browser = action.browser
         profileName = action.profileName
         address = url.absoluteString
     }
 
-    /// The question: "Open “GitHub” in Chrome with the profile “Work”?"
+    /// The question: "Open “GitHub” in Chrome with the profile “Work”?", or for a private window
+    /// "Open “GitHub” in a private Chrome window?"
     public var title: String {
-        Localization.format(
+        guard let profileName else {
+            return Localization.format("item.launch.private.confirm.title", "Open “%1$@” in a private %2$@ window?", itemName, browser.name)
+        }
+        return Localization.format(
             "item.launch.profile.confirm.title", "Open “%1$@” in %2$@ with the profile “%3$@”?",
             itemName, browser.name, profileName
         )
@@ -141,11 +158,12 @@ public struct LaunchActionSummary: Equatable, Sendable {
     }
 }
 
-/// The lines an item's row shows about its launch action: "Chrome · Work", and while that browser
+/// The lines an item's row shows about its launch action: "Chrome · Work" (or "Chrome · private
+/// window"), and while that browser
 /// is running, that the item won't open until it's quit (the runner refuses a running browser:
 /// launch-action-runner-slice.md); or that the action needs review.
 public struct LaunchActionCaption: Equatable, Sendable {
-    /// "Chrome · Work", or "Needs review…".
+    /// "Chrome · Work", "Chrome · private window", or "Needs review…".
     public let text: String
     /// While the browser is running: "Chrome is running: …"; `nil` otherwise.
     public let note: String?
@@ -164,7 +182,8 @@ public struct LaunchActionCaption: Equatable, Sendable {
             needsReview = true
             note = nil
         case .enabled(let action):
-            text = "\(action.browser.name) · \(action.profileName)"
+            text = action.profileName.map { "\(action.browser.name) · \($0)" }
+                ?? Localization.format("item.launch.private.row", "%@ · private window", action.browser.name)
             needsReview = false
             let running = item.launchActionBrowserBundleIdentifier.map(isApplicationRunning) ?? false
             note = running

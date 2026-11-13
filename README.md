@@ -192,9 +192,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   says the same. Importing a backup drops chosen apps that run what they open, and the import
   question says how many items it reset.
   A website can open in a browser profile (Edit Details… → Open in Browser Profile: Chrome, Edge,
-  Brave or Firefox, and the profile's name as `chrome://version` or `about:profiles` shows it). The
-  app asks you to confirm before it turns one on, and one that came in with a backup stays off until
-  you turn it on. Turning it on is recorded on this Mac only, so a groups file or standalone group
+  Brave or Firefox, and the profile's name as `chrome://version` or `about:profiles` shows it), or in
+  a private window of that browser (Open in a private window). The app asks you to confirm before it
+  turns one on, and one that came in with a backup stays off until you turn it on. Turning it on is recorded on this Mac only, so a groups file or standalone group
   copied from elsewhere doesn't turn one on either. It opens only from your own click or Open
   All/Start in the app or a standalone group's app, and only while that browser isn't running —
   otherwise the item isn't opened at all; its row says so.
