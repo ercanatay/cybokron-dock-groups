@@ -8,7 +8,7 @@ import Testing
 @Suite("Triggers: run what was missed, texts")
 @MainActor
 struct TriggerCatchUpTextTests {
-    private static let key = "com.example.app"
+    private nonisolated static let key = "com.example.app"
     private static let uk = Locale(identifier: "en_GB")
     private let work = TriggerRig.work
 
