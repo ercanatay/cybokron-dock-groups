@@ -92,7 +92,7 @@ final class DisplaySource {
         }
     }
 
-    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor () -> Void) {
+    private func observe(_ center: NotificationCenter, _ name: Notification.Name, _ handler: @escaping @MainActor @Sendable () -> Void) {
         let observer = center.addObserver(forName: name, object: nil, queue: .main) { _ in
             MainActor.assumeIsolated { handler() }
         }

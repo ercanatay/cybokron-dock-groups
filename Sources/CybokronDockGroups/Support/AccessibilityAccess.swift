@@ -11,6 +11,8 @@ enum AccessibilityAccess {
     /// Remembers that the prompt was shown for restoring windows, so it appears only once.
     static let didPromptForWindowsKey = "didPromptAccessibilityForWindows"
     private static let settingsURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
+    /// `kAXTrustedCheckOptionPrompt` (`AXUIElement.h`).
+    private static let trustedCheckOptionPrompt = "AXTrustedCheckOptionPrompt"
     private static let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Accessibility")
 
     /// For an app that is already switched on in the list but still lacks access. macOS ties the
@@ -27,7 +29,8 @@ enum AccessibilityAccess {
         guard !AXIsProcessTrusted() else { return true }
         guard !defaults.bool(forKey: key) else { return false }
         defaults.set(true, forKey: key)
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        // The value of `kAXTrustedCheckOptionPrompt`, a C global the compiler can't prove safe to read.
+        let options = [trustedCheckOptionPrompt: true] as CFDictionary
         return AXIsProcessTrustedWithOptions(options)
     }
 

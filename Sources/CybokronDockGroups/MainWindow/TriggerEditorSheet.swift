@@ -47,7 +47,7 @@ struct TriggerEditorSheet: View {
     let readNetworkName: () -> String?
     /// Approves a saved application trigger's app (`TriggerController.approveApplication`).
     /// An ad-hoc signed app is approved only when the second confirmation it is given answers `true`.
-    let approveApplication: (GroupTrigger.ID, @escaping TriggerApplicationApprover.AdHocConfirmation) async -> TriggerApplicationApprovalOutcome
+    let approveApplication: @MainActor (GroupTrigger.ID, @escaping TriggerApplicationApprover.AdHocConfirmation) async -> TriggerApplicationApprovalOutcome
     let dismiss: () -> Void
 
     @State private var draft: TriggerDraft
@@ -74,7 +74,7 @@ struct TriggerEditorSheet: View {
         locationAccess: LocationAccess,
         readDisplays: @escaping () -> [DisplayIdentity],
         readNetworkName: @escaping () -> String?,
-        approveApplication: @escaping (GroupTrigger.ID, @escaping TriggerApplicationApprover.AdHocConfirmation) async -> TriggerApplicationApprovalOutcome,
+        approveApplication: @escaping @MainActor (GroupTrigger.ID, @escaping TriggerApplicationApprover.AdHocConfirmation) async -> TriggerApplicationApprovalOutcome,
         dismiss: @escaping () -> Void
     ) {
         self.group = group
