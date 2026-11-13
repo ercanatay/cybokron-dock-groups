@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Persetujuan tidak ada di Mac ini: item tidak akan terbuka sampai Anda mengaktifkannya kembali.";
 "item.launch.profile.approval.editor" = "Persetujuan tidak ada di Mac ini, sehingga item tidak akan terbuka. Untuk mengaktifkannya, periksa profil lalu aktifkan kembali.";
 "core.backup.approval.disabled" = "%ld tindakan profil browser tiba dalam keadaan nonaktif dan memerlukan persetujuan.";
+"item.launch.private.toggle" = "Buka di jendela privat";
+"item.launch.private.hint" = "Membuka situs web di jendela privat baru saat Anda membukanya sendiri dan browser tidak sedang berjalan.";
+"item.launch.private.row" = "%@ · jendela privat";
+"item.launch.private.confirm.title" = "Buka “%1$@” di jendela privat %2$@?";

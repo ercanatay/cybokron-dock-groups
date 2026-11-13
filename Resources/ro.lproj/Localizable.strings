@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Aprobarea lipsește pe acest Mac: elementul nu se deschide până nu o activezi din nou.";
 "item.launch.profile.approval.editor" = "Aprobarea lipsește pe acest Mac, așa că elementul nu se deschide. Pentru a o activa, verifică profilul și activeaz-o din nou.";
 "core.backup.approval.disabled" = "%ld acțiune(i) de profil de browser au sosit dezactivate și necesită aprobare.";
+"item.launch.private.toggle" = "Deschide într-o fereastră privată";
+"item.launch.private.hint" = "Deschide site-ul web într-o fereastră privată nouă când îl deschizi tu și browserul nu rulează.";
+"item.launch.private.row" = "%@ · fereastră privată";
+"item.launch.private.confirm.title" = "Deschizi „%1$@” într-o fereastră privată %2$@?";

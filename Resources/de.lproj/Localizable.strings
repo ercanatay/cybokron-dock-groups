@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Zustimmung auf diesem Mac fehlt: Das Element lässt sich erst öffnen, wenn du sie wieder aktivierst.";
 "item.launch.profile.approval.editor" = "Die Zustimmung fehlt auf diesem Mac, daher lässt sich das Element nicht öffnen. Zum Aktivieren prüfe das Profil und schalte es wieder ein.";
 "core.backup.approval.disabled" = "%ld Browserprofil-Aktion(en) wurde(n) deaktiviert eingegangen und benötigt/benötigen Zustimmung.";
+"item.launch.private.toggle" = "In einem privaten Fenster öffnen";
+"item.launch.private.hint" = "Öffnet die Website in einem neuen privaten Fenster, wenn du sie selbst öffnest und der Browser nicht läuft.";
+"item.launch.private.row" = "%@ · privates Fenster";
+"item.launch.private.confirm.title" = "„%1$@“ in einem privaten %2$@-Fenster öffnen?";

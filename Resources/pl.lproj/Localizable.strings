@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Brak zatwierdzenia na tym Macu: element nie zostanie otwarty, dopóki go ponownie nie włączysz.";
 "item.launch.profile.approval.editor" = "Zatwierdzenie jest niedostępne na tym Macu, więc element nie zostanie otwarty. Aby je włączyć, sprawdź profil i włącz je ponownie.";
 "core.backup.approval.disabled" = "%ld działań profilu przeglądarki zostało dodanych wyłączonych i wymaga zatwierdzenia.";
+"item.launch.private.toggle" = "Otwórz w oknie prywatnym";
+"item.launch.private.hint" = "Otwiera stronę w nowym oknie prywatnym, gdy sam ją otworzysz i przeglądarka nie jest uruchomiona.";
+"item.launch.private.row" = "%@ · okno prywatne";
+"item.launch.private.confirm.title" = "Otworzyć „%1$@” w prywatnym oknie %2$@?";

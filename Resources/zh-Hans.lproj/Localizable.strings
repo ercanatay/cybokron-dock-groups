@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "在这台 Mac 上缺少批准，项目在重新开启之前无法打开。";
 "item.launch.profile.approval.editor" = "这台 Mac 上缺少批准，因此该项目无法打开。要启用它，请检查配置文件并重新开启。";
 "core.backup.approval.disabled" = "%ld 个浏览器配置文件操作已被关闭，需要批准。";
+"item.launch.private.toggle" = "在无痕窗口中打开";
+"item.launch.private.hint" = "当你自行打开该网站且浏览器未运行时，在新的无痕窗口中打开该网站。";
+"item.launch.private.row" = "%@ · 无痕窗口";
+"item.launch.private.confirm.title" = "要在 %2$@ 的无痕窗口中打开“%1$@”吗？";

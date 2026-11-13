@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Jóváhagyás hiányzik ezen a Mac-en: az elem nem nyílik meg, amíg újra be nem kapcsolja.";
 "item.launch.profile.approval.editor" = "A jóváhagyás hiányzik ezen a Mac-en, ezért az elem nem nyílik meg. A engedélyezéshez ellenőrizze a profilt, majd kapcsolja be újra.";
 "core.backup.approval.disabled" = "%ld böngészőprofil-művelet kikapcsolva érkezett, és jóváhagyást igényel.";
+"item.launch.private.toggle" = "Megnyitás privát ablakban";
+"item.launch.private.hint" = "Új privát ablakban nyitja meg a webhelyet, ha Ön maga nyitja meg, és a böngésző nem fut.";
+"item.launch.private.row" = "%@ · privát ablak";
+"item.launch.private.confirm.title" = "Megnyitja a(z) “%1$@” elemet privát %2$@ ablakban?";

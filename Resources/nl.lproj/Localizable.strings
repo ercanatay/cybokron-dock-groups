@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Goedkeuring ontbreekt op deze Mac: het item wordt pas geopend als je het weer inschakelt.";
 "item.launch.profile.approval.editor" = "Goedkeuring ontbreekt op deze Mac, dus het item wordt niet geopend. Om het in te schakelen, controleer het profiel en schakel het opnieuw in.";
 "core.backup.approval.disabled" = "%ld browserprofielactie(s) zijn uitgeschakeld aangekomen en hebben goedkeuring nodig.";
+"item.launch.private.toggle" = "Openen in een privévenster";
+"item.launch.private.hint" = "Opent de website in een nieuw privévenster wanneer je hem zelf opent en de browser niet actief is.";
+"item.launch.private.row" = "%@ · privévenster";
+"item.launch.private.confirm.title" = "“%1$@” openen in een privévenster van %2$@?";

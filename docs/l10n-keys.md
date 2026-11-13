@@ -1681,7 +1681,7 @@ reuses `item.launch.choice.notOnThisMac`.
 | `item.launch.profile.row.running` | %@ is running: the item opens only after you quit it. |
 | `item.launch.profile.confirm.title` | Open “%1$@” in %2$@ with the profile “%3$@”? |
 
-## A website's private window: the details editor's option and hint, the row's caption and the confirmation's question (English only for now)
+## A website's private window: the details editor's option and hint, the row's caption and the confirmation's question
 
 See [launch-action-private-window.md](design/launch-action-private-window.md). The option sits in
 the browser profile part of the details editor and hides the profile field; `%@` in

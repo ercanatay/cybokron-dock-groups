@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Schválení na tomto Macu chybí: položka se neotevře, dokud ho znovu nezapnete.";
 "item.launch.profile.approval.editor" = "Schválení na tomto Macu chybí, takže se položka neotevře. Pro jeho zapnutí zkontrolujte profil a znovu ho zapněte.";
 "core.backup.approval.disabled" = "%ld akce(í) profilu prohlížeče dorazily vypnuté a vyžadují schválení.";
+"item.launch.private.toggle" = "Otevřít v soukromém okně";
+"item.launch.private.hint" = "Otevře webovou stránku v novém soukromém okně, když ji otevřete sami a prohlížeč neběží.";
+"item.launch.private.row" = "%@ · soukromé okno";
+"item.launch.private.confirm.title" = "Otevřít „%1$@“ v soukromém okně %2$@?";

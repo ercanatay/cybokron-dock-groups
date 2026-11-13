@@ -1211,3 +1211,7 @@
 "item.launch.profile.approval.row" = "Mac-də təsdiq yoxdur: element bunu yenidən aktivləşdirənə qədər açılmayacaq.";
 "item.launch.profile.approval.editor" = "Bu Mac-də təsdiq yoxdur, ona görə element açılmayacaq. Aktivləşdirmək üçün profili yoxlayın və yenidən aktiv edin.";
 "core.backup.approval.disabled" = "%ld brauzer profili əməliyyatı deaktiv halda gəlib və təsdiq tələb edir.";
+"item.launch.private.toggle" = "Məxfi pəncərədə aç";
+"item.launch.private.hint" = "Brauzer işləmirsə, saytı özünüz açdığınız zaman onu yeni məxfi pəncərədə açır.";
+"item.launch.private.row" = "%@ · məxfi pəncərə";
+"item.launch.private.confirm.title" = "“%1$@” saytını %2$@ məxfi pəncərəsində açılsın?";
