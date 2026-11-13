@@ -22,6 +22,9 @@ import SwiftUI
 /// action that came in with a backup or can't be used) first asks to confirm the action, showing
 /// the browser, the profile and the full address; Cancel there changes nothing. While a browser
 /// profile is chosen, "Open with" isn't offered: the profile's browser opens the website.
+/// "Open in a private window" (launch-action-private-window.md) opens it in the chosen browser's
+/// private window instead: the profile field is hidden, and the confirmation names the private
+/// window instead of a profile.
 ///
 /// The group window shows it in a popover from a row's ⓘ button and its Edit Details… menu item,
 /// and as a sheet when the popup's Edit Details… opens the window on the item.
@@ -147,7 +150,7 @@ struct ItemDetailsEditor: View {
     /// The confirmation's Turn On: the action is set and on, and the editor closes, saving.
     private func turnOn(_ summary: LaunchActionSummary) {
         confirming = nil
-        guard let action = draft.chosenLaunchAction, action.browser == summary.browser, action.profileName == summary.profileName else { return }
+        guard let action = draft.chosenLaunchAction, action == summary.action else { return }
         draft.confirmLaunchAction(action)
         finish(.done)
     }
@@ -199,8 +202,8 @@ struct ItemDetailsEditor: View {
 
     // MARK: - Browser profile
 
-    /// A website's browser profile: on or off, the browser and the profile's name, where to find
-    /// the name, why a name can't be used, and Turn On for an action that needs review.
+    /// A website's browser profile: on or off, the browser, a private window or the profile's name,
+    /// where to find the name, why a name can't be used, and Turn On for an action that needs review.
     @ViewBuilder
     private var browserProfileRows: some View {
         GridRow {
@@ -231,14 +234,22 @@ struct ItemDetailsEditor: View {
                 browserPicker(browser)
                     .gridColumnAlignment(.trailing)
                 VStack(alignment: .leading, spacing: 4) {
-                    TextField(L10n.BrowserProfile.toggle, text: $draft.profileName, prompt: Text(verbatim: browser.profileNameExample))
-                        .labelsHidden()
-                        .focused($focusedField, equals: .profile)
-                        .onSubmit(done)
-                    Text(draft.isProfileNameAccepted ? L10n.BrowserProfile.hint : L10n.BrowserProfile.invalidName)
-                        .font(.caption)
-                        .foregroundStyle(draft.isProfileNameAccepted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
-                        .fixedSize(horizontal: false, vertical: true)
+                    Toggle(L10n.BrowserProfile.privateWindow, isOn: $draft.isPrivateWindow)
+                    if draft.isPrivateWindow {
+                        Text(L10n.BrowserProfile.privateWindowHint)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        TextField(L10n.BrowserProfile.toggle, text: $draft.profileName, prompt: Text(verbatim: browser.profileNameExample))
+                            .labelsHidden()
+                            .focused($focusedField, equals: .profile)
+                            .onSubmit(done)
+                        Text(draft.isProfileNameAccepted ? L10n.BrowserProfile.hint : L10n.BrowserProfile.invalidName)
+                            .font(.caption)
+                            .foregroundStyle(draft.isProfileNameAccepted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }

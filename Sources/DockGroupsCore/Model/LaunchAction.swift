@@ -23,6 +23,10 @@ public enum BrowserFamily: String, CaseIterable, Hashable, Sendable {
 public enum LaunchAction: Hashable, Sendable {
     /// Opens the website in `browser`, in its profile named `profileName`.
     case browserProfile(browser: BrowserFamily, profileName: String)
+    /// Opens the website in a new private window of `browser` (Chrome and Brave: incognito, Edge:
+    /// InPrivate, Firefox: private browsing): docs/design/launch-action-private-window.md. It has
+    /// no parameter but the browser: no profile, no address of its own.
+    case browserPrivate(browser: BrowserFamily)
 
     /// Why the action can't be used; `nil` when it can. A case can be built with any parameter,
     /// so every boundary (reading, writing, using) asks this again.
@@ -30,13 +34,16 @@ public enum LaunchAction: Hashable, Sendable {
         switch self {
         case .browserProfile(_, let profileName):
             return BrowserProfileName.rejection(for: profileName).map(LaunchActionRejection.profileName)
+        case .browserPrivate:
+            return nil
         }
     }
 
-    /// The item kinds the action can be set on: a browser profile is for websites only.
+    /// The item kinds the action can be set on: a browser profile and a private window are for
+    /// websites only.
     func isAllowed(for kind: AppReference.Kind) -> Bool {
         switch self {
-        case .browserProfile: return kind == .website
+        case .browserProfile, .browserPrivate: return kind == .website
         }
     }
 }
@@ -49,7 +56,8 @@ enum LaunchActionRejection: Error, Hashable, Sendable {
     /// The object has a key no template has and that is never read: an environment, a command, a
     /// script, a program, a shell, arguments or a location (`LaunchActionCoding.forbiddenKeys`).
     case forbiddenKey
-    /// The object has a key this version doesn't know.
+    /// The object has a key this version doesn't know, or one its template doesn't have (a
+    /// `profile` for a private window).
     case unknownKey
     /// A key holds a value of the wrong JSON type.
     case wrongValueType
@@ -244,7 +252,8 @@ extension AppReference {
 // MARK: - On-disk form
 
 /// The `launchAction` object of an item: a `status`, and the template's own keys, e.g.
-/// `{"status": "enabled", "template": "browserProfile", "browser": "chrome", "profile": "Work"}`.
+/// `{"status": "enabled", "template": "browserProfile", "browser": "chrome", "profile": "Work"}` or
+/// `{"status": "enabled", "template": "browserPrivate", "browser": "firefox"}` (no `profile`).
 ///
 /// - `"status": "enabled"` — on, so the launcher may run it.
 /// - `"status": "review", "reason": "imported"` — came in with a backup: off until turned on.
@@ -264,7 +273,7 @@ struct LaunchActionCoding: Codable {
     static let reviewStatus = "review"
     static let importedReason = "imported"
     static let invalidReason = "invalid"
-    /// The template's keys.
+    /// The templates' keys (`browserPrivate` has no `profile`).
     static let allowedKeys: Set<String> = [templateKey, browserKey, profileKey]
     /// Keys that are never read, kept or written, compared ignoring case. Any of them makes the
     /// action invalid (they'd be unknown anyway; listed so they're refused by name).
@@ -273,6 +282,8 @@ struct LaunchActionCoding: Codable {
     ]
     /// The template identifier of `LaunchAction.browserProfile`.
     static let browserProfileTemplate = "browserProfile"
+    /// The template identifier of `LaunchAction.browserPrivate`.
+    static let browserPrivateTemplate = "browserPrivate"
 
     static func isForbidden(_ key: String) -> Bool {
         forbiddenKeys.contains(key.lowercased())
@@ -371,7 +382,9 @@ struct LaunchActionCoding: Codable {
         case .success(nil): return .failure(.missingTemplate)
         case .failure(let rejection): return .failure(rejection)
         }
-        guard template == browserProfileTemplate else { return .failure(.unknownTemplate) }
+        guard template == browserProfileTemplate || template == browserPrivateTemplate else { return .failure(.unknownTemplate) }
+        // A private window has no profile: one written with it is refused, never ignored.
+        if template == browserPrivateTemplate, object[profileKey] != nil { return .failure(.unknownKey) }
         let browser: BrowserFamily
         switch string(object, browserKey) {
         case .success(let value?):
@@ -380,6 +393,7 @@ struct LaunchActionCoding: Codable {
         case .success(nil): return .failure(.missingBrowser)
         case .failure(let rejection): return .failure(rejection)
         }
+        if template == browserPrivateTemplate { return .success(.browserPrivate(browser: browser)) }
         switch string(object, profileKey) {
         case .success(let profileName?):
             let action = LaunchAction.browserProfile(browser: browser, profileName: profileName)
@@ -413,6 +427,11 @@ struct LaunchActionCoding: Codable {
                     Self.templateKey: .string(Self.browserProfileTemplate),
                     Self.browserKey: .string(browser.rawValue),
                     Self.profileKey: .string(profileName),
+                ]
+            case .browserPrivate(let browser):
+                object = [
+                    Self.templateKey: .string(Self.browserPrivateTemplate),
+                    Self.browserKey: .string(browser.rawValue),
                 ]
             }
             if case .imported = content {

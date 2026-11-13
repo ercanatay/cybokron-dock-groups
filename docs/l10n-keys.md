@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1126 keys.
+1130 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1680,6 +1680,21 @@ reuses `item.launch.choice.notOnThisMac`.
 | `item.launch.profile.row.review` | Browser profile needs review: the item won't open until you turn it on. |
 | `item.launch.profile.row.running` | %@ is running: the item opens only after you quit it. |
 | `item.launch.profile.confirm.title` | Open “%1$@” in %2$@ with the profile “%3$@”? |
+
+## A website's private window: the details editor's option and hint, the row's caption and the confirmation's question (English only for now)
+
+See [launch-action-private-window.md](design/launch-action-private-window.md). The option sits in
+the browser profile part of the details editor and hides the profile field; `%@` in
+`item.launch.private.row` and `%2$@` in `item.launch.private.confirm.title` are a browser's name
+(Chrome, Edge, Brave, Firefox), which stays as it is. A private-window action that needs review
+reuses the browser profile's review texts.
+
+| Key | English |
+| --- | --- |
+| `item.launch.private.toggle` | Open in a private window |
+| `item.launch.private.hint` | Opens the website in a new private window when you open it yourself and the browser isn't running. |
+| `item.launch.private.row` | %@ · private window |
+| `item.launch.private.confirm.title` | Open “%1$@” in a private %2$@ window? |
 
 ## Launch action approval on this Mac: the editor's and row's missing-approval notes, the restore summary's count
 

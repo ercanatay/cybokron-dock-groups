@@ -565,6 +565,12 @@ enum L10n {
             tr("item.launch.profile.approval.editor", "Approval is missing on this Mac, so the item won't open. To enable it, check the profile and turn it on again.")
         }
         static var turnOn: String { tr("item.launch.profile.turnOn", "Turn On") }
+        /// Opens the website in the browser's private window instead of a profile
+        /// (launch-action-private-window.md).
+        static var privateWindow: String { tr("item.launch.private.toggle", "Open in a private window") }
+        static var privateWindowHint: String {
+            tr("item.launch.private.hint", "Opens the website in a new private window when you open it yourself and the browser isn't running.")
+        }
     }
 
     // MARK: - Problems

@@ -1262,3 +1262,7 @@
 "core.backup.approval.disabled" = "%ld browser profile action(s) arrived turned off and need approval.";
 "item.launch.profile.row.running" = "%@ is running: the item opens only after you quit it.";
 "item.launch.profile.confirm.title" = "Open “%1$@” in %2$@ with the profile “%3$@”?";
+"item.launch.private.toggle" = "Open in a private window";
+"item.launch.private.hint" = "Opens the website in a new private window when you open it yourself and the browser isn't running.";
+"item.launch.private.row" = "%@ · private window";
+"item.launch.private.confirm.title" = "Open “%1$@” in a private %2$@ window?";

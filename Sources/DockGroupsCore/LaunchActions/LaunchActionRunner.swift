@@ -33,7 +33,8 @@ enum LaunchActionRunRefusal: String, Error, CaseIterable, Hashable, Sendable {
 
 /// What starting a plan did.
 enum LaunchActionRunOutcome: Hashable, Sendable {
-    /// The browser was started with the plan's arguments and asked to open its address.
+    /// The browser was started with the plan's arguments and asked to open its address (a private
+    /// window's address is one of its arguments).
     case launched
     /// Nothing was started or opened, for this reason.
     case refused(LaunchActionRunRefusal)
@@ -59,7 +60,9 @@ struct LaunchActionRunner {
             return .refused(.browserAlreadyRunning)
         }
         do {
-            try await workspace.startApplication(at: location, opening: [plan.url], configuration: Self.configuration(for: plan))
+            // A private window's address is among its arguments; handed over again it would open in
+            // a normal window (launch-action-private-window.md), so it's handed over only otherwise.
+            try await workspace.startApplication(at: location, opening: plan.urlsToOpen, configuration: Self.configuration(for: plan))
             return .launched
         } catch {
             return .refused(.launchFailed)
@@ -120,7 +123,7 @@ extension LaunchAction {
     /// The browser the action's template starts when the item has no browser chosen for it.
     var preferredBrowserBundleIdentifier: String? {
         switch self {
-        case .browserProfile(let browser, _): return browser.bundleIdentifiers.first
+        case .browserProfile(let browser, _), .browserPrivate(let browser): return browser.bundleIdentifiers.first
         }
     }
 }

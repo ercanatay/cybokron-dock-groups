@@ -62,7 +62,8 @@ struct LaunchActionArgumentPlan: Hashable, Sendable {
     let executableBundleIdentifier: String
     /// The arguments, each one element given to the browser unchanged; never joined into a line.
     let arguments: [String]
-    /// The address to open, given to the browser apart from the arguments.
+    /// The address to open. Given to the browser apart from the arguments (`urlsToOpen`), except
+    /// for a private window, whose arguments end with it (`privateWindowArguments`).
     let url: URL
 
     private init(executableBundleIdentifier: String, arguments: [String], url: URL) {
@@ -77,6 +78,30 @@ struct LaunchActionArgumentPlan: Hashable, Sendable {
     /// The Firefox option that picks a profile by its name, followed by the name as its own
     /// element: `-P`, `Work`.
     static let firefoxProfileOption = "-P"
+
+    /// The option that opens a private window, followed by the address as its own element:
+    /// `--incognito`, `https://…`. Chrome and Brave: `--incognito`; Edge: `--inprivate`
+    /// (unverified); Firefox: `-private-window` (launch-action-private-window.md).
+    static func privateWindowOption(for browser: BrowserFamily) -> String {
+        switch browser {
+        case .chrome, .brave: return "--incognito"
+        case .edge: return "--inprivate"
+        case .firefox: return "-private-window"
+        }
+    }
+
+    /// Whether the address is in the arguments: a private window's plan, whose browser opens a
+    /// private window for an address given there, and a normal one for an address handed over by
+    /// the system as an open event (verified for Chrome and Firefox, launch-action-private-window.md).
+    var opensAddressFromArguments: Bool {
+        arguments.count == 2 && arguments[1] == url.absoluteString
+            && BrowserFamily.allCases.contains { Self.privateWindowOption(for: $0) == arguments[0] }
+    }
+
+    /// What the browser is handed to open apart from the arguments: the address, or nothing when
+    /// the arguments already have it (a private window), so it isn't opened a second time in a
+    /// normal window.
+    var urlsToOpen: [URL] { opensAddressFromArguments ? [] : [url] }
 
     /// The plan for an item of `itemKind` at `url` whose launch action is `setting`, started in the
     /// browser `browserBundleIdentifier`, or why there is none. Checked in this order, the first
@@ -99,20 +124,30 @@ struct LaunchActionArgumentPlan: Hashable, Sendable {
         }
         guard action.isAllowed(for: itemKind) else { return .failure(.itemKindMismatch) }
         guard action.rejection == nil else { return .failure(.actionNeedsReview) }
+        let browser: BrowserFamily
+        let arguments: [String]
         switch action {
-        case .browserProfile(let browser, let profileName):
+        case .browserProfile(let family, let profileName):
             // Checked again here, not only through `action.rejection`: a plan must never carry a
             // name the grammar refuses, whatever the model does.
             guard BrowserProfileName.rejection(for: profileName) == nil,
-                  let arguments = profileArguments(browser: browser, profileName: profileName)
+                  let built = profileArguments(browser: family, profileName: profileName)
             else { return .failure(.actionNeedsReview) }
             guard isAcceptable(url) else { return .failure(.urlRejected) }
-            guard let executable = browser.canonicalBundleIdentifier(for: browserBundleIdentifier) else {
-                return .failure(.unsupportedBrowser)
-            }
-            guard isInstalled(executable) else { return .failure(.browserNotInstalled) }
-            return .success(LaunchActionArgumentPlan(executableBundleIdentifier: executable, arguments: arguments, url: url))
+            browser = family
+            arguments = built
+        case .browserPrivate(let family):
+            // The address is checked before it's put among the arguments.
+            guard isAcceptable(url) else { return .failure(.urlRejected) }
+            guard let built = privateWindowArguments(browser: family, url: url) else { return .failure(.urlRejected) }
+            browser = family
+            arguments = built
         }
+        guard let executable = browser.canonicalBundleIdentifier(for: browserBundleIdentifier) else {
+            return .failure(.unsupportedBrowser)
+        }
+        guard isInstalled(executable) else { return .failure(.browserNotInstalled) }
+        return .success(LaunchActionArgumentPlan(executableBundleIdentifier: executable, arguments: arguments, url: url))
     }
 
     /// The plan for `item`'s launch action in the browser `browserBundleIdentifier`; `nil` when the
@@ -143,6 +178,16 @@ struct LaunchActionArgumentPlan: Hashable, Sendable {
             arguments = [firefoxProfileOption, profileName]
         }
         return arguments.allSatisfy(isSingleArgument) ? arguments : nil
+    }
+
+    /// The arguments that open `url` in a private window of `browser`: the browser's fixed option
+    /// and the address as one element, or `nil` when the address couldn't stand as one value (it
+    /// would start like an option, or hold whitespace or a control character). Nothing the user
+    /// typed but the address, which `isAcceptable` checked first.
+    static func privateWindowArguments(browser: BrowserFamily, url: URL) -> [String]? {
+        let address = url.absoluteString
+        guard isSingleArgument(address), !address.hasPrefix("-"), !address.contains(" ") else { return nil }
+        return [privateWindowOption(for: browser), address]
     }
 
     /// Whether `value` can stand as one argument value on its own: not empty, not an option, and
