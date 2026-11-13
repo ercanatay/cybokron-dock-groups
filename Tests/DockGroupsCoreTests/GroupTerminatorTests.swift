@@ -174,17 +174,20 @@ private final class FakeRunningApplications: RunningApplicationsProviding {
         }
 
         func hide() -> Bool {
-            MainActor.assumeIsolated { owner.hidden.append(processIdentifier) }
+            let (owner, pid) = (owner, processIdentifier)
+            MainActor.assumeIsolated { owner.hidden.append(pid) }
             return !refuses
         }
 
         func terminate() -> Bool {
-            MainActor.assumeIsolated { owner.terminated.append(processIdentifier) }
+            let (owner, pid) = (owner, processIdentifier)
+            MainActor.assumeIsolated { owner.terminated.append(pid) }
             return !refuses
         }
 
         func forceTerminate() -> Bool {
-            MainActor.assumeIsolated { owner.forceTerminated.append(processIdentifier) }
+            let (owner, pid) = (owner, processIdentifier)
+            MainActor.assumeIsolated { owner.forceTerminated.append(pid) }
             return !refuses
         }
     }

@@ -17,20 +17,32 @@ final class SwitchingLog {
     }
 }
 
-/// A running app of `FakeRunningApps`: records what's done to it in the shared log. Its methods
-/// are called on the main actor, as `NSRunningApplication`'s are.
+/// A running app of `FakeRunningApps`: records what's done to it in the shared log. Its state lives
+/// on the main actor, where `NSRunningApplication`'s methods are called too; the protocol's
+/// nonisolated requirements are met by hopping in with `assumeIsolated`.
+@MainActor
 final class FakeRunningApp: SwitchableApplication {
-    let processIdentifier: pid_t
-    let bundleIdentifier: String?
-    let bundleURL: URL?
+    nonisolated let processIdentifier: pid_t
+    nonisolated let bundleIdentifier: String?
+    nonisolated let bundleURL: URL?
     let identity: String
     let name: String
-    var isTerminated = false
-    var isHidden: Bool
+    private var terminated = false
+    private var hidden: Bool
     var isRegular: Bool
     /// Says no to every request.
     var refuses = false
     private let log: SwitchingLog
+
+    nonisolated var isTerminated: Bool {
+        get { MainActor.assumeIsolated { terminated } }
+        set { MainActor.assumeIsolated { terminated = newValue } }
+    }
+
+    nonisolated var isHidden: Bool {
+        get { MainActor.assumeIsolated { hidden } }
+        set { MainActor.assumeIsolated { hidden = newValue } }
+    }
 
     init(pid: pid_t, bundleIdentifier: String?, bundleURL: URL? = nil, name: String, isHidden: Bool, isRegular: Bool, log: SwitchingLog) {
         processIdentifier = pid
@@ -38,51 +50,51 @@ final class FakeRunningApp: SwitchableApplication {
         self.bundleURL = bundleURL
         identity = RunningAppSnapshot.identity(bundleIdentifier: bundleIdentifier, bundleURL: bundleURL) ?? ""
         self.name = name
-        self.isHidden = isHidden
+        hidden = isHidden
         self.isRegular = isRegular
         self.log = log
     }
 
     var snapshot: RunningAppSnapshot {
-        RunningAppSnapshot(processIdentifier: processIdentifier, identity: identity, name: name, isHidden: isHidden, isRegular: isRegular)
+        RunningAppSnapshot(processIdentifier: processIdentifier, identity: identity, name: name, isHidden: hidden, isRegular: isRegular)
     }
 
-    func hide() -> Bool {
+    nonisolated func hide() -> Bool {
         MainActor.assumeIsolated {
             log.record("hide:\(identity)")
             guard !refuses else { return false }
-            isHidden = true
+            hidden = true
             return true
         }
     }
 
-    func unhide() -> Bool {
+    nonisolated func unhide() -> Bool {
         MainActor.assumeIsolated {
             log.record("unhide:\(identity)")
             guard !refuses else { return false }
-            isHidden = false
+            hidden = false
             return true
         }
     }
 
-    func terminate() -> Bool {
+    nonisolated func terminate() -> Bool {
         MainActor.assumeIsolated {
             log.record("quit:\(identity)")
             guard !refuses else { return false }
-            isTerminated = true
+            terminated = true
             return true
         }
     }
 
-    func forceTerminate() -> Bool {
+    nonisolated func forceTerminate() -> Bool {
         MainActor.assumeIsolated {
             log.record("force:\(identity)")
-            isTerminated = true
+            terminated = true
             return true
         }
     }
 
-    func activate(options: NSApplication.ActivationOptions) -> Bool {
+    nonisolated func activate(options: NSApplication.ActivationOptions) -> Bool {
         MainActor.assumeIsolated {
             log.record("front:\(identity)")
             return !refuses

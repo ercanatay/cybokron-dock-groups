@@ -14,11 +14,14 @@ struct AgentDockTilesTests {
         backups = DockTileBackups(directory: temporary.url.appending(path: "dock-backups", directoryHint: .isDirectory))
     }
 
-    private static let safari = DockTileList.makeEntry(
-        bundleIdentifier: "com.apple.Safari",
-        bundleURL: URL(fileURLWithPath: "/Applications/Safari.app"),
-        label: "Safari"
-    )
+    /// Computed, not stored: `DockTileEntry` is a non-`Sendable` dictionary, so a shared static would be global mutable state.
+    private static var safari: DockTileEntry {
+        DockTileList.makeEntry(
+            bundleIdentifier: "com.apple.Safari",
+            bundleURL: URL(fileURLWithPath: "/Applications/Safari.app"),
+            label: "Safari"
+        )
+    }
 
     private func group(_ name: String, standalone: Bool = true) -> DockGroup {
         DockGroup(name: name, isStandalone: standalone)
