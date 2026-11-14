@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.1] - 2026-11-14
+
+### Changed
+
+- The app builds without any Swift 6 concurrency warnings in its sources or tests, so a future language-mode switch won't trip over them. Nothing visible changes.
+
 ## [0.19.0] - 2026-11-13
 
 ### Added
@@ -658,7 +664,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.1...HEAD
+[0.19.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.2...v0.19.0
 [0.18.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.0...v0.18.1
