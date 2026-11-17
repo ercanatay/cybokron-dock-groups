@@ -105,7 +105,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var usage: UsageStore = UsageStore(
         persistence: JSONFileUsagePersistence(),
         sessionLength: TimeInterval(preferences.preferences.mostUsedSessionSeconds),
-        isRecordingEnabled: { [weak self] in self?.preferences.preferences.showsMostUsed ?? false }
+        isRecordingEnabled: { [weak self] in self?.preferences.preferences.showsMostUsed ?? false },
+        suggestionPersistence: JSONFileSuggestionStatePersistence(),
+        areSuggestionsEnabled: { [weak self] in self?.preferences.preferences.showsSuggestions ?? false }
     )
     private lazy var usageMonitor = UsageMonitor(usage: usage)
     private lazy var mostUsed = MostUsedProvider(usage: usage, preferences: preferences, icons: icons)

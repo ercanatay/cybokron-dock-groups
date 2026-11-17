@@ -31,7 +31,8 @@ public enum SettingsBackupError: LocalizedError, Equatable, Sendable {
 /// on its own.
 ///
 /// Launch statistics for the Most Used list are deliberately left out: they're personal usage data
-/// rebuilt on their own, not settings.
+/// rebuilt on their own, not settings. So is the Local Suggestions state, and a backup never has
+/// Suggestions turned on: they're off in what it writes, in what it reads and in what it restores.
 public struct SettingsBackup: Equatable, Sendable {
     /// The format this version writes and the newest one it can read.
     public static let currentSchemaVersion = 1
@@ -82,6 +83,8 @@ public struct SettingsBackup: Equatable, Sendable {
         self.archivedGroups = stored.archived
         self.templates = GroupTemplate.sanitized(templates)
         self.triggers = GroupTrigger.sanitized(triggers)
+        var preferences = preferences
+        preferences.showsSuggestions = false
         self.preferences = preferences
     }
 
@@ -164,7 +167,10 @@ public struct SettingsBackup: Equatable, Sendable {
         resetLaunchOptionCount = results.reduce(0) { $0 + $1.resetLaunchOptionCount }
         disabledLaunchActionCount = results.reduce(0) { $0 + $1.disabledLaunchActionCount }
         triggers = Self.importedTriggers(document.triggers?.triggers ?? [], groupIDs: Set(groups.map(\.id) + archivedGroups.map(\.id)))
-        preferences = document.preferences.preferences
+        var importedPreferences = document.preferences.preferences
+        // Importing a backup never turns Local Suggestions on (local-suggestions.md §5 rule 6).
+        importedPreferences.showsSuggestions = false
+        preferences = importedPreferences
     }
 
     /// A backup's triggers as they come in: only those of its own groups, all turned off — turning

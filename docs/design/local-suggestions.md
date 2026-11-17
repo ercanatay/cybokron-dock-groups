@@ -392,6 +392,8 @@ visible only when slice 3 merges, and is released only after slice 4. Overall: *
 
 ## 8. Open product decisions (with proposed defaults)
 
+Status: accepted 2026-11-17 with the proposed defaults (D1–D10).
+
 | # | Question | Proposed default |
 |---|---|---|
 | D1 | Opt-in or on by default? | **Off by default, explicit opt-in.** Turned off on backup import. |
