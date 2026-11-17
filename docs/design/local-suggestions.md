@@ -1,6 +1,6 @@
 # Design: Local Suggestions
 
-- **Status:** draft for review (2026-11-15). Design only: no code, no strings added yet.
+- **Status:** implemented in slices 1–4 (2026-11-17).
 - **Baseline:** `main` at `a28bdc4` (version 0.19.1, `project.yml` `MARKETING_VERSION: "0.19.1"`),
   26 `*.lproj` folders, `LocalizationTests.awaitingTranslation` empty.
 - **Roadmap item:** 6, *Local Suggestions*: "suggest groups and items from usage patterns; the data

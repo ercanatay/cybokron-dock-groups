@@ -319,6 +319,14 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   Used is on, and the history recorded so far is kept — sets how many apps it shows (5, 10 or 15)
   and the session length, and clears the history. Background agents and a few system processes
   (Finder, Spotlight, …) aren't counted.
+- **Local Suggestions** (off by default): turn on *Suggest groups from apps you open together* in
+  Settings → Most Used and, after a week of history, the menu bar menu shows up to three
+  suggestions: a new group from apps you often open together, or an app to add to a group you
+  already have. They're computed on this Mac from the Most Used history only — no network. Choose
+  **Review…** to open the same review sheet as Capture; nothing is created or opened until you
+  confirm there. **Not Now** hides a suggestion for a week or a month, **Don't Suggest This Again**
+  hides it for good, and Settings can reset the dismissed ones. They need Most Used to be on, and
+  **Clear History** starts them over.
 - **Standalone Dock icons**: turn on *Standalone Dock icon* in a group's settings and the group gets
   its own small app, with the group's tile (emoji or app icon grid) as its icon, at the end of the
   Dock. Clicking it shows the group's popup over the Dock, clicking it again hides it, and ⌥-clicking
