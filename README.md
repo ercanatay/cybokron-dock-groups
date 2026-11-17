@@ -387,7 +387,9 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   `groups.json` for the groups (archived ones too), `templates.json` for the templates,
   `triggers.json` / `trigger-state.json` for the triggers and what they last did,
   `preferences.json` for the settings, `usage-stats.json` /
-  `usage-cooccurrence.json` for the launch counts behind Most Used, `Agents/` for the
+  `usage-cooccurrence.json` for the launch counts behind Most Used, `suggestions-state.json` for
+  Local Suggestions (when they were turned on, on how many days apps were opened since, and the
+  suggestions you turned down; deleted by Clear History, never in a backup), `Agents/` for the
   standalone groups' apps, `update-state.json` / `updates/` for the updater (last check,
   skipped versions, downloads and the previous version's backup), and `changelog-cache.json` for
   Settings → Changelog's copy of the release notes.
