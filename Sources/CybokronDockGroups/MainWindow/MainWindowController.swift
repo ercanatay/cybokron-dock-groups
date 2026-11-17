@@ -146,6 +146,19 @@ final class MainWindowController: NSWindowController {
         }
     }
 
+    /// The review sheet for a Local Suggestion (local-suggestions.md §4.2): shown as the capture
+    /// sheet is, on the target group when an app is suggested for one. Nothing is created until
+    /// the user confirms.
+    func review(_ suggestion: SuggestionPlan) {
+        selection.capture = CaptureRequest(suggestion: suggestion)
+        switch suggestion.target {
+        case .newGroup:
+            show()
+        case .group(let id):
+            showSettings(ofGroup: id.uuidString)
+        }
+    }
+
     /// What the popup can't do itself: shows the window on the group and does `action` there —
     /// opens an item's details editor (Edit Details…), or the open panel of Add Apps… or Add Files
     /// or Folders….

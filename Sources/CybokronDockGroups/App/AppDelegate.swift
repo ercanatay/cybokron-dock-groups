@@ -114,7 +114,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var tiles: TileImageCache = TileImageCache(iconProvider: icons)
     private lazy var standalone = StandaloneController(store: store, preferences: preferences, icons: icons)
     /// Capturing the open apps: the order apps came to the front, the snapshot, the sheet's plan.
-    private lazy var capture = CaptureController(store: store, preferences: preferences)
+    private lazy var capture = CaptureController(store: store, preferences: preferences, suggestions: suggestions)
+    /// Local Suggestions: only the menu bar menu and Settings show them (D5); off by default.
+    private lazy var suggestions = SuggestionCenter(
+        usage: usage,
+        preferences: preferences,
+        groups: store,
+        isInstalled: { [icons] app in icons.isInstalled(app) }
+    )
     private var statusBarController: StatusBarController?
     private var subscriptions: Set<AnyCancellable> = []
     /// Set while this is a second copy of the app, launched next to the copy that runs: it then
@@ -177,6 +184,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         store: store,
         templates: templates,
         usage: usage,
+        suggestions: suggestions,
         shortcuts: shortcutMonitor,
         updater: updater,
         session: session,
@@ -301,7 +309,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     self.popupController.toggle(groupID: MostUsedGroup.id, source: self.menuBarSource)
                 },
                 openMostUsedApp: { [weak self] app in self?.open(app, in: MostUsedGroup.group(with: [])) },
-                appIcon: { [weak self] app in self?.menuIcon(for: app) ?? NSImage() }
+                appIcon: { [weak self] app in self?.menuIcon(for: app) ?? NSImage() },
+                suggestionRows: { [weak self] in self?.suggestions.menuRows() ?? [] },
+                reviewSuggestion: { [weak self] plan in self?.reviewSuggestion(plan) }
             )
         )
         shortcutMonitor.start()
@@ -573,6 +583,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let snapshot = capture.snapshot()
         popupController.close()
         mainWindowController.capture(target, from: snapshot)
+    }
+
+    /// A Local Suggestion's Review… (local-suggestions.md §4.2): the review sheet in the group
+    /// window, only while it's still a current suggestion. Nothing is created, opened or changed
+    /// here; the sheet's commit does that.
+    private func reviewSuggestion(_ plan: SuggestionPlan) {
+        guard suggestions.isCurrent(plan) else {
+            logger.notice("Suggestion review: it isn't a current suggestion any more")
+            NSSound.beep()
+            return
+        }
+        popupController.close()
+        mainWindowController.review(plan)
     }
 
     /// What the menu bar menu offers for the group: Finish for the current group, Start otherwise.

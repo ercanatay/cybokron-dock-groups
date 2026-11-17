@@ -28,6 +28,8 @@ final class DiagnosticsController: ObservableObject {
     private let updater: AutoUpdater
     private let shortcuts: GlobalShortcutMonitor
     private let triggers: TriggerController?
+    /// Only the number of dismissed suggestions is read from it.
+    private let usage: UsageStore?
     private let isStatusItemShown: () -> Bool
     private var feedbackReset: Task<Void, Never>?
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Diagnostics")
@@ -39,6 +41,7 @@ final class DiagnosticsController: ObservableObject {
         updater: AutoUpdater,
         shortcuts: GlobalShortcutMonitor,
         triggers: TriggerController? = nil,
+        usage: UsageStore? = nil,
         isStatusItemShown: @escaping () -> Bool
     ) {
         self.preferences = preferences
@@ -47,6 +50,7 @@ final class DiagnosticsController: ObservableObject {
         self.updater = updater
         self.shortcuts = shortcuts
         self.triggers = triggers
+        self.usage = usage
         self.isStatusItemShown = isStatusItemShown
     }
 
@@ -145,6 +149,7 @@ final class DiagnosticsController: ObservableObject {
             triggers: triggers?.store.triggers ?? [],
             triggersPausedUntil: triggers?.state.pausedUntil,
             opensAtLogin: triggers?.loginItem.isOn,
+            dismissedSuggestionCount: usage?.suggestionState.dismissed.count ?? 0,
             recentErrors: []
         )
     }

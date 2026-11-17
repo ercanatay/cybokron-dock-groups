@@ -54,6 +54,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let openMostUsedApp: (AppReference) -> Void
         /// The app's icon, sized for a menu item.
         let appIcon: (AppReference) -> NSImage
+        /// The Local Suggestions rows; empty hides the section (off, or nothing to suggest).
+        let suggestionRows: () -> [SuggestionMenuRow]
+        /// A row's Review…: the review sheet, which creates nothing until the user confirms.
+        let reviewSuggestion: (SuggestionPlan) -> Void
     }
 
     static let menuTileSize: CGFloat = 18
@@ -114,6 +118,7 @@ final class StatusBarController: NSObject, NSMenuDelegate {
             }
         }
         addMostUsedSection()
+        addSuggestionsSection()
 
         menu.addItem(.separator())
         let capture = NSMenuItem(title: L10n.Capture.menuBarItem, action: #selector(captureNewGroup(_:)), keyEquivalent: "")
@@ -231,6 +236,43 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         }
     }
 
+    /// Local Suggestions (local-suggestions.md §4.1), right after Most Used: at most
+    /// `SuggestionMenuRow.maximumRows` rows, each opening its review sheet; no section without one.
+    private func addSuggestionsSection() {
+        let items = Self.suggestionItems(for: actions.suggestionRows(), target: self, action: #selector(reviewSuggestion(_:)))
+        guard !items.isEmpty else { return }
+        menu.addItem(.separator())
+        menu.addItem(.sectionHeader(title: L10n.Suggestions.MenuBar.header))
+        items.forEach(menu.addItem)
+    }
+
+    /// The section's rows: "New group: Xcode, Simulator, Figma +1 — Review…", "Add Figma to
+    /// “Design” — Review…", with a tooltip of counts only.
+    static func suggestionItems(for rows: [SuggestionMenuRow], target: AnyObject?, action: Selector?) -> [NSMenuItem] {
+        typealias Texts = L10n.Suggestions.MenuBar
+        return rows.prefix(SuggestionMenuRow.maximumRows).map { row in
+            let names = row.appNames.joined(separator: ", ")
+            let text: String
+            if row.plan.kind == .addToGroup {
+                text = Texts.addToGroup(names, groupName: row.groupName ?? "")
+            } else if row.otherAppCount > 0 {
+                text = Texts.newGroup(names, more: row.otherAppCount)
+            } else {
+                text = Texts.newGroup(names)
+            }
+            let item = NSMenuItem(title: Texts.row(text), action: action, keyEquivalent: "")
+            item.target = target
+            item.representedObject = SuggestionMenuItemPayload(plan: row.plan)
+            item.toolTip = Texts.tooltip(row.plan.weakestPairCount)
+            return item
+        }
+    }
+
+    @objc private func reviewSuggestion(_ sender: NSMenuItem) {
+        guard let payload = sender.representedObject as? SuggestionMenuItemPayload else { return }
+        actions.reviewSuggestion(payload.plan)
+    }
+
     private func popupItem(for group: DockGroup) -> NSMenuItem {
         let item = NSMenuItem(title: group.name, action: #selector(showPopup(_:)), keyEquivalent: "")
         item.target = self
@@ -345,5 +387,14 @@ final class StatusBarController: NSObject, NSMenuDelegate {
 
     @objc private func checkForUpdates(_ sender: NSMenuItem) {
         actions.checkForUpdates()
+    }
+}
+
+/// A suggestion carried by its menu item (`representedObject` needs an object).
+final class SuggestionMenuItemPayload: NSObject {
+    let plan: SuggestionPlan
+
+    init(plan: SuggestionPlan) {
+        self.plan = plan
     }
 }

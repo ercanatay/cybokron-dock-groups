@@ -2,12 +2,35 @@ import AppKit
 import DockGroupsCore
 import OSLog
 
-/// A capture the group window is asked to show: where the apps go, and the open apps as they were
-/// read when the user asked (`CaptureController.snapshot()`).
+/// A capture the group window is asked to show: where the apps go, and what the sheet lists — the
+/// open apps as they were read when the user asked (`CaptureController.snapshot()`), or a Local
+/// Suggestion's apps (local-suggestions.md §4.2).
 struct CaptureRequest: Identifiable, Equatable {
+    enum Source: Equatable {
+        case openApps(OpenAppsSnapshot)
+        case suggestion(SuggestionPlan)
+    }
+
     let id = UUID()
     let target: CaptureTarget
-    let snapshot: OpenAppsSnapshot
+    let source: Source
+
+    init(target: CaptureTarget, snapshot: OpenAppsSnapshot) {
+        self.target = target
+        source = .openApps(snapshot)
+    }
+
+    /// Reviewing a suggestion: its target, its apps.
+    init(suggestion: SuggestionPlan) {
+        target = suggestion.target
+        source = .suggestion(suggestion)
+    }
+
+    /// The suggestion being reviewed; `nil` for the open apps.
+    var suggestion: SuggestionPlan? {
+        if case .suggestion(let plan) = source { return plan }
+        return nil
+    }
 }
 
 /// Capturing the open apps in the main app (capture spec §2.3, §2.6): remembers the order apps came
@@ -24,6 +47,8 @@ final class CaptureController {
     private let preferences: PreferencesStore
     private let reader: OpenAppsReading
     private let workspace: NSWorkspace
+    /// Plans a suggestion's review and records turning it down; `nil` without Local Suggestions.
+    private let suggestions: SuggestionCenter?
     private let ownProcessIdentifier = ProcessInfo.processInfo.processIdentifier
     /// The order apps came to the front since this app started; never saved.
     private(set) var history = ActivationHistory()
@@ -34,12 +59,14 @@ final class CaptureController {
         store: GroupStore,
         preferences: PreferencesStore,
         reader: OpenAppsReading? = nil,
-        workspace: NSWorkspace = .shared
+        workspace: NSWorkspace = .shared,
+        suggestions: SuggestionCenter? = nil
     ) {
         self.store = store
         self.preferences = preferences
         self.reader = reader ?? SystemOpenAppsReader(workspace: workspace)
         self.workspace = workspace
+        self.suggestions = suggestions
     }
 
     /// Starts remembering activations, beginning with the app in front now.
@@ -83,8 +110,18 @@ final class CaptureController {
     }
 
     /// What the sheet lists for `request` with `settings`: the target group's items are shown as
-    /// such, the protected apps start unselected.
+    /// such, the protected apps start unselected. A suggestion lists only its apps (and the
+    /// group's, which can't be chosen); nothing when it isn't a current suggestion any more.
     func plan(for request: CaptureRequest, settings: CaptureSettings) -> CapturePlan {
+        let snapshot: OpenAppsSnapshot
+        switch request.source {
+        case .openApps(let read):
+            snapshot = read
+        case .suggestion(let suggestion):
+            return suggestions?.reviewPlan(for: suggestion) ?? CapturePlan(
+                target: request.target, candidates: [], defaultSelection: [], unavailableCount: 0, hasWindowInformation: false
+            )
+        }
         let targetItems: [GroupItem]
         if case .group(let id) = request.target {
             targetItems = store.group(withID: id)?.apps ?? []
@@ -92,7 +129,7 @@ final class CaptureController {
             targetItems = []
         }
         return CapturePlanner.plan(
-            request.snapshot,
+            snapshot,
             settings: settings,
             target: request.target,
             targetItems: targetItems,
@@ -114,9 +151,14 @@ final class CaptureController {
     /// Adds what the user chose (`GroupStore.capture`): a new group named as typed — the
     /// suggestion when the name is blank — or the apps the group doesn't have yet. Logs counts and
     /// group identifiers only.
-    func commit(_ items: [GroupItem], into target: CaptureTarget, typedName: String) -> CaptureResult {
+    /// `suggestion` is the suggestion the sheet reviewed, if any: only its kind and app count are
+    /// logged.
+    func commit(_ items: [GroupItem], into target: CaptureTarget, typedName: String, suggestion: SuggestionPlan? = nil) -> CaptureResult {
         let name = CapturePlanner.groupName(typed: typedName, items: items, taken: store.takenNames)
         let result = store.capture(items, into: target, named: name)
+        if let suggestion {
+            logger.notice("Suggestion reviewed (\(suggestion.kind.rawValue, privacy: .public)): \(items.count, privacy: .public) of \(suggestion.apps.count, privacy: .public) apps confirmed")
+        }
         switch result {
         case .created(let group):
             logger.notice("Captured \(group.apps.count) apps into a new group \(group.id, privacy: .public)")
@@ -126,6 +168,11 @@ final class CaptureController {
             logger.notice("Capture: the group was archived or deleted meanwhile; nothing was added")
         }
         return result
+    }
+
+    /// The review sheet's Not Now, Don't Suggest This Again and Cancel.
+    func dismiss(_ suggestion: SuggestionPlan, for snooze: SuggestionSnooze) {
+        suggestions?.dismiss(suggestion, for: snooze)
     }
 
     // MARK: - Siri and Shortcuts

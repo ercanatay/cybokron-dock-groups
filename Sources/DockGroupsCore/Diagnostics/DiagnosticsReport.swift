@@ -105,6 +105,9 @@ public struct DiagnosticsInfo: Sendable {
     public var opensAtLogin: Bool?
     /// Location access, which only Wi-Fi triggers need; `nil` when the app hasn't looked at it.
     public var locationAccess: LocationAuthorization?
+    /// How many suggestions the user turned down (`suggestions-state.json`): a count only, never
+    /// which apps.
+    public var dismissedSuggestionCount: Int
     /// The latest error messages the app logged, oldest first.
     public var recentErrors: [String]
     public var generatedAt: Date
@@ -124,6 +127,7 @@ public struct DiagnosticsInfo: Sendable {
         triggersPausedUntil: Date? = nil,
         opensAtLogin: Bool? = nil,
         locationAccess: LocationAuthorization? = nil,
+        dismissedSuggestionCount: Int = 0,
         recentErrors: [String],
         generatedAt: Date = Date()
     ) {
@@ -141,6 +145,7 @@ public struct DiagnosticsInfo: Sendable {
         self.triggersPausedUntil = triggersPausedUntil
         self.opensAtLogin = opensAtLogin
         self.locationAccess = locationAccess
+        self.dismissedSuggestionCount = dismissedSuggestionCount
         self.recentErrors = recentErrors
         self.generatedAt = generatedAt
     }
@@ -190,6 +195,8 @@ public enum DiagnosticsReport {
         lines.append("App names under icons: \(onOff(preferences.showsTitles))")
         lines.append("Free Layout: \(onOff(preferences.usesFreeLayout))")
         lines.append("Most Used: \(onOff(preferences.showsMostUsed)) (\(preferences.mostUsedLimit) apps)")
+        // The setting and a count only: never which apps were suggested or turned down.
+        lines.append("Suggestions: \(onOff(preferences.showsSuggestions)) (\(max(info.dismissedSuggestionCount, 0)) dismissed)")
         lines.append("Theme: \(preferences.theme.rawValue), frosted glass \(onOff(preferences.usesFrostedGlass))")
         lines.append("Global shortcuts: \(onOff(preferences.shortcutsEnabled))")
         lines.append("Group shortcuts: \(describeGroupShortcuts(in: info))")
