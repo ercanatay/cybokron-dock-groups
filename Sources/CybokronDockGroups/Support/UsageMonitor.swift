@@ -1,7 +1,6 @@
 import AppKit
 import Combine
 import DockGroupsCore
-import OSLog
 
 /// Feeds app launches and activations from NSWorkspace into the usage statistics, however the app
 /// was opened (Dock, Finder, Spotlight, a group). Only regular apps — the ones with a Dock icon —
@@ -13,7 +12,6 @@ final class UsageMonitor {
     private let workspace: NSWorkspace
     private let ownBundleIdentifier = Bundle.main.bundleIdentifier?.lowercased()
     private var observers: [NSObjectProtocol] = []
-    private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "Usage")
 
     init(usage: UsageStore, workspace: NSWorkspace = .shared) {
         self.usage = usage
@@ -46,9 +44,8 @@ final class UsageMonitor {
             name: app.localizedName ?? app.bundleURL?.deletingPathExtension().lastPathComponent ?? bundleIdentifier,
             path: app.bundleURL?.standardizedFileURL.path
         )
-        if usage.recordLaunch(of: reference) {
-            logger.debug("Launch recorded: \(bundleIdentifier, privacy: .public)")
-        }
+        // Which app was launched is never logged (local-suggestions.md §2.5).
+        usage.recordLaunch(of: reference)
     }
 }
 
