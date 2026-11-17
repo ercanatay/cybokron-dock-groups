@@ -1267,7 +1267,7 @@
 "item.launch.private.row" = "%@ · private window";
 "item.launch.private.confirm.title" = "Open “%1$@” in a private %2$@ window?";
 
-/* Local Suggestions (English only for now) */
+/* Local Suggestions */
 "menuBar.suggestions.header" = "Suggestions";
 "menuBar.suggestions.row" = "%@ — Review…";
 "menuBar.suggestions.newGroup" = "New group: %@";

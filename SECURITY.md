@@ -28,8 +28,11 @@ elsewhere are refused) and the download of a release's disk image — from its d
 when GitHub keeps answering that with a server error, from the asset's `api.github.com` address —
 which, whichever address served it, is checked against its published size and SHA-256 and, on a Developer ID signed copy, against the team's Developer ID
 signature before it's mounted and again on the app inside. Nothing about you or your groups is
-sent. Local Suggestions are computed on this Mac from the Most Used history and make no
-network traffic. Other apps and web pages can send it commands through its URL scheme
+sent. Local Suggestions (off until you turn them on) are computed on this Mac only from the Most
+Used history — launch counts, which apps were opened in the same session, and
+`suggestions-state.json` (when they were turned on, days apps were opened, dismissed suggestions;
+never in a backup) — and make no network traffic at all. A suggestion never creates a group, adds an
+app or opens anything by itself: it only opens the review sheet, and nothing changes without a click there. Other apps and web pages can send it commands through its URL scheme
 (`cybokrondockgroups://`): quitting asks first, and opening, hiding, starting or finishing groups
 is rate limited; a start or finish link that would quit apps asks first too (or hides them
 instead), and protected apps are never quit by Close All, Start or Finish, whoever asks. An app

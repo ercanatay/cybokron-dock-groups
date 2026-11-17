@@ -1709,7 +1709,7 @@ number of the backup's browser profile actions that came in turned off).
 | `item.launch.profile.approval.row` | Approval missing on this Mac: the item won't open until you turn it on again. |
 | `core.backup.approval.disabled` | %ld browser profile action(s) arrived turned off and need approval. |
 
-## Local Suggestions: the menu bar menu's Suggestions section, Settings → Most Used → Suggestions and the review sheet (English only for now)
+## Local Suggestions: the menu bar menu's Suggestions section, Settings → Most Used → Suggestions and the review sheet
 
 See [local-suggestions.md](design/local-suggestions.md) §4. `%@` in `menuBar.suggestions.row` is
 the row's text (`menuBar.suggestions.newGroup*` or `menuBar.suggestions.addToGroup`); the app names in
