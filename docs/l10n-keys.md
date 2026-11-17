@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1130 keys.
+1171 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1708,3 +1708,54 @@ number of the backup's browser profile actions that came in turned off).
 | `item.launch.profile.approval.editor` | Approval is missing on this Mac, so the item won't open. To enable it, check the profile and turn it on again. |
 | `item.launch.profile.approval.row` | Approval missing on this Mac: the item won't open until you turn it on again. |
 | `core.backup.approval.disabled` | %ld browser profile action(s) arrived turned off and need approval. |
+
+## Local Suggestions: the menu bar menu's Suggestions section, Settings → Most Used → Suggestions and the review sheet (English only for now)
+
+See [local-suggestions.md](design/local-suggestions.md) §4. `%@` in `menuBar.suggestions.row` is
+the row's text (`menuBar.suggestions.newGroup*` or `menuBar.suggestions.addToGroup`); the app names in
+`menuBar.suggestions.newGroup*` are joined with a comma. `suggestions-state.json`,
+`usage-stats.json` and `usage-cooccurrence.json` are file names and stay as they are.
+
+| Key | English |
+| --- | --- |
+| `menuBar.suggestions.header` | Suggestions |
+| `menuBar.suggestions.row` | %@ — Review… |
+| `menuBar.suggestions.newGroup` | New group: %@ |
+| `menuBar.suggestions.newGroup.more` | New group: %1$@ +%2$ld |
+| `menuBar.suggestions.addToGroup` | Add %1$@ to “%2$@” |
+| `menuBar.suggestions.tooltip.one` | Opened together once in the last weeks. Nothing is created until you review it. |
+| `menuBar.suggestions.tooltip.other` | Opened together %ld times in the last weeks. Nothing is created until you review it. |
+| `settings.suggestions.header` | Suggestions |
+| `settings.suggestions.toggle` | Suggest groups from apps you open together |
+| `settings.suggestions.detail` | Suggestions appear in the menu bar menu. Nothing is created until you review one and confirm it. |
+| `settings.suggestions.needsMostUsed` | Turn on Most Used to use Suggestions: they're made from its history. |
+| `settings.suggestions.status` | Status |
+| `settings.suggestions.status.off` | Off |
+| `settings.suggestions.status.needsMostUsed` | Paused while Most Used is off |
+| `settings.suggestions.status.watching` | Watching: %1$ld of %2$ld days |
+| `settings.suggestions.status.none` | No suggestions right now |
+| `settings.suggestions.status.count.one` | 1 suggestion |
+| `settings.suggestions.status.count.other` | %ld suggestions |
+| `settings.suggestions.dismissed` | Dismissed |
+| `settings.suggestions.dismissed.count.one` | 1 suggestion turned down |
+| `settings.suggestions.dismissed.count.other` | %ld suggestions turned down |
+| `settings.suggestions.reset` | Reset Dismissed Suggestions… |
+| `settings.suggestions.reset.confirm.title` | Reset dismissed suggestions? |
+| `settings.suggestions.reset.confirm.button` | Reset |
+| `settings.suggestions.reset.confirm.message` | Suggestions you turned down may appear again. Nothing else changes. |
+| `settings.suggestions.storage` | Stored on this Mac only, in suggestions-state.json in Application Support. Suggestions never use the network. |
+| `settings.suggestions.explain.title` | Turn on Suggestions? |
+| `settings.suggestions.explain.message` | %@ suggests groups from the Most Used history: how often you open apps and which ones you open together. It stays on this Mac, in usage-stats.json, usage-cooccurrence.json and suggestions-state.json, and is never sent anywhere. Suggestions start after a week. Nothing is created or opened until you review a suggestion and confirm it. |
+| `settings.suggestions.explain.button` | Turn On |
+| `settings.suggestions.clear.message` | The Most Used list starts over, Suggestions start watching again and dismissed suggestions are forgotten. Your groups and apps aren't affected. |
+| `capture.suggestion.title.new` | Suggested Group |
+| `capture.suggestion.title.add` | Suggested for “%@” |
+| `capture.suggestion.header.new` | Suggested from apps you open together. Creating the group doesn't open any apps. |
+| `capture.suggestion.header.add` | Suggested from apps you open together. Adding the app doesn't open it. |
+| `capture.suggestion.list` | Suggested Apps (%ld) |
+| `capture.suggestion.notNow` | Not Now |
+| `capture.suggestion.notNow.week` | For a Week |
+| `capture.suggestion.notNow.month` | For a Month |
+| `capture.suggestion.never` | Don't Suggest This Again |
+| `capture.suggestion.notNow.help` | Don't show this suggestion for a week. Cancel does the same. |
+| `capture.suggestion.unavailable` | This suggestion isn't available any more. |

@@ -2183,6 +2183,113 @@ extension L10n {
     }
 }
 
+// MARK: - Local Suggestions
+
+extension L10n {
+    /// Local Suggestions (local-suggestions.md §4): the menu bar menu's section, Settings → Most
+    /// Used → Suggestions and the review sheet. English only until they're translated
+    /// (`LocalizationTests.awaitingTranslation`).
+    enum Suggestions {
+        enum MenuBar {
+            static var header: String { tr("menuBar.suggestions.header", "Suggestions") }
+            /// "New group: Xcode, Simulator, Figma — Review…".
+            static func row(_ suggestion: String) -> String { tr("menuBar.suggestions.row", "%@ — Review…", suggestion) }
+            static func newGroup(_ names: String) -> String { tr("menuBar.suggestions.newGroup", "New group: %@", names) }
+            /// "New group: Xcode, Simulator, Figma +1".
+            static func newGroup(_ names: String, more: Int) -> String {
+                tr("menuBar.suggestions.newGroup.more", "New group: %1$@ +%2$ld", names, more)
+            }
+            static func addToGroup(_ appName: String, groupName: String) -> String {
+                tr("menuBar.suggestions.addToGroup", "Add %1$@ to “%2$@”", appName, groupName)
+            }
+            /// Counts only: why the row is suggested.
+            static func tooltip(_ count: Int) -> String {
+                count == 1
+                    ? tr("menuBar.suggestions.tooltip.one", "Opened together once in the last weeks. Nothing is created until you review it.")
+                    : tr("menuBar.suggestions.tooltip.other", "Opened together %ld times in the last weeks. Nothing is created until you review it.", count)
+            }
+        }
+
+        enum Settings {
+            static var header: String { tr("settings.suggestions.header", "Suggestions") }
+            static var toggle: String { tr("settings.suggestions.toggle", "Suggest groups from apps you open together") }
+            static var detail: String {
+                tr("settings.suggestions.detail", "Suggestions appear in the menu bar menu. Nothing is created until you review one and confirm it.")
+            }
+            static var needsMostUsed: String {
+                tr("settings.suggestions.needsMostUsed", "Turn on Most Used to use Suggestions: they're made from its history.")
+            }
+            static var status: String { tr("settings.suggestions.status", "Status") }
+            static var statusOff: String { tr("settings.suggestions.status.off", "Off") }
+            static var statusNeedsMostUsed: String { tr("settings.suggestions.status.needsMostUsed", "Paused while Most Used is off") }
+            /// "Watching: 3 of 5 days".
+            static func watching(_ days: Int, of required: Int) -> String {
+                tr("settings.suggestions.status.watching", "Watching: %1$ld of %2$ld days", days, required)
+            }
+            static var statusNone: String { tr("settings.suggestions.status.none", "No suggestions right now") }
+            static func count(_ count: Int) -> String {
+                count == 1
+                    ? tr("settings.suggestions.status.count.one", "1 suggestion")
+                    : tr("settings.suggestions.status.count.other", "%ld suggestions", count)
+            }
+            static var dismissed: String { tr("settings.suggestions.dismissed", "Dismissed") }
+            static func dismissedCount(_ count: Int) -> String {
+                count == 1
+                    ? tr("settings.suggestions.dismissed.count.one", "1 suggestion turned down")
+                    : tr("settings.suggestions.dismissed.count.other", "%ld suggestions turned down", count)
+            }
+            static var reset: String { tr("settings.suggestions.reset", "Reset Dismissed Suggestions…") }
+            static var resetConfirmTitle: String { tr("settings.suggestions.reset.confirm.title", "Reset dismissed suggestions?") }
+            static var resetConfirmButton: String { tr("settings.suggestions.reset.confirm.button", "Reset") }
+            static var resetConfirmMessage: String {
+                tr("settings.suggestions.reset.confirm.message", "Suggestions you turned down may appear again. Nothing else changes.")
+            }
+            static var storage: String {
+                tr(
+                    "settings.suggestions.storage",
+                    "Stored on this Mac only, in suggestions-state.json in Application Support. Suggestions never use the network."
+                )
+            }
+            static var explainTitle: String { tr("settings.suggestions.explain.title", "Turn on Suggestions?") }
+            static func explainMessage(_ appName: String) -> String {
+                tr(
+                    "settings.suggestions.explain.message",
+                    "%@ suggests groups from the Most Used history: how often you open apps and which ones you open together. It stays on this Mac, in usage-stats.json, usage-cooccurrence.json and suggestions-state.json, and is never sent anywhere. Suggestions start after a week. Nothing is created or opened until you review a suggestion and confirm it.",
+                    appName
+                )
+            }
+            static var explainButton: String { tr("settings.suggestions.explain.button", "Turn On") }
+            static var clearMessage: String {
+                tr(
+                    "settings.suggestions.clear.message",
+                    "The Most Used list starts over, Suggestions start watching again and dismissed suggestions are forgotten. Your groups and apps aren't affected."
+                )
+            }
+        }
+
+        enum Sheet {
+            static var newGroupTitle: String { tr("capture.suggestion.title.new", "Suggested Group") }
+            static func addTitle(_ groupName: String) -> String { tr("capture.suggestion.title.add", "Suggested for “%@”", groupName) }
+            static var newGroupHeader: String {
+                tr("capture.suggestion.header.new", "Suggested from apps you open together. Creating the group doesn't open any apps.")
+            }
+            static var addHeader: String {
+                tr("capture.suggestion.header.add", "Suggested from apps you open together. Adding the app doesn't open it.")
+            }
+            /// "Suggested Apps (4)".
+            static func list(_ count: Int) -> String { tr("capture.suggestion.list", "Suggested Apps (%ld)", count) }
+            static var unavailable: String { tr("capture.suggestion.unavailable", "This suggestion isn't available any more.") }
+            static var notNow: String { tr("capture.suggestion.notNow", "Not Now") }
+            static var forAWeek: String { tr("capture.suggestion.notNow.week", "For a Week") }
+            static var forAMonth: String { tr("capture.suggestion.notNow.month", "For a Month") }
+            static var never: String { tr("capture.suggestion.never", "Don't Suggest This Again") }
+            static var notNowHelp: String {
+                tr("capture.suggestion.notNow.help", "Don't show this suggestion for a week. Cancel does the same.")
+            }
+        }
+    }
+}
+
 // MARK: - Lookup
 
 /// `L10n`'s lookups; the key and English text must be literals (`LocalizationTests` read them).

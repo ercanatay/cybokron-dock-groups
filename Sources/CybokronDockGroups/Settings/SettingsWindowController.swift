@@ -25,6 +25,7 @@ final class SettingsWindowController: NSWindowController {
         store: GroupStore,
         templates: TemplateStore,
         usage: UsageStore,
+        suggestions: SuggestionCenter,
         shortcuts: GlobalShortcutMonitor,
         updater: AutoUpdater,
         session: ContextSession,
@@ -44,6 +45,7 @@ final class SettingsWindowController: NSWindowController {
             updater: updater,
             shortcuts: shortcuts,
             triggers: triggers,
+            usage: usage,
             isStatusItemShown: isStatusItemShown
         )
         // Reads the saved release list now, so the Changelog pane shows it at once.
@@ -56,6 +58,7 @@ final class SettingsWindowController: NSWindowController {
                 preferences: preferences,
                 store: store,
                 usage: usage,
+                suggestions: suggestions,
                 shortcuts: shortcuts,
                 updater: updater,
                 session: session,
@@ -180,6 +183,7 @@ private struct SettingsView: View {
     let preferences: PreferencesStore
     let store: GroupStore
     let usage: UsageStore
+    let suggestions: SuggestionCenter
     let shortcuts: GlobalShortcutMonitor
     let updater: AutoUpdater
     let session: ContextSession
@@ -238,7 +242,7 @@ private struct SettingsView: View {
                 showGroupSettings: showGroupSettings
             )
         case .mostUsed:
-            MostUsedSettingsView(preferences: preferences, usage: usage)
+            MostUsedSettingsView(preferences: preferences, usage: usage, suggestions: suggestions)
         case .updates:
             UpdatesSettingsView(preferences: preferences, updater: updater)
         case .backup:

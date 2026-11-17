@@ -111,6 +111,20 @@ public final class UsageStore: ObservableObject {
         saveSuggestionState()
     }
 
+    /// Records that the user turned a suggestion down ("Not now" or "Don't suggest this again") and
+    /// writes the state right away. The dismissal is only ever compared with new suggestions.
+    public func addSuggestionDismissal(_ dismissal: DismissedSuggestion) {
+        suggestionState.addDismissal(dismissal, now: now())
+        saveSuggestionState()
+    }
+
+    /// Reset Dismissed Suggestions: forgets every dismissal; the observation window stays.
+    public func resetDismissedSuggestions() {
+        guard !suggestionState.dismissed.isEmpty else { return }
+        suggestionState.dismissed = []
+        saveSuggestionState()
+    }
+
     /// Records that a running app came to the front (nothing while recording is off).
     public func recordActivation(bundleIdentifier: String) {
         guard isRecordingEnabled() else { return }

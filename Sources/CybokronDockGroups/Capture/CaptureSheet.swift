@@ -31,6 +31,20 @@ final class CaptureSheetModel: ObservableObject {
 
     var isNewGroup: Bool { request.target == .newGroup }
 
+    /// The Local Suggestion being reviewed; `nil` for the open apps.
+    var reviewedSuggestion: SuggestionPlan? { request.suggestion }
+
+    /// Set once the suggestion was confirmed or turned down, so closing the sheet afterwards
+    /// records nothing more.
+    private var isDecided = false
+
+    /// Not Now, Don't Suggest This Again, and Cancel (which counts as Not Now for a week). Once.
+    func decline(_ snooze: SuggestionSnooze) {
+        guard let reviewedSuggestion, !isDecided else { return }
+        isDecided = true
+        capture.dismiss(reviewedSuggestion, for: snooze)
+    }
+
     /// The group apps are added to; `nil` for a new group, or when it's no longer an active group.
     var groupName: String? { capture.groupName(of: request.target) }
 
@@ -103,13 +117,18 @@ final class CaptureSheetModel: ObservableObject {
 
     /// Adds the selected apps; the name typed counts only once the user edited the field.
     func commit() -> CaptureResult {
-        capture.commit(selection.items(in: plan), into: request.target, typedName: nameWasEdited ? name : "")
+        isDecided = true
+        return capture.commit(selection.items(in: plan), into: request.target, typedName: nameWasEdited ? name : "", suggestion: reviewedSuggestion)
     }
 }
 
 /// New Group from Open Apps and Add Open Apps (capture spec §1.2–§1.8, §3.1–§3.2): the open apps
 /// as they were when the user asked, which ones to add, and — for a new group — its name. Nothing
 /// is opened, hidden or quit; the user's click adds the apps.
+///
+/// Reviewing a Local Suggestion (local-suggestions.md §4.2), it lists the suggested apps instead,
+/// preselected, says where they come from, and offers Not Now and Don't Suggest This Again; Cancel
+/// and Escape count as Not Now for a week. Nothing is created before the user's click.
 struct CaptureSheet: View {
     @StateObject private var model: CaptureSheetModel
     let icons: AppIconProviding
@@ -131,8 +150,13 @@ struct CaptureSheet: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.headline)
+            if model.reviewedSuggestion != nil {
+                Text(model.isNewGroup ? SuggestionTexts.newGroupHeader : SuggestionTexts.addHeader)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             if model.plan.candidates.isEmpty {
-                emptyState(Texts.noOpenApps)
+                emptyState(model.reviewedSuggestion != nil ? SuggestionTexts.unavailable : Texts.noOpenApps)
             } else if !model.plan.hasSelectableCandidates {
                 emptyState(Texts.allInGroup(model.groupName ?? ""))
             } else {
@@ -142,7 +166,7 @@ struct CaptureSheet: View {
         .padding(20)
         .frame(width: 520)
         // Escape closes the sheet in every state, Done's included.
-        .onExitCommand(perform: dismiss)
+        .onExitCommand(perform: cancel)
         .onChange(of: model.showsLimit) { _, isShown in
             if isShown {
                 AccessibilityNotification.Announcement(CapturePlan.limitNote).post()
@@ -150,8 +174,27 @@ struct CaptureSheet: View {
         }
     }
 
+    private typealias SuggestionTexts = L10n.Suggestions.Sheet
+
     private var title: String {
-        model.isNewGroup ? Texts.newGroupTitle : Texts.addTitle(model.groupName ?? "")
+        if model.reviewedSuggestion != nil {
+            return model.isNewGroup ? SuggestionTexts.newGroupTitle : SuggestionTexts.addTitle(model.groupName ?? "")
+        }
+        return model.isNewGroup ? Texts.newGroupTitle : Texts.addTitle(model.groupName ?? "")
+    }
+
+    /// Cancel and Escape: a suggestion counts as Not Now for a week (§3.6).
+    private func cancel() {
+        // A suggestion that isn't current any more listed nothing: nothing to turn down.
+        if !model.plan.candidates.isEmpty {
+            model.decline(.week)
+        }
+        dismiss()
+    }
+
+    private func decline(_ snooze: SuggestionSnooze) {
+        model.decline(snooze)
+        dismiss()
     }
 
     /// Nothing to choose: the reason and Done.
@@ -162,7 +205,7 @@ struct CaptureSheet: View {
                 .fixedSize(horizontal: false, vertical: true)
             HStack {
                 Spacer()
-                Button(L10n.Common.done, action: dismiss)
+                Button(L10n.Common.done, action: cancel)
                     .keyboardShortcut(.defaultAction)
             }
         }
@@ -182,14 +225,19 @@ struct CaptureSheet: View {
         }
 
         HStack {
-            Text(Texts.header(model.plan.candidates.count))
-                .font(.subheadline.weight(.semibold))
-            Spacer()
-            Picker(Texts.order, selection: Binding(get: { model.settings.order }, set: { model.setOrder($0) })) {
-                Text(Texts.orderRecentlyUsed).tag(CaptureSettings.Order.recentlyUsed)
-                Text(Texts.orderName).tag(CaptureSettings.Order.name)
+            if model.reviewedSuggestion != nil {
+                Text(SuggestionTexts.list(model.selectableCount))
+                    .font(.subheadline.weight(.semibold))
+            } else {
+                Text(Texts.header(model.plan.candidates.count))
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Picker(Texts.order, selection: Binding(get: { model.settings.order }, set: { model.setOrder($0) })) {
+                    Text(Texts.orderRecentlyUsed).tag(CaptureSettings.Order.recentlyUsed)
+                    Text(Texts.orderName).tag(CaptureSettings.Order.name)
+                }
+                .fixedSize()
             }
-            .fixedSize()
         }
 
         List {
@@ -201,15 +249,8 @@ struct CaptureSheet: View {
         .frame(height: 280)
 
         HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 2) {
-                Toggle(Texts.windowsOnly, isOn: Binding(get: { model.settings.selectsOnlyAppsWithWindows }, set: { model.setSelectsOnlyAppsWithWindows($0) }))
-                    .toggleStyle(.checkbox)
-                    .disabled(!model.plan.hasWindowInformation)
-                if !model.plan.hasWindowInformation {
-                    Text(Texts.windowsOnlyUnavailable)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            if model.reviewedSuggestion == nil {
+                windowsOnlyOption
             }
             Spacer()
             Button(Texts.selectAll, action: model.selectAll)
@@ -225,19 +266,46 @@ struct CaptureSheet: View {
             if let note = model.plan.unavailableNote {
                 Text(note)
             }
-            Text(Texts.footer(AppInfo.name))
+            if model.reviewedSuggestion == nil {
+                Text(Texts.footer(AppInfo.name))
+            }
         }
         .font(.callout)
         .foregroundStyle(.secondary)
         .fixedSize(horizontal: false, vertical: true)
 
         HStack {
+            if model.reviewedSuggestion != nil {
+                Button(SuggestionTexts.never) { decline(.forever) }
+                Menu(SuggestionTexts.notNow) {
+                    Button(SuggestionTexts.forAWeek) { decline(.week) }
+                    Button(SuggestionTexts.forAMonth) { decline(.month) }
+                } primaryAction: {
+                    decline(.week)
+                }
+                .fixedSize()
+                .help(SuggestionTexts.notNowHelp)
+            }
             Spacer()
-            Button(L10n.Common.cancel, role: .cancel, action: dismiss)
+            Button(L10n.Common.cancel, role: .cancel, action: cancel)
                 .keyboardShortcut(.cancelAction)
             Button(model.isNewGroup ? Texts.create : Texts.add(model.selection.count), action: commit)
                 .keyboardShortcut(.defaultAction)
                 .disabled(!model.canCommit)
+        }
+    }
+
+    /// Select only apps with open windows, and why it's off when macOS didn't say.
+    private var windowsOnlyOption: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Toggle(Texts.windowsOnly, isOn: Binding(get: { model.settings.selectsOnlyAppsWithWindows }, set: { model.setSelectsOnlyAppsWithWindows($0) }))
+                .toggleStyle(.checkbox)
+                .disabled(!model.plan.hasWindowInformation)
+            if !model.plan.hasWindowInformation {
+                Text(Texts.windowsOnlyUnavailable)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
