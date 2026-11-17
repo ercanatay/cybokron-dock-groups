@@ -18,7 +18,7 @@ public struct AgentConfiguration: Equatable, Sendable {
     /// rebuild every agent: the update setting concerns the main app only, and so do the group's
     /// Start and Finish settings (agents don't start or finish groups) and its keyboard shortcut
     /// (only the main app registers shortcuts), and how capturing the open apps lists them (only the
-    /// main app captures). Of the protected apps, only those in the group are kept: the agent's
+    /// main app captures), and whether Suggestions are on (only the main app suggests). Of the protected apps, only those in the group are kept: the agent's
     /// Close All reaches no others. Launch actions are kept as the group has them, status included:
     /// the agent's launcher checks them as the main app's does, against the same approval file
     /// (`LaunchActionApprovalStore.onThisMac`, launch-action-approvals.md), so an action written into
@@ -33,6 +33,7 @@ public struct AgentConfiguration: Equatable, Sendable {
         snapshot.automaticallyChecksForUpdates = PopupPreferences().automaticallyChecksForUpdates
         snapshot.protectedApps = preferences.protectedApps.restricted(to: group)
         snapshot.capture = CaptureSettings()
+        snapshot.showsSuggestions = false
         self.preferences = snapshot
     }
 

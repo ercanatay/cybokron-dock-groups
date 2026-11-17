@@ -41,7 +41,8 @@ extension SettingsBackup {
     /// Replaces the stores' groups — active and archived — and preferences with the backup's, the
     /// templates when the backup has some (a backup without templates leaves them as they are), and
     /// the triggers when it has some, all turned off; without triggers in the backup, the current
-    /// triggers of groups that are still there stay and the others go. Each store's current file is
+    /// triggers of groups that are still there stay and the others go. Local Suggestions come in
+    /// turned off. Each store's current file is
     /// copied next to it first (`*.pre-import-<timestamp>.json`). All are restored or none is: when
     /// the groups, the templates or the triggers can't be written, what was replaced before is put
     /// back.
@@ -52,7 +53,9 @@ extension SettingsBackup {
         let previousGroups = StoredGroups(active: groups.groups, archived: groups.archivedGroups)
         let previousTemplates = templates?.templates
         var copies: [URL] = []
-        if let copy = try preferences.replacePreferences(with: self.preferences) {
+        var importedPreferences = self.preferences
+        importedPreferences.showsSuggestions = false
+        if let copy = try preferences.replacePreferences(with: importedPreferences) {
             copies.append(copy)
         }
         do {

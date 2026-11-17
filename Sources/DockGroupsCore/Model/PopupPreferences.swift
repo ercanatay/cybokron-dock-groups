@@ -39,6 +39,10 @@ public struct PopupPreferences: Hashable, Sendable {
     public var showsMostUsed: Bool
     /// How many apps the Most Used list shows; one of `MostUsedRanking.allowedLimits`.
     public var mostUsedLimit: Int
+    /// Local Suggestions: group suggestions computed on this Mac from the Most Used history (design
+    /// local-suggestions.md). Off by default; only an explicit `true` in the file turns it on, and
+    /// an imported backup and a standalone group's snapshot always have it off.
+    public var showsSuggestions: Bool
     /// Apps launched within this many seconds of each other count as launched together; one of
     /// `allowedMostUsedSessionSeconds`.
     public var mostUsedSessionSeconds: Int
@@ -79,6 +83,7 @@ public struct PopupPreferences: Hashable, Sendable {
         shortcutModifiers: ShortcutModifiers = .controlOption,
         showsMostUsed: Bool = true,
         mostUsedLimit: Int = MostUsedRanking.defaultLimit,
+        showsSuggestions: Bool = false,
         mostUsedSessionSeconds: Int = PopupPreferences.defaultMostUsedSessionSeconds,
         automaticallyChecksForUpdates: Bool = true,
         showsStandaloneDockMenus: Bool = true,
@@ -99,6 +104,7 @@ public struct PopupPreferences: Hashable, Sendable {
         self.shortcutModifiers = shortcutModifiers
         self.showsMostUsed = showsMostUsed
         self.mostUsedLimit = mostUsedLimit
+        self.showsSuggestions = showsSuggestions
         self.mostUsedSessionSeconds = mostUsedSessionSeconds
         self.automaticallyChecksForUpdates = automaticallyChecksForUpdates
         self.showsStandaloneDockMenus = showsStandaloneDockMenus
@@ -172,6 +178,7 @@ extension PopupPreferences: Codable {
         case shortcutModifiers = "globalShortcutModifiers"
         case showsMostUsed = "popupShowsMostUsed"
         case mostUsedLimit
+        case showsSuggestions
         case mostUsedSessionSeconds
         case automaticallyChecksForUpdates
         case showsStandaloneDockMenus = "standaloneDockMenu"
@@ -203,6 +210,8 @@ extension PopupPreferences: Codable {
         mostUsedLimit = container.decodeLeniently(Int.self, forKey: .mostUsedLimit)
             .flatMap { MostUsedRanking.allowedLimits.contains($0) ? $0 : nil }
             ?? defaults.mostUsedLimit
+        // Security rule 5: a missing, malformed or non-boolean value is off.
+        showsSuggestions = container.decodeLeniently(Bool.self, forKey: .showsSuggestions) == true
         mostUsedSessionSeconds = container.decodeLeniently(Int.self, forKey: .mostUsedSessionSeconds)
             .flatMap { Self.allowedMostUsedSessionSeconds.contains($0) ? $0 : nil }
             ?? defaults.mostUsedSessionSeconds
@@ -220,7 +229,7 @@ extension PopupPreferences: Codable {
     }
 
     /// Every setting is written; the protected apps only once there are any, asking for
-    /// authentication only while it's on, and the capture settings only when they aren't the
+    /// authentication and Suggestions only while they're on, and the capture settings only when they aren't the
     /// defaults, so preferences that never had them are saved as before (byte for byte: a version
     /// without them reads and writes the same file).
     public func encode(to encoder: Encoder) throws {
@@ -246,6 +255,9 @@ extension PopupPreferences: Codable {
         }
         if asksForAuthenticationBeforeQuitting {
             try container.encode(asksForAuthenticationBeforeQuitting, forKey: .asksForAuthenticationBeforeQuitting)
+        }
+        if showsSuggestions {
+            try container.encode(showsSuggestions, forKey: .showsSuggestions)
         }
         if !capture.isDefault {
             try container.encode(capture, forKey: .capture)
