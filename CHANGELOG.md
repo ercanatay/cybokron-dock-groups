@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-11-17
+
+### Added
+
+- **Local Suggestions, off by default.** With Suggestions on, the app looks at the Most Used history on this Mac and suggests a new group — or an app to add to one of your groups — from the apps you open together. Nothing is created until you press Create or Add in the review sheet. Not Now hides a suggestion for a week or a month, Don't Suggest This Again hides it for good, and Clear History deletes what was learned. Suggestions keep to this Mac, make no network traffic, and need Most Used on; the menu bar shows at most three suggestions.
+
 ## [0.19.1] - 2026-11-14
 
 ### Changed
@@ -664,7 +670,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.1...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.2...v0.19.0
 [0.18.2]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.1...v0.18.2
