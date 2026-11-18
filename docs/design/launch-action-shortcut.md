@@ -336,3 +336,13 @@ and §6 rule 5 before slice 3 is merged.
   shortcuts, by name, after confirmation.
 - `06_GUVENLIK.md` and `09_YOL_HARITASI.md` (outside this repository): "Kestirme yalnız şablon:
   sabit ad, onay digest'i, parametre yok, CLI yok".
+
+## Spike results (2026-11-18)
+
+- **Q1 delivery — confirmed.** `NSWorkspace.urlForApplication(withBundleIdentifier: "com.apple.shortcuts")` returns `/System/Applications/Shortcuts.app`. `open(_:withApplicationAt:configuration:)` returned no error on every call; the returned `NSRunningApplication` was the Shortcuts process. Delivery went to the explicitly named application, not the default handler. Owning-app-hijack scenario not tested.
+- **Q2 unknown name — visible, not silent.** Shortcuts opens a modal `AXDialog` titled as a critical alert with the text "shortcut “<name>” could not be found" (system language dependent) and an OK button. The dialog blocks Shortcuts: `tell application "Shortcuts" to quit` fails with -128 and Esc does not dismiss it; the process had to be terminated. A second call while the dialog is open does not stack a second dialog.
+- **`activates = false`** does not take focus but still opens two windows in the background (the alert and the main window). So "no focus steal" is not "no windows".
+- **A successful `open` proves delivery, not execution.** Execution failures are Shortcuts' own.
+- **Recommendation (Q4 updated):** verify the name with `shortcuts list --show-identifiers` **at approval time only** (read-only, once per approval), not on every run, so a typo is caught before the modal dialog can appear at launch. No pre-flight spawn in the run path.
+- **Still unverified:** matching and running a real shortcut; `+` and NFC/NFD name handling; behaviour when another app owns the `shortcuts` scheme; whether a real execution can be silent.
+- **Side-effect note:** during the spike no shortcut was run, created or imported; the shortcut count was 39 before and after.
