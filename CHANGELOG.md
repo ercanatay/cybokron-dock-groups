@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-11-18
+
 ### Added
 
-- **Run a Shortcut.** The Shortcuts app's item can run one of your shortcuts when you open it yourself (Edit Details… → Run a Shortcut). The app asks you to confirm the name, gives the shortcut no input, and asks again if the name changes. The new texts are translated into all 25 languages, and the restore summary now counts shortcut actions that arrived turned off along with browser profile actions.
+- **Run a Shortcut.** A Shortcuts.app item in a group can run one of your shortcuts by name when you open it. It asks first, names the shortcut, and says that the app passes it nothing: it does whatever the shortcut does, with the permissions you gave Shortcuts. Rename the shortcut, or let another one take its name, and it asks again. It runs only from your own click — not from a trigger, a link, Siri, the popup or an agent — and it never runs while the screen is locked. You can't pass it arguments, text, files or a callback.
 
 ## [0.20.0] - 2026-11-17
 
@@ -674,7 +676,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.20.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.18.2...v0.19.0
