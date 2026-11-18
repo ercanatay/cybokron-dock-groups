@@ -4,12 +4,14 @@ import Testing
 /// Polls `condition` every `interval` until it holds, replacing a fixed `Task.sleep` for work that
 /// finishes on its own schedule (debounced saves). Returns as soon as the condition holds; the
 /// generous ceiling only matters on failure (a CI runner stalled for 15+ s). When `timeout` passes first it records a test failure naming `what` and returns `false`.
+/// It runs on the caller's actor (`#isolation`), so `condition` needn't be `Sendable`.
 @discardableResult
 func eventually(
     _ what: String,
     timeout: Duration = .seconds(30),
     interval: Duration = .milliseconds(10),
     sourceLocation: SourceLocation = #_sourceLocation,
+    isolation: isolated (any Actor)? = #isolation,
     _ condition: () -> Bool
 ) async -> Bool {
     let clock = ContinuousClock()

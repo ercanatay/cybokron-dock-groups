@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.1] - 2026-11-18
+
+### Fixed
+
+- Settings → Shortcuts now opens Shortcuts.app explicitly instead of relying on whichever app answers the shortcuts:// scheme, so another app can't intercept the button.
+
 ## [0.21.0] - 2026-11-18
 
 ### Added
@@ -676,7 +682,8 @@ First public release.
 - Universal (Apple silicon and Intel) disk image built by `scripts/make-dmg.sh` and attached to a
   draft GitHub release for `v*` tags.
 
-[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.21.0...HEAD
+[Unreleased]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.21.1...HEAD
+[0.21.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.21.0...v0.21.1
 [0.21.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/ercanatay/cybokron-dock-groups/compare/v0.19.0...v0.19.1
