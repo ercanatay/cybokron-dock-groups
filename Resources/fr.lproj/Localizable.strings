@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Ouvrir « %1$@ » dans %2$@ avec le profil « %3$@ » ?";
 "item.launch.profile.approval.row" = "Approbation absente sur ce Mac : l'élément ne s'ouvrira pas tant que vous ne la réactiverez pas.";
 "item.launch.profile.approval.editor" = "L'approbation est absente sur ce Mac, donc l'élément ne s'ouvrira pas. Pour l'activer, vérifiez le profil et réactivez-la.";
-"core.backup.approval.disabled" = "%ld action(s) de profil de navigateur sont arrivées désactivées et nécessitent une approbation.";
+"core.backup.approval.disabled" = "%ld action(s) de profil de navigateur ou de raccourci sont arrivées désactivées et nécessitent une approbation.";
 "item.launch.private.toggle" = "Ouvrir dans une fenêtre privée";
 "item.launch.private.hint" = "Ouvre le site web dans une nouvelle fenêtre privée lorsque vous l'ouvrez vous-même et que le navigateur n'est pas en cours d'exécution.";
 "item.launch.private.row" = "%@ · fenêtre privée";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Ne plus suggérer ceci";
 "capture.suggestion.notNow.help" = "Ne pas afficher cette suggestion pendant une semaine. Annuler fait de même.";
 "capture.suggestion.unavailable" = "Cette suggestion n'est plus disponible.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Exécuter un raccourci";
+"item.launch.shortcut.name" = "Nom du raccourci";
+"item.launch.shortcut.hint" = "Exécute ce raccourci au lieu d'ouvrir simplement Raccourcis, lorsque vous ouvrez l'élément vous-même. Saisissez son nom tel que Raccourcis l'affiche. L'app ne lui transmet aucune entrée.";
+"item.launch.shortcut.invalid" = "Saisissez le nom tel que Raccourcis l'affiche : jusqu'à 128 caractères, sans saut de ligne ni caractère invisible, sans espace au début ou à la fin, sans “-” au début, et sans / ni \\.";
+"item.launch.shortcut.review" = "Ce raccourci a été importé avec une sauvegarde ou ne peut pas être utilisé tel qu'il a été enregistré. L'élément ne s'ouvrira pas tant que vous ne l'aurez pas vérifié et activé.";
+"item.launch.shortcut.approval.editor" = "L'approbation est absente sur ce Mac, donc l'élément ne s'ouvrira pas. Pour l'activer, vérifiez le nom du raccourci et réactivez-la.";
+"item.launch.shortcut.row" = "Exécuter un raccourci : %@";
+"item.launch.shortcut.row.review" = "Raccourci à vérifier : l'élément ne s'ouvrira pas tant que vous ne l'aurez pas activé.";
+"item.launch.shortcut.confirm.title" = "Exécuter le raccourci “%@” lorsque vous ouvrez cet élément ?";
+"item.launch.shortcut.confirm.message" = "Il fait tout ce que fait ce raccourci, avec les autorisations que vous avez accordées à Raccourcis. L'app ne lui transmet rien : aucune entrée, aucun texte, aucun fichier. Si vous le renommez, ou si un autre raccourci reçoit ce nom, c'est celui-là qui s'exécute.";
+"item.launch.shortcut.notRun" = "Le raccourci n'a pas été exécuté.";

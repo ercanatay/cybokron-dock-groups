@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "¿Abrir “%1$@” en %2$@ con el perfil “%3$@”?";
 "item.launch.profile.approval.row" = "Aprobación ausente en este Mac: el elemento no se abrirá hasta que vuelvas a activarla.";
 "item.launch.profile.approval.editor" = "La aprobación falta en este Mac, así que el elemento no se abrirá. Para activarla, revisa el perfil y vuelve a habilitarla.";
-"core.backup.approval.disabled" = "%ld acción(es) de perfil del navegador llegaron desactivadas y necesitan aprobación.";
+"core.backup.approval.disabled" = "%ld acción(es) de perfil del navegador o de atajo llegaron desactivadas y necesitan aprobación.";
 "item.launch.private.toggle" = "Abrir en una ventana privada";
 "item.launch.private.hint" = "Abre el sitio web en una nueva ventana privada cuando lo abres tú mismo y el navegador no está en ejecución.";
 "item.launch.private.row" = "%@ · ventana privada";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "No volver a sugerir esto";
 "capture.suggestion.notNow.help" = "No mostrar esta sugerencia durante una semana. Cancelar hace lo mismo.";
 "capture.suggestion.unavailable" = "Esta sugerencia ya no está disponible.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Ejecutar un atajo";
+"item.launch.shortcut.name" = "Nombre del atajo";
+"item.launch.shortcut.hint" = "Ejecuta este atajo en lugar de solo abrir Atajos, cuando abres el elemento tú mismo. Escribe su nombre tal como lo muestra Atajos. La app no le pasa ninguna entrada.";
+"item.launch.shortcut.invalid" = "Escribe el nombre tal como lo muestra Atajos: hasta 128 caracteres, sin saltos de línea ni caracteres invisibles, sin espacios al principio ni al final, sin “-” al principio y sin / ni \\.";
+"item.launch.shortcut.review" = "Este atajo llegó con una copia de seguridad o no se puede usar tal como se guardó, así que el elemento no se abrirá hasta que lo revises y lo actives.";
+"item.launch.shortcut.approval.editor" = "Falta la aprobación en este Mac, así que el elemento no se abrirá. Para activarla, revisa el nombre del atajo y vuelve a activarlo.";
+"item.launch.shortcut.row" = "Ejecutar un atajo: %@";
+"item.launch.shortcut.row.review" = "El atajo necesita revisión: el elemento no se abrirá hasta que lo actives.";
+"item.launch.shortcut.confirm.title" = "¿Ejecutar el atajo “%@” al abrir este elemento?";
+"item.launch.shortcut.confirm.message" = "Hace lo que haga este atajo, con los permisos que le diste a Atajos. La app no le pasa nada: ni entrada, ni texto, ni archivos. Si lo renombras, o si otro atajo recibe este nombre, se ejecutará ese.";
+"item.launch.shortcut.notRun" = "No se ejecutó el atajo.";
