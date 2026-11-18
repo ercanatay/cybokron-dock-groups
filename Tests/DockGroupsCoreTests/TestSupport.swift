@@ -2,12 +2,12 @@ import Foundation
 import Testing
 
 /// Polls `condition` every `interval` until it holds, replacing a fixed `Task.sleep` for work that
-/// finishes on its own schedule (debounced saves). Returns as soon as the condition holds; when
-/// `timeout` passes first it records a test failure naming `what` and returns `false`.
+/// finishes on its own schedule (debounced saves). Returns as soon as the condition holds; the
+/// generous ceiling only matters on failure (a CI runner stalled for 15+ s). When `timeout` passes first it records a test failure naming `what` and returns `false`.
 @discardableResult
 func eventually(
     _ what: String,
-    timeout: Duration = .seconds(5),
+    timeout: Duration = .seconds(30),
     interval: Duration = .milliseconds(10),
     sourceLocation: SourceLocation = #_sourceLocation,
     _ condition: () -> Bool
