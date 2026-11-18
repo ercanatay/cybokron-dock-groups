@@ -215,6 +215,7 @@ struct ShortcutsSettingsView: View {
             copyRow(capturePhrase, text: Text(L10n.Settings.Shortcuts.quotedPhrase(capturePhrase.text)))
             LabeledContent {
                 Button(L10n.Settings.Shortcuts.openShortcuts, action: openShortcutsApp)
+                    .disabled(ShortcutsApplicationLocation.current() == nil)
             } label: {
                 Text(L10n.Settings.Shortcuts.shortcutsApp)
                 Text(L10n.Settings.Shortcuts.shortcutsAppDetail)
@@ -292,8 +293,12 @@ struct ShortcutsSettingsView: View {
     }
 
     private func openShortcutsApp() {
-        guard let url = URL(string: "shortcuts://") else { return }
-        NSWorkspace.shared.open(url)
+        // Always Shortcuts.app itself, never whichever app claims the scheme; no verified app, no open.
+        guard let url = URL(string: "shortcuts://"), let appURL = ShortcutsApplicationLocation.current() else { return }
+        let workspace = NSWorkspace.shared
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        workspace.open([url], withApplicationAt: appURL, configuration: configuration)
     }
 
     private func binding<Value>(_ keyPath: WritableKeyPath<PopupPreferences, Value>) -> Binding<Value> {

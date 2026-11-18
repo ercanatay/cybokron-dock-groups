@@ -160,8 +160,6 @@ struct ShortcutLaunchRunner {
     let recentRuns: ShortcutRecentRuns
 
     static let shortcutsBundleIdentifier = LaunchAction.shortcutsBundleIdentifier
-    /// Where Shortcuts.app must be: the sealed system volume's apps.
-    static let systemApplicationsPath = "/System/Applications/"
 
     enum Outcome: Hashable, Sendable {
         /// Shortcuts has the address.
@@ -220,18 +218,12 @@ struct ShortcutLaunchRunner {
         }
     }
 
-    /// Shortcuts.app as LaunchServices has it, only when it's an app bundle under
-    /// `/System/Applications/` whose own bundle identifier is `com.apple.shortcuts`.
+    /// Shortcuts.app as LaunchServices has it, only when it passes `ShortcutsApplicationLocation`'s checks.
     func shortcutsLocation(_ opener: ShortcutOpening) -> URL? {
-        guard let location = opener.applicationLocation(bundleIdentifier: Self.shortcutsBundleIdentifier),
-              location.isFileURL
-        else { return nil }
-        let path = location.standardizedFileURL.path
-        guard path.hasPrefix(Self.systemApplicationsPath), FileLocation.isAppBundlePath(path),
-              let found = opener.bundleIdentifier(ofApplicationAt: location),
-              found.lowercased() == Self.shortcutsBundleIdentifier
-        else { return nil }
-        return location
+        ShortcutsApplicationLocation.verified(
+            opener.applicationLocation(bundleIdentifier: Self.shortcutsBundleIdentifier),
+            bundleIdentifierOf: { opener.bundleIdentifier(ofApplicationAt: $0) }
+        )
     }
 
     /// In the background (Shortcuts' own alert still shows), not in Recent Items, no arguments, an
