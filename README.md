@@ -3,7 +3,7 @@
 A free, open-source macOS menu bar utility that organizes your apps into named groups. Choose a
 group from the menu bar to see its apps in a popup over the Dock, or open them all at once.
 
-> Status: in active development — current release v0.6.3 (Developer ID signed and notarized), with 26 languages.
+> Status: in active development — current release v0.21.1 (Developer ID signed and notarized), with 26 languages.
 
 ## Screenshots
 
@@ -66,6 +66,11 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   and a standalone group's own app (Hide All still hides them; Siri's answer says when an app was
   spared). Cybokron Dock Groups and its standalone groups' apps are always protected, and Finder is
   never quit.
+- **Ask for authentication before quitting apps** (Settings → Switching, off by default): Close All,
+  Force Quit, and Start or Finish when they would quit apps ask for Touch ID, an Apple Watch or your
+  Mac password first. If that's cancelled or fails, nothing is quit and the app says so. Links, the
+  command line, Siri, Shortcuts and standalone groups' own apps can't ask, so while it's on they
+  quit nothing and say why. Hiding and opening apps never ask.
 - **Focus**: a macOS Focus can start a group when it turns on. In System Settings → Focus, choose a
   Focus (Work, Personal, or one of your own), then **Focus Filters → Add Filter → Cybokron Dock
   Groups**, pick the **Group**, what happens **When This Focus Turns On** — **Start** (the default),
@@ -112,15 +117,24 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   started it. Display triggers need no permission: they read what macOS tells every app about its
   displays (their maker's and model's numbers, the serial number when there's a real one, the name).
   With no display connected at all, nothing can be read, and nothing changes.
-- **Application triggers** (unreleased): choose an app and run a trigger when its first instance opens
+- **Application triggers**: choose an app and run a trigger when its first instance opens
   or its last instance closes. The current state is a baseline when monitoring starts, so an app
-  already open does not count as a new opening. Matching uses the bundle identifier, not a verified
-  app signature or publisher, and macOS observations can miss short-lived changes.
-  If macOS cannot identify a running app, these triggers wait by default. You may choose **Monitor
-  identified applications only** in a group's Triggers section: unidentified instances can be missed
-  and a close can be reported incorrectly. The choice affects all application triggers, lasts only
-  until Cybokron Dock Groups quits, and is not included in backups. Existing trigger pause, rate,
-  notice, and automatic-action protections still apply.
+  already open does not count as a new opening, and macOS observations can miss short-lived changes.
+  An app is chosen by its identity and must be **approved** once: the editor shows who signed it
+  (and an ad hoc signature asks a second, explicit confirmation), and the trigger waits until you
+  approve. If the app's code changes, for example after an app update, the trigger stops and asks
+  for approval again; the app's process start time is checked too, so a reused process identifier
+  can't be approved by mistake. Matching by bundle identifier alone is off by default and is shown
+  as **Unverified**. If macOS cannot identify a running app, these triggers wait. You may choose
+  **Monitor identified applications only** in a group's Triggers section: unidentified instances can
+  be missed and a close can be reported incorrectly. The choice affects all application triggers,
+  lasts only until Cybokron Dock Groups quits, and is not included in backups. Existing trigger
+  pause, rate, notice, and automatic-action protections still apply.
+- **Trigger delay**: a trigger can wait 0 to 3600 seconds before it runs, applied after a notice is
+  answered. While it waits, the trigger's row counts down. If the trigger, its group, the screen
+  lock, the Mac's sleep or session changes, triggers are paused, or the trigger fires again, the
+  wait is cancelled: nothing runs, and the status line says why. An older version of the app drops
+  the delay when it saves `triggers.json`, so a delayed trigger edited there runs immediately.
 - **Network triggers**: **When Ethernet Connects** or **Disconnects** (a wired connection — built in,
   an adapter or a dock — has a network, even when Wi-Fi is used first; no permission) and **When the
   Mac Joins** or **Leaves a Wi-Fi Network**, by the network's name (matched exactly; **Use Current
@@ -766,7 +780,7 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
      Settings → General → Login Items: Settings → Triggers follows when the app comes forward.
    - **When the Screens Sleep / Wake**: `pmset displaysleepnow`, then wake them; and the lid, on a
      laptop. Finish at the screens' sleep runs without a notice.
-   - **When the Screen Locks / Unlocks** (unreleased): Control-Command-Q, then unlock; with "Require
+   - **When the Screen Locks / Unlocks**: Control-Command-Q, then unlock; with "Require
      password" set to immediately, also `pmset displaysleepnow`. Finish at the lock runs without a
      notice; locking and unlocking within 2 seconds runs only the unlock. Still to check by hand: the
      screen saver, fast user switching, the lid / `pmset sleepnow`, a delayed password setting
@@ -774,7 +788,7 @@ checked by hand (`scripts/build-app.sh debug`, then open `build/debug/Cybokron D
    - Pause Triggers → For 1 Hour in the menu bar menu: a due trigger is *Skipped …: triggers were
      paused.*; Resume Triggers. Archive the group: its triggers don't run, and the archived summary
      counts them; restore it after the time: the time passed while archived doesn't run.
-   - **Application opens / closes** (unreleased): choose a test app, verify the Add button stays
+   - **Application opens / closes**: choose a test app, verify the Add button stays
      disabled until a valid app is selected, and check that one opening and the last close are
      detected with multiple instances. Allow for the existing 15-second protection after an
      automatic action. Check the waiting message when macOS cannot identify a running process;
