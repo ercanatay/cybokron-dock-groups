@@ -581,7 +581,35 @@ struct ShortcutLaunchRunnerTests {
         #expect(scheme == [Self.runnerFile, Self.settingsShortcutsButton])
         let settings = try #require(files.first { $0.path == Self.settingsShortcutsButton })
         let uses = settings.text.split(separator: "\n").filter { $0.contains("shortcuts://") }
-        #expect(uses.map { $0.trimmingCharacters(in: .whitespaces) } == [#"guard let url = URL(string: "shortcuts://") else { return }"#])
+        // The bare scheme goes only to the verified Shortcuts.app, never to the default handler.
+        #expect(uses.map { $0.trimmingCharacters(in: .whitespaces) } == [
+            #"guard let url = URL(string: "shortcuts://"), let appURL = ShortcutsApplicationLocation.current() else { return }"#,
+        ])
+        #expect(!settings.text.contains("run-shortcut"))
+        #expect(!settings.text.contains("NSWorkspace.shared.open("))
+        #expect(!settings.text.contains("urlForApplication"))
+        let opens = settings.text.split(separator: "\n").filter { $0.contains(".open(") }
+        #expect(opens.map { $0.trimmingCharacters(in: .whitespaces) } == ["workspace.open([url], withApplicationAt: appURL, configuration: configuration)"])
+        #expect(settings.text.contains("configuration.activates = true"))
+        // The check lives in one helper that the runner shares.
+        let runner = try #require(files.first { $0.path == Self.runnerFile })
+        #expect(runner.text.contains("ShortcutsApplicationLocation.verified("))
+        #expect(!runner.text.contains("systemApplicationsPath"))
+    }
+
+    @Test func theSharedLocationHelperChecksSystemPathAndBundleIdentifier() {
+        let good = URL(fileURLWithPath: "/System/Applications/Shortcuts.app")
+        #expect(ShortcutsApplicationLocation.verified(good) { _ in "com.apple.shortcuts" } == good)
+        #expect(ShortcutsApplicationLocation.verified(good) { _ in "COM.APPLE.SHORTCUTS" } == good)
+        #expect(ShortcutsApplicationLocation.verified(good) { _ in "com.evil.app" } == nil)
+        #expect(ShortcutsApplicationLocation.verified(good) { _ in nil } == nil)
+        #expect(ShortcutsApplicationLocation.verified(nil) { _ in "com.apple.shortcuts" } == nil)
+        let elsewhere = URL(fileURLWithPath: "/Applications/Shortcuts.app")
+        #expect(ShortcutsApplicationLocation.verified(elsewhere) { _ in "com.apple.shortcuts" } == nil)
+        let notApp = URL(fileURLWithPath: "/System/Applications/Shortcuts")
+        #expect(ShortcutsApplicationLocation.verified(notApp) { _ in "com.apple.shortcuts" } == nil)
+        let web = URL(string: "https://example.com/System/Applications/Shortcuts.app")!
+        #expect(ShortcutsApplicationLocation.verified(web) { _ in "com.apple.shortcuts" } == nil)
     }
 
     @Test func noProcessToolScriptOrCallbackInTheShortcutPath() throws {
