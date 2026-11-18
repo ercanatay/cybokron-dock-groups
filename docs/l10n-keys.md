@@ -15,7 +15,7 @@ app shows the English text instead) and its key prefixes listed in
 - `core.invocation.*.phrase` are Siri phrases: translate them exactly as the App Shortcuts phrases
   of the same language (App Intents localization), or Siri won't recognize what Settings shows.
 
-1181 keys.
+1182 keys.
 
 ## Shared: buttons, menu items and phrases used in several places
 
@@ -1696,12 +1696,13 @@ reuses the browser profile's review texts.
 | `item.launch.private.row` | %@ · private window |
 | `item.launch.private.confirm.title` | Open “%1$@” in a private %2$@ window? |
 
-## The Shortcuts app's item running a shortcut: the details editor's toggle, name field, hint, name rule and review notes, the row's captions and the confirmation (English only for now)
+## The Shortcuts app's item running a shortcut: the details editor's toggle, name field, hint, name rule and review notes, the row's captions, the confirmation and the launch report's line (English only for now)
 
 See [launch-action-shortcut.md](design/launch-action-shortcut.md) §5. `%@` is the shortcut's name,
 which stays as it is; *Shortcuts* is the app's name. The confirmation's message is shown under the
 name; its button and the editor's Turn On reuse `item.launch.profile.turnOn`, and the row's
-missing-approval note reuses `item.launch.profile.approval.row`.
+missing-approval note reuses `item.launch.profile.approval.row`. `item.launch.shortcut.notRun` is the
+launch report's one line for every reason the shortcut wasn't run; it never names the shortcut.
 
 | Key | English |
 | --- | --- |
@@ -1715,6 +1716,7 @@ missing-approval note reuses `item.launch.profile.approval.row`.
 | `item.launch.shortcut.row.review` | Shortcut needs review: the item won't open until you turn it on. |
 | `item.launch.shortcut.confirm.title` | Run the shortcut “%@” when you open this item? |
 | `item.launch.shortcut.confirm.message` | It does whatever this shortcut does, with the permissions you gave Shortcuts. The app passes it nothing: no input, no text, no files. If you rename it, or another shortcut gets this name, that one runs. |
+| `item.launch.shortcut.notRun` | The shortcut wasn't run. |
 
 ## Launch action approval on this Mac: the editor's and row's missing-approval notes, the restore summary's count
 

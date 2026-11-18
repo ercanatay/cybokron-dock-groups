@@ -69,6 +69,9 @@ public struct LaunchReport: Equatable, Sendable {
 /// (`LaunchSource`), its action is enabled and valid, this Mac's approval file has its digest
 /// (launch-action-approvals.md), and its browser is installed and not running. Otherwise it isn't
 /// opened at all — not plainly, not in another browser — and the report says it wasn't opened.
+/// The Shortcuts app's item with a shortcut action runs through `ShortcutLaunchRunner` instead,
+/// only for a click in the app itself and while the screen is unlocked; otherwise Shortcuts isn't
+/// even brought forward (docs/design/launch-action-shortcut.md).
 @MainActor
 public final class GroupLauncher {
     private let workspace: ApplicationWorkspace
@@ -78,6 +81,11 @@ public final class GroupLauncher {
     public let pendingLaunches: DelayedLaunches?
     /// The approvals an item's launch action must have to run; without them none runs.
     private let approvals: LaunchActionApprovalStore?
+    /// Whether the screen is locked now, `nil` when that can't be told; a shortcut runs only when
+    /// it says unlocked.
+    private let screenLock: @MainActor () -> Bool?
+    /// The shortcuts run in the last seconds, so the same one isn't run twice in a row.
+    let shortcutRuns = ShortcutRecentRuns()
     private let logger = Logger(subsystem: "com.cybokron.dockgroups", category: "GroupLauncher")
 
     /// - Parameters:
@@ -89,18 +97,22 @@ public final class GroupLauncher {
     ///     the delays are ignored and every item opens right away, as in versions without them.
     ///   - approvals: This Mac's approvals, read again for every item with an action. Without
     ///     them no item with an action is opened.
+    ///   - screenLock: Whether the screen is locked, read when a shortcut is about to run; `nil`
+    ///     when that can't be told. By default it can't, so no shortcut runs.
     public init(
         workspace: ApplicationWorkspace,
         locator: ItemLocating? = nil,
         catalog: ApplicationCatalog? = nil,
         pendingLaunches: DelayedLaunches? = nil,
-        approvals: LaunchActionApprovalStore? = nil
+        approvals: LaunchActionApprovalStore? = nil,
+        screenLock: @escaping @MainActor () -> Bool? = { nil }
     ) {
         self.workspace = workspace
         self.locator = locator ?? WorkspaceItemLocator()
         self.catalog = catalog ?? SystemApplicationCatalog()
         self.pendingLaunches = pendingLaunches
         self.approvals = approvals
+        self.screenLock = screenLock
     }
 
     public convenience init() {
@@ -301,11 +313,12 @@ public final class GroupLauncher {
     /// now), and the runner starts the browser (it refuses a running one). Anything else opens
     /// nothing. Only a fixed code is logged, never the profile name, arguments or address.
     private func openWithLaunchAction(_ item: GroupItem, source: LaunchSource) async -> LaunchReport.Entry {
+        if ShortcutLaunchRunner.handles(item) {
+            return await runShortcut(item, source: source)
+        }
         let refusal: LaunchActionItemRefusal
         if !source.isUserPresent {
             refusal = .unattendedSource(source)
-        } else if case .enabled(let action)? = item.launchActionSetting, !action.hasRunner {
-            refusal = .templateNotSupported
         } else if let actions = workspace as? LaunchActionWorkspace {
             let browser = item.launch.opener?.bundleIdentifier ?? item.launchAction?.preferredBrowserBundleIdentifier ?? ""
             let planned = LaunchActionArgumentPlan.make(for: item, browserBundleIdentifier: browser) { identifier in
@@ -335,6 +348,22 @@ public final class GroupLauncher {
         }
         logger.error("Not opened, launch action \(refusal.code, privacy: .public): a \(String(describing: item.kind), privacy: .public) item")
         return LaunchReport.Entry(app: item, outcome: refusal.outcome, launchActionRefusal: refusal)
+    }
+
+    /// Runs the shortcut of the Shortcuts app's item through `ShortcutLaunchRunner`, which checks
+    /// the source, the action, the approval (read now), the screen lock, a run just before and
+    /// Shortcuts.app, in that order. Only a fixed code is logged, never the shortcut's name; the
+    /// report says in one line that it wasn't run.
+    private func runShortcut(_ item: GroupItem, source: LaunchSource) async -> LaunchReport.Entry {
+        let runner = ShortcutLaunchRunner(opener: workspace as? ShortcutOpening, isScreenLocked: screenLock, recentRuns: shortcutRuns)
+        switch await runner.run(item, source: source, approval: { approvalRefusal(for: item) }) {
+        case .handedToShortcuts:
+            logger.notice("Handed a shortcut to Shortcuts for an application item")
+            return LaunchReport.Entry(app: item, outcome: .launched)
+        case .refused(let refusal):
+            logger.error("Shortcut not run, launch action \(refusal.code, privacy: .public): an application item")
+            return LaunchReport.Entry(app: item, outcome: LaunchActionItemRefusal.shortcutNotRun, launchActionRefusal: refusal)
+        }
     }
 
     /// Why the approval file doesn't let `item`'s action run, read now; `nil` when it does. Without

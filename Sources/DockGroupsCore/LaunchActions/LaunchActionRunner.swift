@@ -86,9 +86,6 @@ struct LaunchActionRunner {
 enum LaunchActionItemRefusal: Hashable, Sendable {
     /// The request didn't come from the user in the app (`LaunchSource.isUserPresent`).
     case unattendedSource(LaunchSource)
-    /// The action's template has no runner in this version (a shortcut, until its runner ships:
-    /// docs/design/launch-action-shortcut.md); nothing is opened, the app isn't brought forward.
-    case templateNotSupported
     /// The workspace can't start an app with a launch action.
     case noRunner
     /// No plan could be made (`LaunchActionArgumentPlan`).
@@ -97,17 +94,23 @@ enum LaunchActionItemRefusal: Hashable, Sendable {
     case approval(LaunchActionApprovalRefusal)
     /// The plan wasn't started (`LaunchActionRunner`).
     case run(LaunchActionRunRefusal)
+    /// A shortcut's action, item, address or Shortcuts.app didn't pass (the shortcut runner).
+    case shortcutPlan(ShortcutPlanRefusal)
+    /// A checked shortcut wasn't run: the screen lock, a run just before, or the system (the
+    /// shortcut runner).
+    case shortcutRun(ShortcutRunRefusal)
 
     /// The reason as a fixed code for the log: "source.link", "plan.actionDisabled",
-    /// "approval.missing", "run.browserAlreadyRunning".
+    /// "approval.missing", "run.browserAlreadyRunning", "run.screenLocked".
     var code: String {
         switch self {
         case .unattendedSource(let source): return "source.\(source.rawValue)"
-        case .templateNotSupported: return "template.notSupported"
         case .noRunner: return "noRunner"
         case .plan(let refusal): return "plan.\(refusal.rawValue)"
         case .approval(let refusal): return "approval.\(refusal.rawValue)"
         case .run(let refusal): return "run.\(refusal.rawValue)"
+        case .shortcutPlan(let refusal): return "plan.\(refusal.rawValue)"
+        case .shortcutRun(let refusal): return "run.\(refusal.rawValue)"
         }
     }
 
@@ -117,9 +120,17 @@ enum LaunchActionItemRefusal: Hashable, Sendable {
         switch self {
         case .plan(.browserNotInstalled), .run(.browserNotInstalled):
             return .notFound
-        case .unattendedSource, .templateNotSupported, .noRunner, .plan, .approval, .run:
+        case .shortcutPlan, .shortcutRun:
+            return Self.shortcutNotRun
+        case .unattendedSource, .noRunner, .plan, .approval, .run:
             return .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened."))
         }
+    }
+
+    /// The outcome reported for a Shortcuts app's item whose shortcut wasn't run, whatever the
+    /// reason: one line, without the shortcut's name.
+    static var shortcutNotRun: LaunchReport.Outcome {
+        .failed(reason: Localization.string("item.launch.shortcut.notRun", "The shortcut wasn't run."))
     }
 }
 
@@ -130,16 +141,6 @@ extension LaunchAction {
         switch self {
         case .browserProfile(let browser, _), .browserPrivate(let browser): return browser.bundleIdentifiers.first
         case .shortcut: return nil
-        }
-    }
-
-    /// Whether this version can run the action's template. A shortcut can't yet: the launcher
-    /// refuses it (`LaunchActionItemRefusal.templateNotSupported`) rather than opening the item
-    /// plainly or passing it on.
-    var hasRunner: Bool {
-        switch self {
-        case .browserProfile, .browserPrivate: return true
-        case .shortcut: return false
         }
     }
 }
