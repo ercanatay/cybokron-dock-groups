@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "“%1$@” を、プロファイル “%3$@” の %2$@ で開きますか？";
 "item.launch.profile.approval.row" = "このMacでは承認がありません。再度有効にするまで、この項目は開きません。";
 "item.launch.profile.approval.editor" = "このMacでは承認がないため、この項目は開きません。有効にするには、プロファイルを確認して再度オンにしてください。";
-"core.backup.approval.disabled" = "%ld 件のブラウザプロファイル操作がオフの状態で届いており、承認が必要です。";
+"core.backup.approval.disabled" = "オフの状態で届いたブラウザプロファイルまたはショートカットの操作 %ld 件は、承認が必要です。";
 "item.launch.private.toggle" = "プライベートウインドウで開く";
 "item.launch.private.hint" = "ブラウザが起動していない状態でご自身がこのWebサイトを開くと、新しいプライベートウインドウで開きます。";
 "item.launch.private.row" = "%@ · プライベートウインドウ";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "今後この提案を表示しない";
 "capture.suggestion.notNow.help" = "この提案を1週間表示しません。キャンセルでも同じ動作になります。";
 "capture.suggestion.unavailable" = "この提案はもう利用できません。";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "ショートカットを実行";
+"item.launch.shortcut.name" = "ショートカット名";
+"item.launch.shortcut.hint" = "この項目をご自身で開いたとき、ショートカット App を開く代わりに、このショートカットを実行します。ショートカット App に表示される名前どおりに入力してください。App はショートカットに入力を渡しません。";
+"item.launch.shortcut.invalid" = "ショートカット App に表示される名前どおりに入力してください：128 文字以内で、改行や目に見えない文字を含まず、先頭と末尾に空白を入れず、先頭に「-」を付けず、「/」や「\\」を含めないでください。";
+"item.launch.shortcut.review" = "このショートカットはバックアップから読み込まれたか、保存された状態のままでは使用できないため、確認して有効にするまで項目は開きません。";
+"item.launch.shortcut.approval.editor" = "このMacでは承認がないため、この項目は開きません。有効にするには、ショートカット名を確認して再度オンにしてください。";
+"item.launch.shortcut.row" = "ショートカットを実行：%@";
+"item.launch.shortcut.row.review" = "ショートカットの確認が必要です：オンにするまで項目は開きません。";
+"item.launch.shortcut.confirm.title" = "この項目を開くときにショートカット “%@” を実行しますか？";
+"item.launch.shortcut.confirm.message" = "このショートカットの処理内容は、ショートカット App に与えた権限の範囲で実行されます。App はショートカットに入力、テキスト、ファイルを一切渡しません。名前を変更すると、または別のショートカットがこの名前になると、そちらが実行されます。";
+"item.launch.shortcut.notRun" = "ショートカットは実行されませんでした。";

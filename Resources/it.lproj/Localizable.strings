@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Aprire “%1$@” in %2$@ con il profilo “%3$@”?";
 "item.launch.profile.approval.row" = "Approvazione mancante su questo Mac: l'elemento non si aprirà finché non la riattivi.";
 "item.launch.profile.approval.editor" = "L'approvazione manca su questo Mac, quindi l'elemento non si aprirà. Per attivarla, controlla il profilo e riattivala.";
-"core.backup.approval.disabled" = "%ld azione/i del profilo del browser sono arrivate disattivate e richiedono approvazione.";
+"core.backup.approval.disabled" = "%ld azione/i del profilo del browser o di Comandi rapidi sono arrivate disattivate e richiedono approvazione.";
 "item.launch.private.toggle" = "Apri in una finestra privata";
 "item.launch.private.hint" = "Apre il sito in una nuova finestra privata quando lo apri tu stesso e il browser non è in esecuzione.";
 "item.launch.private.row" = "%@ · finestra privata";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Non suggerire più";
 "capture.suggestion.notNow.help" = "Non mostrare questo suggerimento per una settimana. Annulla fa lo stesso.";
 "capture.suggestion.unavailable" = "Questo suggerimento non è più disponibile.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Esegui un comando rapido";
+"item.launch.shortcut.name" = "Nome del comando rapido";
+"item.launch.shortcut.hint" = "Esegue questo comando rapido invece di aprire solo Comandi rapidi, quando apri tu l'elemento. Digita il suo nome come lo mostra Comandi rapidi. L'app non gli passa alcun input.";
+"item.launch.shortcut.invalid" = "Digita il nome come lo mostra Comandi rapidi: massimo 128 caratteri, nessun a capo o carattere invisibile, nessuno spazio all'inizio o alla fine, nessun “-” all'inizio e nessun / o \\.";
+"item.launch.shortcut.review" = "Questo comando rapido è arrivato con un backup o non può essere usato come era stato salvato, quindi l'elemento non si aprirà finché non lo controlli e non lo attivi.";
+"item.launch.shortcut.approval.editor" = "Su questo Mac manca l'approvazione, quindi l'elemento non si aprirà. Per abilitarla, controlla il nome del comando rapido e riattivalo.";
+"item.launch.shortcut.row" = "Esegui un comando rapido: %@";
+"item.launch.shortcut.row.review" = "Comando rapido da controllare: l'elemento non si aprirà finché non lo attivi.";
+"item.launch.shortcut.confirm.title" = "Eseguire il comando rapido “%@” quando apri questo elemento?";
+"item.launch.shortcut.confirm.message" = "Esegue ciò che fa questo comando rapido, con i permessi che hai dato a Comandi rapidi. L'app non gli passa nulla: nessun input, nessun testo, nessun file. Se lo rinomini, o se un altro comando rapido prende questo nome, verrà eseguito quello.";
+"item.launch.shortcut.notRun" = "Il comando rapido non è stato eseguito.";

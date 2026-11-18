@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Abrir “%1$@” no %2$@ com o perfil “%3$@”?";
 "item.launch.profile.approval.row" = "Aprovação ausente neste Mac: o item não será aberto até que você a ative novamente.";
 "item.launch.profile.approval.editor" = "A aprovação está ausente neste Mac, então o item não será aberto. Para ativá-la, verifique o perfil e ative-a novamente.";
-"core.backup.approval.disabled" = "%ld ação(ões) de perfil do navegador chegaram desativadas e precisam de aprovação.";
+"core.backup.approval.disabled" = "%ld ação(ões) de perfil do navegador ou de atalho chegaram desativadas e precisam de aprovação.";
 "item.launch.private.toggle" = "Abrir em uma janela privada";
 "item.launch.private.hint" = "Abre o site em uma nova janela privada quando você o abrir por conta própria e o navegador não estiver em execução.";
 "item.launch.private.row" = "%@ · janela privada";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Não sugerir novamente";
 "capture.suggestion.notNow.help" = "Não mostrar esta sugestão por uma semana. Cancelar faz o mesmo.";
 "capture.suggestion.unavailable" = "Esta sugestão não está mais disponível.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Executar um atalho";
+"item.launch.shortcut.name" = "Nome do atalho";
+"item.launch.shortcut.hint" = "Executa este atalho em vez de apenas abrir o App Atalhos, quando você abre o item manualmente. Digite o nome como ele aparece no App Atalhos. O app não envia nenhuma entrada para ele.";
+"item.launch.shortcut.invalid" = "Digite o nome como aparece no App Atalhos: até 128 caracteres, sem quebras de linha ou caracteres invisíveis, sem espaço no início ou no fim, sem “-” no início, e sem / ou \\.";
+"item.launch.shortcut.review" = "Este atalho veio com um backup ou não pode ser usado como foi salvo, então o item não será aberto até que você o verifique e o ative.";
+"item.launch.shortcut.approval.editor" = "A aprovação está ausente neste Mac, então o item não será aberto. Para ativá-la, verifique o nome do atalho e ative-o novamente.";
+"item.launch.shortcut.row" = "Executar um atalho: %@";
+"item.launch.shortcut.row.review" = "Atalho precisa de revisão: o item não será aberto até que você o ative.";
+"item.launch.shortcut.confirm.title" = "Executar o atalho “%@” quando você abrir este item?";
+"item.launch.shortcut.confirm.message" = "Ele faz tudo o que este atalho faz, com as permissões que você deu ao App Atalhos. O app não envia nada a ele: nenhuma entrada, nenhum texto, nenhum arquivo. Se você renomeá-lo, ou se outro atalho receber este nome, esse outro será executado.";
+"item.launch.shortcut.notRun" = "O atalho não foi executado.";
