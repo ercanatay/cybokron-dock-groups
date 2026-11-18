@@ -1266,6 +1266,16 @@
 "item.launch.private.hint" = "Opens the website in a new private window when you open it yourself and the browser isn't running.";
 "item.launch.private.row" = "%@ · private window";
 "item.launch.private.confirm.title" = "Open “%1$@” in a private %2$@ window?";
+"item.launch.shortcut.toggle" = "Run a Shortcut";
+"item.launch.shortcut.name" = "Shortcut Name";
+"item.launch.shortcut.hint" = "Runs this shortcut instead of just opening Shortcuts, when you open the item yourself. Type its name as Shortcuts shows it. The app gives it no input.";
+"item.launch.shortcut.invalid" = "Type the name as Shortcuts shows it: up to 128 characters, no line breaks or invisible characters, no space at the start or end, no “-” at the start, and no / or \\.";
+"item.launch.shortcut.review" = "This shortcut came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on.";
+"item.launch.shortcut.approval.editor" = "Approval is missing on this Mac, so the item won't open. To enable it, check the shortcut's name and turn it on again.";
+"item.launch.shortcut.row" = "Run a Shortcut: %@";
+"item.launch.shortcut.row.review" = "Shortcut needs review: the item won't open until you turn it on.";
+"item.launch.shortcut.confirm.title" = "Run the shortcut “%@” when you open this item?";
+"item.launch.shortcut.confirm.message" = "It does whatever this shortcut does, with the permissions you gave Shortcuts. The app passes it nothing: no input, no text, no files. If you rename it, or another shortcut gets this name, that one runs.";
 
 /* Local Suggestions */
 "menuBar.suggestions.header" = "Suggestions";

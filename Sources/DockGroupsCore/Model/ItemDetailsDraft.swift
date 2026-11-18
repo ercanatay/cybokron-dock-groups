@@ -7,7 +7,9 @@ import Foundation
 /// A browser profile (launch-action-ui-slice.md) is set or turned on only once the user confirmed
 /// it (`confirmLaunchAction`): Done asks first, and closing the editor another way keeps the item's
 /// action as it was. Only browsers on this Mac can be chosen, and a name the grammar refuses can't
-/// be saved (`canFinish`).
+/// be saved (`canFinish`). The Shortcuts app's item can run a shortcut instead
+/// (`LaunchAction.shortcut`, docs/design/launch-action-shortcut.md): a name typed as free text,
+/// refused by the same rule (`isShortcutNameAccepted`) and confirmed the same way.
 ///
 /// Nothing reaches the store while the user types or chooses. The editor saves once, when it
 /// closes (`GroupStore.saveItemEdits(of:endingWith:ofItem:inGroup:)`), so a standalone group's own
@@ -30,6 +32,9 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     public let originalLaunch: ItemLaunchOptions
     /// The item's kind: an app has no "Open with" (`offersOpener`).
     public let kind: AppReference.Kind
+    /// The item's identity (`AppReference.bundleIdentifier`): only the Shortcuts app's item offers
+    /// a shortcut (`offersShortcut`).
+    public let identity: String
     /// The alias as typed; never longer than `ItemDetails.maximumAliasLength` characters.
     public var alias: String {
         didSet { alias = Self.cut(alias, to: ItemDetails.maximumAliasLength) }
@@ -64,15 +69,20 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     /// (`LaunchAction.browserPrivate`, launch-action-private-window.md); the profile name is then
     /// neither shown nor saved.
     public var isPrivateWindow: Bool
+    /// Whether the Shortcuts app's item runs a shortcut (`LaunchAction.shortcut`); set through
+    /// `setShortcutOn(_:)`. Always `false` for another item.
+    public private(set) var isShortcutOn: Bool
+    /// The shortcut's name as typed; kept while the shortcut is off.
+    public var shortcutName: String
     /// The action the user confirmed in this editor (`confirmLaunchAction`).
     public private(set) var confirmedLaunchAction: LaunchAction?
-    /// Whether the user turned the browser profile off in this editor: for an invalid action,
-    /// whose toggle starts off, that's what removes it.
-    private var turnedBrowserProfileOff = false
+    /// Whether the user turned the browser profile or the shortcut off in this editor: for an
+    /// invalid action, whose toggle starts off, that's what removes it.
+    private var turnedLaunchActionOff = false
 
     /// A draft of these details alone, for an item without launch options.
     public init(_ details: ItemDetails) {
-        self.init(details: details, launch: ItemLaunchOptions(), kind: .application, action: nil, installedBrowsers: [])
+        self.init(details: details, launch: ItemLaunchOptions(), kind: .application, identity: "", action: nil, installedBrowsers: [])
     }
 
     /// A draft of everything the editor edits of `item`.
@@ -81,14 +91,17 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     ///   - isApprovalMissing: The item's action is on but this Mac has no approval for it, so the
     ///     editor offers Turn On, which writes it.
     public init(_ item: GroupItem, installedBrowsers: Set<BrowserFamily> = [], isApprovalMissing: Bool = false) {
-        self.init(details: item.details, launch: item.launch, kind: item.kind, action: item.launchActionStatus, installedBrowsers: installedBrowsers,
+        self.init(details: item.details, launch: item.launch, kind: item.kind, identity: item.bundleIdentifier, action: item.launchActionStatus,
+                  installedBrowsers: installedBrowsers,
                   isApprovalMissing: isApprovalMissing && item.launchActionStatus?.needsReview == false)
     }
 
-    private init(details: ItemDetails, launch: ItemLaunchOptions, kind: AppReference.Kind, action: LaunchActionStatus?, installedBrowsers: Set<BrowserFamily>, isApprovalMissing: Bool = false) {
+    private init(details: ItemDetails, launch: ItemLaunchOptions, kind: AppReference.Kind, identity: String, action: LaunchActionStatus?,
+                 installedBrowsers: Set<BrowserFamily>, isApprovalMissing: Bool = false) {
         self.isApprovalMissing = isApprovalMissing
         original = details
         self.kind = kind
+        self.identity = identity
         originalLaunch = launch.allowed(for: kind)
         alias = details.alias ?? ""
         tagsText = details.commaSeparatedTags
@@ -101,6 +114,9 @@ public struct ItemDetailsDraft: Equatable, Sendable {
         browser = starting?.browser
         profileName = starting?.profileName ?? ""
         isPrivateWindow = starting?.isPrivateWindow ?? false
+        let offersShortcut = kind == .application && identity.lowercased() == LaunchAction.shortcutsBundleIdentifier
+        isShortcutOn = offersShortcut && starting?.shortcutName != nil
+        shortcutName = offersShortcut ? starting?.shortcutName ?? "" : ""
     }
 
     /// Whether the editor offers "Open with": files, folders and websites; apps open themselves.
@@ -169,7 +185,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
         guard offersBrowserProfile else { return family == nil }
         if let family, !canChoose(family) { return false }
         browser = family
-        if family == nil { turnedBrowserProfileOff = true }
+        if family == nil { turnedLaunchActionOff = true }
         return true
     }
 
@@ -183,7 +199,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     public mutating func setBrowserProfileOn(_ isOn: Bool) {
         guard isOn else {
             browser = nil
-            turnedBrowserProfileOff = true
+            turnedLaunchActionOff = true
             return
         }
         guard browser == nil, offersBrowserProfile else { return }
@@ -191,9 +207,34 @@ public struct ItemDetailsDraft: Equatable, Sendable {
         browser = preferred.flatMap { canChoose($0) ? $0 : nil } ?? BrowserFamily.allCases.first(where: canChoose)
     }
 
-    /// The action the editor's fields describe; `nil` while the browser profile is off.
+    // MARK: - Shortcut
+
+    /// Whether the editor offers running a shortcut: the Shortcuts app's item only.
+    public var offersShortcut: Bool {
+        kind == .application && identity.lowercased() == LaunchAction.shortcutsBundleIdentifier
+    }
+
+    /// Turns running a shortcut on or off; ignored for an item that doesn't offer it. The name
+    /// typed is kept either way.
+    public mutating func setShortcutOn(_ isOn: Bool) {
+        guard offersShortcut else { return }
+        isShortcutOn = isOn
+        if !isOn { turnedLaunchActionOff = true }
+    }
+
+    /// Whether the shortcut's name can be saved: the grammar takes it (`ShortcutName`), or the
+    /// shortcut is off. When it can't, the editor says what a name may hold under the field.
+    public var isShortcutNameAccepted: Bool {
+        !isShortcutOn || LaunchAction.isAcceptedShortcutName(shortcutName)
+    }
+
+    // MARK: - Action
+
+    /// The action the editor's fields describe; `nil` while the browser profile (or the shortcut)
+    /// is off.
     public var chosenLaunchAction: LaunchAction? {
-        browser.map { isPrivateWindow ? .browserPrivate(browser: $0) : .browserProfile(browser: $0, profileName: profileName) }
+        if offersShortcut { return isShortcutOn ? .shortcut(name: shortcutName) : nil }
+        return browser.map { isPrivateWindow ? .browserPrivate(browser: $0) : .browserProfile(browser: $0, profileName: profileName) }
     }
 
     /// Whether the profile name can be saved: the grammar takes it, the browser profile is off, or
@@ -207,16 +248,16 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     /// with a backup, or couldn't be used.
     public var launchActionNeedsReview: Bool { (originalLaunchAction?.needsReview ?? false) || isApprovalMissing }
 
-    /// Whether Done can close the editor: the name is accepted, and a changed browser profile is
-    /// for a browser on this Mac.
+    /// Whether Done can close the editor: the profile's or shortcut's name is accepted, and a
+    /// changed browser profile is for a browser on this Mac.
     public var canFinish: Bool {
-        guard isProfileNameAccepted else { return false }
+        guard isProfileNameAccepted, isShortcutNameAccepted else { return false }
         guard let browser, chosenLaunchAction != startingLaunchAction else { return true }
         return canChoose(browser)
     }
 
     /// What Done must have the user confirm first: the chosen action when it's valid, for a
-    /// browser on this Mac, differs from the one the editor started with and wasn't confirmed yet.
+    /// browser on this Mac (a shortcut needs none), differs from the one the editor started with and wasn't confirmed yet.
     public var launchActionAwaitingConfirmation: LaunchAction? {
         guard let action = confirmableAction, action != startingLaunchAction else { return nil }
         return action
@@ -242,10 +283,10 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     public func launchActionToSave(endingWith ending: Ending) -> LaunchActionEdit? {
         guard ending != .cancel else { return nil }
         guard let chosen = chosenLaunchAction else {
-            let removes = startingLaunchAction != nil || (originalLaunchAction == .invalid && turnedBrowserProfileOff)
+            let removes = startingLaunchAction != nil || (originalLaunchAction == .invalid && turnedLaunchActionOff)
             return removes ? .remove : nil
         }
-        guard chosen == confirmedLaunchAction, chosen.rejection == nil, chosen.isAllowed(for: kind) else { return nil }
+        guard chosen == confirmedLaunchAction, chosen.rejection == nil, chosen.isAllowed(for: kind, identity: identity) else { return nil }
         if originalLaunchAction == .enabled(chosen), !isApprovalMissing { return nil }
         return .enable(chosen)
     }
@@ -264,7 +305,8 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     /// The chosen action when it could be confirmed now.
     private var confirmableAction: LaunchAction? {
         guard let action = chosenLaunchAction, action != confirmedLaunchAction, action.rejection == nil,
-              action.isAllowed(for: kind), action.browser.map(canChoose) ?? false else { return nil }
+              // A shortcut opens no browser; `isAllowed` already holds it to the Shortcuts app's item.
+              action.isAllowed(for: kind, identity: identity), action.browser.map(canChoose) ?? true else { return nil }
         return action
     }
 
