@@ -346,3 +346,21 @@ and §6 rule 5 before slice 3 is merged.
 - **Recommendation (Q4 updated):** verify the name with `shortcuts list --show-identifiers` **at approval time only** (read-only, once per approval), not on every run, so a typo is caught before the modal dialog can appear at launch. No pre-flight spawn in the run path.
 - **Still unverified:** matching and running a real shortcut; `+` and NFC/NFD name handling; behaviour when another app owns the `shortcuts` scheme; whether a real execution can be silent.
 - **Side-effect note:** during the spike no shortcut was run, created or imported; the shortcut count was 39 before and after.
+
+## Slice 2: field, confirmation and approval (2026-11-18)
+
+- **Editor:** the Shortcuts app's item (`com.apple.shortcuts`) has "Run a Shortcut" and, while it's
+  on, a one-line free-text name field (`ItemDetailsDraft.offersShortcut`, `isShortcutOn`,
+  `shortcutName`). A name `ShortcutName` refuses shows the rule under the field and keeps Done off.
+  The name isn't looked up in Shortcuts (no `shortcuts list`; Q4 stays open). The review /
+  approval-missing / Turn On band is the browser profile's, with its own texts.
+- **Confirmation:** `LaunchActionSummary` now has a shortcut case: title "Run the shortcut “<name>”
+  when you open this item?", message the name as stored, then the warning (it does whatever the
+  shortcut does; the app passes it nothing). Cancel changes nothing; Turn On writes the approval
+  digest (§5 step 3) and then the groups.
+- **Row:** "Run a Shortcut: <name>"; under review "Shortcut needs review: …".
+- **Backups, agents:** a backup brings it in as `review/imported` (existing path); an agent's
+  configuration carries it turned off (`review/imported`), so an agent never runs one (Q6).
+- **Texts:** `item.launch.shortcut.*`, English only (`LocalizationTests.awaitingTranslation`);
+  the 26 translations come with slice 4.
+- **Still nothing runs it:** the launcher refuses it (`template.notSupported`) until slice 3.

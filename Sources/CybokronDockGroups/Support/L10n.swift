@@ -573,6 +573,27 @@ enum L10n {
         }
     }
 
+    /// The Shortcuts app's item running one of the user's shortcuts (launch-action-shortcut.md).
+    /// The row's caption and the confirmation's question and message come from DockGroupsCore;
+    /// shortcut names aren't localized. Turn On is the browser profile's.
+    enum Shortcut {
+        static var toggle: String { tr("item.launch.shortcut.toggle", "Run a Shortcut") }
+        static var name: String { tr("item.launch.shortcut.name", "Shortcut Name") }
+        static var hint: String {
+            tr("item.launch.shortcut.hint", "Runs this shortcut instead of just opening Shortcuts, when you open the item yourself. Type its name as Shortcuts shows it. The app gives it no input.")
+        }
+        static var invalidName: String {
+            tr("item.launch.shortcut.invalid", "Type the name as Shortcuts shows it: up to 128 characters, no line breaks or invisible characters, no space at the start or end, no “-” at the start, and no / or \\.")
+        }
+        static var review: String {
+            tr("item.launch.shortcut.review", "This shortcut came in with a backup or can't be used as it was saved, so the item won't open until you check it and turn it on.")
+        }
+        /// The action is on but this Mac has no approval for it (`ItemDetailsDraft.isApprovalMissing`).
+        static var approvalMissing: String {
+            tr("item.launch.shortcut.approval.editor", "Approval is missing on this Mac, so the item won't open. To enable it, check the shortcut's name and turn it on again.")
+        }
+    }
+
     // MARK: - Problems
 
     enum Problems {

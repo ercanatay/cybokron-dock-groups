@@ -179,6 +179,7 @@
 		6024388572397D425A53343F /* GroupLinkIdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4734B3089C472AB2FB8C490F /* GroupLinkIdentityTests.swift */; };
 		60E6AA400EFDD34B246171A7 /* PopupSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D701EEF2516B76A45510399 /* PopupSearchTests.swift */; };
 		6154CDC88D77310809692CAA /* SuggestionStatePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6181B4268308D8C877FA200 /* SuggestionStatePersistence.swift */; };
+		617264A7087B0EA342121766 /* LaunchActionShortcutEditingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0414CFBAAC48A9C79E722AC4 /* LaunchActionShortcutEditingTests.swift */; };
 		6257C81917E4EB4C17E44798 /* TriggerDelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D634072C3BE543C6AF68C76F /* TriggerDelayTests.swift */; };
 		63E00BFE6A07E52EF6B0E4B0 /* TemplateSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC43ABF2ADF38A0C4916C5B8 /* TemplateSheets.swift */; };
 		645E84F0CFE8CD2A2FD3E790 /* GroupIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E907092CE95713A2FF02644 /* GroupIntents.swift */; };
@@ -524,6 +525,7 @@
 		03457C14F1518234C0C10C1F /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		039D54E4282F7AC99B6B88BF /* ProcessIncarnation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessIncarnation.swift; sourceTree = "<group>"; };
 		03D022ACDC376346B0EA5BC2 /* WindowRestorerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowRestorerTests.swift; sourceTree = "<group>"; };
+		0414CFBAAC48A9C79E722AC4 /* LaunchActionShortcutEditingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchActionShortcutEditingTests.swift; sourceTree = "<group>"; };
 		053A3D86D09AA31B6FC7AE33 /* GroupTriggersSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTriggersSection.swift; sourceTree = "<group>"; };
 		056659382DC22FBC5FC3A912 /* PopupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupSettingsView.swift; sourceTree = "<group>"; };
 		0576C888146063C8273481B7 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1585,6 +1587,7 @@
 				700AEB0FCEA34BEAA7150870 /* LaunchActionPrivateWindowTests.swift */,
 				EB3D7EE7FF60E16EB8D1EE7B /* LaunchActionReviewPersistenceTests.swift */,
 				C092C32FA1F5C4550C4D616E /* LaunchActionRunnerTests.swift */,
+				0414CFBAAC48A9C79E722AC4 /* LaunchActionShortcutEditingTests.swift */,
 				C780F778296FDD0F4F907D23 /* LaunchActionShortcutTests.swift */,
 				772E8478594B4EE04DBDA296 /* LaunchActionTests.swift */,
 				431053090CB50F4B4DC2D2DB /* LaunchClassifierTests.swift */,
@@ -2409,6 +2412,7 @@
 				F139076780FFC151C43563B2 /* LaunchActionPrivateWindowTests.swift in Sources */,
 				FFBBDB51803766C3B9228166 /* LaunchActionReviewPersistenceTests.swift in Sources */,
 				1B58C42BD4FED3D1952A4BE9 /* LaunchActionRunnerTests.swift in Sources */,
+				617264A7087B0EA342121766 /* LaunchActionShortcutEditingTests.swift in Sources */,
 				C393305CCBB76AC4D6ED7053 /* LaunchActionShortcutTests.swift in Sources */,
 				ECA25A3B6B76F10D96AC71F7 /* LaunchActionTests.swift in Sources */,
 				080180FF17CB327AB5A93438 /* LaunchClassifierTests.swift in Sources */,

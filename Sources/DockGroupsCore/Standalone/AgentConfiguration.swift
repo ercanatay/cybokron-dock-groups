@@ -22,12 +22,22 @@ public struct AgentConfiguration: Equatable, Sendable {
     /// Close All reaches no others. Launch actions are kept as the group has them, status included:
     /// the agent's launcher checks them as the main app's does, against the same approval file
     /// (`LaunchActionApprovalStore.onThisMac`, launch-action-approvals.md), so an action written into
-    /// a configuration by hand, or copied with it, has no approval and doesn't run.
+    /// a configuration by hand, or copied with it, has no approval and doesn't run. A shortcut
+    /// (`LaunchAction.shortcut`) is copied turned off, under review as imported: an agent never
+    /// runs one (docs/design/launch-action-shortcut.md, Q6).
     public init(group: DockGroup, preferences: PopupPreferences) {
         formatVersion = Self.currentFormatVersion
         var group = group
         group.switching = GroupSwitching()
         group.shortcut = nil
+        if group.apps.contains(where: Self.hasShortcutOn) {
+            group.apps = group.apps.map { item in
+                guard Self.hasShortcutOn(item) else { return item }
+                var item = item
+                item.launchActionSetting = item.launchActionSetting?.disabledForImport
+                return item
+            }
+        }
         self.group = group
         var snapshot = preferences
         snapshot.automaticallyChecksForUpdates = PopupPreferences().automaticallyChecksForUpdates
@@ -35,6 +45,12 @@ public struct AgentConfiguration: Equatable, Sendable {
         snapshot.capture = CaptureSettings()
         snapshot.showsSuggestions = false
         self.preferences = snapshot
+    }
+
+    /// Whether `item` has a shortcut action that's on.
+    private static func hasShortcutOn(_ item: GroupItem) -> Bool {
+        if case .enabled(.shortcut)? = item.launchActionSetting { return true }
+        return false
     }
 
     /// The group's popup settings: its own overrides on top of the preferences snapshot.

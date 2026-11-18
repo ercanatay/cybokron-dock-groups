@@ -26,6 +26,12 @@ import SwiftUI
 /// private window instead: the profile field is hidden, and the confirmation names the private
 /// window instead of a profile.
 ///
+/// The Shortcuts app's item can run one of the user's shortcuts instead (launch-action-shortcut.md):
+/// "Run a Shortcut" and the shortcut's name, typed as free text (not looked up in Shortcuts). A
+/// name the grammar refuses is explained under the field and Done stays off; Done (or Turn On)
+/// first asks to confirm, naming the shortcut and saying it does whatever the shortcut does, with
+/// no input from the app. This version doesn't run it yet: the launcher refuses the item.
+///
 /// The group window shows it in a popover from a row's ⓘ button and its Edit Details… menu item,
 /// and as a sheet when the popup's Edit Details… opens the window on the item.
 struct ItemDetailsEditor: View {
@@ -47,7 +53,7 @@ struct ItemDetailsEditor: View {
     @State private var confirming: LaunchActionSummary?
 
     private enum Field: Hashable {
-        case alias, tags, notes, profile
+        case alias, tags, notes, profile, shortcut
     }
 
     /// The choices of the "Open with" menu.
@@ -131,7 +137,7 @@ struct ItemDetailsEditor: View {
         }
     }
 
-    /// Done: asks first when a browser profile would be set or changed; otherwise closes.
+    /// Done: asks first when a browser profile or a shortcut would be set or changed; otherwise closes.
     private func done() {
         guard draft.canFinish else { return }
         if let action = draft.launchActionAwaitingConfirmation {
@@ -182,6 +188,9 @@ struct ItemDetailsEditor: View {
         if draft.offersBrowserProfile {
             browserProfileRows
         }
+        if draft.offersShortcut {
+            shortcutRows
+        }
         GridRow {
             label(L10n.Launch.delay)
             VStack(alignment: .leading, spacing: 4) {
@@ -214,21 +223,7 @@ struct ItemDetailsEditor: View {
             .disabled(!draft.canTurnOnBrowserProfile)
             .gridCellColumns(2)
         }
-        if draft.launchActionNeedsReview {
-            GridRow {
-                VStack(alignment: .leading, spacing: 6) {
-                    Label(draft.isApprovalMissing ? L10n.BrowserProfile.approvalMissing : L10n.BrowserProfile.review, systemImage: "exclamationmark.triangle.fill")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if let action = draft.launchActionToTurnOn {
-                        Button(L10n.BrowserProfile.turnOn) { confirm(action) }
-                            .controlSize(.small)
-                    }
-                }
-                .gridCellColumns(2)
-            }
-        }
+        reviewRow(review: L10n.BrowserProfile.review, approvalMissing: L10n.BrowserProfile.approvalMissing)
         if let browser = draft.browser {
             GridRow {
                 browserPicker(browser)
@@ -250,6 +245,60 @@ struct ItemDetailsEditor: View {
                             .foregroundStyle(draft.isProfileNameAccepted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
                             .fixedSize(horizontal: false, vertical: true)
                     }
+                }
+            }
+        }
+    }
+
+    /// The action needs review (it came in with a backup, can't be used, or has no approval on
+    /// this Mac): why, and Turn On once the chosen action can be confirmed.
+    @ViewBuilder
+    private func reviewRow(review: String, approvalMissing: String) -> some View {
+        if draft.launchActionNeedsReview {
+            GridRow {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label(draft.isApprovalMissing ? approvalMissing : review, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let action = draft.launchActionToTurnOn {
+                        Button(L10n.BrowserProfile.turnOn) { confirm(action) }
+                            .controlSize(.small)
+                    }
+                }
+                .gridCellColumns(2)
+            }
+        }
+    }
+
+    // MARK: - Shortcut
+
+    /// The Shortcuts app's item: on or off, the shortcut's name, what it does or why the name can't
+    /// be used, and Turn On for an action that needs review.
+    @ViewBuilder
+    private var shortcutRows: some View {
+        GridRow {
+            Toggle(L10n.Shortcut.toggle, isOn: Binding(
+                get: { draft.isShortcutOn },
+                set: { draft.setShortcutOn($0) }
+            ))
+            .gridCellColumns(2)
+        }
+        reviewRow(review: L10n.Shortcut.review, approvalMissing: L10n.Shortcut.approvalMissing)
+        if draft.isShortcutOn {
+            GridRow {
+                label(L10n.Shortcut.name)
+                VStack(alignment: .leading, spacing: 4) {
+                    TextField(L10n.Shortcut.name, text: $draft.shortcutName)
+                        .labelsHidden()
+                        .accessibilityLabel(L10n.Shortcut.name)
+                        .lineLimit(1)
+                        .focused($focusedField, equals: .shortcut)
+                        .onSubmit(done)
+                    Text(draft.isShortcutNameAccepted ? L10n.Shortcut.hint : L10n.Shortcut.invalidName)
+                        .font(.caption)
+                        .foregroundStyle(draft.isShortcutNameAccepted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.orange))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }
