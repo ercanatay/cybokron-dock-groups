@@ -104,20 +104,37 @@ enum LaunchActionApprovalRefusal: String, Error, CaseIterable, Hashable, Sendabl
 }
 
 /// The digest an approval binds to: SHA-256 of a canonical text of the item's identity and kind,
-/// the address it opens, the template, its browser and profile name (a private window has none),
-/// and the item's Open With app.
+/// the address it opens, the template, its browser and profile name (a private window has none) or
+/// its shortcut name, and the item's Open With app.
 /// Changing any of them changes the digest, so an approval never covers another action.
 enum LaunchActionApprovalDigest {
     /// The first line of the canonical text: what it is and its version.
     static let domain = "cybokron-dock-groups/launch-action-approval/1"
 
     /// The canonical text for `item`'s action, or `nil` when the item has no action that's on and
-    /// valid for it or no address. One field per line, `name=<UTF-8 length>:<value>`, in a fixed
-    /// order, so no value can be read as another field.
+    /// valid for it, or a browser template's item has no address. One field per line,
+    /// `name=<UTF-8 length>:<value>`, in a fixed order, so no value can be read as another field.
     static func canonical(for item: GroupItem) -> String? {
-        guard let action = item.launchAction, let url = item.websiteURL else { return nil }
+        guard let action = item.launchAction else { return nil }
         let fields: [(String, String)]
+        if case .shortcut(let name) = action {
+            // The Shortcuts app's item has no address: the `url` line is there, empty, so the order
+            // stays fixed; the template line keeps it apart from every browser text, and the name
+            // is bound, so renaming the stored shortcut needs a new approval.
+            fields = [
+                ("item", item.normalizedBundleIdentifier),
+                ("kind", item.kind.rawValue),
+                ("url", ""),
+                ("template", LaunchActionCoding.shortcutTemplate),
+                ("shortcut", name),
+                ("opener", item.launch.opener?.bundleIdentifier.lowercased() ?? ""),
+            ]
+            return text(of: fields)
+        }
+        guard let url = item.websiteURL else { return nil }
         switch action {
+        case .shortcut:
+            return nil
         case .browserProfile(let browser, let profileName):
             fields = [
                 ("item", item.normalizedBundleIdentifier),
@@ -140,7 +157,12 @@ enum LaunchActionApprovalDigest {
                 ("opener", item.launch.opener?.bundleIdentifier.lowercased() ?? ""),
             ]
         }
-        return ([domain] + fields.map { "\($0.0)=\($0.1.utf8.count):\($0.1)" }).joined(separator: "\n") + "\n"
+        return text(of: fields)
+    }
+
+    /// The domain line and `fields`, one per line, each value prefixed with its UTF-8 length.
+    private static func text(of fields: [(String, String)]) -> String {
+        ([domain] + fields.map { "\($0.0)=\($0.1.utf8.count):\($0.1)" }).joined(separator: "\n") + "\n"
     }
 
     /// The digest of `item`'s action as 64 lowercase hexadecimal digits; `nil` as for `canonical`.

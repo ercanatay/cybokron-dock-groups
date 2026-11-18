@@ -142,6 +142,9 @@ struct LaunchActionArgumentPlan: Hashable, Sendable {
             guard let built = privateWindowArguments(browser: family, url: url) else { return .failure(.urlRejected) }
             browser = family
             arguments = built
+        case .shortcut:
+            // Not a browser's: refused by `isAllowed(for:)` above already; never a plan.
+            return .failure(.itemKindMismatch)
         }
         guard let executable = browser.canonicalBundleIdentifier(for: browserBundleIdentifier) else {
             return .failure(.unsupportedBrowser)

@@ -216,7 +216,7 @@ extension AppReference: Codable {
         ).allowed(for: kind)
         if container.contains(.launchAction) {
             let read = (try? container.decode(LaunchActionCoding.self, forKey: .launchAction)) ?? .unreadable
-            storedLaunchAction = StoredLaunchAction(LaunchActionSetting(reading: read.content, for: kind), keptFields: read.fields)
+            storedLaunchAction = StoredLaunchAction(LaunchActionSetting(reading: read.content, for: kind, identity: bundleIdentifier), keptFields: read.fields)
         }
     }
 
@@ -257,7 +257,7 @@ extension AppReference: Codable {
         }
         try container.encodeIfPresent(launch.opener, forKey: .openWith)
         if let storedLaunchAction {
-            try container.encode(LaunchActionCoding(storedLaunchAction, for: kind), forKey: .launchAction)
+            try container.encode(LaunchActionCoding(storedLaunchAction, for: kind, identity: bundleIdentifier), forKey: .launchAction)
         }
     }
 }

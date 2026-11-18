@@ -264,7 +264,7 @@ public struct ItemDetailsDraft: Equatable, Sendable {
     /// The chosen action when it could be confirmed now.
     private var confirmableAction: LaunchAction? {
         guard let action = chosenLaunchAction, action != confirmedLaunchAction, action.rejection == nil,
-              action.isAllowed(for: kind), canChoose(action.browser) else { return nil }
+              action.isAllowed(for: kind), action.browser.map(canChoose) ?? false else { return nil }
         return action
     }
 
