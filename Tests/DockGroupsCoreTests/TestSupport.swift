@@ -1,6 +1,29 @@
 import Foundation
 import Testing
 
+/// Polls `condition` every `interval` until it holds, replacing a fixed `Task.sleep` for work that
+/// finishes on its own schedule (debounced saves). Returns as soon as the condition holds; when
+/// `timeout` passes first it records a test failure naming `what` and returns `false`.
+@discardableResult
+func eventually(
+    _ what: String,
+    timeout: Duration = .seconds(5),
+    interval: Duration = .milliseconds(10),
+    sourceLocation: SourceLocation = #_sourceLocation,
+    _ condition: () -> Bool
+) async -> Bool {
+    let clock = ContinuousClock()
+    let deadline = clock.now + timeout
+    while !condition() {
+        if clock.now >= deadline {
+            Issue.record("Timed out after \(timeout) waiting for: \(what)", sourceLocation: sourceLocation)
+            return false
+        }
+        try? await Task.sleep(for: interval)
+    }
+    return true
+}
+
 extension Process {
     /// Default ceiling for a test's child process; generous so a loaded machine never trips it.
     static let testExitTimeout: Duration = .seconds(60)
