@@ -168,12 +168,14 @@ struct GroupStoreTests {
         #expect(makeStore().groups.map(\.name) == ["Office"])
     }
 
-    @Test func coalescedChangesAreWrittenAfterTheDelay() async throws {
+    @Test func coalescedChangesAreWrittenAfterTheDelay() async {
         defer { directory.remove() }
         let store = makeStore(saveDelay: .milliseconds(20))
         store.addGroup(named: "Work")
 
-        try await Task.sleep(for: .milliseconds(300))
+        await eventually("the debounced save to write \(fileURL.lastPathComponent)") {
+            FileManager.default.fileExists(atPath: fileURL.path)
+        }
 
         #expect(makeStore().groups.map(\.name) == ["Work"])
     }

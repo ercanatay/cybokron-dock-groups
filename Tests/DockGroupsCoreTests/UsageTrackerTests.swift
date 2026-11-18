@@ -269,7 +269,9 @@ struct UsageStoreTests {
         store.recordLaunch(of: app("b"))
 
         #expect(!FileManager.default.fileExists(atPath: persistence.launchesFileURL.path))
-        try await Task.sleep(for: .milliseconds(400))
+        await eventually("the debounced save to write \(persistence.launchesFileURL.lastPathComponent)") {
+            FileManager.default.fileExists(atPath: persistence.launchesFileURL.path)
+        }
         store.flushPendingSave()
         #expect(try persistence.loadLaunches().count == 2)
     }
