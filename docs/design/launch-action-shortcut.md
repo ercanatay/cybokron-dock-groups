@@ -304,7 +304,7 @@ nothing unexpected.
 | Q1b | List of shortcuts or free text | **Free text** in the first release (no `Process`, no parsing). Later, optionally, a list from `shortcuts list` in the editor only, falling back to free text when it can't be read (§5 step 5). Never at launch time. |
 | Q2 | The same shortcut on several items | Allowed across groups (each item/digest approved on its own; shared records as today). Within a group impossible under Q1 (a). |
 | Q3 | Detecting a rename | **Not in the first release**: the digest binds the name; a renamed shortcut fails in Shortcuts (manual gate 4). Later option: store the identifier from `shortcuts list --show-identifiers` next to the name *for display only* and warn in the editor when the name now points elsewhere — still not a content guarantee. |
-| Q4 | Check that the shortcut exists before opening | Only if the spike shows Shortcuts silent on unknown names; then decide between a launch-time `shortcuts list` (a `Process` at launch: needs its own review) and a row note. |
+| Q4 | Check that the shortcut exists before opening | **Decided (2026-11-18): no check, accepted.** No `shortcuts list` or any other process at approval or launch time: it would open a new process surface (T9) for a check that can't be trusted anyway (row e: the name can change right after it). A wrong or missing name isn't silent: Shortcuts shows its own modal alert (spike). Accepted cost: that alert blocks Shortcuts until it's dismissed. |
 | Q5 | Duplicate-run guard | Refuse the same (item, digest) within 2 s (`run.recentlyRun`); tune after the spike. |
 | Q6 | Standalone groups (agents) | **Not in the first release:** the agent carries the action (as today) but refuses it (`source.standaloneAgent` for this template). Revisit once the app's version has shipped. |
 | Q7 | Passing input to the shortcut | **Refused permanently** (no `input`, `text`, clipboard, file, item address). Anything a shortcut needs it reads itself, under Shortcuts' permissions. A request for it is a new template with its own review, not a field on this one. |
@@ -346,6 +346,12 @@ and §6 rule 5 before slice 3 is merged.
 - **Recommendation (Q4 updated):** verify the name with `shortcuts list --show-identifiers` **at approval time only** (read-only, once per approval), not on every run, so a typo is caught before the modal dialog can appear at launch. No pre-flight spawn in the run path.
 - **Still unverified:** matching and running a real shortcut; `+` and NFC/NFD name handling; behaviour when another app owns the `shortcuts` scheme; whether a real execution can be silent.
 - **Side-effect note:** during the spike no shortcut was run, created or imported; the shortcut count was 39 before and after.
+- **Q4 decided from these results (2026-11-18): no pre-check, accepted.** Because an unknown name
+  makes Shortcuts show its own alert (visible, not silent), the release gate of §6 rule 5 is met
+  without a check, and the recommendation above (`shortcuts list --show-identifiers` at approval
+  time) is dropped: the app starts no process for this template, at approval or at launch, and
+  doesn't look the name up anywhere (§9 Q4). The accepted cost is the modal alert blocking
+  Shortcuts on a typo or a deleted shortcut.
 
 ## Slice 2: field, confirmation and approval (2026-11-18)
 
@@ -364,3 +370,25 @@ and §6 rule 5 before slice 3 is merged.
 - **Texts:** `item.launch.shortcut.*`, English only (`LocalizationTests.awaitingTranslation`);
   the 26 translations come with slice 4.
 - **Still nothing runs it:** the launcher refuses it (`template.notSupported`) until slice 3.
+
+## Slice 3: execution (2026-11-18)
+
+- **Runner:** `LaunchActions/ShortcutLaunchRunner.swift`, the only file that builds a
+  `shortcuts://` address or hands one to the system. `template.notSupported` is gone.
+- **Address:** `shortcuts://run-shortcut?name=<name>`, every UTF-8 byte outside `A–Z a–z 0–9 - . _ ~`
+  as `%XX` (not `URLComponents`); then read back: exact text, scheme, host, no user, password,
+  port, path or fragment, one query item `name`, equal to the name scalar by scalar. Otherwise
+  `plan.urlRejected`.
+- **Gates, in order, the first failure winning:** source `userAction` only (`source.<source>`,
+  agents included, Q6); action on, a shortcut, name grammar, the Shortcuts item
+  (`plan.actionDisabled`, `plan.actionNeedsReview`, `plan.notShortcutsItem`); approval digest
+  (`approval.missing`, `approval.mismatch`); screen lock, read now, unlocked only
+  (`run.screenLocked`, `run.lockUnknown`; the agent's launcher has no reading); the same item and
+  digest within 2 s (`run.recentlyRun`, Q5, recorded right before the hand-over, a failed one
+  too); the address; Shortcuts.app under `/System/Applications/` with its own bundle ID
+  (`plan.shortcutsNotInstalled`, no fallback). Then `open(_:withApplicationAt:configuration:)` with
+  `activates = false`, `addsToRecentItems = false`, no arguments, an empty environment
+  (`run.openFailed` when it throws).
+- **Told:** the report says "The shortcut wasn't run." (`item.launch.shortcut.notRun`, English only
+  for now); the log has the fixed code only, never the name or the system's error text.
+- **No pre-check** (Q4), no input (Q7). The tests use fakes only; no shortcut was run.
