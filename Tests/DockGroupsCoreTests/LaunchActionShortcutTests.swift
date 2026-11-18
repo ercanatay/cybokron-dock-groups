@@ -338,6 +338,6 @@ struct LaunchActionShortcutTests {
         #expect(!Self.workSetup.hasRunner)
         #expect(Self.workSetup.browser == nil && Self.workSetup.profileName == nil && Self.workSetup.shortcutName == "Work Setup")
         #expect(Self.shortcutsItem().launchActionBrowserBundleIdentifier == nil)
-        #expect(LaunchActionSummary(Self.workSetup, for: Self.shortcutsItem()) == nil)
+        #expect(LaunchActionSummary(Self.workSetup, for: Self.shortcutsItem())?.shortcutName == "Work Setup")
     }
 }
