@@ -3,8 +3,8 @@ import Testing
 @testable import DockGroupsCore
 
 // The "Run a Shortcut" template, slice 1 (docs/design/launch-action-shortcut.md §3.1, §3.2, §5):
-// the model, the name grammar, the strict decoder, the item rule and the approval digest. Nothing
-// runs it yet: the launcher refuses it as a template without a runner. Every workspace is a fake.
+// the model, the name grammar, the strict decoder, the item rule and the approval digest. Running
+// it (slice 3) is covered by `ShortcutLaunchRunnerTests`. Every workspace is a fake.
 
 @Suite("Launch actions: the shortcut template (model)")
 @MainActor
@@ -300,21 +300,21 @@ struct LaunchActionShortcutTests {
         #expect(LaunchActionApprovalDigest.digest(for: item) == nil)
     }
 
-    // MARK: - Nothing runs it yet
+    // MARK: - Only the shortcut runner runs it
 
-    @Test func theLauncherRefusesItAsATemplateWithoutARunner() async throws {
+    @Test func aWorkspaceThatCantOpenAShortcutRefusesIt() async throws {
         let item = Self.shortcutsItem()
         let workspace = LaunchActionFakeWorkspace(installed: ["com.apple.shortcuts"])
-        let launcher = GroupLauncher(workspace: workspace, approvals: LaunchActionFixtures.approving(item))
+        let launcher = GroupLauncher(workspace: workspace, approvals: LaunchActionFixtures.approving(item), screenLock: { false })
         let group = DockGroup(name: "Work", apps: [item])
         let one = await launcher.open(item, inGroup: group, source: .userAction)
+        launcher.shortcutRuns.now = { 100 }
         let all = await launcher.openAll(group, source: .userAction)
         for report in [one, all] {
-            #expect(report.entries == [LaunchReport.Entry(app: item, outcome: .failed(reason: LaunchActionFixtures.notOpened), launchActionRefusal: .templateNotSupported)])
+            #expect(report.entries == [LaunchReport.Entry(app: item, outcome: LaunchActionItemRefusal.shortcutNotRun, launchActionRefusal: .noRunner)])
         }
         #expect(!workspace.openedAnything, "Shortcuts isn't even brought forward")
         #expect(workspace.runningQueries.isEmpty)
-        #expect(LaunchActionItemRefusal.templateNotSupported.code == "template.notSupported")
     }
 
     @Test func anUnattendedSourceIsStillRefusedFirst() async {
@@ -335,7 +335,6 @@ struct LaunchActionShortcutTests {
         )
         #expect(plan == .failure(.itemKindMismatch))
         #expect(Self.workSetup.preferredBrowserBundleIdentifier == nil)
-        #expect(!Self.workSetup.hasRunner)
         #expect(Self.workSetup.browser == nil && Self.workSetup.profileName == nil && Self.workSetup.shortcutName == "Work Setup")
         #expect(Self.shortcutsItem().launchActionBrowserBundleIdentifier == nil)
         #expect(LaunchActionSummary(Self.workSetup, for: Self.shortcutsItem())?.shortcutName == "Work Setup")

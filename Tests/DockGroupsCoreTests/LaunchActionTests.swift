@@ -386,6 +386,10 @@ struct LaunchActionExecutionScanTests {
 
     /// The one file that starts anything with a launch action (slice 3, launcher part).
     static let runnerFile = "DockGroupsCore/LaunchActions/LaunchActionRunner.swift"
+    /// The one file that hands a shortcut's address to Shortcuts (launch-action-shortcut.md, slice 3).
+    static let shortcutRunnerFile = "DockGroupsCore/LaunchActions/ShortcutLaunchRunner.swift"
+    /// The files that open or start anything with a launch action.
+    static let runnerFiles: Set<String> = [runnerFile, shortcutRunnerFile]
 
     /// The group window's files (slice 4, launch-action-ui-slice.md): the editor's draft, its
     /// texts and the store's save in Core, and in the app the details editor, the row and the view
@@ -405,8 +409,7 @@ struct LaunchActionExecutionScanTests {
     /// part); the runner, the launcher that uses it and the delayed launches that compare actions
     /// (slice 3, launcher part); the group window's files (slice 4); the approval record
     /// (launch-action-approvals.md). No CLI executable file.
-    static let allowedFiles: Set<String> = groupWindowFiles.union([
-        runnerFile,
+    static let allowedFiles: Set<String> = groupWindowFiles.union(runnerFiles).union([
         "DockGroupsCore/Launching/GroupLauncher.swift",
         "DockGroupsCore/Launching/DelayedLaunches.swift",
         "DockGroupsCore/Model/LaunchAction.swift",
@@ -448,7 +451,7 @@ struct LaunchActionExecutionScanTests {
     }
 
     @Test func noLineWithALaunchActionRunsOrOpensAnythingOutsideTheRunner() throws {
-        for file in try Self.swiftFiles() where Self.allowedFiles.contains(file.path) && file.path != Self.runnerFile {
+        for file in try Self.swiftFiles() where Self.allowedFiles.contains(file.path) && !Self.runnerFiles.contains(file.path) {
             for line in file.text.split(separator: "\n", omittingEmptySubsequences: false)
             where Self.actionTokens.contains(where: { line.contains($0) }) {
                 for token in Self.executionTokens {
@@ -465,7 +468,8 @@ struct LaunchActionExecutionScanTests {
         let files = try Self.swiftFiles()
         // Files that configure a LaunchServices start: none but the runner passes arguments or an
         // environment (`Process` arguments for fixed tools are another API and don't mention it).
-        for file in files where file.text.contains("OpenConfiguration") && file.path != Self.runnerFile {
+        // The shortcut runner sets them empty (`ShortcutLaunchRunnerTests`).
+        for file in files where file.text.contains("OpenConfiguration") && !Self.runnerFiles.contains(file.path) {
             for token in Self.argumentTokens {
                 #expect(!file.text.contains(token), "\(file.path) mentions \(token)")
             }

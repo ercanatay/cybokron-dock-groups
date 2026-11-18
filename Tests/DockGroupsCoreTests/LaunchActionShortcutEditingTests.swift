@@ -4,8 +4,8 @@ import Testing
 
 // The "Run a Shortcut" template, slice 2 (docs/design/launch-action-shortcut.md §5): the details
 // editor's field on the Shortcuts app's item, the confirmation's summary, the approval it writes,
-// the row's caption, backups and agents. Still nothing runs it: the launcher refuses it as a
-// template without a runner. Every workspace is a fake.
+// the row's caption, backups and agents. Running it (slice 3) is covered by
+// `ShortcutLaunchRunnerTests`. Every workspace is a fake.
 
 @Suite("Launch actions: the shortcut template (editor and approval)")
 @MainActor
@@ -325,18 +325,24 @@ struct LaunchActionShortcutEditingTests {
         #expect(AgentConfiguration(group: plain, preferences: PopupPreferences()).group.apps == plain.apps)
     }
 
-    // MARK: - Still nothing runs it
+    // MARK: - Turned on in the editor, it runs
 
-    @Test func anApprovedOneIsStillRefusedByTheLauncher() async throws {
+    @Test func anApprovedOneRunsAndAnUnapprovedOneDoesnt() async throws {
         let (store, approvals, id) = fixture()
         store.updateItem(Self.shortcuts.id, inGroup: id, details: nil, launch: nil, launchAction: .enable(Self.workSetup))
         let item = try stored(store, id)
         #expect(approvals.check(item) == .approved)
-        let workspace = LaunchActionFakeWorkspace(installed: ["com.apple.shortcuts"])
-        let report = await GroupLauncher(workspace: workspace, approvals: approvals)
+        let workspace = ShortcutFakeWorkspace()
+        let report = await GroupLauncher(workspace: workspace, approvals: approvals, screenLock: { false })
             .open(item, inGroup: DockGroup(name: "Work", apps: [item]), source: .userAction)
-        #expect(report.entries.map(\.launchActionRefusal) == [.templateNotSupported])
-        #expect(!workspace.openedAnything)
+        #expect(report.entries == [LaunchReport.Entry(app: item, outcome: .launched)])
+        #expect(workspace.opens.map(\.url.absoluteString) == ["shortcuts://run-shortcut?name=Work%20Setup"])
+
+        let elsewhere = ShortcutFakeWorkspace()
+        let refused = await GroupLauncher(workspace: elsewhere, approvals: .inMemory(), screenLock: { false })
+            .open(item, inGroup: DockGroup(name: "Work", apps: [item]), source: .userAction)
+        #expect(refused.entries.map(\.launchActionRefusal) == [.approval(.missing)])
+        #expect(!elsewhere.openedAnything)
     }
 
     /// The files this slice changed run nothing: no URL of Shortcuts, no process, no workspace.
