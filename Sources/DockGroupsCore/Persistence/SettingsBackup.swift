@@ -371,7 +371,7 @@ public struct SettingsRestoreSummary: Equatable, Sendable {
         guard disabledLaunchActionCount > 0 else { return nil }
         return Localization.format(
             "core.backup.approval.disabled",
-            "%ld browser profile action(s) arrived turned off and need approval.", disabledLaunchActionCount
+            "%ld browser profile or shortcut action(s) arrived turned off and need approval.", disabledLaunchActionCount
         )
     }
 

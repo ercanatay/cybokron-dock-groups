@@ -1696,7 +1696,7 @@ reuses the browser profile's review texts.
 | `item.launch.private.row` | %@ · private window |
 | `item.launch.private.confirm.title` | Open “%1$@” in a private %2$@ window? |
 
-## The Shortcuts app's item running a shortcut: the details editor's toggle, name field, hint, name rule and review notes, the row's captions, the confirmation and the launch report's line (English only for now)
+## The Shortcuts app's item running a shortcut: the details editor's toggle, name field, hint, name rule and review notes, the row's captions, the confirmation and the launch report's line
 
 See [launch-action-shortcut.md](design/launch-action-shortcut.md) §5. `%@` is the shortcut's name,
 which stays as it is; *Shortcuts* is the app's name. The confirmation's message is shown under the
@@ -1723,13 +1723,13 @@ launch report's one line for every reason the shortcut wasn't run; it never name
 An action that's on needs this Mac's approval (threat model D9). `item.launch.profile.approval.editor`
 is shown in the details editor, with Turn On, and `item.launch.profile.approval.row` under the item's
 row; `core.backup.approval.disabled` is a sentence of the restore and merge confirmation (`%ld` is the
-number of the backup's browser profile actions that came in turned off).
+number of the backup's browser profile or shortcut actions that came in turned off).
 
 | Key | English |
 | --- | --- |
 | `item.launch.profile.approval.editor` | Approval is missing on this Mac, so the item won't open. To enable it, check the profile and turn it on again. |
 | `item.launch.profile.approval.row` | Approval missing on this Mac: the item won't open until you turn it on again. |
-| `core.backup.approval.disabled` | %ld browser profile action(s) arrived turned off and need approval. |
+| `core.backup.approval.disabled` | %ld browser profile or shortcut action(s) arrived turned off and need approval. |
 
 ## Local Suggestions: the menu bar menu's Suggestions section, Settings → Most Used → Suggestions and the review sheet
 
