@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "„%1$@“ in %2$@ mit dem Profil „%3$@“ öffnen?";
 "item.launch.profile.approval.row" = "Zustimmung auf diesem Mac fehlt: Das Element lässt sich erst öffnen, wenn du sie wieder aktivierst.";
 "item.launch.profile.approval.editor" = "Die Zustimmung fehlt auf diesem Mac, daher lässt sich das Element nicht öffnen. Zum Aktivieren prüfe das Profil und schalte es wieder ein.";
-"core.backup.approval.disabled" = "%ld Browserprofil-Aktion(en) wurde(n) deaktiviert eingegangen und benötigt/benötigen Zustimmung.";
+"core.backup.approval.disabled" = "%ld Aktion(en) für Browserprofile oder Kurzbefehle wurde(n) deaktiviert eingegangen und benötigt/benötigen Zustimmung.";
 "item.launch.private.toggle" = "In einem privaten Fenster öffnen";
 "item.launch.private.hint" = "Öffnet die Website in einem neuen privaten Fenster, wenn du sie selbst öffnest und der Browser nicht läuft.";
 "item.launch.private.row" = "%@ · privates Fenster";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Diesen Vorschlag nicht mehr anzeigen";
 "capture.suggestion.notNow.help" = "Diesen Vorschlag eine Woche lang nicht anzeigen. Abbrechen bewirkt dasselbe.";
 "capture.suggestion.unavailable" = "Dieser Vorschlag ist nicht mehr verfügbar.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Kurzbefehl ausführen";
+"item.launch.shortcut.name" = "Name des Kurzbefehls";
+"item.launch.shortcut.hint" = "Führt diesen Kurzbefehl aus, statt nur die App Kurzbefehle zu öffnen, wenn du das Element selbst öffnest. Gib den Namen so ein, wie ihn die App Kurzbefehle anzeigt. Die App übergibt keine Eingabe.";
+"item.launch.shortcut.invalid" = "Gib den Namen so ein, wie ihn die App Kurzbefehle anzeigt: bis zu 128 Zeichen, keine Zeilenumbrüche oder unsichtbaren Zeichen, kein Leerzeichen am Anfang oder Ende, kein „-“ am Anfang und kein / oder \\.";
+"item.launch.shortcut.review" = "Dieser Kurzbefehl stammt aus einer Sicherung oder kann nicht so verwendet werden, wie er gespeichert wurde. Das Element wird erst geöffnet, wenn du ihn prüfst und einschaltest.";
+"item.launch.shortcut.approval.editor" = "Auf diesem Mac fehlt die Zustimmung, daher lässt sich das Element nicht öffnen. Zum Aktivieren prüfe den Namen des Kurzbefehls und schalte ihn wieder ein.";
+"item.launch.shortcut.row" = "Kurzbefehl ausführen: %@";
+"item.launch.shortcut.row.review" = "Kurzbefehl muss geprüft werden: Das Element wird erst geöffnet, wenn du ihn einschaltest.";
+"item.launch.shortcut.confirm.title" = "Kurzbefehl „%@“ ausführen, wenn du dieses Element öffnest?";
+"item.launch.shortcut.confirm.message" = "Er tut alles, was dieser Kurzbefehl tut, mit den Berechtigungen, die du der App Kurzbefehle gegeben hast. Die App übergibt ihm nichts: keine Eingabe, keinen Text, keine Dateien. Wenn du ihn umbenennst oder ein anderer Kurzbefehl diesen Namen bekommt, wird dieser ausgeführt.";
+"item.launch.shortcut.notRun" = "Der Kurzbefehl wurde nicht ausgeführt.";

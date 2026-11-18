@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Otevřít „%1$@“ v prohlížeči %2$@ s profilem „%3$@“?";
 "item.launch.profile.approval.row" = "Schválení na tomto Macu chybí: položka se neotevře, dokud ho znovu nezapnete.";
 "item.launch.profile.approval.editor" = "Schválení na tomto Macu chybí, takže se položka neotevře. Pro jeho zapnutí zkontrolujte profil a znovu ho zapněte.";
-"core.backup.approval.disabled" = "%ld akce(í) profilu prohlížeče dorazily vypnuté a vyžadují schválení.";
+"core.backup.approval.disabled" = "%ld akce(í) profilu prohlížeče nebo zástupce dorazily vypnuté a vyžadují schválení.";
 "item.launch.private.toggle" = "Otevřít v soukromém okně";
 "item.launch.private.hint" = "Otevře webovou stránku v novém soukromém okně, když ji otevřete sami a prohlížeč neběží.";
 "item.launch.private.row" = "%@ · soukromé okno";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Znovu nenavrhovat";
 "capture.suggestion.notNow.help" = "Tento návrh nezobrazovat na týden. Zrušit dělá totéž.";
 "capture.suggestion.unavailable" = "Tento návrh už není k dispozici.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Spustit zástupce";
+"item.launch.shortcut.name" = "Název zástupce";
+"item.launch.shortcut.hint" = "Když položku otevřete sami, spustí se tento zástupce místo pouhého otevření aplikace Zástupci. Zadejte jeho název tak, jak ho zobrazuje Zástupci. Aplikace mu nepředává žádný vstup.";
+"item.launch.shortcut.invalid" = "Zadejte název tak, jak ho zobrazuje Zástupci: až 128 znaků, bez zalomení řádků a neviditelných znaků, bez mezery na začátku nebo na konci, bez „-“ na začátku a bez / nebo \\.";
+"item.launch.shortcut.review" = "Tento zástupce přišel se zálohou nebo ho nelze použít v podobě, v jaké byl uložen, takže se položka neotevře, dokud ho nezkontrolujete a nezapnete.";
+"item.launch.shortcut.approval.editor" = "Na tomto Macu chybí schválení, takže se položka neotevře. Pro jeho obnovení zkontrolujte název zástupce a znovu ho zapněte.";
+"item.launch.shortcut.row" = "Spustit zástupce: %@";
+"item.launch.shortcut.row.review" = "Zástupce vyžaduje kontrolu: položka se neotevře, dokud ho nezapnete.";
+"item.launch.shortcut.confirm.title" = "Spustit zástupce „%@“, když otevřete tuto položku?";
+"item.launch.shortcut.confirm.message" = "Dělá to, co dělá tento zástupce, s oprávněními, která jste udělili aplikaci Zástupci. Aplikace mu nepředává nic: žádný vstup, text ani soubory. Pokud ho přejmenujete nebo jiný zástupce dostane tento název, spustí se ten.";
+"item.launch.shortcut.notRun" = "Zástupce nebyl spuštěn.";
