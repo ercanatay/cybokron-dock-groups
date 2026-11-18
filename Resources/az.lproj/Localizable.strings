@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "“%1$@” elementi %2$@ brauzerində “%3$@” profili ilə açılsın?";
 "item.launch.profile.approval.row" = "Mac-də təsdiq yoxdur: element bunu yenidən aktivləşdirənə qədər açılmayacaq.";
 "item.launch.profile.approval.editor" = "Bu Mac-də təsdiq yoxdur, ona görə element açılmayacaq. Aktivləşdirmək üçün profili yoxlayın və yenidən aktiv edin.";
-"core.backup.approval.disabled" = "%ld brauzer profili əməliyyatı deaktiv halda gəlib və təsdiq tələb edir.";
+"core.backup.approval.disabled" = "%ld brauzer profili və ya qısayol əməliyyatı deaktiv halda gəlib və təsdiq tələb edir.";
 "item.launch.private.toggle" = "Məxfi pəncərədə aç";
 "item.launch.private.hint" = "Brauzer işləmirsə, saytı özünüz açdığınız zaman onu yeni məxfi pəncərədə açır.";
 "item.launch.private.row" = "%@ · məxfi pəncərə";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Bunu bir daha təklif etmə";
 "capture.suggestion.notNow.help" = "Bu təklifi bir həftə göstərmə. Ləğv et də eyni şeyi edir.";
 "capture.suggestion.unavailable" = "Bu təklif artıq mövcud deyil.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Qısayol işə salınsın";
+"item.launch.shortcut.name" = "Qısayolun adı";
+"item.launch.shortcut.hint" = "Elementi özünüz açanda, sadəcə Qısayollar tətbiqini açmaq əvəzinə bu qısayolu işə salır. Adını Qısayollarda göründüyü kimi yazın. Tətbiq ona heç bir giriş verməz.";
+"item.launch.shortcut.invalid" = "Adı Qısayollarda göründüyü kimi yazın: 128 simvola qədər, sətir sonu və ya görünməz simvol olmadan, əvvəl və ya sonda boşluq olmadan, əvvəldə “-” olmadan, / və ya \\ olmadan.";
+"item.launch.shortcut.review" = "Bu qısayol ehtiyat nüsxə ilə gəlib və ya saxlanıldığı kimi istifadə edilə bilmir, ona görə elementi yoxlayıb yandırana qədər o açılmayacaq.";
+"item.launch.shortcut.approval.editor" = "Bu Mac-də təsdiq yoxdur, ona görə element açılmayacaq. Aktivləşdirmək üçün qısayolun adını yoxlayın və yenidən aktiv edin.";
+"item.launch.shortcut.row" = "Qısayol işə salınsın: %@";
+"item.launch.shortcut.row.review" = "Qısayola baxış lazımdır: elementi yandırana qədər o açılmayacaq.";
+"item.launch.shortcut.confirm.title" = "Bu elementi açanda “%@” qısayolu işə salınsın?";
+"item.launch.shortcut.confirm.message" = "Qısayol nə edirsə onu edəcək, Qısayollara verdiyiniz icazələrlə. Tətbiq ona heç nə göndərmir: giriş, mətn və ya fayl yoxdur. Adını dəyişsəniz və ya bu adla başqa qısayol olsa, o işə düşəcək.";
+"item.launch.shortcut.notRun" = "Qısayol işə salınmadı.";

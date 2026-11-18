@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Otworzyć „%1$@” w %2$@ z profilem „%3$@”?";
 "item.launch.profile.approval.row" = "Brak zatwierdzenia na tym Macu: element nie zostanie otwarty, dopóki go ponownie nie włączysz.";
 "item.launch.profile.approval.editor" = "Zatwierdzenie jest niedostępne na tym Macu, więc element nie zostanie otwarty. Aby je włączyć, sprawdź profil i włącz je ponownie.";
-"core.backup.approval.disabled" = "%ld działań profilu przeglądarki zostało dodanych wyłączonych i wymaga zatwierdzenia.";
+"core.backup.approval.disabled" = "Dodano %ld działań profilu przeglądarki lub skrótów wyłączonych; wymagają zatwierdzenia.";
 "item.launch.private.toggle" = "Otwórz w oknie prywatnym";
 "item.launch.private.hint" = "Otwiera stronę w nowym oknie prywatnym, gdy sam ją otworzysz i przeglądarka nie jest uruchomiona.";
 "item.launch.private.row" = "%@ · okno prywatne";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Nie sugeruj tego ponownie";
 "capture.suggestion.notNow.help" = "Nie pokazuj tej sugestii przez tydzień. Anuluj działa tak samo.";
 "capture.suggestion.unavailable" = "Ta sugestia nie jest już dostępna.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Uruchom skrót";
+"item.launch.shortcut.name" = "Nazwa skrótu";
+"item.launch.shortcut.hint" = "Uruchamia ten skrót zamiast samego otwierania aplikacji Skróty, gdy sam otworzysz element. Wpisz nazwę tak, jak pokazuje ją aplikacja Skróty. Aplikacja nie przekazuje skrótowi żadnych danych wejściowych.";
+"item.launch.shortcut.invalid" = "Wpisz nazwę tak, jak pokazuje ją aplikacja Skróty: do 128 znaków, bez znaków nowej linii i niewidocznych znaków, bez spacji na początku i na końcu, bez „-” na początku oraz bez / i \\.";
+"item.launch.shortcut.review" = "Ten skrót przyszedł z kopią zapasową albo nie może być użyty w zapisanej postaci, dlatego element nie otworzy się, dopóki go nie sprawdzisz i nie włączysz.";
+"item.launch.shortcut.approval.editor" = "Na tym Macu brakuje zatwierdzenia, więc element nie otworzy się. Aby je włączyć, sprawdź nazwę skrótu i włącz go ponownie.";
+"item.launch.shortcut.row" = "Uruchom skrót: %@";
+"item.launch.shortcut.row.review" = "Skrót wymaga sprawdzenia: element nie otworzy się, dopóki go nie włączysz.";
+"item.launch.shortcut.confirm.title" = "Uruchomić skrót „%@” po otwarciu tego elementu?";
+"item.launch.shortcut.confirm.message" = "Skrót wykona wszystko, co robi, z uprawnieniami, które nadano aplikacji Skróty. Aplikacja nie przekaże mu nic: ani danych wejściowych, ani tekstu, ani plików. Jeśli zmienisz jego nazwę albo inny skrót dostanie taką nazwę, uruchomi się ten drugi.";
+"item.launch.shortcut.notRun" = "Skrót nie został uruchomiony.";

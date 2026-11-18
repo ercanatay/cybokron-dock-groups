@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Buka “%1$@” di %2$@ dengan profil “%3$@”?";
 "item.launch.profile.approval.row" = "Persetujuan tidak ada di Mac ini: item tidak akan terbuka sampai Anda mengaktifkannya kembali.";
 "item.launch.profile.approval.editor" = "Persetujuan tidak ada di Mac ini, sehingga item tidak akan terbuka. Untuk mengaktifkannya, periksa profil lalu aktifkan kembali.";
-"core.backup.approval.disabled" = "%ld tindakan profil browser tiba dalam keadaan nonaktif dan memerlukan persetujuan.";
+"core.backup.approval.disabled" = "%ld tindakan profil browser atau pintasan tiba dalam keadaan nonaktif dan memerlukan persetujuan.";
 "item.launch.private.toggle" = "Buka di jendela privat";
 "item.launch.private.hint" = "Membuka situs web di jendela privat baru saat Anda membukanya sendiri dan browser tidak sedang berjalan.";
 "item.launch.private.row" = "%@ · jendela privat";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Jangan Sarankan Lagi";
 "capture.suggestion.notNow.help" = "Jangan tampilkan saran ini selama seminggu. Batal juga melakukan hal yang sama.";
 "capture.suggestion.unavailable" = "Saran ini tidak lagi tersedia.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Jalankan Pintasan";
+"item.launch.shortcut.name" = "Nama Pintasan";
+"item.launch.shortcut.hint" = "Menjalankan pintasan ini, bukan hanya membuka Pintasan, saat Anda membuka item sendiri. Ketik namanya seperti yang ditampilkan Pintasan. Aplikasi tidak memberikan masukan apa pun kepadanya.";
+"item.launch.shortcut.invalid" = "Ketik nama seperti yang ditampilkan Pintasan: hingga 128 karakter, tanpa pemisah baris atau karakter tak terlihat, tanpa spasi di awal atau akhir, tanpa “-” di awal, dan tanpa / atau \\.";
+"item.launch.shortcut.review" = "Pintasan ini datang bersama cadangan atau tidak dapat digunakan seperti saat disimpan, sehingga item tidak akan terbuka sampai Anda memeriksanya dan mengaktifkannya.";
+"item.launch.shortcut.approval.editor" = "Persetujuan tidak ada di Mac ini, sehingga item tidak akan terbuka. Untuk mengaktifkannya, periksa nama pintasan lalu aktifkan kembali.";
+"item.launch.shortcut.row" = "Jalankan Pintasan: %@";
+"item.launch.shortcut.row.review" = "Pintasan perlu ditinjau: item tidak akan terbuka sampai Anda mengaktifkannya.";
+"item.launch.shortcut.confirm.title" = "Jalankan pintasan “%@” saat Anda membuka item ini?";
+"item.launch.shortcut.confirm.message" = "Pintasan ini melakukan apa pun yang biasa dilakukannya, dengan izin yang telah Anda berikan kepada Pintasan. Aplikasi tidak memberikan apa pun kepadanya: tanpa masukan, teks, atau file. Jika Anda mengganti namanya, atau pintasan lain mendapat nama ini, pintasan tersebut yang akan berjalan.";
+"item.launch.shortcut.notRun" = "Pintasan tidak dijalankan.";

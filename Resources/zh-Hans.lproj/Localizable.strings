@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "要在 %2$@ 中使用配置文件“%3$@”打开“%1$@”吗？";
 "item.launch.profile.approval.row" = "在这台 Mac 上缺少批准，项目在重新开启之前无法打开。";
 "item.launch.profile.approval.editor" = "这台 Mac 上缺少批准，因此该项目无法打开。要启用它，请检查配置文件并重新开启。";
-"core.backup.approval.disabled" = "%ld 个浏览器配置文件操作已被关闭，需要批准。";
+"core.backup.approval.disabled" = "%ld 个浏览器配置文件或快捷指令操作在导入时已关闭，需要批准。";
 "item.launch.private.toggle" = "在无痕窗口中打开";
 "item.launch.private.hint" = "当你自行打开该网站且浏览器未运行时，在新的无痕窗口中打开该网站。";
 "item.launch.private.row" = "%@ · 无痕窗口";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "不再建议此项";
 "capture.suggestion.notNow.help" = "一周内不再显示此建议。“取消”的效果相同。";
 "capture.suggestion.unavailable" = "此建议已不可用。";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "运行快捷指令";
+"item.launch.shortcut.name" = "快捷指令名称";
+"item.launch.shortcut.hint" = "当你自行打开该项目时，将运行此快捷指令，而不只是打开快捷指令 App。请按快捷指令中显示的名称输入。应用不会为它提供任何输入。";
+"item.launch.shortcut.invalid" = "请按快捷指令中显示的名称输入：最多 128 个字符，不能包含换行符或不可见字符，开头和结尾不能有空格，开头不能是“-”，且不能包含 / 或 \\。";
+"item.launch.shortcut.review" = "此快捷指令随备份导入，或无法按保存时的原样使用，因此在你检查并开启之前，该项目不会打开。";
+"item.launch.shortcut.approval.editor" = "这台 Mac 上缺少批准，因此该项目无法打开。要启用它，请检查快捷指令的名称并重新开启。";
+"item.launch.shortcut.row" = "运行快捷指令：%@";
+"item.launch.shortcut.row.review" = "快捷指令需要检查：在你开启之前，该项目不会打开。";
+"item.launch.shortcut.confirm.title" = "在你打开此项目时运行快捷指令“%@”吗？";
+"item.launch.shortcut.confirm.message" = "它将执行该快捷指令的全部操作，并使用你授予快捷指令的权限。应用不会向它传递任何内容：没有输入、文本或文件。如果你重命名它，或另一个快捷指令使用了这个名称，那么将运行那个快捷指令。";
+"item.launch.shortcut.notRun" = "未运行该快捷指令。";

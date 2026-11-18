@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Megnyitja a(z) „%1$@” elemet a(z) %2$@ böngészőben a(z) „%3$@” profillal?";
 "item.launch.profile.approval.row" = "Jóváhagyás hiányzik ezen a Mac-en: az elem nem nyílik meg, amíg újra be nem kapcsolja.";
 "item.launch.profile.approval.editor" = "A jóváhagyás hiányzik ezen a Mac-en, ezért az elem nem nyílik meg. A engedélyezéshez ellenőrizze a profilt, majd kapcsolja be újra.";
-"core.backup.approval.disabled" = "%ld böngészőprofil-művelet kikapcsolva érkezett, és jóváhagyást igényel.";
+"core.backup.approval.disabled" = "%ld böngészőprofil- vagy parancsművelet kikapcsolva érkezett, és jóváhagyást igényel.";
 "item.launch.private.toggle" = "Megnyitás privát ablakban";
 "item.launch.private.hint" = "Új privát ablakban nyitja meg a webhelyet, ha Ön maga nyitja meg, és a böngésző nem fut.";
 "item.launch.private.row" = "%@ · privát ablak";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Ne javasolja újra";
 "capture.suggestion.notNow.help" = "Ne mutassa ezt a javaslatot egy hétig. A Mégse ugyanezt teszi.";
 "capture.suggestion.unavailable" = "Ez a javaslat már nem érhető el.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Parancs futtatása";
+"item.launch.shortcut.name" = "Parancs neve";
+"item.launch.shortcut.hint" = "Ha Ön maga nyitja meg az elemet, ez a parancs fut le a Parancsok megnyitása helyett. Írja be a nevét úgy, ahogy a Parancsok megjeleníti. Az alkalmazás nem ad át neki bemenetet.";
+"item.launch.shortcut.invalid" = "Írja be a nevet úgy, ahogy a Parancsok megjeleníti: legfeljebb 128 karakter, nincs sortörés vagy láthatatlan karakter, nincs szóköz az elején vagy a végén, nem kezdődhet „-” jellel, és nem tartalmazhat / vagy \\ karaktert.";
+"item.launch.shortcut.review" = "Ez a parancs mentett biztonsági mentésből érkezett, vagy a mentett állapotában nem használható, ezért az elem nem nyílik meg, amíg át nem ellenőrzi és be nem kapcsolja.";
+"item.launch.shortcut.approval.editor" = "Ezen a Mac-en hiányzik a jóváhagyás, ezért az elem nem nyílik meg. Az engedélyezéshez ellenőrizze a parancs nevét, majd kapcsolja be újra.";
+"item.launch.shortcut.row" = "Parancs futtatása: %@";
+"item.launch.shortcut.row.review" = "A parancsot át kell nézni: az elem nem nyílik meg, amíg be nem kapcsolja.";
+"item.launch.shortcut.confirm.title" = "Futtatja a(z) „%@” parancsot, amikor megnyitja ezt az elemet?";
+"item.launch.shortcut.confirm.message" = "Mindent megtesz, amit ez a parancs végez, a Parancsoknak adott engedélyekkel. Az alkalmazás semmit nem ad át neki: sem bemenetet, sem szöveget, sem fájlokat. Ha átnevezi, vagy más parancs kapja ezt a nevet, az fut le.";
+"item.launch.shortcut.notRun" = "A parancs nem futott le.";

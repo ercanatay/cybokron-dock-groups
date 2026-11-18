@@ -1,6 +1,6 @@
 # Launch actions: the "Run a Shortcut" template (design and threat model)
 
-- **Status:** design and threat model only. No code, no localization key, no release decision.
+- **Status:** implemented in slices 1–4.
   Revisits D10 / option (D) of the [launch actions threat model](launch-actions-threat-model.md)
   ("named-Shortcut action: out of scope until B is decided; if ever, same gates as B"). B is now
   decided: [not planned](launch-action-free-arguments-review.md).

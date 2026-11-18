@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Run a Shortcut.** The Shortcuts app's item can run one of your shortcuts when you open it yourself (Edit Details… → Run a Shortcut). The app asks you to confirm the name, gives the shortcut no input, and asks again if the name changes. The new texts are translated into all 25 languages, and the restore summary now counts shortcut actions that arrived turned off along with browser profile actions.
+
 ## [0.20.0] - 2026-11-17
 
 ### Added

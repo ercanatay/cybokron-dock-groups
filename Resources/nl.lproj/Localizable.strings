@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "“%1$@” openen in %2$@ met het profiel “%3$@”?";
 "item.launch.profile.approval.row" = "Goedkeuring ontbreekt op deze Mac: het item wordt pas geopend als je het weer inschakelt.";
 "item.launch.profile.approval.editor" = "Goedkeuring ontbreekt op deze Mac, dus het item wordt niet geopend. Om het in te schakelen, controleer het profiel en schakel het opnieuw in.";
-"core.backup.approval.disabled" = "%ld browserprofielactie(s) zijn uitgeschakeld aangekomen en hebben goedkeuring nodig.";
+"core.backup.approval.disabled" = "%ld browserprofiel- of snelkoppelingactie(s) zijn uitgeschakeld aangekomen en hebben goedkeuring nodig.";
 "item.launch.private.toggle" = "Openen in een privévenster";
 "item.launch.private.hint" = "Opent de website in een nieuw privévenster wanneer je hem zelf opent en de browser niet actief is.";
 "item.launch.private.row" = "%@ · privévenster";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Dit niet meer voorstellen";
 "capture.suggestion.notNow.help" = "Toon deze suggestie een week lang niet. Annuleren doet hetzelfde.";
 "capture.suggestion.unavailable" = "Deze suggestie is niet meer beschikbaar.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Een snelkoppeling uitvoeren";
+"item.launch.shortcut.name" = "Naam van snelkoppeling";
+"item.launch.shortcut.hint" = "Voert deze snelkoppeling uit in plaats van alleen Snelkoppelingen te openen, wanneer je het item zelf opent. Typ de naam zoals Snelkoppelingen die toont. De app geeft er geen invoer aan mee.";
+"item.launch.shortcut.invalid" = "Typ de naam zoals Snelkoppelingen die toont: maximaal 128 tekens, geen regeleindes of onzichtbare tekens, geen spatie aan het begin of einde, geen “-” aan het begin, en geen / of \\\\.";
+"item.launch.shortcut.review" = "Deze snelkoppeling is met een back-up binnengekomen of kan niet worden gebruikt zoals hij is opgeslagen, dus het item wordt pas geopend nadat je hem hebt gecontroleerd en ingeschakeld.";
+"item.launch.shortcut.approval.editor" = "Goedkeuring ontbreekt op deze Mac, dus het item wordt niet geopend. Om het in te schakelen, controleer je de naam van de snelkoppeling en schakel je hem opnieuw in.";
+"item.launch.shortcut.row" = "Snelkoppeling uitvoeren: %@";
+"item.launch.shortcut.row.review" = "Snelkoppeling moet worden gecontroleerd: het item wordt pas geopend nadat je hem inschakelt.";
+"item.launch.shortcut.confirm.title" = "Snelkoppeling “%@” uitvoeren wanneer je dit item opent?";
+"item.launch.shortcut.confirm.message" = "Hij doet wat deze snelkoppeling doet, met de rechten die je aan Snelkoppelingen hebt gegeven. De app geeft er niets aan mee: geen invoer, geen tekst, geen bestanden. Als je hem hernoemt, of een andere snelkoppeling krijgt deze naam, dan wordt die uitgevoerd.";
+"item.launch.shortcut.notRun" = "De snelkoppeling is niet uitgevoerd.";

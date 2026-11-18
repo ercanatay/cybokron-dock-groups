@@ -1208,7 +1208,7 @@
 "item.launch.profile.confirm.title" = "“%1$@” öğesi “%3$@” profiliyle %2$@ içinde açılsın mı?";
 "item.launch.profile.approval.row" = "Bu Mac'te onay eksik: öğeyi tekrar açana kadar öğe açılmaz.";
 "item.launch.profile.approval.editor" = "Bu Mac'te onay eksik, bu yüzden öğe açılmaz. Etkinleştirmek için profili kontrol edin ve onayı yeniden açın.";
-"core.backup.approval.disabled" = "%ld tarayıcı profili işlemi kapalı olarak geldi ve onay gerektiriyor.";
+"core.backup.approval.disabled" = "%ld tarayıcı profili veya kısayol işlemi kapalı olarak geldi ve onay gerektiriyor.";
 "item.launch.private.toggle" = "Özel pencerede aç";
 "item.launch.private.hint" = "Tarayıcı çalışmıyorsa ve web sitesini siz açtığınızda, siteyi yeni bir özel pencerede açar.";
 "item.launch.private.row" = "%@ · özel pencere";
@@ -1256,3 +1256,16 @@
 "capture.suggestion.never" = "Bunu Bir Daha Önerme";
 "capture.suggestion.notNow.help" = "Bu öneriyi bir hafta boyunca gösterme. İptal de aynısını yapar.";
 "capture.suggestion.unavailable" = "Bu öneri artık kullanılamıyor.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Bir Kısayol Çalıştır";
+"item.launch.shortcut.name" = "Kısayol Adı";
+"item.launch.shortcut.hint" = "Öğeyi kendiniz açtığınızda, yalnızca Kısayollar'ı açmak yerine bu kısayolu çalıştırır. Adını Kısayollar'da göründüğü gibi yazın. Uygulama kısayola hiçbir girdi vermez.";
+"item.launch.shortcut.invalid" = "Adı Kısayollar'da göründüğü gibi yazın: en fazla 128 karakter; satır sonu veya görünmez karakter, başta ya da sonda boşluk, başta “-”, “/” ve “\\” olmamalı.";
+"item.launch.shortcut.review" = "Bu kısayol bir yedekle geldi veya kaydedildiği haliyle kullanılamıyor. Kontrol edip etkinleştirene kadar öğe açılmayacak.";
+"item.launch.shortcut.approval.editor" = "Bu Mac'te onay eksik, bu yüzden öğe açılmaz. Etkinleştirmek için kısayolun adını kontrol edin ve onayı yeniden açın.";
+"item.launch.shortcut.row" = "Bir Kısayol Çalıştır: %@";
+"item.launch.shortcut.row.review" = "Kısayolun incelenmesi gerekiyor: etkinleştirene kadar öğe açılmayacak.";
+"item.launch.shortcut.confirm.title" = "Bu öğeyi açtığınızda “%@” kısayolu çalıştırılsın mı?";
+"item.launch.shortcut.confirm.message" = "Kısayol, Kısayollar'a verdiğiniz izinlerle ne yapıyorsa onu yapar. Uygulama kısayola hiçbir şey iletmez: girdi, metin veya dosya yok. Kısayolu yeniden adlandırırsanız ya da bu adı başka bir kısayol alırsa, o kısayol çalışır.";
+"item.launch.shortcut.notRun" = "Kısayol çalıştırılmadı.";

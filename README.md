@@ -198,6 +198,12 @@ group from the menu bar to see its apps in a popup over the Dock, or open them a
   copied from elsewhere doesn't turn one on either. It opens only from your own click or Open
   All/Start in the app or a standalone group's app, and only while that browser isn't running —
   otherwise the item isn't opened at all; its row says so.
+  The Shortcuts app's item can run one of your shortcuts instead of just opening Shortcuts (Edit
+  Details… → Run a Shortcut): type the shortcut's name as Shortcuts shows it, then confirm in a
+  second question that names it. The app gives the shortcut no input, text or files. If you
+  change the name the approval is gone and you confirm again; one that came in with a backup stays
+  off until you turn it on. It runs only from your own click in the app or a standalone group's
+  app, and the shortcut is run by Shortcuts only; its row says when it needs review.
 - **Free layout** (Settings → Popup): apps stay in the popup cell you drag them to and the others
   don't move, like icons on the desktop; dropping an app on another swaps the two. The popup keeps
   its size: the empty cells at the end of the last row become places to put apps. The cells are

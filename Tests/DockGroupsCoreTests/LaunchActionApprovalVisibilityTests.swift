@@ -79,7 +79,7 @@ struct LaunchActionApprovalVisibilityTests {
         let read = try SettingsBackup.decode(from: backup.encoded())
         let summary = SettingsRestoreSummary(backup: read, currentGroups: [])
         #expect(summary.disabledLaunchActionCount == 2)
-        #expect(summary.profileApprovalNote?.contains("2 browser profile action(s) arrived turned off and need approval") == true)
+        #expect(summary.profileApprovalNote?.contains("2 browser profile or shortcut action(s) arrived turned off and need approval") == true)
 
         let plain = SettingsBackup(appVersion: "0.18.1", groups: [DockGroup(name: "Work", apps: [F.website(nil)])], preferences: PopupPreferences())
         let none = SettingsRestoreSummary(backup: try SettingsBackup.decode(from: plain.encoded()), currentGroups: [])
