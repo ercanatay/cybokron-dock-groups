@@ -60,7 +60,7 @@ public enum LaunchActionPlanProbe {
     static func report(browser: String, profileName: String, address: String) -> Report {
         guard let family = BrowserFamily(rawValue: browser) else { return Report(refusal: .unsupportedBrowser) }
         guard let url = URL(string: address) else { return Report(family: family, refusal: .urlRejected) }
-        let setting = LaunchActionSetting(.browserProfile(browser: family, profileName: profileName), for: .website)
+        let setting = LaunchActionSetting(.browserProfile(browser: family, profileName: profileName), for: .website, identity: url.absoluteString)
         let result = LaunchActionArgumentPlan.make(
             setting: setting,
             itemKind: .website,
@@ -79,7 +79,7 @@ public enum LaunchActionPlanProbe {
     static func privateReport(browser: String, address: String) -> Report {
         guard let family = BrowserFamily(rawValue: browser) else { return Report(refusal: .unsupportedBrowser) }
         guard let url = URL(string: address) else { return Report(family: family, refusal: .urlRejected) }
-        let setting = LaunchActionSetting(.browserPrivate(browser: family), for: .website)
+        let setting = LaunchActionSetting(.browserPrivate(browser: family), for: .website, identity: url.absoluteString)
         let result = LaunchActionArgumentPlan.make(
             setting: setting,
             itemKind: .website,

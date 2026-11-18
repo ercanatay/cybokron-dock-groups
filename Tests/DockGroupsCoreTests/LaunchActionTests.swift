@@ -238,7 +238,7 @@ struct LaunchActionTests {
     }
 
     @Test func unknownKeysMakeTheActionInvalid() throws {
-        for key in ["profileDirectory", "userDataDir", "url", "enabled", "disabled", "Template", ""] {
+        for key in ["profileDirectory", "userDataDir", "enabled", "disabled", "Template", ""] {
             var action = Self.action()
             action[key] = "x"
             try Self.expectRefused(action, .unknownKey)

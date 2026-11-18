@@ -86,6 +86,9 @@ struct LaunchActionRunner {
 enum LaunchActionItemRefusal: Hashable, Sendable {
     /// The request didn't come from the user in the app (`LaunchSource.isUserPresent`).
     case unattendedSource(LaunchSource)
+    /// The action's template has no runner in this version (a shortcut, until its runner ships:
+    /// docs/design/launch-action-shortcut.md); nothing is opened, the app isn't brought forward.
+    case templateNotSupported
     /// The workspace can't start an app with a launch action.
     case noRunner
     /// No plan could be made (`LaunchActionArgumentPlan`).
@@ -100,6 +103,7 @@ enum LaunchActionItemRefusal: Hashable, Sendable {
     var code: String {
         switch self {
         case .unattendedSource(let source): return "source.\(source.rawValue)"
+        case .templateNotSupported: return "template.notSupported"
         case .noRunner: return "noRunner"
         case .plan(let refusal): return "plan.\(refusal.rawValue)"
         case .approval(let refusal): return "approval.\(refusal.rawValue)"
@@ -113,17 +117,29 @@ enum LaunchActionItemRefusal: Hashable, Sendable {
         switch self {
         case .plan(.browserNotInstalled), .run(.browserNotInstalled):
             return .notFound
-        case .unattendedSource, .noRunner, .plan, .approval, .run:
+        case .unattendedSource, .templateNotSupported, .noRunner, .plan, .approval, .run:
             return .failed(reason: Localization.string("core.launch.notOpened", "The app wasn't opened."))
         }
     }
 }
 
 extension LaunchAction {
-    /// The browser the action's template starts when the item has no browser chosen for it.
+    /// The browser the action's template starts when the item has no browser chosen for it; `nil`
+    /// for a shortcut, which starts none.
     var preferredBrowserBundleIdentifier: String? {
         switch self {
         case .browserProfile(let browser, _), .browserPrivate(let browser): return browser.bundleIdentifiers.first
+        case .shortcut: return nil
+        }
+    }
+
+    /// Whether this version can run the action's template. A shortcut can't yet: the launcher
+    /// refuses it (`LaunchActionItemRefusal.templateNotSupported`) rather than opening the item
+    /// plainly or passing it on.
+    var hasRunner: Bool {
+        switch self {
+        case .browserProfile, .browserPrivate: return true
+        case .shortcut: return false
         }
     }
 }

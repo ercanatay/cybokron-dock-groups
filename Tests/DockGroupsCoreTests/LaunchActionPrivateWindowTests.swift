@@ -91,7 +91,7 @@ struct LaunchActionPrivateWindowCodingTests {
         try T.expectRefused(Self.action("safari"), .unknownBrowser)
         try T.expectRefused(Self.action("Chrome"), .unknownBrowser)
         try T.expectRefused(Self.action(1), .wrongValueType)
-        try T.expectRefused(Self.action().merging(["url": "https://evil.example"]) { $1 }, .unknownKey)
+        try T.expectRefused(Self.action().merging(["url": "https://evil.example"]) { $1 }, .forbiddenKey)
         try T.expectRefused(Self.action().merging(["arguments": ["--remote-debugging-port=9222"]]) { $1 }, .forbiddenKey)
         try T.expectRefused(["template": "BrowserPrivate", "browser": "chrome"], .unknownTemplate)
         try T.expectRefused(["template": "browserIncognito", "browser": "chrome"], .unknownTemplate)

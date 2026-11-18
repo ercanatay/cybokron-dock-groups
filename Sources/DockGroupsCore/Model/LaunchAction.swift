@@ -27,6 +27,14 @@ public enum LaunchAction: Hashable, Sendable {
     /// InPrivate, Firefox: private browsing): docs/design/launch-action-private-window.md. It has
     /// no parameter but the browser: no profile, no address of its own.
     case browserPrivate(browser: BrowserFamily)
+    /// Runs the user's own shortcut named `name` when the Shortcuts app's item opens:
+    /// docs/design/launch-action-shortcut.md. The name is the only parameter: no input, no
+    /// callback, no identifier. Nothing runs it yet: the launcher refuses it
+    /// (`LaunchActionItemRefusal.templateNotSupported`) until its runner ships.
+    case shortcut(name: String)
+
+    /// The bundle identifier of the only item a shortcut action can be set on: the Shortcuts app.
+    static let shortcutsBundleIdentifier = "com.apple.shortcuts"
 
     /// Why the action can't be used; `nil` when it can. A case can be built with any parameter,
     /// so every boundary (reading, writing, using) asks this again.
@@ -36,14 +44,31 @@ public enum LaunchAction: Hashable, Sendable {
             return BrowserProfileName.rejection(for: profileName).map(LaunchActionRejection.profileName)
         case .browserPrivate:
             return nil
+        case .shortcut(let name):
+            return ShortcutName.rejection(for: name).map(LaunchActionRejection.shortcutName)
         }
     }
 
-    /// The item kinds the action can be set on: a browser profile and a private window are for
-    /// websites only.
+    /// Whether the action can be set on an item of `kind` whose identity is `identity`
+    /// (`AppReference.bundleIdentifier`): a browser profile and a private window on a website; a
+    /// shortcut only on the Shortcuts app's item (`com.apple.shortcuts`, compared ignoring case as
+    /// bundle identifiers are), never another app, a website, a file or a folder.
+    func isAllowed(for kind: AppReference.Kind, identity: String) -> Bool {
+        switch self {
+        case .browserProfile, .browserPrivate:
+            return kind == .website
+        case .shortcut:
+            return kind == .application && identity.lowercased() == Self.shortcutsBundleIdentifier
+        }
+    }
+
+    /// Whether the action can be set on an item of `kind`, for a caller that doesn't have the
+    /// item's identity: only templates that need none (the browser ones). A shortcut is never
+    /// allowed here; `isAllowed(for:identity:)` decides for it.
     func isAllowed(for kind: AppReference.Kind) -> Bool {
         switch self {
-        case .browserProfile, .browserPrivate: return kind == .website
+        case .browserProfile, .browserPrivate: return isAllowed(for: kind, identity: "")
+        case .shortcut: return false
         }
     }
 }
@@ -68,10 +93,15 @@ enum LaunchActionRejection: Error, Hashable, Sendable {
     /// A browser that has no profile template (Safari, or one a newer version added).
     case unknownBrowser
     case missingProfile
-    /// The template can't be set on an item of this kind.
+    /// A shortcut action without its `name`.
+    case missingName
+    /// The template can't be set on an item of this kind (or, for a shortcut, on any item but the
+    /// Shortcuts app's).
     case unsupportedItemKind
     /// The profile name breaks the grammar (`BrowserProfileName`).
     case profileName(BrowserProfileNameRejection)
+    /// The shortcut name breaks the grammar (`ShortcutName`).
+    case shortcutName(ShortcutNameRejection)
     /// A `status` this version doesn't know, or `"review"` without a known `reason` (maybe written by
     /// a newer version).
     case unknownStatus
@@ -149,6 +179,70 @@ enum BrowserProfileName {
     }
 }
 
+/// Why a shortcut name was refused (`ShortcutName.rejection(for:)`).
+enum ShortcutNameRejection: Hashable, Sendable, CaseIterable {
+    case empty
+    /// More than `ShortcutName.maximumLength` Unicode scalars.
+    case tooLong
+    /// A control character (NUL, a line break, a tab among them), U+2028 or U+2029.
+    case controlCharacter
+    /// A bidirectional formatting character, which can make the name read differently than it is.
+    case bidiCharacter
+    /// An invisible or unassigned character: a format character (zero-width, ZWJ, BOM…), private
+    /// use, a lone surrogate, or a space other than U+0020.
+    case invisibleCharacter
+    /// The name isn't in Unicode NFC ("é" as "e" + U+0301): what is shown, approved and sent would
+    /// differ. Refused, never normalized.
+    case notNormalized
+    /// It starts or ends with a space.
+    case surroundingWhitespace
+    /// It starts with "-".
+    case leadingHyphen
+    /// It contains "/" or a backslash.
+    case pathSeparator
+}
+
+/// The grammar of a shortcut name (docs/design/launch-action-shortcut.md §3.2). A name that breaks
+/// it is refused, never trimmed, normalized or otherwise fixed; the first reason in the order of
+/// `ShortcutNameRejection` wins. Letters of any script, digits, punctuation such as ":", "&", "=",
+/// "?", "#", "+", "%" and emoji without ZWJ are accepted.
+enum ShortcutName {
+    /// The longest name accepted, in Unicode scalars.
+    static let maximumLength = 128
+
+    /// Why `name` can't be a shortcut name; `nil` when it can.
+    static func rejection(for name: String) -> ShortcutNameRejection? {
+        let scalars = name.unicodeScalars
+        guard !scalars.isEmpty else { return .empty }
+        guard scalars.count <= maximumLength else { return .tooLong }
+        for scalar in scalars {
+            switch scalar.properties.generalCategory {
+            case .control, .lineSeparator, .paragraphSeparator:
+                return .controlCharacter
+            default:
+                break
+            }
+        }
+        if scalars.contains(where: \.properties.isBidiControl) { return .bidiCharacter }
+        for scalar in scalars {
+            switch scalar.properties.generalCategory {
+            case .format, .privateUse, .surrogate, .unassigned:
+                return .invisibleCharacter
+            case .spaceSeparator where scalar != " ":
+                return .invisibleCharacter
+            default:
+                break
+            }
+        }
+        // Compared scalar by scalar: `String` equality ignores the difference between NFC and NFD.
+        guard name.precomposedStringWithCanonicalMapping.unicodeScalars.elementsEqual(scalars) else { return .notNormalized }
+        if name.hasPrefix(" ") || name.hasSuffix(" ") { return .surroundingWhitespace }
+        if name.hasPrefix("-") { return .leadingHyphen }
+        if scalars.contains(where: { $0 == "/" || $0 == "\\" }) { return .pathSeparator }
+        return nil
+    }
+}
+
 /// An item's launch action as kept in memory and in the file.
 enum LaunchActionSetting: Hashable, Sendable {
     /// A valid action for the item: the only kind the launcher runs. Written with
@@ -158,31 +252,33 @@ enum LaunchActionSetting: Hashable, Sendable {
     /// and its reason, so it stays off after a restart (launch-action-review-persistence.md).
     case needsReview(LaunchActionReview)
 
-    /// `action` as an item of `kind` keeps it: enabled when it's valid and allowed for the kind,
-    /// otherwise needing review.
-    init(_ action: LaunchAction, for kind: AppReference.Kind) {
+    /// `action` as an item of `kind` and `identity` keeps it: enabled when it's valid and allowed
+    /// for the item, otherwise needing review.
+    init(_ action: LaunchAction, for kind: AppReference.Kind, identity: String) {
         if let rejection = action.rejection {
             self = .needsReview(.invalid(rejection))
-        } else if !action.isAllowed(for: kind) {
+        } else if !action.isAllowed(for: kind, identity: identity) {
             self = .needsReview(.invalid(.unsupportedItemKind))
         } else {
             self = .enabled(action)
         }
     }
 
-    /// The action as it was read from a file for an item of `kind`: one the file has under review
-    /// as imported stays so, and only one the file has on (or saved before statuses) can be enabled.
-    init(reading content: LaunchActionCoding.Content, for kind: AppReference.Kind) {
+    /// The action as it was read from a file for an item of `kind` and `identity`: one the file has
+    /// under review as imported stays so, and only one the file has on (or saved before statuses)
+    /// can be enabled.
+    init(reading content: LaunchActionCoding.Content, for kind: AppReference.Kind, identity: String) {
         switch content {
-        case .enabled(let action): self.init(action, for: kind)
-        case .imported(let action): self = LaunchActionSetting(action, for: kind).disabledForImport
+        case .enabled(let action): self.init(action, for: kind, identity: identity)
+        case .imported(let action): self = LaunchActionSetting(action, for: kind, identity: identity).disabledForImport
         case .invalid(let rejection): self = .needsReview(.invalid(rejection))
         }
     }
 
-    /// The action in use for an item of `kind`, checked again; `nil` when it needs review.
-    func enabledAction(for kind: AppReference.Kind) -> LaunchAction? {
-        guard case .enabled(let action) = self, action.rejection == nil, action.isAllowed(for: kind) else { return nil }
+    /// The action in use for an item of `kind` and `identity`, checked again; `nil` when it needs
+    /// review.
+    func enabledAction(for kind: AppReference.Kind, identity: String) -> LaunchAction? {
+        guard case .enabled(let action) = self, action.rejection == nil, action.isAllowed(for: kind, identity: identity) else { return nil }
         return action
     }
 
@@ -233,7 +329,7 @@ extension AppReference {
     /// The item's launch action in use: valid, for its kind, not waiting for review. Only the
     /// launcher opens the item with it.
     var launchAction: LaunchAction? {
-        launchActionSetting?.enabledAction(for: kind)
+        launchActionSetting?.enabledAction(for: kind, identity: bundleIdentifier)
     }
 
     /// Whether the item has a launch action that can't be used until the user reviews it.
@@ -245,7 +341,7 @@ extension AppReference {
     /// Sets the item's launch action (`nil` removes it); one that isn't valid for the item is kept
     /// and written as needing review, without its refused values.
     mutating func setLaunchAction(_ action: LaunchAction?) {
-        launchActionSetting = action.map { LaunchActionSetting($0, for: kind) }
+        launchActionSetting = action.map { LaunchActionSetting($0, for: kind, identity: bundleIdentifier) }
     }
 }
 
@@ -253,7 +349,8 @@ extension AppReference {
 
 /// The `launchAction` object of an item: a `status`, and the template's own keys, e.g.
 /// `{"status": "enabled", "template": "browserProfile", "browser": "chrome", "profile": "Work"}` or
-/// `{"status": "enabled", "template": "browserPrivate", "browser": "firefox"}` (no `profile`).
+/// `{"status": "enabled", "template": "browserPrivate", "browser": "firefox"}` (no `profile`), or
+/// `{"status": "enabled", "template": "shortcut", "name": "Work Setup"}` (only a `name`).
 ///
 /// - `"status": "enabled"` — on, so the launcher may run it.
 /// - `"status": "review", "reason": "imported"` — came in with a backup: off until turned on.
@@ -269,21 +366,29 @@ struct LaunchActionCoding: Codable {
     static let templateKey = "template"
     static let browserKey = "browser"
     static let profileKey = "profile"
+    static let nameKey = "name"
     static let enabledStatus = "enabled"
     static let reviewStatus = "review"
     static let importedReason = "imported"
     static let invalidReason = "invalid"
-    /// The templates' keys (`browserPrivate` has no `profile`).
+    /// The browser templates' keys (`browserPrivate` has no `profile`).
     static let allowedKeys: Set<String> = [templateKey, browserKey, profileKey]
+    /// The shortcut template's keys: its name only.
+    static let shortcutKeys: Set<String> = [templateKey, nameKey]
     /// Keys that are never read, kept or written, compared ignoring case. Any of them makes the
-    /// action invalid (they'd be unknown anyway; listed so they're refused by name).
+    /// action invalid (they'd be unknown anyway; listed so they're refused by name): a command and
+    /// its parts, and what a shortcut could be given or call back with (input, text, an address,
+    /// an identifier, x-callback-url's callbacks).
     static let forbiddenKeys: Set<String> = [
         "environment", "env", "command", "script", "executable", "shell", "args", "argv", "arguments", "path",
+        "input", "text", "url", "identifier", "x-success", "x-error", "x-cancel",
     ]
     /// The template identifier of `LaunchAction.browserProfile`.
     static let browserProfileTemplate = "browserProfile"
     /// The template identifier of `LaunchAction.browserPrivate`.
     static let browserPrivateTemplate = "browserPrivate"
+    /// The template identifier of `LaunchAction.shortcut`.
+    static let shortcutTemplate = "shortcut"
 
     static func isForbidden(_ key: String) -> Bool {
         forbiddenKeys.contains(key.lowercased())
@@ -308,15 +413,15 @@ struct LaunchActionCoding: Codable {
         fields = [:]
     }
 
-    /// `stored` as an item of `kind` writes it: on, or imported, only while valid and allowed for
-    /// the kind; anything else as invalid, with only the kept fields of an action that was read
-    /// refused (never a refused value built in memory).
-    init(_ stored: StoredLaunchAction, for kind: AppReference.Kind) {
+    /// `stored` as an item of `kind` and `identity` writes it: on, or imported, only while valid
+    /// and allowed for the item; anything else as invalid, with only the kept fields of an action
+    /// that was read refused (never a refused value built in memory).
+    init(_ stored: StoredLaunchAction, for kind: AppReference.Kind, identity: String) {
         switch stored.setting {
-        case .enabled(let action) where action.rejection == nil && action.isAllowed(for: kind):
+        case .enabled(let action) where action.rejection == nil && action.isAllowed(for: kind, identity: identity):
             content = .enabled(action)
             fields = [:]
-        case .needsReview(.imported(let action)) where action.rejection == nil && action.isAllowed(for: kind):
+        case .needsReview(.imported(let action)) where action.rejection == nil && action.isAllowed(for: kind, identity: identity):
             content = .imported(action)
             fields = [:]
         case .needsReview(.invalid(let rejection)):
@@ -349,7 +454,8 @@ struct LaunchActionCoding: Codable {
 
     private static func read(_ object: [String: JSONValue]) -> Content {
         if object.keys.contains(where: isForbidden) { return .invalid(.forbiddenKey) }
-        var keys = allowedKeys
+        // A shortcut has a name and nothing of a browser's; the other templates no name.
+        var keys = object[templateKey]?.stringValue == shortcutTemplate ? shortcutKeys : allowedKeys
         var imported = false
         switch string(object, statusKey) {
         case .success(nil):
@@ -381,6 +487,16 @@ struct LaunchActionCoding: Codable {
         case .success(let value?): template = value
         case .success(nil): return .failure(.missingTemplate)
         case .failure(let rejection): return .failure(rejection)
+        }
+        if template == shortcutTemplate {
+            switch string(object, nameKey) {
+            case .success(let name?):
+                let action = LaunchAction.shortcut(name: name)
+                if let rejection = action.rejection { return .failure(rejection) }
+                return .success(action)
+            case .success(nil): return .failure(.missingName)
+            case .failure(let rejection): return .failure(rejection)
+            }
         }
         guard template == browserProfileTemplate || template == browserPrivateTemplate else { return .failure(.unknownTemplate) }
         // A private window has no profile: one written with it is refused, never ignored.
@@ -432,6 +548,11 @@ struct LaunchActionCoding: Codable {
                 object = [
                     Self.templateKey: .string(Self.browserPrivateTemplate),
                     Self.browserKey: .string(browser.rawValue),
+                ]
+            case .shortcut(let name):
+                object = [
+                    Self.templateKey: .string(Self.shortcutTemplate),
+                    Self.nameKey: .string(name),
                 ]
             }
             if case .imported = content {

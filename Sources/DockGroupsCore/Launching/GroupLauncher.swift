@@ -304,6 +304,8 @@ public final class GroupLauncher {
         let refusal: LaunchActionItemRefusal
         if !source.isUserPresent {
             refusal = .unattendedSource(source)
+        } else if case .enabled(let action)? = item.launchActionSetting, !action.hasRunner {
+            refusal = .templateNotSupported
         } else if let actions = workspace as? LaunchActionWorkspace {
             let browser = item.launch.opener?.bundleIdentifier ?? item.launchAction?.preferredBrowserBundleIdentifier ?? ""
             let planned = LaunchActionArgumentPlan.make(for: item, browserBundleIdentifier: browser) { identifier in

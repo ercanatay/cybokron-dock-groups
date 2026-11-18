@@ -40,10 +40,11 @@ extension BrowserFamily {
 }
 
 extension LaunchAction {
-    /// The browser the action opens the website in.
-    public var browser: BrowserFamily {
+    /// The browser the action opens the website in; `nil` for a shortcut, which opens none.
+    public var browser: BrowserFamily? {
         switch self {
         case .browserProfile(let browser, _), .browserPrivate(let browser): return browser
+        case .shortcut: return nil
         }
     }
 
@@ -52,8 +53,14 @@ extension LaunchAction {
     public var profileName: String? {
         switch self {
         case .browserProfile(_, let profileName): return profileName
-        case .browserPrivate: return nil
+        case .browserPrivate, .shortcut: return nil
         }
+    }
+
+    /// The shortcut the action runs, as the user typed it; `nil` for the browser templates.
+    public var shortcutName: String? {
+        if case .shortcut(let name) = self { return name }
+        return nil
     }
 
     /// Whether the action opens the website in a private window (`browserPrivate`).
@@ -101,10 +108,10 @@ extension AppReference {
 
     /// The bundle identifier of the browser the launcher would start for the item's launch action:
     /// its Open With app when it has one, otherwise the template's own, as the launcher picks it.
-    /// `nil` without an action that's on.
+    /// `nil` without an action that's on, and for one that opens no browser (a shortcut).
     public var launchActionBrowserBundleIdentifier: String? {
-        guard let action = launchAction else { return nil }
-        return launch.opener?.bundleIdentifier ?? action.browser.bundleIdentifier
+        guard let browser = launchAction?.browser else { return nil }
+        return launch.opener?.bundleIdentifier ?? browser.bundleIdentifier
     }
 }
 
@@ -130,12 +137,13 @@ public struct LaunchActionSummary: Equatable, Sendable {
     /// The website's whole address, as it will open.
     public let address: String
 
-    /// The summary of `action` set on `item`; `nil` when the item isn't a website.
+    /// The summary of `action` set on `item`; `nil` when the item isn't a website or the action
+    /// opens no browser (a shortcut's confirmation is its own, a later slice).
     public init?(_ action: LaunchAction, for item: GroupItem) {
-        guard item.isWebsite, let url = item.websiteURL else { return nil }
+        guard item.isWebsite, let url = item.websiteURL, let browser = action.browser else { return nil }
         self.action = action
         itemName = item.displayName
-        browser = action.browser
+        self.browser = browser
         profileName = action.profileName
         address = url.absoluteString
     }
@@ -182,12 +190,19 @@ public struct LaunchActionCaption: Equatable, Sendable {
             needsReview = true
             note = nil
         case .enabled(let action):
-            text = action.profileName.map { "\(action.browser.name) · \($0)" }
-                ?? Localization.format("item.launch.private.row", "%@ · private window", action.browser.name)
+            guard let browser = action.browser else {
+                // A shortcut: its name, as it is (no text of its own until its slice ships).
+                text = action.shortcutName ?? ""
+                needsReview = false
+                note = nil
+                return
+            }
+            text = action.profileName.map { "\(browser.name) · \($0)" }
+                ?? Localization.format("item.launch.private.row", "%@ · private window", browser.name)
             needsReview = false
             let running = item.launchActionBrowserBundleIdentifier.map(isApplicationRunning) ?? false
             note = running
-                ? Localization.format("item.launch.profile.row.running", "%@ is running: the item opens only after you quit it.", action.browser.name)
+                ? Localization.format("item.launch.profile.row.running", "%@ is running: the item opens only after you quit it.", browser.name)
                 : nil
         case .imported, .invalid:
             text = Localization.string("item.launch.profile.row.review", "Browser profile needs review: the item won't open until you turn it on.")
