@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Mở “%1$@” trong %2$@ với hồ sơ “%3$@”?";
 "item.launch.profile.approval.row" = "Thiếu chấp thuận trên Mac này: mục sẽ không mở cho đến khi bạn bật lại.";
 "item.launch.profile.approval.editor" = "Mac này thiếu chấp thuận nên mục sẽ không mở. Để bật, hãy kiểm tra hồ sơ và bật lại.";
-"core.backup.approval.disabled" = "%ld hành động hồ sơ trình duyệt đã đến ở trạng thái tắt và cần được chấp thuận.";
+"core.backup.approval.disabled" = "%ld hành động hồ sơ trình duyệt hoặc lối tắt đã đến ở trạng thái tắt và cần được chấp thuận.";
 "item.launch.private.toggle" = "Mở trong cửa sổ riêng tư";
 "item.launch.private.hint" = "Mở trang web trong cửa sổ riêng tư mới khi bạn tự mở và trình duyệt chưa chạy.";
 "item.launch.private.row" = "%@ · cửa sổ riêng tư";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Đừng gợi ý lại";
 "capture.suggestion.notNow.help" = "Không hiện gợi ý này trong một tuần. Hủy cũng làm như vậy.";
 "capture.suggestion.unavailable" = "Gợi ý này không còn khả dụng nữa.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Chạy một lối tắt";
+"item.launch.shortcut.name" = "Tên lối tắt";
+"item.launch.shortcut.hint" = "Chạy lối tắt này thay vì chỉ mở Lối tắt, khi bạn tự mở mục. Nhập tên như Lối tắt hiển thị. Ứng dụng không truyền đầu vào nào cho lối tắt.";
+"item.launch.shortcut.invalid" = "Nhập tên như Lối tắt hiển thị: tối đa 128 ký tự, không có ngắt dòng hoặc ký tự ẩn, không có khoảng trắng ở đầu hoặc cuối, không bắt đầu bằng “-”, và không có / hoặc \\.";
+"item.launch.shortcut.review" = "Lối tắt này được nhập cùng bản sao lưu hoặc không thể dùng như đã lưu, nên mục sẽ không mở cho đến khi bạn kiểm tra và bật lại.";
+"item.launch.shortcut.approval.editor" = "Mac này thiếu chấp thuận nên mục sẽ không mở. Để bật, hãy kiểm tra tên lối tắt và bật lại.";
+"item.launch.shortcut.row" = "Chạy lối tắt: %@";
+"item.launch.shortcut.row.review" = "Lối tắt cần kiểm tra: mục sẽ không mở cho đến khi bạn bật lại.";
+"item.launch.shortcut.confirm.title" = "Chạy lối tắt “%@” khi bạn mở mục này?";
+"item.launch.shortcut.confirm.message" = "Lối tắt sẽ làm mọi việc mà lối tắt này làm, với các quyền bạn đã cấp cho Lối tắt. Ứng dụng không truyền gì cho nó: không đầu vào, không văn bản, không tệp. Nếu bạn đổi tên, hoặc lối tắt khác mang tên này, thì lối tắt đó sẽ chạy.";
+"item.launch.shortcut.notRun" = "Lối tắt chưa được chạy.";

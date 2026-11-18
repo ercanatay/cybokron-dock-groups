@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Deschizi “%1$@” în %2$@ cu profilul “%3$@”?";
 "item.launch.profile.approval.row" = "Aprobarea lipsește pe acest Mac: elementul nu se deschide până nu o activezi din nou.";
 "item.launch.profile.approval.editor" = "Aprobarea lipsește pe acest Mac, așa că elementul nu se deschide. Pentru a o activa, verifică profilul și activeaz-o din nou.";
-"core.backup.approval.disabled" = "%ld acțiune(i) de profil de browser au sosit dezactivate și necesită aprobare.";
+"core.backup.approval.disabled" = "%ld acțiune(i) de profil de browser sau de comandă rapidă au sosit dezactivate și necesită aprobare.";
 "item.launch.private.toggle" = "Deschide într-o fereastră privată";
 "item.launch.private.hint" = "Deschide site-ul web într-o fereastră privată nouă când îl deschizi tu și browserul nu rulează.";
 "item.launch.private.row" = "%@ · fereastră privată";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Nu mai sugera asta";
 "capture.suggestion.notNow.help" = "Nu afișa această sugestie timp de o săptămână. Anulează face același lucru.";
 "capture.suggestion.unavailable" = "Această sugestie nu mai este disponibilă.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Rulează o comandă rapidă";
+"item.launch.shortcut.name" = "Numele comenzii rapide";
+"item.launch.shortcut.hint" = "Rulează această comandă rapidă în loc să deschizi doar aplicația Comenzi rapide, atunci când deschizi elementul tu. Scrie numele ei așa cum îl afișează Comenzi rapide. Aplicația nu îi transmite nicio intrare.";
+"item.launch.shortcut.invalid" = "Scrie numele așa cum îl afișează Comenzi rapide: până la 128 de caractere, fără întreruperi de rând sau caractere invizibile, fără spațiu la început sau la sfârșit, fără “-” la început și fără / sau \\.";
+"item.launch.shortcut.review" = "Această comandă rapidă a venit cu o copie de rezervă sau nu poate fi folosită așa cum a fost salvată, așa că elementul nu se va deschide până nu o verifici și nu o activezi.";
+"item.launch.shortcut.approval.editor" = "Aprobarea lipsește pe acest Mac, așa că elementul nu se deschide. Pentru a o activa, verifică numele comenzii rapide și activeaz-o din nou.";
+"item.launch.shortcut.row" = "Rulează o comandă rapidă: %@";
+"item.launch.shortcut.row.review" = "Comanda rapidă trebuie verificată: elementul nu se va deschide până nu o activezi.";
+"item.launch.shortcut.confirm.title" = "Rulezi comanda rapidă “%@” când deschizi acest element?";
+"item.launch.shortcut.confirm.message" = "Face tot ce face această comandă rapidă, cu permisiunile pe care le-ai acordat aplicației Comenzi rapide. Aplicația nu îi transmite nimic: nicio intrare, niciun text, niciun fișier. Dacă o redenumești sau altă comandă rapidă primește acest nume, se va rula aceea.";
+"item.launch.shortcut.notRun" = "Comanda rapidă nu a fost rulată.";

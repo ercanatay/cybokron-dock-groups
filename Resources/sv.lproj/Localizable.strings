@@ -1210,7 +1210,7 @@
 "item.launch.profile.confirm.title" = "Öppna “%1$@” i %2$@ med profilen “%3$@”?";
 "item.launch.profile.approval.row" = "Godkännande saknas på den här Mac:en: objektet öppnas inte förrän du slår på det igen.";
 "item.launch.profile.approval.editor" = "Godkännande saknas på den här Mac:en, så objektet öppnas inte. För att aktivera det, kontrollera profilen och slå på den igen.";
-"core.backup.approval.disabled" = "%ld åtgärd(er) för webbläsarprofiler kom avstängda och behöver godkännas.";
+"core.backup.approval.disabled" = "%ld åtgärd(er) för webbläsarprofiler eller genvägar kom avstängda och behöver godkännas.";
 "item.launch.private.toggle" = "Öppna i ett privat fönster";
 "item.launch.private.hint" = "Öppnar webbplatsen i ett nytt privat fönster när du öppnar den själv och webbläsaren inte körs.";
 "item.launch.private.row" = "%@ · privat fönster";
@@ -1258,3 +1258,16 @@
 "capture.suggestion.never" = "Föreslå inte detta igen";
 "capture.suggestion.notNow.help" = "Visa inte det här förslaget på en vecka. Avbryt gör detsamma.";
 "capture.suggestion.unavailable" = "Det här förslaget är inte längre tillgängligt.";
+
+/* Shortcuts app item running a shortcut */
+"item.launch.shortcut.toggle" = "Kör en genväg";
+"item.launch.shortcut.name" = "Genvägens namn";
+"item.launch.shortcut.hint" = "Kör den här genvägen i stället för att bara öppna Genvägar, när du öppnar objektet själv. Skriv namnet så som Genvägar visar det. Appen skickar ingen indata till den.";
+"item.launch.shortcut.invalid" = "Skriv namnet så som Genvägar visar det: högst 128 tecken, inga radbrytningar eller osynliga tecken, inget mellanslag i början eller slutet, inget “-” i början, och varken / eller \\.";
+"item.launch.shortcut.review" = "Den här genvägen kom med en säkerhetskopia eller kan inte användas så som den sparades, så objektet öppnas inte förrän du kontrollerar den och slår på den.";
+"item.launch.shortcut.approval.editor" = "Godkännande saknas på den här Mac:en, så objektet öppnas inte. För att aktivera det, kontrollera genvägens namn och slå på den igen.";
+"item.launch.shortcut.row" = "Kör en genväg: %@";
+"item.launch.shortcut.row.review" = "Genvägen behöver granskas: objektet öppnas inte förrän du slår på den.";
+"item.launch.shortcut.confirm.title" = "Kör genvägen “%@” när du öppnar det här objektet?";
+"item.launch.shortcut.confirm.message" = "Den gör det den här genvägen gör, med de behörigheter du gav Genvägar. Appen skickar ingenting till den: ingen indata, ingen text, inga filer. Om du byter namn på den, eller om en annan genväg får samma namn, körs den i stället.";
+"item.launch.shortcut.notRun" = "Genvägen kördes inte.";
