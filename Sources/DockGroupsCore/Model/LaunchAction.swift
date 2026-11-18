@@ -29,8 +29,7 @@ public enum LaunchAction: Hashable, Sendable {
     case browserPrivate(browser: BrowserFamily)
     /// Runs the user's own shortcut named `name` when the Shortcuts app's item opens:
     /// docs/design/launch-action-shortcut.md. The name is the only parameter: no input, no
-    /// callback, no identifier. Nothing runs it yet: the launcher refuses it
-    /// (`LaunchActionItemRefusal.templateNotSupported`) until its runner ships.
+    /// callback, no identifier. Only `ShortcutLaunchRunner` runs it.
     case shortcut(name: String)
 
     /// The bundle identifier of the only item a shortcut action can be set on: the Shortcuts app.

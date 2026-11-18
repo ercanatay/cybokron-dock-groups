@@ -77,7 +77,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         delayed.onFinished = { report in LaunchReportPresenter.presentProblems(in: report) }
         return delayed
     }()
-    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches, approvals: .onThisMac)
+    /// A shortcut runs only while the session dictionary says the screen is unlocked; the agent's
+    /// launcher has no reading, so it never runs one.
+    private lazy var launcher = GroupLauncher(workspace: SystemApplicationWorkspace(), pendingLaunches: delayedLaunches, approvals: .onThisMac,
+                                              screenLock: { ScreenLockSource.sessionDictionaryReading() })
     /// Close All leaves the protected apps (Settings → Switching) alone, whoever asks.
     private lazy var terminator = GroupTerminator(
         applications: SystemRunningApplications(),
